@@ -1,5 +1,5 @@
 {
-  "name": "m800-white-label-portal",
+  "name": "m800-whitelabel-portal",
   "version": "0.0.0",
   "private": true,
   "scripts": {
@@ -11,14 +11,28 @@
   },
   "dependencies": {
     "body-parser": "~1.8.1",
+    "cluster": "^0.7.7",
+    "compression": "^1.2.1",
+    "connect-flash": "^0.1.1",
+    "connect-redis": "^2.1.0",
     "cookie-parser": "~1.3.3",
     "debug": "~2.0.0",
     "express": "~4.9.0",
-    "grunt": "^0.4.5",
-    "grunt-ts": "^2.0.0",
+    "express-session": "^1.9.3",
+    "express-validator": "^2.7.0",
     "jade": "~1.6.0",
+    "lodash": "^2.4.1",
+    "migrate": "^0.1.6",
+    "moment": "^2.8.4",
+    "mongoose-migrate": "^0.2.2",
     "morgan": "~1.3.0",
-    "serve-favicon": "~2.1.3"
+    "nconf": "^0.7.1",
+    "passport": "^0.2.1",
+    "q": "^1.1.2",
+    "redis": "^0.12.1",
+    "serve-favicon": "^2.1.7",
+    "underscore": "^1.7.0",
+    "winston": "^0.8.3"
   },
   "devDependencies": {
     "chai": "^1.10.0",
@@ -29,6 +43,8 @@
     "load-grunt-tasks": "^1.0.0",
     "mocha": "^2.0.1",
     "time-grunt": "^1.0.0",
-    "typescript": "^1.3.0"
+    "typescript": "^1.3.0",
+    "grunt": "^0.4.5",
+    "grunt-ts": "^2.0.0"
   }
 }

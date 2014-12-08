@@ -1,4 +1,9 @@
-### https://raw.github.com/github/gitignore/c6e6d99b65bcdfc8f248f9545fc9ae43d141d8bd/Node.gitignore
+### https://raw.githubusercontent.com/github/gitignore/master/Node.gitignore
+
+.idea
+*.iml
+*.ipr
+*.iws
 
 # Logs
 logs
@@ -27,5 +32,7 @@ build/Release
 # Dependency directory
 # https://www.npmjs.org/doc/misc/npm-faq.html#should-i-check-my-node_modules-folder-into-git-
 node_modules
+migrations/*
+# Users Environment Variables
 
 build/

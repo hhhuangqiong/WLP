@@ -1,0 +1,89 @@
+{
+  "enableHTTPS": false,
+  "email": {
+    "support": "support@M800.com",
+    "no_reply": "No-Reply@M800.com"
+  },
+  "mongodb": {
+    "uri": "mongodb://localhost/m800-whitelabel-portal",
+    "options": {
+      "mongos": false,
+      "user": "",
+      "pass": ""
+    }
+  },
+  "redis": {
+    "host": "localhost",
+    "port": 6379,
+    "ttl": 1800,
+    "db": 10
+  },
+  "trustProxy": true,
+  "smtp": {
+    "sender": {
+      "email": "issue.tracker@maaii.com",
+      "name": "M800"
+    },
+    "transport":{
+      "host": "smtp.m800400.com",
+      "port": 25,
+      "tls": {
+        "rejectUnauthorized": false
+      }
+    }
+  },
+  "secret": {
+    "session": "fens.me",
+    "params": "fens.me"
+  },
+  "cookies": {
+    "secret": "$ecrEt",
+    "options": {
+      "domain": ".m800.com"
+    }
+  },
+  "logging": {
+    "winston": {
+      "transports": [{
+        "type": "winston.transports.Console",
+        "options": {
+          "level": "debug",
+          "colorize": true,
+          "timestamp": true,
+          "handleExceptions": true
+        }
+      }, {
+        "type": "winston.transports.File",
+        "options": {
+          "filename": "logs/app.log",
+          "json": false
+        }
+      }]
+    }
+  },
+  "jira": {
+    "protocol": "http:",
+    "host": "192.168.135.171",
+    "port": 8080,
+    "user": "testbed",
+    "password": "testbed",
+    "apiVersion": "2",
+    "projects": {
+      "ONLINE_PLATFORM_CONTACT_FORM": "10100",
+      "M800_SDK_DEVELOPER_REQUEST": "11015"
+    },
+    "contactUsRedirectionMapping_enquiry": {
+     "carrier": "catchall",
+     "support": "catchall",
+     "feedback": "catchall"
+    },
+    "contactUsRedirectionMapping_service": {
+      "enterprise_businesses": "catchall",
+      "carrier_services_and_operators": "catchall",
+      "sme": "catchall",
+      "soho": "catchall",
+      "mobile_operator": "catchall",
+      "mvno_ott": "catchall"
+    }
+  }
+}

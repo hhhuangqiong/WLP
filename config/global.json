@@ -1,0 +1,188 @@
+{
+  "client": {
+    "metadata": {
+      "separator": "/"
+    }
+  },
+  "dateFormat": "DD/MM/YYYY HH:mm:ss",
+  "dateFormatWithoutSecond": "DD/MM/YYYY HH:mm",
+  "dateFormatWithoutTime": "DD/MM/YYYY",
+  "defaultLocale": "en",
+  "password": {
+    "length": 8,
+    "rules": {
+      "numerics": {
+        "enable": true,
+        "regex": "[0-9]"
+      },
+      "alphabets": {
+        "enable": true,
+        "regex": "[A-Za-z]"
+      },
+      "symbols": {
+        "enable": true,
+        "regex": "(.*[!,@,#,$,%,^,&,*,?,_,~])"
+      }
+    },
+    "modifiers": "g"
+  },
+  "redirect": {
+    "postLogin": {
+      "default": "/dashboard/index"
+    },
+    "postLogout": "/after-logout",
+    "postSignup": "/signup-success"
+  },
+  "receipt": {
+    "payment": {
+      "success": "/paymentSuccess",
+      "fail": "/paymentFail"
+    },
+    "paymentFailureViews": {
+      "CREDIT_CARD": "paymentFail",
+      "PAYPAL": "paymentFailFull"
+    },
+    "paymentSuccessViews": {
+      "CREDIT_CARD": "paymentSuccess",
+      "PAYPAL": "paymentSuccessFull"
+    }
+  },
+  "plan": {
+    "size": 5,
+    "NO_AVAILABLE": "N/A"
+  },
+  "cookie": {
+    "keys": {
+      "rememberMe": "name",
+      "purchaseItem": "Item",
+      "paymentType": "paymentType",
+      "sourceCountry": "sourceCountry"
+    }
+  },
+  "sourceIp": {
+    "identifier": "sourceIp",
+    "headers": ["x-real-ip", "x-forwarded-for"]
+  },
+  "promise": {
+    "timeoutInMS": 6000
+  },
+  "https": {
+    "redirectPatterns": ["/login", "/signup", "/dashboard"]
+  },
+  "phoneNumber": {
+    "format": {
+      "default": "NATIONAL"
+    }
+  },
+  "blockBruteForce": {
+    "maxAttempts": 5,
+    "allowPrivateIP": false
+  },
+  "nameMapping": {
+    "tollfree": "toll free"
+  },
+  "sem": {
+    "iclick": {
+      "enable": true,
+      "qsKey": "utm_campaign",
+      "qsVal": "",
+      "referer": "optimix.asia"
+    },
+    "facebook": {
+      "enable": true
+    }
+  },
+  "jira": {
+    "issueTypes": {
+      "BUG": "1",
+      "NEW_FEATURE": "2",
+      "TASK": "3",
+      "IMPROVEMENT": "4",
+      "SUB_TASK": "5",
+      "EPIC": "6",
+      "STORY": "7",
+      "TECHNICAL_TASK": "8",
+      "NOC_TICKETS": "9"
+    }
+  },
+  "businessTypes": [
+    "carrier_services_and_operators",
+    "enterprise_businesses",
+    "mobile_operator",
+    "mvno_ott",
+    "sme",
+    "soho"
+  ],
+   "serviceTypes": [
+    "general",
+    "tollfree",
+    "sms",
+    "sdk",
+    "whitelabel"
+  ],
+  "enquiryTypes": [
+    "service-enquiry",
+    "carrier",
+    "support",
+    "feedback"
+  ],
+  "bestSelling": ["China", "Hong Kong", "United States", "Australia", "Taiwan", "Philippines"],
+  "debounceInterval": 300,
+  "CSRF": {
+    "whiteList": [
+    "/login",
+    "/signup",
+    "/contact-us",
+    "/services/tollfree/reserveNumber"
+    ]
+  },
+  "sms": {
+    "HTTPAPIServerAddress": "api.m800.com",
+    "SMPPAPIServerAddress": "smpp.m800.com:2776",
+    "numbers": {
+      "min": "1",
+      "max": "5",
+      "format": "international"
+    },
+    "tool": {
+      "freeBalance": 5
+    },
+    "report": {
+      "size": 10,
+      "limitation": 10000
+    }
+  },
+  "notification": {
+    "size": 10
+  },
+  "template": {
+    "location": "views/templates",
+    "folders": {
+      "notification": "notification",
+      "email": "email"
+    }
+  },
+  "dateTimeFormat": {
+    "request": {
+      "default": "YYYYMMDDHHmmss",
+      "tollfree_cdr": "YYYYMMDD"
+    },
+    "view":{
+      "date": "DD/MM/YYYY",
+      "time": "HH:mm",
+      "timeSecond": "HH:mm:ss",
+      "dateTime": "DD/MM/YYYY HH:mm:ss",
+      "dateOnly": {
+        "short": "DD/MM/YYYY"
+      },
+      "timeOnly": {
+        "short": "HH:mm",
+        "long": "HH:mm:ss"
+      }
+    }
+  },
+  "pagination": {
+    "shownPages": 6
+  },
+  "timeout": 1000
+}

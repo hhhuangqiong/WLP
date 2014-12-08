@@ -10,18 +10,18 @@ module.exports = (grunt) ->
     copy:
       main:
         # [Kareem] "**" in the negate case is required!
-        src: ['**/*', '!node_modules/**', '!build/**']
+        src: ['**/*', '!node_modules/**', '!build/**','!bower_components/**']
         dest: 'build/'
 
     ts:
       default:
         options:
           module: "commonjs"
-        src: ["./build/**/*.ts", "!node_modules/**"]
+        src: ["./build/**/*.ts", "!node_modules/**",'!bower_components/**']
 
     watch:
       scripts:
-        files:['**/*.ts', '!node_modules/**', '!build/**']
+        files:['**/*.ts', '!node_modules/**', '!build/**','!bower_components/**']
         tasks:["copy","ts"]
         options:
           spawn:false
