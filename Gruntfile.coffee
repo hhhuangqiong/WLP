@@ -10,7 +10,7 @@ module.exports = (grunt) ->
     copy:
       main:
         # [Kareem] "**" in the negate case is required!
-        src: ['**/*', '!node_modules/**', '!build/**']
+        src: ['**/*', '!node_modules/**', '!build/**','!reports.xml']
         dest: 'build/'
 
     ts:

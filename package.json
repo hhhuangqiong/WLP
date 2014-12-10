@@ -5,6 +5,7 @@
   "scripts": {
     "start": "node ./bin/www",
     "tsc": "tsc --sourcemap --module commonjs app.ts",
+    "test":"mocha --recursive build/test --reporter xunit > reports.xml",
     "express": "node build/bin/www"
   },
   "dependencies": {

@@ -5,7 +5,7 @@ How the project is set up
 
 Steps:
 
-`
+```
 > npm i -g express-generator
 > npm i tsd@next -g
 > tsd init
@@ -21,7 +21,7 @@ Steps:
 # you should see lots of error but the script can be built (no abort)
 # to prove this: 
 > npm install && npm run start 
-`
+```
 
 Reference
 ============
