@@ -28,7 +28,7 @@ function initialize(port: number): Express.Application {
     // mongodb
     require('./initializers/database')();
 
-    // i18next (TBC with Aviva about Locales)
+
     // mongoose models (models to be located in different folder)(TBC)
 
     // view helpers
@@ -76,6 +76,9 @@ function initialize(port: number): Express.Application {
     // appLocals
     // resLocals
     // source countries
+
+    // i18next init
+    require('./initializers/i18next')(app);
 
     // Routes
     app.get('/', routes.index);

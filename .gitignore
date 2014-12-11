@@ -36,3 +36,5 @@ migrations/*
 # Users Environment Variables
 
 build/
+
+*.js.map

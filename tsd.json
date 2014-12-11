@@ -16,6 +16,9 @@
     },
     "chai/chai.d.ts": {
       "commit": "1fb0d8c3e30156e69a86271d0532d68d71e0735c"
+    },
+    "i18next/i18next.d.ts": {
+      "commit": "1fb0d8c3e30156e69a86271d0532d68d71e0735c"
     }
   }
 }
