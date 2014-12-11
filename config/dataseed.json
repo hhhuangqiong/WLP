@@ -1,0 +1,20 @@
+{
+  "rootUser": {
+    "username": "root@maaii.com",
+    "password": "whitelabel2014",
+    "hashedPassword": "$2a$10$s.24xVm7k/oZ5E1UyvVf0.Am3sqCEC6YuJRg2whGsRqmdszTps8LS",
+    "salt": "$2a$10$s.24xVm7k/oZ5E1UyvVf0.",
+    "name": {
+      "first": "user",
+      "last": "root"
+    },
+    "carrierDomains": "",
+    "assignedGroup": ["root"],
+    "isVerified": true,
+    "status": "active",
+    "createAt": "1990-01-01",
+    "createBy": 0,
+    "updateAt": "1990-01-01",
+    "updateBy": 0
+  }
+}

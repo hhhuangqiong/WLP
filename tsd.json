@@ -11,10 +11,22 @@
     "express/express.d.ts": {
       "commit": "72f8dbc007a261561514c2e3f6ba89c232b12dc8"
     },
+    "mongoose/mongoose.d.ts": {
+      "commit": "9a6d206c5aeff15831acabce96aca23737f6156b"
+    },
+    "underscore/underscore.d.ts": {
+      "commit": "9a6d206c5aeff15831acabce96aca23737f6156b"
+    },
     "mocha/mocha.d.ts": {
-      "commit": "1fb0d8c3e30156e69a86271d0532d68d71e0735c"
+      "commit": "9a6d206c5aeff15831acabce96aca23737f6156b"
     },
     "chai/chai.d.ts": {
+      "commit": "9a6d206c5aeff15831acabce96aca23737f6156b"
+    },
+    "bcrypt/bcrypt.d.ts": {
+      "commit": "1fb0d8c3e30156e69a86271d0532d68d71e0735c"
+    },
+    "express-session/express-session.d.ts": {
       "commit": "1fb0d8c3e30156e69a86271d0532d68d71e0735c"
     },
     "i18next/i18next.d.ts": {
