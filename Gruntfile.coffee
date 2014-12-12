@@ -18,7 +18,7 @@ module.exports = (grunt) ->
         options:
           module: "commonjs"
         src: ["./build/**/*.ts", "!node_modules/**"]
-    
+
     watch:
       scripts:
         files:['**/*.ts', '!node_modules/**', '!build/**']
@@ -27,10 +27,9 @@ module.exports = (grunt) ->
           spawn:false
 
   grunt.event.on "watch", (action, filepath, target) ->
-    grunt.config('copy.main.src',filepath);
+    grunt.config 'copy.main.src', filepath
     grunt.log.writeln target + ": " + filepath + " has " + action
     return
-      
 
   grunt.registerTask "default", ["clean","copy", "ts"]
   grunt.registerTask "w",['default',"watch"]
