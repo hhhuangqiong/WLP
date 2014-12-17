@@ -19,7 +19,16 @@ module.exports = (grunt) ->
           module: "commonjs"
         src: ["./build/**/*.ts", "!node_modules/**",'!bower_components/**']
 
+    browserify:
+      client:
+        src: ["build/client/main.js" ]
+        dest: 'build/public/javascript/bundle.js'
+
     watch:
+      client:
+        files:['client/**']
+        tasks:['copy','browserify']
+
       scripts:
         files:['**/*.ts', '!node_modules/**', '!build/**','!bower_components/**']
         tasks:["copy","ts"]
@@ -31,6 +40,6 @@ module.exports = (grunt) ->
     grunt.log.writeln target + ": " + filepath + " has " + action
     return
 
-  grunt.registerTask "default", ["clean","copy", "ts"]
+  grunt.registerTask "default", ["clean","copy", "ts", "browserify"]
   grunt.registerTask "w",['default',"watch"]
   return

@@ -100,16 +100,15 @@ function initialize(port: number): Express.Application {
 
     // error handlers
     app.use(function(err: any, req, res, next){
-        var status = err.status || 500;
-        var view;
-        if (status === 404) {
-            view = '/pages/errors/not-found';
+        var view,status = err.status || 500;
+        if (err.status === 404) {
+            view = 'pages/errors/not-found';
         } else {
             logger.error(err, err.message, err.stack);
-            view = '/pages/errors/error'
+            view = 'pages/errors/error'
         }
 
-        res.status(status);
+        res.status(app.status);
         res.render(view, {
             message: err.message,
             error: ((env === 'development') ? err : {})
