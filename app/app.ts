@@ -15,107 +15,109 @@ var path = require('path');
 var flash = require('connect-flash');
 
 function initialize(port: number): Express.Application {
-
-    if (!port) throw new Error('Please specify port');
-
-    var app = express();
-    var env = process.env.NODE_ENV || 'development';
-    var nconf = require('./initializers/nconf')(env);
-
-    // passport
-    var passport = require('./initializers/passport');
-
-    // mongodb
-    require('./initializers/database')();
+  if (!port) throw new Error('Please specify port');
 
 
-    // mongoose models (models to be located in different folder)(TBC)
+  var app = express();
+  var env = process.env.NODE_ENV || 'development';
+  var nconf = require('./initializers/nconf')(env);
 
-    // view helpers
-    require('./initializers/viewHelpers')(app);
+  require('./initializers/logging')();
 
-    if(nconf.get('trustProxy')) app.enable('trust proxy');
+  // passport
+  var passport = require('./initializers/passport');
 
-    app.set('port', port);
-    // view engine setup
-    app.set('views', path.join(__dirname + '/../views'));
-    app.set('view engine', 'jade');
-    // by default it's only enabled for 'production'
-    app.set('view cache', env !== 'development');
+  // mongodb
+  require('./initializers/database')();
 
-    app.use(bodyParser.json());
-    app.use(bodyParser.urlencoded({
-        extended: true
+
+  // mongoose models (models to be located in different folder)(TBC)
+
+  // view helpers
+  require('./initializers/viewHelpers')(app);
+
+  if(nconf.get('trustProxy')) app.enable('trust proxy');
+
+  app.set('port', port);
+  // view engine setup
+  app.set('views', path.join(__dirname + '/../views'));
+  app.set('view engine', 'jade');
+  // by default it's only enabled for 'production'
+  app.set('view cache', env !== 'development');
+
+  app.use(bodyParser.json());
+  app.use(bodyParser.urlencoded({
+      extended: true
+  }));
+  app.use(compression());
+  app.use(cookieParser(nconf.get('cookies:secret'), nconf.get('cookies:options')));
+  app.use(expressValidator());
+  // app.use(favicon(__dirname + '/public/favicon.ico'));
+
+  // font resources to be replaced before static resources
+  app.get('/fonts/*', function(req, res, next){
+      res.header("Access-Control-Allow-Origin", "*");
+      res.header("Access-Control-Allow-Headers", "X-Requested-With");
+      next();
+  });
+
+  // static resources
+  app.use(express.static(path.join(__dirname, 'public')));
+
+  app.use(session({
+      secret: nconf.get('secret:session'),
+      store: new RedisStore(nconf.get('redis')),
+      cookie: nconf.get('cookies:options')
+  }));
+  app.use(morgan('dev'));
+  app.use(passport.initialize({}));
+  app.use(passport.session());
+  app.use(flash());
+
+  // wiring
+  // appLocals
+  // resLocals
+  // source countries
+
+  // i18next init
+  require('./initializers/i18next')(app);
+
+  // Routes
+  app.get('/', routes.index);
+  app.get('/login', routes.login)
+    .post('/login', passport.authenticate('local', {
+      successRedirect: '/users',
+      failureRedirect: '/login',
+      failureFlash: false
     }));
-    app.use(compression());
-    app.use(cookieParser(nconf.get('cookies:secret'), nconf.get('cookies:options')));
-    app.use(expressValidator());
-    // app.use(favicon(__dirname + '/public/favicon.ico'));
+  app.get('/users*', passport.ensureAuthenticated, routes.users);
 
-    // font resources to be replaced before static resources
-    app.get('/fonts/*', function(req, res, next){
-        res.header("Access-Control-Allow-Origin", "*");
-        res.header("Access-Control-Allow-Headers", "X-Requested-With");
-        next();
+  // catch 404 and forward to error handler
+  app.use(function(req, res, next){
+    var err:any = new Error('Not Found');
+    // Error does not contain Property of .status
+    err.status = 404;
+    next(err);
+  });
+
+  // error handlers
+  app.use(function(err: any, req, res, next){
+    var view,status = err.status || 500;
+    if (err.status === 404) {
+      view = 'pages/errors/not-found';
+    } else {
+      logger.error(err, err.message, err.stack);
+      view = 'pages/errors/error'
+    }
+
+    res.status(app.status);
+    res.render(view, {
+      message: err.message,
+      error: ((env === 'development') ? err : {})
     });
+  });
 
-    // static resources
-    app.use(express.static(path.join(__dirname, 'public')));
-
-    app.use(session({
-        secret: nconf.get('secret:session'),
-        store: new RedisStore(nconf.get('redis')),
-        cookie: nconf.get('cookies:options')
-    }));
-    app.use(morgan('dev'));
-    app.use(passport.initialize({}));
-    app.use(passport.session());
-    app.use(flash());
-
-    // wiring
-    // appLocals
-    // resLocals
-    // source countries
-
-    // i18next init
-    require('./initializers/i18next')(app);
-
-    // Routes
-    app.get('/', routes.index);
-    app.get('/login', routes.login)
-        .post('/login', passport.authenticate('local', {
-            successRedirect: '/users',
-            failureRedirect: '/login',
-            failureFlash: false
-        }));
-    app.get('/users*', passport.ensureAuthenticated, routes.users);
-
-    // catch 404 and forward to error handler
-    app.use(function(req, res, next){
-        var err:any = new Error('Not Found');
-        // Error does not contain Property of .status
-        err.status = 404;
-        next(err);
-    });
-
-    // error handlers
-    app.use(function(err: any, req, res, next){
-        var view,status = err.status || 500;
-        if (err.status === 404) {
-            view = 'pages/errors/not-found';
-        } else {
-            logger.error(err, err.message, err.stack);
-            view = 'pages/errors/error'
-        }
-
-        res.status(app.status);
-        res.render(view, {
-            message: err.message,
-            error: ((env === 'development') ? err : {})
-        });
-    });
-
-    return app;
+  return app;
 }
 
 export = initialize;
