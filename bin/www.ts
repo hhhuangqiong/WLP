@@ -1,5 +1,5 @@
 import http = require('http');
-var app = require('../app')(3000);
+var app = require('../app/app')(3000);
 var debug = require('debug')('m800-whitelabel-portal');
 var env = process.env.NODE_ENV || 'development';
 var port = app.get('port');

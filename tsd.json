@@ -31,6 +31,9 @@
     },
     "i18next/i18next.d.ts": {
       "commit": "1fb0d8c3e30156e69a86271d0532d68d71e0735c"
+    },
+    "nconf/nconf.d.ts": {
+      "commit": "8e02d8df4e476fe08ec3f5e4dc36db4e645ea34f"
     }
   }
 }

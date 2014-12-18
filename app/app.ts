@@ -5,7 +5,7 @@ import expressValidator = require('express-validator');
 import logger = require('winston');
 import mongoose = require('mongoose');
 import morgan = require('morgan');
-import routes = require('./routes/index');
+import routes = require('./../routes/index');
 import session = require('express-session');
 
 var bodyParser = require('body-parser');
@@ -38,7 +38,7 @@ function initialize(port: number): Express.Application {
 
     app.set('port', port);
     // view engine setup
-    app.set('views', path.join(__dirname + '/views'));
+    app.set('views', path.join(__dirname + '/../views'));
     app.set('view engine', 'jade');
     // by default it's only enabled for 'production'
     app.set('view cache', env !== 'development');
