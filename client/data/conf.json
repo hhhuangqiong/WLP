@@ -1,0 +1,11 @@
+{
+  "i18next": {
+    "getAsync": false,
+    "ns": {
+      "namespaces": ["global", "login", "signup"],
+      "defaultNs": "global"
+    },
+    "fallbackLng": "en",
+    "resGetPath": "/locales/__lng__/__ns__.json"
+  }
+}

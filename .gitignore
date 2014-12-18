@@ -38,3 +38,6 @@ migrations/*
 build/
 
 *.js.map
+
+#Client-side bundle js
+public/javascript/
