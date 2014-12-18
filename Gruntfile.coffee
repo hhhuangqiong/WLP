@@ -10,14 +10,14 @@ module.exports = (grunt) ->
     copy:
       main:
         # [Kareem] "**" in the negate case is required!
-        src: ['**/*', '!node_modules/**', '!build/**','!bower_components/**']
+        src: ['**/*', '!node_modules/**', '!build/**','!bower_components/**', '!public/vendor']
         dest: 'build/'
 
     ts:
       default:
         options:
           module: "commonjs"
-        src: ["./build/**/*.ts", "!node_modules/**",'!bower_components/**']
+        src: ["./build/**/*.ts", "!node_modules/**",'!bower_components/**', '!public/vendor']
 
     browserify:
       client:
@@ -30,10 +30,14 @@ module.exports = (grunt) ->
         tasks:['copy','browserify']
 
       scripts:
-        files:['**/*.ts', '!node_modules/**', '!build/**','!bower_components/**']
+        files:['**/*.ts', '!node_modules/**', '!build/**','!bower_components/**', '!public/vendor', 'views']
         tasks:["copy","ts"]
         options:
           spawn:false
+
+      copylist:
+        files:['views/**', 'locales/**']
+        tasks:['copy']
 
   grunt.event.on "watch", (action, filepath, target) ->
     grunt.config 'copy.main.src', filepath
