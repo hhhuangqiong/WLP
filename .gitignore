@@ -35,8 +35,8 @@ node_modules
 migrations/*
 # Users Environment Variables
 
+#Generated files
 build/
-
 *.js.map
 
 #Client-side bundle js
@@ -44,5 +44,7 @@ public/javascript/
 
 #Generated files for intellij
 .idea
+*.iml
 .tscache
-
+#gitIgnore
+.gitignore

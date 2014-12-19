@@ -5,6 +5,7 @@
   "scripts": {
     "start": "node ./build/bin/www",
     "tsc": "tsc --sourcemap --module commonjs app.ts",
+    "t": "mocha --recursive ./build/test",
     "test": "mocha --recursive ./build/test --reporter xunit > build/reports.xml",
     "express": "node build/bin/www",
     "build": "grunt && npm run test --silent"
@@ -42,6 +43,7 @@
   },
   "devDependencies": {
     "chai": "^1.10.0",
+    "chai-as-promised": "^4.1.1",
     "grunt": "^0.4.5",
     "grunt-browserify": "^3.2.1",
     "grunt-contrib-clean": "^0.6.0",
@@ -51,6 +53,7 @@
     "grunt-ts": "^2.0.1",
     "load-grunt-tasks": "^1.0.0",
     "mocha": "^2.0.1",
+    "mockgoose": "^1.10.7",
     "time-grunt": "^1.0.0",
     "typescript": "^1.3.0"
   }

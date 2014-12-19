@@ -1,7 +1,6 @@
 
 import nconf = require('nconf');
 
-
 var debug = require('debug');
 var path = require('path');
 

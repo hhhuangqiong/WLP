@@ -6,5 +6,4 @@ var router = express.Router();
 router.get('/', function(req, res) {
   res.render('users', { title: 'Welcome' });
 });
-
 module.exports = router;
