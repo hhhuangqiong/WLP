@@ -26,12 +26,12 @@ module.exports = (grunt) ->
 
     browserify:
       client:
-        src: ["build/client/main.js" ]
-        dest: 'build/public/javascript/bundle.js'
+        src: ["build/app/client/main.js" ]
+        dest: 'public/javascript/bundle.js'
 
     watch:
       client:
-        files:['client/**']
+        files:['app/client/**']
         tasks:['copy','browserify']
 
       scripts:
