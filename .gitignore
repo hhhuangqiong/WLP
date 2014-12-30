@@ -8,7 +8,7 @@
 # Logs
 logs
 *.log
-
+bug
 # Runtime data
 pids
 *.pid
@@ -41,3 +41,8 @@ build/
 
 #Client-side bundle js
 public/javascript/
+
+#Generated files for intellij
+.idea
+.tscache
+

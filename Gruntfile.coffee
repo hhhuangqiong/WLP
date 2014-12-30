@@ -10,14 +10,19 @@ module.exports = (grunt) ->
     copy:
       main:
         # [Kareem] "**" in the negate case is required!
-        src: ['**/*', '!node_modules/**', '!build/**','!bower_components/**', '!public/vendor']
+        src: ['**/*', '!node_modules/**', '!build/**','!bower_components/**', '!public/vendor/**']
         dest: 'build/'
 
     ts:
+      "transforms-only":
+        options:
+          compile: false
+        src:["build/**"]
+
       default:
         options:
           module: "commonjs"
-        src: ["./build/**/*.ts", "!node_modules/**",'!bower_components/**', '!public/vendor']
+        src: ["build/**/*.ts"]
 
     browserify:
       client:
@@ -44,6 +49,8 @@ module.exports = (grunt) ->
     grunt.log.writeln target + ": " + filepath + " has " + action
     return
 
-  grunt.registerTask "default", ["clean","copy", "ts", "browserify"]
+#  grunt.registerTask "default", ["clean","copy", "ts", "browserify"]
+  grunt.registerTask "default", ["clean","copy","ts:transforms-only","ts:default"]
   grunt.registerTask "w",['default',"watch"]
+
   return

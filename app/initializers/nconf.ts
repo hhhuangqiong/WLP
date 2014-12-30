@@ -1,12 +1,13 @@
-
+/// <reference path="../../typings/nconf/nconf.d.ts" />
 import nconf = require('nconf');
+
 
 var debug = require('debug');
 var path = require('path');
 
 function initialize(env: string) {
 
-    nconf.argv().env();
+    nconf.argv();
     nconf.env('__');
 
     var dir = path.resolve(__dirname + '/../../config/');

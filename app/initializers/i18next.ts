@@ -1,6 +1,7 @@
 
 import _ = require('underscore');
-import i18n = require('i18next');
+var i18n = require('i18next');
+
 var log: any = require('debug')('app:initializers:i18next');
 var fs: any = require('fs');
 import path = require('path');

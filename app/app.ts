@@ -1,3 +1,4 @@
+
 import compression = require('compression');
 import cookieParser = require('cookie-parser');
 import express = require('express');
@@ -5,7 +6,8 @@ import expressValidator = require('express-validator');
 import logger = require('winston');
 import mongoose = require('mongoose');
 import morgan = require('morgan');
-import routes = require('./../routes/index');
+///ts:import=routes
+/// No file or directory matched name "routes" ///ts:import:generated
 import session = require('express-session');
 
 var bodyParser = require('body-parser');
@@ -14,7 +16,7 @@ var RedisStore = require('connect-redis')(session);
 var path = require('path');
 var flash = require('connect-flash');
 
-function initialize(port: number): Express.Application {
+function initialize(port: number): express.Application {
   if (!port) throw new Error('Please specify port');
 
 
@@ -110,7 +112,7 @@ function initialize(port: number): Express.Application {
       view = 'pages/errors/error'
     }
 
-    res.status(app.status);
+    res.status(status);
     res.render(view, {
       message: err.message,
       error: ((env === 'development') ? err : {})

@@ -5,35 +5,56 @@
   "path": "typings",
   "bundle": "typings/tsd.d.ts",
   "installed": {
-    "node/node.d.ts": {
-      "commit": "72f8dbc007a261561514c2e3f6ba89c232b12dc8"
+    "chai/chai.d.ts": {
+      "commit": "ca32947b75a2b1203779dac7154ffbc232746e4d"
     },
     "express/express.d.ts": {
-      "commit": "72f8dbc007a261561514c2e3f6ba89c232b12dc8"
+      "commit": "ca32947b75a2b1203779dac7154ffbc232746e4d"
     },
-    "mongoose/mongoose.d.ts": {
-      "commit": "9a6d206c5aeff15831acabce96aca23737f6156b"
-    },
-    "underscore/underscore.d.ts": {
-      "commit": "9a6d206c5aeff15831acabce96aca23737f6156b"
-    },
-    "mocha/mocha.d.ts": {
-      "commit": "9a6d206c5aeff15831acabce96aca23737f6156b"
-    },
-    "chai/chai.d.ts": {
-      "commit": "9a6d206c5aeff15831acabce96aca23737f6156b"
+    "node/node.d.ts": {
+      "commit": "ca32947b75a2b1203779dac7154ffbc232746e4d"
     },
     "bcrypt/bcrypt.d.ts": {
-      "commit": "1fb0d8c3e30156e69a86271d0532d68d71e0735c"
+      "commit": "ca32947b75a2b1203779dac7154ffbc232746e4d"
+    },
+    "compression/compression.d.ts": {
+      "commit": "ca32947b75a2b1203779dac7154ffbc232746e4d"
+    },
+    "cookie-parser/cookie-parser.d.ts": {
+      "commit": "ca32947b75a2b1203779dac7154ffbc232746e4d"
     },
     "express-session/express-session.d.ts": {
-      "commit": "1fb0d8c3e30156e69a86271d0532d68d71e0735c"
+      "commit": "ca32947b75a2b1203779dac7154ffbc232746e4d"
+    },
+    "express-validator/express-validator.d.ts": {
+      "commit": "ca32947b75a2b1203779dac7154ffbc232746e4d"
+    },
+    "mocha/mocha.d.ts": {
+      "commit": "ca32947b75a2b1203779dac7154ffbc232746e4d"
+    },
+    "mongoose/mongoose.d.ts": {
+      "commit": "ca32947b75a2b1203779dac7154ffbc232746e4d"
     },
     "i18next/i18next.d.ts": {
-      "commit": "1fb0d8c3e30156e69a86271d0532d68d71e0735c"
+      "commit": "ca32947b75a2b1203779dac7154ffbc232746e4d"
+    },
+    "jquery/jquery.d.ts": {
+      "commit": "ca32947b75a2b1203779dac7154ffbc232746e4d"
     },
     "nconf/nconf.d.ts": {
-      "commit": "8e02d8df4e476fe08ec3f5e4dc36db4e645ea34f"
+      "commit": "ca32947b75a2b1203779dac7154ffbc232746e4d"
+    },
+    "morgan/morgan.d.ts": {
+      "commit": "ca32947b75a2b1203779dac7154ffbc232746e4d"
+    },
+    "winston/winston.d.ts": {
+      "commit": "ca32947b75a2b1203779dac7154ffbc232746e4d"
+    },
+    "underscore/underscore.d.ts": {
+      "commit": "ca32947b75a2b1203779dac7154ffbc232746e4d"
+    },
+    "moment/moment.d.ts": {
+      "commit": "9872b853d6facd11ab4eba733b2408e249d85082"
     }
   }
 }
