@@ -14,13 +14,13 @@ Steps:
 > tsd install node --save
 > tsd install express --save
 
-# rename `app.js` to `app.ts` and add some typescript-specific setting
+# rename `app.js` to `index.ts` and add some typescript-specific setting
 
 > npm run tsc
 
 # you should see lots of error but the script can be built (no abort)
-# to prove this: 
-> npm install && npm run start 
+# to prove this:
+> npm install && npm run start
 ```
 
 Reference

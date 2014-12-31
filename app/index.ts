@@ -7,7 +7,6 @@ import logger = require('winston');
 import mongoose = require('mongoose');
 import morgan = require('morgan');
 ///ts:import=routes
-/// No file or directory matched name "routes" ///ts:import:generated
 import session = require('express-session');
 
 var bodyParser = require('body-parser');
@@ -16,7 +15,7 @@ var RedisStore = require('connect-redis')(session);
 var path = require('path');
 var flash = require('connect-flash');
 
-function initialize(port: number): express.Application {
+export function initialize(port: number): any {
   if (!port) throw new Error('Please specify port');
 
 
@@ -26,8 +25,6 @@ function initialize(port: number): express.Application {
 
   require('./initializers/logging')();
 
-  // passport
-  var passport = require('./initializers/passport');
 
   // mongodb
   require('./initializers/database')();
@@ -72,8 +69,7 @@ function initialize(port: number): express.Application {
       cookie: nconf.get('cookies:options')
   }));
   app.use(morgan('dev'));
-  app.use(passport.initialize({}));
-  app.use(passport.session());
+
   app.use(flash());
 
   // wiring
@@ -86,14 +82,6 @@ function initialize(port: number): express.Application {
 
   // Routes
   app.get('/', routes.index);
-  app.get('/login', routes.login)
-    .post('/login', passport.authenticate('local', {
-      successRedirect: '/users',
-      failureRedirect: '/login',
-      failureFlash: false
-    }));
-  app.get('/users*', passport.ensureAuthenticated, routes.users);
-
   // catch 404 and forward to error handler
   app.use(function(req, res, next){
     var err:any = new Error('Not Found');
@@ -122,4 +110,4 @@ function initialize(port: number): express.Application {
   return app;
 }
 
-export = initialize;
+//export = initialize;

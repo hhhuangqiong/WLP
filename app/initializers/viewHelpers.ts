@@ -1,6 +1,4 @@
-
 import moment = require('moment');
-
 function initialize(app): void {
 
     // monetary formatter,

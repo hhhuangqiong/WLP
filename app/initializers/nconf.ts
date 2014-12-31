@@ -1,4 +1,4 @@
-/// <reference path="../../typings/nconf/nconf.d.ts" />
+
 import nconf = require('nconf');
 
 
