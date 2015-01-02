@@ -49,7 +49,7 @@ module.exports = (grunt) ->
     grunt.log.writeln target + ": " + filepath + " has " + action
     return
 
-
-  grunt.registerTask "default", ["clean","copy","ts:transforms-only","ts:default"]
+#  grunt.registerTask "default", ["clean","copy", "ts", "browserify"]
+  grunt.registerTask "default", ["clean","copy","ts:transforms-only","ts:default", "browserify"]
   grunt.registerTask "w",['default',"watch"]
   return

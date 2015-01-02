@@ -1,29 +1,29 @@
+/// <reference path='../typings/express/express.d.ts' />
+/// <reference path='../typings/node/node.d.ts' />
+
 import express = require('express');
+var LoginRouter = require('./login');
+var LogoutRouter = require('./logout');
+var DashboardRouter = require('./dashboard');
 
-/*
- * GET index page
- */
+var di = require('di');
+var injector = new di.Injector([]);
 
-export function index(req: any, res: any){
-    res.render('pages/index', {title: 'Page Title', testArray: ["1", "2"]});
+var LoginRoutes = injector.get(LoginRouter);
+var LogoutRoutes = injector.get(LogoutRouter);
+var DashboardRoutes = injector.get(DashboardRouter);
+
+class Router {
+  constructor() {
+
+    var _router = express.Router();
+    _router.use('/login', LoginRoutes);
+    _router.use('/logout', LogoutRoutes);
+    _router.use('/dashboard', DashboardRoutes);
+
+    return _router;
+  }
 }
 
-/*
- * GET login page
- */
-
-export function login(req: any, res: any){
-    res.render('pages/login', {title: 'Login Page', testArray: ["1", "3"]});
-}
-
-/*
- * GET users listing page
- */
-
-export function users(req: express.Request, res: express.Response){
-    res.render('pages/users', {title: 'User Page'});
-}
-
-export function postLogin(req: any, res: any) {
-    console.log(res);
-}
+var router = new Router();
+export = router;

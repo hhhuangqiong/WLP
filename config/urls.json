@@ -1,5 +1,13 @@
 {
   "foo": {
     "bar": "http://localhost:3000"
+  },
+  "landing": {
+    "authenticated": {
+      "path": "/dashboard"
+    },
+    "unauthenticated": {
+      "path": "/login"
+    }
   }
 }

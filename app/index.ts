@@ -6,7 +6,6 @@ import expressValidator = require('express-validator');
 import logger = require('winston');
 import mongoose = require('mongoose');
 import morgan = require('morgan');
-///ts:import=routes
 import session = require('express-session');
 
 var bodyParser = require('body-parser');
@@ -18,16 +17,20 @@ var flash = require('connect-flash');
 export function initialize(port: number): any {
   if (!port) throw new Error('Please specify port');
 
-
   var app = express();
   var env = process.env.NODE_ENV || 'development';
   var nconf = require('./initializers/nconf')(env);
 
   require('./initializers/logging')();
 
+  var portalUserManager = require('./user/services/portalUserManager');
+
+  // passport
+  var passport = require('./initializers/passport')(portalUserManager);
 
   // mongodb
-  require('./initializers/database')();
+  var dataseed = require('./initializers/dataseed');
+  require('./initializers/database')(dataseed);
 
 
   // mongoose models (models to be located in different folder)(TBC)
@@ -35,7 +38,7 @@ export function initialize(port: number): any {
   // view helpers
   require('./initializers/viewHelpers')(app);
 
-  if(nconf.get('trustProxy')) app.enable('trust proxy');
+  if (nconf.get('trustProxy')) app.enable('trust proxy');
 
   app.set('port', port);
   // view engine setup
@@ -46,7 +49,7 @@ export function initialize(port: number): any {
 
   app.use(bodyParser.json());
   app.use(bodyParser.urlencoded({
-      extended: true
+    extended: true
   }));
   app.use(compression());
   app.use(cookieParser(nconf.get('cookies:secret'), nconf.get('cookies:options')));
@@ -54,22 +57,23 @@ export function initialize(port: number): any {
   // app.use(favicon(__dirname + '/public/favicon.ico'));
 
   // font resources to be replaced before static resources
-  app.get('/fonts/*', function(req, res, next){
-      res.header("Access-Control-Allow-Origin", "*");
-      res.header("Access-Control-Allow-Headers", "X-Requested-With");
-      next();
+  app.get('/fonts/*', function (req, res, next) {
+    res.header("Access-Control-Allow-Origin", "*");
+    res.header("Access-Control-Allow-Headers", "X-Requested-With");
+    next();
   });
 
   // static resources
-  app.use(express.static(path.join(__dirname, 'public')));
+  app.use(express.static(path.join(__dirname, '/../../public')));
 
   app.use(session({
-      secret: nconf.get('secret:session'),
-      store: new RedisStore(nconf.get('redis')),
-      cookie: nconf.get('cookies:options')
+    secret: nconf.get('secret:session'),
+    store: new RedisStore(nconf.get('redis'))
+    //cookie: nconf.get('cookies:options')
   }));
   app.use(morgan('dev'));
-
+  app.use(passport.initialize());
+  app.use(passport.session());
   app.use(flash());
 
   // wiring
@@ -81,9 +85,10 @@ export function initialize(port: number): any {
   require('./initializers/i18next')(app);
 
   // Routes
-  app.get('/', routes.index);
+  var routes: express.Router = require('../routes/index');
+  app.use(routes);
   // catch 404 and forward to error handler
-  app.use(function(req, res, next){
+  app.use(function (req, res, next) {
     var err:any = new Error('Not Found');
     // Error does not contain Property of .status
     err.status = 404;
@@ -91,8 +96,8 @@ export function initialize(port: number): any {
   });
 
   // error handlers
-  app.use(function(err: any, req, res, next){
-    var view,status = err.status || 500;
+  app.use(function (err:any, req, res, next) {
+    var view, status = err.status || 500;
     if (err.status === 404) {
       view = 'pages/errors/not-found';
     } else {
@@ -105,9 +110,7 @@ export function initialize(port: number): any {
       message: err.message,
       error: ((env === 'development') ? err : {})
     });
-  });
+  })
 
   return app;
 }
-
-//export = initialize;
