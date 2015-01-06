@@ -9,10 +9,10 @@
       "commit": "ca32947b75a2b1203779dac7154ffbc232746e4d"
     },
     "express/express.d.ts": {
-      "commit": "ca32947b75a2b1203779dac7154ffbc232746e4d"
+      "commit": "30cfe7dedb3ae990a369cda93995d69b169465bd"
     },
     "node/node.d.ts": {
-      "commit": "ca32947b75a2b1203779dac7154ffbc232746e4d"
+      "commit": "30cfe7dedb3ae990a369cda93995d69b169465bd"
     },
     "bcrypt/bcrypt.d.ts": {
       "commit": "ca32947b75a2b1203779dac7154ffbc232746e4d"
@@ -60,6 +60,9 @@
       "commit": "a12472597c94a159811c61d41419d55400e6055a"
     },
     "nodemailer/nodemailer.d.ts": {
+      "commit": "30cfe7dedb3ae990a369cda93995d69b169465bd"
+    },
+    "multer/multer.d.ts": {
       "commit": "30cfe7dedb3ae990a369cda93995d69b169465bd"
     }
   }

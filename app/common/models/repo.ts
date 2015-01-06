@@ -4,6 +4,7 @@
 import Mongoose = require('mongoose');
 
 import Q = require('q');
+
 export class Repos<T> {
   /**
    * Mongoose _model that will be used to perform repository operation.
@@ -11,6 +12,14 @@ export class Repos<T> {
   _model:Mongoose.Model<any>;
 
   constructor(collectionName:string, connection:Mongoose.Connection, schema:Mongoose.Schema) {
+    //If user didn't inject the connection
+    if(!connection){
+      if(Mongoose.connection){
+        connection=Mongoose.connection;
+      }else{
+        throw "Database connection is undefined";
+      }
+    }
     this._model = connection.model(collectionName, schema);
   }
 

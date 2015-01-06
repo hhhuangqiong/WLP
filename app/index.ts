@@ -6,6 +6,7 @@ import logger = require('winston');
 import mongoose = require('mongoose');
 import morgan = require('morgan');
 import session = require('express-session');
+import multer = require('multer');
 
 var bodyParser = require('body-parser');
 var favicon = require('serve-favicon');
@@ -38,7 +39,7 @@ export function initialize(port: number): any {
   require('./initializers/viewHelpers')(app);
 
   if (nconf.get('trustProxy')) app.enable('trust proxy');
-
+  app.use(multer({dest:'./uploads/'}));
   app.set('port', port);
   // view engine setup
   app.set('views', path.join(__dirname + '/../views'));

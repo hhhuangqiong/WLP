@@ -18,3 +18,4 @@
 /// <reference path="moment/moment.d.ts" />
 /// <reference path="q/Q.d.ts" />
 /// <reference path="nodemailer/nodemailer.d.ts" />
+/// <reference path="multer/multer.d.ts" />

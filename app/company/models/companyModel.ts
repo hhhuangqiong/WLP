@@ -18,9 +18,6 @@ export function CompanySchema():mongoose.Schema{
         type:Boolean,
         required:true
       },
-      carrierIds:[{
-        type:String
-      }],
       domain:{
         type:String,
         required:true
@@ -53,7 +50,7 @@ export function CompanySchema():mongoose.Schema{
         required: true
       },
       createBy: {
-        type: Number,
+        type: String,
         required: true
       },
       updateAt: {
@@ -61,7 +58,7 @@ export function CompanySchema():mongoose.Schema{
         required: true
       },
       updateBy: {
-        type: Date,
+        type: String,
         required: true
       }
     },{collection:'Company',strict:true});
@@ -71,7 +68,6 @@ export interface Company {
   name:string;
   address:string;
   reseller:boolean;
-  carriersIds:string[];
   domain:string;
   businessContact:Contact;
   technicalContact:Contact;
@@ -79,9 +75,9 @@ export interface Company {
   logo:string;
   themeType:string;
   createAt: string;
-  createBy: number;
+  createBy: String;
   updateAt: string;
-  updateBy: number;
+  updateBy: String;
 }
 
 /**

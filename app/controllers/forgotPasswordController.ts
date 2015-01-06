@@ -1,7 +1,6 @@
 import express = require('express');
 import Q = require('q');
 var nconf = require('nconf');
-var passport = require('passport');
 var di = require('di');
 var logger = require('winston');
 ///ts:import=portalUserManager

@@ -1,5 +1,3 @@
-/// <reference path='../typings/express/express.d.ts' />
-
 import express = require('express');
 var DashboardController = require('../app/controllers/dashboardController');
 var di = require('di');

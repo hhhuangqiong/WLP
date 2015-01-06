@@ -4,7 +4,6 @@ var passport = require('passport');
 var Q = require('q');
 var di = require('di');
 ///ts:import=loginProtector,protector
-//var protector = require('../initializers/loginProtector');
 var logger = require('winston');
 
 class Login {

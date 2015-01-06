@@ -1,6 +1,5 @@
 import express = require('express');
 var nconf = require('nconf');
-var passport = require('passport');
 
 class Logout {
   constructor() {

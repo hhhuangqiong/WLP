@@ -9,6 +9,7 @@ var mongoose;
 mongoose = new Mong();
 mockgoose(mongoose);
 mongoose.connect('mongodb://localhost/TestingDB');
+
 var companyRep = new repo.Repos<companyModel.Company>("Company", mongoose.connection, companyModel.CompanySchema());
 
 
@@ -78,7 +79,6 @@ function getMockCompany():any {
     name: "default name",
     address: "11 funny street name",
     reseller: false,
-    carriersIds: [],
     domain: "my.domain.org",
     businessContact: {
       name: "business contact guy",
@@ -98,8 +98,8 @@ function getMockCompany():any {
     logo: "logo.logo",
     themeType: "pirates",
     createAt: '1418807631',
-    createBy: 2,
+    createBy: "1",
     updateAt: 1418807631,
-    updateBy: 1
+    updateBy: "1"
   };
 }
