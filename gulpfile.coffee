@@ -11,6 +11,7 @@ sass         = require 'gulp-sass'
 sourcemaps   = require 'gulp-sourcemaps'
 autoprefixer = require 'gulp-autoprefixer'
 
+gulpconcat  = require 'gulp-concat'
 gulpif      = require 'gulp-if'
 browserSync = require 'browser-sync'
 
@@ -26,6 +27,7 @@ gulp.task 'default', ['clean', 'browser-sync'], ->
   # let 'watch' to be the default for now
   gulp.watch tsSource, ['typescript']
   gulp.watch 'public/scss/**/*.scss', ['scss']
+  gulp.watch 'app/client/angularjs/**/*.ts', ['typescript-angularjs']
 
   console.log 'done'
   return
@@ -60,7 +62,19 @@ gulp.task 'typescript-test', ->
   # not necessary to generating any .d.ts for test cases
   eventStream.merge tsResult.js.pipe gulp.dest 'build/test/unit'
 
-gulp.task 'nodemon', ['typescript', 'scss'], ->
+gulp.task 'typescript-angularjs', ->
+  tsResult = gulp.src 'app/client/angularjs/**/*.ts'
+  #            .pipe sourcemaps.init()
+              .pipe ts {
+                sortOutput: true
+              }
+
+  return tsResult.js
+              .pipe gulpconcat('application.js')
+  #            .pipe sourcemaps.write()
+              .pipe gulp.dest 'public/javascript'
+
+gulp.task 'nodemon', ['typescript', 'scss', 'typescript-angularjs'], ->
   nodemon
     script: 'bin/www'
     # TODO investigate why this is not picked up by nodemon

@@ -86,7 +86,7 @@ var portalUserSchema: mongoose.Schema = new mongoose.Schema(
       required: true
     },
     createBy: {
-      type: Number,
+      type: String,
       required: true
     },
     updateAt: {
@@ -94,7 +94,7 @@ var portalUserSchema: mongoose.Schema = new mongoose.Schema(
       required: true
     },
     updateBy: {
-      type: Number,
+      type: String,
       required: true
     }
   }, { collection: 'portalUser'}
@@ -111,9 +111,9 @@ export interface PortalUser extends mongoose.Document {
   isVerified: boolean;
   status: string;
   createAt: string;
-  createBy: number;
+  createBy: string;
   updateAt: string;
-  updateBy: number;
+  updateBy: string;
 
   hasCarrierDomain(carrierDomain: string): Boolean;
   isValidPassword(password: string): Boolean;
@@ -138,6 +138,7 @@ portalUserSchema.method('isValidPassword', function(password: string) {
 export interface PortalUserModel extends mongoose.Model<PortalUser> {
   findByName(name: string, cb);
   newForgotPasswordRequest(username: string, cb);
+  newPortalUser(data: PortalUser, cb);
 }
 
 portalUserSchema.static('findByName', function(name: string, cb: any) {
@@ -167,6 +168,26 @@ portalUserSchema.static('newForgotPasswordRequest', function(username: string, c
     }
 
     cb(null, user);
+  });
+});
+
+portalUserSchema.static('newPortalUser', function(data: PortalUser, cb) {
+
+  var _this = this;
+  var _cb = cb;
+
+  bCrypt.genSalt(10, function(err, salt) {
+    bCrypt.hash(data.username + new Date(), salt, function(err, hash) {
+      data.salt = salt;
+      data.hashedPassword = hash;
+
+      _this.create(data, function(err, user) {
+        if (err) {
+          return _cb(err, null);
+        }
+        return _cb(null, user);
+      })
+    })
   });
 });
 

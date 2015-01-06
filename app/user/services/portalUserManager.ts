@@ -1,9 +1,8 @@
-import Q          = require('q');
-import logger     = require('winston');
-import mongoose   = require('mongoose');
+import logger = require('winston');
+import mongoose = require('mongoose');
+import Q = require('q');
 
-import portalUser = require('app/user/models/PortalUser');
-
+var portalUser = require('app/user/models/PortalUser');
 
 class PortalUserManagerClass {
   name: string;
@@ -16,15 +15,16 @@ class PortalUserManagerClass {
     portalUser.findOne({
       username: data.username
     }, function(err, user) {
+      console.log(err, user, data.username);
       if (err) {
-        cb(err);
+        return cb(err);
       }
 
       if (!user) {
-        cb(null, null);
+        return cb(null, null);
       }
 
-      cb(null, user);
+      return cb(null, user);
     })
   }
 
@@ -34,6 +34,60 @@ class PortalUserManagerClass {
     var username = data.user.username;
 
     portalUser.newForgotPasswordRequest(username, cb);
+  }
+
+  getUsers(data, cb) {
+    portalUser
+      .find({})
+      .where('username').ne('root@maaii.com') // exclude root user
+      .exec(function(err, users) {
+        if (err) {
+          cb(err, null);
+        }
+
+        var formatted_users = {};
+
+        users.forEach(function(user: any) {
+          var formatted_user = {
+            "id": user._id,
+            "username": user.username,
+            "name": user.name,
+            "status": user.status,
+            "isVerified": user.isVerified,
+            "assignedGroups": user.assignedGroups,
+            "carrierDomains": user.carrierDomains,
+            "createAt": user.createAt,
+            "createBy": user.createBy,
+            "updateAt": user.updateAt,
+            "updateBy": user.updateBy
+          };
+
+          formatted_users[formatted_user.id] = formatted_user;
+        });
+
+        cb(null, formatted_users);
+      })
+  }
+
+  newUser(data: any, author: any, cb) {
+    data.createBy = author._id;
+    data.createAt = new Date();
+    data.updateBy = author._id;
+    data.updateAt = new Date();
+
+    var _cb = cb;
+
+    Q.nfcall(this.getUser, data)
+      .then(function(user) {
+        if (user) {
+          return _cb(new Error('username duplicated'), null);
+        }
+
+        portalUser.newPortalUser(data, _cb);
+      })
+      .catch(function(err) {
+        return _cb(err, null);
+      });
   }
 
   /**
@@ -67,8 +121,9 @@ class PortalUserManagerClass {
           message: 'Unknown user or invalid password'
         });
       }
+
       return done(null, user);
-    })
+    });
   }
 }
 

@@ -1,9 +1,11 @@
 import express        = require('express');
 import Q              = require('q');
-var nconf             = require('nconf');
+import logger         = require('winston');
+
 var di                = require('di');
-var logger            = require('winston');
-var portalUserManager = require('app/user/services/portalUserManager')
+var nconf             = require('nconf');
+
+var portalUserManager = require('app/user/services/portalUserManager');
 
 class Forgot {
   PortalUserManager;

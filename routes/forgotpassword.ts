@@ -1,5 +1,6 @@
 import express = require('express');
 var di = require('di');
+var passport = require('passport');
 ///ts:import=portalUserManager
 ///ts:import=forgotPasswordController,ForgotPasswordController
 

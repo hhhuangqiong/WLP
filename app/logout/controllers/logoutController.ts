@@ -1,4 +1,5 @@
 import express = require('express');
+
 var nconf = require('nconf');
 
 class Logout {
@@ -12,5 +13,4 @@ class Logout {
   }
 }
 
-//var LogoutController = new Logout();
 export = Logout;

@@ -1,6 +1,7 @@
 import express = require('express');
+import logger = require('winston');
+
 var nconf = require('nconf');
-var logger = require('winston');
 
 class Dashboard {
   constructor() {

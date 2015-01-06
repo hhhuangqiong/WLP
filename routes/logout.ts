@@ -1,7 +1,7 @@
 /// <reference path='../typings/express/express.d.ts' />
 
 import express = require('express');
-var LogoutController = require('../app/controllers/logoutController');
+var LogoutController = require('../app/logout/controllers/logoutController');
 var di = require('di');
 
 class LogoutRouter {

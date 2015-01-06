@@ -70,6 +70,18 @@
     },
     "body-parser/body-parser.d.ts": {
       "commit": "4f0eec65afc75001ef6ce2af5734f5dfc1b5568d"
+    },
+    "angularjs/angular.d.ts": {
+      "commit": "acea1d8b3632266189276cab0478299e78eff563"
+    },
+    "angular-ui/angular-ui-router.d.ts": {
+      "commit": "acea1d8b3632266189276cab0478299e78eff563"
+    },
+    "angularjs/angular-animate.d.ts": {
+      "commit": "acea1d8b3632266189276cab0478299e78eff563"
+    },
+    "angularjs/angular-resource.d.ts": {
+      "commit": "acea1d8b3632266189276cab0478299e78eff563"
     }
   }
 }

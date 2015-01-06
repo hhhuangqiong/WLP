@@ -21,3 +21,7 @@
 /// <reference path="multer/multer.d.ts" />
 /// <reference path="method-override/method-override.d.ts" />
 /// <reference path="body-parser/body-parser.d.ts" />
+/// <reference path="angularjs/angular.d.ts" />
+/// <reference path="angularjs/angular-animate.d.ts" />
+/// <reference path="angularjs/angular-resource.d.ts" />
+/// <reference path="angular-ui/angular-ui-router.d.ts" />

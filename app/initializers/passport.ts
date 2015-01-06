@@ -1,7 +1,7 @@
 var LocalStrategy = require('passport-local').Strategy;
 
 // Models
-var portalUser = require('./../user/models/PortalUser');
+import portalUser = require('app/user/models/PortalUser');
 
 function initialize(PortalUserManager) {
   var passport = require('passport');
@@ -23,7 +23,7 @@ function initialize(PortalUserManager) {
    */
 
   passport.use('local', new LocalStrategy(
-    function (username:string, password:string, done) {
+    function (username:string, password:string, done: Function) {
       portalUserManager.verifyUser(username, password, done);
     }));
 

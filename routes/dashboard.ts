@@ -1,5 +1,5 @@
 import express = require('express');
-var DashboardController = require('../app/controllers/dashboardController');
+var DashboardController = require('../app/dashboard/controllers/dashboardController');
 var di = require('di');
 
 class DashboardRouter {

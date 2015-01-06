@@ -1,11 +1,12 @@
-import express = require('express');
+import express     = require('express');
+import logger      = require('winston');
+import Q           = require('q');
 
+var di             = require('di');
 var nconf          = require('nconf');
 var passport       = require('passport');
-var Q              = require('q');
-var di             = require('di');
-var logger         = require('winston');
-var protector = require('app/initializers/loginProtector')
+
+var protector      = require('app/initializers/loginProtector');
 
 class Login {
   constructor() {

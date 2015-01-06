@@ -1,0 +1,12 @@
+div()
+  h1= title
+  p --------------------------------------------------------------
+  p
+    input(ng-model="query" type="text" name="filter" placeholder="Username or User Group Name")
+  ul
+    //- If have permission
+    li
+      a(ui-sref=".new") Add New +
+    li(ng-repeat="account in accounts | filter:query" ng-hide="!account.data.id || account.data.id == ''")
+      a(ui-sref=".account({ accountId: account.data.id })" ui-sref-active="active") {{account.data.username}}
+  div(class="well slider" ui-view="account" ng-show="$state.current.name.indexOf('index.') > 0")

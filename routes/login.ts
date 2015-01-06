@@ -1,7 +1,7 @@
 /// <reference path='../typings/express/express.d.ts' />
 
 import express = require('express');
-var LoginController = require('../app/controllers/loginController');
+var LoginController = require('../app/login/controllers/loginController');
 var di = require('di');
 
 class LoginRouter {

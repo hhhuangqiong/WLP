@@ -1,22 +1,22 @@
-/// <reference path='../../typings/express/express.d.ts' />
-
 import express = require('express');
-var LoginController = require('app/controllers/loginController');
+
 var di = require('di');
+
+var loginController = require('app/login/controllers/loginController');
 
 class LoginRouter {
 
-  constructor(LoginController) {
+  constructor(loginController) {
 
     var _router = express.Router();
 
-    _router.get('/', LoginController.login);
-    _router.post('/', LoginController.doLogin, LoginController.postLogin);
+    _router.get('/', loginController.login);
+    _router.post('/', loginController.doLogin, loginController.postLogin);
 
     return _router;
   }
 }
 
-di.annotate(LoginRouter, new di.Inject(LoginController));
+di.annotate(LoginRouter, new di.Inject(loginController));
 
 export = LoginRouter;

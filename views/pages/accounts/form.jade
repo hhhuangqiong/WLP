@@ -1,0 +1,40 @@
+form(method="POST" action="#")
+  h1 Edit user
+  p
+    label First Name
+    input(type="text" name="firstname" placeholder="firstname" ng-model="account.data.name.first" value="{{account.data.name.first}}")
+  p
+    label Last Name
+    input(type="text" name="lastname" placeholder="lastname" ng-model="account.data.name.last" value="{{account.data.name.last}}")
+  p
+    label Email
+    input(type="email" name="email" placeholder="email" ng-model="account.data.username" required)
+    span(ng-show="name.email.$error.required") Email Required.
+  p
+    label Carrier Domain
+    select(name="carrier" ng-model="account.data.carrierDomains" multiple)
+      option(value="")
+      option(value="maaii.com") Maaii
+  p
+    label User group
+  p
+    ul
+      li
+        input(type="checkbox" name="groups" value="admin")
+        label Admin
+      li
+        input(type="checkbox" name="groups" value="developer")
+        label Developer
+      li
+        input(type="checkbox" name="groups" value="marketing")
+        label Marketing
+      li
+        input(type="checkbox" name="groups" value="engineer")
+        label Engineer
+      li
+        input(type="checkbox" name="groups" value="cs")
+        label CS
+  p
+    input(type="button" value="Create account" ng-click="account.save()")
+  p
+    a(ui-sref="accounts.index.new.success") Close

@@ -1,21 +1,19 @@
-/// <reference path='../../typings/express/express.d.ts' />
-
 import express = require('express');
-var LogoutController = require('app/controllers/logoutController');
+
 var di = require('di');
+
+var logoutController = require('app/logout/controllers/logoutController');
 
 class LogoutRouter {
 
-  constructor(LogoutController) {
+  constructor(logoutController) {
 
     var _router = express.Router();
-
-    _router.get('/', LogoutController.logout);
-
+    _router.get('/', logoutController.logout);
     return _router;
   }
 }
 
-di.annotate(LogoutRouter, new di.Inject(LogoutController));
+di.annotate(LogoutRouter, new di.Inject(logoutController));
 
 export = LogoutRouter;

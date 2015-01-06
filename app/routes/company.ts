@@ -3,7 +3,7 @@
  */
 import express = require('express');
 var passport = require('passport');
-import CompanyController = require('app/company/controllers/companyController')
+import CompanyController = require('../company/controllers/companyController')
 
 var PermissionChecker = require('app/common/utilities/PermissionChecker')
 

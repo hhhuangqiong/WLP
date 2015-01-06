@@ -2,24 +2,24 @@ import express = require('express');
 
 var di = require('di');
 
-var ForgotPasswordController = require('app/controllers/forgotPasswordController')
+var forgotPasswordController = require('app/forgotPassword/controllers/forgotPasswordController')
 
 class ForgotPasswordRouter {
 
-  constructor(ForgotPasswordController) {
+  constructor(forgotPasswordController) {
 
     var _router = express.Router();
 
-    _router.get('/', ForgotPasswordController.index);
-    _router.post('/', ForgotPasswordController.submit);
+    _router.get('/', forgotPasswordController.index);
+    _router.post('/', forgotPasswordController.submit);
 
-    _router.get('/success', ForgotPasswordController.success);
-    _router.get('/retry', ForgotPasswordController.retry);
+    _router.get('/success', forgotPasswordController.success);
+    _router.get('/retry', forgotPasswordController.retry);
 
     return _router;
   }
 }
 
-di.annotate(ForgotPasswordRouter, new di.Inject(ForgotPasswordController));
+di.annotate(ForgotPasswordRouter, new di.Inject(forgotPasswordController));
 
 export = ForgotPasswordRouter;
