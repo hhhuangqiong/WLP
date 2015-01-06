@@ -71,8 +71,15 @@ var portalUserSchema: mongoose.Schema = new mongoose.Schema(
       required: true,
       default: 'inactive'
     },
-    failedAttempt: {
-      type: Number
+    token: {
+      forgotPassword: {
+        token: {
+          type: String
+        },
+        createAt: {
+          type: Date
+        }
+      }
     },
     createAt: {
       type: Date,
@@ -129,11 +136,38 @@ portalUserSchema.method('isValidPassword', function(password: string) {
  */
 
 export interface PortalUserModel extends mongoose.Model<PortalUser> {
-  findByName(name, cb);
+  findByName(name: string, cb);
+  newForgotPasswordRequest(username: string, cb);
 }
 
 portalUserSchema.static('findByName', function(name: string, cb: any) {
   this.find({ name: new RegExp(name, 'i') }, cb);
+});
+
+portalUserSchema.static('newForgotPasswordRequest', function(username: string, cb: Function) {
+
+  var salt = bCrypt.genSaltSync(10);
+  var token = bCrypt.hashSync(username + new Date(), salt);
+
+  this.findOneAndUpdate({
+    username: username
+  }, {
+    $set: {
+      token: {
+        forgotPassword: {
+          token: token,
+          createAt: new Date()
+        }
+      }
+    }
+  }, function(err, user) {
+
+    if (err) {
+      cb(err, null);
+    }
+
+    cb(null, user);
+  });
 });
 
 var PortalUser = module.exports = <PortalUserModel>mongoose.model('PortalUser', portalUserSchema);

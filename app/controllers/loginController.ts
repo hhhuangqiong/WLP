@@ -3,7 +3,8 @@ var nconf = require('nconf');
 var passport = require('passport');
 var Q = require('q');
 var di = require('di');
-var protector = require('../initializers/loginProtector');
+///ts:import=loginProtector,protector
+//var protector = require('../initializers/loginProtector');
 var logger = require('winston');
 
 class Login {

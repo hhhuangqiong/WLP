@@ -1,12 +1,11 @@
-/// <reference path='./../../typings/node/node.d.ts' />
-
 var LocalStrategy = require('passport-local').Strategy;
 
 // Models
 var portalUser = require('./../user/models/PortalUser');
 
-function initialize(portalUserManager) {
+function initialize(PortalUserManager) {
   var passport = require('passport');
+  var portalUserManager = new PortalUserManager();
 
   // Passport session setup
   passport.serializeUser(function (user, done) {

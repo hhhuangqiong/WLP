@@ -1,10 +1,8 @@
-/// <reference path='../typings/express/express.d.ts' />
-/// <reference path='../typings/node/node.d.ts' />
-
 import express = require('express');
-var LoginRouter = require('./login');
-var LogoutRouter = require('./logout');
-var DashboardRouter = require('./dashboard');
+///ts:import=login,LoginRouter
+///ts:import=logout,LogoutRouter
+///ts:import=dashboard,DashboardRouter
+///ts:import=forgotpassword,ForgotPasswordRouter
 
 var di = require('di');
 var injector = new di.Injector([]);
@@ -12,6 +10,7 @@ var injector = new di.Injector([]);
 var LoginRoutes = injector.get(LoginRouter);
 var LogoutRoutes = injector.get(LogoutRouter);
 var DashboardRoutes = injector.get(DashboardRouter);
+var ForgotPasswordRoutes = injector.get(ForgotPasswordRouter);
 
 class Router {
   constructor() {
@@ -20,6 +19,7 @@ class Router {
     _router.use('/login', LoginRoutes);
     _router.use('/logout', LogoutRoutes);
     _router.use('/dashboard', DashboardRoutes);
+    _router.use('/forgotpassword', ForgotPasswordRoutes);
 
     return _router;
   }

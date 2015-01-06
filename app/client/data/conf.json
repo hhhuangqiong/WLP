@@ -2,7 +2,7 @@
   "i18next": {
     "getAsync": false,
     "ns": {
-      "namespaces": ["global", "login", "signup"],
+      "namespaces": ["global", "login", "signup", "forgotpassword"],
       "defaultNs": "global"
     },
     "fallbackLng": "en",

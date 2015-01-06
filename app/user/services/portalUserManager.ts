@@ -1,7 +1,7 @@
 import logger = require('winston');
 import mongoose = require('mongoose');
 import Q = require('q');
-import PortalUser = require('./../models/PortalUser');
+///ts:import=PortalUser
 var portalUser = <PortalUser.PortalUserModel>PortalUser;
 
 class PortalUserManagerClass {
@@ -9,6 +9,30 @@ class PortalUserManagerClass {
 
   constructor() {
     this.name = 'portalUserManager';
+  }
+
+  getUser(data: {username: string}, cb: Function) {
+    portalUser.findOne({
+      username: data.username
+    }, function(err, user) {
+      if (err) {
+        cb(err);
+      }
+
+      if (!user) {
+        cb(null, null);
+      }
+
+      cb(null, user);
+    })
+  }
+
+  makeForgotPasswordRequest(data: {user: PortalUser.PortalUser}, cb: Function) {
+    logger.debug('make forgot password request');
+
+    var username = data.user.username;
+
+    portalUser.newForgotPasswordRequest(username, cb);
   }
 
   /**
@@ -21,10 +45,10 @@ class PortalUserManagerClass {
    * @example
    *    portalUserManager.verifyUser('username', 'password', done);
    */
-  verifyUser(username: string, password: string, done: any) {
+  verifyUser(username: string, password: string, done: Function) {
     logger.debug('verifying user login data');
     portalUser.findOne({
-      username: username.toLowerCase()
+      username: username
     }, function(err, user) {
       if (err) {
         logger.error(err);
@@ -47,5 +71,5 @@ class PortalUserManagerClass {
   }
 }
 
-var PortalUserManager = new PortalUserManagerClass();
-export = PortalUserManager;
+//var PortalUserManager = new PortalUserManagerClass();
+export = PortalUserManagerClass;
