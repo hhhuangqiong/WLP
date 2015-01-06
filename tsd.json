@@ -58,6 +58,9 @@
     },
     "q/Q.d.ts": {
       "commit": "a12472597c94a159811c61d41419d55400e6055a"
+    },
+    "nodemailer/nodemailer.d.ts": {
+      "commit": "30cfe7dedb3ae990a369cda93995d69b169465bd"
     }
   }
 }
