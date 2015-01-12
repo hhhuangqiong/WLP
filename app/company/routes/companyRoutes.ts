@@ -4,17 +4,23 @@
 import express = require('express');
 var passport = require('passport');
 ///ts:import=companyController,Controller
-///ts:import
+///ts:import=PermissionChecker
 
-var di=require('di');
+var di = require('di');
 
-export class CompanyRouter{
+export class CompanyRouter {
 
-  constructor(companyController){
-    var _router=express.Router();
+  constructor(companyController) {
+    var _router = express.Router();
+    _router.use(passport.ensureAuthenticated);
+    _router.use(PermissionChecker.check);
 
-    _router.get('/',passport.ensureAuthenticated,companyController.index);
-    _router.post('/',passport.ensureAuthenticated,companyController.addCompany);
+
+    _router.get('/new', companyController.index);
+    _router.post('/', companyController.addCompany);
+    //_router.get(companyController.list);
+    //_router.get('/:id/edit',companyController.editCompany);
+    //_router.delete('/:id',companyController.deleteCompany);
     return _router;
   }
 }

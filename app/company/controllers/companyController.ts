@@ -2,7 +2,6 @@
  * Created by ksh on 1/6/15.
  */
 ///ts:import=CompanyRepo,CompanyRepo
-///ts:import=passport
 import express = require('express');
 var nconf = require('nconf');
 var logger = require('winston');
@@ -46,7 +45,10 @@ export class Company {
  * @returns {boolean}
  */
 function isVerified(company:Object,file:Object):boolean {
-  return true;
+  if(company&&file){
+  return true;}else{
+    return false;
+  }
 }
 
 /**

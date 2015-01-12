@@ -20,7 +20,7 @@ class Router {
     _router.use('/logout', LogoutRoutes);
     _router.use('/dashboard', DashboardRoutes);
     _router.use('/forgotpassword', ForgotPasswordRoutes);
-	_router.use('/addcompany',companyRoutes);
+  	_router.use('/companies',companyRoutes);
     return _router;
   }
 }
