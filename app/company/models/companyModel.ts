@@ -60,6 +60,14 @@ export function CompanySchema():mongoose.Schema{
       updateBy: {
         type: String,
         required: true
+      },
+      supportedLanguages:{
+        type:String,
+        required:true
+      },
+      supportedDevices:{
+        type:String,
+        required:true
       }
     },{collection:'Company',strict:true});
 }
@@ -75,9 +83,11 @@ export interface Company {
   logo:string;
   themeType:string;
   createAt: string;
-  createBy: String;
+  createBy: string;
   updateAt: string;
-  updateBy: String;
+  updateBy: string;
+  supportedLanguages:string;
+  supportedDevices:string;
 }
 
 /**

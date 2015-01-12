@@ -25,7 +25,7 @@ export class Company {
     var logo=req.files.logo;
     logger.info("Company data \n" + JSON.stringify(company));
     if (isVerified(company,logo)) {
-      var finCompany = finalize(company, user,logo.name);
+      var finCompany = finalize(company, user._id,logo.name);
       logger.debug("Company object to be persisted :\n" + JSON.stringify(finCompany));
       companyRepo.add(finCompany).then(function (result) {
         res.render("pages/AddCompany",{notification:"Company Added successfully!"});
@@ -52,10 +52,10 @@ function isVerified(company:Object,file:Object):boolean {
 /**
  * Assemble and fill in missing data like create/updated at and created/updated by user
  * @param company
- * @param user
+ * @param id
  * @returns {{name: any, address: any, reseller: any, domain: any, businessContact: {name: any, phone: any, email: any}, technicalContact: {name: any, phone: any, email: any}, supportContact: {name: any, phone: any, email: any}, createAt: Date, createBy: (user.id|any), updateAt: Date, updateBy: (user.id|any)}}
  */
-function finalize(company, user:any,logo:String) {
+function finalize(company, id:string,logo:string) {
   return {
     name: company.name,
     address: company.address,
@@ -66,9 +66,11 @@ function finalize(company, user:any,logo:String) {
     supportContact: {name: company.sc_name, phone: company.sc_phone, email: company.sc_email},
     logo: logo,
     createAt: new Date(),
-    createBy: user._id,
+    createBy:id,
     updateAt: new Date(),
-    updateBy: user._id
+    updateBy:id,
+    supportedLanguages:company.languages,
+    supportedDevices:company.devices
   }
 }
 

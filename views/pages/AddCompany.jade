@@ -9,60 +9,92 @@ block content
       font-size: small;
       color:#00A000;
     }
+    input{
+      margin-right: 30px;
+      margin-left: 30px;
+      padding-right: 5px;
+      padding-left: 5px;
+      align-content: center;
+    }
+    select{
+      margin-right: 30px;
+      margin-left: 30px;
+      padding-right: 5px;
+      padding-left: 5px;
+      align-content: center;
+    }
+    .row{
+      width: 100%;
+    }
+    .row-content{
+      width: 70%;
+      margin-left: 15%;
+    }
 
 
   if notification
     h5=notification
-
-  h1= title
-  form(action="/addCompany" method="POST" typeof='multi' enctype="multipart/form-data")
-    p
-      label Company Name
-      input(name="name" type="text" placeholder="Company Name")
-    p
-      label Address
-      input(name="address" type="text" placeholder="Street Address")
-    p
-      label Reseller
-      input(name="isReseller" type="checkbox")
-    p
-      label Company Domain
-      input(name="domain" type="text" placeholder="Company Domain" size=30)
-    p
-      h3 contacts
-    p
-    h4 Business Contacts
-    p
-      label Contact Name
-      input(name="bc_name" type="text" placeholder="Name")
-    p
-      label Contact Phone
-      input(name="bc_phone" type="text" placeholder="Phone")
-    p
-    label Contact Email
-    input(name="bc_email" type="email" placeholder="email@domain.com")
-    h4 Technical Contacts
-    p
-      label Contact Name
-      input(name="tc_name" type="text" placeholder="Name")
-    p
-      label Contact Phone
-      input(name="tc_phone" type="text" placeholder="Phone")
-    p
+  div.row
+    h1= title
+  div.row-content
+    form(action="/addCompany" method="POST" typeof='multi' enctype="multipart/form-data")
+      p
+        label Company Name
+        input(name="name" type="text" placeholder="Company Name")
+      p
+        label Address
+        input(name="address" type="text" placeholder="Street Address")
+      p
+        label Reseller
+        input(name="isReseller" type="checkbox")
+      p
+        label Company Domain
+        input(name="domain" type="text" placeholder="Company Domain" size=30)
+      p
+        label Supported Devices
+        select(name="devices")
+          option(value="android") Android
+          option(value="ios") IOS
+          option(value="all") Both
+      p
+        label Supported Languages
+        select(name="languages")
+          option(value="en") English
+      p
+        h3 contacts
+      p
+      h4 Business Contacts
+      p
+        label Contact Name
+        input(name="bc_name" type="text" placeholder="Name")
+      p
+        label Contact Phone
+        input(name="bc_phone" type="text" placeholder="Phone")
+      p
       label Contact Email
-      input(name="tc_email" type="email" placeholder="email@domain.com")
-    h4 Support Contacts
-    p
-      label Contact Name
-      input(name="sc_name" type="text" placeholder="Name")
-    p
-      label Contact Phone
-      input(name="sc_phone" type="text" placeholder="Phone")
-    p
-      label Contact Email
-      input(name="sc_email" type="email" placeholder="email@domain.com")
-    p
-      label Logo
-      input(type="file" name="logo" accept="image/*")
+      input(name="bc_email" type="email" placeholder="email@domain.com")
+      h4 Technical Contacts
+      p
+        label Contact Name
+        input(name="tc_name" type="text" placeholder="Name")
+      p
+        label Contact Phone
+        input(name="tc_phone" type="text" placeholder="Phone")
+      p
+        label Contact Email
+        input(name="tc_email" type="email" placeholder="email@domain.com")
+      h4 Support Contacts
+      p
+        label Contact Name
+        input(name="sc_name" type="text" placeholder="Name")
+      p
+        label Contact Phone
+        input(name="sc_phone" type="text" placeholder="Phone")
+      p
+        label Contact Email
+        input(name="sc_email" type="email" placeholder="email@domain.com")
+      p
+        label Logo
+        input(type="file" name="logo" accept="image/*")
 
-    input(type="submit")
+      input.row(type="submit" margin-left="auto")

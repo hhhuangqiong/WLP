@@ -100,6 +100,8 @@ function getMockCompany():any {
     createAt: '1418807631',
     createBy: "1",
     updateAt: 1418807631,
-    updateBy: "1"
+    updateBy: "1",
+    supportedLanguages:"En",
+    supportedDevices:"ios"
   };
 }
