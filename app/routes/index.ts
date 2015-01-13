@@ -6,14 +6,15 @@ var injector = new di.Injector([]);
 var LoginRouter = require('app/routes/login')
 var LogoutRouter = require('app/routes/logout')
 var DashboardRouter = require('app/routes/dashboard')
-var ForgotPasswordRouter = require('app/routes/forgotPassword')
+var ForgotPasswordRouter = require('app/routes/forgotpassword')
 var companyRouter = require('app/company/routes/companyRoutes')
 
 var LoginRoutes = injector.get(LoginRouter);
 var LogoutRoutes = injector.get(LogoutRouter);
 var DashboardRoutes = injector.get(DashboardRouter);
 var ForgotPasswordRoutes = injector.get(ForgotPasswordRouter);
-var companyRoutes = injector.get(companyRouter.CompanyRouter);
+var companyRoutes = injector.get(companyRouter);
+
 class Router {
   constructor() {
 

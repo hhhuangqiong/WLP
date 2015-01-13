@@ -12,19 +12,16 @@ export function CompanySchema():mongoose.Schema{
       },
       address:{
         type:String,
-        required:true
       },
       reseller:{
         type:Boolean,
-        required:true
       },
       domain:{
         type:String,
-        required:true
+        unique:true
       },
       businessContact:{
-        type:Object,
-        required:true
+        type:Object
       },
       technicalContact:{
         type:Object,

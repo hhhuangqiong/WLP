@@ -1,5 +1,4 @@
 import express = require('express');
-
 var nconf = require('nconf');
 var logger = require('winston');
 import Mongoose = require('mongoose');
@@ -8,7 +7,8 @@ var di = require('di');
 var injector = new di.Injector([]);
 var CompanyRepo = require('app/company/models/CompanyRepo')
 var companyRepo = injector.get(CompanyRepo);
-export class Company {
+var ERRORPAGE = 'pages/errors/error';
+class Company {
   constructor() {
   }
 
@@ -17,90 +17,185 @@ export class Company {
   }
 
   addCompany(req:any, res:any, next:Function) {
-    var company = req.body;
-    var user = req.user;
-    var logo = req.files.logo;
-    logger.info("Company data \n" + JSON.stringify(company));
-    if (isVerified(company, logo)) {
-      var finCompany = finalize(company, user._id, logo.name);
-      logger.debug("Company object to be persisted :\n" + JSON.stringify(finCompany));
-      companyRepo.add(finCompany).then(function (result) {
-        res.render("pages/companies/new", {notification: "Company Added successfully!"});
-      }).fail(function (error) {
-        logger.error("Error while persisting Company entity to DB:\n " + error);
-        res.render('pages/errors/error', {message: "Error while persisting Company entity to DB:", error: error});
-      }).done();
-    } else {
-      logger.error('Company object is not verified, will not be saved in the db\n' + company);
-    }
+    var data = getData(req);
+    exec('add', data.company, null).then((result)=> {
+      fulfilled(res, {notification: "Company Added Successfully"}, 'pages/companies/new');
+    }).fail((error)=> {
+      rejected(res, error, null);
+    }).done();
   }
 
-  fetchInfo(req:any, res:any, next:Function) {
-    var user = req.user;
-    var companyName = req.params.name;
-    logger.debug("Processing fetch information request by : " + req.user.username);
-    fetchData(companyName, user._id).then(function (result) {
-      logger.debug("Fetched information : " + JSON.stringify(result));
-      res.render("pages/companies/index", {result: result});
+  fetchInfo = (req:any, res:any, next:Function) => {
+    var criteria = this.getCriteria(req.query);
+    var page = 'pages/companies/index';
+    exec('find', criteria, null).then((result)=> {
+      fulfilled(res, result, page);
+    }).fail((error)=> {
+      rejected(res, error, ()=> {
+        goto(res, [], page)
+      })
+    }).done();
+  }
+
+  editForm(req:any, res:any, next:Function) {
+    var data = getData(req);
+    exec('find', {_id: data.params.id}, null).then(function (result) {
+      fulfilled(res, result[0], 'pages/companies/editcompany');
     }).fail(function (error) {
-      logger.error("Error while trying to request company data: " + error);
-      res.render("pages/companies/index", {result: []});
+      rejected(res, error, null);
     }).done();
   }
 
   updateRecord(req:any, res:any, next:Function) {
-
+    var data = getData(req);
+    var criteria = {_id: data.params.id};
+    exec('update', criteria, data.company).then(function (result) {
+      return exec('find', criteria, null);
+    }).then(function (result) {
+      fulfilled(res, result, 'pages/companies/index');
+    }).fail(function (error) {
+      rejected(res, error, null);
+    }).done();
 
   }
 
+  deActivateRecord(req:any, res:any, next:Function) {
+    var id = req.params.id;
+    var criteria = {_id: id};
+    exec('update', criteria, {status: 'inactive'}).then(function (result) {
+      return exec('find', criteria, null);
+    }).then(function (result) {
+      fulfilled(res, result, 'pages/companies/index');
+    }).fail(function (error) {
+      rejected(res, error, null);
+    }).done();
+  }
+
+  private getCriteria(params:any):any {
+    var criteria:any = {};
+    if (params) {
+      if (params.id) {
+        criteria._id = params.id
+      }
+      if (params.name) {
+        criteria.name = params.name;
+      }
+      if (params.address) {
+        criteria.address = params.address
+      }
+      if (params.domain) {
+        criteria.domain = params.domain
+      }
+    }
+    logger.info(json(criteria));
+    return criteria;
+  }
+
+
+//end of class
+}
+export=Company;
+
+function fulfilled(res, result, page) {
+  logger.debug("Request has been processed successfully\nResult: " + json(result));
+  goto(res, result, page);
 }
 
-
-/**
- * Check if all elements needed for persisting the company is correct.
- * @param company
- * @returns {boolean}
- */
-function isVerified(company:Object, file:Object):boolean {
-  if (company && file) {
-    return true;
+function rejected(res, error, next) {
+  logger.error("Error while processing Request\n", json(error));
+  if (next) {
+    next();
   } else {
-    return false;
+    goto(res, error, ERRORPAGE);
   }
 }
 
-/**
- * Assemble and fill in missing data like create/updated at and created/updated by user
- * @param company
- * @param id
- * @returns {{name: any, address: any, reseller: any, domain: any, businessContact: {name: any, phone: any, email: any}, technicalContact: {name: any, phone: any, email: any}, supportContact: {name: any, phone: any, email: any}, createAt: Date, createBy: (user.id|any), updateAt: Date, updateBy: (user.id|any)}}
- */
-function finalize(company, id:string, logo:string) {
+function getCompany(companyData) {
   return {
-    name: company.name,
-    address: company.address,
-    reseller: company.isReseller,
-    domain: company.domain,
-    businessContact: {name: company.bc_name, phone: company.bc_phone, email: company.bc_email},
-    technicalContact: {name: company.tc_name, phone: company.tc_phone, email: company.tc_email},
-    supportContact: {name: company.sc_name, phone: company.sc_phone, email: company.sc_email},
-    logo: logo,
-    createAt: new Date(),
-    createBy: id,
-    updateAt: new Date(),
-    updateBy: id,
-    supportedLanguages: company.languages,
-    supportedDevices: company.devices
+    name: companyData.name,
+    address: companyData.address,
+    reseller: companyData.isReseller,
+    domain: companyData.domain,
+    businessContact: {name: companyData.bc_name, phone: companyData.bc_phone, email: companyData.bc_email},
+    technicalContact: {name: companyData.tc_name, phone: companyData.tc_phone, email: companyData.tc_email},
+    supportContact: {name: companyData.sc_name, phone: companyData.sc_phone, email: companyData.sc_email},
+    supportedLanguages: companyData.languages,
+    supportedDevices: companyData.devices
   }
 }
-function fetchData(name:string, ownerId:string):Q.Promise<any> {
-  var creteria:any;
-  creteria = {createBy: ownerId};
-//If no company name provided, get all companies
-  if (name && name.trim()) {
-    creteria.name = name;
+/**
+ * render the requested page
+ * @param page
+ * @param data
+ * @param res
+ */
+function goto(res:any, data:any, page:string) {
+  if (page != ERRORPAGE) {
+    var result:any = {};
+    if (data) {
+      result = {result: data};
+    }
+    logger.debug("Serving " + page + " with the following data\n" + json(result));
+    res.render(page, result);
   }
-  return companyRepo.find(creteria);
+  else {
+    res.render(ERRORPAGE, {message: "Error while processing request", error: data});
+  }
 }
+/**
+ * Executing query operation.
+ * @param op operation {find,update,add,delete...}
+ * @param criteria
+ * @param opt optional parameter, used in update to provide the updated entity to be persisted.
+ * @returns {any}
+ */
+function exec(op:string, criteria:any, opt:any) {
+  logger.debug("Executing " + op + " request \nCriteria: ", criteria, "\nOptions:", opt);
+  return companyRepo[op](criteria, opt);
+}
+/**
+ * Fetching request data from req object
+ * @param req
+ * @returns {any}
+ */
+function getData(req:any):any {
+  var data:any = {};
+  var company:any = {};
 
+//Fetching Requester information
+  if (req.user) {
+    data.user = req.user
+  }
+  //Fetching request parameters
+  if (req.params) {
+    data.params = req.params
+    var methods = req.route.methods;
+    if (methods.put || methods.post) {
+      //If there is a body
+      if (req.body) {
+        company = getCompany(req.body);
+      }
+      company.updateBy = data.user._id;
+      company.updateAt = new Date();
+    }
+    if (methods.post) {
+      company.createBy = data.user._id;
+      company.createAt = new Date();
+    }
+  }
+  if (req.files && req.files.logo) {
+    data.logo = req.files.logo;
+    company.logo = data.logo.name;
+  }
+  data.company = company;
+  return data;
+}
+/**
+ * Shortcut for JSON.stringify.
+ * @param obj
+ * @returns {any}
+ */
+function json(obj:any):string {
+  return JSON.stringify(obj);
+}
 

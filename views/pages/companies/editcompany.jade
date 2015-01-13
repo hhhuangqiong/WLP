@@ -1,0 +1,106 @@
+//
+   Created by ksh on 1/6/15.
+
+
+extends /layout/layout
+block content
+  style.
+    h5 {
+      font-size: small;
+      color:#00A000;
+    }
+    input{
+      margin-right: 30px;
+      margin-left: 30px;
+      padding-right: 5px;
+      padding-left: 5px;
+      align-content: center;
+    }
+    select{
+      margin-right: 30px;
+      margin-left: 30px;
+      padding-right: 5px;
+      padding-left: 5px;
+      align-content: center;
+    }
+    .row{
+      width: 100%;
+    }
+    .row-content{
+      width: 70%;
+      margin-left: 15%;
+    }
+
+
+
+  if notification
+    h5=notification
+  div.row
+    h1= title
+    h5=result
+  div.row-content
+    form(action="/companies/#{result._id}?_method=PUT" method="POST" typeof='multi' enctype="multipart/form-data")
+      p
+        label Company Name
+        input(name="name" type="text" value="#{result.name}")
+
+      p
+        label Address
+        input(name="address" type="text" value="#{result.address}")
+      p
+        label Reseller
+        input(name="isReseller" type="checkbox" checked=result.reseller)
+      p
+        label Company Domain
+        input(name="domain" type="text" value="#{result.domain}" size=30)
+      p
+        label Supported Devices
+        select(name="devices")
+          for device in ["Android","Ios","All"]
+            if(device.toLowerCase() == result.supportedDevices)
+                option(value="#{device}" selected="selected")=device
+            else
+              option(value="#{device}")=device
+
+      p
+        label Supported Languages
+        select(name="languages" value="#{result.supportedLanguages}")
+          option(value="en") English
+      p
+        h3 contacts
+      p
+      h4 Business Contacts
+      p
+        label Contact Name
+        input(name="bc_name" type="text" value="#{result.businessContact.name}")
+      p
+        label Contact Phone
+        input(name="bc_phone" type="text" value="#{result.businessContact.phone}")
+      p
+      label Contact Email
+      input(name="bc_email" type="email" value="#{result.businessContact.email}")
+      h4 Technical Contacts
+      p
+        label Contact Name
+        input(name="tc_name" type="text" value="#{result.technicalContact.name}")
+      p
+        label Contact Phone
+        input(name="tc_phone" type="text" value="#{result.technicalContact.phone}")
+      p
+        label Contact Email
+        input(name="tc_email" type="email" value="#{result.technicalContact.email}")
+      h4 Support Contacts
+      p
+        label Contact Name
+        input(name="sc_name" type="text" value="#{result.supportContact.name}")
+      p
+        label Contact Phone
+        input(name="sc_phone" type="text" value="#{result.supportContact.phone}")
+      p
+        label Contact Email
+        input(name="sc_email" type="email" value="#{result.supportContact.email}")
+      p
+        label Logo
+        input(type="file" name="logo" accept="image/*")
+
+      input.row(type="submit" margin-left="auto")

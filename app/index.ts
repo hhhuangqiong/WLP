@@ -7,13 +7,12 @@ import mongoose = require('mongoose');
 import morgan = require('morgan');
 import session = require('express-session');
 import multer = require('multer');
-
+var methodOverride = require('method-override')
 var bodyParser = require('body-parser');
 var favicon = require('serve-favicon');
 var RedisStore = require('connect-redis')(session);
 var path = require('path');
 var flash = require('connect-flash');
-
 export function initialize(port: number): any {
   if (!port) throw new Error('Please specify port');
 
@@ -39,6 +38,9 @@ export function initialize(port: number): any {
   require('./initializers/viewHelpers')(app);
 
   if (nconf.get('trustProxy')) app.enable('trust proxy');
+//To enable using PUT, DELETE METHODS
+  app.use(methodOverride('_method'))
+  //===
   app.use(multer({dest:'./uploads/'}));
   app.set('port', port);
   // view engine setup
@@ -51,11 +53,12 @@ export function initialize(port: number): any {
   app.use(bodyParser.urlencoded({
     extended: true
   }));
+  app.use(expressValidator({}));
+
   app.use(compression());
   app.use(cookieParser(nconf.get('cookies:secret'), nconf.get('cookies:options')));
-  app.use(expressValidator());
-  // app.use(favicon(__dirname + '/public/favicon.ico'));
 
+  // app.use(favicon(__dirname + '/public/favicon.ico'));
   // font resources to be replaced before static resources
   app.get('/fonts/*', function (req, res, next) {
     res.header("Access-Control-Allow-Origin", "*");

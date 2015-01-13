@@ -14,7 +14,6 @@ var ForgotPasswordRoutes = injector.get(ForgotPasswordRouter);
 var companyRoutes = injector.get(companyRouter.CompanyRouter);
 class Router {
   constructor() {
-
     var _router = express.Router();
     _router.use('/login', LoginRoutes);
     _router.use('/logout', LogoutRoutes);

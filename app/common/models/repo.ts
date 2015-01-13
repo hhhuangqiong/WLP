@@ -31,7 +31,7 @@ export class Repos<T> {
     return deferred.promise;
   }
 
-  find(condition:Object):Q.Promise<T> {
+  find(condition:any):Q.Promise<T> {
     var deferred = Q.defer<T>();
     this._model.find(condition, function (error, result) {
       callBack(error, result, deferred);
@@ -39,7 +39,7 @@ export class Repos<T> {
     return deferred.promise;
   }
 
-  update(condition:Object, entity:any):Q.Promise<T> {
+  update(condition:any, entity:any):Q.Promise<T> {
     var deferred = Q.defer<T>();
     this._model.update(condition, entity, function (error, result) {
       callBack(error, result, deferred);
@@ -47,7 +47,7 @@ export class Repos<T> {
     return deferred.promise;
   }
 
-  delete(condition:Object):Q.Promise<T> {
+  delete(condition:any):Q.Promise<T> {
     var deferred = Q.defer<T>();
     this._model.findOneAndRemove(condition, function (error, result) {
       callBack(error, result, deferred);

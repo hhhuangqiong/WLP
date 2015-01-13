@@ -76,11 +76,12 @@ describe("Testing company repository", function () {
 })
 
 function getMockCompany():any {
+
   return {
     name: "default name",
     address: "11 funny street name",
     reseller: false,
-    domain: "my.domain.org",
+    domain: "my.domain.org"+Math.floor((Math.random() * 9999999) + 1),
     businessContact: {
       name: "business contact guy",
       phone: "2537824",

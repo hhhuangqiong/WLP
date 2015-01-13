@@ -7,7 +7,8 @@
     "clean": "gulp clean",
     "server": "npm run build && node bin/www",
     "pretest": "npm run build && gulp typescript-test",
-    "test": "mocha --recursive build/test --reporter xunit > build/reports.xml"
+    "test": "mocha --recursive build/test --reporter xunit > build/reports.xml",
+    "t":"mocha --recursive build/test"
   },
   "dependencies": {
     "bcrypt": "^0.8.0",
