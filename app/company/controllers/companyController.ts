@@ -15,7 +15,7 @@ export class Company {
   }
 
   index(req:any, res:any, next:Function) {
-    res.render('pages/companies/AddCompany', {title: 'Add Company'});
+    res.render('pages/companies/new', {title: 'Add Company'});
   }
 
   addCompany(req:any, res:any, next:Function) {
@@ -27,7 +27,7 @@ export class Company {
       var finCompany = finalize(company, user._id, logo.name);
       logger.debug("Company object to be persisted :\n" + JSON.stringify(finCompany));
       companyRepo.add(finCompany).then(function (result) {
-        res.render("pages/companies/AddCompany", {notification: "Company Added successfully!"});
+        res.render("pages/companies/new", {notification: "Company Added successfully!"});
       }).fail(function (error) {
         logger.error("Error while persisting Company entity to DB:\n " + error);
         res.render('pages/errors/error', {message: "Error while persisting Company entity to DB:", error: error});
@@ -43,10 +43,10 @@ export class Company {
     logger.debug("Processing fetch information request by : " + req.user.username);
     fetchData(companyName, user._id).then(function (result) {
       logger.debug("Fetched information : " + JSON.stringify(result));
-      res.render("pages/companies/listcompanies", {result: result});
+      res.render("pages/companies/index", {result: result});
     }).fail(function (error) {
       logger.error("Error while trying to request company data: " + error);
-      res.render("pages/companies/listcompanies", {result: []});
+      res.render("pages/companies/index", {result: []});
     }).done();
   }
 
