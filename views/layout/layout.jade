@@ -1,11 +1,14 @@
 doctype html
 html(lang="#{lang||'en'}")
+  include ./meta
   head
     title= title
     link(rel='stylesheet', href='/stylesheets/style.css')
+    //-TODO favicon
   body
     block content
     block scripts
+      //-TODO let all these handled by grunt task (inject & version tag & minimize)
       script(src='/vendor/jQuery/dist/jquery.min.js')
       script(src='/vendor/i18next/i18next.min.js')
       script(src='/javascript/bundle.js')

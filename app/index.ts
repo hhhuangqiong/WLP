@@ -67,6 +67,8 @@ export function initialize(port: number): any {
   app.use(express.static(path.join(__dirname, '/../../public')));
 
   app.use(session({
+    resave: false,
+    saveUninitialized: true,
     secret: nconf.get('secret:session'),
     store: new RedisStore(nconf.get('redis'))
     //cookie: nconf.get('cookies:options')

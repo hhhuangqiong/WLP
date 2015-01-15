@@ -42,11 +42,13 @@ build/
 #Client-side bundle js
 public/javascript/
 
-#Generated files for intellij
+# strongly advise not to put your own gitignore entry here
+# https://help.github.com/articles/ignoring-files/#create-a-global-gitignore
+
+# Generated files for intellij
 .idea
 *.iml
 .tscache
-#gitIgnore
 .gitignore
-#Genereted files by mergetool Meld
+# Generated files by mergetool Meld
 *.orig
