@@ -1,8 +1,9 @@
 /**
  * Created by ksh on 1/6/15.
  */
-///ts:import=companyModel
-///ts:import=repo
+var repo = require('app/common/models/repo');
+var companyModel =require('app/company/models/companyModel')
+
 import mongoose=require('mongoose');
 
    class CompanyRepo extends repo.Repos<companyModel.Company> {

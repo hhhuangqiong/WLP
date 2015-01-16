@@ -3,8 +3,8 @@
  */
 import express = require('express');
 var passport = require('passport');
-///ts:import=companyController,Controller
-///ts:import=PermissionChecker
+var Controller = require('app/company/controllers/companyController')
+var PermissionChecker = require('app/common/utilities/PermissionChecker')
 
 var di = require('di');
 /**

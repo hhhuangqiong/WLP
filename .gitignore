@@ -42,6 +42,8 @@ build/
 #Client-side bundle js
 public/javascript/
 
+node_modules/app
+
 # strongly advise not to put your own gitignore entry here
 # https://help.github.com/articles/ignoring-files/#create-a-global-gitignore
 

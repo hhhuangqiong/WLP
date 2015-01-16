@@ -1,9 +1,9 @@
-import express = require('express');
-import Q = require('q');
-var nconf = require('nconf');
-var di = require('di');
-var logger = require('winston');
-///ts:import=portalUserManager
+import express        = require('express');
+import Q              = require('q');
+var nconf             = require('nconf');
+var di                = require('di');
+var logger            = require('winston');
+var portalUserManager = require('app/user/services/portalUserManager')
 
 class Forgot {
   PortalUserManager;

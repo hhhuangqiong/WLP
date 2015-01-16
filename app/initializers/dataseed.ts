@@ -1,8 +1,7 @@
 var mongoose = require('mongoose');
 var fs = require('fs');
 var _ = require('underscore');
-///ts:import=PortalUser
-var portalUser = <PortalUser.PortalUserModel>PortalUser;
+import portalUser = require('app/user/models/PortalUser');
 
 function initialize() {
 

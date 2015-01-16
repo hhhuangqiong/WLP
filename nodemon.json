@@ -1,0 +1,13 @@
+{
+  "watch": [
+    "node_modules/app/**/*",
+    "routes",
+    "app.js",
+    "nodemon.json",
+    "package.json"
+  ],
+  "ignore": [
+    ".git"
+  ],
+  "verbose": true
+}

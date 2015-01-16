@@ -1,14 +1,12 @@
-/**
- * Created by ksh on 1/6/15.
- */
-///ts:import=CompanyRepo,CompanyRepo
 import express = require('express');
+
 var nconf = require('nconf');
 var logger = require('winston');
 import Mongoose = require('mongoose');
 import Q = require('q');
 var di = require('di');
 var injector = new di.Injector([]);
+var CompanyRepo = require('app/company/models/CompanyRepo')
 var companyRepo = injector.get(CompanyRepo);
 export class Company {
   constructor() {

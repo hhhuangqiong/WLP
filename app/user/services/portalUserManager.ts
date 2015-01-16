@@ -1,8 +1,7 @@
 import logger = require('winston');
 import mongoose = require('mongoose');
 import Q = require('q');
-///ts:import=PortalUser
-var portalUser = <PortalUser.PortalUserModel>PortalUser;
+import portalUser = require('app/user/models/PortalUser');
 
 class PortalUserManagerClass {
   name: string;

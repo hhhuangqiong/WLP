@@ -19,7 +19,7 @@ export function initialize(port: number): any {
 
   var app = express();
   var env = process.env.NODE_ENV || 'development';
-  var nconf = require('./initializers/nconf')(env);
+  var nconf = require('./initializers/nconf')(env, __dirname + '/../../config/');
 
   require('./initializers/logging')();
 
@@ -42,7 +42,7 @@ export function initialize(port: number): any {
   app.use(multer({dest:'./uploads/'}));
   app.set('port', port);
   // view engine setup
-  app.set('views', path.join(__dirname + '/../views'));
+  app.set('views', path.join(__dirname + '/../../views'));
   app.set('view engine', 'jade');
   // by default it's only enabled for 'production'
   app.set('view cache', env !== 'development');
@@ -86,8 +86,10 @@ export function initialize(port: number): any {
   // i18next init
   require('./initializers/i18next')(app);
 
+
+
   // Routes
-  var routes: express.Router = require('../routes/index');
+  var routes: express.Router = require('app/routes');
   app.use(routes);
   // catch 404 and forward to error handler
   app.use(function (req, res, next) {
