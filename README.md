@@ -1,29 +1,33 @@
 # M800 White Label Portal
 
-How the project is set up
-============
+## Pre-requisites:
 
-Steps:
+  * node.js
+    * `npm i -g gulp typescript tsd bower`
+  * MongoDB
+    * [Docker image](https://registry.hub.docker.com/u/dockerfile/mongodb/)
+
+### Ubuntu
+you need to update dependencies to install latest version of node js.
 
 ```
-> npm i -g express-generator
-> npm i tsd@next -g
-> tsd init
-
-# the following 2 will install .d.ts files under typings/ folder
-> tsd install node --save
-> tsd install express --save
-
-# rename `app.js` to `index.ts` and add some typescript-specific setting
-
-> npm run tsc
-
-# you should see lots of error but the script can be built (no abort)
-# to prove this:
-> npm install && npm run start
+# e.g.,
+> curl -sL https://deb.nodesource.com/setup | sudo bash -
+> [sudo] apt-get insall node
 ```
+
+Build Server
+-------------
+TODO
+
+Deployment
+-----------
+TODO
 
 Reference
-============
-* [tsd](https://github.com/DefinitelyTyped/tsd)
-* [Express generator](http://expressjs.com/starter/generator.html)
+---------
+* [Docker](https://docs.docker.com/)
+* [TSD](https://github.com/DefinitelyTyped/tsd)
+* [gulp-nodemon](https://github.com/JacksonGariety/gulp-nodemon)
+* [gulp-typescript](https://github.com/ivogabe/gulp-typescript)
+

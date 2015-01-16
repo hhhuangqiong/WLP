@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "build": "gulp typescript",
+    "build": "npm run clean && gulp typescript",
     "clean": "gulp clean",
     "server": "npm run build && node bin/www",
     "pretest": "npm run build && gulp typescript-test",
