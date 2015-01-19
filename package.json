@@ -3,9 +3,11 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "build": "gulp scripts",
-    "start": "npm run build && node bin/www",
-    "test": "mocha --recursive ./build/test --reporter xunit > build/reports.xml"
+    "build": "gulp typescript",
+    "clean": "gulp clean",
+    "server": "npm run build && node bin/www",
+    "pretest": "npm run build && gulp typescript-test",
+    "test": "mocha --recursive build/test --reporter xunit > build/reports.xml"
   },
   "dependencies": {
     "bcrypt": "^0.8.0",

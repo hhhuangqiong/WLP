@@ -1,13 +1,14 @@
 /**
  * Created by ksh on 12/12/14.
  */
-///ts:import=companyModel
-///ts:import=repo
-var mockgoose = require('mockgoose');
-var Mong = require('mongoose').Mongoose;
-var mongoose;
-mongoose = new Mong();
+var repo         = require('app/common/models/repo')
+var companyModel = require('app/company/models/companyModel')
+var mockgoose    = require('mockgoose');
+var Mongoose     = require('mongoose').Mongoose;
+var mongoose     = new Mongoose();
+
 mockgoose(mongoose);
+// integration test?
 mongoose.connect('mongodb://localhost/TestingDB');
 
 var companyRep = new repo.Repos<companyModel.Company>("Company", mongoose.connection, companyModel.CompanySchema());
