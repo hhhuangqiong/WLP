@@ -4,11 +4,12 @@ html(lang="#{lang||'en'}")
   head
     title= title
     link(rel='stylesheet', href='/stylesheets/style.css')
+    link(rel='stylesheet', href='/stylesheets/main.css')
     //-TODO favicon
   body
     block content
     block scripts
-      //-TODO let all these handled by grunt task (inject & version tag & minimize)
+      //-TODO let all these handled by build tool (inject & version tag & minimize)
       script(src='/vendor/jQuery/dist/jquery.min.js')
       script(src='/vendor/i18next/i18next.min.js')
       script(src='/javascript/bundle.js')

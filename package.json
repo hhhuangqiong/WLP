@@ -54,6 +54,7 @@
     "event-stream": "^3.2.1",
     "gulp": "^3.8.10",
     "gulp-nodemon": "^1.0.5",
+    "gulp-ruby-sass": "^0.7.1",
     "gulp-typescript": "^2.3.0",
     "mocha": "^2.0.1",
     "mockgoose": "^1.10.7"

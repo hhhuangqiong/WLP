@@ -1,11 +1,16 @@
+# consider 'gulp-load-plugins' when the deps getting more
 del         = require 'del'
 eventStream = require 'event-stream'
 gulp        = require 'gulp'
 nodemon     = require 'gulp-nodemon'
 ts          = require 'gulp-typescript'
 
+# til 'libsassc' is feature-compatible with 'ruby-sass'
+# then we may swithc to 'gulp-sass'
+sass        = require 'gulp-ruby-sass'
+
 # let 'watch' to be the default for now
-gulp.task 'default', ['clean', 'watch'], ->
+gulp.task 'default', ['clean', 'scss', 'typescript', 'nodemon'], ->
   console.log 'done'
 
 tsSource = 'app/**/*.ts'
@@ -16,6 +21,12 @@ tsProject = ts.createProject
 
 gulp.task 'clean', ->
   del(['node_modules/app', 'build'])
+
+gulp.task 'scss', ->
+  gulp.src 'public/scss/main.scss'
+    .pipe sass { sourcemapPath: '../scss' }
+    .on 'error', (err) -> console.log err.message
+    .pipe gulp.dest 'public/stylesheets'
 
 gulp.task 'typescript', ->
   tsResult = gulp.src tsSource
@@ -43,7 +54,8 @@ gulp.task 'nodemon', ['typescript'], ->
   .on 'restart', ->
     console.log 'nodemon restarted!'
 
-gulp.task 'watch', ->
   gulp.watch(tsSource, ['typescript'])
-  gulp.run('nodemon')
+  gulp.watch('public/scss/**/*.scss', ['scss'])
+  return
+
 

@@ -44,6 +44,11 @@ public/javascript/
 
 node_modules/app
 
+# Assume all css are generated from SCSS
+public/stylesheets/*.css
+public/stylesheets/*.map
+.sass-cache
+
 # strongly advise not to put your own gitignore entry here
 # https://help.github.com/articles/ignoring-files/#create-a-global-gitignore
 
