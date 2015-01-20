@@ -112,6 +112,8 @@ function rejected(res, error, next) {
 
 function getCompany(companyData) {
   return {
+    accountManager:companyData.accountManager,
+    billCode:companyData.billCode,
     name: companyData.name,
     address: companyData.address,
     reseller: companyData.isReseller,

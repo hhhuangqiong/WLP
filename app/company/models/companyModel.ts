@@ -2,40 +2,51 @@
  * Created by ksh on 12/12/14.
  */
 import mongoose = require('mongoose');
-export function CompanySchema():mongoose.Schema{
+export function CompanySchema():mongoose.Schema {
 
   return new mongoose.Schema(
-    { name:{
-        type:String,
-        required:true,
-        unique:true
+    {
+      parentCompany: {
+        type: String
       },
-      address:{
-        type:String,
+      accountManager: {
+        type: String,
+        required: true
       },
-      reseller:{
-        type:Boolean,
+      billCode: {
+        type: String
       },
-      domain:{
-        type:String,
-        unique:true
+      name: {
+        type: String,
+        required: true,
+        unique: true
       },
-      businessContact:{
-        type:Object
+      address: {
+        type: String,
       },
-      technicalContact:{
-        type:Object,
-        required:true
+      reseller: {
+        type: Boolean,
       },
-      supportContact:{
-        type:Object,
-        required:true
+      domain: {
+        type: String,
+        unique: true
       },
-      logo:{
-        type:String
+      businessContact: {
+        type: Object
       },
-      themeType:{
-        type:String
+      technicalContact: {
+        type: Object,
+        required: true
+      },
+      supportContact: {
+        type: Object,
+        required: true
+      },
+      logo: {
+        type: String
+      },
+      themeType: {
+        type: String
       },
       status: {
         type: String,
@@ -58,18 +69,21 @@ export function CompanySchema():mongoose.Schema{
         type: String,
         required: true
       },
-      supportedLanguages:{
-        type:String,
-        required:true
+      supportedLanguages: {
+        type: String,
+        required: true
       },
-      supportedDevices:{
-        type:String,
-        required:true
+      supportedDevices: {
+        type: String,
+        required: true
       }
-    },{collection:'Company',strict:true});
+    }, {collection: 'Company', strict: true});
 }
 
 export interface Company {
+  parentCompany:string;
+  accountManager:string;
+  billCode:string;
   name:string;
   address:string;
   reseller:boolean;

@@ -78,6 +78,8 @@ describe("Testing company repository", function () {
 function getMockCompany():any {
 
   return {
+    accountManager:"Superman",
+    billCode:"22C#",
     name: "default name",
     address: "11 funny street name",
     reseller: false,
