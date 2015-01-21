@@ -3,12 +3,13 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "build": "npm run clean && gulp typescript",
+    "build": "npm run clean && npm run transpile && npm run test:report",
     "clean": "gulp clean",
-    "server": "npm run build && node bin/www",
-    "pretest": "npm run build && gulp typescript-test",
-    "test": "mocha --recursive build/test --reporter xunit > build/reports.xml",
-    "t":"mocha --recursive build/test"
+    "transpile": "gulp typescript",
+    "server": "npm run transpile && node bin/www",
+    "pretest": "npm run transpile && gulp typescript-test",
+    "test": "mocha --recursive build/test",
+    "test:report": "npm run pretest && mocha --recursive build/test --reporter xunit > build/reports.xml"
   },
   "dependencies": {
     "bcrypt": "^0.8.0",
