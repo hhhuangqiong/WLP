@@ -50,12 +50,14 @@
     "winston": "^0.8.3"
   },
   "devDependencies": {
+    "browser-sync": "^1.9.0",
     "chai": "^1.10.0",
     "chai-as-promised": "^4.1.1",
     "coffee-script": "^1.8.0",
     "del": "^1.1.1",
     "event-stream": "^3.2.1",
     "gulp": "^3.8.10",
+    "gulp-if": "^1.2.5",
     "gulp-nodemon": "^1.0.5",
     "gulp-ruby-sass": "^0.7.1",
     "gulp-typescript": "^2.3.0",

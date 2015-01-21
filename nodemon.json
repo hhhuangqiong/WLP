@@ -1,13 +1,15 @@
 {
   "watch": [
-    "node_modules/app/**/*",
+    "node_modules/app",
     "routes",
     "app.js",
     "nodemon.json",
     "package.json"
   ],
   "ignore": [
-    ".git"
+    ".git",
+    ".sass-cache",
+    ".ts-cache"
   ],
   "verbose": true
 }

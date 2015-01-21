@@ -9,9 +9,8 @@ ts          = require 'gulp-typescript'
 # then we may swithc to 'gulp-sass'
 sass        = require 'gulp-ruby-sass'
 
-# let 'watch' to be the default for now
-gulp.task 'default', ['clean', 'scss', 'typescript', 'nodemon'], ->
-  console.log 'done'
+gulpif      = require 'gulp-if'
+browserSync = require 'browser-sync'
 
 tsSource = 'app/**/*.ts'
 # for incremental build
@@ -19,6 +18,13 @@ tsProject = ts.createProject
   declarationFiles:  true,
   noExternalResolve: false,
   target: 'ES5'
+
+gulp.task 'default', ['clean', 'browser-sync'], ->
+  # let 'watch' to be the default for now
+  gulp.watch tsSource, ['typescript']
+  gulp.watch 'public/scss/**/*.scss', ['scss']
+
+  console.log 'done'
 
 gulp.task 'clean', ->
   del(['node_modules/app', 'build'])
@@ -28,6 +34,7 @@ gulp.task 'scss', ->
     .pipe sass { sourcemapPath: '../scss' }
     .on 'error', (err) -> console.log err.message
     .pipe gulp.dest 'public/stylesheets'
+    .pipe gulpif(browserSync.active, browserSync.reload {stream: true})
 
 gulp.task 'typescript', ->
   tsResult = gulp.src tsSource
@@ -47,16 +54,20 @@ gulp.task 'typescript-test', ->
   # not necessary to generating any .d.ts for test cases
   eventStream.merge tsResult.js.pipe gulp.dest 'build/test/unit'
 
-gulp.task 'nodemon', ['typescript'], ->
+gulp.task 'nodemon', ['typescript', 'scss'], ->
   nodemon
     script: 'bin/www'
     # TODO investigate why this is not picked up by nodemon
     #ext: 'js json'
   .on 'restart', ->
     console.log 'nodemon restarted!'
-
-  gulp.watch tsSource, ['typescript']
-  gulp.watch 'public/scss/**/*.scss', ['scss']
   return
 
+gulp.task 'browser-sync', ['nodemon'], ->
+  browserSync
+    # host & port for your express
+    proxy: 'localhost:3000'
+    startPath: '/login'
+    port: 3333
+  return
 
