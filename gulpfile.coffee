@@ -12,12 +12,14 @@ sass        = require 'gulp-ruby-sass'
 gulpif      = require 'gulp-if'
 browserSync = require 'browser-sync'
 
-tsSource = 'app/**/*.ts'
+tsSource = ['app/**/*.ts', 'typings/**/*.ts']
 # for incremental build
 tsProject = ts.createProject
-  declarationFiles:  true,
-  noExternalResolve: false,
+  declarationFiles:  true
+  #noExternalResolve: false
+  noExternalResolve: true
   target: 'ES5'
+  module: 'commonjs'
 
 gulp.task 'default', ['clean', 'browser-sync'], ->
   # let 'watch' to be the default for now
