@@ -64,6 +64,12 @@
     },
     "multer/multer.d.ts": {
       "commit": "30cfe7dedb3ae990a369cda93995d69b169465bd"
+    },
+    "method-override/method-override.d.ts": {
+      "commit": "4f0eec65afc75001ef6ce2af5734f5dfc1b5568d"
+    },
+    "body-parser/body-parser.d.ts": {
+      "commit": "4f0eec65afc75001ef6ce2af5734f5dfc1b5568d"
     }
   }
 }

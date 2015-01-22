@@ -19,3 +19,5 @@
 /// <reference path="q/Q.d.ts" />
 /// <reference path="nodemailer/nodemailer.d.ts" />
 /// <reference path="multer/multer.d.ts" />
+/// <reference path="method-override/method-override.d.ts" />
+/// <reference path="body-parser/body-parser.d.ts" />

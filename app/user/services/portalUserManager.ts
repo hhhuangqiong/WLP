@@ -1,7 +1,9 @@
-import logger = require('winston');
-import mongoose = require('mongoose');
-import Q = require('q');
+import Q          = require('q');
+import logger     = require('winston');
+import mongoose   = require('mongoose');
+
 import portalUser = require('app/user/models/PortalUser');
+
 
 class PortalUserManagerClass {
   name: string;

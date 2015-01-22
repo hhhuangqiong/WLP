@@ -1,23 +1,29 @@
-import compression = require('compression');
-import cookieParser = require('cookie-parser');
-import express = require('express');
+import express          = require('express');
+import logger           = require('winston');
+import mongoose         = require('mongoose');
+
+// express-related
+import bodyParser       = require('body-parser');
+import compression      = require('compression');
+import cookieParser     = require('cookie-parser');
 import expressValidator = require('express-validator');
-import logger = require('winston');
-import mongoose = require('mongoose');
-import morgan = require('morgan');
-import session = require('express-session');
-import multer = require('multer');
-var methodOverride = require('method-override')
-var bodyParser = require('body-parser');
-var favicon = require('serve-favicon');
-var RedisStore = require('connect-redis')(session);
-var path = require('path');
-var flash = require('connect-flash');
+import methodOverride   = require('method-override')
+import morgan           = require('morgan');
+import multer           = require('multer');
+import session          = require('express-session');
+
+var RedisStore     = require('connect-redis')(session);
+var favicon        = require('serve-favicon');
+var flash          = require('connect-flash');
+var path           = require('path');
+
 export function initialize(port: number): any {
   if (!port) throw new Error('Please specify port');
 
   var app = express();
   var env = process.env.NODE_ENV || 'development';
+
+  // initializing ...
   var nconf = require('./initializers/nconf')(env, __dirname + '/../../config/');
 
   require('./initializers/logging')();
