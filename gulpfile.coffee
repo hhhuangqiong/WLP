@@ -1,4 +1,5 @@
 # consider 'gulp-load-plugins' when the deps getting more
+argv        = require('yargs').argv
 del         = require 'del'
 eventStream = require 'event-stream'
 gulp        = require 'gulp'
@@ -61,6 +62,7 @@ gulp.task 'nodemon', ['typescript', 'scss'], ->
     script: 'bin/www'
     # TODO investigate why this is not picked up by nodemon
     #ext: 'js json'
+    nodeArgs: [ if argv.debug then '--debug' else '' ]
   .on 'restart', ->
     console.log 'nodemon restarted!'
   return
