@@ -1,20 +1,19 @@
-var mongoose = require('mongoose');
-var fs = require('fs');
-var _ = require('underscore');
+import mongoose   = require('mongoose');
+import fs         = require('fs');
+import _          = require('underscore');
+
 import portalUser = require('app/user/models/PortalUser');
 
-function initialize() {
+function initialize(seedFilePath: string) {
+  var content = JSON.parse(fs.readFileSync(seedFilePath, { encoding: 'utf8' }));
+  var criteria = {username: "root@maaii.com"};
 
-  fs.readFile('config/dataseed.json', 'utf8', function(err, data) {
-    //if (err) throw err;
-    if (!err) {
-      var seed = _.map(JSON.parse(data))[0];
-      portalUser.findOneAndUpdate({username: "root@maaii.com"}, seed, {upsert: true}, function(err, user) {
-        //if (err) throw err;
-      });
+  portalUser.findOneAndUpdate(criteria, content.rootUser, {upsert: true}, function(err, user) {
+    if (err) {
+      console.error('Error during data seeding', err.stack);
+      throw err;
     }
-  })
-
+  });
 }
 
 export = initialize;

@@ -1,6 +1,6 @@
-import express          = require('express');
-import logger           = require('winston');
-import mongoose         = require('mongoose');
+import express  = require('express');
+import logger   = require('winston');
+import mongoose = require('mongoose');
 
 // express-related
 import bodyParser       = require('body-parser');
@@ -12,10 +12,11 @@ import morgan           = require('morgan');
 import multer           = require('multer');
 import session          = require('express-session');
 
-var RedisStore     = require('connect-redis')(session);
-var favicon        = require('serve-favicon');
-var flash          = require('connect-flash');
-var path           = require('path');
+// no corresponding ".d.ts"
+var RedisStore = require('connect-redis')(session);
+var favicon    = require('serve-favicon');
+var flash      = require('connect-flash');
+var path       = require('path');
 
 export function initialize(port: number): any {
   if (!port) throw new Error('Please specify port');
@@ -23,37 +24,32 @@ export function initialize(port: number): any {
   var app = express();
   var env = process.env.NODE_ENV || 'development';
 
-  // initializing ...
-  var nconf = require('./initializers/nconf')(env, __dirname + '/../../config/');
+  // trust me, it's 2 levels up
+  var APP_ROOT = path.join(__dirname, '../..');
 
-  require('./initializers/logging')();
+  var nconf    = require('app/initializers/nconf')(env, path.join(APP_ROOT, 'config'));
+  var dataseed = require('app/initializers/dataseed')(path.join(APP_ROOT, 'config/dataseed.json'));
+  var passport = require('app/initializers/passport')(require('app/user/services/portalUserManager'));
 
-  var portalUserManager = require('./user/services/portalUserManager');
-
-  // passport
-  var passport = require('./initializers/passport')(portalUserManager);
-
-  // mongodb
-  var dataseed = require('./initializers/dataseed');
-  require('./initializers/database')(dataseed);
-
-
-  // mongoose models (models to be located in different folder)(TBC)
-
-  // view helpers
-  require('./initializers/viewHelpers')(app);
+  require('app/initializers/logging')();
+  require('app/initializers/viewHelpers')(app);
+  // i18next init
+  require('app/initializers/i18next')(app);
 
   if (nconf.get('trustProxy')) app.enable('trust proxy');
-//To enable using PUT, DELETE METHODS
+
+  //To enable using PUT, DELETE METHODS
   app.use(methodOverride('_method'))
-  //===
-  app.use(multer({dest:'./uploads/'}));
+
+  // TODO upload path should be configurable
+  app.use(multer({dest: path.join(APP_ROOT, 'uploads')}));
+
   app.set('port', port);
+
   // view engine setup
-  app.set('views', path.join(__dirname + '/../../views'));
+  app.set('views',       path.join(APP_ROOT, 'views'));
   app.set('view engine', 'jade');
-  // by default it's only enabled for 'production'
-  app.set('view cache', env !== 'development');
+  app.set('view cache',  env !== 'development');
 
   app.use(bodyParser.json());
   app.use(bodyParser.urlencoded({
@@ -65,6 +61,7 @@ export function initialize(port: number): any {
   app.use(cookieParser(nconf.get('cookies:secret'), nconf.get('cookies:options')));
 
   // app.use(favicon(__dirname + '/public/favicon.ico'));
+
   // font resources to be replaced before static resources
   app.get('/fonts/*', function (req, res, next) {
     res.header("Access-Control-Allow-Origin", "*");
@@ -73,7 +70,7 @@ export function initialize(port: number): any {
   });
 
   // static resources
-  app.use(express.static(path.join(__dirname, '/../../public')));
+  app.use(express.static(path.join(APP_ROOT, 'public')));
 
   app.use(session({
     resave: false,
@@ -82,24 +79,16 @@ export function initialize(port: number): any {
     store: new RedisStore(nconf.get('redis'))
     //cookie: nconf.get('cookies:options')
   }));
+
   app.use(morgan('dev'));
   app.use(passport.initialize());
   app.use(passport.session());
   app.use(flash());
 
-  // wiring
-  // appLocals
-  // resLocals
-  // source countries
-
-  // i18next init
-  require('./initializers/i18next')(app);
-
-
-
   // Routes
   var routes: express.Router = require('app/routes');
   app.use(routes);
+
   // catch 404 and forward to error handler
   app.use(function (req, res, next) {
     var err:any = new Error('Not Found');
