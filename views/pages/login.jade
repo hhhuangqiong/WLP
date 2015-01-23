@@ -1,18 +1,20 @@
 extends /layout/layout
 
 block content
-  h1= title
-  h2.error #{message}
-  form(action="/login" method="POST")
-    p
-      input(name="username" type="text" placeholder="Email" value="#{username || ''}")
-    p
-      input(name="password" type="password" placeholder="Password")
-    if captcha
-      p
-        input(name="captcha" type="text" placeholder="Captcha")
-    p
-      a(href="/forgotpassword") Forgot Password?
-    input(name="rememberMe" type="checkbox")
-    label Remember me
-    input(type="submit")
+  .row
+    .large-8.large-centered.columns
+      h1= title
+      h2.error #{message}
+      form(action="/login" method="POST")
+        p
+          input(name="username" type="text" placeholder="Email" value="#{username || ''}")
+        p
+          input(name="password" type="password" placeholder="Password")
+        if captcha
+          p
+            input(name="captcha" type="text" placeholder="Captcha")
+        p
+          a(href="/forgotpassword") Forgot Password?
+        input(name="rememberMe" type="checkbox")
+        label Remember me
+        input(type="submit").button

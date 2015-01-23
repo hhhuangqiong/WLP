@@ -6,9 +6,9 @@ gulp        = require 'gulp'
 nodemon     = require 'gulp-nodemon'
 ts          = require 'gulp-typescript'
 
-# til 'libsassc' is feature-compatible with 'ruby-sass'
-# then we may swithc to 'gulp-sass'
-sass        = require 'gulp-ruby-sass'
+# 'libsass' version, http://sass-compatibility.github.io/
+sass       = require 'gulp-sass'
+sourcemaps = require 'gulp-sourcemaps'
 
 gulpif      = require 'gulp-if'
 browserSync = require 'browser-sync'
@@ -17,7 +17,6 @@ tsSource = ['app/**/*.ts', 'typings/**/*.ts']
 # for incremental build
 tsProject = ts.createProject
   declarationFiles:  true
-  #noExternalResolve: false
   noExternalResolve: true
   target: 'ES5'
   module: 'commonjs'
@@ -34,8 +33,9 @@ gulp.task 'clean', ->
 
 gulp.task 'scss', ->
   gulp.src 'public/scss/main.scss'
-    .pipe sass { sourcemapPath: '../scss' }
-    .on 'error', (err) -> console.log err.message
+    .pipe sourcemaps.init()
+    .pipe sass()
+    .pipe sourcemaps.write '.'
     .pipe gulp.dest 'public/stylesheets'
     .pipe gulpif(browserSync.active, browserSync.reload {stream: true})
 
