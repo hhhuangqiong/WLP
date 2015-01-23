@@ -96,6 +96,10 @@ var portalUserSchema: mongoose.Schema = new mongoose.Schema(
     updateBy: {
       type: String,
       required: true
+    },
+    affiliatedCompany:{
+      type:String,
+      required:true
     }
   }, { collection: 'portalUser'}
 );

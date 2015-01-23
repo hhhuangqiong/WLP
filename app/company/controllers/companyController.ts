@@ -1,9 +1,11 @@
 import express = require('express');
+var _ = require('underscore');
 var nconf = require('nconf');
 var logger = require('winston');
 import Mongoose = require('mongoose');
 import Q = require('q');
 var di = require('di');
+import CompanyModel = require('app/company/models/companyModel');
 var injector = new di.Injector([]);
 var CompanyRepo = require('app/company/models/CompanyRepo')
 var companyRepo = injector.get(CompanyRepo);
@@ -17,16 +19,27 @@ class Company {
   }
 
   addCompany(req:any, res:any, next:Function) {
-    var data = getData(req);
-    exec('add', data.company, null).then((result)=> {
+//Fetching company data
+    var user = req.user;
+    var company:any;
+    company = getCompany(req.body);
+    company.updateBy = user._id;
+    company.parentCompany = user.affiliatedCompany;
+    company.createBy = user._id;
+    company.createAt = new Date();
+//End
+    exec('add', company, null).then((result)=> {
       fulfilled(res, {notification: "Company Added Successfully"}, 'pages/companies/new');
     }).fail((error)=> {
       rejected(res, error, null);
     }).done();
   }
 
+
   fetchInfo = (req:any, res:any, next:Function) => {
     var criteria = this.getCriteria(req.query);
+    criteria.parentCompany = req.user.affiliatedCompany;
+
     var page = 'pages/companies/index';
     exec('find', criteria, null).then((result)=> {
       fulfilled(res, result, page);
@@ -38,8 +51,12 @@ class Company {
   }
 
   editForm(req:any, res:any, next:Function) {
-    var data = getData(req);
-    exec('find', {_id: data.params.id}, null).then(function (result) {
+    var criteria = {_id: req.params.id, parentCompany: req.user.affiliatedCompany};
+    exec('find', criteria, null).then(function (result) {
+//Can't find required id
+      if (!result || result.length == 0) {
+        throw new Error("Can't find entity with id " + req.params.id + " to edit.");
+      }
       fulfilled(res, result[0], 'pages/companies/editcompany');
     }).fail(function (error) {
       rejected(res, error, null);
@@ -47,9 +64,13 @@ class Company {
   }
 
   updateRecord(req:any, res:any, next:Function) {
-    var data = getData(req);
-    var criteria = {_id: data.params.id};
-    exec('update', criteria, data.company).then(function (result) {
+//Get company data from request
+    var company:any;
+    company= getCompany(req.body);
+    company.updateBy = req.user._id;
+
+    var criteria = {_id: req.params.id, parentCompany: req.user.affiliatedCompany};
+    exec('update', criteria, company).then(function (result) {
       return exec('find', criteria, null);
     }).then(function (result) {
       fulfilled(res, result, 'pages/companies/index');
@@ -60,8 +81,8 @@ class Company {
   }
 
   deActivateRecord(req:any, res:any, next:Function) {
-    var id = req.params.id;
-    var criteria = {_id: id};
+
+    var criteria = {_id: req.params.id, parentCompany: req.user.affiliatedCompany};
     exec('update', criteria, {status: 'inactive'}).then(function (result) {
       return exec('find', criteria, null);
     }).then(function (result) {
@@ -71,38 +92,43 @@ class Company {
     }).done();
   }
 
+  /**
+   *Only used in the fetchInfo Method to allow search by name, address,domain, and ID.
+   * @param params
+   * @returns {any}
+   */
+  //TODO: need to refactor it to a simpler method
   private getCriteria(params:any):any {
     var criteria:any = {};
-    if (params) {
-      if (params.id) {
-        criteria._id = params.id
-      }
-      if (params.name) {
-        criteria.name = params.name;
-      }
-      if (params.address) {
-        criteria.address = params.address
-      }
-      if (params.domain) {
-        criteria.domain = params.domain
+    for (var key in params) {
+      //These are the current valid search criteria
+      switch (key) {
+        case "id":
+        case "domain":
+        case "name":
+        case "address":
+          if (!_.isNull(params[key]) && !_.isUndefined(params[key])) {
+            criteria[key] = params[key];
+          }
+        default:
+          logger.warn("Invalid search criteria requested: " + key);
       }
     }
-    logger.info(json(criteria));
+    logger.debug("Requested search criteria: %j", criteria, {});
     return criteria;
   }
-
 
 //end of class
 }
 export=Company;
 
 function fulfilled(res, result, page) {
-  logger.debug("Request has been processed successfully\nResult: " + json(result));
+  logger.debug("Request has been processed successfully\nResult: %j ", result, {});
   goto(res, result, page);
 }
 
 function rejected(res, error, next) {
-  logger.error("Error while processing Request\n", json(error));
+  logger.error("Error while processing Request\n %j ", error, {});
   if (next) {
     next();
   } else {
@@ -110,19 +136,20 @@ function rejected(res, error, next) {
   }
 }
 
-function getCompany(companyData) {
+function getCompany(requestBody) {
   return {
-    accountManager:companyData.accountManager,
-    billCode:companyData.billCode,
-    name: companyData.name,
-    address: companyData.address,
-    reseller: companyData.isReseller,
-    domain: companyData.domain,
-    businessContact: {name: companyData.bc_name, phone: companyData.bc_phone, email: companyData.bc_email},
-    technicalContact: {name: companyData.tc_name, phone: companyData.tc_phone, email: companyData.tc_email},
-    supportContact: {name: companyData.sc_name, phone: companyData.sc_phone, email: companyData.sc_email},
-    supportedLanguages: companyData.languages,
-    supportedDevices: companyData.devices
+    accountManager: requestBody.accountManager,
+    billCode: requestBody.billCode,
+    name: requestBody.name,
+    address: requestBody.address,
+    reseller: requestBody.isReseller,
+    domain: requestBody.domain,
+    businessContact: {name: requestBody.bc_name, phone: requestBody.bc_phone, email: requestBody.bc_email},
+    technicalContact: {name: requestBody.tc_name, phone: requestBody.tc_phone, email: requestBody.tc_email},
+    supportContact: {name: requestBody.sc_name, phone: requestBody.sc_phone, email: requestBody.sc_email},
+    supportedLanguages: requestBody.languages,
+    supportedDevices: requestBody.devices,
+    updateAt: new Date()
   }
 }
 /**
@@ -137,7 +164,7 @@ function goto(res:any, data:any, page:string) {
     if (data) {
       result = {result: data};
     }
-    logger.debug("Serving " + page + " with the following data\n" + json(result));
+    logger.debug("Serving " + page + " with the following data\n %j", result, {});
     res.render(page, result);
   }
   else {
@@ -155,49 +182,3 @@ function exec(op:string, criteria:any, opt:any) {
   logger.debug("Executing " + op + " request \nCriteria: ", criteria, "\nOptions:", opt);
   return companyRepo[op](criteria, opt);
 }
-/**
- * Fetching request data from req object
- * @param req
- * @returns {any}
- */
-function getData(req:any):any {
-  var data:any = {};
-  var company:any = {};
-
-//Fetching Requester information
-  if (req.user) {
-    data.user = req.user
-  }
-  //Fetching request parameters
-  if (req.params) {
-    data.params = req.params
-    var methods = req.route.methods;
-    if (methods.put || methods.post) {
-      //If there is a body
-      if (req.body) {
-        company = getCompany(req.body);
-      }
-      company.updateBy = data.user._id;
-      company.updateAt = new Date();
-    }
-    if (methods.post) {
-      company.createBy = data.user._id;
-      company.createAt = new Date();
-    }
-  }
-  if (req.files && req.files.logo) {
-    data.logo = req.files.logo;
-    company.logo = data.logo.name;
-  }
-  data.company = company;
-  return data;
-}
-/**
- * Shortcut for JSON.stringify.
- * @param obj
- * @returns {any}
- */
-function json(obj:any):string {
-  return JSON.stringify(obj);
-}
-

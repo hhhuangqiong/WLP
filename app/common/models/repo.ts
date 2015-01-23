@@ -39,9 +39,9 @@ export class Repos<T> {
     return deferred.promise;
   }
 
-  update(condition:any, entity:any):Q.Promise<T> {
+  update(condition:any, entity:any,opt:any):Q.Promise<T> {
     var deferred = Q.defer<T>();
-    this._model.update(condition, entity, function (error, result) {
+    this._model.update(condition, entity,opt, function (error, result) {
       callBack(error, result, deferred);
     })
     return deferred.promise;

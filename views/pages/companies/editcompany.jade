@@ -36,8 +36,8 @@ block content
   if notification
     h5=notification
   div.row
-    h1= title
-    h5=result
+    h1 Edit Company
+
   div.row-content
     form(action="/companies/#{result._id}?_method=PUT" method="POST" typeof='multi' enctype="multipart/form-data")
       p
@@ -45,10 +45,10 @@ block content
         input(name="name" type="text" value="#{result.name}")
       p
         label Account Manager
-        input(name="accountManager" type="text" placeholder="Account Manager")
+        input(name="accountManager" type="text" value="#{result.accountManager}")
       p
         label Bill Code
-        input(name="billCode" type="text" placeholder="Bill Code")
+        input(name="billCode" type="text" value="#{result.billCode}")
       p
         label Address
         input(name="address" type="text" value="#{result.address}")

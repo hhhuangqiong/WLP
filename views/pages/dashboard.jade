@@ -1,9 +1,30 @@
 extends /layout/layout
 block content
-  h1= title
-  p
-    a(href="/logout") Logout Here
-  p
-    a(href="/app") Accounts (AngularJS entry point)
-  p
-    a(href="/companies/new") Add Company
+  div.row
+    div.large-3.columns
+      h1
+        img(src="http://placehold.it/400x100&text=Logo")
+    div.large-9.columns
+      ul.right.button-group
+        li
+          a.button(href="/logout") Logout
+        li
+          a.button(href="/companies/new") Add New Company
+        li
+          a.button(href="/companies/") Affiliated Companies
+        li
+          a.button(href="/app") Accounts
+
+  div.row
+    each company, i in companies
+      div.large-4.columns
+        img(src="http://placehold.it/400x300&text=[img]")
+        h4=company.name
+
+
+
+
+
+
+
+

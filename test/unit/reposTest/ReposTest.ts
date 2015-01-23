@@ -2,7 +2,7 @@
  * Created by ksh on 12/12/14.
  */
 var repo         = require('app/common/models/repo')
-var companyModel = require('app/company/models/companyModel')
+import companyModel = require('app/company/models/companyModel')
 var mockgoose    = require('mockgoose');
 var Mongoose     = require('mongoose').Mongoose;
 var mongoose     = new Mongoose();
@@ -11,7 +11,7 @@ mockgoose(mongoose);
 // integration test?
 mongoose.connect('mongodb://localhost/TestingDB');
 
-var companyRep = new repo.Repos<companyModel.Company>("Company", mongoose.connection, companyModel.CompanySchema());
+var companyRep = new repo.Repos<companyModel.Company>("Company", mongoose.connection,new companyModel.CompanySchema());
 
 
 //Chai As promised init
@@ -24,9 +24,7 @@ describe("Testing company repository", function () {
   beforeEach(function (done) {
     //Reset in memory database
     mockgoose.reset();
-    companyRep.add(getMockCompany()).then(function () {
-      done()
-    });
+    companyRep.add(getMockCompany()).then(()=>{done();});
   });
 
   afterEach(function (done) {
@@ -106,6 +104,7 @@ function getMockCompany():any {
     updateAt: 1418807631,
     updateBy: "1",
     supportedLanguages:"En",
-    supportedDevices:"ios"
+    supportedDevices:"ios",
+    parentCompany:"m800"
   };
 }

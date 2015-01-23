@@ -2,10 +2,10 @@
  * Created by ksh on 12/12/14.
  */
 import mongoose = require('mongoose');
-export function CompanySchema():mongoose.Schema {
 
-  return new mongoose.Schema(
-    {
+export class CompanySchema extends mongoose.Schema {
+  constructor() {
+    super({
       parentCompany: {
         type: String
       },
@@ -22,10 +22,10 @@ export function CompanySchema():mongoose.Schema {
         unique: true
       },
       address: {
-        type: String,
+        type: String
       },
       reseller: {
-        type: Boolean,
+        type: Boolean
       },
       domain: {
         type: String,
@@ -77,8 +77,13 @@ export function CompanySchema():mongoose.Schema {
         type: String,
         required: true
       }
-    }, {collection: 'Company', strict: true});
+    }, {collection: 'Company', strict: true})
+
+  }
+
 }
+
+
 
 export interface Company {
   parentCompany:string;
