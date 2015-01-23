@@ -28,7 +28,10 @@ export function initialize(port: number): any {
   var APP_ROOT = path.join(__dirname, '../..');
 
   var nconf    = require('app/initializers/nconf')(env, path.join(APP_ROOT, 'config'));
-  var dataseed = require('app/initializers/dataseed')(path.join(APP_ROOT, 'config/dataseed.json'));
+
+  // database initialization + data seeding
+  require('app/initializers/database')(require('app/initializers/dataseed')(path.join(APP_ROOT, 'config/dataseed.json')));
+
   var passport = require('app/initializers/passport')(require('app/user/services/portalUserManager'));
 
   require('app/initializers/logging')();
