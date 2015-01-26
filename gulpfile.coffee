@@ -7,8 +7,9 @@ nodemon     = require 'gulp-nodemon'
 ts          = require 'gulp-typescript'
 
 # 'libsass' version, http://sass-compatibility.github.io/
-sass       = require 'gulp-sass'
-sourcemaps = require 'gulp-sourcemaps'
+sass         = require 'gulp-sass'
+sourcemaps   = require 'gulp-sourcemaps'
+autoprefixer = require 'gulp-autoprefixer'
 
 gulpif      = require 'gulp-if'
 browserSync = require 'browser-sync'
@@ -27,6 +28,7 @@ gulp.task 'default', ['clean', 'browser-sync'], ->
   gulp.watch 'public/scss/**/*.scss', ['scss']
 
   console.log 'done'
+  return
 
 gulp.task 'clean', ->
   del(['node_modules/app', 'build'])
@@ -35,6 +37,7 @@ gulp.task 'scss', ->
   gulp.src 'public/scss/main.scss'
     .pipe sourcemaps.init()
     .pipe sass()
+    .pipe autoprefixer( browsers: ['last 2 versions'] )
     .pipe sourcemaps.write '.'
     .pipe gulp.dest 'public/stylesheets'
     .pipe gulpif(browserSync.active, browserSync.reload {stream: true})
@@ -65,6 +68,7 @@ gulp.task 'nodemon', ['typescript', 'scss'], ->
     nodeArgs: [ if argv.debug then '--debug' else '' ]
   .on 'restart', ->
     console.log 'nodemon restarted!'
+    return
   return
 
 gulp.task 'browser-sync', ['nodemon'], ->
