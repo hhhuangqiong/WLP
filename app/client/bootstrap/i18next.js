@@ -1,5 +1,5 @@
 'use strict';
-
+// why no 'i18n' require in this file, global?
 
 module.exports = function(conf){
   var defaultOptions = conf.i18next;

@@ -11,11 +11,12 @@ sass         = require 'gulp-sass'
 sourcemaps   = require 'gulp-sourcemaps'
 autoprefixer = require 'gulp-autoprefixer'
 
-gulpconcat  = require 'gulp-concat'
+concat      = require 'gulp-concat'
 gulpif      = require 'gulp-if'
 browserSync = require 'browser-sync'
 
-tsSource = ['app/**/*.ts', 'typings/**/*.ts']
+# please confirm client folder negation is needed here
+tsSource = ['app/**/*.ts', 'typings/**/*.ts', '!app/client/**/*.ts']
 # for incremental build
 tsProject = ts.createProject
   declarationFiles:  true
@@ -25,9 +26,9 @@ tsProject = ts.createProject
 
 gulp.task 'default', ['clean', 'browser-sync'], ->
   # let 'watch' to be the default for now
-  gulp.watch tsSource, ['typescript']
+  gulp.watch tsSource, ['ts']
   gulp.watch 'public/scss/**/*.scss', ['scss']
-  gulp.watch 'app/client/angularjs/**/*.ts', ['typescript-angularjs']
+  gulp.watch 'app/client/**/*.ts', ['ts-angularjs']
 
   console.log 'done'
   return
@@ -44,7 +45,7 @@ gulp.task 'scss', ->
     .pipe gulp.dest 'public/stylesheets'
     .pipe gulpif(browserSync.active, browserSync.reload {stream: true})
 
-gulp.task 'typescript', ->
+gulp.task 'ts', ->
   tsResult = gulp.src tsSource
               .pipe ts(tsProject)
 
@@ -54,27 +55,23 @@ gulp.task 'typescript', ->
     tsResult.js.pipe gulp.dest('node_modules/app')
   )
 
-# intentionally not use `['typescript']` as deps to avoid unnecessary recompilation
-gulp.task 'typescript-test', ->
+# intentionally not use `['ts']` as deps to avoid unnecessary recompilation
+gulp.task 'ts-test', ->
   tsResult = gulp.src 'test/unit/**/*.ts'
               .pipe ts(tsProject)
 
   # not necessary to generating any .d.ts for test cases
   eventStream.merge tsResult.js.pipe gulp.dest 'build/test/unit'
 
-gulp.task 'typescript-angularjs', ->
+gulp.task 'ts-angularjs', ->
   tsResult = gulp.src 'app/client/angularjs/**/*.ts'
-  #            .pipe sourcemaps.init()
-              .pipe ts {
-                sortOutput: true
-              }
+              .pipe ts { sortOutput: true }
 
   return tsResult.js
-              .pipe gulpconcat('application.js')
-  #            .pipe sourcemaps.write()
+              .pipe concat('application.js')
               .pipe gulp.dest 'public/javascript'
 
-gulp.task 'nodemon', ['typescript', 'scss', 'typescript-angularjs'], ->
+gulp.task 'nodemon', ['ts', 'scss', 'ts-angularjs'], ->
   nodemon
     script: 'bin/www'
     # TODO investigate why this is not picked up by nodemon

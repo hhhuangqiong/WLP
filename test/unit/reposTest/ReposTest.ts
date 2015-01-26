@@ -1,11 +1,9 @@
-/**
- * Created by ksh on 12/12/14.
- */
-var repo         = require('app/common/models/repo')
-import companyModel = require('app/company/models/companyModel')
-var mockgoose    = require('mockgoose');
-var Mongoose     = require('mongoose').Mongoose;
-var mongoose     = new Mongoose();
+var repo            = require('app/lib/repo');
+import companyModel = require('app/lib/repo/company/model');
+
+var mockgoose       = require('mockgoose');
+var Mongoose        = require('mongoose').Mongoose;
+var mongoose        = new Mongoose();
 
 mockgoose(mongoose);
 // integration test?

@@ -25,19 +25,19 @@ export function initialize(port: number): any {
   var env = process.env.NODE_ENV || 'development';
 
   // trust me, it's 2 levels up
-  var APP_ROOT = path.join(__dirname, '../..');
+  var PROJ_ROOT = path.join(__dirname, '../..');
 
-  var nconf    = require('app/initializers/nconf')(env, path.join(APP_ROOT, 'config'));
+  var nconf    = require('app/server/initializers/nconf')(env, path.join(PROJ_ROOT, 'app/config'));
 
   // database initialization + data seeding
-  require('app/initializers/database')(require('app/initializers/dataseed')(path.join(APP_ROOT, 'config/dataseed.json')));
+  require('app/server/initializers/database')(require('app/server/initializers/dataseed')(path.join(PROJ_ROOT, 'app/config/dataseed.json')));
 
-  var passport = require('app/initializers/passport')(require('app/user/services/portalUserManager'));
+  var passport = require('app/server/initializers/passport')(require('app/lib/portal/UserManager'));
 
-  require('app/initializers/logging')();
-  require('app/initializers/viewHelpers')(app);
+  require('app/server/initializers/logging')();
+  require('app/server/initializers/viewHelpers')(app);
   // i18next init
-  require('app/initializers/i18next')(app);
+  require('app/server/initializers/i18next')(app);
 
   if (nconf.get('trustProxy')) app.enable('trust proxy');
 
@@ -45,12 +45,11 @@ export function initialize(port: number): any {
   app.use(methodOverride('_method'))
 
   // TODO upload path should be configurable
-  app.use(multer({dest: path.join(APP_ROOT, 'uploads')}));
+  app.use(multer({dest: path.join(PROJ_ROOT, 'uploads')}));
 
   app.set('port', port);
 
-  // view engine setup
-  app.set('views',       path.join(APP_ROOT, 'views'));
+  app.set('views',       path.join(PROJ_ROOT, 'views'));
   app.set('view engine', 'jade');
   app.set('view cache',  env !== 'development');
 
@@ -73,7 +72,7 @@ export function initialize(port: number): any {
   });
 
   // static resources
-  app.use(express.static(path.join(APP_ROOT, 'public')));
+  app.use(express.static(path.join(PROJ_ROOT, 'public')));
 
   app.use(session({
     resave: false,
@@ -89,7 +88,7 @@ export function initialize(port: number): any {
   app.use(flash());
 
   // Routes
-  var routes: express.Router = require('app/routes');
+  var routes: express.Router = require('app/server/routes');
   app.use(routes);
 
   // catch 404 and forward to error handler
