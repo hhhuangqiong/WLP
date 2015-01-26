@@ -49,7 +49,7 @@ gulp.task 'typescript', ->
     tsResult.js.pipe gulp.dest('node_modules/app')
   )
 
-# intentinally not use `['typescript']` as deps to avoid unnecessary recompilation
+# intentionally not use `['typescript']` as deps to avoid unnecessary recompilation
 gulp.task 'typescript-test', ->
   tsResult = gulp.src 'test/unit/**/*.ts'
               .pipe ts(tsProject)

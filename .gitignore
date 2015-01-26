@@ -42,8 +42,6 @@ build/
 #Client-side bundle js
 public/javascript/
 
-node_modules/app
-
 # Assume all css are generated from SCSS
 public/stylesheets/*.css
 public/stylesheets/*.map
