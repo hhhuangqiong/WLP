@@ -5,10 +5,10 @@ var mockgoose       = require('mockgoose');
 var Mongoose        = require('mongoose').Mongoose;
 var mongoose        = new Mongoose();
 
+//Starting from here all calls to mongoose will be mocked by mockgoose.
 mockgoose(mongoose);
-// integration test?
+//Mongoose return a mocked connection.
 mongoose.connect('mongodb://localhost/TestingDB');
-
 var companyRep = new repo.Repos<companyModel.Company>("Company", mongoose.connection,new companyModel.CompanySchema());
 
 
