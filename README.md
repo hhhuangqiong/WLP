@@ -31,3 +31,6 @@ Reference
 * [gulp-nodemon](https://github.com/JacksonGariety/gulp-nodemon)
 * [gulp-typescript](https://github.com/ivogabe/gulp-typescript)
 
+Details
+-------
+https://github.com/angular/di.js/tree/master/example/node

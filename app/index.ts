@@ -30,7 +30,9 @@ export function initialize(port: number): any {
   var nconf    = require('app/server/initializers/nconf')(env, path.join(PROJ_ROOT, 'app/config'));
 
   // database initialization + data seeding
-  require('app/server/initializers/database')(require('app/server/initializers/dataseed')(path.join(PROJ_ROOT, 'app/config/dataseed.json')));
+  require('app/server/initializers/database')(
+    nconf.get('mongodb:uri'),
+    require('app/server/initializers/dataseed')(path.join(PROJ_ROOT, 'app/config/dataseed.json')));
 
   var passport = require('app/server/initializers/passport')(require('app/lib/portal/UserManager'));
 

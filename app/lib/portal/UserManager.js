@@ -1,12 +1,12 @@
-var logger = require('winston');
 var Q = require('q');
-var portalUser = require('app/lib/repo/portalUser/model');
+var logger = require('winston');
+var Portaluser = require('app/collections/portalUser');
 var PortalUserManagerClass = (function () {
     function PortalUserManagerClass() {
         this.name = 'portalUserManager';
     }
     PortalUserManagerClass.prototype.getUser = function (data, cb) {
-        portalUser.findOne({
+        Portaluser.findOne({
             username: data.username
         }, function (err, user) {
             console.log(err, user, data.username);
@@ -22,10 +22,10 @@ var PortalUserManagerClass = (function () {
     PortalUserManagerClass.prototype.makeForgotPasswordRequest = function (data, cb) {
         logger.debug('make forgot password request');
         var username = data.user.username;
-        portalUser.newForgotPasswordRequest(username, cb);
+        Portaluser.newForgotPasswordRequest(username, cb);
     };
     PortalUserManagerClass.prototype.getUsers = function (data, cb) {
-        portalUser.find({}).where('username').ne('root@maaii.com').exec(function (err, users) {
+        Portaluser.find({}).where('username').ne('root@maaii.com').exec(function (err, users) {
             if (err) {
                 cb(err, null);
             }
@@ -59,7 +59,7 @@ var PortalUserManagerClass = (function () {
             if (user) {
                 return _cb(new Error('username duplicated'), null);
             }
-            portalUser.newPortalUser(data, _cb);
+            Portaluser.newPortalUser(data, _cb);
         }).catch(function (err) {
             return _cb(err, null);
         });
@@ -76,7 +76,7 @@ var PortalUserManagerClass = (function () {
      */
     PortalUserManagerClass.prototype.verifyUser = function (username, password, done) {
         logger.debug('verifying user login data');
-        portalUser.findOne({
+        Portaluser.findOne({
             username: username
         }, function (err, user) {
             if (err) {

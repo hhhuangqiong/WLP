@@ -1,6 +1,6 @@
 var LocalStrategy = require('passport-local').Strategy;
 
-import portalUser = require('app/lib/repo/portalUser/model');
+import portalUser = require('app/collections/portalUser');
 
 function initialize(PortalUserManager) {
   var passport = require('passport');

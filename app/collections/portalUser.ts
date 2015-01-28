@@ -1,108 +1,102 @@
-/// <reference path='../../../../typings/mongoose/mongoose.d.ts' />
-/// <reference path='../../../../typings/underscore/underscore.d.ts' />
-/// <reference path='../../../../typings/bcrypt/bcrypt.d.ts' />
+/// <reference path='../../typings/mongoose/mongoose.d.ts' />
+/// <reference path='../../typings/underscore/underscore.d.ts' />
+/// <reference path='../../typings/bcrypt/bcrypt.d.ts' />
 
 import _        = require('underscore');
 import bCrypt   = require('bcrypt');
 import mongoose = require('mongoose');
 
-//TODO: common validators to be shared among models
-function presenceValidator(param: string) {
-  return param && param.length > 0;
-}
-
+//TODO common validators to be shared among models
 function lengthValidator(param: string, min: number, max: number) {
   return param.length >= min || param.length <= max;
 }
-
+//TODO use this validator or drop it
 function emailValidator(email: string): boolean {
   var reg = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
   return email && reg.test(email);
 }
 
-var portalUserSchema: mongoose.Schema = new mongoose.Schema(
-  {
-    // username is in form of email as discussed
-    username: {
-      type: String,
-      required: 'Username is required',
-      trim: true,
-      unique: true
-    },
-    hashedPassword: {
-      type: String,
-      required: true
-    },
-    salt: {
-      type: String,
-      required: true
-    },
-    name: {
-      first: {
-        type: String,
-        required: 'First name is required'
-      },
-      last: {
-        type: String,
-        required: 'Last name is required'
-      }
-    },
-    changedPassword: [{
-      password: {
-        type: String
-      },
-      changeAt: {
-        type: Date
-      }
-    }],
-    carrierDomains: [{
-      type: String
-    }],
-    assignedGroups: [{
-      type: Object
-    }],
-    isVerified: {
-      type: Boolean,
-      require: true,
-      default: false
-    },
-    status: {
+// TODO improve the schema definition
+var portalUserSchema: mongoose.Schema = new mongoose.Schema({
+  // username is in form of email as discussed; TODO email validator integration
+  username: {
+    type: String,
+    required: true,
+    trim: true,
+    unique: true
+  },
+  hashedPassword: {
+    type: String,
+    required: true
+  },
+  salt: {
+    type: String,
+    required: true
+  },
+  name: {
+    first: {
       type: String,
       required: true,
-      default: 'inactive'
+      trim: true
     },
-    token: {
-      forgotPassword: {
-        token: {
-          type: String
-        },
-        createAt: {
-          type: Date
-        }
-      }
-    },
-    createAt: {
-      type: Date,
-      required: true
-    },
-    createBy: {
+    last: {
       type: String,
-      required: true
-    },
-    updateAt: {
-      type: Date,
-      required: true
-    },
-    updateBy: {
-      type: String,
-      required: true
-    },
-    affiliatedCompany:{
-      type:String,
-      required:true
+      required: true,
+      trim: true
     }
-  }, { collection: 'portalUser'}
-);
+  },
+  changedPassword: [{
+    password: {
+      type: String
+    },
+    changeAt: {
+      type: Date
+    }
+  }],
+  carrierDomains: [{
+    type: String
+  }],
+  assignedGroups: [{
+    type: Object
+  }],
+  isVerified: {
+    type: Boolean,
+    require: true,
+    default: false
+  },
+  status: {
+    type: String,
+    required: true,
+    default: 'inactive'
+  },
+  token: {
+    forgotPassword: {
+      token: {
+        type: String
+      },
+      createAt: {
+        type: Date
+      }
+    }
+  },
+  createAt: {
+    type: Date,
+    default: Date.now
+  },
+  createBy: {
+    type: String
+  },
+  updateAt: {
+    type: Date
+  },
+  updateBy: {
+    type: String
+  },
+  affiliatedCompany:{
+    type: String,
+    required: true
+  }
+}, { collection: 'PortalUser' });
 
 export interface PortalUser extends mongoose.Document {
   _id: string;
@@ -126,7 +120,6 @@ export interface PortalUser extends mongoose.Document {
 /*
  * Schema Instance Methods
  */
-
 portalUserSchema.method('hasCarrierDomain', function(carrierDomain: string) {
   return _.contains(this.carrierDomains, carrierDomain);
 });
@@ -138,7 +131,6 @@ portalUserSchema.method('isValidPassword', function(password: string) {
 /*
  * Schema Static Methods
  */
-
 export interface PortalUserModel extends mongoose.Model<PortalUser> {
   findByName(name: string, cb);
   newForgotPasswordRequest(username: string, cb);
@@ -166,22 +158,18 @@ portalUserSchema.static('newForgotPasswordRequest', function(username: string, c
       }
     }
   }, function(err, user) {
-
-    if (err) {
-      cb(err, null);
-    }
-
+    if (err) return cb(err);
     cb(null, user);
   });
 });
 
 portalUserSchema.static('newPortalUser', function(data: PortalUser, cb) {
-
   var _this = this;
   var _cb = cb;
 
   bCrypt.genSalt(10, function(err, salt) {
     bCrypt.hash(data.username + new Date(), salt, function(err, hash) {
+      // : any?
       data.salt = salt;
       data.hashedPassword = hash;
 
@@ -195,4 +183,4 @@ portalUserSchema.static('newPortalUser', function(data: PortalUser, cb) {
   });
 });
 
-var PortalUser = module.exports = <PortalUserModel>mongoose.model('PortalUser', portalUserSchema);
+module.exports = mongoose.model('PortalUser', portalUserSchema);

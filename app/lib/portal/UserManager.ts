@@ -1,8 +1,8 @@
+import Q        = require('q');
 import logger   = require('winston');
 import mongoose = require('mongoose');
-import Q        = require('q');
 
-var portalUser = require('app/lib/repo/portalUser/model');
+import Portaluser = require('app/collections/portalUser');
 
 class PortalUserManagerClass {
   name: string;
@@ -12,7 +12,7 @@ class PortalUserManagerClass {
   }
 
   getUser(data: {username: string}, cb: Function) {
-    portalUser.findOne({
+    Portaluser.findOne({
       username: data.username
     }, function(err, user) {
       console.log(err, user, data.username);
@@ -28,16 +28,16 @@ class PortalUserManagerClass {
     })
   }
 
-  makeForgotPasswordRequest(data: {user: PortalUser.PortalUser}, cb: Function) {
+  makeForgotPasswordRequest(data: {user: Portaluser }, cb: Function) {
     logger.debug('make forgot password request');
 
     var username = data.user.username;
 
-    portalUser.newForgotPasswordRequest(username, cb);
+    Portaluser.newForgotPasswordRequest(username, cb);
   }
 
   getUsers(data, cb) {
-    portalUser
+    Portaluser
       .find({})
       .where('username').ne('root@maaii.com') // exclude root user
       .exec(function(err, users) {
@@ -83,7 +83,7 @@ class PortalUserManagerClass {
           return _cb(new Error('username duplicated'), null);
         }
 
-        portalUser.newPortalUser(data, _cb);
+        Portaluser.newPortalUser(data, _cb);
       })
       .catch(function(err) {
         return _cb(err, null);
@@ -102,7 +102,7 @@ class PortalUserManagerClass {
    */
   verifyUser(username: string, password: string, done: Function) {
     logger.debug('verifying user login data');
-    portalUser.findOne({
+    Portaluser.findOne({
       username: username
     }, function(err, user) {
       if (err) {

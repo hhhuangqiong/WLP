@@ -1,25 +1,24 @@
-/// <reference path='../../../../typings/mongoose/mongoose.d.ts' />
-/// <reference path='../../../../typings/underscore/underscore.d.ts' />
-/// <reference path='../../../../typings/bcrypt/bcrypt.d.ts' />
+/// <reference path='../../typings/mongoose/mongoose.d.ts' />
+/// <reference path='../../typings/underscore/underscore.d.ts' />
+/// <reference path='../../typings/bcrypt/bcrypt.d.ts' />
 var _ = require('underscore');
 var bCrypt = require('bcrypt');
 var mongoose = require('mongoose');
-//TODO: common validators to be shared among models
-function presenceValidator(param) {
-    return param && param.length > 0;
-}
+//TODO common validators to be shared among models
 function lengthValidator(param, min, max) {
     return param.length >= min || param.length <= max;
 }
+//TODO use this validator or drop it
 function emailValidator(email) {
     var reg = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
     return email && reg.test(email);
 }
+// TODO improve the schema definition
 var portalUserSchema = new mongoose.Schema({
-    // username is in form of email as discussed
+    // username is in form of email as discussed; TODO email validator integration
     username: {
         type: String,
-        required: 'Username is required',
+        required: true,
         trim: true,
         unique: true
     },
@@ -34,11 +33,13 @@ var portalUserSchema = new mongoose.Schema({
     name: {
         first: {
             type: String,
-            required: 'First name is required'
+            required: true,
+            trim: true
         },
         last: {
             type: String,
-            required: 'Last name is required'
+            required: true,
+            trim: true
         }
     },
     changedPassword: [{
@@ -77,25 +78,22 @@ var portalUserSchema = new mongoose.Schema({
     },
     createAt: {
         type: Date,
-        required: true
+        default: Date.now
     },
     createBy: {
-        type: String,
-        required: true
+        type: String
     },
     updateAt: {
-        type: Date,
-        required: true
+        type: Date
     },
     updateBy: {
-        type: String,
-        required: true
+        type: String
     },
     affiliatedCompany: {
         type: String,
         required: true
     }
-}, { collection: 'portalUser' });
+}, { collection: 'PortalUser' });
 /*
  * Schema Instance Methods
  */
@@ -123,9 +121,8 @@ portalUserSchema.static('newForgotPasswordRequest', function (username, cb) {
             }
         }
     }, function (err, user) {
-        if (err) {
-            cb(err, null);
-        }
+        if (err)
+            return cb(err);
         cb(null, user);
     });
 });
@@ -134,6 +131,7 @@ portalUserSchema.static('newPortalUser', function (data, cb) {
     var _cb = cb;
     bCrypt.genSalt(10, function (err, salt) {
         bCrypt.hash(data.username + new Date(), salt, function (err, hash) {
+            // : any?
             data.salt = salt;
             data.hashedPassword = hash;
             _this.create(data, function (err, user) {
@@ -145,4 +143,4 @@ portalUserSchema.static('newPortalUser', function (data, cb) {
         });
     });
 });
-var PortalUser = module.exports = mongoose.model('PortalUser', portalUserSchema);
+module.exports = mongoose.model('PortalUser', portalUserSchema);

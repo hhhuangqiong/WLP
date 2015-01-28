@@ -1,20 +1,22 @@
-import express      = require('express');
-import Mongoose     = require('mongoose');
-import Q            = require('q');
+/// <reference path='../../../typings/express/express.d.ts' />
+/// <reference path='../../../typings/mongoose/mongoose.d.ts' />
+/// <reference path='../../../typings/q/q.d.ts' />
+/// <reference path='../../../typings/winston/winston.d.ts' />
+import express  = require('express');
+import mongoose = require('mongoose');
+import Q        = require('q');
+import logger   = require('winston');
 
-var _               = require('underscore');
-var nconf           = require('nconf');
-var logger          = require('winston');
-var di              = require('di');
-var injector        = new di.Injector([]);
-var companyRepo     = injector.get(CompanyRepo);
+var _        = require('underscore');
+var nconf    = require('nconf');
+var di       = require('di');
+var injector = new di.Injector([]);
 
-import CompanyModel = require('app/lib/repo/company/model');
-var CompanyRepo     = require('app/lib/repo/company');
+// TODO
+var Company   = mongoose.model('company');
+var ERRORPAGE = 'pages/errors/error';
 
-var ERRORPAGE       = 'pages/errors/error';
-
-class Company {
+class CompanyController {
   constructor() { }
 
   index(req:any, res:any, next:Function) {
@@ -123,6 +125,7 @@ class Company {
 
 //end of class
 }
+
 export=Company;
 
 function fulfilled(res, result, page) {
@@ -183,5 +186,6 @@ function goto(res:any, data:any, page:string) {
  */
 function exec(op:string, criteria:any, opt:any) {
   logger.debug("Executing " + op + " request \nCriteria: ", criteria, "\nOptions:", opt);
-  return companyRepo[op](criteria, opt);
+  // TOFIX probably break
+  return Company[op](criteria, opt);
 }

@@ -12,10 +12,6 @@
     "assignedGroup": ["root"],
     "isVerified": true,
     "status": "active",
-    "createAt": "1990-01-01",
-    "createBy": 0,
-    "updateAt": "1990-01-01",
-    "updateBy": 0,
     "affiliatedCompany":"M800-Super"
   },
   "rootCompany":{
