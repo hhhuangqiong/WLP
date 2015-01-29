@@ -49,6 +49,7 @@ public/stylesheets/*.map
 
 # Assume no '.js' being written under 'app/{lib,server}' (TBC: 'app/client')
 app/index.js
+app/collections/**/*.js
 app/lib/**/*.js
 app/server/**/*.js
 

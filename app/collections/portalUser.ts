@@ -25,6 +25,7 @@ function emailValidator(email: string): boolean {
 
 // TODO improve the schema definition
 var portalUserSchema: mongoose.Schema = new mongoose.Schema({
+  isRoot: { type: Boolean, default: false },
   // username is in form of email as discussed; TODO email validator integration
   username: {
     type: String,
@@ -206,7 +207,8 @@ portalUserSchema.method('hasSignUpTokenExpired', function() {
 });
 
 portalUserSchema.method('hasValidOneTimePassword', function(password:  string) {
-  if (this.googleAuth == undefined) return true;
+  // assume root user does not have 'googleAuth' property
+  if (this.isRoot) return true;
 
   var secret = speakeasy.time({
     key       : this.googleAuth,

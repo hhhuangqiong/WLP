@@ -52,8 +52,7 @@ class PortalUserManagerClass {
    */
   getUsers(data: any, cb: Function) {
     Portaluser
-      .find({})
-      .where('username').ne('root@maaii.com')
+      .find({isRoot: false})
       .exec(function(err, users) {
         if (err) {
           cb(err, null);
