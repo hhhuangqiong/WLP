@@ -70,7 +70,7 @@ var schema: mongoose.Schema = new mongoose.Schema({
   supportedDevices: {
     type: String,
     required: true
-  }}, {collection: 'Company', strict: true});
+  }}, {collection: 'Company'});
 
 module.exports = mongoose.model('Company', schema);
 
