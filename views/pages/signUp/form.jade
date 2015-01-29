@@ -1,0 +1,15 @@
+extends /layout/layout
+block content
+  h1 Sign Up
+  form(method="POST" action="/signup/process")
+    ul
+      li
+        input(type="password" name="password" placeholder="Password")
+      li
+        input(type="password" name="rePassword" placeholder="Re-confirm password")
+      li
+        label QR Code:
+        img(src="#{GoogleAuth}")
+      li
+        input(type="submit" value="Sign up")
+

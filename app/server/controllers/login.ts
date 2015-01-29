@@ -31,7 +31,10 @@ class Login {
         return next(err);
       }
       if (!user) {
-        return next();
+        return next(new Error(info.message));
+      }
+      if (!user.hasValidOneTimePassword(req.body.onetimepassword)) {
+        return next(new Error('Invalid one time password'));
       }
       req.logIn(user, function(err) {
         if (err) {

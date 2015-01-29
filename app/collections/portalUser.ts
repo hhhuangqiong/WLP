@@ -6,7 +6,14 @@ import _        = require('underscore');
 import bCrypt   = require('bcrypt');
 import mongoose = require('mongoose');
 
+var randtoken   = require('rand-token');
+var speakeasy   = require('speakeasy');
+
 //TODO common validators to be shared among models
+function presenceValidator(param: string) {
+  return param && param.length > 0;
+}
+
 function lengthValidator(param: string, min: number, max: number) {
   return param.length >= min || param.length <= max;
 }
@@ -69,13 +76,34 @@ var portalUserSchema: mongoose.Schema = new mongoose.Schema({
     required: true,
     default: 'inactive'
   },
+  googleAuth: {
+    type: String
+  },
   token: {
+    signUp: {
+      token: {
+        type: String
+      },
+      createAt: {
+        type: Date,
+        default: new Date()
+      },
+      expired: {
+        type: Boolean,
+        default: true
+      }
+    },
     forgotPassword: {
       token: {
         type: String
       },
       createAt: {
-        type: Date
+        type: Date,
+        default: new Date()
+      },
+      expired: {
+        type: Boolean,
+        default: true
       }
     }
   },
@@ -92,7 +120,7 @@ var portalUserSchema: mongoose.Schema = new mongoose.Schema({
   updateBy: {
     type: String
   },
-  affiliatedCompany:{
+  affiliatedCompany: {
     type: String,
     required: true
   }
@@ -102,24 +130,67 @@ export interface PortalUser extends mongoose.Document {
   _id: string;
   username: string;
   hashedPassword: string;
+  salt: string;
   name: Array<string>;
   changedPassword: Array<Array<() => string>>;
   carrierDomains: Array<string>;
   assignedGroup: Array<string>;
   isVerified: boolean;
   status: string;
+  googleAuth: string;
+  token: {
+    signUp: {
+      token: string;
+      createAt: string;
+      expired: boolean;
+    };
+    forgotPassword: {
+      token: string;
+      createAt: string;
+      expired: boolean;
+    };
+  };
   createAt: string;
   createBy: string;
   updateAt: string;
   updateBy: string;
+  affiliatedCompany: string;
 
   hasCarrierDomain(carrierDomain: string): Boolean;
   isValidPassword(password: string): Boolean;
+  hasSignUpTokenExpired(): Boolean;
+  hasValidOneTimePassword(password: string): Boolean;
 }
+
+/*
+ * Schema Pre State
+ */
+
+portalUserSchema.pre('save', function(next) {
+  var user = this;
+
+  console.log(user.isModified('hashedPassword'));
+  if (!user.isModified('hashedPassword')) {
+    return next();
+  }
+
+  bCrypt.genSalt(10, function(err, salt) {
+    if (err) return next(err);
+
+    bCrypt.hash(user.hashedPassword, salt, function(err, hash) {
+      if (err) return next(err);
+
+      user.salt = salt;
+      user.hashedPassword = hash;
+      next();
+    })
+  });
+});
 
 /*
  * Schema Instance Methods
  */
+
 portalUserSchema.method('hasCarrierDomain', function(carrierDomain: string) {
   return _.contains(this.carrierDomains, carrierDomain);
 });
@@ -128,9 +199,27 @@ portalUserSchema.method('isValidPassword', function(password: string) {
   return bCrypt.compareSync(password, this.hashedPassword);
 });
 
+portalUserSchema.method('hasSignUpTokenExpired', function() {
+  var now = new Date();
+  console.log((now - this.token.signUp.token));
+  return (now - this.token.signUp.token) > 3;
+});
+
+portalUserSchema.method('hasValidOneTimePassword', function(password:  string) {
+  if (this.googleAuth == undefined) return true;
+
+  var secret = speakeasy.time({
+    key       : this.googleAuth,
+    encoding  : 'base32'
+  });
+
+  return password == secret;
+});
+
 /*
  * Schema Static Methods
  */
+
 export interface PortalUserModel extends mongoose.Model<PortalUser> {
   findByName(name: string, cb);
   newForgotPasswordRequest(username: string, cb);
@@ -153,7 +242,8 @@ portalUserSchema.static('newForgotPasswordRequest', function(username: string, c
       token: {
         forgotPassword: {
           token: token,
-          createAt: new Date()
+          createAt: new Date(),
+          expired: false
         }
       }
     }
@@ -172,6 +262,11 @@ portalUserSchema.static('newPortalUser', function(data: PortalUser, cb) {
       // : any?
       data.salt = salt;
       data.hashedPassword = hash;
+      data.token = {};
+      data.token.signUp = {};
+      data.token.signUp.token = randtoken.suid(22);
+      data.token.signUp.expired = false;
+      data.affiliatedCompany = 'M800-SUPER';
 
       _this.create(data, function(err, user) {
         if (err) {

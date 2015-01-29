@@ -12,6 +12,7 @@ var dashboardRouter      = require('app/server/routes/dashboard');
 var forgotPasswordRouter = require('app/server/routes/forgotPassword');
 var loginRouter          = require('app/server/routes/login');
 var logoutRouter         = require('app/server/routes/logout');
+var signUpRouter         = require('app/server/routes/signup');
 
 var accountsRoutes       = injector.get(accountsRouter);
 var apiRoutes            = injector.get(apiRouter);
@@ -21,6 +22,7 @@ var dashboardRoutes      = injector.get(dashboardRouter);
 var forgotPasswordRoutes = injector.get(forgotPasswordRouter);
 var loginRoutes          = injector.get(loginRouter);
 var logoutRoutes         = injector.get(logoutRouter);
+var signUpRoutes = injector.get(signUpRouter);
 
 class Router {
   constructor() {
@@ -28,11 +30,13 @@ class Router {
     _router.use('/api',            apiRoutes);
     _router.use('/app',            appRoutes);
     _router.use('/app/accounts',   accountsRoutes);
-    _router.use('/login',          loginRoutes);
-    _router.use('/logout',         logoutRoutes);
+    //_router.use('/companies',     companyRoutes);
     _router.use('/dashboard',      dashboardRoutes);
     _router.use('/forgotpassword', forgotPasswordRoutes);
-    //_router.use('/companies',      companyRoutes);
+    _router.use('/login',          loginRoutes);
+    _router.use('/logout',         logoutRoutes);
+    _router.use('/signup',         signUpRoutes);
+
     return _router;
   }
 }

@@ -2,6 +2,8 @@ import Q        = require('q');
 import logger   = require('winston');
 import mongoose = require('mongoose');
 
+var speakeasy   = require('speakeasy');
+
 import Portaluser = require('app/collections/portalUser');
 
 class PortalUserManagerClass {
@@ -11,6 +13,12 @@ class PortalUserManagerClass {
     this.name = 'portalUserManager';
   }
 
+  /**
+   * Return a user with condition(s)
+   *
+   * @param data
+   * @param cb
+   */
   getUser(data: {username: string}, cb: Function) {
     Portaluser.findOne({
       username: data.username
@@ -36,10 +44,16 @@ class PortalUserManagerClass {
     Portaluser.newForgotPasswordRequest(username, cb);
   }
 
-  getUsers(data, cb) {
+  /**
+   * Get all users except Root
+   *
+   * @param {PortalUserModel} data
+   * @param {Function} cb
+   */
+  getUsers(data: any, cb: Function) {
     Portaluser
       .find({})
-      .where('username').ne('root@maaii.com') // exclude root user
+      .where('username').ne('root@maaii.com')
       .exec(function(err, users) {
         if (err) {
           cb(err, null);
@@ -69,11 +83,16 @@ class PortalUserManagerClass {
       })
   }
 
-  newUser(data: any, author: any, cb) {
+  /**
+   * Create new portal user
+   *
+   * @param data
+   * @param author
+   * @param {Function} cb
+   */
+  newUser(data: any, author: PortalUser, cb: Function) {
     data.createBy = author._id;
-    data.createAt = new Date();
     data.updateBy = author._id;
-    data.updateAt = new Date();
 
     var _cb = cb;
 
@@ -88,6 +107,32 @@ class PortalUserManagerClass {
       .catch(function(err) {
         return _cb(err, null);
       });
+  }
+
+  /**
+   * Verify PortalUser Sign Up Token
+   *
+   * @method verifySignUpToken
+   * @param {String} token
+   * @param {Function} done
+   */
+  verifySignUpToken(token: string, done: Function) {
+    logger.debug('verifying sign up token');
+    Portaluser.findOne({
+      "token.signUp.token": token,
+      "token.signUp.expired": false
+    }, function(err, user) {
+      if (err) {
+        logger.error(err, 'db-error');
+        return done(err);
+      }
+      if (!user) {
+        logger.debug('Invalid token %s', token);
+        return done(null, null);
+      }
+
+      return done(null, user);
+    })
   }
 
   /**

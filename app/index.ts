@@ -44,7 +44,7 @@ export function initialize(port: number): any {
   if (nconf.get('trustProxy')) app.enable('trust proxy');
 
   //To enable using PUT, DELETE METHODS
-  app.use(methodOverride('_method'))
+  app.use(methodOverride('_method'));
 
   // TODO upload path should be configurable
   app.use(multer({dest: path.join(PROJ_ROOT, 'uploads')}));
@@ -116,7 +116,7 @@ export function initialize(port: number): any {
       message: err.message,
       error: ((env === 'development') ? err : {})
     });
-  })
+  });
 
   return app;
 }
