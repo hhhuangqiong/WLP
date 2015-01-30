@@ -1,40 +1,42 @@
 form(method="POST" action="#")
-  h1 Edit user
-  p
-    label First Name
-    input(type="text" name="firstname" placeholder="firstname" ng-model="account.data.name.first" value="{{account.data.name.first}}")
-  p
-    label Last Name
-    input(type="text" name="lastname" placeholder="lastname" ng-model="account.data.name.last" value="{{account.data.name.last}}")
-  p
-    label Email
-    input(type="email" name="email" placeholder="email" ng-model="account.data.username" required)
+  h2(class="main-slider__title") Create user account
+  div(class="main-slider__close-btn")
+    a(ui-sref="accounts.index" class="button postfix")
+      i(class="fi-x")
+  div(class="row")
+    div(class="large-6 columns")
+      label First Name
+        input(type="text" name="firstname" placeholder="firstname" ng-model="account.data.name.first" value="{{account.data.name.first}}")
+    div(class="large-6 columns")
+      label Last Name
+        input(type="text" name="lastname" placeholder="lastname" ng-model="account.data.name.last" value="{{account.data.name.last}}")
+  div(class="row")
+    div(class="large-12 columns")
+      label Email
+        input(type="email" name="email" placeholder="email" ng-model="account.data.username" required)
     span(ng-show="name.email.$error.required") Email Required.
-  p
-    label Carrier Domain
-    select(name="carrier" ng-model="account.data.carrierDomains" multiple)
-      option(value="")
-      option(value="maaii.com") Maaii
-  p
-    label User group
-  p
-    ul
-      li
-        input(type="checkbox" name="groups" value="admin")
-        label Admin
-      li
-        input(type="checkbox" name="groups" value="developer")
-        label Developer
-      li
-        input(type="checkbox" name="groups" value="marketing")
-        label Marketing
-      li
-        input(type="checkbox" name="groups" value="engineer")
-        label Engineer
-      li
-        input(type="checkbox" name="groups" value="cs")
-        label CS
-  p
-    input(type="button" value="Create account" ng-click="account.save()")
-  p
-    a(ui-sref="accounts.index.new.success") Close
+  hr
+  div(class="row main-slider__user-group")
+    div(class="large-12 columns")
+      header(class="main-slider__user-group__header")
+        div(class="row")
+          div(class="large-8 columns")
+            label
+              h4(class="main-slider__sub-title") User group
+          div(class="large-4 columns")
+            a(class="button tiny right inline") Setting
+      div()
+        ul(class="main-slider__user-group__input-group")
+          li(class="option")
+            span(class="text-center" ng-click="account.toggleUserGroup('admin')" ng-class="{'selected' : account.data.assignedGroups.indexOf('admin') > -1}") Admin
+          li(class="option")
+            span(class="text-center" ng-click="account.toggleUserGroup('developer')" ng-class="{'selected' : account.data.assignedGroups.indexOf('developer') > -1}") Developer
+          li(class="option")
+            span(class="text-center" ng-click="account.toggleUserGroup('marketing')" ng-class="{'selected' : account.data.assignedGroups.indexOf('marketing') > -1}") Marketing
+          li(class="option")
+            span(class="text-center" ng-click="account.toggleUserGroup('engineer')" ng-class="{'selected' : account.data.assignedGroups.indexOf('engineer') > -1}") Engineer
+          li(class="option")
+            span(class="text-center" ng-click="account.toggleUserGroup('cs')" ng-class="{'selected' : account.data.assignedGroups.indexOf('cs') > -1}") CS
+  div(class="row")
+    div(class="large-12 columns")
+      a(ng-click="account.save()" class="button postfix") Create account

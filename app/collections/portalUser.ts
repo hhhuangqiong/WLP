@@ -62,7 +62,7 @@ var portalUserSchema: mongoose.Schema = new mongoose.Schema({
     type: String
   }],
   assignedGroups: [{
-    type: Object
+    type: String
   }],
   isVerified: {
     type: Boolean,
@@ -110,13 +110,15 @@ var portalUserSchema: mongoose.Schema = new mongoose.Schema({
     default: Date.now
   },
   createBy: {
-    type: String
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'PortalUser'
   },
   updateAt: {
     type: Date
   },
   updateBy: {
-    type: String
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'PortalUser'
   },
   affiliatedCompany: {
     type: String,
@@ -132,7 +134,7 @@ export interface PortalUser extends mongoose.Document {
   name: Array<string>;
   changedPassword: Array<Array<() => string>>;
   carrierDomains: Array<string>;
-  assignedGroup: Array<string>;
+  assignedGroups: Array<string>;
   isVerified: boolean;
   status: string;
   googleAuth: string;

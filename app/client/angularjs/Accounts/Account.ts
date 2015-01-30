@@ -39,6 +39,21 @@ module whitelabel {
           this.$state.transitionTo('accounts.index.new.fail');
         });
     };
+
+    toggleUserGroup = (groupName: string) => {
+
+      if (this.data.assignedGroups == undefined) {
+        this.data.assignedGroups = [];
+      }
+
+      var idx = this.data.assignedGroups.indexOf(groupName);
+
+      if (idx > -1) {
+        this.data.assignedGroups.splice(idx, 1);
+      } else {
+        this.data.assignedGroups.push(groupName);
+      }
+    };
   }
 
   app.factory('Account', function() {

@@ -64,7 +64,7 @@ module whitelabel {
      */
 
     newAccount = (initData?) => {
-      if (initData !== undefined && initData !== null && initData.id != '') {
+      if (this.accounts.length == 0 || (initData !== undefined && initData !== null && initData.id != '')) {
         // For creating existing Account Object
         var _account = new Account(this.$state, this.$q, this.ApiService, initData);
         this.accounts.push(_account);

@@ -4,5 +4,15 @@
 
 @import 'vendors/foundation-settings';
 @import 'vendors/foundation';
+@import 'vendors/foundation-icons';
 
 @import 'base/typography';
+
+@import 'layouts/common';
+@import 'layouts/default';
+@import 'layouts/header';
+@import 'layouts/page';
+@import 'layouts/sidebar';
+@import 'layouts/slider';
+
+@import 'pages/account';

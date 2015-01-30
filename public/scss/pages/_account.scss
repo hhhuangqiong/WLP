@@ -1,0 +1,47 @@
+.account-list {
+  &__block {
+    .account-block-grid-4 {
+      @include block-grid(
+      $per-row: 4,
+      $spacing: 12,
+      $base-style: true
+      );
+
+      li {
+        text-align: center;
+
+        > div {
+          background: lightseagreen;
+          padding: 25px;
+        }
+
+        a {
+          color: white;
+          line-height: 50px;
+        }
+
+        .icon > i {
+          font-size: 50px;
+          color: white;
+          line-height: 50px;
+          text-align: center;
+        }
+
+        .username {
+          text-align: left;
+        }
+      }
+
+      li.new {
+        .icon i {
+          font-size: 36px;
+          vertical-align: middle;
+        }
+      }
+    }
+  }
+
+  &__slider {
+
+  }
+}

@@ -1,0 +1,11 @@
+.main-sidebar{
+  &__contents {
+    position: absolute;
+
+    @include icon-bar(
+      $bar-bg: black,
+      $bar-hover-color: grey,
+      $bar-active-color: #333333
+    );
+  }
+}

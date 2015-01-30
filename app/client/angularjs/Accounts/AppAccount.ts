@@ -9,7 +9,7 @@ module whitelabel {
         .state('accounts', {
           abstract: true,
           url: '/accounts',
-          template: '<ui-view></ui-view>',
+          template: '<div ui-view="header"></div><div ui-view></div>',
           resolve: {
             accounts: function(AppObject: AppObject) {
               return AppObject.getAccounts();
@@ -18,8 +18,16 @@ module whitelabel {
         })
         .state('accounts.index', {
           url: '',
-          templateUrl: '/app/accounts',
-          controller: 'Accounts'
+          views: {
+            header: {
+              templateUrl: '/app/accounts/accountHeader',
+              controller: 'Accounts'
+            },
+            '': {
+              templateUrl: '/app/accounts',
+              controller: 'Accounts'
+            }
+          }
         })
         .state('accounts.index.new', {
           url: '/new',
@@ -60,7 +68,7 @@ module whitelabel {
             }
           },
           resolve: {
-            account: function($stateParams: any, AppObject: AppObject) {
+            account: function($stateParams: any, accounts: Array<Account>, AppObject: AppObject) {
               return AppObject.getAccountById($stateParams.accountId.trim());
             }
           }

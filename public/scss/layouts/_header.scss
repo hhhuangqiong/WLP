@@ -1,0 +1,9 @@
+.section-header {
+
+  border-bottom: 1px solid lightgray;
+  overflow: hidden;
+
+  &__title {
+    text-transform: uppercase;
+  }
+}

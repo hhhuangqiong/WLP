@@ -2,6 +2,7 @@ import Q        = require('q');
 import logger   = require('winston');
 import mongoose = require('mongoose');
 
+var moment      = require('moment');
 var speakeasy   = require('speakeasy');
 
 import Portaluser = require('app/collections/portalUser');
@@ -23,7 +24,6 @@ class PortalUserManagerClass {
     Portaluser.findOne({
       username: data.username
     }, function(err, user) {
-      console.log(err, user, data.username);
       if (err) {
         return cb(err);
       }
@@ -53,6 +53,7 @@ class PortalUserManagerClass {
   getUsers(data: any, cb: Function) {
     Portaluser
       .find({isRoot: false})
+      .populate('createBy', 'name')
       .exec(function(err, users) {
         if (err) {
           cb(err, null);
@@ -69,9 +70,9 @@ class PortalUserManagerClass {
             "isVerified": user.isVerified,
             "assignedGroups": user.assignedGroups,
             "carrierDomains": user.carrierDomains,
-            "createAt": user.createAt,
+            "createAt": moment(user.createAt).format('LLL'),
             "createBy": user.createBy,
-            "updateAt": user.updateAt,
+            "updateAt": moment(user.updateAt).format('LLL'),
             "updateBy": user.updateBy
           };
 
@@ -90,6 +91,7 @@ class PortalUserManagerClass {
    * @param {Function} cb
    */
   newUser(data: any, author: PortalUser, cb: Function) {
+    console.log(data);
     data.createBy = author._id;
     data.updateBy = author._id;
 
@@ -153,7 +155,7 @@ class PortalUserManagerClass {
         logger.error(err);
         return done(err);
       }
-      if (!user) {
+      if (!user || !user.isVerified) {
         logger.debug('Invalid username %s', username);
         return done(null, false, {
           message: 'Unknown user or invalid password'

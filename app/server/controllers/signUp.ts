@@ -166,6 +166,7 @@ class SignUp {
         }
 
         user.hashedPassword = params.password;
+        user.isVerified = true;
 
         var deferred = Q.defer();
         Q.ninvoke(user, 'save', function(err, user) {

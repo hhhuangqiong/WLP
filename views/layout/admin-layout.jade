@@ -1,8 +1,14 @@
 doctype html
 html(lang="#{lang||'en'}" ng-app="App" data-framework="typescript")
+  include ./meta
   head
     title= title
+
+    <!-- Styles -->
     link(rel='stylesheet', href='/stylesheets/style.css')
+    link(rel='stylesheet', href='/stylesheets/main.css')
+
+    <!-- Scripts -->
     block scripts
       script(src='/vendor/jquery/dist/jquery.min.js')
       script(src='/vendor/i18next/i18next.min.js')
@@ -13,28 +19,33 @@ html(lang="#{lang||'en'}" ng-app="App" data-framework="typescript")
       script(src='/vendor/angular-animate/angular-animate.min.js')
       script(src='/vendor/angular-resource/angular-resource.min.js')
       script(src='/javascript/application.js')
-      script(src='/javascript/bundle.js')
-  body()
-    nav(id="main-nav")
-      ul
-        li
-          a(ui-sref="dashboard.index") {{'dashboard' | translate}}
-        li
-          a(ui-sref="company") {{'company' | translate}}
-        li
-          a(ui-sref="accounts.index") {{'account' | translate}}
-        li(style="display: none;")
-          a(ui-sref="users") {{'end_user' | translate}}
-        li
-          a(ui-sref="permissions") {{'permissions' | translate}}
-        li(style="display: none;")
-          a(ui-sref="voucher") {{'voucher' | translate}}
-        li
-          a(ui-sref="setting") {{'setting' | translate}}
-    div(id="main-view" ui-view)
-      header(id="main-header")
-        h1 TITLE
-        a Companies switcher
-        p Welcome. Username
-        a Logout
+  body(class="antialiased")
+    div(class="inner-wrap full-height main-sidebar")
+      nav(role="main-nav")
+        div(class="main-sidebar__contents fixed vertical")
+          a(class="item" ui-sref="dashboard.index" ui-sref-active="active")
+            i(class="fi-web")
+            label {{'dashboard' | translate}}
+          a(class="item" ui-sref="companies" ui-sref-active="active")
+            i(class="fi-home")
+            label {{'company' | translate}}
+          a(class="item" ui-sref="accounts.index" ui-sref-active="active")
+            i(class="fi-torso")
+            label {{'account' | translate}}
+          a(class="item" ui-sref="users" ui-sref-active="active")
+            i(class="fi-torsos-all")
+            label {{'end_user' | translate}}
+          a(class="item" ui-sref="permissions" ui-sref-active="active" ng-hide="true")
+            label {{'permissions' | translate}}
+          a(class="item" ui-sref="voucher" ui-sref-active="active" ng-hide="true")
+            i(class="fi-dollar-bill")
+            label {{'voucher' | translate}}
+          a(class="item" ui-sref="setting" ui-sref-active="active")
+            i(class="fi-widget")
+            label {{'setting' | translate}}
+      section(role="main" class="")
+        div(class="row")
+          div(class="large-1 columns")
+          div(class="large-11 large-offset-1 columns")
+            div(class="main-view" ui-view)
     block content
