@@ -1,0 +1,26 @@
+extends /layout/layout.jade
+
+block content
+  .ui.visible.vertical.inverted.labeled.icon.sidebar.menu.blue
+    .item
+      i.block.layout.icon
+      | y
+    a.item
+      i.world.icon
+      |  Overview
+    a.item
+      i.user.icon
+      |  Accounts
+    a.item
+      i.users.icon
+      |  End Users
+    a.item
+      i.lock.icon
+      |  Permissions
+  block dashboard-content
+    .ui.grid
+      .sixteen.wide.column
+        include /layout/dashboard/dashboard-header
+      .two.wide.column
+      .fourteen.wide.column
+        block dashboard-body

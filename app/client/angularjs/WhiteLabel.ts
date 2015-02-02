@@ -2,7 +2,7 @@
 
 module whitelabel {
 
-  export var app = angular.module('App', ['App.Accounts', 'ui.router', 'ngResource', 'ngAnimate']);
+  export var app = angular.module('App', ['App.Accounts', 'ui.router', 'ngResource', 'ngAnimate', 'App.Translate']);
 
   app.config(function($urlRouterProvider: ng.ui.IUrlRouterProvider) {
     $urlRouterProvider.otherwise('/accounts');

@@ -64,7 +64,7 @@ module whitelabel {
               return AppObject.getAccountById($stateParams.accountId.trim());
             }
           }
-        })
+        });
     })
     .run(['$rootScope', '$state', function($rootScope: any, $state: ng.ui.IStateService, $log: ng.ILogService) {
       // Making global objects

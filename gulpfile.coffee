@@ -14,6 +14,7 @@ autoprefixer = require 'gulp-autoprefixer'
 concat      = require 'gulp-concat'
 gulpif      = require 'gulp-if'
 browserSync = require 'browser-sync'
+extend      = require 'gulp-extend'
 
 # please confirm client folder negation is needed here
 tsSource = ['app/**/*.ts', 'typings/**/*.ts', '!app/client/**/*.ts']
@@ -24,10 +25,11 @@ tsProject = ts.createProject
   target: 'ES5'
   module: 'commonjs'
 
-gulp.task 'default', ['clean', 'browser-sync'], ->
+gulp.task 'default', ['clean', 'browser-sync', 'locale'], ->
   # let 'watch' to be the default for now
   gulp.watch tsSource, ['ts']
   gulp.watch 'public/scss/**/*.scss', ['scss']
+  gulp.watch 'locales/client/en/*.json', ['locale']
   gulp.watch 'app/client/**/*.ts', ['ts-angularjs']
 
   console.log 'done'
@@ -90,3 +92,7 @@ gulp.task 'browser-sync', ['nodemon'], ->
     port: 3333
   return
 
+gulp.task 'locale', ->
+  gulp.src 'locales/client/en/*.json'
+    .pipe extend('en.json')
+    .pipe gulp.dest('public/locales')
