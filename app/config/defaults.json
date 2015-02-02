@@ -1,17 +1,5 @@
 {
-  "PLATFORM_BOSS_URL": "http://192.168.135.167:9090",
-  "PLATFORM_PG_URL": "http://192.168.118.20:9090",
-  "PLATFORM_SMS_URL": "http://192.168.118.12:8080",
-  "PLATFORM_DATA_URL": "http://192.168.118.26:9998",
-  "PLATFORM_WEB_SMS":"http://192.168.118.12:8081",
-  "PLATFORM_HOST": "localhost",
-  "PLATFORM_PORT": 3000,
-  "PLATFORM_PORT_SECURE": 3443,
-  "sourceCountry": "HK",
-  "currency": "$",
-  "topup": {
-      "auto": {
-          "threshold": 5
-      }
+  "email": {
+    "from": "noreply@m800.com"
   }
 }
