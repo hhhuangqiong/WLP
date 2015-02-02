@@ -1,6 +1,8 @@
 /// <reference path='../../typings/mongoose/mongoose.d.ts' />
+
 import mongoose = require('mongoose');
 
+var collectionName = 'Company';
 var schema: mongoose.Schema = new mongoose.Schema({
   parentCompany: {
     type: String
@@ -51,7 +53,6 @@ var schema: mongoose.Schema = new mongoose.Schema({
   },
   createAt: {
     type: Date,
-    required: true,
     default: Date.now
   },
   createBy: {
@@ -70,9 +71,9 @@ var schema: mongoose.Schema = new mongoose.Schema({
   supportedDevices: {
     type: String,
     required: true
-  }}, {collection: 'Company'});
+  }}, {collection: collectionName});
 
-module.exports = mongoose.model('Company', schema);
+module.exports = mongoose.model(collectionName, schema);
 
 export interface Company {
   parentCompany:      string;

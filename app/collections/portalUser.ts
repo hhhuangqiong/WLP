@@ -3,17 +3,15 @@
 /// <reference path='../../typings/bcrypt/bcrypt.d.ts' />
 
 import _        = require('underscore');
-import bCrypt   = require('bcrypt');
+import bcrypt   = require('bcrypt');
 import mongoose = require('mongoose');
 
 var randtoken   = require('rand-token');
 var speakeasy   = require('speakeasy');
 
-//TODO common validators to be shared among models
-function presenceValidator(param: string) {
-  return param && param.length > 0;
-}
+var collectionName = 'PortalUser';
 
+//TODO common validators to be shared among models
 function lengthValidator(param: string, min: number, max: number) {
   return param.length >= min || param.length <= max;
 }
@@ -23,11 +21,10 @@ function emailValidator(email: string): boolean {
   return email && reg.test(email);
 }
 
-// TODO improve the schema definition
 var portalUserSchema: mongoose.Schema = new mongoose.Schema({
   isRoot: { type: Boolean, default: false },
-  // username is in form of email as discussed; TODO email validator integration
   username: {
+    // username is in form of email as discussed; TODO email validator integration
     type: String,
     required: true,
     trim: true,
@@ -125,7 +122,7 @@ var portalUserSchema: mongoose.Schema = new mongoose.Schema({
     type: String,
     required: true
   }
-}, { collection: 'PortalUser' });
+}, { collection: collectionName });
 
 export interface PortalUser extends mongoose.Document {
   _id: string;
@@ -163,22 +160,15 @@ export interface PortalUser extends mongoose.Document {
   hasValidOneTimePassword(password: string): Boolean;
 }
 
-/*
- * Schema Pre State
- */
-
 portalUserSchema.pre('save', function(next) {
   var user = this;
+  if(user.hashedPassword) return next();
 
-  console.log(user.isModified('hashedPassword'));
-  if (!user.isModified('hashedPassword')) {
-    return next();
-  }
-
-  bCrypt.genSalt(10, function(err, salt) {
+  // DRY this
+  bcrypt.genSalt(10, function(err, salt) {
     if (err) return next(err);
 
-    bCrypt.hash(user.hashedPassword, salt, function(err, hash) {
+    bcrypt.hash(user.hashedPassword, salt, function(err, hash) {
       if (err) return next(err);
 
       user.salt = salt;
@@ -191,13 +181,12 @@ portalUserSchema.pre('save', function(next) {
 /*
  * Schema Instance Methods
  */
-
 portalUserSchema.method('hasCarrierDomain', function(carrierDomain: string) {
   return _.contains(this.carrierDomains, carrierDomain);
 });
 
 portalUserSchema.method('isValidPassword', function(password: string) {
-  return bCrypt.compareSync(password, this.hashedPassword);
+  return bcrypt.compareSync(password, this.hashedPassword);
 });
 
 portalUserSchema.method('hasSignUpTokenExpired', function() {
@@ -221,21 +210,21 @@ portalUserSchema.method('hasValidOneTimePassword', function(password:  string) {
 /*
  * Schema Static Methods
  */
-
 export interface PortalUserModel extends mongoose.Model<PortalUser> {
   findByName(name: string, cb);
   newForgotPasswordRequest(username: string, cb);
   newPortalUser(data: PortalUser, cb);
 }
 
+//TODO obsolete this method
 portalUserSchema.static('findByName', function(name: string, cb: any) {
   this.find({ name: new RegExp(name, 'i') }, cb);
 });
 
 portalUserSchema.static('newForgotPasswordRequest', function(username: string, cb: Function) {
 
-  var salt = bCrypt.genSaltSync(10);
-  var token = bCrypt.hashSync(username + new Date(), salt);
+  var salt = bcrypt.genSaltSync(10);
+  var token = bcrypt.hashSync(username + new Date(), salt);
 
   this.findOneAndUpdate({
     username: username
@@ -255,12 +244,27 @@ portalUserSchema.static('newForgotPasswordRequest', function(username: string, c
   });
 });
 
+/**
+ * Hash the password with generated salt returned
+ *
+ * @param {String} password
+ * @param {Function} cb
+ */
+portalUserSchema.statics.hashInfo = function(password, cb) {
+  //use default rounds for now
+  var salt = bcrypt.genSaltSync(10);
+  console.log('hashInfo', password, salt);
+  bcrypt.hash(password, salt, function(err, hash) {
+    if(err) return cb(err);
+    cb(null, {salt: salt, hashedPassword: hash});
+  });
+}
+
 portalUserSchema.static('newPortalUser', function(data: PortalUser, cb) {
   var _this = this;
-  var _cb = cb;
 
-  bCrypt.genSalt(10, function(err, salt) {
-    bCrypt.hash(data.username + new Date(), salt, function(err, hash) {
+  bcrypt.genSalt(10, function(err, salt) {
+    bcrypt.hash(data.username + new Date(), salt, function(err, hash) {
       // : any?
       data.salt = salt;
       data.hashedPassword = hash;
@@ -271,13 +275,11 @@ portalUserSchema.static('newPortalUser', function(data: PortalUser, cb) {
       data.affiliatedCompany = 'M800-SUPER';
 
       _this.create(data, function(err, user) {
-        if (err) {
-          return _cb(err, null);
-        }
-        return _cb(null, user);
-      })
-    })
+        if (err) return cb(err, null);
+        cb(null, user);
+      });
+    });
   });
 });
 
-module.exports = mongoose.model('PortalUser', portalUserSchema);
+module.exports = mongoose.model(collectionName, portalUserSchema);

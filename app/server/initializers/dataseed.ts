@@ -1,21 +1,47 @@
 /// <reference path='../../../typings/winston/winston.d.ts' />
 import logger   = require('winston');
 
-var fs = require('fs');
+var Q          = require('q');
+var _          = require('lodash');
+var fs         = require('fs');
+
+var Company    = require('app/collections/company');
 var PortalUser = require('app/collections/portalUser');
-var companyModel = require('app/collections/company');
-function initialize(seedFilePath:string) {
-  var content = JSON.parse(fs.readFileSync(seedFilePath, {encoding: 'utf8'}));
 
+function initialize(seedFilePath: string) {
   // assume there can only have 1 and only 1 root user
-  PortalUser.findOneAndUpdate({isRoot: true}, content.rootUser, {upsert: true}, function (err, user) {
-    if (err) throw err;
+  PortalUser.findOne({isRoot: true}, function(err, user) {
+    if(err) throw err;
+
+    if(!user) {
+      // read file content; blocking
+      var content  = JSON.parse(fs.readFileSync(seedFilePath, {encoding: 'utf8'}));
+      var rootUser = content.rootUser;
+
+      var hashInfo = Q.nbind(PortalUser.hashInfo, PortalUser);
+      var seedUser = function(hashInfo) {
+        return Q.ninvoke(PortalUser, 'create', _.merge(rootUser, hashInfo))
+      }
+      var seedCompany = function() {
+        var companyInfo = content.rootCompany;
+        var criteria =  { name: companyInfo.name } ;
+        return Q.ninvoke(Company, 'findOneAndUpdate', criteria, companyInfo, {upsert: true});
+      }
+      var infoLogger = function(model) {
+        logger.info('Seeded: %j', model, {});
+      }
+
+      hashInfo(rootUser.password)
+      .then(seedUser)
+      .then(infoLogger)
+      .then(seedCompany)
+      .then(infoLogger)
+      .catch(function(err){
+        logger.error('Error during data seeding', err.stack);
+      });
+    }
   });
 
-  //assume there can only have 1 and only 1 root company
-  companyModel.findOneAndUpdate(content.rootCompany, {upsert: true}, function (err, company) {
-    if (err) throw err;
-  });
 }
 
 export = initialize;
