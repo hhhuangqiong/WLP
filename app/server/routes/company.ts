@@ -1,23 +1,18 @@
 import express = require('express');
 var passport   = require('passport');
 var di         = require('di');
-
-import CompanyController = require('app/server/controllers/company');
-var PermissionChecker    = require('app/server/middlewares/PermissionChecker');
+var CompanyController = require('app/server/controllers/company');
 
 class CompanyRouter {
 
-  constructor(CompanyController) {
+  constructor(companyController) {
      var _router = express.Router();
-    _router.use(passport.ensureAuthenticated);
-    _router.use(PermissionChecker.check);
 
-    _router.get('/new',      CompanyController.index);
-    _router.post('/',        CompanyController.addCompany);
-    _router.get('/',         CompanyController.fetchInfo);
-    _router.get('/:id/edit', CompanyController.editForm);
-    _router.put('/:id',      CompanyController.updateRecord);
-    _router.delete('/:id',   CompanyController.deActivateRecord);
+
+    _router.get('/',      companyController.index);
+    _router.get('/companyHeader',companyController.companyHeader);
+    _router.get('/form',companyController.new);
+    _router.get('/edit',companyController.edit);
     return _router;
   }
 }

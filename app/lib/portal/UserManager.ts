@@ -151,4 +151,9 @@ class PortalUserManager {
   }
 }
 
+<<<<<<< HEAD
 export = PortalUserManager;
+=======
+//var Company = new PortalUserManagerClass();
+export = PortalUserManagerClass;
+>>>>>>> f34c5f9... Adding Angular support for company.

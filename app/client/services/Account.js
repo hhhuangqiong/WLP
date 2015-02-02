@@ -1,4 +1,4 @@
-import Account        from '../Accounts/AccountObject'
+import Account        from '../objects/Account'
 
 class AccountService {
 
@@ -35,20 +35,21 @@ class AccountService {
    */
   getAccounts() {
 
-    var deferred = this.ApiService.$q.defer();
-
     if (this.accounts) {
-      return deferred.resolve(this.accounts);
+      return this.accounts;
     }
 
+    var deferred = this.ApiService.$q.defer();
+
     this.ApiService.get('users')
-      .then((users) => {
+      .then((response) => {
 
         // initialize accounts array
+        var _accounts = response.result;
         this.accounts = [];
 
-        for (var userKey in users) {
-          this.newAccount(users[userKey]);
+        for (var userKey in response.result) {
+          this.newAccount(_accounts[userKey]);
         }
 
         return deferred.resolve(this.accounts);

@@ -26,24 +26,24 @@ html(lang="#{lang||'en'}" ng-app="App" data-framework="typescript")
         div(class="main-sidebar__contents fixed vertical")
           a(class="item" ui-sref="dashboard.index" ui-sref-active="active")
             i(class="fi-web")
-            label {{'dashboard'}}
-          a(class="item" ui-sref="companies" ui-sref-active="active")
+            label {{'dashboard' | translate}}
+          a(class="item" ui-sref="companies.index" ui-sref-active="active")
             i(class="fi-home")
-            label {{'company'}}
+            label {{'company' | translate}}
           a(class="item" ui-sref="accounts.index" ui-sref-active="active")
             i(class="fi-torso")
-            label {{'account'}}
+            label {{'account' | translate}}
           a(class="item" ui-sref="users" ui-sref-active="active")
             i(class="fi-torsos-all")
-            label {{'end_user'}}
+            label {{'end_user' | translate}}
           a(class="item" ui-sref="permissions" ui-sref-active="active" ng-hide="true")
-            label {{'permissions'}}
+            label {{'permissions' | translate}}
           a(class="item" ui-sref="voucher" ui-sref-active="active" ng-hide="true")
             i(class="fi-dollar-bill")
-            label {{'voucher'}}
+            label {{'voucher' | translate}}
           a(class="item" ui-sref="setting" ui-sref-active="active")
             i(class="fi-widget")
-            label {{'setting'}}
+            label {{'setting' | translate}}
       section(role="main" class="")
         div(class="row")
           div(class="large-1 columns")

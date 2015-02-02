@@ -1,6 +1,6 @@
 var di = require('di');
 var injector = new di.Injector([]);
-var CompanyRepo = require('app/lib/repo/company');
+var CompanyRepo = require('app/lib/repo/companies');
 var companyRepo = injector.get(CompanyRepo);
 var logger = require('winston');
 var faker = require('faker');

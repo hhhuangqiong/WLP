@@ -1,5 +1,5 @@
 // Sub Module AppAccount
-import AccountService from '../Accounts/AccountService'
+import AccountService from '../services/Account'
 
 var accountModule = angular.module('App.Accounts', ['ui.router', 'ngResource'])
   .config(function($stateProvider) {
@@ -78,8 +78,7 @@ var accountModule = angular.module('App.Accounts', ['ui.router', 'ngResource'])
     $rootScope.$state = $state;
     $rootScope.$log = $log;
   })
-    .controller('Accounts', function($scope, accounts) {
-    console.log(accounts);
+  .controller('Accounts', function($scope, accounts) {
     $scope.accounts = accounts;
   })
   .controller('Account', function($scope, account) {

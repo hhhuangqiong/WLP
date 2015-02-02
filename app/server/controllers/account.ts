@@ -35,7 +35,7 @@ class Accounts {
   // Server side rending - Abandoned
   /*
   createUser = (req: any, res: any, next: Function) => {
-    var PortalUserManager = this.PortalUserManager;
+    var Company = this.Company;
 
     var data = {
       name: {
@@ -51,7 +51,7 @@ class Accounts {
       updateBy: req.session._userId
     };
 
-    Q.ninvoke(PortalUserManager, 'addNewUser', data)
+    Q.ninvoke(Company, 'addNewUser', data)
       .then(function(user: any) {
         if (!user) {
           throw new Error('db-error');
@@ -60,11 +60,11 @@ class Accounts {
         // send email
       })
       .then(function(err) {
-        res.redirect('/accounts');
+        res.redirect('/companies');
       })
       .catch(function(err) {
         logger.error(err);
-        res.redirect('/accounts');
+        res.redirect('/companies');
       })
   }
   */

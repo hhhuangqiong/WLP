@@ -7,31 +7,21 @@ class ApiService {
     this.$log = $log;
   }
 
- get(resource, id) {
-    var deferred = this.$q.defer();
-
-    this.$http.get(this.composeApiUrl(resource))
-      .success(function (data, status, headers, config) {
-        deferred.resolve(data[resource]);
-      })
-      .error(function (error) {
-        deferred.reject(error);
-      });
-
-      return deferred.promise;
-  };
+  get(resource, objectParams) {
+    return this.execute('get', resource, objectParams);
+  }
 
   post(resource, objectParams) {
     return this.execute('post', resource, objectParams);
-  };
+  }
 
   put(resource, objectParams) {
     return this.execute('put', resource, objectParams);
-  };
+  }
 
   remove(resource, objectParams) {
     return this.execute('delete', resource, objectParams);
-  };
+  }
 
   execute(method, resource, objectParams) {
     var deferred = this.$q.defer();
@@ -46,7 +36,6 @@ class ApiService {
       });
 
     return deferred.promise;
-
   }
 
   /**

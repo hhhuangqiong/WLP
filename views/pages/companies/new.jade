@@ -37,7 +37,7 @@ block content
   div.row
     h1= title
   div.row-content
-    form(action="/companies" method="POST" typeof='multi' enctype="multipart/form-data")
+    form(action="#" method="POST" typeof='multi' enctype="multipart/form-data")
       p
         label Company Name
         input(name="name" type="text" placeholder="Company Name")
@@ -102,5 +102,6 @@ block content
       p
         label Logo
         input(type="file" name="logo" accept="image/*")
-
-      input.row(type="submit" margin-left="auto")
+      div(class="row")
+        div(class="large-12 columns")
+          a(ng-click="company.save()" class="button postfix") Create Company

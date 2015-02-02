@@ -1,8 +1,9 @@
 // Entry point of AngularJS
 
-import AccountModule from './modules/Accounts.js';
-import TranslateModule from './modules/Translate.js'
-import ApiService       from './ApiService'
+import AccountModule    from './modules/Accounts';
+import CompanyModule    from './modules/Companies';
+import TranslateModule  from './modules/Translate';
+import ApiService       from './services/Api';
 
 var app = angular.module('App', [
   'ngAnimate',
@@ -10,6 +11,7 @@ var app = angular.module('App', [
   'ngResource',
   'ui.router',
   AccountModule.name,
+  CompanyModule.name,
   TranslateModule.name
 ]);
 

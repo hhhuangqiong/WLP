@@ -208,6 +208,40 @@ portalUserSchema.method('hasValidOneTimePassword', function(password) {
   return password === secret;
 });
 
+/**
+ * Hash the password with generated salt returned
+ *
+ * @method hashInfo
+ * @param {String} password
+ * @param {Function} cb
+ */
+portalUserSchema.static('hashInfo', function(password, cb) {
+  //use default rounds for now
+  var salt = bcrypt.genSaltSync(10);
+  bcrypt.hash(password, salt, function(err, hash) {
+    if (err)
+      return cb(err);
+    cb(null, {
+      salt: salt,
+      hashedPassword: hash
+    });
+  });
+})
+
+/**
+ * Produce the token in the conformed format
+ *
+ * @method makeToken
+ * @return {Object} the token
+ */
+portalUserSchema.static('makeToken', function(event, val) {
+  return {
+    event: event,
+    value: val || randtoken.generate(16),
+    createAt: new Date()
+  };
+});
+
 // TODO
 // - make use of existing token features
 // - consider the approach of 'newForgotPasswordRequest'
@@ -239,25 +273,5 @@ portalUserSchema.static('newForgotPasswordRequest', function(username, cb) {
     cb(null, user);
   });
 });
-
-/**
- * Hash the password with generated salt returned
- *
- * @method hashInfo
- * @param {String} password
- * @param {Function} cb
- */
-portalUserSchema.statics.hashInfo = function(password, cb) {
-  //use default rounds for now
-  var salt = bcrypt.genSaltSync(10);
-  bcrypt.hash(password, salt, function(err, hash) {
-    if (err)
-      return cb(err);
-    cb(null, {
-      salt: salt,
-      hashedPassword: hash
-    });
-  });
-};
 
 module.exports = mongoose.model(collectionName, portalUserSchema);

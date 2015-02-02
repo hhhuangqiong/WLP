@@ -75,7 +75,7 @@ gulp.task '6to5', ->
     .pipe gulp.dest dest.node
 
 gulp.task '6to5-ng', ->
-  browserify({ entries: './app/client/angularjs/WhiteLabel.js', debug: true })
+  browserify({ entries: './app/client/WhiteLabel.js', debug: true })
     .transform(to5ify)
     .transform(ngAnnotate)
     .bundle()

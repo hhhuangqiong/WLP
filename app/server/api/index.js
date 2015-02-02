@@ -1,7 +1,9 @@
+var di     = require('di');
 var logger = require('winston');
-var Q = require('q');
-var di = require('di');
+var Q      = require('q');
+
 var portalUserManager = require('app/lib/portal/UserManager');
+
 var Api = (function () {
     function Api(portalUserManager) {
         var _this = this;
@@ -10,13 +12,12 @@ var Api = (function () {
             var conditions = [];
             Q.ninvoke(PortalUserManager, 'getUsers', conditions).then(function (users) {
                 res.json({
-                    "result": users ? true : false,
-                    "users": users
+                    "result": users ? users : false
                 });
             }).catch(function (err) {
                 logger.error('Database error', err.stack);
                 res.json({
-                    "result": false
+                    "result": {}
                 });
             });
         };
@@ -27,18 +28,18 @@ var Api = (function () {
             // user hasn't logged in
             if (!req.user) {
                 res.json({
-                    "result": false
+                    "result": {},
+                    "message": 'Invalid permission'
                 });
             }
             Q.ninvoke(PortalUserManager, 'newUser', conditions, author).then(function (user) {
                 res.json({
-                    "result": user ? true : false,
-                    "user": user
+                    "result": user ? user : false
                 });
             }).catch(function (err) {
                 logger.error(err, 'db-error');
                 res.json({
-                    "result": false,
+                    "result": {},
                     "message": err
                 });
             });

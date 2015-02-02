@@ -1,0 +1,81 @@
+form(method="POST" action="#")
+  h2(class="main-slider__title") Create Company
+  div(class="main-slider__close-btn")
+    a(ui-sref="companies.index" class="button postfix")
+      i(class="fi-x")
+  div(class="row")
+    div(class="large-6 columns")
+      label Company Name
+        input(type="text" name="name" placeholder="Company Name" ng-model="company.data.name" value="{{company.data.name}}")
+    div(class="large-6 columns")
+      label Account Manager
+        input(type="text" name="accountManager" placeholder="Account Manager" ng-model="company.data.accountManager" value="{{company.data.accountManager}}")
+    div(class="large-6 columns")
+      label Bill Code
+        input(type="text" name="billCode" placeholder="Bill Code" ng-model="company.data.billCode" value="{{company.data.billCode}}")
+    div(class="large-6 columns")
+      label Address
+        input(type="text" name="address" placeholder="Company Address" ng-model="company.data.address" value="{{company.data.address}}")
+    div(class="large-6 columns")
+      label Domain
+        input(type="text" name="domain" placeholder="example@domain.com" ng-model="company.data.domain" value="{{company.data.domain}}")
+    div(class="large-6 columns")
+      label
+      input(type="checkbox" name="isReseller" ng-model="company.data.reseller" value="{{company.data.reseller}}")
+      label Reseller
+    div(class="large-12 columns")
+      label Supported Devices
+        select(name="devices" ng-model="company.data.supportedDevices" value="{{company.data.supportedDevices}}")
+          option(value="android") Android
+          option(value="ios") IOS
+          option(value="all") All
+    div(class="large-12 columns")
+      label Supported Languages
+        select(name="languages" ng-model="company.data.supportedLanguages" value="{{company.data.supportedLanguages}}")
+          option(value="en") English
+  div(class="row")
+    div(class="large-12 columns")
+      h4 Business Contacts
+      div(class="row")
+        div(class="large-6 columns")
+          label Contact name
+            input(type="text" name="bc_name" placeholder="Contact Name" ng-model="company.data.businessContact.name" value="{{company.data.businessContact.name}}")
+        div(class="large-6 columns")
+          label Contact Phone
+            input(type="text" name="bc_phone" placeholder="Contact phone" ng-model="company.data.businessContact.phone" value="{{company.data.businessContact.phone}}")
+        div(class="large-6 columns")
+          label Contact email
+            input(type="text" name="bc_email" placeholder="Contact email" ng-model="company.data.businessContact.email" value="{{company.data.businessContact.email}}")
+  div(class="row")
+    div(class="large-12 columns")
+      h4 Support Contacts
+        div(class="row")
+          div(class="large-6 columns")
+            label Contact name
+              input(type="text" name="sc_name" placeholder="Contact Name" ng-model="company.data.supportContact.name" value="{{company.data.supportContact.name}}")
+          div(class="large-6 columns")
+            label Contact Phone
+              input(type="text" name="sc_phone" placeholder="Contact phone" ng-model="company.data.supportContact.phone" value="{{company.data.supportContact.phone}}")
+          div(class="large-6 columns")
+            label Contact email
+              input(type="text" name="sc_email" placeholder="Contact email" ng-model="company.data.supportContact.email" value="{{company.data.supportContact.email}}")
+  div(class="row")
+    div(class="large-12 columns")
+      h4 Technical Contacts
+        div(class="row")
+          div(class="large-6 columns")
+            label Contact name
+              input(type="text" name="tc_name" placeholder="Contact Name" ng-model="company.data.technicalContact.name" value="{{company.data.technicalContact.name}}")
+          div(class="large-6 columns")
+            label Contact Phone
+              input(type="text" name="tc_phone" placeholder="Contact phone" ng-model="company.data.technicalContact.phone" value="{{company.data.technicalContact.phone}}")
+          div(class="large-6 columns")
+            label Contact email
+              input(type="text" name="tc_email" placeholder="Contact email" ng-model="company.data.technicalContact.email" value="{{company.data.technicalContact.email}}")
+  div(class="row")
+    div(class="large-12 columns")
+      label Logo
+        input(type="file" name="logo" accept="image/*" ng-model="company.data.logo")
+  div(class="row")
+    div(class="large-12 columns")
+      a(ng-click="company.save()" class="button postfix") Create Company

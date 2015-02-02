@@ -1,4 +1,4 @@
-import BaseObject from '../BaseObject'
+import BaseObject from './Base'
 
 class Account extends BaseObject {
 
@@ -28,8 +28,8 @@ class Account extends BaseObject {
   create() {
     this.ApiService.post('users', this.data)
       .then((data) => {
-        if (data.result && data.user) {
-          this.data.id = data.user._id;
+        if (data.result) {
+          this.data.id = data.result._id;
           this.$state.transitionTo('accounts.index.new.success');
         } else {
           this.$state.transitionTo('accounts.index.new.fail');
