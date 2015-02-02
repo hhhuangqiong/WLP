@@ -1,0 +1,9 @@
+{
+  "dashboard": "Dashboard",
+  "company":"Company",
+  "account": "Account",
+  "end_user": "End Users",
+  "permissions": "Permissions",
+  "voucher": "Voucher",
+  "setting": "Setting"
+}

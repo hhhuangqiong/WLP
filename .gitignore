@@ -38,6 +38,7 @@ migrations/*
 #Generated files
 build/
 *.js.map
+public/locales/
 
 #Client-side bundle js
 public/javascript/

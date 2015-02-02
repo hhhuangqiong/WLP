@@ -7,4 +7,5 @@
 /// <reference path='./Objects.ts' />
 /// <reference path='./Accounts/Account.ts' />
 /// <reference path='./Accounts/AppAccount.ts' />
+/// <reference path='./Translate/AppTranslate.ts' />
 /// <reference path='./AppObject.ts' />

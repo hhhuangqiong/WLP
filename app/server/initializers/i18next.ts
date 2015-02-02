@@ -8,7 +8,7 @@ import path = require('path');
 function i18nextInit(app : any) : void {
   var fallbackLng: string = 'en';
   //TODO pass via parameters
-  var pathes:string[] = fs.readdirSync(__dirname + '/../../../../locales/'+fallbackLng).map(
+  var pathes:string[] = fs.readdirSync(__dirname + '/../../../../locales/server/'+fallbackLng).map(
     function(animal){
       return path.basename(animal,'.json')
     }
