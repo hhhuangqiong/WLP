@@ -1,8 +1,7 @@
 /// <reference path='../../typings/mongoose/mongoose.d.ts' />
-/// <reference path='../../typings/underscore/underscore.d.ts' />
 /// <reference path='../../typings/bcrypt/bcrypt.d.ts' />
 
-import _        = require('underscore');
+import _        = require('lodash');
 import bcrypt   = require('bcrypt');
 import mongoose = require('mongoose');
 
@@ -30,14 +29,8 @@ var portalUserSchema: mongoose.Schema = new mongoose.Schema({
     trim: true,
     unique: true
   },
-  hashedPassword: {
-    type: String,
-    required: true
-  },
-  salt: {
-    type: String,
-    required: true
-  },
+  hashedPassword: { type: String },
+  salt: { type: String },
   name: {
     first: {
       type: String,
@@ -71,7 +64,7 @@ var portalUserSchema: mongoose.Schema = new mongoose.Schema({
   },
   status: {
     type: String,
-    required: true,
+    // TODO introduce enum-like statuses
     default: 'inactive'
   },
   googleAuth: {
@@ -162,25 +155,24 @@ export interface PortalUser extends mongoose.Document {
   hasValidOneTimePassword(password: string): Boolean;
 }
 
+portalUserSchema.virtual('password')
+  .get(function() { return this._password; })
+  .set(function(password) { this._password = password; });
+
 portalUserSchema.pre('save', function(next) {
   var user = this;
   if(user.hashedPassword) return next();
 
-  // DRY this
-  bcrypt.genSalt(10, function(err, salt) {
-    if (err) return next(err);
-
-    bcrypt.hash(user.hashedPassword, salt, function(err, hash) {
-      if (err) return next(err);
-
-      user.salt = salt;
-      user.hashedPassword = hash;
+  // only when the caller submit data with password information
+  if(user.password) {
+    portalUserSchema.hashInfo(user.password, function(err, hash){
+      _.merge(user, hash)
       next();
-    })
-  });
+    });
+  }
 });
 
-/*
+/**
  * Schema Instance Methods
  */
 portalUserSchema.method('hasCarrierDomain', function(carrierDomain: string) {
@@ -191,6 +183,7 @@ portalUserSchema.method('isValidPassword', function(password: string) {
   return bcrypt.compareSync(password, this.hashedPassword);
 });
 
+// TODO verify the expiration logic
 portalUserSchema.method('hasSignUpTokenExpired', function() {
   var now = new Date();
   console.log((now - this.token.signUp.token));
@@ -209,7 +202,7 @@ portalUserSchema.method('hasValidOneTimePassword', function(password:  string) {
   return password == secret;
 });
 
-/*
+/**
  * Schema Static Methods
  */
 export interface PortalUserModel extends mongoose.Model<PortalUser> {
@@ -224,17 +217,13 @@ portalUserSchema.static('findByName', function(name: string, cb: any) {
 });
 
 portalUserSchema.static('newForgotPasswordRequest', function(username: string, cb: Function) {
-
-  var salt = bcrypt.genSaltSync(10);
-  var token = bcrypt.hashSync(username + new Date(), salt);
-
   this.findOneAndUpdate({
     username: username
   }, {
     $set: {
       token: {
         forgotPassword: {
-          token: token,
+          token: randtoken.generate(16), // use a simple one for now
           createAt: new Date(),
           expired: false
         }
@@ -262,25 +251,18 @@ portalUserSchema.statics.hashInfo = function(password, cb) {
   });
 }
 
-portalUserSchema.static('newPortalUser', function(data: PortalUser, cb) {
-  var _this = this;
+portalUserSchema.static('newPortalUser', function(data, cb) {
+  data.token = {};
+  data.token.signUp = {
+    token   : randtoken.suid(22),
+    expired : false
+  };
+  // always true?
+  data.affiliatedCompany = 'M800-SUPER';
 
-  bcrypt.genSalt(10, function(err, salt) {
-    bcrypt.hash(data.username + new Date(), salt, function(err, hash) {
-      // : any?
-      data.salt = salt;
-      data.hashedPassword = hash;
-      data.token = {};
-      data.token.signUp = {};
-      data.token.signUp.token = randtoken.suid(22);
-      data.token.signUp.expired = false;
-      data.affiliatedCompany = 'M800-SUPER';
-
-      _this.create(data, function(err, user) {
-        if (err) return cb(err, null);
-        cb(null, user);
-      });
-    });
+  this.create(data, function(err, user) {
+    if (err) return cb(err, null);
+    cb(null, user);
   });
 });
 
