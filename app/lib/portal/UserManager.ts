@@ -1,3 +1,5 @@
+/// <reference path='../../../typings/node/node.d.ts' />
+
 import Q        = require('q');
 import logger   = require('winston');
 import mongoose = require('mongoose');
@@ -5,43 +7,20 @@ import mongoose = require('mongoose');
 var moment      = require('moment');
 var speakeasy   = require('speakeasy');
 
-import Portaluser = require('app/collections/portalUser');
+import PortalUser = require('app/collections/portalUser');
 
-class PortalUserManagerClass {
+class PortalUserManager {
   name: string;
 
   constructor() {
     this.name = 'portalUserManager';
   }
 
-  /**
-   * Return a user with condition(s)
-   *
-   * @param data
-   * @param cb
-   */
-  getUser(data: {username: string}, cb: Function) {
-    Portaluser.findOne({
-      username: data.username
-    }, function(err, user) {
-      if (err) {
-        return cb(err);
-      }
-
-      if (!user) {
-        return cb(null, null);
-      }
-
-      return cb(null, user);
-    })
-  }
-
-  makeForgotPasswordRequest(data: {user: Portaluser }, cb: Function) {
+  makeForgotPasswordRequest(data: {user: PortalUser }, cb: Function) {
     logger.debug('make forgot password request');
 
     var username = data.user.username;
-
-    Portaluser.newForgotPasswordRequest(username, cb);
+    PortalUser.newForgotPasswordRequest(username, cb);
   }
 
   /**
@@ -51,7 +30,7 @@ class PortalUserManagerClass {
    * @param {Function} cb
    */
   getUsers(data: any, cb: Function) {
-    Portaluser
+    PortalUser
       .find({isRoot: false})
       .populate('createBy', 'name')
       .exec(function(err, users) {
@@ -91,23 +70,21 @@ class PortalUserManagerClass {
    * @param {Function} cb
    */
   newUser(data: any, author: PortalUser, cb: Function) {
-    console.log(data);
-    data.createBy = author._id;
-    data.updateBy = author._id;
+    console.log('newUser payload', data);
+    data.createBy = data.updateBy = author._id;
 
-    var _cb = cb;
+    var findOne = Q.nbind(PortalUser.findOne, PortalUser);
+    var rejectExisting = function(user) {
+      if (user) throw new Error('username duplicated');
+    }
+    var createUser = function() {
+      return Q.ninvoke(PortalUser, 'newPortalUser', data);
+    }
 
-    Q.nfcall(this.getUser, data)
-      .then(function(user) {
-        if (user) {
-          return _cb(new Error('username duplicated'), null);
-        }
-
-        Portaluser.newPortalUser(data, _cb);
-      })
-      .catch(function(err) {
-        return _cb(err, null);
-      });
+    findOne({ username: data.username })
+    .then(rejectExisting)
+    .then(createUser)
+    .nodeify(cb);
   }
 
   /**
@@ -119,7 +96,7 @@ class PortalUserManagerClass {
    */
   verifySignUpToken(token: string, done: Function) {
     logger.debug('verifying sign up token');
-    Portaluser.findOne({
+    PortalUser.findOne({
       "token.signUp.token": token,
       "token.signUp.expired": false
     }, function(err, user) {
@@ -148,7 +125,8 @@ class PortalUserManagerClass {
    */
   verifyUser(username: string, password: string, done: Function) {
     logger.debug('verifying user login data');
-    Portaluser.findOne({
+
+    PortalUser.findOne({
       username: username
     }, function(err, user) {
       if (err) {
@@ -173,5 +151,4 @@ class PortalUserManagerClass {
   }
 }
 
-//var PortalUserManager = new PortalUserManagerClass();
-export = PortalUserManagerClass;
+export = PortalUserManager;

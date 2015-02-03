@@ -1,9 +1,11 @@
-import _              = require('underscore');
+import _              = require('lodash');
 import logger         = require('winston');
 import Q              = require('q');
 
 var di                = require('di');
 var injector          = new di.Injector([]);
+
+// because we don't have password strenght requirement at the moment
 var owasp             = require('owasp-password-strength-test');
 var speakeasy         = require('speakeasy');
 
@@ -15,7 +17,6 @@ interface SignUpInterface {
 }
 
 class SignUp {
-
   PortalUserManager: PortalUserManager;
 
   constructor(portalUserManager) {
