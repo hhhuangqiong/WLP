@@ -11,8 +11,8 @@ module whitelabel {
           url: '/accounts',
           template: '<div ui-view="header"></div><div ui-view></div>',
           resolve: {
-            accounts: function(AppObject: AppObject) {
-              return AppObject.getAccounts();
+            accounts: function(AccountService: AccountService) {
+              return AccountService.getAccounts();
             }
           }
         })
@@ -38,8 +38,8 @@ module whitelabel {
             }
           },
           resolve: {
-            account: function(accounts: Array<Account>, AppObject: AppObject) {
-              return AppObject.newAccount();
+            account: function(accounts: Array<Account>, AccountService: AccountService) {
+              return AccountService.newAccount();
             }
           }
         })
@@ -68,8 +68,8 @@ module whitelabel {
             }
           },
           resolve: {
-            account: function($stateParams: any, accounts: Array<Account>, AppObject: AppObject) {
-              return AppObject.getAccountById($stateParams.accountId.trim());
+            account: function($stateParams: any, accounts: Array<Account>, AccountService: AccountService) {
+              return AccountService.getAccountById($stateParams.accountId.trim());
             }
           }
         });

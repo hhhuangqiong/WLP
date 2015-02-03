@@ -1,11 +1,11 @@
-/// <reference path='./all.ts' />
+/// <reference path='../all.ts' />
 
 module whitelabel {
-  export class AppObject extends BaseObject {
+  export class AccountService extends BaseObject {
 
-    accounts: Array<Account>;
+    accounts:Array<Account>;
 
-    constructor($state: ng.ui.IStateService, $q: ng.IQService, ApiService: ApiService) {
+    constructor($state:ng.ui.IStateService, $q:ng.IQService, ApiService:ApiService) {
       super($state, $q, ApiService);
     }
 
@@ -15,10 +15,10 @@ module whitelabel {
      * @returns {boolean}
      */
 
-    getAccountById = (id: string) => {
-      var _account: Account = null;
+    getAccountById = (id:string) => {
+      var _account:Account = null;
 
-      this.accounts.forEach(function(item: Account) {
+      this.accounts.forEach(function (item:Account) {
         if (item.data.id) {
           if (item.data.id.trim() == id) {
             _account = item;
@@ -27,6 +27,7 @@ module whitelabel {
       });
 
       return _account;
+
     };
 
     /**
@@ -47,7 +48,7 @@ module whitelabel {
           // initialize accounts array
           this.accounts = [];
 
-          for(var userKey in users) {
+          for (var userKey in users) {
             this.newAccount(users[userKey]);
           }
 
@@ -72,7 +73,7 @@ module whitelabel {
       } else {
         // For creating new Account Object
         // Lazy load: if lastObject exists, return it rather than creating new Account Object
-        var lastObject: any = this.accounts.slice(-1).pop();
+        var lastObject:any = this.accounts.slice(-1).pop();
         if (lastObject !== undefined) {
           if (lastObject.data.id) {
             var _account = new Account(this.$state, this.$q, this.ApiService, initData);
@@ -88,7 +89,7 @@ module whitelabel {
     };
   }
 
-  app.factory('AppObject', function($state: ng.ui.IStateService, $q: ng.IQService, ApiService: ApiService) {
-    return new AppObject($state, $q, ApiService);
+  app.factory('AccountService', function ($state:ng.ui.IStateService, $q:ng.IQService, ApiService:ApiService) {
+    return new AccountService($state, $q, ApiService);
   });
 }

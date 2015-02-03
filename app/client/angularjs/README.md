@@ -7,7 +7,7 @@ and named as resource name itself in singular e.g. Account, Voucher, User
 - each resource object(s) will be passed out into $scope in the corresponding controller,
 and that's all controller does
 - all objects are injected into AngularJS as a Factory
-- an AppObject is defined to handle/store all resources (could be regarded as a kind of controller?)
+- an AccountService is defined to handle/store all resources (could be regarded as a kind of controller?)
 
 Sub-modules:
 - file named as AppModuleName e.g. AppAccounts
