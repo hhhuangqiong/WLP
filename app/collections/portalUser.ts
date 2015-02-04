@@ -167,9 +167,9 @@ portalUserSchema.pre('save', function(next) {
   if(user.password) {
     portalUserSchema.hashInfo(user.password, function(err, hash){
       _.merge(user, hash)
-      next();
     });
   }
+  next();
 });
 
 /**
@@ -199,7 +199,7 @@ portalUserSchema.method('hasValidOneTimePassword', function(password:  string) {
     encoding  : 'base32'
   });
 
-  return password == secret;
+  return password === secret;
 });
 
 /**
@@ -261,7 +261,7 @@ portalUserSchema.static('newPortalUser', function(data, cb) {
   data.affiliatedCompany = 'M800-SUPER';
 
   this.create(data, function(err, user) {
-    if (err) return cb(err, null);
+    if (err) return cb(err);
     cb(null, user);
   });
 });
