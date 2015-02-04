@@ -31,9 +31,13 @@ module whitelabel {
 
     create = () => {
       this.ApiService.post('users', this.data)
-        .then((user: any) => {
-          this.data.id = user._id;
-          this.$state.transitionTo('accounts.index.new.success');
+        .then((data: any) => {
+          if (data.result && data.user) {
+            this.data.id = data.user._id;
+            this.$state.transitionTo('accounts.index.new.success');
+          } else {
+            this.$state.transitionTo('accounts.index.new.fail');
+          }
         })
         .catch(function(err) {
           this.$state.transitionTo('accounts.index.new.fail');

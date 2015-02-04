@@ -52,7 +52,7 @@ module whitelabel {
           }
         })
         .state('accounts.index.new.fail', {
-          url: '/new',
+          url: '',
           views: {
             'account@accounts.index': {
               template: '<h1>Failed!</h1>'

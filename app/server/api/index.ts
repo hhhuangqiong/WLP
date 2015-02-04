@@ -53,7 +53,8 @@ class Api {
       .catch(function(err) {
         logger.error(err, 'db-error');
         res.json({
-          "result": false
+          "result": false,
+          "message": err
         });
       });
   };

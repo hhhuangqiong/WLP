@@ -1,20 +1,21 @@
-form(method="POST" action="#")
+mixin input(name, label, model)
+  label(ng-class="{'error': (accountForm.#{name}.$submitted || accountForm.#{name}.$touched) && accountForm.#{name}.$error.required}")= label
+    input(type="text" name=name placeholder=label ng-model=model required)
+  small(class="error" ng-show="(accountForm.#{name}.$submitted || accountForm.#{name}.$touched) && accountForm.#{name}.$error.required") Invalid entry
+
+form(method="POST" name="accountForm" action="#")
   h2(class="main-slider__title") Create user account
   div(class="main-slider__close-btn")
     a(ui-sref="accounts.index" class="button postfix")
       i(class="fi-x")
   div(class="row")
     div(class="large-6 columns")
-      label First Name
-        input(type="text" name="firstname" placeholder="firstname" ng-model="account.data.name.first" value="{{account.data.name.first}}")
+      +input('firstname', 'First Name', 'account.data.name.first')
     div(class="large-6 columns")
-      label Last Name
-        input(type="text" name="lastname" placeholder="lastname" ng-model="account.data.name.last" value="{{account.data.name.last}}")
+      +input('lastname', 'Last Name', 'account.data.name.last')
   div(class="row")
     div(class="large-12 columns")
-      label Email
-        input(type="email" name="email" placeholder="email" ng-model="account.data.username" required)
-    span(ng-show="name.email.$error.required") Email Required.
+      +input('email', 'Email', 'account.data.username')
   hr
   div(class="row main-slider__user-group")
     div(class="large-12 columns")
