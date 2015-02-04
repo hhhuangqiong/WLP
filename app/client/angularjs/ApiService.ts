@@ -30,11 +30,6 @@ module whitelabel {
       return deferred.promise;
     };
 
-
-    post = (resource:string, objectParams:any) => {
-      return this.execute('post', resource, objectParams);
-    };
-
     put = (resource:string, objectParams:any) => {
       return this.execute('put', resource, objectParams);
     };
@@ -47,7 +42,9 @@ module whitelabel {
       var deferred = this.$q.defer();
       this.$http[method](this.composeApiUrl(resource), objectParams)
         .success(function (data:any, status:any, header:any, config:any) {
-          deferred.resolve(data.user);
+          // passing whole data object rather than data.user
+          // not applicable
+          deferred.resolve(data);
         })
         .error(function (error:any) {
           deferred.reject(error);
