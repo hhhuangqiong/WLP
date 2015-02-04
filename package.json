@@ -48,7 +48,6 @@
     "redis": "^0.12.1",
     "serve-favicon": "^2.1.7",
     "speakeasy": "^1.0.3",
-    "underscore": "^1.7.0",
     "winston": "^0.8.3"
   },
   "devDependencies": {

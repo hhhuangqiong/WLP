@@ -25,3 +25,4 @@
 /// <reference path="angularjs/angular-animate.d.ts" />
 /// <reference path="angularjs/angular-resource.d.ts" />
 /// <reference path="angular-ui/angular-ui-router.d.ts" />
+/// <reference path="lodash/lodash.d.ts" />

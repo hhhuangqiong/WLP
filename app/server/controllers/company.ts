@@ -1,13 +1,15 @@
 /// <reference path='../../../typings/express/express.d.ts' />
+/// <reference path='../../../typings/lodash/lodash.d.ts' />
 /// <reference path='../../../typings/mongoose/mongoose.d.ts' />
+/// <reference path='../../../typings/node/node.d.ts' />
 /// <reference path='../../../typings/q/q.d.ts' />
 /// <reference path='../../../typings/winston/winston.d.ts' />
-import express  = require('express');
-import mongoose = require('mongoose');
 import Q        = require('q');
+import _        = require('lodash');
+import express  = require('express');
 import logger   = require('winston');
+import mongoose = require('mongoose');
 
-var _        = require('underscore');
 var nconf    = require('nconf');
 var di       = require('di');
 var injector = new di.Injector([]);

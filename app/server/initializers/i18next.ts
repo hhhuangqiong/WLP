@@ -1,4 +1,4 @@
-import _ = require('underscore');
+import _ = require('lodash');
 var i18n = require('i18next');
 
 var log: any = require('debug')('app:initializers:i18next');
