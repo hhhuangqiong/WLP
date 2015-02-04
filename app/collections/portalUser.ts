@@ -244,7 +244,6 @@ portalUserSchema.static('newForgotPasswordRequest', function(username: string, c
 portalUserSchema.statics.hashInfo = function(password, cb) {
   //use default rounds for now
   var salt = bcrypt.genSaltSync(10);
-  console.log('hashInfo', password, salt);
   bcrypt.hash(password, salt, function(err, hash) {
     if(err) return cb(err);
     cb(null, {salt: salt, hashedPassword: hash});
