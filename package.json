@@ -5,14 +5,13 @@
   "scripts": {
     "build": "npm run clean && npm run transpile && npm run test:report",
     "clean": "gulp clean",
-    "transpile": "gulp ts",
+    "transpile": "gulp 6to5",
     "server": "npm run transpile && node bin/www",
-    "pretest": "npm run transpile && gulp ts-test",
-    "test": "mocha --recursive build/test",
-    "test:report": "npm run pretest && mocha --recursive build/test --reporter xunit > build/reports.xml"
+    "pretest": "npm run transpile",
+    "test": "mocha --recursive test",
+    "test:report": "mocha --recursive test --reporter xunit > build/reports.xml"
   },
   "dependencies": {
-    "6to5": "^3.3.9",
     "bcrypt": "^0.8.0",
     "body-parser": "~1.8.1",
     "compression": "^1.2.1",
@@ -67,7 +66,6 @@
     "gulp-nodemon": "^1.0.5",
     "gulp-sass": "^1.3.2",
     "gulp-sourcemaps": "^1.3.0",
-    "gulp-typescript": "^2.3.0",
     "mocha": "^2.0.1",
     "mockgoose": "^1.10.7",
     "yargs": "^1.3.3"

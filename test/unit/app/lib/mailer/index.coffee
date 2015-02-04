@@ -1,4 +1,4 @@
-_    = require 'underscore'
+_    = require 'lodash'
 path = require 'path'
 
 assert = require 'assert'
@@ -10,9 +10,8 @@ Mailer = require 'app/lib/mailer/mailer'
 
 TemplateMailer = require 'app/lib/mailer/templateMailer'
 
-assert process.env.recipient, 'Expect "recipient" to be set'
-
 describe 'Template Mailer', ->
+
   transport = null
   mailer    = null
   tMailer   = null
@@ -35,7 +34,9 @@ describe 'Template Mailer', ->
     mailer    = new Mailer transport
     tMailer   = new TemplateMailer mailer, { templatesDir: __dirname }
 
-  it 'should send okay', (done) ->
+  it.skip 'should send okay', (done) ->
+    assert process.env.recipient, 'Expect "recipient" to be set'
+
     mailOpts =
       from:    opts.smtp.sender.email
       to:      process.env.recipient

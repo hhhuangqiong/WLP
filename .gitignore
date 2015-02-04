@@ -35,12 +35,11 @@ node_modules
 migrations/*
 # Users Environment Variables
 
-#Generated files
-build/
+# Generated files
 *.js.map
 public/locales/
 
-#Client-side bundle js
+# Concatenated output (from AngularJS)
 public/javascript/
 
 # Assume all css are generated from SCSS
@@ -48,11 +47,8 @@ public/stylesheets/*.css
 public/stylesheets/*.map
 .sass-cache
 
-# Assume no '.js' being written under 'app/{lib,server}' (TBC: 'app/client')
-app/index.js
-app/collections/**/*.js
-app/lib/**/*.js
-app/server/**/*.js
+# Assume no '.ts' being written under 'app/' (temporary setting)
+app/**/*.ts
 
 # strongly advise not to put your own gitignore entry here
 # https://help.github.com/articles/ignoring-files/#create-a-global-gitignore
