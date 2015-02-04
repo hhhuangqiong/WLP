@@ -70,34 +70,13 @@ var portalUserSchema: mongoose.Schema = new mongoose.Schema({
   googleAuth: {
     type: String
   },
-  token: {
-    signUp: {
-      token: {
-        type: String
-      },
-      createAt: {
-        type: Date,
-        default: new Date()
-      },
-      expired: {
-        type: Boolean,
-        default: true
-      }
-    },
-    forgotPassword: {
-      token: {
-        type: String
-      },
-      createAt: {
-        type: Date,
-        default: new Date()
-      },
-      expired: {
-        type: Boolean,
-        default: true
-      }
-    }
-  },
+  // TODO convenince method to fetch token by event, e.g., tokenOf('signup')
+  tokens:[{
+    _id: false,
+    event: String,
+    value: mongoose.Schema.Types.Mixed,
+    createAt: { type: Date, default: Date.now }
+  }],
   createAt: {
     type: Date,
     default: Date.now
@@ -131,18 +110,7 @@ export interface PortalUser extends mongoose.Document {
   isVerified: boolean;
   status: string;
   googleAuth: string;
-  token: {
-    signUp: {
-      token: string;
-      createAt: string;
-      expired: boolean;
-    };
-    forgotPassword: {
-      token: string;
-      createAt: string;
-      expired: boolean;
-    };
-  };
+  tokens: Array<any>;
   createAt: string;
   createBy: string;
   updateAt: string;
@@ -151,7 +119,7 @@ export interface PortalUser extends mongoose.Document {
 
   hasCarrierDomain(carrierDomain: string): Boolean;
   isValidPassword(password: string): Boolean;
-  hasSignUpTokenExpired(): Boolean;
+  //hasSignUpTokenExpired(): Boolean;
   hasValidOneTimePassword(password: string): Boolean;
 }
 
@@ -166,15 +134,35 @@ portalUserSchema.pre('save', function(next) {
   // only when the caller submit data with password information
   if(user.password) {
     portalUserSchema.hashInfo(user.password, function(err, hash){
-      _.merge(user, hash)
+      _.merge(user, hash);
     });
   }
   next();
 });
 
 /**
- * Schema Instance Methods
+ * Apply the signup token value to the 'tokens' array
+ *
+ * TODO:
+ * - method to get token by event, e.g., tokenOf('signup')
+ * - method to check if the token has expired (generic)
+ *
+ * @param {string|number|object} val
+ * @return itself
  */
+portalUserSchema.method('signUpToken', function(val) {
+  var KEY    = 'signup';
+  var tokens = _.reject(this.tokens, function(t) { return t.event === KEY; });
+  var token  = {
+    event:    KEY,
+    value:    val || randtoken.generate(16), // use a simple one for now
+    createAt: new Date()
+  };
+  tokens.push(token);
+  this.tokens = token;
+  return this;
+});
+
 portalUserSchema.method('hasCarrierDomain', function(carrierDomain: string) {
   return _.contains(this.carrierDomains, carrierDomain);
 });
@@ -183,12 +171,12 @@ portalUserSchema.method('isValidPassword', function(password: string) {
   return bcrypt.compareSync(password, this.hashedPassword);
 });
 
-// TODO verify the expiration logic
-portalUserSchema.method('hasSignUpTokenExpired', function() {
-  var now = new Date();
-  console.log((now - this.token.signUp.token));
-  return (now - this.token.signUp.token) > 3;
-});
+// TODO verify the expiration logic; commment out for now
+//portalUserSchema.method('hasSignUpTokenExpired', function() {
+  //var now = new Date();
+  //console.log((now - this.token.signUp.token));
+  //return (now - this.token.signUp.token) > 3;
+//});
 
 portalUserSchema.method('hasValidOneTimePassword', function(password:  string) {
   // assume root user does not have 'googleAuth' property
@@ -250,6 +238,7 @@ portalUserSchema.statics.hashInfo = function(password, cb) {
   });
 }
 
+// TODO may need to rewrite due to be compatible with 'signUpToken' above
 portalUserSchema.static('newPortalUser', function(data, cb) {
   data.token = {};
   data.token.signUp = {
