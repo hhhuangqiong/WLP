@@ -12,6 +12,7 @@
     "test:report": "npm run pretest && mocha --recursive build/test --reporter xunit > build/reports.xml"
   },
   "dependencies": {
+    "6to5": "^3.3.9",
     "bcrypt": "^0.8.0",
     "body-parser": "~1.8.1",
     "compression": "^1.2.1",
@@ -59,6 +60,7 @@
     "event-stream": "^3.2.1",
     "faker": "^2.1.2",
     "gulp": "^3.8.10",
+    "gulp-6to5": "^3.0.0",
     "gulp-autoprefixer": "^2.1.0",
     "gulp-concat": "^2.4.3",
     "gulp-if": "^1.2.5",
