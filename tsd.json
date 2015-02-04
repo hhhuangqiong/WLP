@@ -82,6 +82,9 @@
     },
     "angularjs/angular-resource.d.ts": {
       "commit": "acea1d8b3632266189276cab0478299e78eff563"
+    },
+    "lodash/lodash.d.ts": {
+      "commit": "23b6edd28c0f5ccbe9e01bcfc84963d07b921ff7"
     }
   }
 }
