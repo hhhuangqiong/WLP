@@ -1,56 +1,74 @@
-var whitelabel;
-(function (whitelabel) {
-    var ApiService = (function () {
-        function ApiService(apiUrl, $http, $q, $log) {
-            var _this = this;
-            this.get = function (resource, id) {
-                var deferred = _this.$q.defer();
-                _this.$http.get(_this.composeApiUrl(resource, id)).success(function (data, status, headers, config) {
-                    deferred.resolve(data[resource]);
-                }).error(function (error) {
-                    deferred.reject(error);
-                });
-                return deferred.promise;
-            };
-            this.put = function (resource, objectParams) {
-                return _this.execute('put', resource, objectParams);
-            };
-            this.delete = function (resource, objectParams) {
-                return _this.execute('delete', resource, objectParams);
-            };
-            this.execute = function (method, resource, objectParams) {
-                var deferred = _this.$q.defer();
-                _this.$http[method](_this.composeApiUrl(resource), objectParams).success(function (data, status, header, config) {
-                    // passing whole data object rather than data.user
-                    // not applicable
-                    deferred.resolve(data);
-                }).error(function (error) {
-                    deferred.reject(error);
-                });
-                return deferred.promise;
-            };
-            this.apiUrl = apiUrl;
-            this.$http = $http;
-            this.$q = $q;
-            this.$log = $log;
-        }
-        /**
-         * Making up Api Url
-         * @param resource
-         * @param id
-         * @returns {string}
-         */
-        ApiService.prototype.composeApiUrl = function (resource, id) {
-            var _url = this.apiUrl + '/' + resource;
-            if (id) {
-                _url += '/' + id;
-            }
-            return _url;
-        };
-        return ApiService;
-    })();
-    whitelabel.ApiService = ApiService;
-    whitelabel.app.factory('ApiService', function ($http, $q, $log) {
-        return new ApiService('/api', $http, $q, $log);
-    });
-})(whitelabel || (whitelabel = {}));
+class ApiService {
+
+  constructor($http, $q, $log) {
+    console.log($http, $q, $log);
+    this.apiUrl = '/api';
+    this.$http = $http;
+    this.$q = $q;
+    this.$log = $log;
+  }
+
+ get(resource, id) {
+    var deferred = this.$q.defer();
+
+    this.$http.get(this.composeApiUrl(resource))
+      .success(function (data, status, headers, config) {
+        deferred.resolve(data[resource]);
+      })
+      .error(function (error) {
+        deferred.reject(error);
+      });
+
+      return deferred.promise;
+  };
+
+  post(resource, objectParams) {
+    return this.execute('post', resource, objectParams);
+  };
+
+  put(resource, objectParams) {
+    return this.execute('put', resource, objectParams);
+  };
+
+  remove(resource, objectParams) {
+    return this.execute('delete', resource, objectParams);
+  };
+
+  execute(method, resource, objectParams) {
+    var deferred = this.$q.defer();
+    this.$http[method](this.composeApiUrl(resource), objectParams)
+      .success(function (data, status, header, config) {
+        // passing whole data object rather than data.user
+        // not applicable
+        deferred.resolve(data);
+      })
+      .error(function (error:any) {
+        deferred.reject(error);
+      });
+
+    return deferred.promise;
+
+  }
+
+  /**
+   * Making up Api Url
+   * @param resource
+   * @param id
+   * @returns {string}
+   */
+
+  composeApiUrl(resource, id) {
+    var _url = this.apiUrl + '/' + resource;
+    if (id) {
+      _url += '/' + id;
+    }
+
+    return _url;
+  }
+}
+
+// ng-annotate does not work
+// So that you don't need to go here and there to check for dependencies
+export default function($http, $q, $log) {
+  return new ApiService($http, $q, $log);
+};

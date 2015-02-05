@@ -1,11 +1,18 @@
 # consider 'gulp-load-plugins' when the deps getting more
 argv        = require('yargs').argv
+buffer      = require('vinyl-buffer')
 del         = require 'del'
 eventStream = require 'event-stream'
 gulp        = require 'gulp'
 nodemon     = require 'gulp-nodemon'
 #ts          = require 'gulp-typescript'
+source      = require('vinyl-source-stream')
 to5         = require 'gulp-6to5'
+
+# browserify
+browserify  = require('browserify');
+to5ify      = require('6to5ify');
+ngAnnotate  = require('browserify-ngannotate')
 
 # 'libsass' version, http://sass-compatibility.github.io/
 sass         = require 'gulp-sass'
@@ -56,12 +63,23 @@ gulp.task '6to5', ->
 # before consider performing any minification
 # please read: https://github.com/olov/ng-annotate
 gulp.task '6to5-ng', ->
-  gulp.src 'app/client/angularjs/**/*.js'
-    .pipe to5()
-    .pipe sourcemaps.init()
-    .pipe concat 'application.js'
-    .pipe sourcemaps.write '.'
-    .pipe gulp.dest 'public/javascript'
+  browserify({ entries: './app/client/angularjs/WhiteLabel.js', debug: true })
+    .transform(to5ify)
+    .transform(ngAnnotate)
+    .bundle()
+    .pipe(source('application.js'))
+    .pipe(buffer())
+    .pipe(gulp.dest('public/javascript'));
+
+
+#gulp.src 'app/client/angularjs/**/*.js'
+#  .pipe to5({
+#    modules: 'ignore'
+#})
+#  .pipe sourcemaps.init()
+#  .pipe concat 'application.js'
+#  .pipe sourcemaps.write '.'
+#  .pipe gulp.dest 'public/javascript'
 
 
 ## please confirm client folder negation is needed here

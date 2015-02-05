@@ -1,12 +1,24 @@
-/// <reference path='./all.ts' />
-var whitelabel;
-(function (whitelabel) {
-    whitelabel.app = angular.module('App', ['App.Accounts', 'ui.router', 'ngResource', 'ngAnimate', 'App.Translate']);
-    whitelabel.app.config(function ($urlRouterProvider) {
-        $urlRouterProvider.otherwise('/accounts');
-    });
-    whitelabel.app.run(['$rootScope', '$state', '$stateParams', function ($rootScope, $state, $stateParams) {
-        $rootScope.state = $state;
-        $rootScope.state = $stateParams;
-    }]);
-})(whitelabel || (whitelabel = {}));
+// Entry point of AngularJS
+
+import AccountModule from './modules/Accounts.js';
+import TranslateModule from './modules/Translate.js'
+import ApiService       from './ApiService'
+
+var app = angular.module('App', [
+  'ngAnimate',
+  'ngResource',
+  'ui.router',
+  AccountModule.name,
+  TranslateModule.name
+]);
+
+app.config(function($urlRouterProvider) {
+  $urlRouterProvider.otherwise('/accounts');
+});
+
+app.run(['$rootScope', '$state', '$stateParams', function($rootScope, $state, $stateParams) {
+  $rootScope.state = $state;
+  $rootScope.state = $stateParams;
+}]);
+
+app.factory('ApiService', ApiService);
