@@ -1,10 +1,10 @@
 var i18n = require('i18next');
-var log = require('debug')('app:initializers:i18next');
-var fs = require('fs');
+var fs   = require('fs');
 var path = require('path');
+
 function i18nextInit(app) {
     var fallbackLng = 'en';
-    //TODO pass via parameters
+    //TODO ugly; pass via parameter
     var pathes = fs.readdirSync(__dirname + '/../../../../locales/server/' + fallbackLng).map(function (animal) {
         return path.basename(animal, '.json');
     });
