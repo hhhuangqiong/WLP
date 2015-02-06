@@ -1,18 +1,24 @@
 # consider 'gulp-load-plugins' when the deps getting more
+
+console.time 'Loading plugins';
+
 argv        = require('yargs').argv
-buffer      = require('vinyl-buffer')
+buffer      = require 'vinyl-buffer'
 del         = require 'del'
 eventStream = require 'event-stream'
 gulp        = require 'gulp'
 nodemon     = require 'gulp-nodemon'
-#ts          = require 'gulp-typescript'
-source      = require('vinyl-source-stream')
+source      = require 'vinyl-source-stream'
 to5         = require 'gulp-6to5'
+#ts          = require 'gulp-typescript'
+
+# 1 of the reasons behind using 'yuidoc', https://github.com/jsBoot/gulp-jsdoc#big-fat-warning
+yuidoc       = require 'gulp-yuidoc'
 
 # browserify
-browserify  = require('browserify');
-to5ify      = require('6to5ify');
-ngAnnotate  = require('browserify-ngannotate')
+browserify  = require 'browserify';
+ngAnnotate  = require 'browserify-ngannotate'
+to5ify      = require '6to5ify';
 
 # 'libsass' version, http://sass-compatibility.github.io/
 sass         = require 'gulp-sass'
@@ -24,13 +30,21 @@ gulpif      = require 'gulp-if'
 browserSync = require 'browser-sync'
 extend      = require 'gulp-extend'
 
+console.timeEnd 'Loading plugins';
+
+src =
+  allJS:  'app/**/*.js'
+  clientJS:  'app/client/**/*.js'
+
+dest =
+  node: 'node_modules/app'
+
 # not trigger 'browser-sync'; `gulp browser-sync` separately if needed
 gulp.task 'default', ['clean', 'locale', 'nodemon'], ->
   # let 'watch' to be the default for now
 
-  # TODO DRY the globs
-  gulp.watch ['app/**/*.js', '!app/client/**/*.js'], ['6to5']
-  gulp.watch 'app/client/**/*.js', ['6to5-ng']
+  gulp.watch [src.allJS, "!#{src.clientJS}"], ['6to5']
+  gulp.watch src.clientJS, ['6to5-ng']
   gulp.watch 'public/scss/**/*.scss', ['scss']
   gulp.watch 'locales/client/en/*.json', ['locale']
 
@@ -44,6 +58,12 @@ gulp.task 'default', ['clean', 'locale', 'nodemon'], ->
 gulp.task 'clean', ->
   del(['node_modules/app', 'build/**/*'])
 
+# name as jsdoc on purpose
+gulp.task 'jsdoc', ['6to5'], ->
+  gulp.src "#{dest.node}/**/*.js"
+    .pipe yuidoc()
+    .pipe gulp.dest 'build/docs'
+
 gulp.task 'scss', ->
   gulp.src 'public/scss/main.scss'
     .pipe sourcemaps.init()
@@ -54,11 +74,11 @@ gulp.task 'scss', ->
     .pipe gulpif(browserSync.active, browserSync.reload {stream: true})
 
 gulp.task '6to5', ->
-  gulp.src 'app/**/*.js'
+  gulp.src src.allJS
     .pipe to5()
     .pipe sourcemaps.init()
     .pipe sourcemaps.write '.'
-    .pipe gulp.dest 'node_modules/app'
+    .pipe gulp.dest dest.node
 
 # before consider performing any minification
 # please read: https://github.com/olov/ng-annotate
