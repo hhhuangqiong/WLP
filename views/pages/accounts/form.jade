@@ -1,7 +1,4 @@
-mixin input(name, label, model)
-  label(ng-class="{'error': (accountForm.#{name}.$submitted || accountForm.#{name}.$touched) && accountForm.#{name}.$error.required}")= label
-    input(type="text" name=name placeholder=label ng-model=model required)
-  small(class="error" ng-show="(accountForm.#{name}.$submitted || accountForm.#{name}.$touched) && accountForm.#{name}.$error.required") Invalid entry
+include /_mixins/formInput.jade
 
 form(method="POST" name="accountForm" action="#")
   h2(class="main-slider__title") Create user account
@@ -10,12 +7,12 @@ form(method="POST" name="accountForm" action="#")
       i(class="fi-x")
   div(class="row")
     div(class="large-6 columns")
-      +input('firstname', 'First Name', 'account.data.name.first')
+      +input('firstname', 'text', 'First Name', 'account.data.name.first')(required)
     div(class="large-6 columns")
-      +input('lastname', 'Last Name', 'account.data.name.last')
+      +input('lastname', 'text', 'Last Name', 'account.data.name.last')(required)
   div(class="row")
     div(class="large-12 columns")
-      +input('email', 'Email', 'account.data.username')
+      +input('email', 'email', 'Email', 'account.data.username')(required email ng-maxlength="30")
   hr
   div(class="row main-slider__user-group")
     div(class="large-12 columns")

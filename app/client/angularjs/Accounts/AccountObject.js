@@ -16,7 +16,7 @@ class Account extends BaseObject {
 
   update() {
     this.ApiService.put('users', this.data)
-      .then((user: any) => {
+      .then((user) => {
         this.data.id = user._id;
         this.$state.transitionTo('accounts.index.new.success');
       })
@@ -27,7 +27,7 @@ class Account extends BaseObject {
 
   create() {
     this.ApiService.post('users', this.data)
-      .then((data: any) => {
+      .then((data) => {
         if (data.result && data.user) {
           this.data.id = data.user._id;
           this.$state.transitionTo('accounts.index.new.success');
