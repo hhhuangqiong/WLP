@@ -42,5 +42,16 @@ describe 'Portal User', ->
       expect _.filter(p.tokens, predicate).length
         .to.eql 1
 
+  describe '#tokenOf', ->
+    p = null
+
+    beforeEach ->
+      p = new PortalUser()
+      p.signUpToken()
+
+    it 'should return the token object found', ->
+      expect( p.tokenOf 'signup' ).to.exist
+      expect( p.tokenOf 'notexist' ).to.not.exist
+
 
 
