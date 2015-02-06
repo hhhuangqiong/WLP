@@ -19,6 +19,9 @@ function emailValidator(email) {
   return email && reg.test(email);
 }
 
+/**
+ * @class PortalUserSchema
+ */
 var portalUserSchema = new mongoose.Schema({
   isRoot: {
     type: Boolean,
@@ -131,6 +134,7 @@ portalUserSchema.pre('save', function(next) {
  * Add token of the event with value to 'tokens'
  * Assume each event can have 1 and only 1 token
  *
+ * @method addToken
  * @param {string|number|object} [val]
  */
 portalUserSchema.method('addToken', function(event, val) {
@@ -143,6 +147,7 @@ portalUserSchema.method('addToken', function(event, val) {
 /**
  * Produce the token in the conformed format
  *
+ * @method makeToken
  * @return {Object} the token
  */
 portalUserSchema.method('makeToken', function(event, val) {
@@ -163,6 +168,7 @@ portalUserSchema.method('isValidPassword', function(password) {
 /**
  * Get the token of the event specified
  *
+ * @method tokenOf
  * @param {String} event Event name
  * @return {Object|undefined} The event embedded document token itself or undefined
  */
@@ -174,6 +180,7 @@ portalUserSchema.method('tokenOf', function(event) {
 /**
  * Check if the evevnt token specified has expired
  *
+ * @method isTokenExpired
  * @param {String} event The event type of the token
  * @param {Number} n The number to be used with the "unit"
  * @param {String} [unit] The unit for the "n" above; All values supported by momentjs (e.g., "days", "hours")
@@ -236,6 +243,7 @@ portalUserSchema.static('newForgotPasswordRequest', function(username, cb) {
 /**
  * Hash the password with generated salt returned
  *
+ * @method hashInfo
  * @param {String} password
  * @param {Function} cb
  */
