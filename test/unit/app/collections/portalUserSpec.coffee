@@ -53,5 +53,23 @@ describe 'Portal User', ->
       expect( p.tokenOf 'signup' ).to.exist
       expect( p.tokenOf 'notexist' ).to.not.exist
 
+  describe '#isTokenExpired', ->
+    p = null
 
+    beforeEach ->
+      p = new PortalUser()
+      p.signUpToken()
+
+    it 'should be expired', (done) ->
+      # better to use sinon's fake timer
+      setTimeout ->
+        expect( p.isTokenExpired 'signup', 0, 'milliseconds' ).to.be.true
+        done()
+      , 100
+
+    it 'should not be expired', ->
+      expect( p.isTokenExpired 'signup', 1, 'hours' ).to.be.false
+
+    it 'should throw Error if the token could not be found', ->
+      expect( -> p.isTokenExpired 'notexist', 1, 'minutes' ).to.throw Error
 

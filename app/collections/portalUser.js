@@ -4,14 +4,15 @@ var mongoose  = require('mongoose');
 var randtoken = require('rand-token');
 var speakeasy = require('speakeasy');
 
-var moment    = require('moment');
+var util   = require('util');
+var moment = require('moment');
 
 var collectionName = 'PortalUser';
 
 //TODO common validators to be shared among models
 function lengthValidator(param, min, max) {
-    return param.length >= min || param.length <= max;
-  }
+  return param.length >= min || param.length <= max;
+}
 
 //TODO use this validator or drop it
 function emailValidator(email) {
@@ -124,12 +125,9 @@ portalUserSchema.pre('save', function(next) {
   }
   next();
 });
+
 /**
  * Apply the signup token value to the 'tokens' array
- *
- * TODO:
- * - method to get token by event, e.g., tokenOf('signup')
- * - method to check if the token has expired (generic)
  *
  * @param {string|number|object} val
  * @return itself
@@ -156,8 +154,8 @@ portalUserSchema.method('isValidPassword', function(password) {
 /**
  * Get the token of the event specified
  *
- * @param {String} eventName
- * @return {Object|undefined}
+ * @param {String} event Event name
+ * @return {Object|undefined} The event embedded document token itself or undefined
  */
 portalUserSchema.method('tokenOf', function(event) {
   var found = _.filter(this.tokens, (t) => { return t.event === event});
@@ -165,20 +163,24 @@ portalUserSchema.method('tokenOf', function(event) {
 });
 
 /**
- * Check if the token has passed
- * replace 'hasSignUpTokenExpired'
+ * Check if the evevnt token specified has expired
  *
  * @param {String} event The event type of the token
  * @param {Number} n The number to be used with the "unit"
- * @param {String} [unit] The unit for the "n" above
- *  all values supported by momentjs (e.g., "days", "hours")
+ * @param {String} [unit] The unit for the "n" above; All values supported by momentjs (e.g., "days", "hours")
+ *
+ * @throws Will throw an error if no such token could be found
  *
  * @return {Boolean}
  */
 portalUserSchema.method('isTokenExpired', function(event, n, unit) {
-  //var compareTo = moment().subtract(n, unit);
-  //return moment(this._timestamp).isBefore(compareTo);
+  var token = this.tokenOf(event);
+  if(!token) throw new Error(util.format('No token of "%s"', event));
+
+  var compareTo = moment().subtract(n, unit);
+  return moment(token.createAt).isBefore(compareTo);
 });
+
 portalUserSchema.method('hasValidOneTimePassword', function(password) {
   // assume root user does not have 'googleAuth' property
   if (this.isRoot)
@@ -189,12 +191,7 @@ portalUserSchema.method('hasValidOneTimePassword', function(password) {
   });
   return password === secret;
 });
-//TODO obsolete this method
-portalUserSchema.static('findByName', function(name, cb) {
-  this.find({
-    name: new RegExp(name, 'i')
-  }, cb);
-});
+
 portalUserSchema.static('newForgotPasswordRequest', function(username, cb) {
   this.findOneAndUpdate({
     username: username
@@ -214,6 +211,7 @@ portalUserSchema.static('newForgotPasswordRequest', function(username, cb) {
     cb(null, user);
   });
 });
+
 /**
  * Hash the password with generated salt returned
  *
@@ -232,6 +230,7 @@ portalUserSchema.statics.hashInfo = function(password, cb) {
     });
   });
 };
+
 // TODO may need to rewrite due to be compatible with 'signUpToken' above
 portalUserSchema.static('newPortalUser', function(data, cb) {
   data.token = {};
