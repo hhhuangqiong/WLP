@@ -16,9 +16,9 @@ class AccountService {
    */
 
   getAccountById(id) {
-    var _account:Account = null;
+    var _account = null;
 
-    this.accounts.forEach(function (item:Account) {
+    this.accounts.forEach(function (item) {
       if (item.data.id) {
         if (item.data.id.trim() == id) {
           _account = item;
@@ -72,7 +72,7 @@ class AccountService {
     } else {
       // For creating new Account Object
       // Lazy load: if lastObject exists, return it rather than creating new Account Object
-      var lastObject:any = this.accounts.slice(-1).pop();
+      var lastObject = this.accounts.slice(-1).pop();
       if (lastObject !== undefined) {
         if (lastObject.data.id) {
           var _account = new Account(this.$state, this.$q, this.ApiService, initData);

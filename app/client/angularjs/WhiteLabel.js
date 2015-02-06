@@ -6,6 +6,7 @@ import ApiService       from './ApiService'
 
 var app = angular.module('App', [
   'ngAnimate',
+  'ngMessages',
   'ngResource',
   'ui.router',
   AccountModule.name,

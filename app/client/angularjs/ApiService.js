@@ -1,7 +1,6 @@
 class ApiService {
 
   constructor($http, $q, $log) {
-    console.log($http, $q, $log);
     this.apiUrl = '/api';
     this.$http = $http;
     this.$q = $q;
@@ -42,7 +41,7 @@ class ApiService {
         // not applicable
         deferred.resolve(data);
       })
-      .error(function (error:any) {
+      .error(function (error) {
         deferred.reject(error);
       });
 
