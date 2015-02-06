@@ -1,11 +1,10 @@
 var _         = require('lodash');
 var bcrypt    = require('bcrypt');
+var moment    = require('moment');
 var mongoose  = require('mongoose');
 var randtoken = require('rand-token');
 var speakeasy = require('speakeasy');
-
-var util   = require('util');
-var moment = require('moment');
+var util      = require('util');
 
 var collectionName = 'PortalUser';
 
@@ -19,6 +18,7 @@ function emailValidator(email) {
   var reg = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
   return email && reg.test(email);
 }
+
 var portalUserSchema = new mongoose.Schema({
   isRoot: {
     type: Boolean,
@@ -108,6 +108,7 @@ var portalUserSchema = new mongoose.Schema({
 }, {
   collection: collectionName
 });
+
 portalUserSchema.virtual('password').get(function() {
   return this._password;
 }).set(function(password) {
@@ -127,23 +128,31 @@ portalUserSchema.pre('save', function(next) {
 });
 
 /**
- * Apply the signup token value to the 'tokens' array
+ * Add token of the event with value to 'tokens'
+ * Assume each event can have 1 and only 1 token
  *
- * @param {string|number|object} val
- * @return itself
+ * @param {string|number|object} [val]
  */
-portalUserSchema.method('signUpToken', function(val) {
-  const KEY = 'signup';
-  var tokens = _.reject(this.tokens, (t) => { return t.event === KEY; });
-  var token = {
-    event: KEY,
+portalUserSchema.method('addToken', function(event, val) {
+  var tokens = _.reject(this.tokens, (t) => { return t.event === event; });
+  tokens.push(this.makeToken(event, val));
+  this.tokens = tokens;
+  return this;
+});
+
+/**
+ * Produce the token in the conformed format
+ *
+ * @return {Object} the token
+ */
+portalUserSchema.method('makeToken', function(event, val) {
+  return {
+    event: event,
     value: val || randtoken.generate(16),
     createAt: new Date()
   };
-  tokens.push(token);
-  this.tokens = token;
-  return this;
 });
+
 portalUserSchema.method('hasCarrierDomain', function(carrierDomain) {
   return _.contains(this.carrierDomains, carrierDomain);
 });
@@ -183,8 +192,8 @@ portalUserSchema.method('isTokenExpired', function(event, n, unit) {
 
 portalUserSchema.method('hasValidOneTimePassword', function(password) {
   // assume root user does not have 'googleAuth' property
-  if (this.isRoot)
-    return true;
+  if (this.isRoot) return true;
+
   var secret = speakeasy.time({
     key: this.googleAuth,
     encoding: 'base32'
@@ -192,22 +201,34 @@ portalUserSchema.method('hasValidOneTimePassword', function(password) {
   return password === secret;
 });
 
+// TODO
+// - make use of existing token features
+// - consider the approach of 'newForgotPasswordRequest'
+portalUserSchema.static('newPortalUser', function(data, cb) {
+  var token = this.makeToken('signup');
+
+  data.tokens = data.tokens || [];
+  data.tokens.push(token);
+
+  // always true?
+  data.affiliatedCompany = 'M800-SUPER';
+
+  this.create(data, (err, user) => {
+    if (err) return cb(err);
+    cb(null, user);
+  });
+});
+
 portalUserSchema.static('newForgotPasswordRequest', function(username, cb) {
+  var token = this.makeToken('forgotPassword');
+
   this.findOneAndUpdate({
     username: username
   }, {
-    $set: {
-      token: {
-        forgotPassword: {
-          token: randtoken.generate(16),
-          createAt: new Date(),
-          expired: false
-        }
-      }
-    }
+    // this kinda make '#addToken' redundant
+    $addToSet: { tokens: token }
   }, function(err, user) {
-    if (err)
-      return cb(err);
+    if (err) return cb(err);
     cb(null, user);
   });
 });
@@ -231,19 +252,4 @@ portalUserSchema.statics.hashInfo = function(password, cb) {
   });
 };
 
-// TODO may need to rewrite due to be compatible with 'signUpToken' above
-portalUserSchema.static('newPortalUser', function(data, cb) {
-  data.token = {};
-  data.token.signUp = {
-    token: randtoken.suid(22),
-    expired: false
-  };
-  // always true?
-  data.affiliatedCompany = 'M800-SUPER';
-  this.create(data, function(err, user) {
-    if (err)
-      return cb(err);
-    cb(null, user);
-  });
-});
 module.exports = mongoose.model(collectionName, portalUserSchema);
