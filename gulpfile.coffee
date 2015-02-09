@@ -10,12 +10,10 @@ gulp        = require 'gulp'
 nodemon     = require 'gulp-nodemon'
 source      = require 'vinyl-source-stream'
 to5         = require 'gulp-6to5'
-#ts          = require 'gulp-typescript'
 
 # 1 of the reasons behind using 'yuidoc', https://github.com/jsBoot/gulp-jsdoc#big-fat-warning
 yuidoc       = require 'gulp-yuidoc'
 
-# browserify
 browserify  = require 'browserify';
 ngAnnotate  = require 'browserify-ngannotate'
 to5ify      = require '6to5ify';
@@ -48,10 +46,6 @@ gulp.task 'default', ['clean', 'locale', 'nodemon'], ->
   gulp.watch 'public/scss/**/*.scss', ['scss']
   gulp.watch 'locales/client/en/*.json', ['locale']
 
-  # obsolete; keep for reference
-  #gulp.watch tsSource, ['ts']
-  #gulp.watch 'app/client/**/*.ts', ['ts-angularjs']
-
   console.log 'done'
   return
 
@@ -80,8 +74,6 @@ gulp.task '6to5', ->
     .pipe sourcemaps.write '.'
     .pipe gulp.dest dest.node
 
-# before consider performing any minification
-# please read: https://github.com/olov/ng-annotate
 gulp.task '6to5-ng', ->
   browserify({ entries: './app/client/angularjs/WhiteLabel.js', debug: true })
     .transform(to5ify)
@@ -91,50 +83,6 @@ gulp.task '6to5-ng', ->
     .pipe(buffer())
     .pipe(gulp.dest('public/javascript'));
 
-
-#gulp.src 'app/client/angularjs/**/*.js'
-#  .pipe to5({
-#    modules: 'ignore'
-#})
-#  .pipe sourcemaps.init()
-#  .pipe concat 'application.js'
-#  .pipe sourcemaps.write '.'
-#  .pipe gulp.dest 'public/javascript'
-
-
-## please confirm client folder negation is needed here
-#tsSource = ['app/**/*.ts', 'typings/**/*.ts', '!app/client/**/*.ts']
-## for incremental build
-#tsProject = ts.createProject
-#  declarationFiles:  true
-#  noExternalResolve: true
-#  target: 'ES5'
-#  module: 'commonjs'
-#
-#gulp.task 'ts', ->
-#  tsResult = gulp.src tsSource
-#              .pipe ts(tsProject)
-#
-#  eventStream.merge(
-#    # comment out for now for we don't have our own '.d.ts' files
-#    #tsResult.dts.pipe gulp.dest('node_modules/definitions'),
-#    tsResult.js.pipe gulp.dest('node_modules/app')
-#  )
-#
-#gulp.task 'ts-angularjs', ->
-#  tsResult = gulp.src 'app/client/angularjs/**/*.ts'
-#              .pipe ts { sortOutput: true }
-#
-#  return tsResult.js
-#          .pipe concat('application.js')
-#          .pipe gulp.dest 'public/javascript'
-#
-## intentionally not using `['ts']` as deps to avoid unnecessary recompilation
-#gulp.task 'ts-test', ->
-#  tsResult = gulp.src 'test/unit/**/*.ts'
-#              .pipe ts(tsProject)
-
-#gulp.task 'nodemon', ['scss', 'ts', 'ts-angularjs'], ->
 gulp.task 'nodemon', ['scss', '6to5', '6to5-ng'], ->
   nodemon
     script: 'bin/www'
@@ -149,7 +97,7 @@ gulp.task 'nodemon', ['scss', '6to5', '6to5-ng'], ->
 # intentionally not using `['nodemon']` as deps
 gulp.task 'browser-sync', ->
   browserSync
-    # host & port for your express
+    # host & port for your express app
     proxy: 'localhost:3000'
     startPath: '/login'
     port: 3333
