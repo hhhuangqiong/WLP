@@ -148,6 +148,7 @@ portalUserSchema.method('addToken', function(event, val) {
  * Produce the token in the conformed format
  *
  * @method makeToken
+ * @static
  * @return {Object} the token
  */
 portalUserSchema.static('makeToken', function(event, val) {
