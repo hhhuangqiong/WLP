@@ -38,15 +38,16 @@ dest =
   node: 'node_modules/app'
 
 # not trigger 'browser-sync'; `gulp browser-sync` separately if needed
-gulp.task 'default', ['clean', 'locale', 'nodemon'], ->
-  # let 'watch' to be the default for now
+# let 'watch' be the default for now
+gulp.task 'default', ['clean', 'locale', 'nodemon', 'watch'], ->
+  console.log 'done'
+  return
 
+gulp.task 'watch', ->
   gulp.watch [src.allJS, "!#{src.clientJS}"], ['6to5']
   gulp.watch src.clientJS, ['6to5-ng']
   gulp.watch 'public/scss/**/*.scss', ['scss']
   gulp.watch 'locales/client/en/*.json', ['locale']
-
-  console.log 'done'
   return
 
 gulp.task 'clean', ->
