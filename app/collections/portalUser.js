@@ -139,7 +139,7 @@ portalUserSchema.pre('save', function(next) {
  */
 portalUserSchema.method('addToken', function(event, val) {
   var tokens = _.reject(this.tokens, (t) => { return t.event === event; });
-  tokens.push(this.makeToken(event, val));
+  tokens.push(this.constructor.makeToken(event, val));
   this.tokens = tokens;
   return this;
 });
@@ -150,7 +150,7 @@ portalUserSchema.method('addToken', function(event, val) {
  * @method makeToken
  * @return {Object} the token
  */
-portalUserSchema.method('makeToken', function(event, val) {
+portalUserSchema.static('makeToken', function(event, val) {
   return {
     event: event,
     value: val || randtoken.generate(16),
