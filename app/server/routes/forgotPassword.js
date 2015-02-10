@@ -1,7 +1,6 @@
-import { Router } from 'express';
-import nconf from 'nconf';
-
-import Controller from 'app/server/controllers/forgotPassword';
+import { Router }         from 'express';
+import nconf              from 'nconf';
+import Controller         from 'app/server/controllers/forgotPassword';
 import { fetchContainer } from 'app/server/initializers/ioc';
 
 module.exports = (() => {

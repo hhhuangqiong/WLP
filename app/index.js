@@ -8,7 +8,6 @@ var cookieParser     = require('cookie-parser');
 var expressValidator = require('express-validator');
 var methodOverride   = require('method-override');
 var morgan           = require('morgan');
-var multer           = require('multer');
 var session          = require('express-session');
 var favicon          = require('serve-favicon');
 var flash            = require('connect-flash');
@@ -42,11 +41,6 @@ function initialize(port) {
 
   //To enable using PUT, DELETE METHODS
   app.use(methodOverride('_method'));
-
-  // TODO upload path should be configurable
-  app.use(multer({
-    dest: path.join(PROJ_ROOT, 'uploads')
-  }));
 
   app.set('port', port);
   app.set('views', path.join(PROJ_ROOT, 'views'));

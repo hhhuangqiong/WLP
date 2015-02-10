@@ -5,3 +5,16 @@
 .full-width {
   width: 100% !important;
 }
+
+.valign-middle {
+  display: table;
+
+  > .columns {
+    display: table-cell;
+    vertical-align: middle;
+  }
+
+  > .columns, > [class*="column"] + [class*="column"]:last-child {
+    float: none;
+  }
+}

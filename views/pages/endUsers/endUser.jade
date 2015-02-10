@@ -1,0 +1,58 @@
+h3 {{endUser.data.username}}
+h4 Wallet Info
+ul
+  li
+    span balance
+  li
+    span status
+  li
+    span last top-up date
+  li
+    span expiration date
+  li
+    input(type="text")
+    button(class="button") top up
+h4 Account Info
+ul
+  li
+    span verified user
+    span {{endUser.data.verified}}
+  li
+    span mobile number
+    span {{endUser.data.username}}
+  li
+    span Country
+    span {{endUser.data.countryCode}}
+  li
+    span Create date
+    span {{endUser.data.creationDate}}
+  li
+    span Gender
+    span {{endUser.data.gender}}
+  li
+    span Email
+    span {{endUser.data.email}}
+  li
+    span Pin
+    span {{endUser.data.pin}}
+  li
+    span Date Of Birth
+    span {{endUser.data.birthDate}}
+  li
+    span Account status
+    span {{endUser.data.accountStatus}}
+h4 App Info
+ul(ng-repeat="device in endUser.data.devices")
+  li
+    span Device
+    span {{device.plaform}}
+  li
+    span APP version number
+    span V{{device.appVersionNumber}}
+  li
+    span Current APP Language
+    span {{device.appLanguage}}
+div
+  a(class="button" ng-click="endUser.suspend()" ng-show="endUser.data.accountStatus == 'ACTIVE'") suspend user
+  a(class="button" ng-click="endUser.reactivate()" ng-show="endUser.data.accountStatus == 'SUSPENDED'") reactivate user
+  a(class="button alert" ng-click="endUser.terminate()") delete user

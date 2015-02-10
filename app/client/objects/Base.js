@@ -14,6 +14,14 @@ class BaseObject {
       _data[key] = initData[key];
     }
   }
+
+  save() {
+    if (this.data._id) {
+      this.update();
+    } else {
+      this.create();
+    }
+  }
 }
 
 export default BaseObject;

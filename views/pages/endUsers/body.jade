@@ -1,0 +1,33 @@
+div(class="account-list row")
+  div(class="large-1 columns")
+  div(class="large-11 large-offset-1 columns")
+    div(class="row")
+      section(role="controls" class="account-list__main-control main-control")
+        div(class="large-5 columns end")
+          p
+            input(type="text" name="daterange" placeholder="Username or User Group Name")
+          p
+            select(name="country")
+              option(value="") Select Country
+              option(value="CHN") China
+              option(value="HKG") Hong Kong
+          p
+            input(type="text" name="keywords" placeholder="Username / mobile number" ng-multiple="true")
+          p
+            input(type="file" file-reader="fileContent" accept="text/csv")
+            div(class="button default large" ng-file-select ng-model="whitelistUploader.files")
+              i(class="fi-upload")
+    div(class="row")
+      aside(class="account-list__slider main-slider" ng-show="$state.current.name.indexOf('index.') > 0")
+        div(class="main-slider__inner-wrapper .inner-wrapper" ui-view="enduser")
+      section(role="contents" class="account-list__block")
+        div(class="large-12 columns")
+          ul(class="account-block-grid-4")
+            li(ng-repeat="user in endUsers")
+              div(class="clearfix")
+                a(ui-sref=".enduser({ carrierId: user.data.carrierId, username: user.data.username })" ui-sref-active="active")
+                  p Username/Mobile No.: {{ user.data.username }}
+                  p Country Code: {{ user.data.countryCode }}
+                  p Register Date: {{ user.data.creationDate }}
+                  p Verified: {{ user.data.verified }}
+

@@ -35,6 +35,10 @@ export function init(nconf) {
 
   ioc.service('PortalUserManager', require('app/lib/portal/UserManager'));
 
+  ioc.constant('MUMS_API_BASE_URL', nconf.get('mumsApi:baseUrl'));
+  ioc.constant('MUMS_API_TIMEOUT', nconf.get('mumsApi:timeout'));
+  ioc.service('EndUsersRequest', require('app/lib/requests/Users'), 'MUMS_API_BASE_URL', 'MUMS_API_TIMEOUT');
+
   return ioc;
 }
 

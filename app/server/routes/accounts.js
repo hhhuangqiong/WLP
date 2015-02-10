@@ -1,25 +1,29 @@
-import nconf from 'nconf';
-import { fetchContainer } from 'app/server/initializers/ioc';
+import { Router }         from 'express';
+import nconf              from 'nconf';
+import Controller         from 'app/server/controllers/account';
+import { fetchContainer } from 'app/server/initializers/ioc'
 
-var express = require('express');
-var di = require('di');
-var passport = require('passport');
-var accountsController = require('app/server/controllers/account');
+var bottle      = fetchContainer(nconf.get('containerName'));
+var accountCtrl = new Controller(bottle.PortalUserManager);
+var router      = Router();
 
-var AccountsRouter = (function () {
-    var ensureAuthenticated = fetchContainer(nconf.get('containerName'), 'middlewares.ensureAuthenticated');
-
-    function AccountsRouter(accountsController) {
-        var _router = express.Router();
-        _router.get('/',              accountsController.index);
-        //_router.post('/', accountsController.createUser);
-        _router.get('/form',          accountsController.form);
-        _router.get('/accountHeader', accountsController.accountHeader);
-        _router.get('/account',       accountsController.account);
-        _router.get('/edit',          ensureAuthenticated, accountsController.showEditForm);
-        return _router;
+router.get('/',function(req, res, next) {
+  res.format({
+    json: function() {
+      return accountCtrl.getAccounts(req, res, next);
+    },
+    html: function() {
+      return accountCtrl.showAccounts(req, res, next);
     }
-    return AccountsRouter;
-})();
-di.annotate(AccountsRouter, new di.Inject(accountsController));
-module.exports = AccountsRouter;
+  });
+});
+
+router.post('/', function(req, res, next) {
+  return accountCtrl.createAccount(req, res, next);
+});
+
+router.get('/edit',         accountCtrl.showAccount);
+router.get('/new',          accountCtrl.showNewForm);
+router.get('/view/header',  accountCtrl.showHeader);
+
+export default router;

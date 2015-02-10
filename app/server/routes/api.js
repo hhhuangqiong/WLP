@@ -1,26 +1,38 @@
-import nconf from 'nconf';
+import { Router }         from 'express';
+import nconf              from 'nconf';
 import { fetchContainer } from 'app/server/initializers/ioc';
+import Controller         from 'app/server/api';
 
-var di        = require('di');
-var express   = require('express');
-var passport  = require('passport');
+var endUsersRequest = fetchContainer(nconf.get('containerName'), 'EndUsersRequest');
+var apiCtrl         = new Controller(endUsersRequest);
 
-var apiController     = require('app/server/api');
-var CompanyController = require('app/server/api/company');
+var router = Router({ mergeParams: true });
 
-var ApiRouter = (function () {
-    var ensureAuthenticated = fetchContainer(nconf.get('containerName'), 'middlewares.ensureAuthenticated');
+router.get('/carriers/:carrierId/users', function(req, res, next) {
+  return apiCtrl.listEndUsers(req, res, next);
+});
 
-    function ApiRouter(apiController, companyController) {
-        var _router = express.Router();
-        _router.get('/users',         ensureAuthenticated, apiController.getUsers);
-        _router.post('/users',        ensureAuthenticated, apiController.newUser);
-        _router.get('/companies',     ensureAuthenticated, companyController.getCompanies);
-        _router.post('/companies',    ensureAuthenticated, companyController.newCompany);
-        _router.put('/companies/:id', ensureAuthenticated, companyController.updateCompany);
-        return _router;
-    }
-    return ApiRouter;
-})();
-di.annotate(ApiRouter, new di.Inject(apiController, CompanyController));
-module.exports = ApiRouter;
+router.get('/carriers/:carrierId/users/:username', function(req, res, next) {
+  return apiCtrl.getEndUserDetails(req, res, next);
+});
+
+router.post('/carriers/:carrierId/users/:username/suspension', function(req, res, next) {
+  return apiCtrl.suspendEndUser(req, res, next);
+});
+
+router.put('/carriers/:carrierId/whitelist', function(req, res, next) {
+  return apiCtrl.whitelistUsers(req, res, next);
+});
+
+router.delete('/carriers/:carrierId/users/:username/suspension', function(req, res, next) {
+  return apiCtrl.reactivateEndUser(req, res, next);
+});
+
+router.delete('/carriers/:carrierId/users/:username', function(req, res, next) {
+    return apiCtrl.terminateEndUser(req, res, next);
+});
+
+export default router;
+
+
+

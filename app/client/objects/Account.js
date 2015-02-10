@@ -4,20 +4,18 @@ class Account extends BaseObject {
 
   constructor($state, $q, ApiService, initData) {
     super($state, $q, ApiService, initData);
-  }
-
-  save() {
-    if (this.data.id) {
-      this.update();
-    } else {
-      this.create();
+    this.methods = {
+      createUser: {
+        url: "/app/accounts",
+        type: "application/json"
+      }
     }
   }
 
   update() {
     this.ApiService.put('users', this.data)
       .then((user) => {
-        this.data.id = user._id;
+        this.data._id = user._id;
         this.$state.transitionTo('accounts.index.new.success');
       })
       .catch(function(err) {
@@ -26,10 +24,10 @@ class Account extends BaseObject {
   }
 
   create() {
-    this.ApiService.post('users', this.data)
+    this.ApiService.post(this.methods.createUser, this.data)
       .then((data) => {
         if (data.result) {
-          this.data.id = data.result._id;
+          this.data._id = data.result._id;
           this.$state.transitionTo('accounts.index.new.success');
         } else {
           this.$state.transitionTo('accounts.index.new.fail');
@@ -41,7 +39,6 @@ class Account extends BaseObject {
   }
 
   toggleUserGroup(groupName) {
-
     if (this.data.assignedGroups == undefined) {
       this.data.assignedGroups = [];
     }

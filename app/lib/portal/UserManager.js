@@ -32,7 +32,7 @@ export default class PortalUserManager {
       var formatted_users = {};
       users.forEach(function(user) {
         var formatted_user = {
-          'id':             user._id,
+          '_id':             user._id,
           'username':       user.username,
           'name':           user.name,
           'status':         user.status,
@@ -45,7 +45,7 @@ export default class PortalUserManager {
           'updateAt':       moment(user.updateAt).format('LLL'),
           'updateBy':       user.updateBy
         };
-        formatted_users[formatted_user.id] = formatted_user;
+        formatted_users[formatted_user._id] = formatted_user;
       });
       cb(null, formatted_users);
     });

@@ -1,19 +1,15 @@
-var di      = require('di');
-var express = require('express');
+import { Router }         from 'express';
+import nconf              from 'nconf';
+import { fetchContainer } from 'app/server/initializers/ioc';
+import EndUsersCtrl       from 'app/server/controllers/endUsers';
 
-import EndUsersController from '../controllers/endUsers';
+var endUsersRequest = fetchContainer(nconf.get('containerName'), 'EndUsersRequest');
+var endUsersCtrl    = new EndUsersCtrl(endUsersRequest);
 
-class EndUsersRouter {
-  constructor(endUsersController) {
+var router          = Router();
 
-    let _router = express.Router();
+router.get('/view/header',  endUsersCtrl.showHeader);
+router.get('/view/body',    endUsersCtrl.showBody);
+router.get('/view/enduser', endUsersCtrl.showEndUser);
 
-    _router.get('/', endUsersController.test);
-
-    return _router;
-  }
-}
-
-di.annotate(EndUsersRouter, new di.Inject(EndUsersController));
-
-export default EndUsersRouter;
+export default router;

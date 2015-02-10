@@ -1,22 +1,35 @@
 extends /layout/layout
+include /mixins/formInput.jade
 
 block content
-  .row
-    .large-8.large-centered.columns
-      h1= title
-      h2.error #{message}
-      form(action="/login" method="POST")
-        p
-          input(name="username" type="text" placeholder="Email" value="#{username || ''}")
-        p
-          input(name="password" type="password" placeholder="Password")
-        p
-          input(name="onetimepassword" type="text" placeholder="Secret Key")
-        if captcha
-          p
-            input(name="captcha" type="text" placeholder="Captcha")
-        p
-          a(href="/forgotpassword") Forgot Password?
-        input(name="rememberMe" type="checkbox")
-        label Remember me
-        input(type="submit").button
+  .row.valign-middle.full-height
+    .input-block__form.login-block(ng-controller="SignInController").large-8.columns
+      .row
+        .input-block__form.login-block__thumbnail.large-5.columns
+          p Image to be placed
+        .input-block__form.login-block__contents.large-7.columns
+          .row
+            .large-12.columns
+              form(name="accountForm" action="/login" method="POST").input-block__form.login-block__form
+                .input-block__form__title.login-block__form__title.large-12.columns
+                  h2 {{'login.title' | translate}}
+                .input-block__form__alert.login-block__form__alert.large-12.columns
+                  h4.error #{message}
+                .large-12.columns
+                  +input('username', 'email', 'Username', 'username')(required email)
+                .large-12.columns
+                  +input('password', 'password', 'Password', 'password')(required)
+                .large-12.columns
+                  +input('onetimepassword', 'text', 'Secret key', 'secretKey')
+                if captcha
+                  .large-12.columns
+                    +input('captcha', 'text', 'Captcha', 'captcha')
+                .large-12.columns
+                  a(href="/forgotpassword") Forgot Password?
+                .large-12.columns
+                  .row
+                    .large-6.columns
+                      +input('rememberMe', 'checkbox', 'Remember me', 'rememberMe')
+                    .large-6.columns
+                      input(type="submit").button.right.small
+

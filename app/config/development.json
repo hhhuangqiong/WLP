@@ -36,13 +36,19 @@
     "session": "fens.me",
     "params": "fens.me"
   },
+  "session": {
+    "cookie": {
+      "maxAge": {
+        "default": 900000
+      }
+    }
+  },
   "cookies": {
     "secret": "$ecrEt",
     "options": {
       "domain": ".m800.com"
     }
   },
-
   "logging": {
     "winston": {
       "transports": [{
@@ -55,5 +61,9 @@
         }
       }]
     }
+  },
+  "mumsApi": {
+    "baseUrl": "http://www.mums.com/api/1.0",
+    "timeout": 5000
   }
 }

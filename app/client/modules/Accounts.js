@@ -19,7 +19,7 @@ var accountModule = angular.module('App.Accounts', ['ui.router', 'ngResource'])
         url: '',
         views: {
           header: {
-            templateUrl: '/app/accounts/accountHeader',
+            templateUrl: '/app/accounts/view/header',
             controller: 'Accounts'
           },
           '': {
@@ -32,7 +32,7 @@ var accountModule = angular.module('App.Accounts', ['ui.router', 'ngResource'])
         url: '/new',
         views: {
           account: {
-            templateUrl: '/app/accounts/form',
+            templateUrl: '/app/accounts/new',
             controller: 'AccountForm'
           }
         },
@@ -62,7 +62,7 @@ var accountModule = angular.module('App.Accounts', ['ui.router', 'ngResource'])
         url: '/:accountId',
         views: {
           account: {
-            templateUrl: 'app/accounts/account',
+            templateUrl: '/app/accounts/edit',
             controller: 'AccountForm'
           }
         },

@@ -1,12 +1,17 @@
-import Account        from '../objects/Account'
+import Account from './../objects/Account'
+import Service from './Service'
 
-class AccountService {
+class AccountService extends Service {
 
   constructor($state, $q, ApiService) {
-    this.$state     = $state;
-    this.$q         = $q;
-    this.ApiService = ApiService;
-    this.accounts   = null;
+    super($state, $q, ApiService, Account);
+    this.methods = {
+      list: {
+        url: "/app/accounts",
+        type: "application/json",
+        method: "get"
+      }
+    }
   }
 
   /**
@@ -16,46 +21,16 @@ class AccountService {
    */
 
   getAccountById(id) {
-    var _account = null;
-
-    this.accounts.forEach(function (item) {
-      if (item.data.id) {
-        if (item.data.id.trim() == id) {
-          _account = item;
-        }
-      }
-    });
-
-    return _account;
+    return this.getEntityById(id);
   }
 
   /**
-   * Get all accounts to be solved in AngularJS
+   * Get all accounts to be resolved in AngularJS
    * @returns {*}
    */
+
   getAccounts() {
-
-    if (this.accounts) {
-      return this.accounts;
-    }
-
-    var deferred = this.ApiService.$q.defer();
-
-    this.ApiService.get('users')
-      .then((response) => {
-
-        // initialize accounts array
-        var _accounts = response.result;
-        this.accounts = [];
-
-        for (var userKey in response.result) {
-          this.newAccount(_accounts[userKey]);
-        }
-
-        return deferred.resolve(this.accounts);
-      });
-
-    return deferred.promise;
+    return this.getEntities();
   }
 
   /**
@@ -65,27 +40,7 @@ class AccountService {
    */
 
   newAccount(initData) {
-    if (this.accounts.length == 0 || (initData !== undefined && initData !== null && initData.id != '')) {
-      // For creating existing Account Object
-      var _account = new Account(this.$state, this.$q, this.ApiService, initData);
-      this.accounts.push(_account);
-      return _account;
-    } else {
-      // For creating new Account Object
-      // Lazy load: if lastObject exists, return it rather than creating new Account Object
-      var lastObject = this.accounts.slice(-1).pop();
-      if (lastObject !== undefined) {
-        if (lastObject.data.id) {
-          var _account = new Account(this.$state, this.$q, this.ApiService, initData);
-          this.accounts.push(_account);
-          return _account;
-        } else {
-          return lastObject;
-        }
-      } else {
-        return lastObject;
-      }
-    }
+    return this.getNewEntity(initData);
   }
 }
 

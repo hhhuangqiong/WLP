@@ -1,19 +1,32 @@
-var di       = require('di');
-var express  = require('express');
-var passport = require('passport');
+import nconf              from 'nconf';
+import { fetchContainer } from 'app/server/initializers/ioc';
+import { Router }         from 'express';
+import CompanyCtrl        from 'app/server/controllers/company';
 
-var CompanyController = require('app/server/controllers/company');
+var companyCtrl         = new CompanyCtrl();
+var ensureAuthenticated = fetchContainer(nconf.get('containerName'), 'middlewares.ensureAuthenticated');
+var router              = Router();
 
-var CompanyRouter = (function () {
-    function CompanyRouter(companyController) {
-        var _router = express.Router();
-        _router.get('/', companyController.index);
-        _router.get('/companyHeader', companyController.companyHeader);
-        _router.get('/form', companyController.new);
-        _router.get('/edit', companyController.edit);
-        return _router;
+router.get('/', ensureAuthenticated, function(req, res, next) {
+  res.format({
+    json: function() {
+      return companyCtrl.getCompanies(req, res, next);
+    },
+    html: function() {
+      return companyCtrl.index(req, res, next);
     }
-    return CompanyRouter;
-})();
-di.annotate(CompanyRouter, new di.Inject(CompanyController));
-module.exports = CompanyRouter;
+  })
+});
+
+router.post('/', ensureAuthenticated, function(req, res, next) {
+  return companyCtrl.newCompany(req, res, next);
+});
+router.put('/companies/:id', ensureAuthenticated, function(req, res, next) {
+  return companyCtrl.updateCompany(req, res, next);
+});
+
+router.get('/companyHeader', companyCtrl.companyHeader);
+router.get('/form',          companyCtrl.new);
+router.get('/edit',          companyCtrl.edit);
+
+export default router;

@@ -61,7 +61,7 @@ var companiesModule = angular.module('App.Companies', ['ui.router', 'ngResource'
         url: '/:companyId',
         views: {
           company: {
-            templateUrl: 'app/companies/edit',
+            templateUrl: '/app/companies/edit',
             controller: 'CompanyForm'
           }
         },

@@ -1,26 +1,66 @@
-// Account is page display PortalUser
-var di = require('di');
-var portalUserManager = require('app/lib/portal/UserManager');
-var Accounts = (function () {
-    function Accounts(portalUserManager) {
-        this.index = function (req, res, next) {
-            res.render('pages/accounts/index');
-        };
-        this.PortalUserManager = portalUserManager;
+var Q     = require('q');
+
+export default class AccountController {
+
+  constructor(portalUserManager) {
+    this.portalUserManager = portalUserManager;
+  }
+
+  getAccounts(req, res, next) {
+    var conditions = [];
+    Q.ninvoke(this.portalUserManager, 'getUsers', conditions).then(function (users) {
+      res.json({
+        "result": users ? users : false
+      });
+    }).catch(function (err) {
+      logger.error('Database error', err.stack);
+      res.json({
+        "result": {}
+      });
+    });
+  }
+
+  createAccount(req, res, next) {
+    var conditions = req.body;
+    console.log(req.body);
+    var author = req.user;
+    // user hasn't logged in
+    if (!req.user) {
+      res.json({
+        "result": {},
+        "message": 'Invalid permission'
+      });
     }
-    Accounts.prototype.account = function (req, res, next) {
-        res.render('pages/accounts/account');
-    };
-    Accounts.prototype.accountHeader = function (req, res, next) {
-        res.render('pages/accounts/header');
-    };
-    Accounts.prototype.form = function (req, res, next) {
-        res.render('pages/accounts/form');
-    };
-    Accounts.prototype.showEditForm = function (req, res, next) {
-        res.render('pages/accounts/edit', {});
-    };
-    return Accounts;
-})();
-di.annotate(Accounts, new di.Inject(portalUserManager));
-module.exports = Accounts;
+    Q.ninvoke(this.portalUserManager, 'newUser', conditions, author).then(function (user) {
+      res.json({
+        "result": user ? user : false
+      });
+    }).catch(function (err) {
+      logger.error(err, 'db-error');
+      res.json({
+        "result": {},
+        "message": err
+      });
+    });
+  }
+
+  showAccount(req, res, next) {
+    res.render('pages/accounts/account', {});
+  }
+
+  showAccounts(req, res, next) {
+    res.render('pages/accounts/index', {});
+  }
+
+  showHeader(req, res, next) {
+    res.render('pages/accounts/header', {});
+  }
+
+  showNewForm(req, res, next) {
+    res.render('pages/accounts/form', {});
+  }
+
+  showEditForm(req, res, next) {
+    res.render('pages/accounts/edit', {});
+  }
+}

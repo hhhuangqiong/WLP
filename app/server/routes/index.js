@@ -1,26 +1,25 @@
-var di       = require('di');
-var injector = new di.Injector([]);
+import nconf                from 'nconf';
+import { fetchContainer }   from 'app/server/initializers/ioc';
+import { Router }           from 'express';
 
-import { Router } from 'express';
-//import endUsersRouter from './endUsers';
-
-var accountsRouter = injector.get(require('app/server/routes/accounts'));
-var apiRouter      = injector.get(require('app/server/routes/api'));
-var appRouter      = injector.get(require('app/server/routes/app'));
-var companyRouter  = injector.get(require('app/server/routes/company'));
-var endUsersRouter = injector.get(require('./endUsers'));
-
-import dashboardRouter from 'app/server/routes/dashboard';
+import accountsRouter       from 'app/server/routes/accounts';
+import apiRouter            from 'app/server/routes/api';
+import appRouter            from 'app/server/routes/app';
+import companyRouter        from 'app/server/routes/company';
+import dashboardRouter      from 'app/server/routes/dashboard';
+import endUsersRouter       from 'app/server/routes/endUsers';
 import forgotPasswordRouter from 'app/server/routes/forgotPassword';
-import loginRouter from 'app/server/routes/login'
-import logoutRouter from 'app/server/routes/logout'
-import signUpRouter from 'app/server/routes/signUp';
+import loginRouter          from 'app/server/routes/login'
+import logoutRouter         from 'app/server/routes/logout'
+import signUpRouter         from 'app/server/routes/signUp';
+
+var ensureAuthenticated = fetchContainer(nconf.get('containerName'), 'middlewares.ensureAuthenticated');
 
 module.exports = (() => {
   return Router()
-    .use('/api',            apiRouter)
+    .use('/api/1.0',        ensureAuthenticated, apiRouter)
     .use('/app',            appRouter)
-    .use('/app/accounts',   accountsRouter)
+    .use('/app/accounts',   ensureAuthenticated, accountsRouter)
     .use('/app/companies',  companyRouter)
     .use('/dashboard',      dashboardRouter)
     .use('/endUsers',       endUsersRouter)

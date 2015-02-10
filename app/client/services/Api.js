@@ -7,25 +7,32 @@ class ApiService {
     this.$log = $log;
   }
 
-  get(resource, objectParams) {
-    return this.execute('get', resource, objectParams);
+  get(methods, objectParams) {
+    return this.execute('get', methods, objectParams);
   }
 
-  post(resource, objectParams) {
-    return this.execute('post', resource, objectParams);
+  post(methods, objectParams) {
+    return this.execute('post', methods, objectParams);
   }
 
-  put(resource, objectParams) {
-    return this.execute('put', resource, objectParams);
+  put(methods, objectParams) {
+    return this.execute('put', methods, objectParams);
   }
 
-  remove(resource, objectParams) {
-    return this.execute('delete', resource, objectParams);
+  remove(methods, objectParams) {
+    return this.execute('delete', methods, objectParams);
   }
 
-  execute(method, resource, objectParams) {
+  execute(methods, objectParams) {
     var deferred = this.$q.defer();
-    this.$http[method](this.composeApiUrl(resource), objectParams)
+    this.$http({
+        url    : methods.url,
+        method : methods.method,
+        data   : objectParams,
+        headers: {
+          'Content-Type': methods.type || 'text/html'
+        }
+      })
       .success(function (data, status, header, config) {
         // passing whole data object rather than data.user
         // not applicable
@@ -36,22 +43,6 @@ class ApiService {
       });
 
     return deferred.promise;
-  }
-
-  /**
-   * Making up Api Url
-   * @param resource
-   * @param id
-   * @returns {string}
-   */
-
-  composeApiUrl(resource, id) {
-    var _url = this.apiUrl + '/' + resource;
-    if (id) {
-      _url += '/' + id;
-    }
-
-    return _url;
   }
 }
 

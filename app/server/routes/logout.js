@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import nconf from 'nconf';
+import nconf      from 'nconf';
 
 module.exports = (function() {
   return Router()

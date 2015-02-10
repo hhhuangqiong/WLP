@@ -3,8 +3,7 @@ var di = require('di');
 var nconf = require('nconf');
 var portalUserManager = require('app/lib/portal/UserManager');
 
-export
-default class ForgotPassword {
+export default class ForgotPassword {
 
   constructor(portalUserManager) {
     this.portalUserManager = portalUserManager;

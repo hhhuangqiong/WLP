@@ -1,0 +1,16 @@
+.input-block {
+
+  &__form {
+
+    &__title {
+      text-transform: uppercase;
+    }
+
+    &__alert {
+
+      h4 {
+        color: red;
+      }
+    }
+  }
+}
