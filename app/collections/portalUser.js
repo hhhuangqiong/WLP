@@ -76,8 +76,10 @@ var portalUserSchema = new mongoose.Schema({
     // TODO introduce enum-like statuses
     default: 'inactive'
   },
+  // Goolge Authenticator
   googleAuth: {
-    type: String
+    key: String,
+    encoding: String
   },
   // TODO convenince method to fetch token by event, e.g., tokenOf('signup')
   tokens: [{
@@ -95,14 +97,14 @@ var portalUserSchema = new mongoose.Schema({
   },
   createBy: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'PortalUser'
+    ref: collectionName
   },
   updateAt: {
     type: Date
   },
   updateBy: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'PortalUser'
+    ref: collectionName
   },
   affiliatedCompany: {
     type: String,
@@ -142,6 +144,20 @@ portalUserSchema.method('addToken', function(event, val) {
   tokens.push(this.constructor.makeToken(event, val));
   this.tokens = tokens;
   return this;
+});
+
+/**
+ * Set the Google Authenticator information
+ *
+ * TODO guard the encoding
+ *
+ * @param {String} key Value returned from the key generator
+ * @param {String} encoding Allowed: 'base32', 'ascii', or 'hex'
+ *
+ * @return this
+ */
+portalUserSchema.method('googleAuthInfo', function(key, encoding) {
+  return this.set('googleAuth',{ key: key, encoding: encoding });
 });
 
 /**

@@ -15,8 +15,22 @@ describe 'Portal User', ->
 
         done()
 
+  describe '#googleAuthInfo', ->
+
+    it 'should apply the supplied value', ->
+      key      = 'key'
+      encoding = 'base32'
+
+      p = new PortalUser()
+      ret = p.googleAuthInfo key, encoding
+
+      expect(ret).to.be.an.instanceof PortalUser
+
+      expect p.googleAuth.toObject()
+        .to.eql { key: key, encoding: encoding }
+
   describe '#addToken', ->
-    p         = null;
+    p         = null
     event     = 'signup'
     predicate = (t) -> t.event == event
 

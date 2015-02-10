@@ -1,14 +1,13 @@
-var express = require('express');
-var di = require('di');
-var signUpController = require('app/server/controllers/signUp');
-var SignUpRouter = (function () {
-    function SignUpRouter(signUpController) {
-        var _router = express.Router();
-        _router.get('/', signUpController.preSignUp);
-        _router.post('/process', signUpController.signUp);
-        return _router;
-    }
-    return SignUpRouter;
-})();
-di.annotate(SignUpRouter, new di.Inject(signUpController));
+var di         = require('di');
+var express    = require('express');
+var controller = require('app/server/controllers/signUp');
+
+var SignUpRouter = (controller) => {
+  var _router = express.Router();
+  _router.get('/',         controller.verifyRequest, controller.preSignUp);
+  _router.post('/process', controller.signUp);
+  return _router;
+}
+
+di.annotate(SignUpRouter, new di.Inject(controller));
 module.exports = SignUpRouter;
