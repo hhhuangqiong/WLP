@@ -1,8 +1,8 @@
 # consider 'gulp-load-plugins' when the deps getting more
 
-console.time 'Loading plugins';
+console.time 'Loading plugins'
 
-argv        = require('yargs').argv
+{argv}      = require 'yargs'
 buffer      = require 'vinyl-buffer'
 del         = require 'del'
 eventStream = require 'event-stream'
@@ -11,12 +11,13 @@ nodemon     = require 'gulp-nodemon'
 source      = require 'vinyl-source-stream'
 to5         = require 'gulp-6to5'
 
-# 1 of the reasons behind using 'yuidoc', https://github.com/jsBoot/gulp-jsdoc#big-fat-warning
+# 1 of the reasons behind using 'yuidoc'
+# https://github.com/jsBoot/gulp-jsdoc#big-fat-warning
 yuidoc       = require 'gulp-yuidoc'
 
-browserify  = require 'browserify';
+browserify  = require 'browserify'
 ngAnnotate  = require 'browserify-ngannotate'
-to5ify      = require '6to5ify';
+to5ify      = require '6to5ify'
 
 # 'libsass' version, http://sass-compatibility.github.io/
 sass         = require 'gulp-sass'
@@ -28,7 +29,7 @@ gulpif      = require 'gulp-if'
 browserSync = require 'browser-sync'
 extend      = require 'gulp-extend'
 
-console.timeEnd 'Loading plugins';
+console.timeEnd 'Loading plugins'
 
 src =
   allJS:  'app/**/*.js'
@@ -40,7 +41,7 @@ dest =
 # not trigger 'browser-sync'; `gulp browser-sync` separately if needed
 # let 'watch' be the default for now
 gulp.task 'default', ['clean', 'locale', 'nodemon', 'watch'], ->
-  console.log 'done'
+  console.log 'done \uD83D\uDE80'
   return
 
 gulp.task 'watch', ->

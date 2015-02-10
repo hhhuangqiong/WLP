@@ -9,6 +9,28 @@ describe 'SignUp service', ->
     user      = null
     signUp    = new SignUp()
 
+    describe 'invalid parameter(s)', ->
+      describe 'invalid user', ->
+        it 'should throw Error', ->
+          expect ->
+            signUp.verify {}, 'token', new Date()
+          .to.throw /portaluser/i
+
+      describe 'invalid token value', ->
+        it 'should throw Error', ->
+          expect ->
+            signUp.verify new PortalUser(), '', new Date()
+          .to.throw /required/i
+
+      describe 'invalid "after" date', ->
+        it 'should throw Error', ->
+          expect ->
+            signUp.verify new PortalUser(), 'tokenValue', ''
+          .to.throw /date/i
+          expect ->
+            signUp.verify new PortalUser(), 'tokenValue', new Date()
+          .to.not.throw /date/i
+
     describe 'for users that do not have token', ->
       beforeEach ->
         user = new PortalUser()
@@ -16,20 +38,20 @@ describe 'SignUp service', ->
       it 'should throw Error', ->
         expect ->
           signUp.verify user, 'dontcare', new Date()
-        .to.throw Error
+        .to.throw /token/i
 
     describe 'for users that have a valid token', ->
       compareTo = 'cannedValue'
       clock = null
+      signUpEvent = 'signup' # all lowercase
 
-      describe 'And the token has not expired', ->
+      describe 'and the token has not expired', ->
         beforeEach ->
           clock = sinon.useFakeTimers()
           clock.tick 5000
 
           user = new PortalUser()
-          # extract as constants?
-          user.addToken 'signup', compareTo
+          user.addToken signUpEvent, compareTo
 
         afterEach ->
           clock.restore()
@@ -46,7 +68,7 @@ describe 'SignUp service', ->
           clock = sinon.useFakeTimers()
 
           user = new PortalUser()
-          user.addToken 'signup', compareTo
+          user.addToken signUpEvent, compareTo
 
         afterEach ->
           clock.restore()
