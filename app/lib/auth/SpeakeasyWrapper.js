@@ -3,8 +3,10 @@ var speakeasy  = require('speakeasy');
 
 const ENCODINGS = ['ascii', 'hex', 'base32'];
 
+/**
+ * @deprecated
+ */
 export default class SpeakeasyWrapper {
-
   /**
    * An wrapper object of the 'Speakeasy' module
    * See {@link https://github.com/markbao/speakeasy}
@@ -20,6 +22,7 @@ export default class SpeakeasyWrapper {
       throw new Error(`Unknown encoding: ${encoding}`);
 
     this.encoding = encoding || 'ascii';
+    this.name     = opts.name || '';
   }
 
   /**
@@ -31,9 +34,9 @@ export default class SpeakeasyWrapper {
    * @param {String} [name=''] Show up as the label after scanning
    * @return {String}
    */
-  qrCodeURL(name = '') {
-    // do not care about the lenght for now
-    var qrOpts = { qr_codes: true, name: name, length: 32 };
+  qrCodeURL(name = '', length = 32) { // do not care about the length for now
+    // 'qr_codes' are not for Google Authenticator
+    var qrOpts = { qr_codes: true, name: name || this.name, length: length };
 
     // how to use `Object.assign` with 6to5?
     var result = speakeasy.generate_key(_.assign({}, qrOpts));

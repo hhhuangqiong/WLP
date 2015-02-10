@@ -79,7 +79,9 @@ var portalUserSchema = new mongoose.Schema({
   // Goolge Authenticator
   googleAuth: {
     key: String,
-    encoding: String
+    encoding: String,
+    //TODO enforce valid url
+    qrCodeUrl: String
   },
   // TODO convenince method to fetch token by event, e.g., tokenOf('signup')
   tokens: [{
@@ -149,15 +151,15 @@ portalUserSchema.method('addToken', function(event, val) {
 /**
  * Set the Google Authenticator information
  *
- * TODO guard the encoding
+ * Google Authentiator only support 'base32'?
  *
- * @param {String} key Value returned from the key generator
- * @param {String} encoding Allowed: 'base32', 'ascii', or 'hex'
- *
+ * @param {String} [name] show up as the label after scanning
+ * @param {Number} [length=32] length of the generated secret key
  * @return this
  */
-portalUserSchema.method('googleAuthInfo', function(key, encoding) {
-  return this.set('googleAuth',{ key: key, encoding: encoding });
+portalUserSchema.method('googleAuthInfo', function(name = '', length = 32) {
+  var result = speakeasy.generate_key({lenght: length, google_auth_qr: true, name: name});
+  return this.set('googleAuth', { key: result.base32, encoding: 'base32', qrCodeUrl: result.google_auth_qr });
 });
 
 /**
@@ -214,15 +216,12 @@ portalUserSchema.method('isTokenExpired', function(event, n, unit) {
   return moment(token.createAt).isBefore(compareTo);
 });
 
-portalUserSchema.method('hasValidOneTimePassword', function(password) {
-  // assume root user does not have 'googleAuth' property
+portalUserSchema.method('hasValidOneTimePassword', function(number) {
+  // assume root user does not need 'googleAuth'
   if (this.isRoot) return true;
 
-  var secret = speakeasy.time({
-    key: this.googleAuth,
-    encoding: 'base32'
-  });
-  return password === secret;
+  var googleAuth = this.get('googleAuth') || {};
+  return number === speakeasy.time({ key: googleAuth.key, encoding: googleAuth.encoding });
 });
 
 /**

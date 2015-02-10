@@ -55,17 +55,9 @@ var SignUp = (function() {
       }
 
       function prepareGoogleAuthQRCode(user) {
-        var qRCode = speakeasy.generate_key({
-          name: 'M800 Whitelabel Portal Sign Up',
-          lenght: 20,
-          google_auth_qr: true
-        });
-
-        //temporary; should read from config
-        user.googleAuthInfo(qRCode.base32, 'base32');
-
-        req.locals = {};
-        req.locals.google_auth_qr = qRCode.google_auth_qr;
+        //TODO read 'name' from config
+        var googleAuth = user.googleAuthInfo('M800 Whitelabel Portal Sign Up').get('googleAuth');
+        req.locals.google_auth_qr = googleAuth.qrCodeUrl;
         return user;
       }
 
@@ -85,6 +77,7 @@ var SignUp = (function() {
         return user;
       }
     };
+
     this.signUp = function(req, res, next) {
       var PortalUserManager = _this.PortalUserManager;
       Q(verifyIdentity(req)).then(verifyPassword).then(getUserAndSave).then(function() {

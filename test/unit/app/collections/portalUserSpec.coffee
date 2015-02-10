@@ -17,17 +17,14 @@ describe 'Portal User', ->
 
   describe '#googleAuthInfo', ->
 
-    it 'should apply the supplied value', ->
-      key      = 'key'
-      encoding = 'base32'
-
+    it 'should apply the generated values', ->
       p = new PortalUser()
-      ret = p.googleAuthInfo key, encoding
+      ret = p.googleAuthInfo()
 
       expect(ret).to.be.an.instanceof PortalUser
 
       expect p.googleAuth.toObject()
-        .to.eql { key: key, encoding: encoding }
+        .to.have.keys ['key', 'encoding', 'qrCodeUrl']
 
   describe '#addToken', ->
     p         = null
