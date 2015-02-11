@@ -7,16 +7,16 @@ var PortalUser = require('app/collections/portalUser');
 const SIGNUP_EVENT = 'signup';
 
 export default class SignUp {
-
   /**
    * Verify if the username has a valid signup status/info
    *
+   * @method verify
    * @param {PortalUser} user
    * @param {String} tokenValue
    * @param {Date} after The date which token should be created after
    *
    * @throws Will throw an error if the user passed doesn't have the token
-   *
+   * @return {Boolean}
    */
   verify(user, tokenValue, after) {
     if(_.isEmpty(tokenValue)) throw new Error('Token value is required');

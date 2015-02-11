@@ -1,7 +1,7 @@
-/// <reference path='../../../typings/node/node.d.ts' />
 var emailTemplates = require('email-templates');
-var fs = require('fs');
-var logger = require('winston');
+var fs             = require('fs');
+var logger         = require('winston');
+
 var TemplateMailer = module.exports = function (mailer, opts) {
     if (!mailer)
         throw new Error('mailer is required');
