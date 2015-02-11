@@ -7,13 +7,10 @@ buffer      = require 'vinyl-buffer'
 del         = require 'del'
 eventStream = require 'event-stream'
 gulp        = require 'gulp'
+gutil       = require 'gulp-util'
 nodemon     = require 'gulp-nodemon'
 source      = require 'vinyl-source-stream'
 to5         = require 'gulp-6to5'
-
-# 1 of the reasons behind using 'yuidoc'
-# https://github.com/jsBoot/gulp-jsdoc#big-fat-warning
-yuidoc       = require 'gulp-yuidoc'
 
 browserify  = require 'browserify'
 ngAnnotate  = require 'browserify-ngannotate'
@@ -25,7 +22,6 @@ sourcemaps   = require 'gulp-sourcemaps'
 autoprefixer = require 'gulp-autoprefixer'
 
 concat      = require 'gulp-concat'
-gulpif      = require 'gulp-if'
 extend      = require 'gulp-extend'
 
 console.timeEnd 'Loading plugins'
@@ -56,8 +52,11 @@ gulp.task 'watch', ->
 gulp.task 'clean', ->
   del(['node_modules/app', 'build/**/*'])
 
+# 1 of the reasons behind using 'yuidoc'
+# https://github.com/jsBoot/gulp-jsdoc#big-fat-warning
 # name as jsdoc on purpose
 gulp.task 'jsdoc', ['6to5'], ->
+  yuidoc = require 'gulp-yuidoc'
   gulp.src "#{dest.node}/**/*.js"
     .pipe yuidoc()
     .pipe gulp.dest 'build/docs'
@@ -69,7 +68,7 @@ gulp.task 'scss', ->
     .pipe autoprefixer( browsers: ['last 2 versions'] )
     .pipe sourcemaps.write '.'
     .pipe gulp.dest 'public/stylesheets'
-    .pipe gulpif(browserSync && browserSync.active, browserSync.reload {stream: true})
+    .pipe (if ( browserSync? && browserSync.active ) then browserSync.reload {stream: true} else gutil.noop())
 
 gulp.task '6to5', ->
   gulp.src src.allJS
