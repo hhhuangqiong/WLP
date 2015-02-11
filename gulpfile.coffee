@@ -26,10 +26,12 @@ autoprefixer = require 'gulp-autoprefixer'
 
 concat      = require 'gulp-concat'
 gulpif      = require 'gulp-if'
-browserSync = require 'browser-sync'
 extend      = require 'gulp-extend'
 
 console.timeEnd 'Loading plugins'
+
+# reduce startup loading time
+browserSync = null
 
 src =
   allJS:  'app/**/*.js'
@@ -67,7 +69,7 @@ gulp.task 'scss', ->
     .pipe autoprefixer( browsers: ['last 2 versions'] )
     .pipe sourcemaps.write '.'
     .pipe gulp.dest 'public/stylesheets'
-    .pipe gulpif(browserSync.active, browserSync.reload {stream: true})
+    .pipe gulpif(browserSync && browserSync.active, browserSync.reload {stream: true})
 
 gulp.task '6to5', ->
   gulp.src src.allJS
@@ -77,13 +79,13 @@ gulp.task '6to5', ->
     .pipe gulp.dest dest.node
 
 gulp.task '6to5-ng', ->
-  browserify({ entries: './app/client/WhiteLabel.js', debug: true })
+  browserify { entries: './app/client/WhiteLabel.js', debug: true }
     .transform(to5ify)
     .transform(ngAnnotate)
     .bundle()
-    .pipe(source('application.js'))
-    .pipe(buffer())
-    .pipe(gulp.dest('public/javascript'));
+    .pipe source('application.js')
+    .pipe buffer()
+    .pipe gulp.dest('public/javascript')
 
 gulp.task 'nodemon', ['scss', '6to5', '6to5-ng'], ->
   nodemon
@@ -98,8 +100,9 @@ gulp.task 'nodemon', ['scss', '6to5', '6to5-ng'], ->
 
 # intentionally not using `['nodemon']` as deps
 gulp.task 'browser-sync', ->
+  browserSync = require 'browser-sync'
   browserSync
-    # host & port for your express app
+    # host & port for Express app
     proxy: 'localhost:3000'
     startPath: '/login'
     port: 3333
