@@ -1,13 +1,15 @@
-var di         = require('di');
-var express    = require('express');
-var controller = require('app/server/controllers/signUp');
+import { Router } from 'express';
+import nconf from 'nconf';
 
-var SignUpRouter = (controller) => {
-  var _router = express.Router();
-  _router.get('/',         controller.verifyRequest, controller.preSignUp);
-  _router.post('/process', controller.signUp);
-  return _router;
-}
+import Controller from 'app/server/controllers/signUp';
+import { fetchContainer } from 'app/server/initializers/ioc';
 
-di.annotate(SignUpRouter, new di.Inject(controller));
-module.exports = SignUpRouter;
+module.exports = (() => {
+  // DRY this with the one in 'forgotPassword' router
+  var userManager = fetchContainer(nconf.get('containerName'), 'UserManager');
+  var controller  = new Controller(userManager);
+
+  return Router()
+    .get('/',         controller.verifyRequest, controller.preSignUp)
+    .post('/process', controller.signUp);
+}());

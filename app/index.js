@@ -29,7 +29,7 @@ function initialize(port) {
   // database initialization + data seeding
   require('app/server/initializers/database')(nconf.get('mongodb:uri'), require('app/server/initializers/dataseed')(path.join(PROJ_ROOT, 'app/data/rootUser.json')));
 
-  var container = require('app/server/initializers/ioc')(nconf);
+  var container = require('app/server/initializers/ioc').init(nconf);
 
   require('app/server/initializers/logging')();
   require('app/server/initializers/viewHelpers')(app);

@@ -1,46 +1,31 @@
 var di       = require('di');
-var express  = require('express');
 var injector = new di.Injector([]);
 
-var accountsRouter       = require('app/server/routes/accounts');
-var apiRouter            = require('app/server/routes/api');
-var appRouter            = require('app/server/routes/app');
-var companyRouter        = require('app/server/routes/company');
-var dashboardRouter      = require('app/server/routes/dashboard');
-var forgotPasswordRouter = require('app/server/routes/forgotPassword');
-var loginRouter          = require('app/server/routes/login');
-var logoutRouter         = require('app/server/routes/logout');
-var signUpRouter         = require('app/server/routes/signup');
-
+import { Router } from 'express';
 import endUsersRouter from './endUsers';
 
-var accountsRoutes       = injector.get(accountsRouter);
-var apiRoutes            = injector.get(apiRouter);
-var appRoutes            = injector.get(appRouter);
-var companyRoutes        = injector.get(companyRouter);
-var dashboardRoutes      = injector.get(dashboardRouter);
-var endUsersRoutes       = injector.get(endUsersRouter);
-var forgotPasswordRoutes = injector.get(forgotPasswordRouter);
-var loginRoutes          = injector.get(loginRouter);
-var logoutRoutes         = injector.get(logoutRouter);
-var signUpRoutes         = injector.get(signUpRouter);
+var accountsRouter       = injector.get(require('app/server/routes/accounts'));
+var apiRouter            = injector.get(require('app/server/routes/api'));
+var appRouter            = injector.get(require('app/server/routes/app'));
+var companyRouter        = injector.get(require('app/server/routes/company'));
+var endUsersRouter       = injector.get(endUsersRouter);
 
-var Router = (function () {
-    function Router() {
-        var _router = express.Router();
-        _router.use('/api',            apiRoutes);
-        _router.use('/app',            appRoutes);
-        _router.use('/app/accounts',   accountsRoutes);
-        _router.use('/app/companies',  companyRoutes);
-        _router.use('/dashboard',      dashboardRoutes);
-        _router.use('/endUsers',       endUsersRoutes);
-        _router.use('/forgotpassword', forgotPasswordRoutes);
-        _router.use('/login',          loginRoutes);
-        _router.use('/logout',         logoutRoutes);
-        _router.use('/signup',         signUpRoutes);
-        return _router;
-    }
-    return Router;
+import dashboardRouter from 'app/server/routes/dashboard';
+import forgotPasswordRouter from 'app/server/routes/forgotPassword';
+import loginRouter from 'app/server/routes/login'
+import logoutRouter from 'app/server/routes/logout'
+import signUpRouter from 'app/server/routes/signUp';
+
+module.exports = (() => {
+  return Router()
+    .use('/api',            apiRouter)
+    .use('/app',            appRouter)
+    .use('/app/accounts',   accountsRouter)
+    .use('/app/companies',  companyRouter)
+    .use('/dashboard',      dashboardRouter)
+    .use('/endUsers',       endUsersRouter)
+    .use('/forgotpassword', forgotPasswordRouter)
+    .use('/login',          loginRouter)
+    .use('/logout',         logoutRouter)
+    .use('/signup',         signUpRouter);
 })();
-var router = new Router();
-module.exports = router;
