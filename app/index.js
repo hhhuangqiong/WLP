@@ -29,7 +29,7 @@ function initialize(port) {
   // database initialization + data seeding
   require('app/server/initializers/database')(nconf.get('mongodb:uri'), require('app/server/initializers/dataseed')(path.join(PROJ_ROOT, 'app/data/rootUser.json')));
 
-  var container = require('app/server/initializers/ioc').init(nconf);
+  var ioc = require('app/server/initializers/ioc').init(nconf);
 
   require('app/server/initializers/logging')();
   require('app/server/initializers/viewHelpers')(app);
@@ -61,12 +61,14 @@ function initialize(port) {
   app.use(cookieParser(nconf.get('cookies:secret'), nconf.get('cookies:options')));
 
   // app.use(favicon(__dirname + '/public/favicon.ico'));
+
   // font resources to be replaced before static resources
   app.get('/fonts/*', (req, res, next) => {
-    res.header("Access-Control-Allow-Origin", "*");
-    res.header("Access-Control-Allow-Headers", "X-Requested-With");
+    res.header('Access-Control-Allow-Origin', '*');
+    res.header('Access-Control-Allow-Headers', 'X-Requested-With');
     next();
   });
+
   // static resources
   app.use(express.static(path.join(PROJ_ROOT, 'public')));
 
@@ -79,14 +81,17 @@ function initialize(port) {
 
   app.use(morgan('dev'));
 
-  var passport = require('app/server/initializers/passport')(require('app/lib/portal/UserManager'));
+  var passport = require('app/server/initializers/passport')(ioc.container.PortalUserManager);
   app.use(passport.initialize());
+  // ensure express.session() is before passport.session()
   app.use(passport.session());
 
   app.use(flash());
+
   // Routes
   var routes = require('app/server/routes');
   app.use(routes);
+
   // catch 404 and forward to error handler
   app.use(function(req, res, next) {
     var err = new Error('Not Found');
@@ -94,6 +99,7 @@ function initialize(port) {
     err.status = 404;
     next(err);
   });
+
   // error handlers
   app.use(function(err, req, res, next) {
     var view, status = err.status || 500;
@@ -111,4 +117,5 @@ function initialize(port) {
   });
   return app;
 }
+
 exports.initialize = initialize;

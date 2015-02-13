@@ -22,7 +22,7 @@ export function init(nconf) {
   ioc.service('Mailer', require('app/lib/mailer/mailer'), 'SmtpTransport');
   ioc.service('TemplateMailer', require('app/lib/mailer/templateMailer'), 'Mailer', 'MAIL_TMPL_CONFIG');
 
-  ioc.service('UserManager', require('app/lib/portal/UserManager'));
+  ioc.service('PortalUserManager', require('app/lib/portal/UserManager'));
 
   return ioc;
 }

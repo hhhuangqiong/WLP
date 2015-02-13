@@ -3,7 +3,6 @@ var Q                 = require('q');
 
 // because we don't have password strenght requirement at the moment
 var owasp             = require('owasp-password-strength-test');
-var portalUserManager = require('app/lib/portal/UserManager');
 
 var nconf = require('nconf');
 
