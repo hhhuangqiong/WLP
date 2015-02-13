@@ -81,7 +81,7 @@ function initialize(port) {
 
   app.use(morgan('dev'));
 
-  var passport = require('app/server/initializers/passport')(ioc.container.PortalUserManager);
+  var passport = require('app/server/initializers/passport')();
   app.use(passport.initialize());
   // ensure express.session() is before passport.session()
   app.use(passport.session());

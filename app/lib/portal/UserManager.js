@@ -4,9 +4,10 @@ var moment     = require('moment');
 
 var PortalUser = require('app/collections/portalUser');
 
+import SignUp from 'app/lib/portal/SignUp';
+
 /**
  * @class PortalUserManager
- *
  */
 export default class PortalUserManager {
 
@@ -31,18 +32,18 @@ export default class PortalUserManager {
       var formatted_users = {};
       users.forEach(function(user) {
         var formatted_user = {
-          "id":             user._id,
-          "username":       user.username,
-          "name":           user.name,
-          "status":         user.status,
-          "isVerified":     user.isVerified,
-          "assignedGroups": user.assignedGroups,
-          "carrierDomains": user.carrierDomains,
-          "createBy":       user.createBy,
+          'id':             user._id,
+          'username':       user.username,
+          'name':           user.name,
+          'status':         user.status,
+          'isVerified':     user.isVerified,
+          'assignedGroups': user.assignedGroups,
+          'carrierDomains': user.carrierDomains,
+          'createBy':       user.createBy,
           // date formatting could be left to view layer
-          "createAt":       moment(user.createAt).format('LLL'),
-          "updateAt":       moment(user.updateAt).format('LLL'),
-          "updateBy":       user.updateBy
+          'createAt':       moment(user.createAt).format('LLL'),
+          'updateAt':       moment(user.updateAt).format('LLL'),
+          'updateBy':       user.updateBy
         };
         formatted_users[formatted_user.id] = formatted_user;
       });
@@ -80,11 +81,12 @@ export default class PortalUserManager {
    * @param {String} token
    * @param {Function} done
    */
-  verifySignUpToken(token, done) {
+  //verifySignUpToken(token, done) {
+  verifySignUpToken(username, token, done) {
     logger.debug('verifying sign up token');
     PortalUser.findOne({
-      "token.signUp.token": token,
-      "token.signUp.expired": false
+      'token.signUp.token':   token,
+      'token.signUp.expired': false
     }, function(err, user) {
       if (err) {
         logger.error(err, 'db-error');
@@ -98,39 +100,6 @@ export default class PortalUserManager {
     });
   }
 
-  /**
-   * Verify PortalUser Login Data for Passport.js
-   *
-   * @method verifyUser
-   * @param {String} username Username
-   * @param {String} password Password
-   * @param {Function} done Callback from Passport.js
-   * @example
-   *    portalUserManager.verifyUser('username', 'password', done);
-   */
-  verifyUser(username, password, done) {
-    logger.debug('verifying user login data');
-    PortalUser.findOne({
-      username: username
-    }, function(err, user) {
-      if (err) {
-        logger.error(err);
-        return done(err);
-      }
-      if (!user || !user.isVerified) {
-        logger.debug('Invalid username %s', username);
-        return done(null, false, {
-          message: 'Unknown user or invalid password'
-        });
-      }
-      if (!user.isValidPassword(password)) {
-        logger.debug('Invalid user password %s', password);
-        return done(null, false, {
-          message: 'Unknown user or invalid password'
-        });
-      }
-      return done(null, user);
-    });
-  }
+  // TODO add a method to check if the user is verified
 }
 

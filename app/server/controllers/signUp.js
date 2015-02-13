@@ -42,7 +42,8 @@ export default class Signup {
 
     //TODO veriy + expire logic could be grouped under a single method in SignUp service
     function verifyUser(token) {
-      return Q.ninvoke(this.portalUserManager, 'verifySignUpToken', token);
+      // quick & dirty way for not handling the flow now
+      throw new Error('To be implemented');
     }
 
     function expireToken(user) {
