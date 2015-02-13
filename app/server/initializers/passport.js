@@ -31,11 +31,5 @@ export default function setup() {
     });
   }));
 
-  // TODO maybe extract this part into express middleware
-  passport.ensureAuthenticated = (req, res, next) => {
-    if (req.isAuthenticated()) return next();
-    res.redirect('/login');
-  };
-
   return passport;
 }

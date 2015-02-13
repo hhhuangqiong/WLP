@@ -1,3 +1,4 @@
+// Account is page display PortalUser
 var di = require('di');
 var portalUserManager = require('app/lib/portal/UserManager');
 var Accounts = (function () {

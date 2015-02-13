@@ -4,7 +4,6 @@ var moment    = require('moment');
 var mongoose  = require('mongoose');
 var randtoken = require('rand-token');
 var speakeasy = require('speakeasy');
-var util      = require('util');
 
 var collectionName = 'PortalUser';
 
@@ -108,6 +107,7 @@ var portalUserSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: collectionName
   },
+  // TODO use 'ref' instead
   affiliatedCompany: {
     type: String,
     required: true
@@ -210,7 +210,7 @@ portalUserSchema.method('tokenOf', function(event) {
  */
 portalUserSchema.method('isTokenExpired', function(event, n, unit) {
   var token = this.tokenOf(event);
-  if(!token) throw new Error(util.format('No token of "%s"', event));
+  if(!token) throw new Error(`No token of "${event}"`);
 
   var compareTo = moment().subtract(n, unit);
   return moment(token.createAt).isBefore(compareTo);

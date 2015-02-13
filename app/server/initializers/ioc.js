@@ -1,18 +1,24 @@
 import Bottle from 'bottlejs';
 import path from 'path';
 
+import ensureAuthenticated from 'app/server/middlewares/ensureAuthenticated';
+
 /**
  * Initalize the IoC container
  *
  * @param {*} nconf nconf instance
  */
 export function init(nconf) {
-  // intentionally not calling with `new`
+  // intentionally not calling with `new`; otherwise `fetchContainer` cannot work
   var ioc = Bottle(nconf.get('containerName'));
 
   // NB: relative to 'node_modules/'
   ioc.constant('MAIL_TMPL_DIR', path.resolve(__dirname, '../../../../mail/templates'));
   ioc.constant('MAIL_TMPL_CONFIG', { templatesDir: ioc.container.MAIL_TMPL_DIR });
+
+  ioc.factory('middlewares.ensureAuthenticated', (container) => {
+    return ensureAuthenticated(nconf.get('landing:unauthenticated:path'));
+  });
 
   ioc.factory('SmtpTransport', container => {
     var transport = require('app/lib/mailer/transports/smtp');
@@ -47,8 +53,12 @@ export function init(nconf) {
  */
 export function fetchContainer(name, depIdentifer) {
   var bottle = Bottle.pop(name);
-  if(!depIdentifer)
+  if(!depIdentifer) {
     return bottle;
-  else
-    return bottle.container[depIdentifer];
+  } else {
+    //TODO prevent the 'identifier.' case
+    return depIdentifer.split('.').reduce( (result, key) => {
+      return result[key];
+    }, bottle.container);
+  }
 }
