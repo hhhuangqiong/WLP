@@ -4,7 +4,8 @@ import path from 'path';
 import ensureAuthenticated from 'app/server/middlewares/ensureAuthenticated';
 
 /**
- * Initalize the IoC container
+ * Initalize the IoC containero
+ * The registered factory(s) seems to be lazied loaded.
  *
  * @param {*} nconf nconf instance
  */
@@ -18,6 +19,10 @@ export function init(nconf) {
 
   ioc.factory('middlewares.ensureAuthenticated', (container) => {
     return ensureAuthenticated(nconf.get('landing:unauthenticated:path'));
+  });
+
+  ioc.factory('middlewares.flash', (container) => {
+    return require('app/server/middlewares/flash')();
   });
 
   ioc.factory('SmtpTransport', container => {
@@ -54,7 +59,7 @@ export function init(nconf) {
 export function fetchContainer(name, depIdentifer) {
   var bottle = Bottle.pop(name);
   if(!depIdentifer) {
-    return bottle;
+    return bottle.container;
   } else {
     //TODO prevent the 'identifier.' case
     return depIdentifer.split('.').reduce( (result, key) => {

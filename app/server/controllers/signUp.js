@@ -1,15 +1,25 @@
+import moment from 'moment';
+import nconf from 'nconf';
+import Q from 'q';
+
 var logger            = require('winston');
-var Q                 = require('q');
 
-// because we don't have password strenght requirement at the moment
-var owasp             = require('owasp-password-strength-test');
+// because we don't have password strength requirement at the moment
+var owasp      = require('owasp-password-strength-test');
 
-var nconf = require('nconf');
+var PortalUser = require('app/collections/portalUser');
+var SignUp     = require('app/lib/portal/SignUp');
+
+const INVALID_PATH = '/signup/invalid';
 
 export default class Signup {
 
   constructor(portalUserManager) {
     this.portalUserManager = portalUserManager;
+  }
+
+  invalidSignUp(req, res) {
+    res.render('pages/signUp/invalid');
   }
 
   verifyRequest(req, res, next) {
@@ -18,10 +28,50 @@ export default class Signup {
 
     var errors = req.validationErrors();
     if (errors) {
-      next(new Error('Invalid signup request'));
+      req.flash('messages', 'Missing required parameter(s)');
+      req.flash('messageType', 'warning');
+      res.redirect(INVALID_PATH);
     } else {
       next();
     }
+  }
+
+  /**
+   * Validate if the user has a valid & not-expired sign up token
+   *
+   * TODO
+   * - i18n-ize the message
+   * - the error handling page
+   */
+  validateSignUpUser(req, res, next) {
+    Q.ninvoke(PortalUser, 'findOne', { username: req.sanitize('username').trim() })
+      .then((user) => {
+        var tokenValue  = req.sanitize('token').trim();
+        var tokenConfig = nconf.get('signUp:token:expiry');
+        var compareTo   = moment().subtract(tokenConfig.value, tokenConfig.unit).toDate();
+
+        try {
+          if(SignUp.verify(user, tokenValue, compareTo)){
+            // probably not needed, let see
+            req.signUpUser = user;
+            next();
+          } else {
+            // redirect to another page?
+            //TODO any messageType
+            req.flash('messages', 'Invalid token or the token has already been expired');
+            req.flash('messageType', 'warning');
+            res.redirect(INVALID_PATH);
+          }
+        } catch (e) {
+          req.flash('messages', 'User does not have a valid sign up request');
+          req.flash('messageType', 'warning');
+          res.redirect(INVALID_PATH);
+        }
+      })
+      .catch((err)=>{
+        logger.error('Error during validating sign up user', err.stack);
+        next(err);
+      });
   }
 
   preSignUp(req, res, next) {
@@ -55,8 +105,7 @@ export default class Signup {
     }
 
     function prepareGoogleAuthQRCode(user) {
-      //TODO read 'name' from config
-      var googleAuth = user.googleAuthInfo('M800 Whitelabel Portal Sign Up').get('googleAuth');
+      var googleAuth = user.googleAuthInfo(nconf.get('speakeasy:name')).get('googleAuth');
       req.locals.google_auth_qr = googleAuth.qrCodeUrl;
       return user;
     }

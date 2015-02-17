@@ -1,0 +1,9 @@
+// easier for standalone testing with CLI
+include ../../mixins/zf/alerts
+
+if messages && messages.length
+  //-- messageType = messageType || ''
+  each msg in [].concat(messages)
+    +alert(msg)
+
+

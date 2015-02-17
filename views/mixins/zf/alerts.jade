@@ -1,0 +1,13 @@
+//- http://foundation.zurb.com/docs/components/alert_boxes.html
+mixin alert(message)
+  .alert-box(data-alert)&attributes(attributes)
+    != message
+    a(href="#").close
+      |&times;
+
+//- uncommet below for experimenting
+//-+alert('hello')
+//-+alert('hello').round
+
+
+
