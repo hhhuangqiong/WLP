@@ -24,17 +24,31 @@ autoprefixer = require 'gulp-autoprefixer'
 concat      = require 'gulp-concat'
 extend      = require 'gulp-extend'
 
+istanbul = require 'gulp-istanbul'
+mocha    = require 'gulp-mocha'
+
 console.timeEnd 'Loading plugins'
 
 # reduce startup loading time
 browserSync = null
 
 src =
-  allJS:  'app/**/*.js'
-  clientJS:  'app/client/**/*.js'
+  allJS:    'app/**/*.js'
+  clientJS: 'app/client/**/*.js'
 
 dest =
   node: 'node_modules/app'
+
+gulp.task 'test', (cb) ->
+  gulp.src [ "#{dest.node}/**/*.js" ]
+    .pipe istanbul()
+    .pipe istanbul.hookRequire()
+    .on 'finish', ->
+      gulp.src ['test/unit/**/*.coffee']
+        .pipe mocha()
+        .pipe istanbul.writeReports({ dir:  './build/coverage' })
+        .on 'end', cb
+  return
 
 # not trigger 'browser-sync'; `gulp browser-sync` separately if needed
 # let 'watch' be the default for now
