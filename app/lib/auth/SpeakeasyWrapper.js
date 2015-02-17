@@ -38,7 +38,7 @@ export default class SpeakeasyWrapper {
     // 'qr_codes' are not for Google Authenticator
     var qrOpts = { qr_codes: true, name: name || this.name, length: length };
 
-    // how to use `Object.assign` with 6to5?
+    // how to use `Object.assign` with babel?
     var result = speakeasy.generate_key(_.assign({}, qrOpts));
     var target = `qr_code_${this.encoding}`;
     return result[target];

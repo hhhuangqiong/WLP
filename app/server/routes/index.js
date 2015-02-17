@@ -2,12 +2,13 @@ var di       = require('di');
 var injector = new di.Injector([]);
 
 import { Router } from 'express';
+//import endUsersRouter from './endUsers';
 
 var accountsRouter = injector.get(require('app/server/routes/accounts'));
 var apiRouter      = injector.get(require('app/server/routes/api'));
 var appRouter      = injector.get(require('app/server/routes/app'));
 var companyRouter  = injector.get(require('app/server/routes/company'));
-var endUsersRouter = injector.get(endUsersRouter);
+var endUsersRouter = injector.get(require('./endUsers'));
 
 import dashboardRouter from 'app/server/routes/dashboard';
 import forgotPasswordRouter from 'app/server/routes/forgotPassword';

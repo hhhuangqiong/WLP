@@ -10,11 +10,11 @@ gulp        = require 'gulp'
 gutil       = require 'gulp-util'
 nodemon     = require 'gulp-nodemon'
 source      = require 'vinyl-source-stream'
-to5         = require 'gulp-6to5'
+babel       = require 'gulp-babel'
 
-browserify  = require 'browserify'
-ngAnnotate  = require 'browserify-ngannotate'
-to5ify      = require '6to5ify'
+browserify = require 'browserify'
+ngAnnotate = require 'browserify-ngannotate'
+babelify   = require 'babelify'
 
 # 'libsass' version, http://sass-compatibility.github.io/
 sass         = require 'gulp-sass'
@@ -43,8 +43,8 @@ gulp.task 'default', ['clean', 'locale', 'nodemon', 'watch'], ->
   return
 
 gulp.task 'watch', ->
-  gulp.watch [src.allJS, "!#{src.clientJS}"], ['6to5']
-  gulp.watch src.clientJS, ['6to5-ng']
+  gulp.watch [src.allJS, "!#{src.clientJS}"], ['babel']
+  gulp.watch src.clientJS, ['babel-ng']
   gulp.watch 'public/scss/**/*.scss', ['scss']
   gulp.watch 'locales/client/en/*.json', ['locale']
   return
@@ -55,7 +55,7 @@ gulp.task 'clean', ->
 # 1 of the reasons behind using 'yuidoc'
 # https://github.com/jsBoot/gulp-jsdoc#big-fat-warning
 # name as jsdoc on purpose
-gulp.task 'jsdoc', ['6to5'], ->
+gulp.task 'jsdoc', ['babel'], ->
   yuidoc = require 'gulp-yuidoc'
   gulp.src "#{dest.node}/**/*.js"
     .pipe yuidoc()
@@ -70,23 +70,23 @@ gulp.task 'scss', ->
     .pipe gulp.dest 'public/stylesheets'
     .pipe (if ( browserSync? && browserSync.active ) then browserSync.reload {stream: true} else gutil.noop())
 
-gulp.task '6to5', ->
+gulp.task 'babel', ->
   gulp.src src.allJS
-    .pipe to5()
+    .pipe babel()
     .pipe sourcemaps.init()
     .pipe sourcemaps.write '.'
     .pipe gulp.dest dest.node
 
-gulp.task '6to5-ng', ->
+gulp.task 'babel-ng', ->
   browserify { entries: './app/client/WhiteLabel.js', debug: true }
-    .transform(to5ify)
+    .transform(babelify)
     .transform(ngAnnotate)
     .bundle()
     .pipe source('application.js')
     .pipe buffer()
     .pipe gulp.dest('public/javascript')
 
-gulp.task 'nodemon', ['scss', '6to5', '6to5-ng'], ->
+gulp.task 'nodemon', ['scss', 'babel', 'babel-ng'], ->
   nodemon
     script: 'bin/www'
     # TODO investigate why this is not picked up by nodemon
