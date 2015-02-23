@@ -1,7 +1,10 @@
 extends /layout/layout
+
 block content
   h1 Sign Up
-  form(method="POST" action="/signup/process")
+  form(method="post" action="/signup/process")
+    input(type="hidden" name="username" value="#{username}")
+    input(type="hidden" name="token" value="#{token}")
     ul
       li
         input(type="password" name="password" placeholder="Password")
@@ -9,7 +12,7 @@ block content
         input(type="password" name="rePassword" placeholder="Re-confirm password")
       li
         label QR Code:
-        img(src="#{GoogleAuth}")
+        img(src="#{google_auth_qr}")
       li
         input(type="submit" value="Sign up")
 

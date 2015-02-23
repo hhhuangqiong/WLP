@@ -1,13 +1,33 @@
+import Q from 'q';
+
 var _          = require('lodash');
 var moment     = require('moment');
 var util       = require('util');
 var PortalUser = require('app/collections/portalUser');
 
-// TODO consider export the constant(s)
-const SIGNUP_EVENT = 'signup';
+/** @constant {string} */
+export const SIGNUP_EVENT = 'signup';
 
-// TODO signup-related logic, add token (interface)
-export default class SignUp {
+// TODO signup-related logic
+export class SignUp {
+
+  /**
+   * Clear the user sign up status (token)
+   * Password will be set
+   *
+   * @param {PortalUser} user
+   * @param {string} password
+   * @param {function} cb
+   */
+  activate(user, password, cb) {
+    //TODO parameter validation
+
+    user.removeToken(SIGNUP_EVENT);
+    user.set('password', password);
+
+    return Q.ninvoke(user, 'save').nodeify(cb);
+  }
+
   /**
    * Verify if the username has a valid signup status/info
    *
@@ -34,8 +54,6 @@ export default class SignUp {
     return moment(after).isBefore(token.createAt);
   }
 
-  // remove the 'signup' token
-  // update the user (updateBy?)
-  // call the SpeakeasyWrapper#qrCode
+  // call the SpeakeasyWrapper#qrCode?
 }
 

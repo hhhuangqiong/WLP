@@ -4,6 +4,7 @@ _      = require 'lodash'
 expect = require('chai').expect
 
 describe 'Portal User', ->
+  tokenVal = 'arbitrary'
 
   describe '::hashInfo', ->
     it 'should return information in expected structure', (done) ->
@@ -35,13 +36,12 @@ describe 'Portal User', ->
       p = new PortalUser()
 
     it 'should generate the token', ->
-      p.addToken(event)
+      p.addToken event, tokenVal
 
       expect _.findIndex p.tokens, predicate
         .to.gte 0
 
     it 'should accept token value passed', ->
-      tokenVal = 'testing'
       p.addToken event, tokenVal
 
       expect _.find p.tokens, predicate
@@ -49,7 +49,7 @@ describe 'Portal User', ->
         .and.equal tokenVal
 
     it 'should only have 1 signup token maximum', ->
-      p.addToken(event).addToken(event)
+      p.addToken(event, tokenVal).addToken(event, tokenVal)
 
       expect _.filter(p.tokens, predicate).length
         .to.eql 1
@@ -60,7 +60,7 @@ describe 'Portal User', ->
 
     beforeEach ->
       p = new PortalUser()
-      p.addToken event
+      p.addToken event, tokenVal
 
     it 'should return the token object found', ->
       expect( p.tokenOf event ).to.exist
@@ -72,7 +72,7 @@ describe 'Portal User', ->
 
     beforeEach ->
       p = new PortalUser()
-      p.addToken event
+      p.addToken event, tokenVal
 
     it 'should be expired', (done) ->
       # better to use sinon's fake timer
@@ -87,3 +87,15 @@ describe 'Portal User', ->
     it 'should throw Error if the token could not be found', ->
       expect( -> p.isTokenExpired 'notexist', 1, 'minutes' ).to.throw Error
 
+  describe '#removeToken', ->
+    p   = null
+    evt = 'arbitrary'
+
+    beforeEach ->
+      p = new PortalUser()
+      p.addToken evt, tokenVal
+
+    it 'should remove the token of type', ->
+      p.removeToken evt
+      # assume tokenOf behaves correctly
+      expect( p.tokenOf evt ).to.be.empty

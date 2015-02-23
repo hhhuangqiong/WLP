@@ -1,9 +1,42 @@
-{expect}   = require 'chai'
-sinon      = require 'sinon'
-SignUp     = require 'app/lib/portal/SignUp'
-PortalUser = require 'app/collections/portalUser'
+{ expect }               = require 'chai'
+sinon                    = require 'sinon'
+
+PortalUser               = require 'app/collections/portalUser'
+{ SIGNUP_EVENT, SignUp } = require 'app/lib/portal/SignUp'
 
 describe 'SignUp service', ->
+
+  describe '#activate', ->
+    user     = null
+    signUp   = new SignUp()
+    password = 'arbitrary'
+
+    beforeEach ->
+      user = new PortalUser()
+
+    it 'should remove the token from user', (done) ->
+      sinon.stub(user, 'save').yields null, user, 1
+
+      user.addToken SIGNUP_EVENT, 'whatever'
+
+      signUp.activate user, password, ->
+        expect user.tokenOf SIGNUP_EVENT
+          .to.be.empty
+
+        user.save.restore()
+        done()
+
+    # too intrusive; PoC
+    it 'should trigger the password generation', (done) ->
+      sinon.stub(user, 'validate').yields null
+
+      sinon.stub PortalUser, 'hashInfo', ->
+        PortalUser.hashInfo.restore()
+        user.validate.restore()
+        done()
+
+      signUp.activate user, password, ->
+        console.log 'should not be triggered'
 
   describe '#verify', ->
     user      = null
@@ -43,7 +76,6 @@ describe 'SignUp service', ->
     describe 'for users that have a valid token', ->
       compareTo = 'cannedValue'
       clock = null
-      signUpEvent = 'signup' # all lowercase
 
       describe 'and the token has not expired', ->
         beforeEach ->
@@ -51,7 +83,7 @@ describe 'SignUp service', ->
           clock.tick 5000
 
           user = new PortalUser()
-          user.addToken signUpEvent, compareTo
+          user.addToken SIGNUP_EVENT, compareTo
 
         afterEach ->
           clock.restore()
@@ -68,7 +100,7 @@ describe 'SignUp service', ->
           clock = sinon.useFakeTimers()
 
           user = new PortalUser()
-          user.addToken signUpEvent, compareTo
+          user.addToken SIGNUP_EVENT, compareTo
 
         afterEach ->
           clock.restore()

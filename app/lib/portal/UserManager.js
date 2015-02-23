@@ -4,7 +4,7 @@ var moment     = require('moment');
 
 var PortalUser = require('app/collections/portalUser');
 
-import SignUp from 'app/lib/portal/SignUp';
+import { SignUp } from 'app/lib/portal/SignUp';
 
 /**
  * @class PortalUserManager

@@ -65,11 +65,6 @@ var portalUserSchema = new mongoose.Schema({
   assignedGroups: [{
     type: String
   }],
-  isVerified: {
-    type: Boolean,
-    require: true,
-    default: false
-  },
   status: {
     type: String,
     // TODO introduce enum-like statuses
@@ -121,14 +116,14 @@ portalUserSchema.virtual('password').get(function() {
 }).set(function(password) {
   this._password = password;
 });
+
 portalUserSchema.pre('save', function(next) {
-  var user = this;
-  if (user.hashedPassword)
+  if (this.hashedPassword && !this.password)
     return next();
-  // only when the caller submit data with password information
-  if (user.password) {
-    portalUserSchema.hashInfo(user.password, function(err, hash) {
-      _.merge(user, hash);
+
+  if (this.password) {
+    this.constructor.hashInfo(this.password, (err, hash) => {
+      _.merge(this, hash);
     });
   }
   next();
@@ -138,12 +133,23 @@ portalUserSchema.pre('save', function(next) {
  * Add token of the event with value to 'tokens'
  * Assume each event can have 1 and only 1 token
  *
- * @method addToken
  * @param {string|number|object} [val]
+ * @returns {PortalUser}
  */
 portalUserSchema.method('addToken', function(event, val) {
+  this.removeToken(event);
+  this.tokens.push(this.constructor.makeToken(event, val));
+  return this;
+});
+
+/**
+ * Remove token of the event
+ *
+ * @param {string} event
+ * @returns {PortalUser}
+ */
+portalUserSchema.method('removeToken', function(event) {
   var tokens = _.reject(this.tokens, (t) => { return t.event === event; });
-  tokens.push(this.constructor.makeToken(event, val));
   this.tokens = tokens;
   return this;
 });

@@ -2,17 +2,17 @@ import moment from 'moment';
 import nconf from 'nconf';
 import Q from 'q';
 
-var logger            = require('winston');
+import util from 'util';
+import { SignUp } from 'app/lib/portal/SignUp';
 
+var logger     = require('winston');
 // because we don't have password strength requirement at the moment
 var owasp      = require('owasp-password-strength-test');
-
 var PortalUser = require('app/collections/portalUser');
-var SignUp     = require('app/lib/portal/SignUp');
 
 const INVALID_PATH = '/signup/invalid';
 
-export default class Signup {
+export default class SignupController {
 
   constructor(portalUserManager) {
     this.portalUserManager = portalUserManager;
@@ -52,7 +52,7 @@ export default class Signup {
 
         try {
           if(SignUp.verify(user, tokenValue, compareTo)){
-            // probably not needed, let see
+            // for the next handler
             req.signUpUser = user;
             next();
           } else {
@@ -74,115 +74,79 @@ export default class Signup {
       });
   }
 
+  /**
+   * Render the form containing the Google Auth QR code image
+   *
+   */
+  renderForm(req, res, next) {
+    var user = req.signUpUser;
+    if(!user)
+      return next(new Error('Invalid request: No sign up user'));
+
+    var googleAuth = user.googleAuthInfo(nconf.get('speakeasy:name')).get('googleAuth');
+    res.render('pages/signUp/form', {
+      username:       user.username,
+      google_auth_qr: googleAuth.qrCodeUrl,
+      // for redirect
+      token:          req.sanitize('token').trim()
+    });
+  }
+
   preSignUp(req, res, next) {
-    // TODO leave this to service layer
-    Q(verifyUser(req.query.token))
-      .then(expireToken)
-      .then(prepareGoogleAuthQRCode)
-      .then(updateUser)
-      .then(flashUser)
-      .then(function() {
-        return res.render('pages/signUp/form', {
-          GoogleAuth: req.locals.google_auth_qr
-        });
-      }).catch(function(reason) {
-        logger.error('Error during showing signup form', reason.stack);
-        return res.render('pages/signUp/denied');
-      });
+    req.checkBody('username').notEmpty().isEmail();
+    req.checkBody('password').notEmpty().equals(req.sanitize('rePassword'));
+    // safety check
+    req.checkBody('token').notEmpty();
 
-    //TODO veriy + expire logic could be grouped under a single method in SignUp service
-    function verifyUser(token) {
-      // quick & dirty way for not handling the flow now
-      throw new Error('To be implemented');
-    }
-
-    function expireToken(user) {
-      if (!user) {
-        throw new Error('Invalid token.');
-      }
-      user.token.signUp.expired = true;
-      return user;
-    }
-
-    function prepareGoogleAuthQRCode(user) {
-      var googleAuth = user.googleAuthInfo(nconf.get('speakeasy:name')).get('googleAuth');
-      req.locals.google_auth_qr = googleAuth.qrCodeUrl;
-      return user;
-    }
-
-    function updateUser(user) {
-      var deferred = Q.defer();
-      user.save(function(err, user) {
-        if (err) {
-          throw new Error('Error during updating user.');
-        }
-        return deferred.resolve(user);
-      });
-      return deferred.promise;
-    }
-
-    function flashUser(user) {
-      req.session.username = user.username;
-      return user;
+    var errors = req.validationErrors();
+    if (errors) {
+      // copied from the sample code
+      req.flash('messages', 'Validation error(s)' + util.inspect(errors) );
+      req.flash('messageType', 'warning');
+      next(err);
+    } else {
+      next();
     }
   }
 
+  passwordStrengthTest(req, res, next) {
+    owasp.config(nconf.get('owasp'));
+    var result = owasp.test(req.sanitize('password'));
+    if (result.failedTests.length != 1 || result.failedTests[0] != 6) {
+      next(new Error('Insecure Password.'));
+    }
+    next();
+  }
+
+  /**
+   * Flash scope data are prepared in the other handlers before `next(err)`
+   */
+  bounceBack(err, req, res, next) {
+    // prepare flash in another handlers
+    var username = req.sanitize('username');
+    var token    = req.sanitize('token');
+
+    // NB: what happen the token expires after redirect
+    // redirect to the root page (i.e., /signup); don't know if this is an anti-pattern
+    res.redirect(`./?username=${username}&token=${token}`);
+  }
+
+  /**
+   * TODO
+   * - this is the new flow; not yet verified the correctness
+   */
   signUp(req, res, next) {
-    Q(verifyIdentity(req)).then(verifyPassword).then(getUserAndSave).then(function() {
-      res.render('pages/signUp/done');
-    }).catch(function(reason) {
-      logger.error('Error during signup', reason.stack);
-      res.render('pages/signUp/denied');
-    });
+    Q.ninvoke(User, 'findOne', { username: req.sanitize('username') })
+      .then(function(user){
+        SignUp.activate(user, req.sanitize('password'), function(err, ...others) {
+          console.log('others', others);
 
-    function verifyIdentity(req) {
-      var username = req.session.username;
-      if (!username) {
-        throw new Error('Undefined identity.');
-      }
-      return username;
-    }
-
-    function verifyPassword(username) {
-      var password = req.body.password;
-      var rePassword = req.body.rePassword;
-      if (!password || !rePassword) {
-        throw new Error('Missing parameters.');
-      }
-      if (password != rePassword) {
-        throw new Error('Mismatched Password.');
-      }
-      // TODO move it somewhere else
-      owasp.config(nconf.get('owasp'));
-      // other password strength check
-      var result = owasp.test(password);
-      if (result.failedTests.length != 1 || result.failedTests[0] != 6) {
-        throw new Error('Insecure Password.');
-      }
-      return {
-        username: username,
-        password: password,
-        rePassword: rePassword
-      };
-    }
-
-    function getUserAndSave(params) {
-      return Q.ninvoke(this.portalUserManager, 'getUser', {
-        username: params.username
-      }).then(function(user) {
-        if (!user) {
-          throw new Error('Undefined identity');
-        }
-        user.hashedPassword = params.password;
-        user.isVerified = true;
-        var deferred = Q.defer();
-        Q.ninvoke(user, 'save', function(err, user) {
-          if (err)
-            throw new Error('Error during saving new password.');
-          return deferred.resolve(user);
-        });
-        return deferred.promise;
+          if(err) throw new Error('Failed to sign user up')
+          res.render('pages/signUp/done'); // no render data?
+        })
+      }).catch(function(reason) {
+        logger.error('Error during signup process', reason.stack);
+        res.render('pages/signUp/denied');
       });
-    }
   }
 }
