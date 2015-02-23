@@ -66,15 +66,6 @@ gulp.task 'watch', ->
 gulp.task 'clean', ->
   del(['node_modules/app', 'build/**/*'])
 
-# 1 of the reasons behind using 'yuidoc'
-# https://github.com/jsBoot/gulp-jsdoc#big-fat-warning
-# name as jsdoc on purpose
-gulp.task 'jsdoc', ['babel'], ->
-  yuidoc = require 'gulp-yuidoc'
-  gulp.src "#{dest.node}/**/*.js"
-    .pipe yuidoc()
-    .pipe gulp.dest 'build/docs'
-
 gulp.task 'scss', ->
   gulp.src 'public/scss/main.scss'
     .pipe sourcemaps.init()

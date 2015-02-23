@@ -5,6 +5,7 @@
   "scripts": {
     "build": "npm run clean && npm run transpile && npm run test:report",
     "clean": "gulp clean",
+    "doc": "npm run transpile && jsdoc -r node_modules/app -d build/docs",
     "transpile": "gulp babel",
     "server": "npm run transpile && node bin/www",
     "pretest": "npm run transpile",
@@ -67,7 +68,7 @@
     "gulp-sass": "^1.3.3",
     "gulp-sourcemaps": "^1.3.0",
     "gulp-util": "^3.0.3",
-    "gulp-yuidoc": "^0.1.2",
+    "jsdoc": "^3.3.0-beta1",
     "mocha": "^2.0.1",
     "mockgoose": "^1.10.7",
     "sinon": "^1.12.2",
