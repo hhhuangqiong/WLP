@@ -63,7 +63,13 @@
     }
   },
   "mumsApi": {
+    "name": "mums",
     "baseUrl": "http://www.mums.com/api/1.0",
+    "timeout": 5000
+  },
+  "bossApi": {
+    "name": "boss",
+    "baseUrl": "http://www.boss.com/api",
     "timeout": 5000
   }
 }

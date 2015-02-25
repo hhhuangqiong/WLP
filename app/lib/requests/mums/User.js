@@ -4,7 +4,7 @@ var Q       = require('q');
 var request = require('superagent');
 var util    = require('util');
 
-import BaseRequest from './Base';
+import BaseRequest from '../Base';
 
 export default class UsersRequest extends BaseRequest {
 
@@ -50,7 +50,7 @@ export default class UsersRequest extends BaseRequest {
 
     nock(base)
       .get(url)
-      //.delay(2000)
+      .delay(2000)
       .reply(200, {
         "carrierId": `${carrierId}`,
         "userCount": 3,
@@ -97,12 +97,16 @@ export default class UsersRequest extends BaseRequest {
     logger.debug('get users from %s', carrierId);
   }
 
-  getUser(carrierId, username, cb) {
+  getUser(params, cb) {
+    var carrierId = params.carrierId;
+    var username = params.username;
+
     var base = this.opts.baseUrl;
     var url = util.format(this.opts.methods.DETAILS.URL, carrierId, username);
 
     nock(base)
       .get(url)
+      .delay(1000)
       .reply(200, {
         "carrierId": `${carrierId}`,
         "userDetails": {

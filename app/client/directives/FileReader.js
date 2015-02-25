@@ -7,7 +7,9 @@ export default function() {
       this.$scope = $scope;
       $scope.whitelist = null;
       $scope.$watch('whitelist', function() {
-        EndUsersService.updateWhitelist($scope.whitelist);
+        if ($scope.whitelist && $scope.whitelist.length > 1) {
+          EndUsersService.updateWhitelist($scope.whitelist);
+        }
       });
     },
     link: function(scope, element, attr, controller) {

@@ -1,17 +1,20 @@
 h3 {{endUser.data.username}}
 h4 Wallet Info
-ul
-  li
-    span balance
-  li
-    span status
-  li
-    span last top-up date
-  li
-    span expiration date
-  li
-    input(type="text")
-    button(class="button") top up
+div(ng-show="endUser.data.wallet")
+  ul
+    li
+      span balance ${{endUser.data.wallet.balance}}
+    li
+      span status {{endUser.data.wallet.ocsStatus}}
+    li
+      span last top-up date {{endUser.data.wallet.lastTopupDate}}
+    li
+      span expiration date {{endUser.data.wallet.expiryDate}}
+    li
+      input(type="text")
+      button(class="button") top up
+div(ng-show="!endUser.data.wallet")
+  p Wallet info is unavaliable for now. Click here to try reloading it.
 h4 Account Info
 ul
   li

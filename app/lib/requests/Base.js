@@ -9,6 +9,10 @@ class BaseRequest {
       throw new Error('invalid baseUrl.');
   }
 
+  createRequestId() {
+    return Math.random().toString(36).substring(6);
+  }
+
   // http://issuetracking.maaii.com:8090/display/MAAIIP/MUMS+User+Management+by+Carrier+HTTP+API#MUMSUserManagementbyCarrierHTTPAPI-HTTPErrorCodes
   handleError(err) {
     var error = new Error(err.message);

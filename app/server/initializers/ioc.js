@@ -37,7 +37,11 @@ export function init(nconf) {
 
   ioc.constant('MUMS_API_BASE_URL', nconf.get('mumsApi:baseUrl'));
   ioc.constant('MUMS_API_TIMEOUT', nconf.get('mumsApi:timeout'));
-  ioc.service('EndUsersRequest', require('app/lib/requests/Users'), 'MUMS_API_BASE_URL', 'MUMS_API_TIMEOUT');
+  ioc.service('EndUsersRequest', require('app/lib/requests/mums/User'), 'MUMS_API_BASE_URL', 'MUMS_API_TIMEOUT');
+
+  ioc.constant('BOSS_API_BASE_URL', nconf.get('bossApi:baseUrl'));
+  ioc.constant('BOSS_API_TIMEOUT', nconf.get('bossApi:timeout'));
+  ioc.service('WalletRequest', require('app/lib/requests/boss/Wallet'), 'BOSS_API_BASE_URL', 'BOSS_API_TIMEOUT');
 
   return ioc;
 }

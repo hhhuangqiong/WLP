@@ -1,7 +1,7 @@
 {expect}   = require 'chai'
 
 # object under test
-UserRequest = require 'app/lib/requests/Users'
+UserRequest = require 'app/lib/requests/mums/User'
 
 describe 'UserRequest', ->
   request = null

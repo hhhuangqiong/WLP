@@ -71,14 +71,19 @@ class EndUsersService {
     this.ApiService.execute(method)
       .then((response) => {
 
-      var _carrierId = response.carrierId;
-      var _username = response.userDetails.username;
+        if (response.error) {
+          return deferred.promise;
+        }
 
-      var _user = this.endUsers[_username];
-      _user.data = response.userDetails;
-      _user.data.carrierId = _carrierId;
+        var _carrierId = response.carrierId;
+        var _username = response.userDetails.username;
 
-      return deferred.resolve(_user);
+        var _user = this.endUsers[_username];
+        _user.data = response.userDetails;
+        _user.data.wallet = response.wallet;
+        _user.data.carrierId = _carrierId;
+
+        return deferred.resolve(_user);
     });
 
     return deferred.promise;

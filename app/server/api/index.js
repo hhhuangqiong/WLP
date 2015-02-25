@@ -1,7 +1,11 @@
+var _ = require('lodash');
+var Q = require('q');
+
 export default class Api {
 
-  constructor(endUsersRequest) {
+  constructor(endUsersRequest, walletRequest) {
     this.endUserRequest = endUsersRequest;
+    this.walletRequest = walletRequest;
   }
 
   listEndUsers(req, res, next) {
@@ -18,9 +22,28 @@ export default class Api {
     var username = req.params.username ? req.params.username.trim() : false;
     if (!carrierId || !username) return next(new Error('missing mandatory field(s)'));
 
-    this.endUserRequest.getUser(carrierId, username, function(err, body) {
-      res.json(err || body);
-    })
+    var user;
+
+    Q.ninvoke(this.endUserRequest, 'getUser', {
+      "carrierId": carrierId,
+      "username": username
+    }).then((body) => {
+      user = _.clone(body);
+      return Q.ninvoke(this.walletRequest, 'getWalletBalance', {
+        "carrier": user.carrierId,
+        "number": user.userDetails.username,
+        "sessionUserName": user.userDetails.displayName
+      });
+    }).then((body) => {
+      if (body) {
+        user.wallet = _.first(body.result.wallets);
+      }
+      res.json(user);
+    }).catch((err) => {
+      res.json({
+        error: err
+      });
+    });
   }
 
   suspendEndUser(req, res, next) {

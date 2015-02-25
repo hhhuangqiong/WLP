@@ -11,6 +11,7 @@ import FileReader       from './directives/FileReader';
 // AngularJS application for sections after logged in
 var app = angular.module('App', [
   'angularFileUpload',
+  'angular-loading-bar',
   'ngAnimate',
   'ngMessages',
   'ngResource',
