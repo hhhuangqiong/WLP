@@ -1,3 +1,6 @@
+var _    = require('lodash');
+var util = require('util');
+
 import BaseObject from './Base'
 
 class Account extends BaseObject {
@@ -5,17 +8,32 @@ class Account extends BaseObject {
   constructor($state, $q, ApiService, initData) {
     super($state, $q, ApiService, initData);
     this.methods = {
-      createUser: {
+      accounts: {
         url: "/app/accounts",
         type: "application/json"
       }
     }
   }
 
-  update() {
-    this.ApiService.put('users', this.data)
+  delete() {
+    var methods = _.clone(this.methods.accounts);
+    methods.url = util.format('%s%s', methods.url, this.data._id);
+
+    this.ApiService.delete(this.methods.accounts, this.data)
       .then((user) => {
-        this.data._id = user._id;
+        // TBC: how to handle deleted account
+      })
+      .catch((err) => {
+        this.$state.transitionTo('accounts.index.new.fail');
+      });
+  }
+
+  update() {
+    var methods = _.clone(this.methods.accounts);
+    methods.url = util.format('%s%s', methods.url, this.data._id);
+
+    this.ApiService.put(methods, this.data)
+      .then((user) => {
         this.$state.transitionTo('accounts.index.new.success');
       })
       .catch(function(err) {
@@ -24,10 +42,10 @@ class Account extends BaseObject {
   }
 
   create() {
-    this.ApiService.post(this.methods.createUser, this.data)
+    this.ApiService.post(this.methods.accounts, this.data)
       .then((data) => {
-        if (data.result) {
-          this.data._id = data.result._id;
+        if (data.user) {
+          this.data = data.user;
           this.$state.transitionTo('accounts.index.new.success');
         } else {
           this.$state.transitionTo('accounts.index.new.fail');

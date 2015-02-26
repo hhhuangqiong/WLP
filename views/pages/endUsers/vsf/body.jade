@@ -1,0 +1,51 @@
+div(class="account-list row")
+  div(class="large-12 columns")
+    div(class="row")
+      div(class="large-1 columns")
+      div(class="large-11 large-offset-1 columns")
+        section(role="navs" class="account-list__navs")
+          dl(class="tabs")
+            dd
+              a(ui-sref="endusers.index") EndUsers list
+            dd
+              a(ui-sref="endusers.topup") Top-up history
+            dd
+              a(ui-sref="endusers.vsf") VSF record
+  div(class="large-1 columns")
+  div(class="large-11 large-offset-1 columns")
+    div(class="row")
+      section(role="controls" class="account-list__main-control main-control")
+        div(class="large-5 columns end")
+          p
+            input(type="text" name="daterange" placeholder="Username or User Group Name")
+          p
+            input(type="text" name="keywords" placeholder="mobile number")
+    div(class="row")
+      section(role="contents" class="account-list__block")
+        div(class="large-12 columns")
+          table
+            thead
+              tr
+                th timestamp
+              tr
+                th mobile number
+              tr
+                th amount
+              tr
+                th virtual item id
+              tr
+                th type
+              tr
+                th category
+              tr
+                th status
+            tbody
+              tr(ng-repeat="topup in topups")
+                td 1
+                td 2
+                td 3
+                td 4
+                td 5
+                td 6
+                td 7
+

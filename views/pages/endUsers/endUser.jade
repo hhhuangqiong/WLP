@@ -14,7 +14,10 @@ div(ng-show="endUser.data.wallet")
       input(type="text")
       button(class="button") top up
 div(ng-show="!endUser.data.wallet")
-  p Wallet info is unavaliable for now. Click here to try reloading it.
+  p
+    | Wallet info is unavaliable for now.
+    a(ng-click="endUser.refresh()") Click here
+    | to try reloading it.
 h4 Account Info
 ul
   li

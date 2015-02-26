@@ -8,19 +8,23 @@ class ApiService {
   }
 
   get(methods, objectParams) {
-    return this.execute('get', methods, objectParams);
+    methods.method= "get";
+    return this.execute(methods, objectParams);
   }
 
   post(methods, objectParams) {
-    return this.execute('post', methods, objectParams);
+    methods.method = "post";
+    return this.execute(methods, objectParams);
   }
 
   put(methods, objectParams) {
-    return this.execute('put', methods, objectParams);
+    methods.method = "put";
+    return this.execute(methods, objectParams);
   }
 
   remove(methods, objectParams) {
-    return this.execute('delete', methods, objectParams);
+    methods.method = "delete";
+    return this.execute(methods, objectParams);
   }
 
   execute(methods, objectParams) {

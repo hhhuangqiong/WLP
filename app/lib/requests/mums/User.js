@@ -149,6 +149,7 @@ export default class UsersRequest extends BaseRequest {
 
     nock(base)
       .post(url)
+      .delay(1000)
       .reply(200, {
         "carrierId": `${carrierId}`
       });
@@ -170,6 +171,7 @@ export default class UsersRequest extends BaseRequest {
 
     nock(base)
       .delete(url)
+      .delay(1000)
       .reply(200, {
         "carrierId": `${carrierId}`
       });
@@ -191,6 +193,7 @@ export default class UsersRequest extends BaseRequest {
 
     nock(base)
       .delete(url)
+      .delay(1000)
       .reply(200, {
         "carrierId": `${carrierId}`
       });
@@ -212,6 +215,7 @@ export default class UsersRequest extends BaseRequest {
 
     nock(base)
       .put(url)
+      .delay(1000)
       .reply(200, {
         "carrierId": `${carrierId}`,
         "usernamesApplied": [

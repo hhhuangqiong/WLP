@@ -70,7 +70,6 @@ class EndUsersService {
 
     this.ApiService.execute(method)
       .then((response) => {
-
         if (response.error) {
           return deferred.promise;
         }
@@ -82,6 +81,9 @@ class EndUsersService {
         _user.data = response.userDetails;
         _user.data.wallet = response.wallet;
         _user.data.carrierId = _carrierId;
+        _user.refresh = () => {
+          return this.getEndUser(carrierId, username);
+        };
 
         return deferred.resolve(_user);
     });

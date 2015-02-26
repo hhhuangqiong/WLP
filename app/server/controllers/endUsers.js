@@ -10,4 +10,20 @@ export default class EndUsers {
   showEndUser(req, res, next) {
     res.render('pages/endUsers/enduser');
   }
+
+  showTopUpHeader(req, res, next) {
+    res.render('pages/endUsers/topup/header');
+  }
+
+  showTopUpBody(req, res, next) {
+    res.render('pages/endUsers/topup/body');
+  }
+
+  showVsfHeader(req, res, next) {
+    res.render('pages/endUsers/vsf/header');
+  }
+
+  showVsfBody(req, res, next) {
+    res.render('pages/endUsers/vsf/body');
+  }
 }

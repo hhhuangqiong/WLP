@@ -35,8 +35,34 @@ var endUsersModule = angular.module('App.EndUsers', ['ui.router', 'ngResource'])
           }
         },
         resolve: {
-          endUser: function($stateParams, EndUsersService) {
+          endUser: function($stateParams, EndUsersService, endUsers) {
             return EndUsersService.getEndUser($stateParams.carrierId, $stateParams.username);
+          }
+        }
+      })
+      .state('endusers.topup', {
+        url: '/topup',
+        views: {
+          header: {
+            templateUrl: '/endUsers/topup/view/header',
+            contorller: 'TopUp'
+          },
+          '': {
+            templateUrl: '/endUsers/topup/view/body',
+            controller: 'TopUp'
+          }
+        }
+      })
+      .state('endusers.vsf', {
+        url: '/vsf',
+        views: {
+          header: {
+            templateUrl: '/endUsers/vsf/view/header',
+            contorller: 'TopUp'
+          },
+          '': {
+            templateUrl: '/endUsers/vsf/view/body',
+            controller: 'VSF'
           }
         }
       })
@@ -49,8 +75,14 @@ var endUsersModule = angular.module('App.EndUsers', ['ui.router', 'ngResource'])
   .controller('EndUsers', function($scope, EndUsersService, Uploader, endUsers) {
     $scope.endUsers = endUsers;
   })
-  .controller('EndUser', function($scope, endUser) {
+  .controller('EndUser', function($scope, EndUsersService, endUser) {
     $scope.endUser = endUser;
+  })
+  .controller('TopUp', function() {
+    
+  })
+  .controller('VSF', function() {
+
   })
   .factory('EndUsersService', EndUsersService);
 

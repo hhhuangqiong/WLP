@@ -60,4 +60,4 @@ form(class="editform" method="POST" action="#")
             span(class="text-center" ng-click="account.toggleUserGroup('cs')" ng-class="{'selected' : account.data.assignedGroups.indexOf('cs') > -1}") CS
   div(class="row")
     div(class="large-12 columns")
-      a(ng-click="account.remove()" class="button postfix alert") Delete account
+      a(ng-click="account.delete()" class="button postfix alert") Delete account

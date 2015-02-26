@@ -31,17 +31,17 @@ export default class AccountController {
         "message": 'Invalid permission'
       });
     }
-    Q.ninvoke(this.portalUserManager, 'newUser', conditions, author).then(function (user) {
-      res.json({
-        "result": user ? user : false
+    Q.ninvoke(this.portalUserManager, 'newUser', conditions, author)
+      .then(function (user) {
+        res.json({
+          "user": user ? user : false
+        });
+      }).catch(function (err) {
+        logger.error(err, 'db-error');
+        res.json({
+          "error": err
+        });
       });
-    }).catch(function (err) {
-      logger.error(err, 'db-error');
-      res.json({
-        "result": {},
-        "message": err
-      });
-    });
   }
 
   showAccount(req, res, next) {
