@@ -40,22 +40,34 @@ export default class TransactionsRequest extends BaseRequest {
         "id": `${requestId}`,
         "success": true,
         "result": {
-          "wallets": [{
-            "id": 12,
-            "currency": 840,
-            "balance": 20.0,
-            "expiryDate": "yyyymmddhh24miss",
-            "serviceType": "SMS",
-            "walletType": "Free",
-            "lastTopupDate": "yyyymmddhh24miss",
-            "ocsStatus": "Active"
-          }]
+          "wallets": [
+            {
+              "id": 12,
+              "currency": 840,
+              "balance": 20.0,
+              "expiryDate": "yyyymmddhh24miss",
+              "serviceType": "SMS",
+              "walletType": "Free",
+              "lastTopupDate": "yyyymmddhh24miss",
+              "ocsStatus": "Active"
+            },
+            {
+              "id": 13,
+              "currency": 840,
+              "balance": 25.0,
+              "expiryDate": "yyyymmddhh24miss",
+              "serviceType": "Voice",
+              "walletType": "Paid",
+              "lastTopupDate": "yyyymmddhh24miss",
+              "ocsStatus": "Deactivated"
+            }
+          ]
         }
       });
 
     request
       .get(util.format('%s%s', base, url))
-      .query(params)
+      //.query(params)
       .buffer()
       .timeout(this.timeout)
       .end((err, res) => {

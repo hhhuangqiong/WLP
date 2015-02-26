@@ -79,7 +79,7 @@ var endUsersModule = angular.module('App.EndUsers', ['ui.router', 'ngResource'])
     $scope.endUser = endUser;
   })
   .controller('TopUp', function() {
-    
+
   })
   .controller('VSF', function() {
 

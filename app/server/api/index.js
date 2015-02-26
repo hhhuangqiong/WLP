@@ -36,7 +36,7 @@ export default class Api {
       });
     }).then((body) => {
       if (body) {
-        user.wallet = _.first(body.result.wallets);
+        user.wallets = body.result.wallets;
       }
       res.json(user);
     }).catch((err) => {

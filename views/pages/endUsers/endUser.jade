@@ -1,19 +1,18 @@
 h3 {{endUser.data.username}}
 h4 Wallet Info
-div(ng-show="endUser.data.wallet")
-  ul
+div(ng-show="endUser.data.wallets")
+  ul(ng-repeat="wallet in endUser.data.wallets")
     li
-      span balance ${{endUser.data.wallet.balance}}
+      h4 {{wallet.walletType}}
     li
-      span status {{endUser.data.wallet.ocsStatus}}
+      span balance {{wallet.balance}}
     li
-      span last top-up date {{endUser.data.wallet.lastTopupDate}}
+      span status {{wallet.ocsStatus}}
     li
-      span expiration date {{endUser.data.wallet.expiryDate}}
+      span last top-up date {{wallet.lastTopupDate}}
     li
-      input(type="text")
-      button(class="button") top up
-div(ng-show="!endUser.data.wallet")
+      span expiration date {{wallet.expiryDate}}
+div(ng-show="!endUser.data.wallets")
   p
     | Wallet info is unavaliable for now.
     a(ng-click="endUser.refresh()") Click here
