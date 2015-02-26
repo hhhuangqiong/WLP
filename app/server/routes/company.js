@@ -21,7 +21,7 @@ router.get('/', ensureAuthenticated, function(req, res, next) {
 router.post('/', ensureAuthenticated, function(req, res, next) {
   return companyCtrl.newCompany(req, res, next);
 });
-router.put('/companies/:id', ensureAuthenticated, function(req, res, next) {
+router.put('/:id', ensureAuthenticated, function(req, res, next) {
   return companyCtrl.updateCompany(req, res, next);
 });
 
