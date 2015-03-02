@@ -1,10 +1,9 @@
-import { Router }         from 'express';
-import nconf              from 'nconf';
-import Controller         from 'app/server/controllers/account';
-import { fetchContainer } from 'app/server/initializers/ioc'
+import { Router }   from 'express';
+import nconf        from 'nconf';
+import Controller   from 'app/server/controllers/account';
+import { fetchDep } from 'app/server/initializers/ioc'
 
-var bottle      = fetchContainer(nconf.get('containerName'));
-var accountCtrl = new Controller(bottle.PortalUserManager);
+var accountCtrl = new Controller(fetchDep(nconf.get('containerName'), 'PortalUserManager'));
 var router      = Router();
 
 router.get('/',function(req, res, next) {

@@ -1,10 +1,10 @@
 import { Router }         from 'express';
 import nconf              from 'nconf';
-import { fetchContainer } from 'app/server/initializers/ioc';
+import { fetchDep } from 'app/server/initializers/ioc';
 import Controller         from 'app/server/api';
 
-var endUsersRequest = fetchContainer(nconf.get('containerName'), 'EndUsersRequest');
-var walletRequest   = fetchContainer(nconf.get('containerName'), 'WalletRequest');
+var endUsersRequest = fetchDep(nconf.get('containerName'), 'EndUsersRequest');
+var walletRequest   = fetchDep(nconf.get('containerName'), 'WalletRequest');
 var apiCtrl         = new Controller(endUsersRequest, walletRequest);
 
 var router = Router({ mergeParams: true });

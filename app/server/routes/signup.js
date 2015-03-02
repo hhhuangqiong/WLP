@@ -1,11 +1,12 @@
-import { Router }         from 'express';
-import nconf              from 'nconf';
-import Controller         from 'app/server/controllers/signUp';
-import { fetchContainer } from 'app/server/initializers/ioc';
+import { Router } from 'express';
+import nconf      from 'nconf';
+import Controller from 'app/server/controllers/signUp';
+import { fetchContainerInstance } from 'app/server/initializers/ioc';
 
 module.exports = (() => {
-  var container = fetchContainer(nconf.get('containerName'));
-  var c         = new Controller(container.userManager);
+  var ioc       = fetchContainerInstance( nconf.get('containerName') );
+  var container = ioc.container;
+  var c         = new Controller(container.PortalUserManager);
 
   return Router()
     .get('/',         c.verifyRequest, c.validateSignUpUser, c.renderForm)

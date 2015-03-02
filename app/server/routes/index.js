@@ -1,5 +1,5 @@
 import nconf                from 'nconf';
-import { fetchContainer }   from 'app/server/initializers/ioc';
+import { fetchDep }   from 'app/server/initializers/ioc';
 import { Router }           from 'express';
 
 import accountsRouter       from 'app/server/routes/accounts';
@@ -13,7 +13,7 @@ import loginRouter          from 'app/server/routes/login'
 import logoutRouter         from 'app/server/routes/logout'
 import signUpRouter         from 'app/server/routes/signUp';
 
-var ensureAuthenticated = fetchContainer(nconf.get('containerName'), 'middlewares.ensureAuthenticated');
+var ensureAuthenticated = fetchDep(nconf.get('containerName'), 'middlewares.ensureAuthenticated');
 
 module.exports = (() => {
   return Router()

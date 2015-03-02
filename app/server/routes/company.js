@@ -1,10 +1,10 @@
 import nconf              from 'nconf';
-import { fetchContainer } from 'app/server/initializers/ioc';
+import { fetchDep } from 'app/server/initializers/ioc';
 import { Router }         from 'express';
 import CompanyCtrl        from 'app/server/controllers/company';
 
 var companyCtrl         = new CompanyCtrl();
-var ensureAuthenticated = fetchContainer(nconf.get('containerName'), 'middlewares.ensureAuthenticated');
+var ensureAuthenticated = fetchDep(nconf.get('containerName'), 'middlewares.ensureAuthenticated');
 var router              = Router();
 
 router.get('/', ensureAuthenticated, function(req, res, next) {

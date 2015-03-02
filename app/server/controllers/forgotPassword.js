@@ -1,7 +1,4 @@
 var Q = require('q');
-var di = require('di');
-var nconf = require('nconf');
-var portalUserManager = require('app/lib/portal/UserManager');
 
 export default class ForgotPassword {
 

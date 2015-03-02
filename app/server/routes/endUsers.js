@@ -1,9 +1,9 @@
 import { Router }         from 'express';
 import nconf              from 'nconf';
-import { fetchContainer } from 'app/server/initializers/ioc';
+import { fetchDep } from 'app/server/initializers/ioc';
 import EndUsersCtrl       from 'app/server/controllers/endUsers';
 
-var endUsersRequest = fetchContainer(nconf.get('containerName'), 'EndUsersRequest');
+var endUsersRequest = fetchDep(nconf.get('containerName'), 'EndUsersRequest');
 var endUsersCtrl    = new EndUsersCtrl(endUsersRequest);
 
 var router          = Router();
