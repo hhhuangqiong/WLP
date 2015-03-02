@@ -1,16 +1,20 @@
-/// <reference path='../../../typings/node/node.d.ts' />
 var logger = require('winston');
+
 /**
  * This mailer is a thin wrapping using the passed transporter combined with
  * the templating feature provided by "email-template" module for sending out emails
  *
+ * @module mailer/mailer
+ *
+ * @constructor
  * @param {Object} transporters 1 of the supported transporter (#sendMail method)
  */
 var Mailer = module.exports = function (transporter) {
     if (!transporter)
-        throw new Error('"transporter is required"');
+      throw new Error("transporter is required");
     this._transporter = transporter;
 };
+
 /**
  * Send email with HTML content specified
  *

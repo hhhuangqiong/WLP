@@ -1,4 +1,3 @@
-/// <reference path='../../typings/mongoose/mongoose.d.ts' />
 var mongoose = require('mongoose');
 var collectionName = 'Company';
 var schema = new mongoose.Schema({
