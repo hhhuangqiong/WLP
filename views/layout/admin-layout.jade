@@ -30,24 +30,36 @@ html(lang="#{lang||'en'}" ng-app="App")
         div(class="main-sidebar__contents fixed vertical")
           a(class="item" ui-sref="dashboard.index" ui-sref-active="active")
             i(class="fi-web")
-            label {{'dashboard' | translate}}
+            label {{'dashboard.title' | translate}}
           a(class="item" ui-sref="companies.index" ui-sref-active="active")
             i(class="fi-home")
-            label {{'company' | translate}}
+            label {{'company.title' | translate}}
           a(class="item" ui-sref="accounts.index" ui-sref-active="active")
             i(class="fi-torso")
-            label {{'account' | translate}}
+            label {{'account.title' | translate}}
           a(class="item" ui-sref="endusers.index" ui-sref-active="active")
             i(class="fi-torsos-all")
-            label {{'end_user' | translate}}
+            label {{'end_user.title' | translate}}
+          a(class="item" ui-sref="topup.index" ui-sref-active="active")
+            i(class="fi-dollar")
+            label {{'top_up.title' | translate}}
+          a(class="item" ui-sref="calls.index" ui-sref-active="active")
+            i(class="fi-telephone")
+            label {{'calls.title' | translate}}
+          a(class="item" ui-sref="im.index" ui-sref-active="active")
+            i(class="fi-comment")
+            label {{'im.title' | translate}}
+          a(class="item" ui-sref="store.index" ui-sref-active="active")
+            i(class="fi-shopping-cart")
+            label {{'store.title' | translate}}
           a(class="item" ui-sref="permissions" ui-sref-active="active" ng-hide="true")
-            label {{'permissions' | translate}}
+            label {{'permissions.title' | translate}}
           a(class="item" ui-sref="voucher" ui-sref-active="active" ng-hide="true")
             i(class="fi-dollar-bill")
-            label {{'voucher' | translate}}
+            label {{'voucher.title' | translate}}
           a(class="item" ui-sref="setting" ui-sref-active="active")
             i(class="fi-widget")
-            label {{'setting' | translate}}
+            label {{'setting.title' | translate}}
       section(role="main" class="")
         div(class="row")
           div(class="large-1 columns")

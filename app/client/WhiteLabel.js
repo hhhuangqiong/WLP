@@ -5,6 +5,7 @@ import CompanyModule    from './modules/Companies';
 import EndUsersModule   from './modules/EndUsers';
 import TranslateModule  from './modules/Translate';
 import ApiService       from './services/Api';
+import Defaults         from './services/Defaults';
 import Uploader         from './services/Uploader';
 import FileReader       from './directives/FileReader';
 
@@ -26,6 +27,7 @@ var app = angular.module('App', [
   $rootScope.state = $state;
   $rootScope.stateParams = $stateParams;
 }).factory('ApiService', ApiService)
+  .factory('Defaults', Defaults)
   .factory('Uploader', Uploader)
   .directive('fileReader', FileReader);
 

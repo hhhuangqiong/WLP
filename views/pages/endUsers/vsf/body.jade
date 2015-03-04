@@ -27,20 +27,18 @@ div(class="account-list row")
             thead
               tr
                 th timestamp
-              tr
                 th mobile number
-              tr
                 th amount
-              tr
                 th virtual item id
-              tr
                 th type
-              tr
                 th category
-              tr
                 th status
             tbody
-              tr(ng-repeat="topup in topups")
+              tr(ng-hide="transactions")
+                td(colspan="7") {{ 'api.error' | translate }}
+              tr(ng-hide="!transactions || transactions.length > 0")
+                td(colspan="7") {{ 'api.empty' | translate }}
+              tr(ng-repeat="transaction in transactions")
                 td 1
                 td 2
                 td 3

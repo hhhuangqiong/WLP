@@ -42,7 +42,6 @@
       "domain": ".m800.com"
     }
   },
-
   "logging": {
     "winston": {
       "transports": [{
@@ -52,6 +51,19 @@
           "json": false
         }
       }]
+    }
+  },
+  "mumsApi": {
+    "name": "mums",
+    "baseUrl": "http://192.168.118.12:8080/api/1.0",
+    "timeout": 5000
+  },
+  "bossApi": {
+    "name": "boss",
+    "baseUrl": "http://192.168.135.167:10180/api",
+    "timeout": 5000,
+    "format": {
+      "timestamp": "YYYYMMDD"
     }
   }
 }

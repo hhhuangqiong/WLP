@@ -1,3 +1,5 @@
+var moment = require('moment');
+
 import EndUsersService from '../services/EndUsers';
 
 var endUsersModule = angular.module('App.EndUsers', ['ui.router', 'ngResource'])
@@ -51,6 +53,14 @@ var endUsersModule = angular.module('App.EndUsers', ['ui.router', 'ngResource'])
             templateUrl: '/endUsers/topup/view/body',
             controller: 'TopUp'
           }
+        },
+        resolve: {
+          topUps: function(Defaults, $stateParams, EndUsersService) {
+            return EndUsersService.getTransactions({
+              startDate: Defaults.DEFAULT_DATE,
+              endDate: Defaults.DEFAULT_DATE
+            });
+          }
         }
       })
       .state('endusers.vsf', {
@@ -64,6 +74,11 @@ var endUsersModule = angular.module('App.EndUsers', ['ui.router', 'ngResource'])
             templateUrl: '/endUsers/vsf/view/body',
             controller: 'VSF'
           }
+        },
+        resolve: {
+          VSFs: function($stateParams) {
+            return false;
+          }
         }
       })
   })
@@ -72,17 +87,28 @@ var endUsersModule = angular.module('App.EndUsers', ['ui.router', 'ngResource'])
     $rootScope.$state = $state;
     $rootScope.$log = $log;
   })
-  .controller('EndUsers', function($scope, EndUsersService, Uploader, endUsers) {
+  .controller('EndUsers', function($scope, endUsers) {
     $scope.endUsers = endUsers;
   })
-  .controller('EndUser', function($scope, EndUsersService, endUser) {
+  .controller('EndUser', function($scope, endUser) {
     $scope.endUser = endUser;
   })
-  .controller('TopUp', function() {
-
+  .controller('TopUp', function(Defaults, $scope, $stateParams, EndUsersService, topUps) {
+    $scope.topUps = topUps;
+    $scope.query = {
+      "carrier": $stateParams.carrierId,
+      "startDate": Defaults.DEFAULT_DATE,
+      "endDate": Defaults.DEFAULT_DATE
+    };
+    $scope.search = function() {
+      EndUsersService.getTransactions($scope.query)
+        .then((result)=> {
+          $scope.topUps = result;
+        });
+    };
   })
-  .controller('VSF', function() {
-
+  .controller('VSF', function($scope, VSFs) {
+    $scope.VSFs = VSFs;
   })
   .factory('EndUsersService', EndUsersService);
 

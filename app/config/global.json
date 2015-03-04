@@ -16,5 +16,11 @@
         "unit": "day"
       }
     }
+  },
+  "currencyCode": {
+    "156": "CNY",
+    "840": "USD",
+    "978": "EUR",
+    "998": "Yato Coin"
   }
 }

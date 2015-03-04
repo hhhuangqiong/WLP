@@ -1,9 +1,39 @@
 {
-  "dashboard": "dashboard",
-  "company": "company",
-  "account": "account",
-  "end_user": "end users",
-  "permissions": "permissions",
-  "voucher": "voucher",
-  "setting": "setting"
+  "dashboard": {
+    "title": "overview"
+  },
+  "company": {
+    "title": "company"
+  },
+  "account": {
+    "title": "account"
+  },
+  "end_user": {
+    "title": "end users"
+  },
+  "top_up": {
+    "title": "top-up"
+  },
+  "calls": {
+    "title": "calls"
+  },
+  "im": {
+    "title": "im"
+  },
+  "store": {
+    "title": "store"
+  },
+  "permissions": {
+    "title": "permissions"
+  },
+  "voucher": {
+    "title": "voucher"
+  },
+  "setting": {
+    "title": "setting"
+  },
+  "api": {
+    "error": "error ocurred. Please try searching again.",
+    "empty": "no result is found. please try refining your search."
+  }
 }

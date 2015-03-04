@@ -10,7 +10,7 @@ describe 'UserRequest', ->
 
   it 'should throw error without baseUrl', ->
     expect ->
-      request = new UserRequest();
+      request = new UserRequest()
     .to.throw Error
 
   it 'should throw error with invalid baseUrl', ->

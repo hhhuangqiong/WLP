@@ -31,8 +31,8 @@ class ApiService {
     var deferred = this.$q.defer();
     this.$http({
         url    : methods.url,
-        method : methods.method,
-        data   : objectParams,
+        method : methods.method || 'get',
+        data   : JSON.stringify(objectParams),
         headers: {
           'Content-Type': methods.type || 'text/html'
         }
@@ -42,8 +42,8 @@ class ApiService {
         // not applicable
         deferred.resolve(data);
       })
-      .error(function (error) {
-        deferred.reject(error);
+      .error(function (err) {
+        deferred.reject(err);
       });
 
     return deferred.promise;

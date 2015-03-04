@@ -9,16 +9,23 @@ class BaseRequest {
       throw new Error('invalid baseUrl.');
   }
 
-  createRequestId() {
-    return Math.random().toString(36).substring(6);
+  appendRequestId(params) {
+    params.requestId = params.requestId || Math.random().toString(36).substring(2, 8);
+    return params;
   }
 
   // http://issuetracking.maaii.com:8090/display/MAAIIP/MUMS+User+Management+by+Carrier+HTTP+API#MUMSUserManagementbyCarrierHTTPAPI-HTTPErrorCodes
-  handleError(err) {
+  handleError(err, status) {
     var error = new Error(err.message);
-    error.status = err.status;
-    error.code = err.code;
 
+    if (err.timeout) {
+      error.status = 504;
+      error.timeout = err.timeout;
+      return error;
+    }
+
+    error.status = err.status || status || 500;
+    error.code = err.code;
     return error;
   }
 }

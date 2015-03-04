@@ -11,20 +11,23 @@ class EndUsersService {
     this.ApiService = ApiService;
     this.endUsers;
     this.methods = {
-      list: {
+      users: {
         url: "/api/1.0/carriers/%s/users",
-        type: "application/json",
-        method: "get"
+        type: "application/json"
       },
-      details: {
+      user: {
         url: "/api/1.0/carriers/%s/users/%s",
-        type: "application/json",
-        method: "get"
+        type: "application/json"
       },
       whitelist: {
         url: "/api/1.0/carriers/%s/whitelist",
         type: "application/json",
         method: "put"
+      },
+      transactions: {
+        url: "/api/1.0/transactionHistory",
+        type: "application/json",
+        method: "post"
       }
     }
   }
@@ -36,7 +39,7 @@ class EndUsersService {
 
     var deferred = this.ApiService.$q.defer();
 
-    var method = _.clone(this.methods.list);
+    var method = _.clone(this.methods.users);
     method.url = util.format(method.url, 'yato.maaii.com');
 
     this.ApiService.execute(method)
@@ -65,14 +68,13 @@ class EndUsersService {
 
     var deferred = this.ApiService.$q.defer();
 
-    var method = _.clone(this.methods.details);
+    var method = _.clone(this.methods.user);
     method.url = util.format(method.url, carrierId, username);
 
     this.ApiService.execute(method)
       .then((response) => {
-        if (response.error) {
-          return deferred.promise;
-        }
+        if (response.error)
+          return deferred.resolve(false);
 
         var _carrierId = response.carrierId;
         var _username = response.userDetails.username;
@@ -86,7 +88,29 @@ class EndUsersService {
         };
 
         return deferred.resolve(_user);
-    });
+      })
+      .catch((err) => {
+        return deferred.reject(err);
+      });
+
+    return deferred.promise;
+  }
+
+  getTransactions(query) {
+    var deferred = this.ApiService.$q.defer();
+
+    this.ApiService.execute(this.methods.transactions, query)
+      .then((response) => {
+        if (response.error)
+          return deferred.resolve(false);
+
+        return deferred.resolve(response.result.history);
+      })
+      .catch((err) => {
+        return deferred.resolve({
+          error: err
+        });
+      });
 
     return deferred.promise;
   }
@@ -99,6 +123,8 @@ class EndUsersService {
 
     this.ApiService.execute(method)
       .then((response) => {
+        if (response.error)
+          return deferred.resolve(false);
 
         var _carrierId = response.carrierId;
         var _applied = response.usernamesApplied;
