@@ -3,15 +3,11 @@ import { Router } from 'express';
 var router = Router();
 
 router.get('/view/header', function(req, res, next) {
-  res.render('pages/endUsers/header');
+  res.render('pages/store/header');
 });
 
 router.get('/view/body', function(req, res, next) {
-  res.render('pages/endUsers/body');
-});
-
-router.get('/view/enduser', function(req, res, next) {
-  res.render('pages/endUsers/enduser');
+  res.render('pages/store/body');
 });
 
 export default router;

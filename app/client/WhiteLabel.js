@@ -3,6 +3,8 @@
 import AccountModule    from './modules/Accounts';
 import CompanyModule    from './modules/Companies';
 import EndUsersModule   from './modules/EndUsers';
+import StoreModule      from './modules/Store';
+import TopUpsModule     from './modules/TopUps';
 import TranslateModule  from './modules/Translate';
 import ApiService       from './services/Api';
 import Defaults         from './services/Defaults';
@@ -20,6 +22,8 @@ var app = angular.module('App', [
   AccountModule.name,
   CompanyModule.name,
   EndUsersModule.name,
+  StoreModule.name,
+  TopUpsModule.name,
   TranslateModule.name
 ]).config(function($urlRouterProvider, $httpProvider) {
   $urlRouterProvider.otherwise('/accounts');

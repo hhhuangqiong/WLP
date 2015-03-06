@@ -28,6 +28,10 @@ class EndUsersService {
         url: "/api/1.0/transactionHistory",
         type: "application/json",
         method: "post"
+      },
+      vsfTransactions: {
+        url: "/api/1.0/transacitons/carriers/%s",
+        type: "application/json"
       }
     }
   }
@@ -91,6 +95,28 @@ class EndUsersService {
       })
       .catch((err) => {
         return deferred.reject(err);
+      });
+
+    return deferred.promise;
+  }
+
+  getVSFTransactions(carrierId, params) {
+    var deferred = this.ApiService.$q.defer();
+
+    var method = _.clone(this.methods.vsfTransactions);
+    method.url = util.format(method.url, carrierId);
+
+    this.ApiService.execute(this.methods.vsfTransactions, params)
+      .then((response) => {
+        if (response.error)
+          return deferred.resolve(false);
+
+        return deferred.resolve(response.result.transactionRecords);
+      })
+      .catch((err) => {
+        return deferred.resolve({
+          error: err
+        });
       });
 
     return deferred.promise;

@@ -85,10 +85,11 @@ export default class VSFTransactionRequest extends BaseRequest {
 
     request
       .get(util.format('%s%s', base, url))
-      //.query(params)
+      .query(params)
       .buffer()
       .timeout(this.timeout)
       .end((err, res) => {
+        console.log(err, res);
         if (err) return cb(err);
         if (res.status >= 400) return cb(this.handleError(res.body.err));
         cb(null, res.body);

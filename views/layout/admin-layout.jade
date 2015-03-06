@@ -40,7 +40,7 @@ html(lang="#{lang||'en'}" ng-app="App")
           a(class="item" ui-sref="endusers.index" ui-sref-active="active")
             i(class="fi-torsos-all")
             label {{'end_user.title' | translate}}
-          a(class="item" ui-sref="topup.index" ui-sref-active="active")
+          a(class="item" ui-sref="topups.index" ui-sref-active="active")
             i(class="fi-dollar")
             label {{'top_up.title' | translate}}
           a(class="item" ui-sref="calls.index" ui-sref-active="active")
@@ -57,7 +57,7 @@ html(lang="#{lang||'en'}" ng-app="App")
           a(class="item" ui-sref="voucher" ui-sref-active="active" ng-hide="true")
             i(class="fi-dollar-bill")
             label {{'voucher.title' | translate}}
-          a(class="item" ui-sref="setting" ui-sref-active="active")
+          a(class="item" ui-sref="setting.index" ui-sref-active="active")
             i(class="fi-widget")
             label {{'setting.title' | translate}}
       section(role="main" class="")

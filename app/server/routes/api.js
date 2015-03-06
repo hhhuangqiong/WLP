@@ -7,7 +7,7 @@ var endUserRequest        = fetchDep(nconf.get('containerName'), 'EndUserRequest
 var transactionRequest    = fetchDep(nconf.get('containerName'), 'TransactionRequest');
 var vsfTransactionRequest = fetchDep(nconf.get('containerName'), 'VSFTransactionRequest');
 var walletRequest         = fetchDep(nconf.get('containerName'), 'WalletRequest');
-var apiCtrl               = new Controller(endUserRequest, transactionRequest, walletRequest);
+var apiCtrl               = new Controller(endUserRequest, transactionRequest, walletRequest, vsfTransactionRequest);
 
 var router = Router({ mergeParams: true });
 
@@ -33,6 +33,10 @@ router.delete('/carriers/:carrierId/users/:username/suspension', function(req, r
 
 router.delete('/carriers/:carrierId/users/:username', function(req, res, next) {
   return apiCtrl.terminateEndUser(req, res, next);
+});
+
+router.get('/transactions/carrier/:carrierId', function(req, res, next) {
+  return apiCtrl.getVSFTransactions(req, res, next);
 });
 
 router.post('/transactionHistory', function(req, res, next) {

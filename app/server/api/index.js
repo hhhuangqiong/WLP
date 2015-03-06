@@ -3,10 +3,11 @@ var Q = require('q');
 
 export default class Api {
 
-  constructor(endUsersRequest, transactionRequest, walletRequest) {
+  constructor(endUsersRequest, transactionRequest, walletRequest, vsfTransactionRequest) {
     this.endUserRequest = endUsersRequest;
     this.transactionRequest = transactionRequest;
     this.walletRequest = walletRequest;
+    this.vsfTransactionRequest = vsfTransactionRequest;
   }
 
   getTransactions(req, res, next) {
@@ -22,6 +23,24 @@ export default class Api {
     var endDate      = req.body.endDate;
 
     this.transactionRequest.getTransactions(req.body, (err, result)=>{
+      if (err)
+        return res.status(err.status).json({
+          error: err
+        });
+
+      return res.json(result);
+    });
+  }
+
+  getVSFTransactions(req, res, next) {
+    req.checkParams('carrierId').notEmpty();
+
+    if (req.validationErrors())
+      return res.status(400).json({
+        error: new Error("missing mandatory field(s).")
+      });
+
+    this.vsfTransactionRequest.getTransactions(req.body, (err, result)=>{
       if (err)
         return res.status(err.status).json({
           error: err

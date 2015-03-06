@@ -1,5 +1,3 @@
-var moment = require('moment');
-
 import EndUsersService from '../services/EndUsers';
 
 var endUsersModule = angular.module('App.EndUsers', ['ui.router', 'ngResource'])
@@ -76,8 +74,10 @@ var endUsersModule = angular.module('App.EndUsers', ['ui.router', 'ngResource'])
           }
         },
         resolve: {
-          VSFs: function($stateParams) {
-            return false;
+          VSFs: function($stateParams, EndUsersService) {
+            return EndUsersService.getVSFTransactions($stateParams.carrierId, {
+              carrierId: $stateParams.carrierId
+            });
           }
         }
       })
@@ -108,6 +108,7 @@ var endUsersModule = angular.module('App.EndUsers', ['ui.router', 'ngResource'])
     };
   })
   .controller('VSF', function($scope, VSFs) {
+    console.log(VSFs);
     $scope.VSFs = VSFs;
   })
   .factory('EndUsersService', EndUsersService);
