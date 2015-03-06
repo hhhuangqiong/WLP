@@ -3,6 +3,8 @@ import path from 'path';
 
 import ensureAuthenticated from 'app/server/middlewares/ensureAuthenticated';
 
+import {SignUp} from 'app/lib/portal/SignUp';
+
 /**
  * Initalize the IoC containero
  * The registered factory(s) seems to be lazied loaded.
@@ -29,6 +31,8 @@ export function init(nconf) {
     var transport = require('app/lib/mailer/transports/smtp');
     return transport(nconf.get('smtp:transport'));
   });
+
+  ioc.service('SignUp', SignUp, { from: nconf.get('signUp:email:from'), subject: nconf.get('signUp:email:from') });
 
   ioc.service('Mailer', require('app/lib/mailer/mailer'), 'SmtpTransport');
   ioc.service('TemplateMailer', require('app/lib/mailer/templateMailer'), 'Mailer', 'MAIL_TMPL_CONFIG');

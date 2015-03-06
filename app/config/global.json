@@ -10,6 +10,10 @@
     "minOptionalTestsToPass": 4
   },
   "signUp": {
+    "email": {
+      "from": "noreply@m800.com",
+      "subject": "Sign up instruction"
+    },
     "token": {
       "expiry": {
         "value": 1,

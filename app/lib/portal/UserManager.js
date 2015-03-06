@@ -20,6 +20,7 @@ export default class PortalUserManager {
   /**
    * Get all users except Root
    *
+   * @method
    * @param {PortalUserModel} data
    * @param {Function} cb
    */
@@ -54,6 +55,7 @@ export default class PortalUserManager {
   /**
    * Create new portal user
    *
+   * @method
    * @param data
    * @param author
    * @param {Function} cb
@@ -77,27 +79,13 @@ export default class PortalUserManager {
   /**
    * Verify PortalUser Sign Up Token
    *
-   * @method verifySignUpToken
+   * @method 
    * @param {String} token
    * @param {Function} done
    */
   //verifySignUpToken(token, done) {
   verifySignUpToken(username, token, done) {
-    logger.debug('verifying sign up token');
-    PortalUser.findOne({
-      'token.signUp.token':   token,
-      'token.signUp.expired': false
-    }, function(err, user) {
-      if (err) {
-        logger.error(err, 'db-error');
-        return done(err);
-      }
-      if (!user) {
-        logger.debug('Invalid token %s', token);
-        return done(null, null);
-      }
-      return done(null, user);
-    });
+    return done(null, user);
   }
 
   // TODO add a method to check if the user is verified

@@ -91,8 +91,7 @@ var portalUserSchema = new mongoose.Schema({
     type: Date,
     default: Date.now
   },
-  createBy: {
-    type: mongoose.Schema.Types.ObjectId,
+  createBy: { type: mongoose.Schema.Types.ObjectId,
     ref: collectionName
   },
   updateAt: {

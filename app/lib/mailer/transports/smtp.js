@@ -1,12 +1,15 @@
-var nodemailer = require('nodemailer');
+var nodemailer    = require('nodemailer');
 var smtpTransport = require('nodemailer-smtp-transport');
+
 /**
  * All options are passed through to the SMTP transporter
  *
- * https://github.com/andris9/nodemailer-smtp-transport#usage
+ * @module mailer/transports
+ * @func
  * @param {Object} opts
+ *
+ * @see {@link https://github.com/andris9/nodemailer-smtp-transport#usage}
  */
-module.exports = function (opts) {
-    opts = opts || {};
-    return nodemailer.createTransport(smtpTransport(opts));
-};
+export default function (opts = {}) {
+  return nodemailer.createTransport(smtpTransport(opts));
+}
