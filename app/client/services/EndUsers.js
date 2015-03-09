@@ -30,7 +30,7 @@ class EndUsersService {
         method: "post"
       },
       vsfTransactions: {
-        url: "/api/1.0/transacitons/carriers/%s",
+        url: "/api/1.0/transactions/carriers/%s",
         type: "application/json"
       }
     }
@@ -106,7 +106,7 @@ class EndUsersService {
     var method = _.clone(this.methods.vsfTransactions);
     method.url = util.format(method.url, carrierId);
 
-    this.ApiService.execute(this.methods.vsfTransactions, params)
+    this.ApiService.get(method, params)
       .then((response) => {
         if (response.error)
           return deferred.resolve(false);

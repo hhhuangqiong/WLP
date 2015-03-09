@@ -78,5 +78,13 @@
     "format": {
       "timestamp": "YYYYMMDD"
     }
+  },
+  "dataProvidersApi": {
+    "name": "dataProviders",
+    "baseUrl": "http://this.is.dataproviderapi.com/api/v1",
+    "timeout": 5000,
+    "format": {
+      "timestamp": "YYYYMMDD"
+    }
   }
 }

@@ -93,7 +93,7 @@ export default class TransactionRequest extends BaseRequest {
         this.sendRequest(params, cb);
       })
       .catch((err) => {
-        return cb(this.handleError(err), 400);
+        return cb(this.handleError(err), 500);
       });
   }
 }

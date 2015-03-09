@@ -3,20 +3,62 @@ var Q = require('q');
 
 export default class Api {
 
-  constructor(endUsersRequest, transactionRequest, walletRequest, vsfTransactionRequest) {
+  constructor(callsRequest, endUsersRequest, transactionRequest, walletRequest, vsfTransactionRequest, imRequest) {
+    this.callsRequest = callsRequest;
     this.endUserRequest = endUsersRequest;
     this.transactionRequest = transactionRequest;
     this.walletRequest = walletRequest;
     this.vsfTransactionRequest = vsfTransactionRequest;
+    this.imRequest = imRequest;
   }
 
-  getTransactions(req, res, next) {
+  getCalls(req, res) {
+    req.checkQuery('carrierId').notEmpty();
+    req.checkQuery('from').notEmpty();
+    req.checkQuery('to').notEmpty();
+
+    if (req.validationErrors())
+      return res.status(400).json({
+        error: "missing/invalid mandatory field(s)."
+      });
+
+    this.callsRequest.getCalls(req.query, (err, result) => {
+      if (err)
+        return res.status(err.status).json({
+          error: err
+        });
+
+      return res.json(result);
+    });
+  }
+
+  getImStat(req, res) {
+    req.checkQuery('carrierId').notEmpty();
+    req.checkQuery('from').notEmpty();
+    req.checkQuery('to').notEmpty();
+
+    if (req.validationErrors())
+      return res.status(400).json({
+        error: "missing/invalid mandatory field(s)."
+      });
+
+    this.imRequest.getImStat(req.query, (err, result) => {
+      if (err)
+        return res.status(err.status).json({
+          error: err
+        });
+
+      return res.json(result);
+    });
+  }
+
+  getTransactions(req, res) {
     req.checkBody('startDate').notEmpty().isDate();
     req.checkBody('endDate').notEmpty().isDate();
 
     if (req.validationErrors())
       return res.status(400).json({
-        error: new Error("missing mandatory field(s).")
+        error: "missing/invalid mandatory field(s)."
       });
 
     var startDate    = req.body.startDate;
@@ -32,15 +74,17 @@ export default class Api {
     });
   }
 
-  getVSFTransactions(req, res, next) {
+  getVSFTransactions(req, res) {
     req.checkParams('carrierId').notEmpty();
 
     if (req.validationErrors())
       return res.status(400).json({
-        error: new Error("missing mandatory field(s).")
+        error: "missing/invalid mandatory field(s)."
       });
 
-    this.vsfTransactionRequest.getTransactions(req.body, (err, result)=>{
+    var carrierId = req.params.carrierId;
+
+    this.vsfTransactionRequest.getTransactions(carrierId, req.query, (err, result)=>{
       if (err)
         return res.status(err.status).json({
           error: err
@@ -50,12 +94,12 @@ export default class Api {
     });
   }
 
-  listEndUsers(req, res, next) {
+  listEndUsers(req, res) {
     req.checkParams('carrierId').notEmpty();
 
     if (req.validationErrors())
       return res.status(400).json({
-        error: new Error("missing mandatory field(s).")
+        error: "missing/invalid mandatory field(s)."
       });
 
     var carrierId = req.params.carrierId;
@@ -70,13 +114,13 @@ export default class Api {
     });
   }
 
-  getEndUserDetails(req, res, next) {
+  getEndUserDetails(req, res) {
     req.checkParams('carrierId').notEmpty();
     req.checkParams('username').notEmpty();
 
     if (req.validationErrors())
       return res.status(400).json({
-        error: new Error("missing mandatory field(s).")
+        error: "missing/invalid mandatory field(s)."
       });
 
     var user = {};
@@ -138,13 +182,13 @@ export default class Api {
       });
   }
 
-  suspendEndUser(req, res, next) {
+  suspendEndUser(req, res) {
     req.checkParams('carrierId').notEmpty();
     req.checkParams('username').notEmpty();
 
     if (validationErrors())
       return res.status(400).json({
-        error: new Error("missing mandatory field(s).")
+        error: "missing/invalid mandatory field(s)."
       });
 
     var carrierId = req.params.carrierId;
@@ -160,13 +204,13 @@ export default class Api {
     })
   }
 
-  reactivateEndUser(req, res, next) {
+  reactivateEndUser(req, res) {
     req.checkParams('carrierId').notEmpty();
     req.checkParams('username').notEmpty();
 
     if (validationErrors())
       return res.status(400).json({
-        error: new Error("missing mandatory field(s).")
+        error: "missing/invalid mandatory field(s)."
       });
 
     var carrierId = req.params.carrierId;
@@ -182,13 +226,13 @@ export default class Api {
     })
   }
 
-  terminateEndUser(req, res, next) {
+  terminateEndUser(req, res) {
     req.checkParams('carrierId').notEmpty();
     req.checkParams('username').notEmpty();
 
     if (validationErrors())
       return res.status(400).json({
-        error: new Error("missing mandatory field(s).")
+        error: "missing/invalid mandatory field(s)."
       });
 
     var carrierId = req.params.carrierId;
@@ -204,13 +248,13 @@ export default class Api {
     })
   }
 
-  whitelistUsers(req, res, next) {
+  whitelistUsers(req, res) {
     req.checkParams('carrierId').notEmpty();
     req.checkParams('username').notEmpty();
 
     if (validationErrors())
       return res.status(400).json({
-        error: new Error("missing mandatory field(s).")
+        error: "missing/invalid mandatory field(s)."
       });
 
     var carrierId = req.params.carrierId;

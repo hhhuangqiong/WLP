@@ -28,8 +28,8 @@ var storeModule = angular.module('App.Store', ['ui.router', 'ngResource'])
         resolve: {
           transactions: function($stateParams, EndUsersService) {
             return EndUsersService.getVSFTransactions('yato.maaii.com', {
-              startDate: '',
-              endDate: ''
+              fromTime: '2014-12-30T16:00:00Z',
+              toTime: '2014-12-31T16:00:00Z'
             });
           }
         }
@@ -42,6 +42,12 @@ var storeModule = angular.module('App.Store', ['ui.router', 'ngResource'])
   })
   .controller('VSF', function(Defaults, $scope, $stateParams, transactions) {
     $scope.transactions = transactions;
+    $scope.query = {
+      fromTime: null,
+      toTime: null,
+      pageNumberIndex: null,
+      userNumber: null
+    }
   })
   .factory('EndUsersService', EndUsersService);
 

@@ -39,6 +39,11 @@ export function init(nconf) {
 
   ioc.service('PortalUserManager', require('app/lib/portal/UserManager'));
 
+  ioc.constant('DATAPROVIDER_API_BASE_URL', nconf.get('dataProviderApi:baseUrl'));
+  ioc.constant('DATAPROVIDER_API_TIMEOUT', nconf.get('dataProviderApi:timeout'));
+  ioc.service('CallsRequest', require('app/lib/requests/dataProviders/Call'), 'DATAPROVIDER_API_BASE_URL', 'DATAPROVIDER_API_TIMEOUT');
+  ioc.service('ImRequest', require('app/lib/requests/dataProviders/Im'), 'DATAPROVIDER_API_BASE_URL', 'DATAPROVIDER_API_TIMEOUT');
+
   ioc.constant('MUMS_API_BASE_URL', nconf.get('mumsApi:baseUrl'));
   ioc.constant('MUMS_API_TIMEOUT', nconf.get('mumsApi:timeout'));
   ioc.service('EndUserRequest', require('app/lib/requests/mums/User'), 'MUMS_API_BASE_URL', 'MUMS_API_TIMEOUT');

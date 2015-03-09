@@ -32,7 +32,8 @@ class ApiService {
     this.$http({
         url    : methods.url,
         method : methods.method || 'get',
-        data   : JSON.stringify(objectParams),
+        data   : methods.method == 'get' ? null : JSON.stringify(objectParams),
+        params : methods.method == 'get' ? objectParams : null,
         headers: {
           'Content-Type': methods.type || 'text/html'
         }

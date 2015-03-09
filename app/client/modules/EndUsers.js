@@ -107,10 +107,6 @@ var endUsersModule = angular.module('App.EndUsers', ['ui.router', 'ngResource'])
         });
     };
   })
-  .controller('VSF', function($scope, VSFs) {
-    console.log(VSFs);
-    $scope.VSFs = VSFs;
-  })
   .factory('EndUsersService', EndUsersService);
 
 export default endUsersModule;

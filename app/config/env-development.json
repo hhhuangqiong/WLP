@@ -69,14 +69,25 @@
   "mumsApi": {
     "name": "mums",
     "baseUrl": "http://this.is.mumsapi.com/api/1.0",
-    "timeout": 5000
+    "timeout": 5000,
+    "format": {
+      "timestamp": ""
+    }
   },
   "bossApi": {
     "name": "boss",
     "baseUrl": "http://this.is.bossapi.com/api",
     "timeout": 5000,
     "format": {
-      "timestamp": "YYYYMMDD"
+      "timestamp": "YYYYMMDDHHmmss"
+    }
+  },
+  "dataProviderApi": {
+    "name": "dataProvider",
+    "baseUrl": "http://this.is.dataproviderapi.com/api/v1",
+    "timeout": 5000,
+    "format": {
+      "timestamp": "x"
     }
   }
 }

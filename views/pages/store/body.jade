@@ -14,24 +14,22 @@ div(class="account-list row")
           table
             thead
               tr
-                th timestamp
-                th mobile number
+                th date & time
+                th mobile
+                th plaform
+                th virtual item
                 th amount
-                th virtual item id
-                th type
-                th category
-                th status
+                th transaction ID
             tbody
               tr(ng-hide="transactions")
-                td(colspan="7") {{ 'api.error' | translate }}
+                td(colspan="6") {{ 'api.error' | translate }}
               tr(ng-hide="!transactions || transactions.length > 0")
-                td(colspan="7") {{ 'api.empty' | translate }}
-              tr(ng-repeat="transaction in transactions")
-                td 1
-                td 2
-                td 3
-                td 4
-                td 5
-                td 6
-                td 7
+                td(colspan="6") {{ 'api.empty' | translate }}
+              tr(ng-repeat="transaction in transactions" ng-hide="transactions.error")
+                td {{ transaction.purchaseDate }}
+                td {{ transaction.userNumber }}
+                td {{ transaction.store }}
+                td {{ transaction.virtualItemId }}
+                td {{ transaction.amount }}
+                td {{ transaction.transactionId }}
 

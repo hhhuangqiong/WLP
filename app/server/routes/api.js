@@ -3,11 +3,20 @@ import nconf              from 'nconf';
 import { fetchDep }       from 'app/server/initializers/ioc';
 import Controller         from 'app/server/api';
 
+var callsRequest          = fetchDep(nconf.get('containerName'), 'CallsRequest');
 var endUserRequest        = fetchDep(nconf.get('containerName'), 'EndUserRequest');
 var transactionRequest    = fetchDep(nconf.get('containerName'), 'TransactionRequest');
 var vsfTransactionRequest = fetchDep(nconf.get('containerName'), 'VSFTransactionRequest');
 var walletRequest         = fetchDep(nconf.get('containerName'), 'WalletRequest');
-var apiCtrl               = new Controller(endUserRequest, transactionRequest, walletRequest, vsfTransactionRequest);
+var imRequest             = fetchDep(nconf.get('containerName'), 'ImRequest');
+var apiCtrl               = new Controller(
+                              callsRequest,
+                              endUserRequest,
+                              transactionRequest,
+                              walletRequest,
+                              vsfTransactionRequest,
+                              imRequest
+                            );
 
 var router = Router({ mergeParams: true });
 
@@ -35,7 +44,15 @@ router.delete('/carriers/:carrierId/users/:username', function(req, res, next) {
   return apiCtrl.terminateEndUser(req, res, next);
 });
 
-router.get('/transactions/carrier/:carrierId', function(req, res, next) {
+router.get('/calls/carriers/:carrierId', function(req, res, next) {
+  return apiCtrl.getCalls(req, res, next);
+});
+
+router.get('/imMessageStat', function(req, res, next) {
+  return apiCtrl.getImStat(req, res, next);
+});
+
+router.get('/transactions/carriers/:carrierId', function(req, res, next) {
   return apiCtrl.getVSFTransactions(req, res, next);
 });
 
