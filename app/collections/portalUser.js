@@ -82,12 +82,12 @@ var portalUserSchema = new mongoose.Schema({
     _id: false,
     event: String,
     value: mongoose.Schema.Types.Mixed,
-    createAt: {
+    createdAt: {
       type: Date,
       default: Date.now
     }
   }],
-  createAt: {
+  createdAt: {
     type: Date,
     default: Date.now
   },
@@ -178,7 +178,7 @@ portalUserSchema.static('makeToken', function(event, val) {
   return {
     event: event,
     value: val || randtoken.generate(16),
-    createAt: new Date()
+    createdAt: new Date()
   };
 });
 
@@ -218,7 +218,7 @@ portalUserSchema.method('isTokenExpired', function(event, n, unit) {
   if(!token) throw new Error(`No token of "${event}"`);
 
   var compareTo = moment().subtract(n, unit);
-  return moment(token.createAt).isBefore(compareTo);
+  return moment(token.createdAt).isBefore(compareTo);
 });
 
 portalUserSchema.method('hasValidOneTimePassword', function(number) {
@@ -259,7 +259,7 @@ portalUserSchema.static('makeToken', function(event, val) {
   return {
     event: event,
     value: val || randtoken.generate(16),
-    createAt: new Date()
+    createdAt: new Date()
   };
 });
 

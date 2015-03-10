@@ -28,6 +28,7 @@
     "express-validator": "^2.7.0",
     "i18next": "^1.7.8",
     "jade": "^1.9.0",
+    "kue": "^0.8.11",
     "lodash": "^3.1.0",
     "markdown": "^0.5.0",
     "method-override": "^2.3.1",

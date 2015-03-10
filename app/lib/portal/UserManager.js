@@ -42,7 +42,7 @@ export default class PortalUserManager {
           'carrierDomains': user.carrierDomains,
           'createBy':       user.createBy,
           // date formatting could be left to view layer
-          'createAt':       moment(user.createAt).format('LLL'),
+          'createdAt':       moment(user.createdAt).format('LLL'),
           'updateAt':       moment(user.updateAt).format('LLL'),
           'updateBy':       user.updateBy
         };

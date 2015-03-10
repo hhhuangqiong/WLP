@@ -117,7 +117,7 @@ export class SignUp {
     if(token.value !== tokenValue) return false;
 
     // true means not expired
-    return moment(after).isBefore(token.createAt);
+    return moment(after).isBefore(token.createdAt);
   }
 
   // call the SpeakeasyWrapper#qrCode?

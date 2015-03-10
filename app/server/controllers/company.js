@@ -54,7 +54,7 @@ export default class CompanyController {
     company.updateBy = user._id;
     company.parentCompany = user.affiliatedCompany;
     company.createBy = user._id;
-    company.createAt = new Date();
+    company.createdAt = new Date();
     //End
     logger.debug("Initiate persisting request for :%j", company, {});
     Q.ninvoke(Company, 'create', company).then((result)=>{

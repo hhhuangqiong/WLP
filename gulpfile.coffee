@@ -56,11 +56,14 @@ gulp.task 'default', ['clean', 'locale', 'nodemon', 'watch'], ->
   console.log 'done \uD83D\uDE80'
   return
 
-gulp.task 'watch', ->
-  gulp.watch [src.allJS, "!#{src.clientJS}"], ['babel']
-  gulp.watch src.clientJS, ['babel-ng']
+gulp.task 'watch', ['watch:js'], ->
   gulp.watch 'public/scss/**/*.scss', ['scss']
   gulp.watch 'locales/client/en/*.json', ['locale']
+  return
+
+gulp.task 'watch:js', ->
+  gulp.watch [src.allJS, "!#{src.clientJS}"], ['babel']
+  gulp.watch src.clientJS, ['babel-ng']
   return
 
 gulp.task 'clean', ->

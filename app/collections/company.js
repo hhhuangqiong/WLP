@@ -48,7 +48,7 @@ var schema = new mongoose.Schema({
         required: true,
         default: 'inactive'
     },
-    createAt: {
+    createdAt: {
         type: Date,
         default: Date.now
     },
