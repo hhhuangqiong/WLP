@@ -19,7 +19,8 @@
     "db": 10
   },
   "queue": {
-    "prefix": "q"
+    "prefix": "q",
+    "uiPort": 3100
   },
   "trustProxy": true,
   "smtp": {

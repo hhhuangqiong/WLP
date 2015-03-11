@@ -61,7 +61,7 @@ gulp.task 'watch', ['watch:js'], ->
   gulp.watch 'locales/client/en/*.json', ['locale']
   return
 
-gulp.task 'watch:js', ->
+gulp.task 'watch:js', ['babel'], ->
   gulp.watch [src.allJS, "!#{src.clientJS}"], ['babel']
   gulp.watch src.clientJS, ['babel-ng']
   return
