@@ -18,6 +18,9 @@
     "ttl": 1800,
     "db": 10
   },
+  "queue": {
+    "prefix": "q"
+  },
   "trustProxy": true,
   "smtp": {
     "sender": {

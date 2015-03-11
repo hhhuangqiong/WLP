@@ -1,34 +1,45 @@
 var express          = require('express');
 var logger           = require('winston');
+var path             = require('path');
 
 // express-related
 var bodyParser       = require('body-parser');
 var compression      = require('compression');
 var cookieParser     = require('cookie-parser');
 var expressValidator = require('express-validator');
+var favicon          = require('serve-favicon');
+var flash            = require('connect-flash');
 var methodOverride   = require('method-override');
 var morgan           = require('morgan');
 var session          = require('express-session');
-var favicon          = require('serve-favicon');
-var flash            = require('connect-flash');
-var path             = require('path');
 
 var RedisStore       = require('connect-redis')(session);
 
 function initialize(port) {
-  if (!port)
-    throw new Error('Please specify port');
+  if (!port) throw new Error('Please specify port');
+
+  // trust me, it's 2 levels up after transpilation
+  const PROJ_ROOT = path.join(__dirname, '../..');
 
   var app = express();
-  var env = process.env.NODE_ENV || 'development';
-  // trust me, it's 2 levels up
-  var PROJ_ROOT = path.join(__dirname, '../..');
+
+  // application settings
+  app.set('port',        port);
+  app.set('views',       path.join(PROJ_ROOT, 'views'));
+  app.set('view engine', 'jade');
+  app.set('view cache',  env !== 'development');
+
+  var env = app.get('env');
 
   var nconf = require('app/server/initializers/nconf')(env, path.join(PROJ_ROOT, 'app/config'));
+
   // database initialization + data seeding
-  require('app/server/initializers/database')(nconf.get('mongodb:uri'), require('app/server/initializers/dataseed')(path.join(PROJ_ROOT, 'app/data/rootUser.json')));
+  var seedFilePath = path.join(PROJ_ROOT, 'app/data/rootUser.json');
+  require('app/server/initializers/database')(nconf.get('mongodb:uri'), require('app/server/initializers/dataseed')(seedFilePath));
 
   var ioc = require('app/server/initializers/ioc').init(nconf);
+
+  require('app/server/initializers/kue')(ioc, nconf, { uiPort: +port + 100 });
 
   require('app/server/initializers/logging')();
   require('app/server/initializers/viewHelpers')(app);
@@ -42,10 +53,6 @@ function initialize(port) {
   //To enable using PUT, DELETE METHODS
   app.use(methodOverride('_method'));
 
-  app.set('port', port);
-  app.set('views', path.join(PROJ_ROOT, 'views'));
-  app.set('view engine', 'jade');
-  app.set('view cache', env !== 'development');
   app.use(bodyParser.json());
   app.use(bodyParser.urlencoded({
     extended: true

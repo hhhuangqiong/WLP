@@ -1,0 +1,72 @@
+{
+  "enableHTTPS": false,
+  "email": {
+    "support": "support@M800.com",
+    "no_reply": "No-Reply@M800.com"
+  },
+  "mongodb": {
+    "uri": "mongodb://localhost/m800-whitelabel-portal",
+    "options": {
+      "mongos": false,
+      "user": "",
+      "pass": ""
+    }
+  },
+  "redis": {
+    "host": "localhost",
+    "port": 6379,
+    "ttl": 1800,
+    "db": 10
+  },
+  "queue": {
+    "prefix": "q"
+  },
+  "trustProxy": true,
+  "smtp": {
+    "sender": {
+      "email": "issue.tracker@maaii.com",
+      "name": "M800"
+    },
+    "transport":{
+      "host": "smtp.m800400.com",
+      "port": 25,
+      "tls": {
+        "rejectUnauthorized": false
+      }
+    }
+  },
+  "secret": {
+    "session": "fens.me",
+    "params": "fens.me"
+  },
+  "cookies": {
+    "secret": "$ecrEt",
+    "options": {
+      "domain": ".m800.com"
+    }
+  },
+  "logging": {
+    "winston": {
+      "transports": [{
+        "type": "winston.transports.File",
+        "options": {
+          "filename": "logs/app.log",
+          "json": false
+        }
+      }]
+    }
+  },
+  "mumsApi": {
+    "name": "mums",
+    "baseUrl": "http://192.168.118.12:8080/api/1.0",
+    "timeout": 5000
+  },
+  "bossApi": {
+    "name": "boss",
+    "baseUrl": "http://192.168.135.167:10180/api",
+    "timeout": 5000,
+    "format": {
+      "timestamp": "YYYYMMDD"
+    }
+  }
+}

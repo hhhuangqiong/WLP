@@ -18,6 +18,9 @@
     "ttl": 1800,
     "db": 10
   },
+  "queue": {
+    "prefix": "q"
+  },
   "trustProxy": true,
   "smtp": {
     "sender": {
@@ -36,6 +39,13 @@
     "session": "fens.me",
     "params": "fens.me"
   },
+  "session": {
+    "cookie": {
+      "maxAge": {
+        "default": 900000
+      }
+    }
+  },
   "cookies": {
     "secret": "$ecrEt",
     "options": {
@@ -45,22 +55,24 @@
   "logging": {
     "winston": {
       "transports": [{
-        "type": "winston.transports.File",
+        "type": "winston.transports.Console",
         "options": {
-          "filename": "logs/app.log",
-          "json": false
+          "level": "debug",
+          "colorize": true,
+          "timestamp": true,
+          "handleExceptions": true
         }
       }]
     }
   },
   "mumsApi": {
     "name": "mums",
-    "baseUrl": "http://192.168.118.12:8080/api/1.0",
+    "baseUrl": "http://this.is.mumsapi.com/api/1.0",
     "timeout": 5000
   },
   "bossApi": {
     "name": "boss",
-    "baseUrl": "http://192.168.135.167:10180/api",
+    "baseUrl": "http://this.is.bossapi.com/api",
     "timeout": 5000,
     "format": {
       "timestamp": "YYYYMMDD"

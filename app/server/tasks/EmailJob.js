@@ -26,7 +26,7 @@ export class EmailJob {
    */
   constructor(queue, processFn) {
     if(!queue) throw new Error('require a Queue object');
-    if(!_.isFunction(processFn)) throw new Error('A process function is required');
+    if(!_.isFunction(processFn)) throw new Error('A function for how to process the job is required');
 
     this.queue = queue;
     // any scenario to unbind
@@ -37,14 +37,14 @@ export class EmailJob {
    * Save the email job in the queue
    *
    * TODO
-   *  - use different priority level, default for now
-   *  - allow to configure attempts and/or backoff
+   *  - use different priority level (kue.Job.priorities), default for now
+   *  - allow to configure delay, attempts and backoff
    *  - may split a separate #save() method
    *
    * @param {Email} email A instance from email collection
    * @param cb the callback will recieve an err as the only param
    *
-   * @return {Job}
+   * @return {kue.Job}
    */
   create(email, cb) {
     //TODO any validation on the email object
