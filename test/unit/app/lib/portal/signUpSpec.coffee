@@ -6,6 +6,8 @@ _ = require 'lodash'
 TemplateMailer           = require 'app/lib/mailer/templateMailer'
 PortalUser               = require 'app/collections/portalUser'
 
+SignUpTemplate = require 'app/lib/mailer/emailTemplates/SignUpTemplate'
+
 # object under test
 { SIGNUP_EVENT, SignUp } = require 'app/lib/portal/SignUp'
 
@@ -15,6 +17,8 @@ describe 'SignUp service', ->
   opts =
     from: 'admin@m800.com'
     subject: 'Please follow the instruction for sign up'
+
+  tmplObjStub = sinon.createStubInstance SignUpTemplate
 
   describe '#initializeUser', ->
     createBy = mongoose.Types.ObjectId()
@@ -30,7 +34,7 @@ describe 'SignUp service', ->
 
     it 'should update corresponding properties', (done) ->
       tm = send: ->
-      signUp = new SignUp tm, opts
+      signUp = new SignUp tm, tmplObjStub
 
       sinon.stub tm, 'send', ->
         expect( user ).to.have.property('createBy')
@@ -42,11 +46,12 @@ describe 'SignUp service', ->
       signUp.initializeUser user, createBy, ->
 
     it 'should trigger sending email', ->
+      tmplObj = new SignUpTemplate('signup', opts)
       tm = send: ->
       mailerMock = sinon.mock tm
       mailerMock.expects('send').withArgs(_.assign({to: user.username}, opts)).once()
 
-      signUp = new SignUp tm, opts
+      signUp = new SignUp tm, tmplObj
 
       # mocked the call; ignore the callback
       signUp.initializeUser user, createBy, ->

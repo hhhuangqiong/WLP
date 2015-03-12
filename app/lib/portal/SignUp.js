@@ -2,14 +2,14 @@
  * @module portal/signup
  */
 import Q from 'q';
+import _ from 'lodash';
+import logger from 'winston';
+import moment from 'moment';
+import randtoken from 'rand-token';
+import util from 'util';
 
-var _          = require('lodash');
-var moment     = require('moment');
-var randtoken  = require('rand-token');
-var util       = require('util');
-var PortalUser = require('app/collections/portalUser');
+import PortalUser from 'app/collections/portalUser';
 
-var logger     = require('winston');
 
 /**
  * Create a new SignUp service.
@@ -21,17 +21,15 @@ export class SignUp {
   /**
    * @constructs
    * @param {TemplateMailer} mailer
-   * @param {Object} opts
-   * @param {string} opts.from  The "from" field for the sign up email
-   * @param {string} opts.subject Sign up email subject
+   * @param {Object} templateObject
    */
-  constructor(mailer, opts = {}) {
+  constructor(mailer, templateObject) {
     // better to have mailer & template mailer implement the same interface
-    if(!mailer) throw new Error('mailer is required for SignUp to work');
+    if(!mailer) throw new Error('`mailer` is required');
     this.mailer = mailer;
 
-    if(!opts.from || !opts.subject) throw new Error('"from" & "subject" are both required in the options');
-    this.opts = opts;
+    if(!templateObject) throw new Error('`templateObject` is required');
+    this.templateObject = templateObject;
   }
 
   /**
@@ -69,10 +67,10 @@ export class SignUp {
       var to = model.username;
       logger.debug(`About to send ${to} a 'signup' email`);
 
-      // IDEA: method to get corresponding data from template
-      this.mailer.send({to: to, from: this.opts.from, subject: this.opts.subject},
-      // hard code various template data for now
-        'test', {name: 'dummy'}, cb);
+      var tmpl = this.templateObject;
+
+      this.mailer.send({to: to, from: tmpl.from, subject: tmpl.subject},
+        tmpl.templateFolderName, tmpl.data(user), cb);
     });
   }
 

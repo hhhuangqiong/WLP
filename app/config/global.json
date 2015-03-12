@@ -12,7 +12,8 @@
   "signUp": {
     "email": {
       "from": "noreply@m800.com",
-      "subject": "Sign up instruction"
+      "subject": "Sign up instruction",
+      "templateFolderName": "signup"
     },
     "token": {
       "expiry": {

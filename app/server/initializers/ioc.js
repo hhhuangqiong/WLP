@@ -32,7 +32,18 @@ export function init(nconf) {
     return transport(nconf.get('smtp:transport'));
   });
 
-  ioc.service('SignUp', SignUp, { from: nconf.get('signUp:email:from'), subject: nconf.get('signUp:email:from') });
+  // seems too verbose to load a template like this:
+  ioc.factory('SignUpTemplate', container => {
+    var SignUpTemplate = require('app/lib/mailer/emailTemplates/SignUpTemplate');
+    return new SignUpTemplate(nconf.get('signUp:email:templateFolderName'), {
+      from:    nconf.get('signUp:email:from'),
+      subject: nconf.get('signUp:email:subject')
+    }, {
+      expiryDays: nconf.get('signUp:token:expiry:value')
+    });
+  });
+
+  ioc.service('SignUp', SignUp, 'Mailer', 'SignUpTemplate');
 
   ioc.service('Mailer', require('app/lib/mailer/mailer'), 'SmtpTransport');
   ioc.service('TemplateMailer', require('app/lib/mailer/templateMailer'), 'Mailer', 'MAIL_TMPL_CONFIG');
