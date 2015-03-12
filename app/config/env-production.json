@@ -9,7 +9,8 @@
     "options": {
       "mongos": false,
       "user": "",
-      "pass": ""
+      "pass": "",
+      "autoIndex": false
     }
   },
   "redis": {

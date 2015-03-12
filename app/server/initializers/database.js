@@ -5,12 +5,17 @@ var mongoose = require('mongoose');
 /**
  * Initialize database connection
  *
- * @param {String} mongoURI MongoDB connection URI
+ * @param {string} mongoURI MongoDB connection URI
+ * @param {Object} mongoOpts MongoDB connection options
  * @param {Function} [cb]
  */
-function initialize(mongodbURI, cb) {
-  logger.info('Connecting to Mongo on %s', mongodbURI);
-  mongoose.connect(mongodbURI);
+function initialize(mongodbURI, mongodbOpts, cb) {
+  if(!mongodbURI || !mongodbOpts) throw new Error('Both uri & options are required');
+
+  //TODO may be exposing sensitive information (e.g., password) 
+  logger.info('Connecting to Mongo on %s with %j', mongodbURI, mongodbOpts, {});
+  mongoose.connect(mongodbURI, mongodbOpts);
+
   ['open', 'connected', 'disconnected', 'close'].forEach(function(evt) {
     mongoose.connection.on(evt, function() {
       logger.info('mongoose connection', evt);

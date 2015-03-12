@@ -35,7 +35,8 @@ function initialize(port) {
 
   // database initialization + data seeding
   var seedFilePath = path.join(PROJ_ROOT, 'app/data/rootUser.json');
-  require('app/server/initializers/database')(nconf.get('mongodb:uri'), require('app/server/initializers/dataseed')(seedFilePath));
+  var postDBInit = require('app/server/initializers/dataseed')(seedFilePath);
+  require('app/server/initializers/database')(nconf.get('mongodb:uri'), nconf.get('mongodb:options'), postDBInit);
 
   var ioc = require('app/server/initializers/ioc').init(nconf);
 
