@@ -14,7 +14,7 @@ describe 'Email job processor', ->
       emailJobProcessor()
     .to.throw Error, /mailer/i
     expect ->
-      emailJobProcessor( {} )
+      emailJobProcessor {}
     .to.throw Error, /send/i
     expect ->
       emailJobProcessor mailerStub
@@ -22,7 +22,8 @@ describe 'Email job processor', ->
     .to.not.throw Error
 
   it 'should return a function with correct arity', ->
-    fn = emailJobProcessor( mailerStub )
+    fn = emailJobProcessor mailerStub
+    expect( fn ).to.be.a 'function'
     expect( fn.length ).to.equal 2
 
   # not using 'done' with 'it' since it's testing about arguments
