@@ -33,16 +33,16 @@ export default class PortalUserManager {
       var formatted_users = {};
       users.forEach(function(user) {
         var formatted_user = {
-          '_id':             user._id,
+          '_id':            user._id,
           'username':       user.username,
           'name':           user.name,
           'status':         user.status,
           'isVerified':     user.isVerified,
-          'assignedGroups': user.assignedGroups,
-          'carrierDomains': user.carrierDomains,
+          'assignedGroup':  user.assignedGroup,
+          'carrierDomain':  user.carrierDomain,
           'createBy':       user.createBy,
           // date formatting could be left to view layer
-          'createdAt':       moment(user.createdAt).format('LLL'),
+          'createdAt':      moment(user.createdAt).format('LLL'),
           'updateAt':       moment(user.updateAt).format('LLL'),
           'updateBy':       user.updateBy
         };
@@ -79,7 +79,7 @@ export default class PortalUserManager {
   /**
    * Verify PortalUser Sign Up Token
    *
-   * @method 
+   * @method
    * @param {String} token
    * @param {Function} done
    */

@@ -59,12 +59,13 @@ var portalUserSchema = new mongoose.Schema({
       type: Date
     }
   }],
-  carrierDomains: [{
+  carrierDomain: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Company'
+  },
+  assignedGroup: {
     type: String
-  }],
-  assignedGroups: [{
-    type: String
-  }],
+  },
   status: {
     type: String,
     // TODO introduce enum-like statuses
@@ -91,7 +92,8 @@ var portalUserSchema = new mongoose.Schema({
     type: Date,
     default: Date.now
   },
-  createBy: { type: mongoose.Schema.Types.ObjectId,
+  createBy: {
+    type: mongoose.Schema.Types.ObjectId,
     ref: collectionName
   },
   updateAt: {
@@ -182,9 +184,6 @@ portalUserSchema.static('makeToken', function(event, val) {
   };
 });
 
-portalUserSchema.method('hasCarrierDomain', function(carrierDomain) {
-  return _.contains(this.carrierDomains, carrierDomain);
-});
 portalUserSchema.method('isValidPassword', function(password) {
   return bcrypt.compareSync(password, this.hashedPassword);
 });
