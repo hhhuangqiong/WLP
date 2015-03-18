@@ -1,4 +1,37 @@
 .account-list {
+  height: 100%;
+
+  &__side-nav {
+    height: 100%;
+    border-right: 1px solid lightgray;
+    overflow-y: scroll;
+  }
+
+  &__button-group {
+
+    &__button {
+      width: 120px;
+      margin-right: 10px;
+      text-transform: capitalize;
+
+      &__icon {
+        margin-right: 5px;
+      }
+    }
+  }
+
+  &__header {
+    margin-bottom: 10px;
+    border-bottom: 1px solid #f1f1f1;
+    overflow: hidden;
+
+    &__title {
+      padding: 12px 0 5px;
+      font-size: 18px;
+      text-transform: uppercase;
+    }
+  }
+
   &__block {
     .account-block-grid-4 {
       @include block-grid(

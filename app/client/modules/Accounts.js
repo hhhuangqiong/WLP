@@ -8,7 +8,7 @@ var accountModule = angular.module('App.Accounts', ['ui.router', 'ngResource'])
       .state('accounts', {
         abstract: true,
         url: '/accounts',
-        template: '<div ui-view="header"></div><div ui-view></div>',
+        template: '<div ui-view="header" class="main__main-section__main-view__header"></div><div ui-view class="main__main-section__main-view__contents"></div>',
         resolve: {
           accounts: function(AccountService) {
             return AccountService.getAccounts();
@@ -85,6 +85,7 @@ var accountModule = angular.module('App.Accounts', ['ui.router', 'ngResource'])
     $scope.account = account;
   })
   .controller('AccountForm', function($scope, account) {
+    console.log(account);
     $scope.account = account;
   })
   .factory('AccountService', AccountService);

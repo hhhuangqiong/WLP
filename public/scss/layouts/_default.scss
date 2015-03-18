@@ -2,10 +2,38 @@ html, body {
   height: 100% !important;
 }
 
+body {
+  min-width: 1024px;
+  min-height: 768px;
+}
+
 .row {
   max-width: 100%;
 }
 
 .main-control {
   padding: 30px 0;
+}
+
+.main {
+  overflow: hidden;
+
+  &__main-section {
+    height: 100%;
+    padding-left: 80px;
+    box-sizing: border-box;
+
+    &__main-view {
+      height: 100%;
+      overflow: hidden;
+
+      &__header {
+
+      }
+
+      &__contents {
+        height: 100%;
+      }
+    }
+  }
 }

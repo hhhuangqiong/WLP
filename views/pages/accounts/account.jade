@@ -1,63 +1,39 @@
-form(class="editform" method="POST" action="#")
-  h2(class="main-slider__title") User info
-  h3(class="main-slider__sub-title") Basic info
-  div(class="main-slider__close-btn")
-    a(ui-sref="accounts.index" class="button postfix")
-      i(class="fi-x")
-  div(class="row")
-    div(class="large-12 columns")
+div(class="row")
+  section(role="header" class="account-list__header")
+    div(class="large-8 large-offset-1 columns")
+      h3(class="account-list__header__title") account information
+div(class="row")
+  div(class="large-8 large-offset-1 columns")
+    div(class="row")
+      div(class="large-12 columns")
+        p created at {{account.data.createdAt}}
+    form(class="editform" method="POST" action="#")
       div(class="row")
-        div(class="large-3 columns")
-          label(class="left inline") Create by
-        div(class="large-9 columns")
-          label(class="main-slider__value left inline") {{account.data.createBy.name.first}} {{account.data.createBy.name.last}}
-  div(class="row")
-    div(class="large-12 columns")
+        div(class="large-6 columns")
+          label company
+            select(name="company" ng-model="account.data.carrierDomain")
+              option(value="") please select
+        div(class="large-6 columns")
+          label user group
+            select(name="group" ng-model="account.data.assignedGroup")
+              option(value="") please select
       div(class="row")
-        div(class="large-3 columns")
-          label(class="left inline") Create Time
-        div(class="large-9 columns")
-          label(class="main-slider__value left inline") {{account.data.createAt}}
-  div(class="row")
-    div(class="large-12 columns")
+        div(class="large-6 columns")
+          label first name
+            input(type="text" name="firstname" ng-model="account.data.name.first")
+        div(class="large-6 columns")
+          label last name
+            input(type="text" name="lastname" ng-model="account.data.name.last")
       div(class="row")
-        div(class="large-3 columns")
-          label(class="left inline") Verified
-        div(class="large-9 columns")
-          label(class="main-slider__value left inline")
-            i(class="fi-{{account.data.isVerified ? 'check' : 'x'}}")
-  div(class="row")
-    div(class="large-12 columns")
-      div(class="row")
-        div(class="large-3 columns")
-          label(class="left inline") Email
-        div(class="large-9 columns")
-          div(class="row collapse postfix-radius")
-            div(class="large-8 columns")
-              input(type="text" placeholder="Email" ng-model="account.data.username")
-            div(class="large-4 columns")
-              a
-                span(class="postfix") Re-verify
-  hr
-  div(class="row main-slider__user-group")
-    div(class="large-12 columns")
-      header(class="main-slider__user-group__header")
-        div(class="row")
-          div(class="large-8 columns")
-            label
-              h4(class="main-slider__sub-title") User group
-      div()
-        ul(class="main-slider__user-group__input-group")
-          li(class="option")
-            span(class="text-center" ng-click="account.toggleUserGroup('admin')" ng-class="{'selected' : account.data.assignedGroups.indexOf('admin') > -1}") Admin
-          li(class="option")
-            span(class="text-center" ng-click="account.toggleUserGroup('developer')" ng-class="{'selected' : account.data.assignedGroups.indexOf('developer') > -1}") Developer
-          li(class="option")
-            span(class="text-center" ng-click="account.toggleUserGroup('marketing')" ng-class="{'selected' : account.data.assignedGroups.indexOf('marketing') > -1}") Marketing
-          li(class="option")
-            span(class="text-center" ng-click="account.toggleUserGroup('engineer')" ng-class="{'selected' : account.data.assignedGroups.indexOf('engineer') > -1}") Engineer
-          li(class="option")
-            span(class="text-center" ng-click="account.toggleUserGroup('cs')" ng-class="{'selected' : account.data.assignedGroups.indexOf('cs') > -1}") CS
-  div(class="row")
-    div(class="large-12 columns")
-      a(ng-click="account.delete()" class="button postfix alert") Delete account
+        div(class="large-6 columns")
+          label email
+            input(type="text" name="username" ng-model="account.data.username")
+      hr
+      div(class="row account-list__button-group")
+        div(class="large-12 columns")
+          a(role="button" ng-click="account.delete()" class="account-list__button-group__button button small secondary")
+            i(class="account-list__button-group__button__icon fi-x")
+            | discard
+          a(role="button" ng-click="account.save()" class="account-list__button-group__button button small default")
+            i(class="account-list__button-group__button__icon fi-save")
+            | save

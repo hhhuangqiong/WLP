@@ -25,8 +25,8 @@ html(lang="#{lang||'en'}" ng-app="App")
 
     <!-- Scripts -->
   body(class="antialiased")
-    div(class="inner-wrap full-height main-sidebar")
-      nav(role="main-nav")
+    div(class="inner-wrap full-height main")
+      nav(role="main-nav" class="main-sidebar")
         div(class="main-sidebar__contents fixed vertical")
           a(class="item" ui-sref="dashboard.index" ui-sref-active="active")
             i(class="fi-web")
@@ -60,9 +60,7 @@ html(lang="#{lang||'en'}" ng-app="App")
           a(class="item" ui-sref="setting.index" ui-sref-active="active")
             i(class="fi-widget")
             label {{'setting.title' | translate}}
-      section(role="main" class="")
-        div(class="row")
-          div(class="large-1 columns")
-          div(class="large-11 large-offset-1 columns")
-            div(class="main-view" ui-view)
+      section(role="main" class="main__main-section")
+        div(class="main__main-section__main-view" ui-view)
+
     block content

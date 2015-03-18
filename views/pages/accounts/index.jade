@@ -1,27 +1,12 @@
 div(class="account-list row")
-  div(class="large-1 columns")
-  div(class="large-11 large-offset-1 columns")
-    div(class="row")
-      section(role="controls" class="account-list__main-control main-control")
-        div(class="large-5 columns end")
-          p
-            input(ng-model="query" type="text" name="filter" placeholder="Username or User Group Name")
-    div(class="row")
-      aside(class="account-list__slider main-slider" ng-show="$state.current.name.indexOf('index.') > 0")
-        div(class="main-slider__inner-wrapper .inner-wrapper" ui-view="account")
-      section(role="contents" class="account-list__block")
-        div(class="large-12 columns")
-          ul(class="account-block-grid-4")
-            //- If have permission
-            li(class="new")
-              div(class="clearfix")
-                a(ui-sref=".new")
-                  div(class="icon")
-                    i(class="fi-plus inline")
-            li(ng-repeat="account in accounts | filter:query" ng-hide="!account.data._id || account.data._id == ''")
-              div(class="clearfix")
-                a(ui-sref=".account({ accountId: account.data._id })" ui-sref-active="active")
-                  div(class="icon large-4 columns")
-                    i(class="fi-torso right inline")
-                  div(class="username large-8 columns")
-                    {{account.data.name.first}} {{account.data.name.last}}
+  div(class="large-3 columns account-list__side-nav")
+    div(class="account-list__side-nav__header")
+    div(class="account-list__side-nav__contents")
+      ul(class="side-nav")
+        li(ng-repeat="account in accounts | filter:query" ng-hide="!account.data._id || account.data._id == ''")
+          a(ui-sref=".account({ accountId: account.data._id })" ui-sref-active="active")
+            {{account.data.name.first}} {{account.data.name.last}}
+            br
+            {{account.data.assignedGroup}}
+    div(class="account-list__side-nav__footer") {{accounts.length}} / 20 accounts
+  div(class="large-9 columns" ui-view="account")
