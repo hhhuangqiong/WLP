@@ -7,7 +7,7 @@ var companiesModule = angular.module('App.Companies', ['ui.router', 'ngResource'
       .state('companies', {
         abstract: true,
         url: '/companies',
-        template: '<div ui-view="header"></div><div ui-view></div>',
+        template: '<div ui-view="header" class="main__main-section__main-view__header"></div><div ui-view class="main__main-section__main-view__contents"></div>',
         resolve: {
           companies: function(CompanyService) {
             return CompanyService.getCompanies();
@@ -66,7 +66,7 @@ var companiesModule = angular.module('App.Companies', ['ui.router', 'ngResource'
           }
         },
         resolve: {
-          company: function($stateParams, companies, CompanyService) {
+          company: function($stateParams, CompanyService) {
             return CompanyService.getCompanyById($stateParams.companyId.trim());
           }
         }
@@ -85,6 +85,7 @@ var companiesModule = angular.module('App.Companies', ['ui.router', 'ngResource'
   })
   .controller('CompanyForm', function($scope, company) {
     $scope.company = company;
+    $scope.test = function() { alert('123') };
   })
   .factory('CompanyService', CompanyService);
 

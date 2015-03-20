@@ -12,6 +12,7 @@ import ApiService       from './services/Api';
 import Defaults         from './services/Defaults';
 import Uploader         from './services/Uploader';
 import FileReader       from './directives/FileReader';
+import TabButton        from './directives/Tab';
 import RangeFilter      from './filters/range';
 
 // AngularJS application for sections after logged in
@@ -39,6 +40,7 @@ var app = angular.module('App', [
   .factory('Defaults', Defaults)
   .factory('Uploader', Uploader)
   .directive('fileReader', FileReader)
+  .directive('tabButton', TabButton)
   .filter('range', RangeFilter);
 
 

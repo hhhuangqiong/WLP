@@ -1,0 +1,291 @@
+div(class="row")
+  section(role="header" class="account-list__header")
+    div(class="large-8 large-offset-1 columns")
+      ul(class="tabs")
+        li(class="tab-title")
+          tab-button(parent="#section-pane" target="#panel1" title="company profile")
+        li(class="tab-title")
+          tab-button(parent="#section-pane" target="#panel2" title="service config")
+div(class="row")
+  div(class="large-10 large-offset-1 columns")
+    div(id="section-pane" class="tabs-content")
+      div(class="content active" id="panel1")
+        div(class="row")
+          div(class="large-12 columns")
+            h5(class="account-list__section-title") basic information
+              hr
+        div(class="row")
+          div(class="large-3 columns")
+            input(type="file" name="logo" accept="image/*" ng-model="company.data.logo")
+          div(class="large-9 columns")
+            div(class="row")
+              div(class="large-12 columns")
+                label Company Name
+                  input(type="text" name="name" placeholder="Company Name" ng-model="company.data.name" value="{{company.data.name}}")
+              div(class="large-12 columns")
+                label Address
+                  input(type="text" name="address" placeholder="Company Address" ng-model="company.data.address" value="{{company.data.address}}")
+        div(class="row")
+          div(class="large-6 columns")
+            label company type
+              ul(class="button-group radius")
+                li
+                  a(href="#" class="button small") default
+                li
+                  a(href="#" class="button small") reseller
+            //div(class="row")
+            //  div(class="large-4 columns")
+            //    label(for="right-label" class="right inline") company type
+            //  div(class="large-8 columns")
+            //    ul(class="button-group round")
+            //      li
+            //        a(href="#" class="button small") default
+            //      li
+            //        a(href="#" class="button small") reseller
+          div(class="large-6 columns")
+            label(for="") parent company
+              select(name="parent" ng-model="company.data.parent")
+                option(value="") please select
+            //div(class="row")
+            //  div(class="large-4 columns")
+            //    label(for="right-label" class="right inline") parent company
+            //  div(class="large-8 columns")
+            //    select(name="parent" ng-model="company.data.parent")
+            //      option(value="") please select
+        div(class="row")
+          div(class="large-6 columns")
+            label service type
+              ul(class="button-group radius")
+                li
+                  a(href="#" class="button small") white label APP
+                li
+                  a(href="#" class="button small") sdk
+            //div(class="row")
+            //  div(class="large-4 columns")
+            //    label(for="" class="right inline") service type
+            //  div(class="large-8 columns")
+            //    ul(class="button-group round")
+            //      li
+            //        a(href="#" class="button small") white label APP
+            //      li
+            //        a(href="#" class="button small") sdk
+        div(class="row")
+          div(class="large-6 columns")
+            label(for="") account manager
+              input(type="text" name="accountManager" placeholder="Account Manager" ng-model="company.data.accountManager")
+            //div(class="row")
+            //  div(class="large-4 columns")
+            //    label(for="" class="right inline") account manager
+            //  div(class="large-8 columns")
+            //    input(type="text" name="accountManager" placeholder="Account Manager" ng-model="company.data.accountManager")
+          div(class="large-6 columns")
+            label(for="") bill code
+              input(type="text" name="billCode" placeholder="Bill Code" ng-model="company.data.billCode")
+            //div(class="row")
+            //  div(class="large-4 columns")
+            //    label(for="" class="right inline") bill code
+            //  div(class="large-8 columns")
+            //    input(type="text" name="billCode" placeholder="Bill Code" ng-model="company.data.billCode")
+        div(class="row")
+          div(class="large-6 columns")
+            label(for="") categoryID
+              input(type="text" name="categoryID" placeholder="category ID" ng-model="company.data.categoryID")
+            //div(class="row")
+            //  div(class="large-4 columns")
+            //    label(for="" class="right inline") category ID
+            //  div(class="large-8 columns")
+            //    input(type="text" name="categoryID" placeholder="category ID" ng-model="company.data.categoryID")
+          div(class="large-6 columns")
+            label(for="") expected service date
+              input(type="text" name="esd" ng-model="company.data.ESD")
+            //div(class="row")
+            //  div(class="large-4 columns")
+            //    label(for="" class="right inline") expected service date
+            //  div(class="large-8 columns")
+            //    input(type="text" name="esd" ng-model="company.data.ESD")
+        div(class="row")
+          div(class="large-6 columns")
+            label(for="") country
+              select(name="country" ng-model="company.data.country")
+                option(value="") not specified
+            //div(class="row")
+            //  div(class="large-4 columns")
+            //    label(for="" class="right inline") country
+            //  div(class="large-8 columns")
+            //    select(name="country" ng-model="company.data.country")
+            //      option(value="") please select
+          div(class="large-6 columns")
+            label(for="") timezone*
+              select(name="timezone" ng-model="company.data.timezone")
+                option(value="") please select
+            //div(class="row")
+            //  div(class="large-4 columns")
+            //    label(for="" class="right inline") timezone*
+            //  div(class="large-8 columns")
+            //    select(name="timezone" ng-model="company.data.timezone")
+            //      option(value="") please select
+          //div(class="large-6 columns")
+          //  label Domain
+          //    input(type="text" name="domain" placeholder="example@domain.com" ng-model="company.data.domain" value="{{company.data.domain}}")
+          //div(class="large-12 columns")
+          //  label Supported Devices
+          //    select(name="devices" ng-model="company.data.supportedDevices" value="{{company.data.supportedDevices}}")
+          //      option(value="android") Android
+          //      option(value="ios") IOS
+          //      option(value="all") All
+          //div(class="large-12 columns")
+          //  label Supported Languages
+          //    select(name="languages" ng-model="company.data.supportedLanguages" value="{{company.data.supportedLanguages}}")
+          //      option(value="en") English
+        div(class="row")
+          div(class="large-12 columns")
+            h5(class="account-list__section-title") business contact
+              hr
+        div(class="row")
+          div(class="large-6 columns")
+            label Contact name
+              input(type="text" name="bc_name" placeholder="Contact Name" ng-model="company.data.businessContact.name" value="{{company.data.businessContact.name}}")
+          div(class="large-6 columns")
+            label Contact Phone
+              input(type="text" name="bc_phone" placeholder="Contact phone" ng-model="company.data.businessContact.phone" value="{{company.data.businessContact.phone}}")
+        div(class="row")
+          div(class="large-6 columns")
+            label Contact email
+              input(type="text" name="bc_email" placeholder="Contact email" ng-model="company.data.businessContact.email" value="{{company.data.businessContact.email}}")
+        div(class="row")
+          div(class="large-12 columns")
+            h5(class="account-list__section-title") support contact
+              hr
+        div(class="row")
+          div(class="large-6 columns")
+            label Contact name
+              input(type="text" name="sc_name" placeholder="Contact Name" ng-model="company.data.supportContact.name" value="{{company.data.supportContact.name}}")
+          div(class="large-6 columns")
+            label Contact Phone
+              input(type="text" name="sc_phone" placeholder="Contact phone" ng-model="company.data.supportContact.phone" value="{{company.data.supportContact.phone}}")
+        div(class="row")
+          div(class="large-6 columns")
+            label Contact email
+              input(type="text" name="sc_email" placeholder="Contact email" ng-model="company.data.supportContact.email" value="{{company.data.supportContact.email}}")
+        div(class="row")
+          div(class="large-12 columns")
+            h5(class="account-list__section-title") technical contact
+              hr
+        div(class="row")
+          div(class="large-6 columns")
+            label Contact name
+              input(type="text" name="tc_name" placeholder="Contact Name" ng-model="company.data.technicalContact.name" value="{{company.data.technicalContact.name}}")
+          div(class="large-6 columns")
+            label Contact Phone
+              input(type="text" name="tc_phone" placeholder="Contact phone" ng-model="company.data.technicalContact.phone" value="{{company.data.technicalContact.phone}}")
+        div(class="row")
+          div(class="large-6 columns")
+            label Contact email
+              input(type="text" name="tc_email" placeholder="Contact email" ng-model="company.data.technicalContact.email" value="{{company.data.technicalContact.email}}")
+        div(class="row")
+          div(class="large-12 columns")
+            a(ng-click="company.update()" class="button postfix") Update
+      div(class="content" id="panel2")
+        div(class="row")
+          div(class="large-12 columns")
+            h5(class="account-list__section-title") general information
+              hr
+        div(class="row")
+          div(class="large-6 columns")
+            label carrier ID*
+              input(type="text" placeholder="carrier ID" ng-model="company.data.serviceConfig.carrierID")
+          div(class="large-6 columns")
+            label application ID*
+              input(type="text" placeholder="application ID" ng-model="company.data.serviceConfig.applicationID")
+        div(class="row")
+          div(class="large-6 columns")
+            label developer key
+              input(type="text" placeholder="developer key" ng-model="company.data.serviceConfig.key")
+          div(class="large-6 columns")
+            label developer secret
+              input(type="text" placeholder="developer secret key" ng-model="company.data.serviceConfig.secret")
+        div(class="row")
+          div(class="large-12 columns")
+            ul(class="tabs")
+              li(class="tab-title")
+                tab-button(parent="#device-pane" target="#device-ios" title="iOS")
+              li(class="tab-title")
+                tab-button(parent="#device-pane" target="#device-an" title="Android")
+        div(id="device-pane" class="tabs-content")
+          div(class="content active" id="device-ios")
+            div(class="row")
+              div(class="large-12 columns")
+                label application name
+                  input(type="text" placeholder="iOS application name" ng-model="")
+            div(class="row")
+              div(class="large-6 columns")
+                label application key
+                  input(type="text" placeholder="iOS application key" ng-model="")
+              div(class="large-6 columns")
+                label application secret
+                  input(type="text" placeholder="iOS application secret" ng-model="")
+          div(class="content" id="device-an")
+            div(class="row")
+              div(class="large-12 columns")
+                label application name
+                  input(type="text" placeholder="Android application name" ng-model="")
+            div(class="row")
+              div(class="large-6 columns")
+                label application key
+                  input(type="text" placeholder="Android application key" ng-model="")
+              div(class="large-6 columns")
+                label application secret
+                  input(type="text" placeholder="Android application secret" ng-model="")
+        div(class="row")
+          div(class="large-12 columns")
+            h5(class="account-list__section-title") feature list
+              hr
+        div(class="row")
+          div(class="large-6 columns")
+            table
+              thead
+                tr
+                  th(colspan="2") common features
+              tbody
+                tr
+                  td member matching (visibility)
+                  td
+                    fieldset(class="switch" tabindex="0")
+                      input(id="exampleCheckboxSwitch4" type="checkbox")
+                      label(for="exampleCheckboxSwitch4")
+                tr
+                  td FB integration
+                  td
+                    fieldset(class="switch" tabindex="0")
+                      input(id="exampleCheckboxSwitch5" type="checkbox")
+                      label(for="exampleCheckboxSwitch5")
+                tr
+                  td friend finding
+                  td
+                    fieldset(class="switch" tabindex="0")
+                      input(id="exampleCheckboxSwitch6" type="checkbox")
+                      label(for="exampleCheckboxSwitch6")
+          div(class="large-6 columns")
+            table
+              thead
+                tr
+                  th(colspan="2") other features
+              tbody
+                tr
+                  td member matching (visibility)
+                  td
+                    fieldset(class="switch" tabindex="0")
+                      input(id="exampleCheckboxSwitch7" type="checkbox")
+                      label(for="exampleCheckboxSwitch7")
+                tr
+                  td FB integration
+                  td
+                    fieldset(class="switch" tabindex="0")
+                      input(id="exampleCheckboxSwitch8" type="checkbox")
+                      label(for="exampleCheckboxSwitch8")
+                tr
+                  td friend finding
+                  td
+                    fieldset(class="switch" tabindex="0")
+                      input(id="exampleCheckboxSwitch9" type="checkbox")
+                      label(for="exampleCheckboxSwitch9")

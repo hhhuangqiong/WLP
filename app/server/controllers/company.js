@@ -5,7 +5,7 @@ var Company = require('app/collections/company');
 
 export default class CompanyController {
 
-  index(req, res, next) {
+  showCompanies(req, res, next) {
     res.render('pages/companies/index');
   };
 
@@ -106,15 +106,11 @@ export default class CompanyController {
     };
   };
 
-  companyHeader(req, res, next) {
+  showHeader(req, res) {
     res.render('pages/companies/header');
   };
 
-  new(req, res, next) {
-    res.render('pages/companies/form');
-  };
-
-  edit(req, res, next) {
-    res.render('pages/companies/edit');
+  showCompany(req, res) {
+    res.render('pages/companies/company');
   };
 }
