@@ -7,7 +7,6 @@ var storeModule = angular.module('App.Store', ['ui.router', 'ngResource'])
       .state('store', {
         abstract: true,
         url: '/store',
-        template: '<div ui-view="header"></div><div ui-view></div>',
         resolve: {
           endUsers: function(EndUsersService) {
             return EndUsersService.getEndUsers();
@@ -17,10 +16,7 @@ var storeModule = angular.module('App.Store', ['ui.router', 'ngResource'])
       .state('store.index', {
         url: '',
         views: {
-          header: {
-            templateUrl: '/store/view/header'
-          },
-          '': {
+          'contents@': {
             templateUrl: '/store/view/body',
             controller: 'VSF'
           }

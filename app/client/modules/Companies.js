@@ -7,7 +7,6 @@ var companiesModule = angular.module('App.Companies', ['ui.router', 'ngResource'
       .state('companies', {
         abstract: true,
         url: '/companies',
-        template: '<div ui-view="header" class="main__main-section__main-view__header"></div><div ui-view class="main__main-section__main-view__contents"></div>',
         resolve: {
           companies: function(CompanyService) {
             return CompanyService.getCompanies();
@@ -17,11 +16,7 @@ var companiesModule = angular.module('App.Companies', ['ui.router', 'ngResource'
       .state('companies.index', {
         url: '',
         views: {
-          header: {
-            templateUrl: '/app/companies/companyHeader',
-            controller: 'Companies'
-          },
-          '': {
+          'contents@': {
             templateUrl: '/app/companies',
             controller: 'Companies'
           }

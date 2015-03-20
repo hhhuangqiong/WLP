@@ -8,7 +8,6 @@ var accountModule = angular.module('App.Accounts', ['ui.router', 'ngResource'])
       .state('accounts', {
         abstract: true,
         url: '/accounts',
-        template: '<div ui-view="header" class="main__main-section__main-view__header"></div><div ui-view class="main__main-section__main-view__contents"></div>',
         resolve: {
           accounts: function(AccountService) {
             return AccountService.getAccounts();
@@ -18,11 +17,7 @@ var accountModule = angular.module('App.Accounts', ['ui.router', 'ngResource'])
       .state('accounts.index', {
         url: '',
         views: {
-          header: {
-            templateUrl: '/app/accounts/view/header',
-            controller: 'Accounts'
-          },
-          '': {
+          'contents@': {
             templateUrl: '/app/accounts',
             controller: 'Accounts'
           }

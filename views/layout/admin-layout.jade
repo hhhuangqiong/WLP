@@ -61,6 +61,36 @@ html(lang="#{lang||'en'}" ng-app="App")
             i(class="fi-widget")
             label {{'setting.title' | translate}}
       section(role="main" class="main__main-section")
-        div(class="main__main-section__main-view" ui-view)
-
-    block content
+        div(class="main__main-section__main-view__header")
+          header(role="section-header" class="section-header")
+            div(class="row")
+              div(class="large-7 columns")
+                h4(class="section-header__title") header title
+              div(class="large-5 columns")
+                div(class="row")
+                  nav(class="section-header__nav-bar top-bar right" data-topbar role="navigation")
+                    section(class="top-bar-section")
+                      ul(class="right")
+                        li(class="divider")
+                        li
+                          a(class="section-header__nav-bar__icon-button")
+                            i(class="fi-info")
+                        li(class="divider")
+                        li(class="active")
+                          a report issues
+                        li(class="divider")
+                        li(class="has-dropdown not-click")
+                          a(href="#" class="section-header__nav-bar__icon-button")
+                            i(class="fi-thumbnails")
+                          ul(class="dropdown")
+                            li
+                              a(href="#") M800
+                            li
+                              a(href="#") Yato
+                        li(class="divider")
+                        li(class="has-dropdown not-click")
+                          a(href="#") hi, username
+                          ul(class="dropdown")
+                            li
+                              a(href="/logout") logout
+        div(ui-view="contents" class="main__main-section__main-view__contents")

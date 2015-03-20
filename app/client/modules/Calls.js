@@ -6,16 +6,12 @@ var callsModule = angular.module('App.Calls', ['ui.router', 'ngResource'])
       // ABSTRACT state cannot be reached
       .state('calls', {
         abstract: true,
-        url: '/calls',
-        template: '<div ui-view="header"></div><div ui-view></div>'
+        url: '/calls'
       })
       .state('calls.index', {
         url: '',
         views: {
-          header: {
-            templateUrl: '/calls/view/header'
-          },
-          '': {
+          'contents@': {
             templateUrl: '/calls/view/body',
             controller: 'Calls'
           }

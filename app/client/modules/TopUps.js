@@ -6,17 +6,12 @@ var topUpsModule = angular.module('App.TopUps', ['ui.router', 'ngResource'])
       // ABSTRACT state cannot be reached
       .state('topups', {
         abstract: true,
-        url: '/topups',
-        template: '<div ui-view="header"></div><div ui-view></div>'
+        url: '/topups'
       })
       .state('topups.index', {
         url: '/',
         views: {
-          header: {
-            templateUrl: '/topups/view/header',
-            contorller: 'TopUp'
-          },
-          '': {
+          'contents@': {
             templateUrl: '/topups/view/body',
             controller: 'TopUp'
           }

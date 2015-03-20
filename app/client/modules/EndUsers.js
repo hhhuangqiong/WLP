@@ -7,7 +7,6 @@ var endUsersModule = angular.module('App.EndUsers', ['ui.router', 'ngResource'])
       .state('endusers', {
         abstract: true,
         url: '/endusers',
-        template: '<div ui-view="header"></div><div ui-view></div>',
         resolve: {
           endUsers: function(EndUsersService) {
             return EndUsersService.getEndUsers();
@@ -17,10 +16,7 @@ var endUsersModule = angular.module('App.EndUsers', ['ui.router', 'ngResource'])
       .state('endusers.index', {
         url: '',
         views: {
-          header: {
-            templateUrl: '/endUsers/view/header'
-          },
-          '': {
+          'contents@': {
             templateUrl: '/endUsers/view/body',
             controller: 'EndUsers'
           }

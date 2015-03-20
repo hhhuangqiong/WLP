@@ -6,16 +6,12 @@ var imModule = angular.module('App.Im', ['ui.router', 'ngResource'])
       // ABSTRACT state cannot be reached
       .state('im', {
         abstract: true,
-        url: '/im',
-        template: '<div ui-view="header"></div><div ui-view></div>'
+        url: '/im'
       })
       .state('im.index', {
         url: '/',
         views: {
-          header: {
-            templateUrl: '/im/view/header'
-          },
-          '': {
+          'contents@': {
             templateUrl: '/im/view/body',
             controller: 'Im'
           }

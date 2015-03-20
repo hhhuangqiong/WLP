@@ -12,9 +12,16 @@
 }
 
 .section-header {
-
   border-bottom: 1px solid lightgray;
-  overflow: hidden;
+
+  .section-header__nav-bar {
+    &__icon-button {
+      i {
+        font-size: 35px;
+        vertical-align: middle;
+      }
+    }
+  }
 
   &__title {
     text-indent: 30px;
