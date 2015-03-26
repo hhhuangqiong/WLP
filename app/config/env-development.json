@@ -60,8 +60,7 @@
         "options": {
           "level": "debug",
           "colorize": true,
-          "timestamp": true,
-          "humanReadableUnhandledException": true
+          "timestamp": true
         }
       }]
     }

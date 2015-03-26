@@ -22,7 +22,7 @@ router.post('/', function(req, res, next) {
 });
 
 router.get('/edit',         accountCtrl.showAccount);
-router.get('/new',          accountCtrl.showNewForm);
+router.get('/new',          accountCtrl.showAccount);
 router.get('/view/header',  accountCtrl.showHeader);
 
 export default router;

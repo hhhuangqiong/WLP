@@ -13,8 +13,7 @@ source      = require 'vinyl-source-stream'
 babel       = require 'gulp-babel'
 
 browserify = require 'browserify'
-ngAnnotate = require 'browserify-ngannotate'
-babelify   = require 'babelify'
+reactify   = require 'reactify'
 
 # 'libsass' version, http://sass-compatibility.github.io/
 sass         = require 'gulp-sass'
@@ -35,6 +34,7 @@ browserSync = null
 src =
   allJS:    'app/**/*.js'
   clientJS: 'app/client/**/*.js'
+  reactJS:  ['app/actions/*.js', 'app/components/*.js', 'app/stores/*.js', 'app/client.js']
 
 dest =
   node: 'node_modules/app'
@@ -64,6 +64,8 @@ gulp.task 'watch', ['watch:js'], ->
 gulp.task 'watch:js', ['babel'], ->
   gulp.watch [src.allJS, "!#{src.clientJS}"], ['babel']
   gulp.watch src.clientJS, ['babel-ng']
+  gulp.watch src.reactJS, ['babel-react']
+
   return
 
 gulp.task 'clean', ->
@@ -96,16 +98,18 @@ gulp.task 'babel', ->
     .pipe sourcemaps.write '.'
     .pipe gulp.dest dest.node
 
-gulp.task 'babel-ng', ->
-  browserify { entries: './app/client/WhiteLabel.js', debug: true }
-    .transform(babelify)
-    .transform(ngAnnotate)
-    .bundle()
-    .pipe source('application.js')
-    .pipe buffer()
-    .pipe gulp.dest('public/javascript')
+gulp.task 'babel-react', ['babel'], ->
+  browserify({
+    entries: "./#{dest.node}/client.js",
+    extensions: ['.js'],
+    debug: true
+  })
+  .transform(reactify)
+  .bundle()
+  .pipe source('bundle.js')
+  .pipe gulp.dest('public/javascript/')
 
-gulp.task 'nodemon', ['scss', 'babel', 'babel-ng'], ->
+gulp.task 'nodemon', ['scss', 'babel', 'babel-react'], ->
   nodemon
     script: 'bin/www'
     # TODO investigate why this is not picked up by nodemon

@@ -31,8 +31,19 @@ var app = angular.module('App', [
   StoreModule.name,
   TopUpsModule.name,
   TranslateModule.name
-]).config(function($urlRouterProvider, $httpProvider) {
-  $urlRouterProvider.otherwise('/accounts');
+]).config(function($urlRouterProvider, $stateProvider, $httpProvider) {
+  $stateProvider
+    .state('app', {
+      url: '/carriers/:carrierId',
+      resolve: {
+        permission: function() {
+          return true;
+        }
+      },
+      controller: function(permission) {
+      }
+    });
+  //$urlRouterProvider.otherwise('/carriers/m800.maaii.com/accounts');
 }).run(function($rootScope, $state, $stateParams) {
   $rootScope.state = $state;
   $rootScope.stateParams = $stateParams;

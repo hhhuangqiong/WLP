@@ -1,10 +1,11 @@
 class ApiService {
 
-  constructor($http, $q, $log) {
+  constructor($http, $q, $log, $upload) {
     this.apiUrl = '/api';
     this.$http = $http;
     this.$q = $q;
     this.$log = $log;
+    this.$upload = $upload;
   }
 
   get(methods, objectParams) {
@@ -27,6 +28,27 @@ class ApiService {
     return this.execute(methods, objectParams);
   }
 
+  upload(methods, objectParams) {
+    var deferred = this.$q.defer();
+    if (objectParams.logo) {
+      this.$upload.upload({
+        url: methods.url,
+        method: methods.method,
+        fields: objectParams,
+        file: objectParams.logo[0]
+      })
+      .success(function(data, status, headers, config) {
+        console.log('file ' + config.file.name + 'uploaded. Response: ' +
+        deferred.resolve(data));
+      })
+      .error(function(err) {
+        console.log(err);
+        return deferred.reject(err);
+      })
+    }
+    return deferred.promise;
+  }
+
   execute(methods, objectParams) {
     var deferred = this.$q.defer();
     this.$http({
@@ -38,13 +60,12 @@ class ApiService {
           'Content-Type': methods.type || 'text/html'
         }
       })
-      .success(function (data, status, header, config) {
-        // passing whole data object rather than data.user
-        // not applicable
-        deferred.resolve(data);
+      .success(function(data, status, header, config) {
+        console.log(data);
+        deferred.resolve(data)
       })
-      .error(function (err) {
-        deferred.reject(err);
+      .error(function(err) {
+        return deferred.reject(err);
       });
 
     return deferred.promise;
@@ -53,6 +74,6 @@ class ApiService {
 
 // ng-annotate does not work
 // So that you don't need to go here and there to check for dependencies
-export default function($http, $q, $log) {
-  return new ApiService($http, $q, $log);
+export default function($http, $q, $log, $upload) {
+  return new ApiService($http, $q, $log, $upload);
 };

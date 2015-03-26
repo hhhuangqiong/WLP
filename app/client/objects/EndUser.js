@@ -47,7 +47,6 @@ class EndUser extends BaseObject {
 
     this.ApiService.execute(method, params)
       .then((response) => {
-        console.log(method, response);
         if (!response.carrierId) {
           return false;
         }

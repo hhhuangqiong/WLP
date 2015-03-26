@@ -4,16 +4,18 @@ var endUsersModule = angular.module('App.EndUsers', ['ui.router', 'ngResource'])
   .config(function($stateProvider) {
     $stateProvider
       // ABSTRACT state cannot be reached
-      .state('endusers', {
+      .state('app.endusers', {
         abstract: true,
         url: '/endusers',
         resolve: {
-          endUsers: function(EndUsersService) {
-            return EndUsersService.getEndUsers();
+          endUsers: function($stateParams, EndUsersService) {
+            return EndUsersService.getEndUsers({
+              carrierId: $stateParams.carrierId
+            });
           }
         }
       })
-      .state('endusers.index', {
+      .state('app.endusers.index', {
         url: '',
         views: {
           'contents@': {
@@ -22,8 +24,8 @@ var endUsersModule = angular.module('App.EndUsers', ['ui.router', 'ngResource'])
           }
         }
       })
-      .state('endusers.index.enduser', {
-        url: '/carriers/:carrierId/username/:username',
+      .state('app.endusers.index.enduser', {
+        url: '/username/:username',
         views: {
           enduser: {
             templateUrl: '/endUsers/view/enduser',
@@ -33,47 +35,6 @@ var endUsersModule = angular.module('App.EndUsers', ['ui.router', 'ngResource'])
         resolve: {
           endUser: function($stateParams, EndUsersService, endUsers) {
             return EndUsersService.getEndUser($stateParams.carrierId, $stateParams.username);
-          }
-        }
-      })
-      .state('endusers.topup', {
-        url: '/topup',
-        views: {
-          header: {
-            templateUrl: '/endUsers/topup/view/header',
-            contorller: 'TopUp'
-          },
-          '': {
-            templateUrl: '/endUsers/topup/view/body',
-            controller: 'TopUp'
-          }
-        },
-        resolve: {
-          topUps: function(Defaults, $stateParams, EndUsersService) {
-            return EndUsersService.getTransactions({
-              startDate: Defaults.DEFAULT_DATE,
-              endDate: Defaults.DEFAULT_DATE
-            });
-          }
-        }
-      })
-      .state('endusers.vsf', {
-        url: '/vsf',
-        views: {
-          header: {
-            templateUrl: '/endUsers/vsf/view/header',
-            contorller: 'TopUp'
-          },
-          '': {
-            templateUrl: '/endUsers/vsf/view/body',
-            controller: 'VSF'
-          }
-        },
-        resolve: {
-          VSFs: function($stateParams, EndUsersService) {
-            return EndUsersService.getVSFTransactions($stateParams.carrierId, {
-              carrierId: $stateParams.carrierId
-            });
           }
         }
       })
@@ -88,20 +49,6 @@ var endUsersModule = angular.module('App.EndUsers', ['ui.router', 'ngResource'])
   })
   .controller('EndUser', function($scope, endUser) {
     $scope.endUser = endUser;
-  })
-  .controller('TopUp', function(Defaults, $scope, $stateParams, EndUsersService, topUps) {
-    $scope.topUps = topUps;
-    $scope.query = {
-      "carrier": $stateParams.carrierId,
-      "startDate": Defaults.DEFAULT_DATE,
-      "endDate": Defaults.DEFAULT_DATE
-    };
-    $scope.search = function() {
-      EndUsersService.getTransactions($scope.query)
-        .then((result)=> {
-          $scope.topUps = result;
-        });
-    };
   })
   .factory('EndUsersService', EndUsersService);
 

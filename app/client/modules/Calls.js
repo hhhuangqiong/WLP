@@ -4,11 +4,11 @@ var callsModule = angular.module('App.Calls', ['ui.router', 'ngResource'])
   .config(function($stateProvider) {
     $stateProvider
       // ABSTRACT state cannot be reached
-      .state('calls', {
+      .state('app.calls', {
         abstract: true,
         url: '/calls'
       })
-      .state('calls.index', {
+      .state('app.calls.index', {
         url: '',
         views: {
           'contents@': {

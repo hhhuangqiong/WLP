@@ -1,15 +1,14 @@
 .main-slider {
-  position: fixed;
+  position: absolute;
   top: 0;
   right: 0;
-  width: 500px;
+  width: 350px;
   height: 100%;
-  background: #e5e5e5;
+  background: white;
   box-sizing: border-box;
-  padding: 20px;
-  padding-left: 60px;
   overflow-y: scroll;
   z-index: 9999;
+  border-left: 1px solid lightgray;
 
   &__inner-wrapper {
     position: relative;

@@ -13,35 +13,10 @@
     "affiliatedCompany":"M800-Super"
   },
   "rootCompany":{
-    "accountManager":"chan tai man",
-    "billCode":"22C#",
-    "name": "M800-Super",
-    "address": "11 funny street name",
-    "reseller": true,
-    "domain": "my.m800super.org",
-    "businessContact": {
-      "name": "business contact guy",
-      "phone": "2537824",
-      "email": "business@business.com"
-    },
-    "technicalContact": {
-      "name": "technical contact guy",
-      "phone": "2537824",
-      "email": "technical@technical.com"
-    },
-    "supportContact": {
-      "name": "support contact guy",
-      "phone": "2537824",
-      "email": "support@support.com"
-    },
-    "logo": "logo.logo",
-    "themeType": "pirates",
-    "createdAt": "1418807631",
-    "createBy": "1",
-    "updateAt": "1418807631",
-    "updateBy": "1",
-    "supportedLanguages":"En",
-    "supportedDevices":"ios",
-    "parentCompany":"M800-Super"
+    "parentCompany": null,
+    "carrierId": "m800",
+    "name": "M800",
+    "reseller": false,
+    "status": "active"
   }
 }

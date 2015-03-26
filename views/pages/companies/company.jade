@@ -4,8 +4,10 @@ div(class="row")
       ul(class="tabs")
         li(class="tab-title")
           tab-button(parent="#section-pane" target="#panel1" title="company profile")
-        li(class="tab-title")
+        li(class="tab-title" ng-class="company.checkServiceType() == '' ? 'disabled' : ''")
           tab-button(parent="#section-pane" target="#panel2" title="service config")
+        li(class="tab-title" )
+          tab-button(parent="#section-pane" target="#panel3" title="widget config")
 div(class="row")
   div(class="large-10 large-offset-1 columns")
     div(id="section-pane" class="tabs-content")
@@ -16,127 +18,78 @@ div(class="row")
               hr
         div(class="row")
           div(class="large-3 columns")
-            input(type="file" name="logo" accept="image/*" ng-model="company.data.logo")
+            img(src="/data/{{company.data.logo}}")
+            input(type="file" name="logo" accept="image/*" ng-model="company.data.logo" ng-file-select)
           div(class="large-9 columns")
             div(class="row")
               div(class="large-12 columns")
                 label Company Name
-                  input(type="text" name="name" placeholder="Company Name" ng-model="company.data.name" value="{{company.data.name}}")
+                  input(type="text" name="name" placeholder="Company Name" ng-model="company.data.name")
+              div(class="large-12 columns")
+                label carrier ID*
+                  input(type="text" placeholder="carrier ID" ng-model="company.data.carrierId" ng-change="company.getCompanyProvision();" ng-model-options="{updateOn: 'blur'}")
               div(class="large-12 columns")
                 label Address
-                  input(type="text" name="address" placeholder="Company Address" ng-model="company.data.address" value="{{company.data.address}}")
+                  input(type="text" name="address" placeholder="Company Address" ng-model="company.data.address")
+        div(class="row")
+          div(class="large-6 columns")
+            label ref. no.
+              input(type="text" placeholder="reference number" ng-model="company.data.referenceNumber")
+          div(class="large-6 columns")
+            label contract no.
+              input(type="text" placeholder="contract number" ng-model="company.data.contactNumber")
         div(class="row")
           div(class="large-6 columns")
             label company type
-              ul(class="button-group radius")
-                li
-                  a(href="#" class="button small") default
-                li
-                  a(href="#" class="button small") reseller
-            //div(class="row")
-            //  div(class="large-4 columns")
-            //    label(for="right-label" class="right inline") company type
-            //  div(class="large-8 columns")
-            //    ul(class="button-group round")
-            //      li
-            //        a(href="#" class="button small") default
-            //      li
-            //        a(href="#" class="button small") reseller
+              select(ng-init="company.data.reseller = company.data.reseller === true ? 1 : 0"
+                     ng-model="company.data.reseller")
+                option(value="0") default
+                option(value="1") reseller
           div(class="large-6 columns")
             label(for="") parent company
-              select(name="parent" ng-model="company.data.parent")
-                option(value="") please select
-            //div(class="row")
-            //  div(class="large-4 columns")
-            //    label(for="right-label" class="right inline") parent company
-            //  div(class="large-8 columns")
-            //    select(name="parent" ng-model="company.data.parent")
-            //      option(value="") please select
+              select(ng-init="company.data.parentCompany = company.data.parentCompany || '#{parentCompanies[0]._id}'" ng-model="company.data.parentCompany")
+                each company in parentCompanies
+                  option(value="#{company._id}") #{company.name}
         div(class="row")
           div(class="large-6 columns")
             label service type
               ul(class="button-group radius")
                 li
-                  a(href="#" class="button small") white label APP
+                  span(class="label round" ng-class="company.checkServiceType() == 'whitelabel' ? '' : 'secondary'") white label APP
                 li
-                  a(href="#" class="button small") sdk
-            //div(class="row")
-            //  div(class="large-4 columns")
-            //    label(for="" class="right inline") service type
-            //  div(class="large-8 columns")
-            //    ul(class="button-group round")
-            //      li
-            //        a(href="#" class="button small") white label APP
-            //      li
-            //        a(href="#" class="button small") sdk
+                  span(class="label round" ng-class="company.checkServiceType() == 'sdk' ? '' : 'secondary'") sdk
+          div(class="large-6 columns")
+            label customer type
+              select(ng-init="company.data.customerType = company.data.customerType || ''" ng-model="company.data.customerType")
+                option(value="") not specified
+                option(value="carrier") carrier
+                option(value="eb") eb
+                option(value="internal") internal
         div(class="row")
           div(class="large-6 columns")
             label(for="") account manager
               input(type="text" name="accountManager" placeholder="Account Manager" ng-model="company.data.accountManager")
-            //div(class="row")
-            //  div(class="large-4 columns")
-            //    label(for="" class="right inline") account manager
-            //  div(class="large-8 columns")
-            //    input(type="text" name="accountManager" placeholder="Account Manager" ng-model="company.data.accountManager")
           div(class="large-6 columns")
             label(for="") bill code
               input(type="text" name="billCode" placeholder="Bill Code" ng-model="company.data.billCode")
-            //div(class="row")
-            //  div(class="large-4 columns")
-            //    label(for="" class="right inline") bill code
-            //  div(class="large-8 columns")
-            //    input(type="text" name="billCode" placeholder="Bill Code" ng-model="company.data.billCode")
         div(class="row")
           div(class="large-6 columns")
             label(for="") categoryID
               input(type="text" name="categoryID" placeholder="category ID" ng-model="company.data.categoryID")
-            //div(class="row")
-            //  div(class="large-4 columns")
-            //    label(for="" class="right inline") category ID
-            //  div(class="large-8 columns")
-            //    input(type="text" name="categoryID" placeholder="category ID" ng-model="company.data.categoryID")
           div(class="large-6 columns")
             label(for="") expected service date
-              input(type="text" name="esd" ng-model="company.data.ESD")
-            //div(class="row")
-            //  div(class="large-4 columns")
-            //    label(for="" class="right inline") expected service date
-            //  div(class="large-8 columns")
-            //    input(type="text" name="esd" ng-model="company.data.ESD")
+              input(type="text" name="esd" ng-model="company.data.expectedServiceDate")
         div(class="row")
           div(class="large-6 columns")
             label(for="") country
-              select(name="country" ng-model="company.data.country")
-                option(value="") not specified
-            //div(class="row")
-            //  div(class="large-4 columns")
-            //    label(for="" class="right inline") country
-            //  div(class="large-8 columns")
-            //    select(name="country" ng-model="company.data.country")
-            //      option(value="") please select
+              select(name="country" ng-init="company.data.country = company.data.country || 'HK'" ng-model="company.data.country")
+                each country in countries
+                  option(value="#{country.alpha2}") #{country.name}
           div(class="large-6 columns")
             label(for="") timezone*
-              select(name="timezone" ng-model="company.data.timezone")
-                option(value="") please select
-            //div(class="row")
-            //  div(class="large-4 columns")
-            //    label(for="" class="right inline") timezone*
-            //  div(class="large-8 columns")
-            //    select(name="timezone" ng-model="company.data.timezone")
-            //      option(value="") please select
-          //div(class="large-6 columns")
-          //  label Domain
-          //    input(type="text" name="domain" placeholder="example@domain.com" ng-model="company.data.domain" value="{{company.data.domain}}")
-          //div(class="large-12 columns")
-          //  label Supported Devices
-          //    select(name="devices" ng-model="company.data.supportedDevices" value="{{company.data.supportedDevices}}")
-          //      option(value="android") Android
-          //      option(value="ios") IOS
-          //      option(value="all") All
-          //div(class="large-12 columns")
-          //  label Supported Languages
-          //    select(name="languages" ng-model="company.data.supportedLanguages" value="{{company.data.supportedLanguages}}")
-          //      option(value="en") English
+              select(name="timezone" ng-init="company.data.timezone = company.data.timezone || 'UTC'" ng-model="company.data.timezone")
+                each timezone in timezones
+                  option(value="#{timezone}") #{timezone}
         div(class="row")
           div(class="large-12 columns")
             h5(class="account-list__section-title") business contact
@@ -181,29 +134,29 @@ div(class="row")
         div(class="row")
           div(class="large-6 columns")
             label Contact email
-              input(type="text" name="tc_email" placeholder="Contact email" ng-model="company.data.technicalContact.email" value="{{company.data.technicalContact.email}}")
+              input(type="text" name="tc_egulpmail" placeholder="Contact email" ng-model="company.data.technicalContact.email" value="{{company.data.technicalContact.email}}")
         div(class="row")
           div(class="large-12 columns")
-            a(ng-click="company.update()" class="button postfix") Update
+            a(ng-click="company.save()" class="button postfix") Update
       div(class="content" id="panel2")
         div(class="row")
           div(class="large-12 columns")
             h5(class="account-list__section-title") general information
               hr
         div(class="row")
-          div(class="large-6 columns")
+          div(class="large-12 columns")
             label carrier ID*
-              input(type="text" placeholder="carrier ID" ng-model="company.data.serviceConfig.carrierID")
-          div(class="large-6 columns")
+              input(type="text" placeholder="carrier ID" ng-model="company.data.carrierId" readonly)
+          div(class="large-12 columns")
             label application ID*
-              input(type="text" placeholder="application ID" ng-model="company.data.serviceConfig.applicationID")
+              input(type="text" placeholder="application ID" ng-model="company.data.serviceConfig.applicationIdentifier" readonly)
         div(class="row")
           div(class="large-6 columns")
             label developer key
-              input(type="text" placeholder="developer key" ng-model="company.data.serviceConfig.key")
+              input(type="text" placeholder="developer key" ng-model="company.data.serviceConfig.developerKey" readonly)
           div(class="large-6 columns")
             label developer secret
-              input(type="text" placeholder="developer secret key" ng-model="company.data.serviceConfig.secret")
+              input(type="text" placeholder="developer secret key" ng-model="company.data.serviceConfig.developerSecret" readonly)
         div(class="row")
           div(class="large-12 columns")
             ul(class="tabs")
@@ -216,31 +169,33 @@ div(class="row")
             div(class="row")
               div(class="large-12 columns")
                 label application name
-                  input(type="text" placeholder="iOS application name" ng-model="")
+                  input(type="text" placeholder="iOS application name" ng-model="company.data.serviceConfig.applications.ios.name")
             div(class="row")
               div(class="large-6 columns")
                 label application key
-                  input(type="text" placeholder="iOS application key" ng-model="")
+                  input(type="text" placeholder="iOS application key" ng-model="company.data.serviceConfig.applications.ios.applicationKey" readonly)
               div(class="large-6 columns")
                 label application secret
-                  input(type="text" placeholder="iOS application secret" ng-model="")
+                  input(type="text" placeholder="iOS application secret" ng-model="company.data.serviceConfig.applications.ios.applicationSecret" readonly)
           div(class="content" id="device-an")
             div(class="row")
               div(class="large-12 columns")
                 label application name
-                  input(type="text" placeholder="Android application name" ng-model="")
+                  input(type="text" placeholder="Android application name" ng-model="company.data.serviceConfig.applications.android.name")
             div(class="row")
               div(class="large-6 columns")
                 label application key
-                  input(type="text" placeholder="Android application key" ng-model="")
+                  input(type="text" placeholder="Android application key" ng-model="company.data.serviceConfig.applications.android.applicationKey" readonly)
               div(class="large-6 columns")
                 label application secret
-                  input(type="text" placeholder="Android application secret" ng-model="")
+                  input(type="text" placeholder="Android application secret" ng-model="company.data.serviceConfig.applications.android.applicationSecret" readonly)
         div(class="row")
           div(class="large-12 columns")
             h5(class="account-list__section-title") feature list
               hr
-        div(class="row")
+        div(class="row" ng-show="company.checkServiceType() == 'whitelabel'")
+          div(class="large-12 columns")
+            h5 white label features
           div(class="large-6 columns")
             table
               thead
@@ -289,3 +244,44 @@ div(class="row")
                     fieldset(class="switch" tabindex="0")
                       input(id="exampleCheckboxSwitch9" type="checkbox")
                       label(for="exampleCheckboxSwitch9")
+        div(class="row" ng-show="company.checkServiceType() == 'sdk'")
+          div(class="large-12 columns")
+            h5 sdk features
+          div(class="large-6 columns end")
+            table
+              thead
+                tr
+                  th(colspan="2") common features
+              tbody
+                tr
+                  td member matching (visibility)
+                  td
+                    fieldset(class="switch" tabindex="0")
+                      input(id="exampleCheckboxSwitch4" type="checkbox")
+                      label(for="exampleCheckboxSwitch4")
+                tr
+                  td FB integration
+                  td
+                    fieldset(class="switch" tabindex="0")
+                      input(id="exampleCheckboxSwitch5" type="checkbox")
+                      label(for="exampleCheckboxSwitch5")
+                tr
+                  td friend finding
+                  td
+                    fieldset(class="switch" tabindex="0")
+                      input(id="exampleCheckboxSwitch6" type="checkbox")
+                      label(for="exampleCheckboxSwitch6")
+        div(class="row")
+          div(class="large-12 columns")
+            a(ng-click="company.save()" class="button postfix") Update
+      div(class="content" id="panel3")
+        div(class="row")
+          div(class="large-12 columns")
+            h5(class="account-list__section-title") choose a page
+              hr
+        div(class="row")
+          div(class="large-12 columns")
+            h5(class="account-list__section-title") edit widgets
+              hr
+
+

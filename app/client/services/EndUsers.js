@@ -13,7 +13,8 @@ class EndUsersService {
     this.methods = {
       users: {
         url: "/api/1.0/carriers/%s/users",
-        type: "application/json"
+        type: "application/json",
+        method: "get"
       },
       user: {
         url: "/api/1.0/carriers/%s/users/%s",
@@ -36,7 +37,7 @@ class EndUsersService {
     }
   }
 
-  getEndUsers() {
+  getEndUsers(params) {
     if (this.endUsers) {
       return this.endUsers;
     }
@@ -44,11 +45,10 @@ class EndUsersService {
     var deferred = this.ApiService.$q.defer();
 
     var method = _.clone(this.methods.users);
-    method.url = util.format(method.url, 'yato.maaii.com');
+    method.url = util.format(method.url, params.carrierId);
 
-    this.ApiService.execute(method)
+    this.ApiService.get(method, params)
       .then((response) => {
-
         var endUsers = response.userList;
 
         if (!endUsers) {
@@ -63,6 +63,11 @@ class EndUsersService {
         }
 
         return deferred.resolve(this.endUsers);
+      })
+      .catch((err) => {
+        return deferred.resolve({
+          error: err
+        });
       });
 
     return deferred.promise;
@@ -157,6 +162,11 @@ class EndUsersService {
         var _notApplied = response.usernamesNotApplied;
 
         return deferred.resolve(_carrierId);
+      })
+      .catch((err) => {
+        return deferred.resolve({
+          error: err
+        });
       });
 
     return deferred.promise;

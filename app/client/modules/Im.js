@@ -4,11 +4,11 @@ var imModule = angular.module('App.Im', ['ui.router', 'ngResource'])
   .config(function($stateProvider) {
     $stateProvider
       // ABSTRACT state cannot be reached
-      .state('im', {
+      .state('app.im', {
         abstract: true,
         url: '/im'
       })
-      .state('im.index', {
+      .state('app.im.index', {
         url: '/',
         views: {
           'contents@': {

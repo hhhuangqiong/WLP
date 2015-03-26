@@ -17,17 +17,18 @@ export default class Service {
    */
 
   getEntityById(id) {
-    return _.find(this.entities, function(_entity) {
-      return _entity.data._id == id;
+    return _.find(this.entities, function(entity) {
+      return entity.data._id == id;
     });
   }
 
   /**
    * Get all entities to be resolved in AngularJS
+   * @param params
    * @returns {*}
    */
 
-  getEntities() {
+  getEntities(params) {
     if (this.entities.length > 0) {
       return this.entities;
     }
@@ -35,9 +36,8 @@ export default class Service {
     var deferred = this.ApiService.$q.defer();
     var method   = this.methods.list;
 
-    this.ApiService.execute(method)
+    this.ApiService.execute(method, params)
       .then((response) => {
-
         this.entities = [];
 
         var entities = response.result;
@@ -46,6 +46,8 @@ export default class Service {
         }
 
         return deferred.resolve(this.entities);
+      }).catch((err) => {
+        return deferred.resolve(null);
       });
 
     return deferred.promise;

@@ -4,7 +4,7 @@ var companiesModule = angular.module('App.Companies', ['ui.router', 'ngResource'
   .config(function($stateProvider) {
     $stateProvider
       // ABSTRACT state cannot be reached
-      .state('companies', {
+      .state('app.companies', {
         abstract: true,
         url: '/companies',
         resolve: {
@@ -13,16 +13,19 @@ var companiesModule = angular.module('App.Companies', ['ui.router', 'ngResource'
           }
         }
       })
-      .state('companies.index', {
+      .state('app.companies.index', {
         url: '',
         views: {
+          'supplement@': {
+            templateUrl: '/app/companies/view/header'
+          },
           'contents@': {
             templateUrl: '/app/companies',
             controller: 'Companies'
           }
         }
       })
-      .state('companies.index.new', {
+      .state('app.companies.index.new', {
         url: '/new',
         views: {
           company: {
@@ -36,7 +39,7 @@ var companiesModule = angular.module('App.Companies', ['ui.router', 'ngResource'
           }
         }
       })
-      .state('companies.index.new.success', {
+      .state('app.companies.index.new.success', {
         url: '',
         views: {
           'company@companies.index': {
@@ -44,7 +47,7 @@ var companiesModule = angular.module('App.Companies', ['ui.router', 'ngResource'
           }
         }
       })
-      .state('companies.index.new.fail', {
+      .state('app.companies.index.new.fail', {
         url: '/new',
         views: {
           'company@companies.index': {
@@ -52,7 +55,7 @@ var companiesModule = angular.module('App.Companies', ['ui.router', 'ngResource'
           }
         }
       })
-      .state('companies.index.company', {
+      .state('app.companies.index.company', {
         url: '/:companyId',
         views: {
           company: {
@@ -61,7 +64,8 @@ var companiesModule = angular.module('App.Companies', ['ui.router', 'ngResource'
           }
         },
         resolve: {
-          company: function($stateParams, CompanyService) {
+          // TODO: no hints for resolving variable companies
+          company: function($stateParams, CompanyService, companies) {
             return CompanyService.getCompanyById($stateParams.companyId.trim());
           }
         }
@@ -80,7 +84,6 @@ var companiesModule = angular.module('App.Companies', ['ui.router', 'ngResource'
   })
   .controller('CompanyForm', function($scope, company) {
     $scope.company = company;
-    $scope.test = function() { alert('123') };
   })
   .factory('CompanyService', CompanyService);
 

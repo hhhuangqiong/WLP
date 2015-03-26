@@ -4,7 +4,7 @@ var storeModule = angular.module('App.Store', ['ui.router', 'ngResource'])
   .config(function($stateProvider) {
     $stateProvider
       // ABSTRACT state cannot be reached
-      .state('store', {
+      .state('app.store', {
         abstract: true,
         url: '/store',
         resolve: {
@@ -13,7 +13,7 @@ var storeModule = angular.module('App.Store', ['ui.router', 'ngResource'])
           }
         }
       })
-      .state('store.index', {
+      .state('app.store.index', {
         url: '',
         views: {
           'contents@': {

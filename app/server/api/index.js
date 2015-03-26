@@ -14,6 +14,30 @@ export default class Api {
     this.imRequest = imRequest;
   }
 
+  getApplication(req, res) {
+    req.checkParams('carrierId').notEmpty();
+
+    // TODO: turn into applcation request class and make real request
+    return res.status(200).json({
+      "carrierId": "developer173968.maaii-api.com",
+      "developerKey": "mdevac0645a7-a956-4e5d-833f-7983d7cc44dc",
+      "developerSecret": "bacbd718-6f17-47ad-8a95-f8edd93ae030",
+      "applicationIdentifier": "com.maaii-api.xxx",
+      "applications": {
+        ios: {
+          "applicationKey": "mapp6a245b5c-6933-7951-7825-4e55646d487b",
+          "applicationSecret": "64705066-4f5c-2777-7e6b-7b32792f2e25",
+          "platform": "com.maaii.platform.ios"
+        },
+        android: {
+          "applicationKey": "mapp6a245b5c-6933-7951-7825-4e55646d487c",
+          "applicationSecret": "64705066-4f5c-2777-7e6b-7b32792f2e26",
+          "platform": "com.maaii.platform.android"
+        }
+      }
+    });
+  }
+
   getCalls(req, res) {
     req.checkQuery('carrierId').notEmpty();
     req.checkQuery('from').notEmpty();
@@ -104,15 +128,15 @@ export default class Api {
         error: "missing/invalid mandatory field(s)."
       });
 
-    var carrierId = req.params.carrierId;
+    var params = req.params;
 
-    this.endUserRequest.getUsers(carrierId, function(err, body) {
+    this.endUserRequest.getUsers(params, (err, result) => {
       if (err)
         return res.status(err.status).json({
           error: err
         });
 
-      return res.json(body);
+      return res.json(result);
     });
   }
 

@@ -1,13 +1,11 @@
 import nconf from 'nconf';
 import { fetchDep } from 'app/server/initializers/ioc';
 import { Router } from 'express';
+import appCtrl from 'app/server/controllers/app';
 
-var ensureAuthenticated = fetchDep(nconf.get('containerName'), 'middlewares.ensureAuthenticated');
 var router = Router();
 
 // Entry point for angularJS app
-router.get('/', ensureAuthenticated, function(req, res, next) {
-  res.render('layout/admin-layout', {});
-});
+router.get('/', appCtrl.showLayout);
 
 export default router;

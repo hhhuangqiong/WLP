@@ -5,29 +5,40 @@ var accountModule = angular.module('App.Accounts', ['ui.router', 'ngResource'])
   .config(function($stateProvider) {
     $stateProvider
       // ABSTRACT state cannot be reached
-      .state('accounts', {
+      .state('app.accounts', {
         abstract: true,
         url: '/accounts',
         resolve: {
-          accounts: function(AccountService) {
-            return AccountService.getAccounts();
+          accounts: function(AccountService, $stateParams) {
+            return AccountService.getAccounts({
+              'carrierId': $stateParams.carrierId
+            });
           }
         }
       })
-      .state('accounts.index', {
+      .state('app.accounts.index', {
         url: '',
         views: {
+          'supplement@': {
+            templateUrl: '/app/accounts/view/header'
+          },
           'contents@': {
             templateUrl: '/app/accounts',
             controller: 'Accounts'
           }
         }
       })
-      .state('accounts.index.new', {
+      .state('app.accounts.index.new', {
         url: '/new',
         views: {
           account: {
-            templateUrl: '/app/accounts/new',
+            templateProvider: function($http, $stateParams) {
+              return $http
+                .get('/app/accounts/new', {params: {carrierId: $stateParams.carrierId}})
+                .then(function(tpl){
+                  return tpl.data;
+                });
+            },
             controller: 'AccountForm'
           }
         },
@@ -37,7 +48,7 @@ var accountModule = angular.module('App.Accounts', ['ui.router', 'ngResource'])
           }
         }
       })
-      .state('accounts.index.new.success', {
+      .state('app.accounts.index.new.success', {
         url: '',
         views: {
           'account@accounts.index': {
@@ -45,7 +56,7 @@ var accountModule = angular.module('App.Accounts', ['ui.router', 'ngResource'])
           }
         }
       })
-      .state('accounts.index.new.fail', {
+      .state('app.accounts.index.new.fail', {
         url: '',
         views: {
           'account@accounts.index': {
@@ -53,11 +64,17 @@ var accountModule = angular.module('App.Accounts', ['ui.router', 'ngResource'])
           }
         }
       })
-      .state('accounts.index.account', {
+      .state('app.accounts.index.account', {
         url: '/:accountId',
         views: {
           account: {
-            templateUrl: '/app/accounts/edit',
+            templateProvider: function($http, $stateParams) {
+              return $http
+                .get('/app/accounts/new', {params: {carrierId: $stateParams.carrierId}})
+                .then(function(tpl){
+                  return tpl.data;
+                });
+            },
             controller: 'AccountForm'
           }
         },
@@ -80,7 +97,6 @@ var accountModule = angular.module('App.Accounts', ['ui.router', 'ngResource'])
     $scope.account = account;
   })
   .controller('AccountForm', function($scope, account) {
-    console.log(account);
     $scope.account = account;
   })
   .factory('AccountService', AccountService);

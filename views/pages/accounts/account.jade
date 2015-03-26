@@ -11,12 +11,14 @@ div(class="row")
       div(class="row")
         div(class="large-6 columns")
           label company
-            select(name="company" ng-model="account.data.carrierDomain")
-              option(value="") please select
+            select(ng-init="account.data.affiliatedCompany = '#{companies[0]._id}'" ng-model="account.data.affiliatedCompany")
+              each company in companies
+                option(value="#{company._id}") #{company.name}
         div(class="large-6 columns")
           label user group
-            select(name="group" ng-model="account.data.assignedGroup")
-              option(value="") please select
+            select(ng-init="account.data.assignedGroup = '#{groups[0]._id}'" ng-model="account.data.assignedGroup")
+              each group in groups
+                option(value="#{group._id}") #{group.name}
       div(class="row")
         div(class="large-6 columns")
           label first name

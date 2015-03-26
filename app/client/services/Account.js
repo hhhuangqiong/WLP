@@ -26,11 +26,12 @@ class AccountService extends Service {
 
   /**
    * Get all accounts to be resolved in AngularJS
+   * @param carrierId
    * @returns {*}
    */
 
-  getAccounts() {
-    return this.getEntities();
+  getAccounts(params) {
+    return this.getEntities(params);
   }
 
   /**

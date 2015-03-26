@@ -1,6 +1,7 @@
 var Q          = require('q');
 var logger     = require('winston');
 var moment     = require('moment');
+var mongoose   = require('mongoose');
 
 var PortalUser = require('app/collections/portalUser');
 
@@ -21,35 +22,41 @@ export default class PortalUserManager {
    * Get all users except Root
    *
    * @method
-   * @param {PortalUserModel} data
+   * @param {PortalUserModel} conditions
    * @param {Function} cb
    */
-  getUsers(data, cb) {
-    PortalUser.find({
-      isRoot: false
-    }).populate('createBy', 'name').exec(function(err, users) {
-      if (err) return cb(err, null);
+  getUsers(conditions, cb) {
+    PortalUser
+      .find({ isRoot: false })
+      .populate('createBy', 'name')
+      .populate({
+        path: 'carrierDomain',
+        match: {'domain': {$in: ['m800.maaii.com']}},
+        select: 'name'
+      })
+      .exec(function(err, users) {
+        if (err) return cb(err, null);
 
-      var formatted_users = {};
-      users.forEach(function(user) {
-        var formatted_user = {
-          '_id':            user._id,
-          'username':       user.username,
-          'name':           user.name,
-          'status':         user.status,
-          'isVerified':     user.isVerified,
-          'assignedGroup':  user.assignedGroup,
-          'carrierDomain':  user.carrierDomain,
-          'createBy':       user.createBy,
-          // date formatting could be left to view layer
-          'createdAt':      moment(user.createdAt).format('LLL'),
-          'updateAt':       moment(user.updateAt).format('LLL'),
-          'updateBy':       user.updateBy
-        };
-        formatted_users[formatted_user._id] = formatted_user;
+        var formatted_users = {};
+        users.forEach(function(user) {
+          var formatted_user = {
+            '_id':            user._id,
+            'username':       user.username,
+            'name':           user.name,
+            'status':         user.status,
+            'isVerified':     user.isVerified,
+            'assignedGroup':  user.assignedGroup,
+            'carrierDomain':  user.carrierDomain,
+            'createBy':       user.createBy,
+            // date formatting could be left to view layer
+            'createdAt':      moment(user.createdAt).format('LLL'),
+            'updateAt':       moment(user.updateAt).format('LLL'),
+            'updateBy':       user.updateBy
+          };
+          formatted_users[formatted_user._id] = formatted_user;
+        });
+        return cb(null, formatted_users);
       });
-      cb(null, formatted_users);
-    });
   }
 
   /**
@@ -61,9 +68,11 @@ export default class PortalUserManager {
    * @param {Function} cb
    */
   newUser(data, author, cb) {
-    console.log('newUser payload', data);
+    logger.debug('newUser payload', data);
 
+    data.affiliatedCompany = mongoose.Types.ObjectId(data.affiliatedCompany);
     data.createBy = data.updateBy = author._id;
+
     var findOne = Q.nbind(PortalUser.findOne, PortalUser);
     var rejectExisting = function(user) {
       if (user) throw new Error('username duplicated');

@@ -1,3 +1,13 @@
+import React          from 'react';
+import Router         from 'react-router';
+import serialize      from 'serialize-javascript';
+
+import whiteLabelApp  from 'app/whiteLabelApp';
+import Html           from 'app/components/Html';
+
+import navigateAction from 'app/actions/navigate';
+
+var debug            = require('debug')('WhiteLabelPortal:MainStream');
 var express          = require('express');
 var logger           = require('winston');
 var path             = require('path');
@@ -62,7 +72,7 @@ function initialize(port) {
   app.use(compression());
   app.use(cookieParser(nconf.get('cookies:secret'), nconf.get('cookies:options')));
 
-  // app.use(favicon(__dirname + '/public/favicon.ico'));
+  app.use(favicon(path.join(PROJ_ROOT, '/public/favicon.ico')));
 
   // font resources to be replaced before static resources
   app.get('/fonts/*', (req, res, next) => {
@@ -93,6 +103,30 @@ function initialize(port) {
   // Routes
   var routes = require('app/server/routes');
   app.use(routes);
+
+  // react startup point
+  app.use(function (req, res, next) {
+    var HtmlComponent = React.createFactory(Html);
+    var context = whiteLabelApp.createContext();
+
+    debug('Executing navigate action');
+    Router.run(whiteLabelApp.getComponent(), req.path, function (Handler, state) {
+      context.executeAction(navigateAction, state, function () {
+        debug('Exposing context state');
+        var exposed = 'window.App=' + serialize(whiteLabelApp.dehydrate(context)) + ';';
+
+        debug('Rendering Application component into html');
+        var Component = React.createFactory(Handler);
+        var html = React.renderToStaticMarkup(HtmlComponent({
+          state: exposed,
+          markup: React.renderToString(Component({context:context.getComponentContext()}))
+        }));
+
+        debug('Sending markup');
+        res.send(html);
+      });
+    });
+  });
 
   // catch 404 and forward to error handler
   app.use(function(req, res, next) {

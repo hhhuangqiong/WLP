@@ -40,57 +40,22 @@ export default class UsersRequest extends BaseRequest {
     super(opts);
   }
 
-  getUsers(carrierId, cb) {
-    var base = this.opts.baseUrl;
-    var url = util.format(this.opts.methods.LIST.URL, carrierId);
+  getUsers(queries, cb) {
+    logger.debug('get users from %s', queries.carrierId);
 
-    nock(base)
-      .get(url)
-      .delay(2000)
-      .reply(200, {
-        "carrierId": `${carrierId}`,
-        "userCount": 3,
-        "indexRange": {
-          "from": 0,
-          "to": 2,
-          "pageNumberIndex": 0
-        },
-        "userList": [
-          {
-            "carrierId": `${carrierId}`,
-            "username": "+85291111111",
-            "creationDate": "2014-12-31T16:00:00Z",
-            "verified": true,
-            "countryCode": "hk"
-          },
-          {
-            "carrierId": `${carrierId}`,
-            "username": "+85291111112",
-            "creationDate": "2015-01-01T16:00:00Z",
-            "verified": true,
-            "countryCode": "us"
-          },
-          {
-            "carrierId": `${carrierId}`,
-            "username": "+85291111113",
-            "creationDate": "2015-01-02T16:00:00Z",
-            "verified": true,
-            "countryCode": "hk"
-          }
-        ]
-      });
+    var base = this.opts.baseUrl;
+    var url = util.format(this.opts.methods.LIST.URL, queries.carrierId);
 
     request
       .get(util.format('%s%s', base, url))
+      .query(queries)
       .buffer()
       .timeout(this.timeout)
       .end((err, res) => {
-        if (err) return cb(err);
+        if (err) return cb(this.handleError(err, err.status || 400));
         if (res.status >= 400) return cb(this.handleError(res.body.err));
-        cb(null, res.body);
+        return cb(null, res.body);
       });
-
-    logger.debug('get users from %s', carrierId);
   }
 
   getUser(params, cb) {

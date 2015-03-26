@@ -4,11 +4,11 @@ var topUpsModule = angular.module('App.TopUps', ['ui.router', 'ngResource'])
   .config(function($stateProvider) {
     $stateProvider
       // ABSTRACT state cannot be reached
-      .state('topups', {
+      .state('app.topups', {
         abstract: true,
         url: '/topups'
       })
-      .state('topups.index', {
+      .state('app.topups.index', {
         url: '/',
         views: {
           'contents@': {

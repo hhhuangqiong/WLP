@@ -59,7 +59,7 @@ var portalUserSchema = new mongoose.Schema({
       type: Date
     }
   }],
-  carrierDomain: {
+  affiliatedCompany: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Company'
   },
@@ -102,11 +102,6 @@ var portalUserSchema = new mongoose.Schema({
   updateBy: {
     type: mongoose.Schema.Types.ObjectId,
     ref: collectionName
-  },
-  // TODO use 'ref' instead
-  affiliatedCompany: {
-    type: String,
-    required: true
   }
 }, {
   collection: collectionName
@@ -222,7 +217,8 @@ portalUserSchema.method('isTokenExpired', function(event, n, unit) {
 
 portalUserSchema.method('hasValidOneTimePassword', function(number) {
   // assume root user does not need 'googleAuth'
-  if (this.isRoot) return true;
+  //if (this.isRoot) return true;
+  return true;
 
   var googleAuth = this.get('googleAuth') || {};
   return number === speakeasy.time({ key: googleAuth.key, encoding: googleAuth.encoding });

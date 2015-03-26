@@ -31,25 +31,25 @@ html(lang="#{lang||'en'}" ng-app="App")
           a(class="item" ui-sref="dashboard.index" ui-sref-active="active")
             i(class="fi-web")
             label {{'dashboard.title' | translate}}
-          a(class="item" ui-sref="companies.index" ui-sref-active="active")
+          a(class="item" ui-sref="app.companies.index" ui-sref-active="active")
             i(class="fi-home")
             label {{'company.title' | translate}}
-          a(class="item" ui-sref="accounts.index" ui-sref-active="active")
+          a(class="item" ui-sref="app.accounts.index" ui-sref-active="active")
             i(class="fi-torso")
             label {{'account.title' | translate}}
-          a(class="item" ui-sref="endusers.index" ui-sref-active="active")
+          a(class="item" ui-sref="app.endusers.index" ui-sref-active="active")
             i(class="fi-torsos-all")
             label {{'end_user.title' | translate}}
-          a(class="item" ui-sref="topups.index" ui-sref-active="active")
+          a(class="item" ui-sref="app.topups.index" ui-sref-active="active")
             i(class="fi-dollar")
             label {{'top_up.title' | translate}}
-          a(class="item" ui-sref="calls.index" ui-sref-active="active")
+          a(class="item" ui-sref="app.calls.index" ui-sref-active="active")
             i(class="fi-telephone")
             label {{'calls.title' | translate}}
-          a(class="item" ui-sref="im.index" ui-sref-active="active")
+          a(class="item" ui-sref="app.im.index" ui-sref-active="active")
             i(class="fi-comment")
             label {{'im.title' | translate}}
-          a(class="item" ui-sref="store.index" ui-sref-active="active")
+          a(class="item" ui-sref="app.store.index" ui-sref-active="active")
             i(class="fi-shopping-cart")
             label {{'store.title' | translate}}
           a(class="item" ui-sref="permissions" ui-sref-active="active" ng-hide="true")
@@ -57,40 +57,38 @@ html(lang="#{lang||'en'}" ng-app="App")
           a(class="item" ui-sref="voucher" ui-sref-active="active" ng-hide="true")
             i(class="fi-dollar-bill")
             label {{'voucher.title' | translate}}
-          a(class="item" ui-sref="setting.index" ui-sref-active="active")
+          a(class="item" ui-sref="app.setting.index" ui-sref-active="active")
             i(class="fi-widget")
             label {{'setting.title' | translate}}
       section(role="main" class="main__main-section")
-        div(class="main__main-section__main-view__header")
+        div(ui-view="header" class="main__main-section__main-view__header")
           header(role="section-header" class="section-header")
             div(class="row")
-              div(class="large-7 columns")
-                h4(class="section-header__title") header title
-              div(class="large-5 columns")
-                div(class="row")
-                  nav(class="section-header__nav-bar top-bar right" data-topbar role="navigation")
-                    section(class="top-bar-section")
-                      ul(class="right")
-                        li(class="divider")
+              h4(class="section-header__title left") header title
+              nav(class="section-header__nav-bar top-bar right" data-topbar role="navigation")
+                section(class="top-bar-section")
+                  ul(class="right")
+                    li(class="section-header__nav-bar__additional")
+                      div(ui-view="supplement")
+                    li(class="divider")
+                    li
+                      a(class="section-header__nav-bar__icon-button")
+                        i(class="fi-info")
+                    li(class="divider")
+                    li(class="active")
+                      a report issues
+                    li(class="divider")
+                    li(class="has-dropdown not-click")
+                      a(class="section-header__nav-bar__icon-button")
+                        i(class="fi-thumbnails")
+                      ul(class="dropdown")
+                        each company in companies
+                          li
+                            a(href="/app#/carriers/#{company.carrierId}") #{company.name}
+                    li(class="divider")
+                    li(class="has-dropdown not-click")
+                      a(href="#") hi, #{userName.first} #{userName.last}
+                      ul(class="dropdown")
                         li
-                          a(class="section-header__nav-bar__icon-button")
-                            i(class="fi-info")
-                        li(class="divider")
-                        li(class="active")
-                          a report issues
-                        li(class="divider")
-                        li(class="has-dropdown not-click")
-                          a(href="#" class="section-header__nav-bar__icon-button")
-                            i(class="fi-thumbnails")
-                          ul(class="dropdown")
-                            li
-                              a(href="#") M800
-                            li
-                              a(href="#") Yato
-                        li(class="divider")
-                        li(class="has-dropdown not-click")
-                          a(href="#") hi, username
-                          ul(class="dropdown")
-                            li
-                              a(href="/logout") logout
+                          a(href="/logout") logout
         div(ui-view="contents" class="main__main-section__main-view__contents")

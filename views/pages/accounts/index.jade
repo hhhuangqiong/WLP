@@ -8,5 +8,5 @@ div(class="account-list row")
             {{account.data.name.first}} {{account.data.name.last}}
             br
             {{account.data.assignedGroup}}
-    div(class="account-list__side-nav__footer") {{accounts.length}} / 20 accounts
+    div(class="account-list__side-nav__footer") {{accounts.length || 0}} / 20 accounts
   div(class="large-9 columns" ui-view="account")

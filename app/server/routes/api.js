@@ -20,6 +20,10 @@ var apiCtrl               = new Controller(
 
 var router = Router({ mergeParams: true });
 
+router.get('/carriers/:carrierId/applications', function(req, res, next) {
+  return apiCtrl.getApplication(req, res, next);
+});
+
 router.get('/carriers/:carrierId/users', function(req, res, next) {
   return apiCtrl.listEndUsers(req, res, next);
 });

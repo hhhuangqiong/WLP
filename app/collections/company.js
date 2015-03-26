@@ -5,16 +5,24 @@ var schema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Company'
   },
-  logo: {
-    type: String
-  },
-  serviceType: {
-    type: String
-  },
   name: {
     type: String,
     required: true,
     unique: true
+  },
+  carrierId: {
+    type: String,
+    unique: true
+  },
+  // reflecting company type, either "Default" or "Reseller"
+  reseller: {
+    type: Boolean
+  },
+  logo: {
+    type: mongoose.Schema.Types.ObjectId
+  },
+  themeType: {
+    type: String
   },
   address: {
     type: String
@@ -23,74 +31,80 @@ var schema = new mongoose.Schema({
     type: String
   },
   country: {
-    type: String
+    type: String,
+    require: true
   },
   timezone: {
-    type: String
+    type: String,
+    require: true
   },
   accountManager: {
-    type: String,
-    required: true
+    type: String
   },
   billCode: {
     type: String
   },
-  // reflecting company type, either "Default" or "Reseller"
-  reseller: {
-    type: Boolean
+  expectedServiceDate: {
+    type: Date
   },
-  carrierId: {
-    type: String,
-    unique: true
+  customerType: {
+    type: String
   },
-  domain: {
-    type: String,
-    unique: true
+  contactNumber: {
+    type: String
+  },
+  referenceNumber: {
+    type: String
+  },
+  features: {
+    type: Array
   },
   businessContact: {
     name: {
-      type: String,
-      required: true
+      type: String
     },
     phone: {
-      type: String,
-      required: true
+      type: String
     },
     email: {
-      type: String,
-      required: true
+      type: String
     }
   },
   technicalContact: {
     name: {
-      type: String,
-      required: true
+      type: String
     },
     phone: {
-      type: String,
-      required: true
+      type: String
     },
     email: {
-      type: String,
-      required: true
+      type: String
     }
   },
   supportContact: {
     name: {
-      type: String,
-      required: true
+      type: String
     },
     phone: {
-      type: String,
-      required: true
+      type: String
     },
     email: {
-      type: String,
-      required: true
+      type: String
     }
   },
-  themeType: {
-    type: String
+  serviceConfig: {
+    applications: {
+      ios: {
+        name: {
+          type: String
+        }
+      },
+      android: {
+        name: {
+          type: String
+        }
+      }
+    }
   },
   status: {
     type: String,
@@ -112,14 +126,11 @@ var schema = new mongoose.Schema({
   updateBy: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'PortalUser'
-  },
-  supportedLanguages: {
-    type: String,
-    required: true
-  },
-  supportedDevices: {
-    type: String,
-    required: true
   }
 }, { collection: collectionName });
+
+schema.method('isRootCompany', function() {
+  return this.parentCompany == null;
+});
+
 module.exports = mongoose.model(collectionName, schema);

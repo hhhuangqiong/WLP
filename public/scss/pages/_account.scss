@@ -1,6 +1,10 @@
 .account-list {
   height: 100%;
 
+  > .columns {
+    height: 100%;
+  }
+
   &__section-title {
     text-transform: capitalize;
 
@@ -89,5 +93,16 @@
 
   &__slider {
 
+  }
+}
+
+.account-details {
+  &__section {
+    padding: 10px 20px;
+    border-bottom: 1px solid lightgray;
+  }
+
+  &__section:last-child {
+    border-bottom: none;
   }
 }
