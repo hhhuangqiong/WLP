@@ -61,7 +61,7 @@
           "level": "debug",
           "colorize": true,
           "timestamp": true,
-          "handleExceptions": true
+          "humanReadableUnhandledException": true
         }
       }]
     }

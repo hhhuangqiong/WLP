@@ -1,6 +1,5 @@
 var logger = require('winston');
 var Q = require('q');
-var di = require('di');
 var Company = require('app/collections/company');
 //var companyRepo = new Company();
 var CompanyApi = (function () {

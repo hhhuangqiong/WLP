@@ -5,7 +5,6 @@
     "app.js",
     "nodemon.json",
     "package.json"
-    ,"package.json"
   ],
   "ignore": [
     ".git",
