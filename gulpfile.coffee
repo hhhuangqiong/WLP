@@ -78,9 +78,20 @@ gulp.task 'scss', ->
     .pipe gulp.dest 'public/stylesheets'
     .pipe (if ( browserSync? && browserSync.active ) then browserSync.reload {stream: true} else gutil.noop())
 
+# https://github.com/gulpjs/gulp/issues/71#issuecomment-41512070
+_continueOnError = (fn) ->
+  _fn = fn()
+  _fn.on 'error', (e) ->
+    gutil.log e
+    _fn.end()
+    return
+  _fn
+
 gulp.task 'babel', ->
+  b = if /^watch/.test argv._[0] then _continueOnError babel else babel()
+
   gulp.src src.allJS
-    .pipe babel()
+    .pipe b
     .pipe sourcemaps.init()
     .pipe sourcemaps.write '.'
     .pipe gulp.dest dest.node
