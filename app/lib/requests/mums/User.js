@@ -33,10 +33,6 @@ export default class UsersRequest extends BaseRequest {
         TERMINATE: {
           URL: '/carriers/%s/users/%s/',
           METHOD: 'DELETE'
-        },
-        WHITELIST: {
-          URL: '/carriers/%s/whitelist',
-          METHOD: 'PUT'
         }
       }
     };
@@ -209,34 +205,4 @@ export default class UsersRequest extends BaseRequest {
       })
   }
 
-  whitelistUsers(carrierId, username, cb) {
-    var base = this.opts.baseUrl;
-    var url = util.format(this.opts.methods.WHITELIST.URL, carrierId);
-
-    nock(base)
-      .put(url)
-      .delay(1000)
-      .reply(200, {
-        "carrierId": `${carrierId}`,
-        "usernamesApplied": [
-          "+85291111111",
-          "+85291111113",
-          "+85291111115"
-        ],
-        "usernamesNotApplied": [
-          "+85291111112",
-          "+85291111114"
-        ]
-      });
-
-    request
-      .put(util.format('%s%s', base, url))
-      .buffer()
-      .timeout(this.timeout)
-      .end((err, res) => {
-        if (err) return cb(err);
-        if (res.status >= 400) return cb(this.handleError(res.body.err));
-        cb(null, res.body);
-      })
-  }
 }

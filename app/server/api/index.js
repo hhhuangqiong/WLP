@@ -1,6 +1,8 @@
 var _ = require('lodash');
 var Q = require('q');
 
+import WhitelistRequest from 'app/lib/requests/Whitelist'
+
 export default class Api {
 
   constructor(callsRequest, endUsersRequest, transactionRequest, walletRequest, vsfTransactionRequest, imRequest) {
@@ -249,6 +251,8 @@ export default class Api {
   }
 
   whitelistUsers(req, res) {
+    var wl = new WhitelistRequest({ baseUrl: nconf.get('mumsApi:baseUrl') });
+
     req.checkParams('carrierId').notEmpty();
     req.checkParams('username').notEmpty();
 
@@ -260,13 +264,18 @@ export default class Api {
     var carrierId = req.params.carrierId;
     var username = req.params.username;
 
-    this.endUserRequest.whitelistUsers(carrierId, users, function(err, body) {
-      if (err)
+    wl(carrierId, users, function(err, applied, notApplied) {
+      if (err) {
         return res.status(err.status).json({
           error: err
         });
+      }
 
-      return res.json(body);
+      // TODO any status code to imply partial success?
+      return res.json({
+        usernamesApplied: applied,
+        usernamesNotApplied: notApplied
+      });
     });
   }
 }

@@ -1,11 +1,17 @@
-let mixin = {
+/** @module requests/mixins */
+
+/**
+ * This provides method for parsing error payload from response
+ *
+ * @mixin
+ * @see {@link http://issuetracking.maaii.com:8090/display/MAAIIP/MUMS+User+Management+by+Carrier+HTTP+API#MUMSUserManagementbyCarrierHTTPAPI-HTTPErrorCodes}
+ */
+let mumsErrorResponse = {
 
   /**
    * Prepare an Error object based on error response payload
    *
-   * See {@link http://issuetracking.maaii.com:8090/display/MAAIIP/MUMS+User+Management+by+Carrier+HTTP+API#MUMSUserManagementbyCarrierHTTPAPI-HTTPErrorCodes}
-   *
-   * @param {Object} err Error Object from the response
+   * @param {Object} err Error payload from the response
    * @returns {Error}
    */
   prepareError(err = {}) {
@@ -20,4 +26,4 @@ let mixin = {
   }
 }
 
-export default mixin;
+export default mumsErrorResponse;
