@@ -8,11 +8,13 @@ request  = require 'superagent'
 {OPERATION_TYPE_ADD, WhitelistRequest} = require 'app/lib/requests/Whitelist'
 
 describe 'Whitelist Request', ->
-
+  wl        = null
   hostPart  = 'http://localhost'
   carrierId = 'carrierId'
   path      = "/1.0/carriers/#{carrierId}/whitelist"
   usernames = ['username1']
+  opts      =
+    baseUrl: hostPart
 
   requestPath = "#{hostPart}#{path}"
 
@@ -30,9 +32,6 @@ describe 'Whitelist Request', ->
       .to.not.throw Error, regex
 
   describe '#add', ->
-    wl = null
-    opts =
-      baseUrl: hostPart
     addPayload =
       operationType: OPERATION_TYPE_ADD
       usernames:     usernames
@@ -82,12 +81,62 @@ describe 'Whitelist Request', ->
         .put path, addPayload
         .reply 400,
           error:
-            status: 500
-            code: 30000
+            status:  500
+            code:    30000
             message: "Internal Server Error"
 
       wl.add carrierId, usernames, (err)->
         expect( err ).to.not.be.undefined
-
         done()
 
+  describe '#get', ->
+    getOpts =
+      from: 0
+      to:   4
+
+    it 'should throw Error on missing required parameters', ->
+      expect ->
+        wl.get()
+        wl.get(carrierId)
+      .to.throw Error, /required/i
+
+    it 'should allow for optional parameters', ->
+      expect ->
+        wl.get(carrierId, ->)
+        wl.get(carrierId, getOpts, ->)
+      .to.not.throw Error
+
+    it 'should not send optional parameter if not present', (done) ->
+      nock hostPart
+        # could i do this better?
+        .get "#{path}?from=#{getOpts.from}&to=#{getOpts.to}"
+        .reply 200,
+          "carrierId": carrierId
+          "userCount": 5
+          "indexRange":
+            "from": getOpts.from
+            "to": getOpts.to
+            "pageNumberIndex": 0
+          "whitelist": [
+            "+85291111111",
+            "+85291111112",
+            "+85291111113",
+            "+85291111114",
+            "+85291111115"]
+
+        spy = sinon.spy request, 'get'
+
+        # NB: no need to check querystring for nock won't reply
+        # with the corresponding payload if querystring not match
+        wl.get carrierId, getOpts, (err, result) ->
+          expect( spy.firstCall.args[0] )
+            .to.match new RegExp requestPath
+
+          # to make sure not mistakenly getting another payload
+          expect( result.userCount ).to.eql 5
+          found = result.whitelist 
+          expect(found).to.be.not.empty
+          expect(found).to.have.length.of 5
+
+          spy.reset()
+          done()

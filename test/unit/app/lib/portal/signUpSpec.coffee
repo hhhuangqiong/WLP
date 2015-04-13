@@ -79,7 +79,7 @@ describe 'SignUp service', ->
         done()
 
     # too intrusive; PoC
-    it 'should trigger the password generation', (done) ->
+    it.skip 'should trigger the password generation', (done) ->
       sinon.stub(user, 'validate').yields null
 
       sinon.stub PortalUser, 'hashInfo', ->
