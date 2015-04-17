@@ -1,5 +1,6 @@
 'use strict';
 import React from 'react';
+import {NavLink} from 'flux-router-component';
 
 var Home = React.createClass({
   getInitialState: function () {
@@ -7,7 +8,10 @@ var Home = React.createClass({
   },
   render: function() {
     return (
-      <p>This is Home component!</p>
+      <div>
+        <p>This is Home component!</p>
+        <NavLink routeName="signin">to sign in</NavLink>
+      </div>
     );
   }
 });

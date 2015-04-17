@@ -1,10 +1,10 @@
 {
   "landing": {
     "authenticated": {
-      "path": "/app#/accounts"
+      "path": "/about"
     },
     "unauthenticated": {
-      "path": "/login"
+      "path": "/signin"
     }
   }
 }

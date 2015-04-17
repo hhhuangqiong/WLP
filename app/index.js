@@ -1,3 +1,5 @@
+import _              from 'lodash';
+import Q              from 'q';
 import React          from 'react';
 import Router         from 'react-router';
 import serialize      from 'serialize-javascript';
@@ -5,7 +7,7 @@ import serialize      from 'serialize-javascript';
 import whiteLabelApp  from 'app/whiteLabelApp';
 import Html           from 'app/components/Html';
 
-import navigateAction from 'app/actions/navigate';
+import {navigateAction} from 'flux-router-component';
 
 var debug            = require('debug')('WhiteLabelPortal:MainStream');
 var express          = require('express');
@@ -22,6 +24,7 @@ var flash            = require('connect-flash');
 var methodOverride   = require('method-override');
 var morgan           = require('morgan');
 var session          = require('express-session');
+//var csrf             = require('csurf');
 
 var RedisStore       = require('connect-redis')(session);
 
@@ -32,6 +35,7 @@ function initialize(port) {
   const PROJ_ROOT = path.join(__dirname, '../..');
 
   var app = express();
+  debug('starting app');
 
   // application settings
   app.set('port',        port);
@@ -74,6 +78,8 @@ function initialize(port) {
 
   app.use(favicon(path.join(PROJ_ROOT, '/public/favicon.ico')));
 
+  //app.use(csrf({cookie: true}));
+
   // font resources to be replaced before static resources
   app.get('/fonts/*', (req, res, next) => {
     res.header('Access-Control-Allow-Origin', '*');
@@ -105,32 +111,62 @@ function initialize(port) {
   app.use(routes);
 
   // react startup point
-  app.use(function (req, res, next) {
-    var HtmlComponent = React.createFactory(Html);
-    var context = whiteLabelApp.createContext();
+  app.use(
+    // TODO: routing middleware to be extracted
+    // whitelist paths to be refactored
+    function(req, res, next) {
+      var path = req.path;
+      if (req.user) {
+        // authenticated paths;
+        if (_.includes(['/', '/signin', '/forgot'], path)) {
+          return res.redirect('/about');
+        }
+      } else {
+        // unauthenticated paths
+        if (path == '/' || !_.includes(['/signin', '/forgot'], path)) {
+          return res.redirect('/signin');
+        }
+      }
 
-    debug('Executing navigate action');
-    Router.run(whiteLabelApp.getComponent(), req.path, function (Handler, state) {
-      context.executeAction(navigateAction, state, function () {
+      next();
+    },
+    function(req, res, next) {
+      let HtmlComponent = React.createFactory(Html);
+      let context = whiteLabelApp.createContext();
+
+      debug('Executing navigate action');
+      context.getActionContext().executeAction(navigateAction, {
+        url: req.url
+      }, function (err) {
+        if (err) {
+          if (err.status && err.status === 404) {
+            next();
+          } else {
+            next(err);
+          }
+          return;
+        }
+
         debug('Exposing context state');
-        var exposed = 'window.App=' + serialize(whiteLabelApp.dehydrate(context)) + ';';
+        let exposed = 'window.App=' + serialize(whiteLabelApp.dehydrate(context)) + ';';
 
         debug('Rendering Application component into html');
-        var Component = React.createFactory(Handler);
-        var html = React.renderToStaticMarkup(HtmlComponent({
+        let Component = whiteLabelApp.getComponent();
+        let html = React.renderToStaticMarkup(HtmlComponent({
           state: exposed,
-          markup: React.renderToString(Component({context:context.getComponentContext()}))
+          markup: React.renderToString(Component({context:context.getComponentContext()})),
+          context: context.getComponentContext()
         }));
 
         debug('Sending markup');
         res.send(html);
       });
-    });
-  });
+    }
+  );
 
   // catch 404 and forward to error handler
   app.use(function(req, res, next) {
-    var err = new Error('Not Found');
+    let err = new Error('Not Found');
     // Error does not contain Property of .status
     err.status = 404;
     next(err);
@@ -138,7 +174,7 @@ function initialize(port) {
 
   // error handlers
   app.use(function(err, req, res, next) {
-    var view, status = err.status || 500;
+    let view, status = err.status || 500;
     if (err.status === 404) {
       view = 'pages/errors/not-found';
     } else {

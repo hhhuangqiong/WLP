@@ -2,15 +2,19 @@
 
 import React from 'react';
 import {FluxibleMixin} from 'fluxible';
-import {RouteHandler} from 'react-router';
+import {RouterMixin} from 'flux-router-component';
 
-import Nav from 'app/components/Nav';
-import Timestamp from 'app/components/Timestamp';
+import Home from 'app/components/Home';
+import About from 'app/components/About';
+import SignIn from 'app/components/SignIn';
+import Page from 'app/components/Page';
 
 import ApplicationStore from 'app/stores/ApplicationStore';
 
+var debug = require('debug')('WhiteLabelPortal:Application');
+
 var Application = React.createClass({
-  mixins: [FluxibleMixin],
+  mixins: [RouterMixin, FluxibleMixin],
   statics: {
     storeListeners: [ApplicationStore]
   },
@@ -22,13 +26,39 @@ var Application = React.createClass({
     this.setState(state);
   },
   render: function () {
+    var output = '';
+    debug('current page: %s', this.state.currentPageName);
+    //choose the right page based on the route
+    switch (this.state.currentPageName) {
+      case 'signin':
+        output = <SignIn/>;
+        break;
+      case 'home':
+        output = <Home/>;
+        break;
+      case 'about':
+        output = <About/>;
+        break;
+      case 'forgot':
+        output = <Home/>;
+        break;
+      case 'page':
+        output = <Page context={this.props.context}/>;
+        break;
+    }
+    //render content
     return (
       <div>
-        <Nav />
-          <RouteHandler />
-        <Timestamp />
+        {output}
       </div>
     );
+  },
+  componentDidUpdate: function(prevProps, prevState) {
+    var newState = this.state;
+    if (newState.pageTitle === prevState.pageTitle) {
+      return;
+    }
+    document.title = newState.pageTitle;
   }
 });
 
