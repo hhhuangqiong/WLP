@@ -2,7 +2,6 @@ var _       = require('lodash');
 var logger  = require('winston');
 var moment  = require('moment');
 var nconf   = require('nconf');
-var nock    = require('nock');
 var Q       = require('q');
 var request = require('superagent');
 var util    = require('util');

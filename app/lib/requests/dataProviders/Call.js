@@ -1,6 +1,5 @@
 var logger  = require('winston');
 var nconf   = require('nconf');
-var nock    = require('nock');
 var moment  = require('moment');
 var Q       = require('q');
 var request = require('superagent');

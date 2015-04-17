@@ -1,5 +1,4 @@
 var logger  = require('winston');
-var nock    = require('nock');
 var Q       = require('q');
 var request = require('superagent');
 var util    = require('util');

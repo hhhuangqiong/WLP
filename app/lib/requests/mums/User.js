@@ -1,5 +1,5 @@
 var logger  = require('winston');
-var nock    = require('nock');
+//var nock    = require('nock');
 var Q       = require('q');
 var request = require('superagent');
 var util    = require('util');
@@ -65,31 +65,31 @@ export default class UsersRequest extends BaseRequest {
     var base = this.opts.baseUrl;
     var url = util.format(this.opts.methods.DETAILS.URL, carrierId, username);
 
-    nock(base)
-      .get(url)
-      .delay(1000)
-      .reply(200, {
-        "carrierId": `${carrierId}`,
-        "userDetails": {
-          "username": "+85291111111",
-          "pin": "1lc3cvds2",
-          "displayName": `${username}`,
-          "creationDate": "2015-01-09T16:00:00Z",
-          "verified": true,
-          "email": "demo-user@maaii.com",
-          "birthDate": "1970-01-01",
-          "gender": "male",
-          "countryCode": "us",
-          "devices": [
-            {
-              "plaform": "iOS",
-              "appVersionNumber": "2.4.0",
-              "appLanguage": "en"
-            }
-          ],
-          "accountStatus": "ACTIVE"
-        }
-      });
+    //nock(base)
+      //.get(url)
+      //.delay(1000)
+      //.reply(200, {
+        //"carrierId": `${carrierId}`,
+        //"userDetails": {
+          //"username": "+85291111111",
+          //"pin": "1lc3cvds2",
+          //"displayName": `${username}`,
+          //"creationDate": "2015-01-09T16:00:00Z",
+          //"verified": true,
+          //"email": "demo-user@maaii.com",
+          //"birthDate": "1970-01-01",
+          //"gender": "male",
+          //"countryCode": "us",
+          //"devices": [
+            //{
+              //"plaform": "iOS",
+              //"appVersionNumber": "2.4.0",
+              //"appLanguage": "en"
+            //}
+          //],
+          //"accountStatus": "ACTIVE"
+        //}
+      //});
 
     request
       .get(util.format('%s%s', base, url))
@@ -108,12 +108,12 @@ export default class UsersRequest extends BaseRequest {
     var base = this.opts.baseUrl;
     var url = util.format(this.opts.methods.SUSPENSION.URL, carrierId, username);
 
-    nock(base)
-      .post(url)
-      .delay(1000)
-      .reply(200, {
-        "carrierId": `${carrierId}`
-      });
+    //nock(base)
+      //.post(url)
+      //.delay(1000)
+      //.reply(200, {
+        //"carrierId": `${carrierId}`
+      //});
 
     request
       .post(util.format('%s%s', base, url))
@@ -152,12 +152,12 @@ export default class UsersRequest extends BaseRequest {
     var base = this.opts.baseUrl;
     var url = util.format(this.opts.methods.TERMINATE.URL, carrierId, username);
 
-    nock(base)
-      .delete(url)
-      .delay(1000)
-      .reply(200, {
-        "carrierId": `${carrierId}`
-      });
+    //nock(base)
+      //.delete(url)
+      //.delay(1000)
+      //.reply(200, {
+        //"carrierId": `${carrierId}`
+      //});
 
     request
       .del(util.format('%s%s', base, url))
