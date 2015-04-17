@@ -9,10 +9,24 @@ Pre-login
 ---------
 
 ```
-GET /signin               # login froms
-GET /account/locked
+GET  /signin # sign in form
+POST /signin # where sign in form submitted
 
-```
+# forgot password
+GET  /password/recover
+POST /password/recover
+
+# reset password
+# access by clicking the generated link in "forgot password" email
+#
+# Query string:
+# 1. token
+GET  /password/reset
+
+POST /password/reset
+
+# static page
+GET /account/locked
 
 Post-login
 ------------
