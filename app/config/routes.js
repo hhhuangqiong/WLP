@@ -14,7 +14,7 @@ export default {
   forgot: {
     path: '/forgot',
     method: 'get',
-    page: 'home',
+    page: 'forgot',
     label: 'forgot password',
     action: function (context, payload, done) {
       context.dispatch('UPDATE_PAGE_TITLE', { pageTitle: 'Forgot | flux-examples | routing' });

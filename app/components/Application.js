@@ -9,6 +9,8 @@ import Home from 'app/components/Home';
 import About from 'app/components/About';
 import SignIn from 'app/components/SignIn';
 import Page from 'app/components/Page';
+import Forgot from 'app/components/ForgetPass';
+
 
 import ApplicationStore from 'app/stores/ApplicationStore';
 
@@ -45,7 +47,7 @@ var Application = React.createClass({
         output = <About/>;
         break;
       case 'forgot':
-        output = <Home/>;
+        output = <Forgot/>;
         break;
       case 'page':
         output = <Page context={this.props.context}/>;

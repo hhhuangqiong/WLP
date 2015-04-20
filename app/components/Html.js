@@ -16,6 +16,9 @@ var Html = React.createClass({
       <div id="app" dangerouslySetInnerHTML={{__html: this.props.markup}}></div>
       </body>
       <script dangerouslySetInnerHTML={{__html: this.props.state}}></script>
+      <script src="/vendor/jQuery/dist/jquery.js"></script>
+      <script src="/vendor/modernizr/modernizr.js"></script>
+      <script src="/vendor/foundation/js/foundation.js"></script>
       <script src="/javascript/bundle.js" defer></script>
       </html>
     );
