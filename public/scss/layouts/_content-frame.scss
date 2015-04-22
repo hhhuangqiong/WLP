@@ -1,0 +1,13 @@
+.content-frame {
+  $transform-distance: $menu-sidebar-width - $menu-sidebar-offcanvas-width;
+
+  padding-left: $menu-sidebar-offcanvas-width;
+  box-sizing: border-box;
+
+  transform: translate($transform-distance, 0);
+  transition: transform 0.28s ease-in-out;
+
+  &.offcanvas {
+    transform: translate(0px, 0);
+  }
+}

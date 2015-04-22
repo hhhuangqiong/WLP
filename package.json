@@ -16,6 +16,7 @@
     "bcrypt": "^0.8.0",
     "body-parser": "^1.8.1",
     "bottlejs": "^0.7.2",
+    "classnames": "^1.2.0",
     "compression": "^1.2.1",
     "connect-flash": "^0.1.1",
     "connect-multiparty": "^1.2.5",

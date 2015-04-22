@@ -4,7 +4,7 @@ import React from 'react';
 import {FluxibleMixin} from 'fluxible';
 import {RouterMixin} from 'flux-router-component';
 
-import {UnauthenticatedHtml, AuthenticatedHtml} from 'app/components/Wrapper';
+import {PublicHtml, AuthenticatedHtml} from 'app/components/Wrapper';
 import Home from 'app/components/Home';
 import About from 'app/components/About';
 import SignIn from 'app/components/SignIn';
@@ -59,15 +59,15 @@ var Application = React.createClass({
     //see this: https://facebook.github.io/react/docs/reusable-components.html#single-child
     if (authenticated) {
       return (
-        <AuthenticatedHtml>
+        <AuthenticatedHtml pageName={this.state.pageName}>
           {output}
         </AuthenticatedHtml>
       )
     } else {
       return (
-        <UnauthenticatedHtml>
+        <PublicHtml>
           {output}
-        </UnauthenticatedHtml>
+        </PublicHtml>
       )
     }
   },

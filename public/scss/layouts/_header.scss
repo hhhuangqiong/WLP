@@ -1,3 +1,20 @@
+.public-header {
+  background-color: rgb(226, 61, 61);
+
+  &__title-area {
+    height: 100%;
+    padding: 7px 10px;
+    box-sizing: border-box;
+  }
+
+  &__logo {
+    max-width: 60px;
+  }
+}
+
+.app-header {
+}
+
 .main-header {
   width: 100%;
   padding: 10px 0;

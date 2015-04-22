@@ -11,7 +11,6 @@ var About = React.createClass({
       <div>
         <p>This is About component!</p>
         <NavLink href="/page/1">Page 1</NavLink>
-        <a href="/logout">logout here</a>
       </div>
     );
   }

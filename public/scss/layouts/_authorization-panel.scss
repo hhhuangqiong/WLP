@@ -1,0 +1,9 @@
+.authorization-panel {
+  height: 100%;
+  display: table-cell;
+  vertical-align: middle;
+
+  &__panel {
+    background-color: white;
+  }
+}
