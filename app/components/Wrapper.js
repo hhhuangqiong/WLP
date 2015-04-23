@@ -58,7 +58,7 @@ export var AuthenticatedHtml = React.createClass({
             <Navigation/>
           </nav>
           <div className="row">
-            <div className="large-12 columns">
+            <div className="large-24 columns">
               {this.props.children}
             </div>
           </div>

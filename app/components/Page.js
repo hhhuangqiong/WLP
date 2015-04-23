@@ -12,7 +12,7 @@ var Page = React.createClass({
     return this.getStore(PageStore).getState();
   },
   onChange: function () {
-    var state = this.getStore(PageStore).getState();
+    let state = this.getStore(PageStore).getState();
     this.setState(state);
   },
   render: function() {

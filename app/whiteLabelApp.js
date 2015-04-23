@@ -7,6 +7,7 @@ import Application from 'app/components/Application';
 import ApplicationStore from 'app/stores/ApplicationStore';
 import TimeStore from 'app/stores/TimeStore';
 import PageStore from 'app/stores/PageStore';
+import CompanyStore from 'app/stores/CompanyStore';
 
 import routes from 'app/config/routes';
 
@@ -23,5 +24,6 @@ app.plug(routrPlugin({
 app.registerStore(ApplicationStore);
 app.registerStore(TimeStore);
 app.registerStore(PageStore);
+app.registerStore(CompanyStore);
 
 export default app;
