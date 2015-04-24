@@ -2,34 +2,30 @@
 
 console.time 'Loading plugins'
 
-{argv}      = require 'yargs'
-buffer      = require 'vinyl-buffer'
-del         = require 'del'
-eventStream = require 'event-stream'
-gulp        = require 'gulp'
-gutil       = require 'gulp-util'
-nodemon     = require 'gulp-nodemon'
-source      = require 'vinyl-source-stream'
-babel       = require 'gulp-babel'
-
-browserify = require 'browserify'
-reactify   = require 'reactify'
-
+autoprefixer = require 'gulp-autoprefixer'
+babel        = require 'gulp-babel'
+browserify   = require 'browserify'
+del          = require 'del'
+extend       = require 'gulp-extend'
+gulp         = require 'gulp'
+gutil        = require 'gulp-util'
+istanbul     = require 'gulp-istanbul'
+mocha        = require 'gulp-mocha'
+nodemon      = require 'gulp-nodemon'
+reactify     = require 'reactify'
+runSequence  = require 'run-sequence'
 # 'libsass' version, http://sass-compatibility.github.io/
 sass         = require 'gulp-sass'
+source       = require 'vinyl-source-stream'
 sourcemaps   = require 'gulp-sourcemaps'
-autoprefixer = require 'gulp-autoprefixer'
-
-concat      = require 'gulp-concat'
-extend      = require 'gulp-extend'
-
-istanbul = require 'gulp-istanbul'
-mocha    = require 'gulp-mocha'
+{argv}       = require 'yargs'
+{exec}       = require 'child_process'
 
 console.timeEnd 'Loading plugins'
 
 # reduce startup loading time
 browserSync = null
+isNodemonRunning = false
 
 src =
   allJS:    'app/**/*.js'
@@ -51,7 +47,6 @@ gulp.task 'test', (cb) ->
   return
 
 # not trigger 'browser-sync'; `gulp browser-sync` separately if needed
-# let 'watch' be the default for now
 gulp.task 'default', ['clean', 'locale', 'nodemon', 'watch'], ->
   console.log 'done \uD83D\uDE80'
   return
@@ -62,11 +57,21 @@ gulp.task 'watch', ['watch:js'], ->
   return
 
 gulp.task 'watch:js', ['babel'], ->
-  gulp.watch [src.allJS, "!#{src.clientJS}"], ['babel']
-  gulp.watch src.clientJS, ['babel-ng']
-  gulp.watch src.reactJS, ['babel-react']
-
+  # no hints when not running in server mode
+  gulp.watch [src.allJS, "!#{src.clientJS}"], ['babel-server']
+  gulp.watch src.reactJS, ['babel-react'], ['babel-react-server']
   return
+
+['babel', 'babel-react'].forEach (t) ->
+  gulp.task "#{t}-server", (cb) ->
+    runSequence(t, 'nodemon-hints', cb)
+
+gulp.task 'nodemon-hints', (cb) ->
+  # defer evaluation
+  return cb() if !isNodemonRunning
+  exec 'touch nodemon.json', (err) ->
+    return cb(err) if err
+    cb()
 
 gulp.task 'clean', ->
   del(['node_modules/app', 'build/**/*'])
@@ -118,6 +123,7 @@ gulp.task 'nodemon', ['scss', 'babel', 'babel-react'], ->
   .on 'restart', ->
     console.log 'nodemon restarted!'
     return
+  isNodemonRunning = true
   return
 
 # intentionally not using `['nodemon']` as deps
@@ -130,6 +136,7 @@ gulp.task 'browser-sync', ->
     port: 3333
   return
 
+# probably not needed in the future
 gulp.task 'locale', ->
   gulp.src 'locales/client/en/*.json'
     .pipe extend('en.json')
