@@ -60,3 +60,5 @@ app/**/*.ts
 .gitignore
 # Generated files by mergetool Meld
 *.orig
+
+.envrc
