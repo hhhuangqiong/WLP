@@ -1,0 +1,13 @@
+.info-panel {
+
+  &__header {
+    background-color: #B06868;
+    border-radius: 5px 5px 0 0;
+
+    &__title {
+      color: white;
+      margin: 0;
+      padding: 10px 20px;
+    }
+  }
+}

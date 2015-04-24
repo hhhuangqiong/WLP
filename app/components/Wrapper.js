@@ -45,6 +45,7 @@ export var AuthenticatedHtml = React.createClass({
     })
   },
   render: function() {
+    console.log(this.props.children);
     return (
       <div>
         <Sidebar isOffCanvas={this.state.isOffCanvas} handleOffCavnas={this._setOffCanvas} />
@@ -52,7 +53,7 @@ export var AuthenticatedHtml = React.createClass({
           <nav className="top-bar app-header" data-topbar role="navigation">
             <ul className="title-area app-header__title-area">
               <li className="name app-header__title">
-                <h1>{this.props.pageName}</h1>
+                <h1>{this.props.pageTitle}</h1>
               </li>
             </ul>
             <Navigation/>

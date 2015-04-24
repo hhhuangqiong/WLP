@@ -28,12 +28,12 @@ var CompanyList = React.createClass({
   render: function() {
     return (
       <div className="companies-list-bar">
-        <div className="companies-list-bar__search-bar large-24 columns">
+        <nav className="top-bar companies-list-bar__search-bar" data-topbar role="navigation">
           <input
             type="text" placeholder="search company"
             onChange={this._handleSearchChange}
-          />
-        </div>
+            />
+        </nav>
         <ul className="companies-list-bar__list">
           {this.getFilteredCompanies().map(this.renderCompanyListItem)}
         </ul>
@@ -42,8 +42,8 @@ var CompanyList = React.createClass({
   },
   renderCompanyListItem: function(company) {
 
-    let href = `/admin/companies/${company.carrierId}`;
-    
+    let href = `/admin/companies/${company.carrierId}/settings`;
+
     return (
       <NavLink href={href}>
         <li className="companies-list-bar__list__list-item">

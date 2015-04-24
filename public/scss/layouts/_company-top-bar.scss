@@ -1,0 +1,15 @@
+.company-top-bar {
+  // to fill up the gutter
+  margin-left: -0.9375rem;
+  background-color: #C34D4D;
+
+  &__tab-panel {
+
+    &__tab-item {
+
+      > a {
+        color: white !important;
+      }
+    }
+  }
+}

@@ -10,8 +10,18 @@ var CompanyStore = createStore({
     this.companies = payload.companies;
     this.emitChange();
   },
+  handleCompanyChange: function (payload) {
+    this.currentCompany = payload.company;
+    this.emitChange();
+  },
+  handleCompanyReset: function () {
+    this.currentCompany = null;
+    this.emitChange();
+  },
   handlers: {
-    'LOAD_COMPANIES': 'handleCompaniesChange'
+    'LOAD_COMPANIES': 'handleCompaniesChange',
+    'LOAD_COMPANY': 'handleCompanyChange',
+    'RESET_CURRENT_COMPANY': 'handleCompanyReset'
   },
   getState: function () {
     return {
