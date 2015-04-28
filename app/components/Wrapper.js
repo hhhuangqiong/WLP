@@ -45,7 +45,6 @@ export var AuthenticatedHtml = React.createClass({
     })
   },
   render: function() {
-    console.log(this.props.children);
     return (
       <div>
         <Sidebar isOffCanvas={this.state.isOffCanvas} handleOffCavnas={this._setOffCanvas} />

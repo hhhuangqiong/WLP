@@ -10,4 +10,45 @@
       padding: 10px 20px;
     }
   }
+
+  &__block {
+    &__header {
+      cursor: pointer;
+      background-color: whitesmoke;
+
+      > span {
+        display: block;
+        color: gray;
+        font-size: 12px;
+        padding: 4px 0;
+
+        &:before {
+          content: '-';
+          display: inline-block;
+          width: auto;
+          padding: 0 20px;
+        }
+      }
+    }
+
+    &__contents {
+      max-height: 100%;
+      overflow: hidden;
+      transition: max-height ease-in-out 0.28s, background linear 0.1s;
+
+      &__feature-item {
+        padding: 20px 0;
+        border-bottom: 1px solid lightgray;
+        overflow: hidden;
+
+        &:last-child {
+          border-bottom: 0 none;
+        }
+      }
+
+      &.collapsed {
+        max-height: 0;
+      }
+    }
+  }
 }

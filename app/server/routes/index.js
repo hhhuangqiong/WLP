@@ -25,6 +25,7 @@ module.exports = (() => {
     .use('/api/1.0',        ensureAuthenticated, apiRouter)
     .use('/app',            ensureAuthenticated, appRouter)
     .use('/app/accounts',   ensureAuthenticated, accountsRouter)
+    .use('/companies',      ensureAuthenticated, companyRouter)
     .use('/app/companies',  ensureAuthenticated, companyRouter)
     .use('/dashboard',      dashboardRouter)
     .use('/data',           dataRouter)

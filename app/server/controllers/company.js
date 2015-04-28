@@ -54,6 +54,27 @@ export default class CompanyController {
     return deferred.promise;
   }
 
+  getCompany(req, res, next) {
+    let user = req.user;
+    let carrierId = req.params.carrierId;
+    let criteria = {
+      carrierId: carrierId
+    };
+
+    Q.ninvoke(Company, 'findOne', criteria)
+      .then((company)=>{
+        res.status(200).json({
+          company: company
+        })
+      })
+      .catch((err)=>{
+        res.status(500).json({
+          err: err
+        });
+      })
+      .done();
+  }
+
   getCompanies(req, res, next) {
     var criteria = this.getCriteria(req.params);
     Q.ninvoke(Company, 'find', criteria)
@@ -220,24 +241,24 @@ export default class CompanyController {
     res.json({ result: {} });
   };
 
-  getCompany(requestBody) {
-    logger.debug("Request data: \n %j", requestBody, {});
-    //Do I really need to do this ??
-    return {
-      accountManager: requestBody.accountManager,
-      billCode: requestBody.billCode,
-      name: requestBody.name,
-      address: requestBody.address,
-      reseller: requestBody.isReseller,
-      domain: requestBody.domain,
-      businessContact: requestBody.businessContact,
-      technicalContact: requestBody.technicalContact,
-      supportContact: requestBody.supportContact,
-      supportedLanguages: requestBody.supportedLanguages,
-      supportedDevices: requestBody.supportedDevices,
-      updateAt: new Date()
-    };
-  };
+  //getCompany(requestBody) {
+  //  logger.debug("Request data: \n %j", requestBody, {});
+  //  //Do I really need to do this ??
+  //  return {
+  //    accountManager: requestBody.accountManager,
+  //    billCode: requestBody.billCode,
+  //    name: requestBody.name,
+  //    address: requestBody.address,
+  //    reseller: requestBody.isReseller,
+  //    domain: requestBody.domain,
+  //    businessContact: requestBody.businessContact,
+  //    technicalContact: requestBody.technicalContact,
+  //    supportContact: requestBody.supportContact,
+  //    supportedLanguages: requestBody.supportedLanguages,
+  //    supportedDevices: requestBody.supportedDevices,
+  //    updateAt: new Date()
+  //  };
+  //};
 
   showHeader(req, res) {
     res.render('pages/companies/header-supplement');

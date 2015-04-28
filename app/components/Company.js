@@ -14,14 +14,14 @@ var Company = React.createClass({
   render: function() {
     if (!this.props.company) return <div></div>;
 
-    let subPageComponent = <CompanyProfile company={this.props.company}/>;
+    let subPageComponent = <CompanyProfile/>;
 
     switch (this.props.subPage) {
       case 'service':
-        subPageComponent = <CompanyService company={this.props.company}/>;
+        subPageComponent = <CompanyService/>;
         break;
       case 'widget':
-        subPageComponent = <CompanyWidget company={this.props.company}/>;
+        subPageComponent = <CompanyWidget/>;
         break;
     }
 
