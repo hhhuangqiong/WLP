@@ -139,6 +139,7 @@ function initialize(port) {
         url: req.url
       }, function (err) {
         if (err) {
+          logger.error('error during initalizing ReactApp:', err);
           if (err.status && err.status === 404) {
             next();
           } else {

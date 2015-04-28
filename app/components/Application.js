@@ -33,7 +33,7 @@ var Application = React.createClass({
     let output = '';
     // looking for alternatives, and better be negative default
     let authenticated = true;
-    debug('current page: %s', this.state.currentPageName);
+    //debug('current page: %s', this.state.currentPageName, this.state.route);
     //choose the right page based on the route
     switch (this.state.currentPageName) {
       case 'signin':
@@ -56,6 +56,9 @@ var Application = React.createClass({
       case 'companies':
         output = <Companies context={this.props.context}/>;
         break;
+      case 'company':
+        output = <Companies context={this.props.context} subPage={this.state.route.params.subPage}/>;
+        break;
       case 'page':
         output = <Page context={this.props.context}/>;
         break;
@@ -66,7 +69,7 @@ var Application = React.createClass({
     //see this: https://facebook.github.io/react/docs/reusable-components.html#single-child
     if (authenticated) {
       return (
-        <AuthenticatedHtml pageName={this.state.pageName}>
+        <AuthenticatedHtml pageTitle={this.state.pageTitle}>
           {output}
         </AuthenticatedHtml>
       )

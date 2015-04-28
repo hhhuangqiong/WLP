@@ -13,7 +13,14 @@
 }
 
 .app-header {
+  background-color: #DB5858;
   padding-left: $menu-sidebar-offcanvas-width;
+  z-index: $menu-level-z-index;
+  box-shadow: 0px 2px 5px 0 rgba(0,0,0,0.2);
+
+  &__title {
+    text-indent: 20px;
+  }
 }
 
 .main-header {
