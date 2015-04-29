@@ -1,0 +1,10 @@
+# copy this file as '.envrc'
+
+# development
+export WL_API_HKBOSS=192.168.135.167:10180
+
+# testing
+#export WL_API_HKBOSS=192.168.135.167:10080
+
+# production
+#export WL_API_HKBOSS=192.168.56.42:8080

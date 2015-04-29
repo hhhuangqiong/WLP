@@ -4,7 +4,7 @@ var Grid      = require('gridfs-stream');
 var _         = require('lodash');
 var logger    = require('winston');
 var mongoose  = require('mongoose');
-var Q         = require('Q');
+var Q         = require('q');
 
 var db         = mongoose.connection.db;
 var GridStore  = mongoose.mongo.GridStore;
