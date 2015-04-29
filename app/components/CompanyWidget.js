@@ -1,67 +1,67 @@
+import _ from 'lodash';
 import React from 'react';
+import {FluxibleMixin} from 'fluxible';
+import classNames from 'classnames';
+
+import OverviewWidget from 'app/components/CompanyWidgetOverview';
+import StoresWidget from 'app/components/CompanyWidgetStores';
+import CallsWidget from 'app/components/CompanyWidgetCalls';
+import IMWidget from 'app/components/CompanyWidgetIM';
+
+import CompanyStore from 'app/stores/CompanyStore';
 
 var CompanyWidget = React.createClass({
+  mixins: [FluxibleMixin],
+  statics: {
+    storeListeners: [CompanyStore]
+  },
+  getInitialState: function() {
+    return {
+      currentTab: 'overview'
+    };
+  },
+  onChange: function() {
+
+  },
+  _handleTabChange: function(tab) {
+    this.setState({
+      currentTab: tab
+    });
+  },
   render: function() {
+
+    let widget = <OverviewWidget/>;
+
+    switch (this.state.currentTab) {
+      case 'overview':
+        widget = <OverviewWidget/>;
+        break;
+      case 'stores':
+        widget = <StoresWidget/>;
+        break;
+      case 'calls':
+        widget = <CallsWidget/>;
+        break;
+      case 'im':
+        widget = <IMWidget/>;
+        break;
+    }
+
     return (
       <div className="large-15 large-centered columns">
         <div className="contents-panel">
           <div className="row">
             <div className="large-24 columns">
               <div className="contents-panel__title">
-                <h4>widget config</h4>
+                <ul className="tab-panel row">
+                  <li className={classNames('left', {active: this.state.currentTab == 'overview'})} onClick={_.bindKey(this, '_handleTabChange', 'overview')}>overivew</li>
+                  <li className={classNames('left', {active: this.state.currentTab == 'stores'})} onClick={_.bindKey(this, '_handleTabChange', 'stores')}>stores</li>
+                  <li className={classNames('left', {active: this.state.currentTab == 'calls'})} onClick={_.bindKey(this, '_handleTabChange', 'calls')}>calls</li>
+                  <li className={classNames('left', {active: this.state.currentTab == 'im'})} onClick={_.bindKey(this, '_handleTabChange', 'im')}>im</li>
+                </ul>
               </div>
             </div>
-            <div className="large-24 columns">
-              <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.</p>
-            </div>
-            <div className="large-24 columns">
-              <div className="large-9 columns">
-                <label>widget 1</label>
-              </div>
-              <div className="large-15 columns">
-                <input type="text" name="overview-widget-1" placeholder="url" />
-              </div>
-            </div>
-            <div className="large-24 columns">
-              <div className="large-9 columns">
-                <label>widget 2</label>
-              </div>
-              <div className="large-15 columns">
-                <input type="text" name="overview-widget-2" placeholder="url" />
-              </div>
-            </div>
-            <div className="large-24 columns">
-              <div className="large-9 columns">
-                <label>widget 3</label>
-              </div>
-              <div className="large-15 columns">
-                <input type="text" name="overview-widget-3" placeholder="url" />
-              </div>
-            </div>
-            <div className="large-24 columns">
-              <div className="large-9 columns">
-                <label>widget 4</label>
-              </div>
-              <div className="large-15 columns">
-                <input type="text" name="overview-widget-4" placeholder="url" />
-              </div>
-            </div>
-            <div className="large-24 columns">
-              <div className="large-9 columns">
-                <label>widget 5</label>
-              </div>
-              <div className="large-15 columns">
-                <input type="text" name="overview-widget-5" placeholder="url" />
-              </div>
-            </div>
-            <div className="large-24 columns">
-              <div className="large-9 columns">
-                <label>widget 6</label>
-              </div>
-              <div className="large-15 columns">
-                <input type="text" name="overview-widget-6" placeholder="url" />
-              </div>
-            </div>
+            {widget}
           </div>
         </div>
       </div>

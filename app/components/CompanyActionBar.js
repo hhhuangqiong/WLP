@@ -19,13 +19,6 @@ var CompanyActionBar = React.createClass({
           </ul>
           <ul className="right">
             <li className="active"><a href="#">Right Button Active</a></li>
-            <li className="has-dropdown">
-              <a href="#">Right Button Dropdown</a>
-              <ul className="dropdown">
-                <li><a href="#">First link in dropdown</a></li>
-                <li className="active"><a href="#">Active link in dropdown</a></li>
-              </ul>
-            </li>
           </ul>
         </section>
       </nav>

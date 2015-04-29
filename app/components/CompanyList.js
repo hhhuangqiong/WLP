@@ -3,6 +3,8 @@ import _ from 'lodash';
 import React from 'react';
 import {NavLink} from 'flux-router-component';
 
+var Countries = require('../../../app/data/countries.json');
+
 var CompanyList = React.createClass({
   getInitialState: function () {
     return {
@@ -22,7 +24,7 @@ var CompanyList = React.createClass({
       });
     }
 
-    return this.props.companies;
+    return this.props.companies || [];
   }
   ,
   render: function() {
@@ -55,7 +57,7 @@ var CompanyList = React.createClass({
               {company.name}
             </div>
             <div className="companies-list-bar__list__list-item__info__location">
-              {company.location}
+              {_.pluck(_.filter(Countries, {'alpha2': company.country}), 'name')}
             </div>
           </div>
         </li>

@@ -10,7 +10,7 @@
     "carrierDomains": "",
     "assignedGroup": "root",
     "status": "active",
-    "affiliatedCompany":"M800-Super"
+    "affiliatedCompany": null
   },
   "rootCompany":{
     "parentCompany": null,
