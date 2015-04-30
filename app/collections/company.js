@@ -32,11 +32,11 @@ var schema = new mongoose.Schema({
   },
   country: {
     type: String,
-    require: true
+    required: true
   },
   timezone: {
     type: String,
-    require: true
+    required: true
   },
   accountManager: {
     type: String
