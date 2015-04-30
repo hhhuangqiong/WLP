@@ -79,7 +79,10 @@ gulp.task 'clean', ->
 gulp.task 'scss', ->
   gulp.src 'public/scss/main.scss'
     .pipe sourcemaps.init()
-    .pipe sass()
+    .pipe sass(
+      onError: (e) ->
+        gutil.log e
+    )
     .pipe autoprefixer( browsers: ['last 2 versions'] )
     .pipe sourcemaps.write '.'
     .pipe gulp.dest 'public/stylesheets'
