@@ -1,17 +1,10 @@
-.main-sidebar{
-  &__contents {
-    position: absolute;
-
-    @include icon-bar(
-      $bar-bg: black,
-      $bar-hover-color: grey,
-      $bar-active-color: #333333,
-      $padding: 10px 12px
-    );
-
-    label {
-      font-size: 12px;
-      text-transform: capitalize;
+.main-sidebar {
+    &__contents {
+        position: absolute;
+        @include icon-bar( $bar-bg: black, $bar-hover-color: grey, $bar-active-color: #333333, $padding: 10px 12px);
+        label {
+            font-size: 12px;
+            text-transform: capitalize;
+        }
     }
-  }
 }

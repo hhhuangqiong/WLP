@@ -1,0 +1,30 @@
+.button-switcher {
+    margin: 0;
+    paddign: 0;
+    list-style: none;
+    &__button {
+        @include button( $padding: $button-sml, $bg: false, $radius: 1000px);
+        padding-top: 0.625rem;
+        padding-bottom: 0.6875rem;
+        border-width: 1px;
+        border-color: lightgray;
+        color: lightgray;
+        &.active, &:hover, &:focus {
+            color: red;
+        }
+    }
+    > li {
+        width: auto;
+        float: left;
+        &:first-child > .button-switcher__button {
+            border-right: 0;
+            border-top-right-radius: 0;
+            border-bottom-right-radius: 0;
+        }
+        &:last-child > .button-switcher__button {
+            border-left: 0;
+            border-top-left-radius: 0;
+            border-bottom-left-radius: 0;
+        }
+    }
+}

@@ -1,0 +1,28 @@
+//media query mixins
+@mixin media($media) {
+    @if $media==sm {
+        @media only screen and (min-width: $small-up) {
+            @content;
+        }
+    }
+    @else if $media==md {
+        @media only screen and (min-width: $medium-up) {
+            @content;
+        }
+    }
+    @else if $media==lg {
+        @media only screen and (min-width: $large-up) {
+            @content;
+        }
+    }
+    @else if $media==xlg {
+        @media only screen and (min-width: $xlarge-up) {
+            @content;
+        }
+    }
+    @else if $media==xxlg {
+        @media only screen and (min-width: $xxlarge-up) {
+            @content;
+        }
+    }
+}

@@ -9,22 +9,22 @@ var Sidebar = React.createClass({
       sections: [
         {
           name: 'overview',
-          icon: 'fi-web',
+          icon: 'icon-menu-overview',
           link: '/admin'
         },
         {
           name: 'account',
-          icon: 'fi-key',
+          icon: 'icon-menu-account',
           link: '/admin'
         },
         {
           name: 'company',
-          icon: 'fi-home',
+          icon: 'icon-menu-company',
           link: '/admin/companies'
         },
         {
           name: 'setting',
-          icon: 'fi-widget',
+          icon: 'icon-menu-setting',
           link: '/admin'
         }]
     }
@@ -37,7 +37,15 @@ var Sidebar = React.createClass({
         onMouseEnter={this.props.handleOffCavnas.bind(null, false)}
       >
         <ul>
-          {this.state.sections.map((section, idx)=>{
+          <li>
+            <a className="item mainmenu-bar__item" href="#">
+              <label>
+              <i><img src="/images/logo-m800.png"/></i>
+              <span>company name</span>
+              </label>
+            </a>
+          </li>
+          {this.state.sections.map((section,idx)=>{
             return (
               <li>
                 <NavLink className="item mainmenu-bar__item" href={section.link} key={idx}>

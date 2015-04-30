@@ -1,15 +1,14 @@
+@import 'utils/mixins';
 @import 'utils/variables';
 
 @import '../vendor/foundation/scss/normalize';
 
 @import 'vendors/foundation-settings';
 
-@import 'overrides/top-bar';
+@import 'components/top-bar';
 
 @import 'vendors/foundation';
 @import 'vendors/foundation-icons';
-
-@import 'base/typography';
 
 @import 'layouts/common';
 @import 'layouts/default';
@@ -27,8 +26,8 @@
 @import 'layouts/contents-panel';
 @import 'layouts/info-panel';
 @import 'layouts/tab-panel';
-@import 'layouts/button-switcher';
 
+@import 'elements/button-switcher';
 @import 'elements/input-block';
 @import 'elements/loading-bar';
 

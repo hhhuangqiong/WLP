@@ -1,0 +1,46 @@
+.main-menu {
+    @include icon-bar( $bar-bg: $m800-mainmenu-bar-bg-color, $bar-hover-color: $m800-mainmenu-bar-bg-color, $padding: 10px 12px);
+    position: fixed;
+    width: $main-menu-width !important;
+    left: 0;
+    top: 0;
+    overflow-x: hidden;
+    overflow-y: auto;
+    z-index: $main-menu-z-index;
+    transition: width ease-in-out 0.28s, background linear 0.1s;
+    transform: translate(0px, 0);
+    touch-callout: none;
+    user-select: none;
+    font-smoothing: subpixel-antialiased;
+    > ul {
+        width: $main-menu-width;
+        padding: 0;
+        margin: 0;
+        list-style: none;
+        li {
+            padding: 15px 0;
+            overflow: hidden;
+        }
+    }
+    @include e(item) {
+        label {
+            text-align: left;
+            i {
+                display: inline-block;
+                width: $main-menu-offcanvas-width;
+                &:before {
+                    width: 100%;
+                    text-align: center;
+                }
+            }
+            &:hover {
+                i, label {
+                    color: #EC5252;
+                }
+            }
+        }
+    }
+    &.offcanvas {
+        width: $main-menu-offcanvas-width !important;
+    }
+}

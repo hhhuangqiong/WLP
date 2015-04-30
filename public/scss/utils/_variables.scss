@@ -1,6 +1,3 @@
-// font
-$font-stack: 'Lucida Grande', 'Helvetica', 'Arial', sans-serif;
-
 $description-font-size: 12px;
 
 // z-index
@@ -9,8 +6,12 @@ $menu-level-z-index: 100;
 
 // bg-color
 $body-bg-color: #F5F5F5;
-$m800-mainmenu-bar-bg-color: rgb(127, 52, 52);
 
 // menu-sidebar
-$menu-sidebar-width: 280px;
-$menu-sidebar-offcanvas-width: 80px;
+$menu-sidebar-width: 17.5rem;
+$menu-sidebar-offcanvas-width: 5rem;
+
+//theme variables: m800
+$brand-primary: #e05353;
+$brand-secondary: #8b4343;
+$brand-extend: #c24848;

@@ -10,6 +10,8 @@ var Html = React.createClass({
         <title>{this.props.title}</title>
         <meta name="viewport" content="width=device-width, user-scalable=no" />
         <link rel="stylesheet" href="/stylesheets/style.css" />
+        <link href="http://fonts.googleapis.com/css?family=Roboto:500,300,700,400" rel="stylesheet" type="text/css" />
+        <link rel="stylesheet" href="/stylesheets/iconic-fonts.css" />
         <link rel="stylesheet" href="/stylesheets/main.css" />
         <link rel="stylesheet" href="/vendor/react-datepicker/react-date-picker.css" />
       </head>

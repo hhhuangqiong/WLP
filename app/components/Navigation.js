@@ -11,16 +11,18 @@ var Navigation = React.createClass({
           </li>
           <li className="navigation-bar__item">
             <NavLink routeName="about" className="navigation-bar__item__name">
-              <i className="fi-info"/>
+              <i className="icon-question2"/>
             </NavLink>
           </li>
           <li className="navigation-bar__item">
             <NavLink routeName="about" className="navigation-bar__item__name">
-              <i className="fi-thumbnails"/>
+              <i className="icon-ccompany-menu"/>
             </NavLink>
           </li>
           <li className="has-dropdown not-click navigation-bar__item">
-            <a>hi, username</a>
+            <a>hi, username
+              <i className="icon-more2"/>
+            </a>
             <ul className="dropdown">
               <li className="navigation-bar__item">
                 <a href="/logout" className="navigation-bar__item__name">logout</a>

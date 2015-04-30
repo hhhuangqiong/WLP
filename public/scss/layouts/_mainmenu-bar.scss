@@ -1,59 +1,60 @@
 .mainmenu-bar {
-  @include icon-bar(
-    $bar-bg: $m800-mainmenu-bar-bg-color,
-    $bar-hover-color: $m800-mainmenu-bar-bg-color,
-    $padding: 10px 12px
-  );
-
-  position: fixed;
-  width: $menu-sidebar-width !important;
-  left: 0;
-  top: 0;
-  overflow-x: hidden;
-  overflow-y: auto;
-  z-index: $menu-level-z-index;
-
-  transition: width ease-in-out 0.28s, background linear 0.1s;
-  transform: translate(0px, 0);
-  touch-callout: none;
-  user-select: none;
-  font-smoothing: subpixel-antialiased;
-
-  > ul {
-    width: $menu-sidebar-width;
-    padding: 0;
-    margin: 0;
-    list-style: none;
-
-    li {
-      padding: 15px 0;
-      overflow: hidden;
-    }
-  }
-
-  &__item {
-    label {
-      text-align: left;
-
-      i {
-        display: inline-block;
-        width: $menu-sidebar-offcanvas-width;
-
-        &:before {
-          width: 100%;
-          text-align: center;
+    @include icon-bar( $bar-bg: $brand-secondary, $bar-hover-color: $brand-primary, $padding: 10px 12px);
+    @include box-shadow(0 2px 10px rgba(0, 0, 0, 0.15));
+    position: fixed;
+    width: $menu-sidebar-width !important;
+    left: 0;
+    top: 0;
+    overflow-x: hidden;
+    overflow-y: auto;
+    z-index: $menu-level-z-index;
+    transition: width ease-in-out 0.28s, background linear 0.1s;
+    transform: translate(0px, 0);
+    touch-callout: none;
+    user-select: none;
+    font-smoothing: subpixel-antialiased;
+    > ul {
+        width: $menu-sidebar-width;
+        padding: 0;
+        margin: 0;
+        list-style: none;
+        li {
+            height: $menu-sidebar-offcanvas-width;
+            padding: 15px 0;
+            overflow: hidden;
+            &:first-child {
+                height: $topbar-height;
+                background: rgba(0, 0, 0, 0.2);
+            }
         }
-      }
     }
-  }
-
-  &__item:hover {
-    i, label {
-      color: #EC5252;
+    &__item {
+        height: 100%;
+        display: flex;
+        align-items: center;
+        label {
+            text-align: left;
+            i {
+                text-align: center;
+                display: inline-block;
+                width: $menu-sidebar-offcanvas-width;
+                &:before {
+                    width: 100%;
+                    text-align: center;
+                }
+                + span {
+                    text-transform: capitalize;
+                }
+            }
+        }
+        &:hover {
+            i, label {
+                color: #EC5252;
+                text-shadow: 0px 1px 3px rgba(0, 0, 0, 0.2);
+            }
+        }
     }
-  }
-
-  &.offcanvas {
-    width: $menu-sidebar-offcanvas-width !important;
-  }
+    &.offcanvas {
+        width: $menu-sidebar-offcanvas-width !important;
+    }
 }

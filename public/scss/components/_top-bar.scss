@@ -1,0 +1,39 @@
+//
+// Top Bar Variables
+//
+$include-html-top-bar-classes: $include-html-classes;
+$header-color: #666666;
+$topbar-divider-border-bottom: solid 1px scale-color(lightgray, $lightness: 13%);
+$topbar-arrows: false;
+.top-bar {
+    .title-area {
+        h1 {
+            color: $white;
+        }
+    }
+    .top-bar-section {
+        ul {
+            font-size: rem-calc(14);
+            li {
+                > a {
+                    text-transform: capitalize;
+                    i {
+                        font-size: rem-calc(22);
+                        line-height: 3.5rem;
+                    }
+                }
+                &:last-child {
+                    > a {
+                        min-width: rem-calc(280);
+                        i {
+                            line-height: 1rem;
+                            position: relative;
+                            top: 1.2rem;
+                            float: right;
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
