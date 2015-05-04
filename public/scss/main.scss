@@ -1,12 +1,13 @@
 @import 'utils/mixins';
 @import 'utils/variables';
 
+//import vendor default and config
 @import '../vendor/foundation/scss/normalize';
-
 @import 'vendors/foundation-settings';
 @import 'vendors/foundation';
 @import 'vendors/foundation-icons';
 
+//layouts
 @import 'layouts/common';
 @import 'layouts/default';
 @import 'layouts/header';
@@ -14,29 +15,28 @@
 @import 'layouts/mainmenu-bar';
 @import 'layouts/company-sidebar';
 
+//import all components
+@import 'components/top-bar';
+@import 'components/tabs';
+@import 'components/forms';
+@import 'components/company-sidebar-list';
+@import 'components/company-sidebar-search';
 
+//page specific style
+@import 'pages/account';
+@import 'pages/company';
+@import 'pages/signin';
+
+
+//need to rework these items
 @import 'layouts/sidebar';
 @import 'layouts/slider';
 @import 'layouts/control-bar';
 @import 'layouts/content-frame';
-@import 'layouts/company-top-bar';
-@import 'layouts/company-action-bar';
 @import 'layouts/authorization-panel';
 @import 'layouts/contents-panel';
 @import 'layouts/info-panel';
-@import 'layouts/tab-panel';
-
-
-//import all components
-@import 'components/top-bar';
-@import 'components/company-sidebar-list';
-@import 'components/company-sidebar-search';
-
 
 @import 'elements/button-switcher';
 @import 'elements/input-block';
 @import 'elements/loading-bar';
-
-@import 'pages/account';
-@import 'pages/company';
-@import 'pages/signin';

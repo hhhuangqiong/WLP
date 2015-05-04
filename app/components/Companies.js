@@ -24,10 +24,10 @@ var Companies = React.createClass({
 
     return (
       <div className="row">
-        <div className="large-7 columns">
+        <div className="large-6 columns">
           <CompanyList companies={this.state.companies}/>
         </div>
-        <div className="large-17 columns">
+        <div className="large-18 columns">
           <Company company={this.state.currentCompany} subPage={subPage}/>
         </div>
       </div>

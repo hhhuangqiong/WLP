@@ -1,0 +1,16 @@
+.tab {
+    &--inverted {
+      border-right: $tab-inverted-border;
+        &__title {
+          &:first-child{
+            padding-left: rem-calc(30);
+          }
+          &:last-child{
+            padding-right: rem-calc(30);
+          }
+          a{
+            min-width: initial !important;
+          }
+        }
+    }
+}

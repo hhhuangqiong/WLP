@@ -1,0 +1,4 @@
+input[type="text"],
+textarea{
+    @include border-radius($input-border-radius);
+}

@@ -1,3 +1,28 @@
+@import "../../vendor/foundation/scss/foundation/functions";
+
+/*********************************************
+theme setting
+*********************************************/
+$brand-primary: #e05353;
+$brand-secondary: #8f4646;
+$brand-extend: #c24848;
+
+//form elements
+$place-holder-color: #999;
+
+//general dropdown color
+$dropdown-bg-color: #555;
+$dropdown-link-bg-color: transparent;
+$dropdown-divider-color: #666;
+$dropdown-divider-lightness: 0%;
+
+//company switcher
+$company-switcher-width: 270px;
+$company-switcher-bg-color: $dropdown-bg-color;
+
+
+//need to rework
+
 $description-font-size: 12px;
 
 // z-index
@@ -7,6 +32,9 @@ $menu-level-z-index: 100;
 // bg-color
 $body-bg-color: #F5F5F5;
 
+/*********************************************
+components setting
+*********************************************/
 // menu-sidebar
 $menu-sidebar-width: 17.5rem;
 $menu-sidebar-offcanvas-width: 5rem;

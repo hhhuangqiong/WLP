@@ -7,10 +7,10 @@ var CompanyActionBar = React.createClass({
     // for create company
     if (!this.props._id) {
       return (
-        <nav className="top-bar company-top-bar company-action-bar" data-topbar role="navigation">
+        <nav className="top-bar top-bar--inner" data-topbar role="navigation">
           <section className="top-bar-section">
-            <ul className="left company-top-bar__tab-panel">
-              <li className="company-top-bar__tab-panel__tab-item">
+            <ul className="left top-bar--inner tab--inverted">
+              <li className="top-bar--inner tab--inverted__title">
                 <a href="javascript:void(0)">company profile</a>
               </li>
             </ul>
@@ -30,16 +30,16 @@ var CompanyActionBar = React.createClass({
       )
     } else {
       return (
-        <nav className="top-bar company-top-bar" data-topbar role="navigation">
+        <nav className="top-bar top-bar--inner" data-topbar role="navigation">
           <section className="top-bar-section">
-            <ul className="left company-top-bar__tab-panel">
-              <li className="company-top-bar__tab-panel__tab-item">
+            <ul className="left top-bar--inner tab--inverted">
+              <li className="top-bar--inner tab--inverted__title">
                 <NavLink routeName="adminCompany" navParams={{carrierId: this.props.carrierId, subPage: 'profile'}}>company profile</NavLink>
               </li>
-              <li className="company-top-bar__tab-panel__tab-item">
+              <li className="top-bar--inner tab--inverted__title">
                 <NavLink routeName="adminCompany" navParams={{carrierId: this.props.carrierId, subPage: 'service'}}>service config</NavLink>
               </li>
-              <li className="company-top-bar__tab-panel__tab-item">
+              <li className="top-bar--inner tab--inverted__title">
                 <NavLink routeName="adminCompany" navParams={{carrierId: this.props.carrierId, subPage: 'widget'}}>widget config</NavLink>
               </li>
             </ul>
