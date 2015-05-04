@@ -32,14 +32,15 @@ var CompanyList = React.createClass({
   },
   render: function() {
     return (
-      <div className="companies-list-bar">
-        <nav className="top-bar companies-list-bar__search-bar" data-topbar role="navigation">
+      <div className="company-sidebar">
+        <nav className="top-bar company-sidebar__search" data-topbar role="navigation">
           <input
             type="text" placeholder="search company"
             onChange={this._handleSearchChange}
             />
+            <i className="icon-search"/>
         </nav>
-        <ul className="companies-list-bar__list">
+        <ul className="company-sidebar__list">
           {this.getFilteredCompanies().map(this.renderCompanyListItem)}
         </ul>
       </div>
@@ -51,15 +52,15 @@ var CompanyList = React.createClass({
 
     return (
       <NavLink href={href}>
-        <li className="companies-list-bar__list__list-item">
-          <div className="companies-list-bar__list__list-item__logo left">
+        <li className="company-sidebar__list__list-item">
+          <div className="company-sidebar__list__list-item__logo left">
             logo
           </div>
-          <div className="companies-list-bar__list__list-item__info left">
-            <div className="companies-list-bar__list__list-item__info__title">
+          <div className="company-sidebar__list__list-item__info left">
+            <div className="company-sidebar__list__list-item__info__title">
               {company.name}
             </div>
-            <div className="companies-list-bar__list__list-item__info__location">
+            <div className="company-sidebar__list__list-item__info__location">
               {_.pluck(_.filter(Countries, {'alpha2': company.country}), 'name')}
             </div>
           </div>

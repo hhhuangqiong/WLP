@@ -7,17 +7,31 @@ var Navigation = React.createClass({
       <section className="top-bar-section navigation-bar">
         <ul className="right">
           <li className="navigation-bar__item">
-            <NavLink routeName="about" className="navigation-bar__item__name">report issue</NavLink>
+            <NavLink routeName="about">report issue</NavLink>
           </li>
           <li className="navigation-bar__item">
-            <NavLink routeName="about" className="navigation-bar__item__name">
+            <NavLink routeName="about">
               <i className="icon-question2"/>
             </NavLink>
           </li>
-          <li className="navigation-bar__item">
-            <NavLink routeName="about" className="navigation-bar__item__name">
+          <li className="has-dropdown not-click navigation-bar__item">
+            <NavLink routeName="about">
               <i className="icon-ccompany-menu"/>
             </NavLink>
+            <ul className="dropdown dropdown--company-switcher">
+              <li className="navigation-bar__item">
+                <a href="/logout"><img src="/images/logo-yato.png"/></a>
+              </li>
+              <li className="navigation-bar__item">
+                <a href="/logout"><img src="/images/logo-yato.png"/></a>
+              </li>
+              <li className="navigation-bar__item">
+                <a href="/logout"><img src="/images/logo-yato.png"/></a>
+              </li>
+              <li className="navigation-bar__item">
+                <a href="/logout"><img src="/images/logo-yato.png"/></a>
+              </li>
+            </ul>
           </li>
           <li className="has-dropdown not-click navigation-bar__item">
             <a>hi, username
@@ -25,7 +39,11 @@ var Navigation = React.createClass({
             </a>
             <ul className="dropdown">
               <li className="navigation-bar__item">
-                <a href="/logout" className="navigation-bar__item__name">logout</a>
+                <a href="/logout">change password</a>
+              </li>
+              <li className="divider"></li>
+              <li className="navigation-bar__item">
+                <a href="/logout">logout</a>
               </li>
             </ul>
           </li>

@@ -1,0 +1,21 @@
+@mixin inputBoxReset() {
+    border: 0;
+    height: rem-calc(34);
+	top: rem-calc(11);
+    @include box-shadow(0 0 0 rgba(0, 0, 0, 0));
+    &::-webkit-input-placeholder {color: $place-holder-color;}
+    &:-moz-placeholder {color: $place-holder-color; opacity: 1;}
+    &::-moz-placeholder {color: $place-holder-color; opacity: 1;}
+    &:-ms-input-placeholder {color: $place-holder-color;}
+}
+
+@mixin inputBoxWithIcon() {
+	padding-left: rem-calc(40);
+	~ [class^="icon-"]{
+		color: $place-holder-color;
+		font-size: rem-calc(20);
+		position: absolute;
+		left: rem-calc(36);
+		top: rem-calc(18);
+	}
+}

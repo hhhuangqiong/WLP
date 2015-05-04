@@ -1,0 +1,37 @@
+.company-sidebar {
+    &__search {
+        background: #707070;
+        padding: 0 20px;
+        height: rem-calc(55);
+        > input {
+            @include inputBoxReset;
+            @include inputBoxWithIcon;
+            @include border-radius(rem-calc(6));
+        }
+    }
+    &__list {
+        margin: 0;
+        padding: 0;
+        list-style: none;
+        &__list-item {
+            width: 100%;
+            border-bottom: 1px solid #e5e5e5;
+            padding: 5px 0;
+            overflow: hidden;
+            &__logo {
+                width: 35%;
+                text-align: center;
+            }
+            &__info {
+                width: 65%;
+                text-align: left;
+                text-transform: capitalize;
+                &__title {}
+                &__location {
+                    color: #CCC;
+                    font-size: $description-font-size;
+                }
+            }
+        }
+    }
+}
