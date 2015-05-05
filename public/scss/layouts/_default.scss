@@ -4,9 +4,16 @@ html, body {
 }
 
 body {
-  min-width: 1024px;
-  min-height: 768px;
+  // min-width: 1024px;
+  // min-height: 768px;
   background-color: $body-bg-color;
+}
+
+.public-container{
+  height: 100%;
+  display: flex;
+  align-items: center;
+  overflow: hidden;
 }
 
 .row {

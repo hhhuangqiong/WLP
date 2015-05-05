@@ -31,33 +31,35 @@ class SignIn extends React.Component {
     return (
       <div className="row">
           <form method="POST" action="/login" onSubmit={this._onSubmit}>
-            <h1>Sign In</h1>
-            <div className="large-12 columns">
+            <h1 className="text-center">Sign In</h1>
+            <div className="large-24">
               <input
                 type="text" name="username" placeholder="email"
                 value={this.state.username}
                 onChange={_.bindKey(this, '_handleChange', 'username')}
               />
             </div>
-            <div className="large-12 columns">
+            <div className="large-24">
               <input
                 type="password" name="password" placeholder="password"
                 value={this.state.password}
                 onChange={_.bindKey(this, '_handleChange', 'password')}
               />
             </div>
-            <div className="large-12 columns">
+            <div className="large-24">
               <NavLink routeName="forgot">forgot password?</NavLink>
             </div>
-            <div className="large-6 columns">
+            <div className="row">
+            <div className="large-16 columns">
               <input
                 type="checkbox" name="rememberMe"
                 onChange={_.bindKey(this, '_handleChange', 'rememberMe')}
               />
               <label>remember me</label>
             </div>
-            <div className="large-6 columns">
-              <button className="round right" onClick={this._onSubmit}>sign in</button>
+            <div className="large-8 columns">
+              <button className="button--custom round right" onClick={this._onSubmit}>sign in</button>
+            </div>
             </div>
           </form>
       </div>

@@ -14,14 +14,16 @@ export var PublicHtml = React.createClass({
         <nav className="top-bar public-header" data-topbar role="navigation">
           <ul className="title-area public-header__title-area">
             <li className="logo public-header__logo">
-              <img className="logo" src="/images/m800-logo.png" />
+              <img className="logo" src="/images/logo-default-m800.png" />
             </li>
           </ul>
         </nav>
-        <div className="row">
-          <div className="large-4 large-centered columns">
-            <div className="authorization-panel">
+        <div className="public-container row">
+          <div className="large-8 large-centered columns">
+            <div className="panel--default">
+            <div className="large-offset-3 large-18">
               {this.props.children}
+              </div>
             </div>
           </div>
         </div>

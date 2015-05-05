@@ -1,12 +1,11 @@
 .public-header {
-    background-color: rgb(226, 61, 61);
+    width: 100%;
+    background-color: $brand-primary;
+    position: absolute;
     &__title-area {
         height: 100%;
-        padding: 7px 10px;
+        padding: 12px 22px;
         box-sizing: border-box;
-    }
-    &__logo {
-        max-width: 60px;
     }
 }
 

@@ -1,0 +1,6 @@
+button {
+  &--custom{
+    @include button();
+    min-width: rem-calc(100);
+  }
+}

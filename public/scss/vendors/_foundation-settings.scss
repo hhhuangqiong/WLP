@@ -424,7 +424,7 @@ $medium-up: "#{$screen} and (min-width:#{lower-bound($medium-range)})";
 // We use these to build padding for buttons.
 // $button-tny: rem-calc(10);
 // $button-sml: rem-calc(14);
-// $button-med: rem-calc(16);
+$button-med: rem-calc(6);
 // $button-lrg: rem-calc(18);
 
 // We use this to control the display property.
@@ -437,7 +437,7 @@ $medium-up: "#{$screen} and (min-width:#{lower-bound($medium-range)})";
 // $button-font-color-alt: $oil;
 // $button-font-tny: rem-calc(11);
 // $button-font-sml: rem-calc(13);
-// $button-font-med: rem-calc(16);
+$button-font-med: rem-calc(14);
 // $button-font-lrg: rem-calc(20);
 // $button-font-weight: $font-weight-normal;
 // $button-font-align: center;
@@ -448,7 +448,8 @@ $medium-up: "#{$screen} and (min-width:#{lower-bound($medium-range)})";
 // We use these to control button border and hover styles.
 // $button-border-width: 0px;
 // $button-border-style: solid;
-// $button-bg-color: $primary-color;
+$button-bg-color: $brand-primary;
+$button-bg-hover: $brand-primary;
 // $button-bg-hover: scale-color($button-bg-color, $lightness: $button-function-factor);
 // $button-border-color: $button-bg-hover;
 // $secondary-button-bg-hover: scale-color($secondary-color, $lightness: $button-function-factor);
@@ -955,9 +956,9 @@ $icon-bar-icon-size: 1.35rem;
 // $include-html-panel-classes: $include-html-classes;
 
 // We use these to control the background and border styles
-// $panel-bg: scale-color($white, $lightness: -5%);
-// $panel-border-style: solid;
-// $panel-border-size: 1px;
+$panel-bg: scale-color($white, $lightness: 0);
+$panel-border-style: solid;
+$panel-border-size: 0;
 
 // We use this % to control how much we darken things on hover
 // $panel-function-factor: -11%;
