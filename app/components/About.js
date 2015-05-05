@@ -1,6 +1,6 @@
 'use strict';
 import React from 'react';
-import {NavLink} from 'flux-router-component';
+import {NavLink} from 'fluxible-router';
 
 var About = React.createClass({
   getInitialState: function () {

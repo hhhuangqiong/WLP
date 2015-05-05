@@ -12,7 +12,6 @@ gutil        = require 'gulp-util'
 istanbul     = require 'gulp-istanbul'
 mocha        = require 'gulp-mocha'
 nodemon      = require 'gulp-nodemon'
-reactify     = require 'reactify'
 runSequence  = require 'run-sequence'
 # 'libsass' version, http://sass-compatibility.github.io/
 sass         = require 'gulp-sass'
@@ -30,7 +29,7 @@ isNodemonRunning = false
 src =
   allJS:    'app/**/*.js'
   clientJS: 'app/client/**/*.js'
-  reactJS:  ['app/actions/*.js', 'app/components/*.js', 'app/stores/*.js', 'app/client.js']
+  reactJS:  ['app/{actions,components,stores}/**/*.js', 'app/client.js']
 
 dest =
   node: 'node_modules/app'
@@ -97,9 +96,9 @@ _continueOnError = (fn) ->
     return
   _fn
 
-gulp.task 'babel', ->
-  b = if /^watch/.test argv._[0] then _continueOnError babel else babel()
+b = if /^watch/.test argv._[0] then _continueOnError babel else babel()
 
+gulp.task 'babel', ->
   gulp.src src.allJS
     .pipe b
     .pipe sourcemaps.init()
@@ -112,7 +111,6 @@ gulp.task 'babel-react', ['babel'], ->
     extensions: ['.js'],
     debug: true
   })
-  .transform(reactify)
   .bundle()
   .pipe source('bundle.js')
   .pipe gulp.dest('public/javascript/')

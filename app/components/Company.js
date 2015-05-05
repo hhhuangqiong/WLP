@@ -1,6 +1,6 @@
 'use strict';
+
 import React from 'react';
-import {NavLink} from 'flux-router-component';
 
 import CompanyActionBar from  'app/components/CompanyActionBar';
 import CompanyProfile from 'app/components/CompanyProfile';

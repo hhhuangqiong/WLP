@@ -1,19 +1,19 @@
-'use strict';
 import React from 'react';
-import {NavLink} from 'flux-router-component';
+import {NavLink} from 'fluxible-router';
 
-var Home = React.createClass({
-  getInitialState: function () {
+class Home extends React.component {
+  getInitialState() {
     return {};
-  },
-  render: function() {
+  }
+
+  render() {
     return (
       <div>
-        <p>This is Home component!</p>
-        <NavLink routeName="signin">to sign in</NavLink>
+        <p>Home component!</p>
+        <NavLink href="/signin">to sign in</NavLink>
       </div>
     );
   }
-});
+}
 
 export default Home;

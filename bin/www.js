@@ -2,7 +2,7 @@
 
 var http  = require('http');
 var port  = 3000;
-var app   = require('app/index').initialize(port);
+var app   = require('app/server').initialize(port);
 var debug = require('debug')('m800-whitelabel-portal');
 var env   = process.env.NODE_ENV || 'development';
 

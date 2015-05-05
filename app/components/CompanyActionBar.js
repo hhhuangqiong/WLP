@@ -1,5 +1,5 @@
 import React from 'react';
-import {NavLink} from 'flux-router-component';
+import {NavLink} from 'fluxible-router';
 
 var CompanyActionBar = React.createClass({
   render: function() {

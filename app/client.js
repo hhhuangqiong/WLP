@@ -1,33 +1,24 @@
 /*global App, document, window */
-'use strict';
 import React from 'react';
-import Router, {HistoryLocation} from 'react-router';
+import debug from 'debug'
+import app from './index';
 
-import app from 'app/whiteLabelApp';
-
-var debug = require('debug')('WhiteLabelPortal:MainStream');
-
-var dehydratedState = window.App; // Sent from the server
+const bootstrapDebug = debug('wlp:client');
+const dehydratedState = window.App; // Sent from the server
 
 window.React = React; // For chrome dev tool support
+debug.enable('*');
 
-debug('rehydrating app');
-
-function RenderApp(context){
-  debug('React Rendering');
-
-  let mountNode = document.getElementById('app');
-  let Component = app.getComponent();
-  React.render(Component({context:context.getComponentContext()}), mountNode, function () {
-    debug('React Rendered');
-  });
-}
-
+bootstrapDebug('rehydrating app');
 app.rehydrate(dehydratedState, function (err, context) {
   if (err) {
     throw err;
   }
-
   window.context = context;
-  RenderApp(context);
+  const mountNode = document.getElementById('app');
+
+  bootstrapDebug('React Rendering');
+  React.render(context.createElement(), mountNode, () => {
+    bootstrapDebug('React Rendered');
+  });
 });

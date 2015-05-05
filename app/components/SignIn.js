@@ -1,29 +1,33 @@
-'use strict';
 import React from 'react';
-import {NavLink} from 'flux-router-component';
+import {NavLink} from 'fluxible-router';
 import _ from 'lodash';
+import debug from 'debug';
 
-var debug = require('debug')('SignIn Component');
+const bootstrapDebug = debug('wlp:components:signin');
 
-var SignIn = React.createClass({
-  getInitialState: function () {
-    return {
+class SignIn extends React.Component {
+  constructor(props, context) {
+    super(props, context);
+    this.state = {
       username: '',
       password: '',
       rememberMe: false
-    };
-  },
-  _onSubmit: function() {
+    }
+  }
+
+  _onSubmit(e) {
     // TODO: send post request
-  },
-  _handleChange: function(stateName, event) {
+  }
+
+  _handleChange(stateName, event) {
     debug(stateName, event);
     // es6 computed property name
     this.setState({
       [stateName]: event.target.type == 'checkbox' ? event.target.checked : event.target.value
     });
-  },
-  render: function() {
+  }
+
+  render() {
     return (
       <div className="row">
           <form method="POST" action="/login" onSubmit={this._onSubmit}>
@@ -59,6 +63,6 @@ var SignIn = React.createClass({
       </div>
     );
   }
-});
+}
 
 export default SignIn;

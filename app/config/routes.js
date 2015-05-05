@@ -4,14 +4,15 @@
  *
  * DOES NOT support nested routing
  */
-
-import request from 'superagent'
-var debug = require('debug')('WhiteLabelPortal:Routes');
-
+import request from 'superagent';
+import debug from 'debug';
 import env from 'app/utils/env';
+
+const bootstrapDebug = debug('wlp:routes');
 
 export default {
   signin: {
+    handler: require('../components/SignIn'),
     path: '/signin',
     method: 'get',
     page: 'signin',
@@ -22,6 +23,7 @@ export default {
     }
   },
   forgot: {
+    handler: require('../components/ForgetPass'),
     path: '/forgot',
     method: 'get',
     page: 'forgot',
@@ -32,6 +34,7 @@ export default {
     }
   },
   about: {
+    handler: require('../components/About'),
     path: '/about',
     method: 'get',
     page: 'about',
@@ -42,6 +45,7 @@ export default {
     }
   },
   dynamicpage: {
+    handler: require('../components/Page'),
     path: '/page/:id',
     method: 'get',
     page: 'page',

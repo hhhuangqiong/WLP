@@ -1,6 +1,5 @@
 'use strict';
 import React from 'react';
-import {NavLink} from 'flux-router-component';
 import {FluxibleMixin} from 'fluxible';
 
 import CompanyStore from 'app/stores/CompanyStore';

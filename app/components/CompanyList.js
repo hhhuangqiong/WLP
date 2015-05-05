@@ -1,7 +1,7 @@
 'use strict';
 import _ from 'lodash';
 import React from 'react';
-import {NavLink} from 'flux-router-component';
+import {NavLink} from 'fluxible-router';
 
 var Countries = require('../../../app/data/countries.json');
 

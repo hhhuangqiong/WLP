@@ -1,7 +1,7 @@
 import React from 'react';
 import classnames from 'classnames';
 
-import {NavLink} from 'flux-router-component';
+import {NavLink} from 'fluxible-router';
 
 var Sidebar = React.createClass({
   getInitialState: function() {
@@ -37,10 +37,10 @@ var Sidebar = React.createClass({
         onMouseEnter={this.props.handleOffCavnas.bind(null, false)}
       >
         <ul>
-          {this.state.sections.map((section)=>{
+          {this.state.sections.map((section, idx)=>{
             return (
               <li>
-                <NavLink className="item mainmenu-bar__item" href={section.link}>
+                <NavLink className="item mainmenu-bar__item" href={section.link} key={idx}>
                   <label>
                     <i className={section.icon} />
                     {section.name}
