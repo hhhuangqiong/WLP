@@ -1,14 +1,13 @@
 {
   "watch": [
-    "routes",
-    "app.js",
+    "public/javascript/bundle.js",
+    "gulpfile.coffee",
     "nodemon.json",
     "package.json"
   ],
   "ignore": [
     ".git",
     ".sass-cache",
-    ".ts-cache",
     "*.map"
   ],
   "verbose": true

@@ -1,11 +1,12 @@
-'use strict';
+// Register babel to have ES6 support on the server
+require('babel/register');
 
-var http  = require('http');
-var port  = 3000;
-var app   = require('app/server').initialize(port);
-var debug = require('debug')('m800-whitelabel-portal');
-var env   = process.env.NODE_ENV || 'development';
+const http   = require('http');
+const port   = 3000;
+const server = require('../app/server').initialize(port);
+const debug  = require('debug')('wlp');
 
-http.createServer(app).listen(port, function() {
-   debug('Express server listening on port %s (env: %s)', port, env);
+http.createServer(server).listen(port, function() {
+  debug('Express server listening on port %s (env: %s)', port, process.env.NODE_ENV);
 });
+

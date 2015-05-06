@@ -1,7 +1,7 @@
 var _ = require('lodash');
 var Q = require('q');
 
-import WhitelistRequest from 'app/lib/requests/Whitelist'
+import WhitelistRequest from '../../lib/requests/Whitelist'
 
 export default class Api {
 

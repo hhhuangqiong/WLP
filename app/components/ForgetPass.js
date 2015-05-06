@@ -2,7 +2,7 @@
 import React from 'react';
 import ValidationMixin from 'react-validation-mixin';
 import Joi from 'joi';
-import Message from 'app/components/ValidateErrorMsg';
+import Message from './ValidateErrorMsg';
 
 var ForgetPass = React.createClass({
   displayName: 'ForgetPass',

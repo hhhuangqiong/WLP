@@ -3,8 +3,8 @@ var Q          = require('q');
 var _          = require('lodash');
 var fs         = require('fs');
 
-var Company    = require('app/collections/company');
-var PortalUser = require('app/collections/portalUser');
+var Company    = require('../../collections/company');
+var PortalUser = require('../../collections/portalUser');
 
 function initialize(seedFilePath) {
   // assume there can only have 1 and only 1 root user

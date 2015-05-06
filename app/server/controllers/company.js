@@ -6,9 +6,9 @@ var moment    = require('moment-timezone');
 var mongoose  = require('mongoose');
 var Q         = require('q');
 
-var Company   = require('app/collections/company');
+var Company   = require('../../collections/company');
 
-var countries = require('../../../../app/data/countries.json');
+var countries = require('../../data/countries.json');
 
 export default class CompanyController {
 

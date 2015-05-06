@@ -1,8 +1,8 @@
 import React from 'react';
 import classnames from 'classnames';
 
-import Sidebar from 'app/components/Sidebar';
-import Navigation from 'app/components/Navigation';
+import Sidebar from './Sidebar';
+import Navigation from './Navigation';
 
 export var PublicHtml = React.createClass({
   propTypes: {

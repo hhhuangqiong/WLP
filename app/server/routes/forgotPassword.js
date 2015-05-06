@@ -1,7 +1,7 @@
 import { Router }   from 'express';
 import nconf        from 'nconf';
-import Controller   from 'app/server/controllers/forgotPassword';
-import { fetchDep } from 'app/server/initializers/ioc';
+import Controller   from '../controllers/forgotPassword';
+import { fetchDep } from '../initializers/ioc';
 
 module.exports = (() => {
   var controller  = new Controller(fetchDep(nconf.get('containerName'), 'PortalUserManager'));

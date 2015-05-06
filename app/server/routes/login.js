@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import Controller from 'app/server/controllers/login';
+import Controller from '../controllers/login';
 
 module.exports = (() => {
   // no deps, looks weird

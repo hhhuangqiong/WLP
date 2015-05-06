@@ -1,7 +1,7 @@
 import { Router }         from 'express';
 import nconf              from 'nconf';
-import { fetchDep }       from 'app/server/initializers/ioc';
-import Controller         from 'app/server/api';
+import { fetchDep }       from '../initializers/ioc';
+import Controller         from '../api';
 
 var callsRequest          = fetchDep(nconf.get('containerName'), 'CallsRequest');
 var endUserRequest        = fetchDep(nconf.get('containerName'), 'EndUserRequest');

@@ -3,9 +3,8 @@ var logger     = require('winston');
 var moment     = require('moment');
 var mongoose   = require('mongoose');
 
-var PortalUser = require('app/collections/portalUser');
-
-import { SignUp } from 'app/lib/portal/SignUp';
+import PortalUser from '../../collections/portalUser';
+import { SignUp } from '../portal/SignUp';
 
 /**
  * @class PortalUserManager

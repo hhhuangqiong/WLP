@@ -1,7 +1,7 @@
 import { Router }   from 'express';
 import nconf        from 'nconf';
-import Controller   from 'app/server/controllers/dashboard';
-import { fetchDep } from 'app/server/initializers/ioc';
+import Controller   from '../controllers/dashboard';
+import { fetchDep } from '../initializers/ioc';
 
 module.exports = (() => {
   var ensureAuthenticated = fetchDep(nconf.get('containerName'), 'middlewares.ensureAuthenticated');

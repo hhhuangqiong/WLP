@@ -1,6 +1,6 @@
 'use strict';
 import React from 'react';
-import PageStore from 'app/stores/PageStore';
+import PageStore from '../stores/PageStore';
 import {FluxibleMixin} from 'fluxible';
 
 var Page = React.createClass({

@@ -1,7 +1,7 @@
 import nconf        from 'nconf';
-import { fetchDep } from 'app/server/initializers/ioc';
+import { fetchDep } from '../initializers/ioc';
 import { Router }   from 'express';
-import CompanyCtrl  from 'app/server/controllers/company';
+import CompanyCtrl  from '../controllers/company';
 
 var multipart           = require('connect-multiparty')();
 var companyCtrl         = new CompanyCtrl();

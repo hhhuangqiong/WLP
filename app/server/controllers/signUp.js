@@ -3,12 +3,12 @@ import nconf from 'nconf';
 import Q from 'q';
 
 import util from 'util';
-import { SignUp } from 'app/lib/portal/SignUp';
+import { SignUp } from '../../lib/portal/SignUp';
 
 var logger     = require('winston');
 // because we don't have password strength requirement at the moment
 var owasp      = require('owasp-password-strength-test');
-var PortalUser = require('app/collections/portalUser');
+var PortalUser = require('../../collections/portalUser');
 
 const INVALID_PATH = '/signup/invalid';
 

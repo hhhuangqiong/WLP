@@ -1,5 +1,5 @@
 import { Strategy as LocalStrategy } from 'passport-local';
-import PortalUser from 'app/collections/portalUser';
+import PortalUser from '../../collections/portalUser';
 
 /**
  * Set up the de-/serializer for passport

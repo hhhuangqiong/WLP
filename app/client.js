@@ -1,4 +1,4 @@
-/*global App, document, window */
+/* global App, document, window */
 import React from 'react';
 import debug from 'debug'
 import app from './index';

@@ -8,7 +8,7 @@ import TimeStore from './stores/TimeStore';
 import PageStore from './stores/PageStore';
 import CompanyStore from './stores/CompanyStore';
 
-import routes from 'app/config/routes';
+import routes from './config/routes';
 
 // not sure about how this plug in help; keep for future reference
 //import routrPlugin from 'fluxible-plugin-routr';

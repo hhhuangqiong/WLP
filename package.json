@@ -7,7 +7,7 @@
     "clean": "gulp clean",
     "doc": "npm run transpile && jsdoc -r node_modules/app -d build/docs",
     "transpile": "gulp babel",
-    "server": "npm run transpile && node bin/www",
+    "server": "node bin/www",
     "pretest": "npm run transpile",
     "test": "gulp test",
     "test:report": "mocha --recursive test --reporter xunit > build/reports.xml"
@@ -67,6 +67,7 @@
     "winston": "^1.0.0"
   },
   "devDependencies": {
+    "babel-loader": "^5.0.0",
     "browser-sync": "^2.0.1",
     "browserify": "^10.1.0",
     "chai": "^2.0.0",
@@ -82,13 +83,15 @@
     "gulp-sass": "^1.3.3",
     "gulp-sourcemaps": "^1.3.0",
     "gulp-util": "^3.0.3",
+    "gulp-webpack": "^1.4.0",
     "jsdoc": "^3.3.0-beta1",
     "mocha": "^2.0.1",
     "nock": "^1.6.0",
-    "run-sequence": "^1.1.0",
+    "reactify": "^1.1.0",
     "sinon": "^1.12.2",
     "vinyl-buffer": "^1.0.0",
     "vinyl-source-stream": "^1.0.0",
+    "webpack": "^1.8.11",
     "yargs": "^3.0.4"
   }
 }

@@ -5,7 +5,7 @@ import assign from 'object-assign';
 import logger from 'winston'
 import request from 'superagent';
 
-import errorMixin from 'app/lib/requests/mixins/mumsErrorResponse';
+import errorMixin from '../requests/mixins/mumsErrorResponse';
 
 export const OPERATION_TYPE_ADD    = 'ADD';
 export const OPERATION_TYPE_REMOVE = 'REMOVE';

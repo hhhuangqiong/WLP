@@ -1,22 +1,22 @@
 import nconf                from 'nconf';
-import { fetchDep }         from 'app/server/initializers/ioc';
+import { fetchDep }         from '../initializers/ioc';
 import { Router }           from 'express';
 
-import accountsRouter       from 'app/server/routes/accounts';
-import apiRouter            from 'app/server/routes/api';
-import appRouter            from 'app/server/routes/app';
-import companyRouter        from 'app/server/routes/company';
-import dashboardRouter      from 'app/server/routes/dashboard';
-import dataRouter           from 'app/server/routes/data';
-import endUsersRouter       from 'app/server/routes/endUsers';
-import forgotPasswordRouter from 'app/server/routes/forgotPassword';
-import loginRouter          from 'app/server/routes/login'
-import logoutRouter         from 'app/server/routes/logout'
-import signUpRouter         from 'app/server/routes/signUp';
-import topUpsRouter         from 'app/server/routes/topUps';
-import storeRouter          from 'app/server/routes/store';
-import imRouter             from 'app/server/routes/im';
-import callsRouter          from 'app/server/routes/calls';
+import accountsRouter       from './accounts';
+import apiRouter            from './api';
+import appRouter            from './app';
+import companyRouter        from './company';
+import dashboardRouter      from './dashboard';
+import dataRouter           from './data';
+import endUsersRouter       from './endUsers';
+import forgotPasswordRouter from './forgotPassword';
+import loginRouter          from './login'
+import logoutRouter         from './logout'
+import signUpRouter         from './signUp';
+import topUpsRouter         from './topUps';
+import storeRouter          from './store';
+import imRouter             from './im';
+import callsRouter          from './calls';
 
 var ensureAuthenticated = fetchDep(nconf.get('containerName'), 'middlewares.ensureAuthenticated');
 

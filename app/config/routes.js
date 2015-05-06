@@ -6,7 +6,7 @@
  */
 import request from 'superagent';
 import debug from 'debug';
-import env from 'app/utils/env';
+import env from '../utils/env';
 
 const bootstrapDebug = debug('wlp:routes');
 

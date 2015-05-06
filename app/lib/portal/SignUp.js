@@ -8,8 +8,7 @@ import moment from 'moment';
 import randtoken from 'rand-token';
 import util from 'util';
 
-import PortalUser from 'app/collections/portalUser';
-
+import PortalUser from '../../collections/portalUser';
 
 /**
  * Create a new SignUp service.

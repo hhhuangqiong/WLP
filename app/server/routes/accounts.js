@@ -1,7 +1,8 @@
 import { Router }   from 'express';
 import nconf        from 'nconf';
-import Controller   from 'app/server/controllers/account';
-import { fetchDep } from 'app/server/initializers/ioc'
+
+import Controller   from '../controllers/account';
+import { fetchDep } from '../initializers/ioc'
 
 var accountCtrl = new Controller(fetchDep(nconf.get('containerName'), 'PortalUserManager'));
 var router      = Router();

@@ -1,6 +1,7 @@
 var logger  = require('winston');
 var moment  = require('moment');
-var Q       = require('q'); var request = require('superagent');
+var Q       = require('q'); 
+var request = require('superagent');
 var util    = require('util');
 
 import BaseRequest from '../Base';

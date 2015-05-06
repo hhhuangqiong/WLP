@@ -1,7 +1,7 @@
 import nconf from 'nconf';
-import { fetchDep } from 'app/server/initializers/ioc';
+import appCtrl from '../controllers/app';
+import { fetchDep } from '../initializers/ioc';
 import { Router } from 'express';
-import appCtrl from 'app/server/controllers/app';
 
 var router = Router();
 

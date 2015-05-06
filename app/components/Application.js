@@ -4,7 +4,7 @@ import {connectToStores, provideContext} from 'fluxible/addons';
 import {handleHistory} from 'fluxible-router';
 
 // TODO maybe not doing this here
-import {PublicHtml, AuthenticatedHtml} from 'app/components/Wrapper';
+import {PublicHtml, AuthenticatedHtml} from './Wrapper';
 
 import ApplicationStore from '../stores/ApplicationStore';
 

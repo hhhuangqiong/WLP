@@ -4,7 +4,6 @@ console.time 'Loading plugins'
 
 autoprefixer = require 'gulp-autoprefixer'
 babel        = require 'gulp-babel'
-browserify   = require 'browserify'
 del          = require 'del'
 extend       = require 'gulp-extend'
 gulp         = require 'gulp'
@@ -12,11 +11,11 @@ gutil        = require 'gulp-util'
 istanbul     = require 'gulp-istanbul'
 mocha        = require 'gulp-mocha'
 nodemon      = require 'gulp-nodemon'
-runSequence  = require 'run-sequence'
 # 'libsass' version, http://sass-compatibility.github.io/
 sass         = require 'gulp-sass'
 source       = require 'vinyl-source-stream'
 sourcemaps   = require 'gulp-sourcemaps'
+webpack      = require 'gulp-webpack'
 {argv}       = require 'yargs'
 {exec}       = require 'child_process'
 
@@ -28,20 +27,19 @@ isNodemonRunning = false
 
 src =
   allJS:    'app/**/*.js'
-  clientJS: 'app/client/**/*.js'
-  reactJS:  ['app/{actions,components,stores}/**/*.js', 'app/client.js']
 
 dest =
-  node: 'node_modules/app'
+  build: './build'
+  app: "./node_modules/app"
 
 gulp.task 'test', (cb) ->
-  gulp.src [ "#{dest.node}/**/*.js" ]
+  gulp.src [ "#{dest.app}/**/*.js" ]
     .pipe istanbul()
     .pipe istanbul.hookRequire()
     .on 'finish', ->
       gulp.src ['test/unit/**/*.coffee']
         .pipe mocha()
-        .pipe istanbul.writeReports({ dir:  './build/coverage' })
+        .pipe istanbul.writeReports({ dir:  "#{dest.build}/coverage" })
         .on 'end', cb
   return
 
@@ -55,25 +53,12 @@ gulp.task 'watch', ['watch:js'], ->
   gulp.watch 'locales/client/en/*.json', ['locale']
   return
 
-gulp.task 'watch:js', ['babel'], ->
-  # no hints when not running in server mode
-  gulp.watch [src.allJS, "!#{src.clientJS}"], ['babel-server']
-  gulp.watch src.reactJS, ['babel-react'], ['babel-react-server']
+gulp.task 'watch:js', ['client-react'], ->
+  gulp.watch src.allJS, ['client-react']
   return
 
-['babel', 'babel-react'].forEach (t) ->
-  gulp.task "#{t}-server", (cb) ->
-    runSequence(t, 'nodemon-hints', cb)
-
-gulp.task 'nodemon-hints', (cb) ->
-  # defer evaluation
-  return cb() if !isNodemonRunning
-  exec 'touch nodemon.json', (err) ->
-    return cb(err) if err
-    cb()
-
 gulp.task 'clean', ->
-  del(['node_modules/app', 'build/**/*'])
+  del([ "#{dest.app}", "#{dest.build}/**/*" ])
 
 gulp.task 'scss', ->
   gulp.src 'public/scss/main.scss'
@@ -103,19 +88,14 @@ gulp.task 'babel', ->
     .pipe b
     .pipe sourcemaps.init()
     .pipe sourcemaps.write '.'
-    .pipe gulp.dest dest.node
+    .pipe gulp.dest dest.app
 
-gulp.task 'babel-react', ['babel'], ->
-  browserify({
-    entries: "./#{dest.node}/client.js",
-    extensions: ['.js'],
-    debug: true
-  })
-  .bundle()
-  .pipe source('bundle.js')
+gulp.task 'client-react', ->
+  gulp.src('./app/client.js')
+  .pipe(webpack(require './webpack.config.js'))
   .pipe gulp.dest('public/javascript/')
 
-gulp.task 'nodemon', ['scss', 'babel', 'babel-react'], ->
+gulp.task 'nodemon', ['scss', 'client-react'], ->
   nodemon
     script: 'bin/www'
     # TODO investigate why this is not picked up by nodemon

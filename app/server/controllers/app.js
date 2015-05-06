@@ -1,6 +1,6 @@
 var _ = require('lodash');
 var Q = require('q');
-var Company = require('app/collections/company');
+var Company = require('../../collections/company');
 
 export default {
   showLayout: function(req, res, next) {

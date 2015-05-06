@@ -1,67 +1,68 @@
 'use strict';
-require('babel/register');
 
-import _                from 'lodash';
-import Q                from 'q';
-import React            from 'react';
-import serialize        from 'serialize-javascript';
-import app              from './index';
-import {navigateAction} from 'fluxible-router';
+import Q from 'q';
+import _ from 'lodash';
+import logger from 'winston';
+import path from 'path';
 
-var HtmlComponent = React.createFactory(require('./components/Html'));
+// react-related
+import React from 'react';
+import serialize from 'serialize-javascript';
+import { navigateAction } from 'fluxible-router';
 
-var debug            = require('debug')('wlp:server');
-var express          = require('express');
-var logger           = require('winston');
-var path             = require('path');
+const HtmlComponent = React.createFactory(require('./components/Html'));
 
 // express-related
-var bodyParser       = require('body-parser');
-var compression      = require('compression');
-var cookieParser     = require('cookie-parser');
-var expressValidator = require('express-validator');
-var favicon          = require('serve-favicon');
-var flash            = require('connect-flash');
-var methodOverride   = require('method-override');
-var morgan           = require('morgan');
-var session          = require('express-session');
-//var csrf             = require('csurf');
+import express from 'express';
+import bodyParser from 'body-parser';
+import compression from 'compression';
+import cookieParser from 'cookie-parser';
+import expressValidator from 'express-validator';
+import favicon from 'serve-favicon';
+import flash from 'connect-flash';
+import methodOverride from 'method-override';
+import morgan from 'morgan';
+import session from 'express-session';
+//import csrf from 'csurf';
 
-var RedisStore       = require('connect-redis')(session);
+import app from './index';
+
+var debug = require('debug')('wlp:server');
+var RedisStore = require('connect-redis')(session);
+
+const PROJ_ROOT = path.join(__dirname, '..');
 
 function initialize(port) {
   if (!port) throw new Error('Please specify port');
-
-  // trust me, it's 2 levels up after transpilation
-  const PROJ_ROOT = path.join(__dirname, '../..');
 
   var server = express();
   debug('starting app');
 
   // serverlication settings
-  server.set('port',        port);
-  server.set('views',       path.join(PROJ_ROOT, 'views'));
+  server.set('port', port);
+  server.set('views', path.join(PROJ_ROOT, 'views'));
   server.set('view engine', 'jade');
-  server.set('view cache',  env !== 'development');
+  server.set('view cache', env !== 'development');
 
   var env = server.get('env');
 
-  var nconf = require('app/server/initializers/nconf')(env, path.join(PROJ_ROOT, 'app/config'));
+  var nconf = require('./server/initializers/nconf')(env, path.join(__dirname, 'config'));
 
   // database initialization + data seeding
-  var seedFilePath = path.join(PROJ_ROOT, 'app/data/rootUser.json');
-  var postDBInit = require('app/server/initializers/dataseed')(seedFilePath);
-  require('app/server/initializers/database')(nconf.get('mongodb:uri'), nconf.get('mongodb:options'), postDBInit);
+  var postDBInit = require('./server/initializers/dataseed')( './data/rootUser.json');
+  require('./server/initializers/database')(nconf.get('mongodb:uri'), nconf.get('mongodb:options'), postDBInit);
 
-  var ioc = require('app/server/initializers/ioc').init(nconf);
+  var ioc = require('./server/initializers/ioc').init(nconf);
 
-  require('app/server/initializers/kue')(ioc, nconf, { uiPort: nconf.get('queue:uiPort')});
+  require('./server/initializers/kue')(ioc, nconf, {
+    uiPort: nconf.get('queue:uiPort')
+  });
 
-  require('app/server/initializers/logging')();
-  require('app/server/initializers/viewHelpers')(server);
+  require('./server/initializers/logging')();
+  require('./server/initializers/viewHelpers')(server);
 
   // i18next init
-  require('app/server/initializers/i18next')(server);
+  require('./server/initializers/i18next')(server);
 
   if (nconf.get('trustProxy'))
     server.enable('trust proxy');
@@ -77,7 +78,7 @@ function initialize(port) {
   server.use(compression());
   server.use(cookieParser(nconf.get('cookies:secret'), nconf.get('cookies:options')));
 
-  server.use(favicon(path.join(PROJ_ROOT, '/public/favicon.ico')));
+  server.use(favicon(path.join(PROJ_ROOT, 'public/favicon.ico')));
 
   //server.use(csrf({cookie: true}));
 
@@ -100,7 +101,7 @@ function initialize(port) {
 
   server.use(morgan('dev'));
 
-  var passport = require('app/server/initializers/passport')();
+  var passport = require('./server/initializers/passport')();
   server.use(passport.initialize());
   // ensure express.session() is before passport.session()
   server.use(passport.session());
@@ -108,7 +109,7 @@ function initialize(port) {
   server.use(flash());
 
   // Routes
-  var routes = require('app/server/routes');
+  var routes = require('./server/routes');
   server.use(routes);
 
   // react startup point
@@ -136,7 +137,9 @@ function initialize(port) {
       let context = app.createContext();
 
       debug('Executing navigate action');
-      context.executeAction(navigateAction, { url: req.url }, function (err) {
+      context.executeAction(navigateAction, {
+        url: req.url
+      }, function(err) {
         if (err) {
           logger.error('error during initalizing ReactApp:', err);
           if (err.status && err.status === 404) {

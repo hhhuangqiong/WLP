@@ -2,7 +2,7 @@ var logger    = require('winston');
 var nconf     = require('nconf');
 var passport  = require('passport');
 
-var protector = require('app/server/initializers/loginProtector');
+var protector = require('../initializers/loginProtector');
 
 export default class Login {
 
