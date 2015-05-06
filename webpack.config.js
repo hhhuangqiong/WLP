@@ -5,7 +5,8 @@ module.exports = {
   //entry: "./app/client.js",
   module: {
     loaders: [
-      { test: /\.js$/, exclude: /node_modules/, loader: "babel-loader" }
+      { test: /\.js$/, exclude: /node_modules/, loader: "babel-loader" },
+      { test: /\.json$/, loader: "json" }
     ]
   },
   // necessary? even `gulp.dest` exists

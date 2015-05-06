@@ -1,0 +1,10 @@
+{
+  "env": {
+    "node": true,
+    "mocha": true
+  },
+  "ecmaFeatures": {
+    "jsx": true
+    "blockBindings": true
+  }
+}

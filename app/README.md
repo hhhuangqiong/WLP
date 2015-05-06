@@ -6,7 +6,6 @@ General Application Structure
 
 app
 |-- actions               # Fluxible actions
-|-- client                # front-end AngularJS script (abandoned)
 |-- collections           # mongoose db collections
 |-- components            # React components
 |-- config                # configuration to be shared between client/server
