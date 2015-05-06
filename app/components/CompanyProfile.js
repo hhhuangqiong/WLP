@@ -1,78 +1,140 @@
+import _ from 'lodash';
 import React from 'react';
 import {FluxibleMixin} from 'fluxible';
 import classNames from 'classnames';
 
-import CompanyStore from 'app/stores/CompanyStore';
+import CompanyStore from '../stores/CompanyStore';
 
-import InfoBlock from 'app/components/InfoBlock';
+import InfoBlock from './InfoBlock';
 
-var Countries = require('../../../app/data/countries.json');
-var Timezones = require('../../../app/data/timezones.json');
+var Countries = require('../data/countries.json');
+var Timezones = require('../data/timezones.json');
+
+// determinant of logo image src
+const imageDataRegex = /^data:.+\/(.+);base64,(.*)$/;
+
+const newContactObject = {name: '', phone: '', email: ''};
 
 var CompanyProfile = React.createClass({
-  mixins: [FluxibleMixin],
-  statics: {
-    storeListeners: [CompanyStore]
-  },
   getInitialState: function () {
-    let state = this.getStore(CompanyStore).getState();
-    let company = state.currentCompany;
     return {
-      name: company.name,
-      address: company.address,
-      carrierId: company.carrierId,
-      reseller: company.reseller,
-      logo: company.logo,
-      accountManager: company.accountManager,
-      billCode: company.billCode,
-      expectedServiceDate: company.expectedServiceDate,
-      categoryID: company.categoryID,
-      country: company.country,
-      timezone: company.timezone,
-      businessContact: company.businessContact || {name: '', phone: '', email: ''},
-      technicalContact: company.technicalContact || {name: '', phone: '', email: ''},
-      supportContact: company.supportContact || {name: '', phone: '', email: ''}
+      errors: null,
+      _id: this.props._id || null,
+      name: this.props.name || '',
+      address: this.props.address || '',
+      carrierId: this.props.carrierId || '',
+      reseller: this.props.reseller || false,
+      logo: this.props.logo || null,
+      accountManager: this.props.accountManager || '',
+      billCode: this.props.billCode || '',
+      expectedServiceDate: this.props.expectedServiceDate || '',
+      categoryID: this.props.categoryID || '',
+      country: this.props.country || '',
+      timezone: this.props.timezone || '',
+      businessContact: this.props.businessContact || newContactObject,
+      technicalContact: this.props.technicalContact || newContactObject,
+      supportContact: this.props.supportContact || newContactObject
     };
   },
-  onChange: function() {
-    let state = this.getStore(CompanyStore).getState();
-    let company = state.currentCompany;
+  componentWillReceiveProps: function(nextProps) {
+    // errors should always be null upon selecting another company
+    // it applies only with difference in carrierId
+    // this function will fire upon any change in parent state
+    // so carrierId checking is a MUST
+    if (this.props.carrierId != nextProps.carrierId) {
+      this.setState({
+        errors: null,
+        _id: nextProps._id || null,
+        name: nextProps.name || '',
+        address: nextProps.address || '',
+        carrierId: nextProps.carrierId || '',
+        reseller: nextProps.reseller || false,
+        logo: nextProps.logo || null,
+        accountManager: nextProps.accountManager || '',
+        billCode: nextProps.billCode || '',
+        expectedServiceDate: nextProps.expectedServiceDate || '',
+        categoryID: nextProps.categoryID || '',
+        country: nextProps.country || '',
+        timezone: nextProps.timezone || '',
+        businessContact: nextProps.businessContact || newContactObject,
+        technicalContact: nextProps.technicalContact || newContactObject,
+        supportContact: nextProps.supportContact || newContactObject
+      });
+    }
+  },
+  isWhiteLabel: function() {
+    return this.state.carrierId.indexOf('.maaii.com') > -1;
+  },
+  isSDK: function() {
+    return this.state.carrierId.indexOf('.m800-api.com') > -1;
+  },
+  _handleInputChange: function(stateName, e) {
+    this.setState({[stateName]: e.target.value || e.target.selected});
+  },
+  _handleContactChange: function(stateName, key, e) {
     this.setState({
-      name: company.name,
-      address: company.address,
-      carrierId: company.carrierId,
-      reseller: company.reseller,
-      logo: company.logo,
-      accountManager: company.accountManager,
-      billCode: company.billCode,
-      expectedServiceDate: company.expectedServiceDate,
-      categoryID: company.categoryID,
-      country: company.country,
-      timezone: company.timezone,
-      businessContact: company.businessContact || {name: '', phone: '', email: ''},
-      technicalContact: company.technicalContact || {name: '', phone: '', email: ''},
-      supportContact: company.supportContact || {name: '', phone: '', email: ''}
+      [stateName]: _.merge(this.state[stateName], {[key]: e.target.value})
     });
   },
-  _isWhiteLabel: function() {
-    return this.state.carrierId.indexOf('.maaii.com') >= 0;
+  _handleLogoChange: function(e) {
+    var reader = new FileReader();
+    reader.onload = (e) => {
+      this.setState({
+        logo: reader.result
+      });
+    };
+    reader.readAsDataURL(e.target.files[0]);
   },
-  _isSDK: function() {
-    return this.state.carrierId.indexOf('.m800-api.com') >= 0;
+  _handleCarrierIdBlur: function(e) {
+    // make an api call for application ID
+    // false logic is currently used to see the effect
+    this.setState({
+      isValidated: this.state.carrierId.indexOf('.maaii.com') > -1
+    });
+  },
+  _handleInputBlur: function() {
+    // do validation and return errors if any
+    //this.props.onDataChange(['validation error']);
+  },
+  _handleSetReseller: function(isReseller) {
+    this.setState({
+      reseller: isReseller
+    });
   },
   _renderTimezoneOption: function(timezone) {
     return (
       <option value={timezone.value}>{timezone.name}</option>
-    )
+    );
   },
   _renderCountryOption: function(country) {
     return (
       <option value={country.alpha2}>{country.name}</option>
     );
   },
+  _renderLogoImage: function() {
+    if (this.state.logo) {
+      let logo = this.state.logo;
+
+      if (!this.state.logo.match(imageDataRegex)) {
+        logo = `/data/${this.state.logo}`;
+      }
+
+      return (
+        <img src={logo} />
+      );
+    }
+  },
+  _renderIdInput: function() {
+    if (this.props._id) {
+      return (
+        <input type="hidden" name="_id" value={this.props._id} />
+      );
+    };
+  },
   render: function() {
     return (
-      <div>
+      <form ref="companyFrom" encType="multipart/form-data">
+        {this._renderIdInput()}
         <div className="large-15 columns">
           <div className="contents-panel">
             <div className="row">
@@ -83,7 +145,8 @@ var CompanyProfile = React.createClass({
               </div>
               <div className="large-24 columns">
                 <div className="contents-panel__logo">
-                  i am a logo
+                  {this._renderLogoImage()}
+                  <input type="file" name="logo" onChange={this._handleLogoChange} />
                 </div>
               </div>
               <div className="large-24 columns">
@@ -91,7 +154,12 @@ var CompanyProfile = React.createClass({
                   <label>company name</label>
                 </div>
                 <div className="large-15 columns">
-                  <input type="text" name="company" placeholder="company name" value={this.state.name} />
+                  <input
+                    type="text" name="name" placeholder="company name"
+                    value={this.state.name}
+                    onChange={_.bindKey(this, '_handleInputChange', 'name')}
+                    onBlur={this._handleInputBlur}
+                  />
                 </div>
               </div>
               <div className="large-24 columns">
@@ -99,7 +167,12 @@ var CompanyProfile = React.createClass({
                   <label>carrier ID</label>
                 </div>
                 <div className="large-15 columns">
-                  <input type="text" name="carrierId" placeholder="company name" value={this.state.carrierId} />
+                  <input
+                    type="text" name="carrierId" placeholder="company name"
+                    value={this.state.carrierId}
+                    onChange={_.bindKey(this, '_handleInputChange', 'carrierId')}
+                    onBlur={this._handleCarrierIdBlur}
+                  />
                 </div>
               </div>
               <div className="large-24 columns">
@@ -107,7 +180,12 @@ var CompanyProfile = React.createClass({
                   <label>company address</label>
                 </div>
                 <div className="large-15 columns">
-                  <textarea name="company-address" value={this.state.address} />
+                  <textarea
+                    name="address"
+                    value={this.state.address}
+                    onChange={_.bindKey(this, '_handleInputChange', 'address')}
+                    onBlur={this._handleInputBlur}
+                  />
                 </div>
               </div>
               <div className="large-24 columns">
@@ -117,10 +195,22 @@ var CompanyProfile = React.createClass({
                 <div className="large-15 columns">
                   <ul className="button-switcher">
                     <li>
-                      <a className={classNames('button-switcher__button', {active: !this.state.reseller})}>default</a>
+                      <a
+                        className={classNames('button-switcher__button', {active: !this.state.reseller})}
+                        onClick={_.bindKey(this, '_handleSetReseller', false)}
+                      >
+                        default
+                      </a>
+                      <input className="hide" type="radio" name="reseller" value="0" checked={!this.state.reseller} readOnly />
                     </li>
                     <li>
-                      <a className={classNames('button-switcher__button', {active: this.state.reseller})}>reseller</a>
+                      <a
+                        className={classNames('button-switcher__button', {active: this.state.reseller})}
+                        onClick={_.bindKey(this, '_handleSetReseller', true)}
+                      >
+                        reseller
+                      </a>
+                      <input className="hide" type="radio" name="reseller" value="1" checked={this.state.reseller} readOnly />
                     </li>
                   </ul>
                 </div>
@@ -131,7 +221,7 @@ var CompanyProfile = React.createClass({
                 </div>
                 <div className="large-15 columns">
                   <select name="parent-company">
-                    <option>please select</option>
+                    <option value="551bbd63003fd58975b12284">m800</option>
                   </select>
                 </div>
               </div>
@@ -142,10 +232,10 @@ var CompanyProfile = React.createClass({
                 <div className="large-15 columns">
                   <ul className="button-switcher">
                     <li>
-                      <a className={classNames('button-switcher__button', {active: this._isWhiteLabel()})}>whitelabel</a>
+                      <a className={classNames('button-switcher__button', {active: this.isWhiteLabel()})}>whitelabel</a>
                     </li>
                     <li>
-                      <a className={classNames('button-switcher__button', {active: this._isSDK()})}>sdk</a>
+                      <a className={classNames('button-switcher__button', {active: this.isSDK()})}>sdk</a>
                     </li>
                   </ul>
                 </div>
@@ -155,7 +245,12 @@ var CompanyProfile = React.createClass({
                   <label>account manager</label>
                 </div>
                 <div className="large-15 columns">
-                  <input type="text" name="account-manager" placeholder="account manager" value={this.state.accountManager} />
+                  <input
+                    type="text" name="accountManager" placeholder="account manager"
+                    value={this.state.accountManager}
+                    onChange={_.bindKey(this, '_handleInputChange', 'accountManager')}
+                    onBlur={this._handleInputBlur}
+                  />
                 </div>
               </div>
               <div className="large-24 columns">
@@ -163,7 +258,12 @@ var CompanyProfile = React.createClass({
                   <label>bill code</label>
                 </div>
                 <div className="large-15 columns">
-                  <input type="text" name="bill-code" placeholder="bill code" value={this.state.billCode} />
+                  <input
+                    type="text" name="billCode" placeholder="bill code"
+                    value={this.state.billCode}
+                    onChange={_.bindKey(this, '_handleInputChange', 'billCode')}
+                    onBlur={this._handleInputBlur}
+                  />
                 </div>
               </div>
               <div className="large-24 columns">
@@ -171,7 +271,12 @@ var CompanyProfile = React.createClass({
                   <label>category ID</label>
                 </div>
                 <div className="large-15 columns">
-                  <input type="text" name="category-id" placeholder="category ID" value={this.state.categoryID} />
+                  <input
+                    type="text" name="categoryID" placeholder="category ID"
+                    value={this.state.categoryID}
+                    onChange={_.bindKey(this, '_handleInputChange', 'categoryID')}
+                    onBlur={this._handleInputBlur}
+                  />
                 </div>
               </div>
               <div className="large-24 columns">
@@ -179,7 +284,12 @@ var CompanyProfile = React.createClass({
                   <label>expected service date</label>
                 </div>
                 <div className="large-15 columns">
-                  <input type="text" name="company" placeholder="expected service date" value={this.state.expectedServiceDate} />
+                  <input
+                    type="text" name="expectedServiceDate" placeholder="expected service date"
+                    value={this.state.expectedServiceDate}
+                    onChange={_.bindKey(this, '_handleInputChange', 'expectedServiceDate')}
+                    onBlur={this._handleInputBlur}
+                  />
                 </div>
               </div>
               <div className="large-24 columns">
@@ -187,7 +297,7 @@ var CompanyProfile = React.createClass({
                   <label>country</label>
                 </div>
                 <div className="large-15 columns">
-                  <select name="country" value={this.state.country}>
+                  <select name="country" value={this.state.country} onChange={_.bindKey(this, '_handleInputChange', 'country')}>
                     <option>please select</option>
                     {Countries.map(this._renderCountryOption)}
                   </select>
@@ -198,7 +308,7 @@ var CompanyProfile = React.createClass({
                   <label>timezone</label>
                 </div>
                 <div className="large-15 columns">
-                  <select name="timezone" value={this.state.timezone}>
+                  <select name="timezone" value={this.state.timezone} onChange={_.bindKey(this, '_handleInputChange', 'timezone')}>
                     <option>please select</option>
                     {Timezones.map(this._renderTimezoneOption)}
                   </select>
@@ -221,7 +331,12 @@ var CompanyProfile = React.createClass({
                         <label>name</label>
                       </div>
                       <div className="large-15 columns">
-                        <input name="bc-name" value={this.state.businessContact.name} />
+                        <input
+                          type="text" name="bc-name"
+                          value={this.state.businessContact.name}
+                          onChange={_.bindKey(this, '_handleContactChange', 'businessContact', 'name')}
+                          onBlur={this._handleInputBlur}
+                        />
                       </div>
                     </div>
                   </div>
@@ -231,7 +346,12 @@ var CompanyProfile = React.createClass({
                         <label>phone</label>
                       </div>
                       <div className="large-15 columns">
-                        <input name="bc-phone" value={this.state.businessContact.phone} />
+                        <input
+                          type="text" name="bc-phone"
+                          value={this.state.businessContact.phone}
+                          onChange={_.bindKey(this, '_handleContactChange', 'businessContact', 'phone')}
+                          onBlur={this._handleInputBlur}
+                        />
                       </div>
                     </div>
                   </div>
@@ -241,7 +361,12 @@ var CompanyProfile = React.createClass({
                         <label>email</label>
                       </div>
                       <div className="large-15 columns">
-                        <input name="bc-email" value={this.state.businessContact.email} />
+                        <input
+                          type="text" name="bc-email"
+                          value={this.state.businessContact.email}
+                          onChange={_.bindKey(this, '_handleContactChange', 'businessContact', 'email')}
+                          onBlur={this._handleInputBlur}
+                        />
                       </div>
                     </div>
                   </div>
@@ -253,7 +378,12 @@ var CompanyProfile = React.createClass({
                         <label>name</label>
                       </div>
                       <div className="large-15 columns">
-                        <input name="tc-name" value={this.state.technicalContact.name} />
+                        <input
+                          type="text" name="tc-name"
+                          value={this.state.technicalContact.name}
+                          onChange={_.bindKey(this, '_handleContactChange', 'technicalContact', 'name')}
+                          onBlur={this._handleInputBlur}
+                        />
                       </div>
                     </div>
                   </div>
@@ -263,7 +393,12 @@ var CompanyProfile = React.createClass({
                         <label>phone</label>
                       </div>
                       <div className="large-15 columns">
-                        <input name="tc-phone" value={this.state.technicalContact.phone} />
+                        <input
+                          type="text" name="tc-phone"
+                          value={this.state.technicalContact.phone}
+                          onChange={_.bindKey(this, '_handleContactChange', 'technicalContact', 'phone')}
+                          onBlur={this._handleInputBlur}
+                        />
                       </div>
                     </div>
                   </div>
@@ -273,7 +408,12 @@ var CompanyProfile = React.createClass({
                         <label>email</label>
                       </div>
                       <div className="large-15 columns">
-                        <input name="tc-email" value={this.state.technicalContact.name} />
+                        <input
+                          type="text" name="tc-email"
+                          value={this.state.technicalContact.email}
+                          onChange={_.bindKey(this, '_handleContactChange', 'technicalContact', 'email')}
+                          onBlur={this._handleInputBlur}
+                        />
                       </div>
                     </div>
                   </div>
@@ -285,7 +425,12 @@ var CompanyProfile = React.createClass({
                         <label>name</label>
                       </div>
                       <div className="large-15 columns">
-                        <input name="sc-name" value={this.state.supportContact.name} />
+                        <input
+                          type="text" name="sc-name"
+                          value={this.state.supportContact.name}
+                          onChange={_.bindKey(this, '_handleContactChange', 'supportContact', 'name')}
+                          onBlur={this._handleInputBlur}
+                        />
                       </div>
                     </div>
                   </div>
@@ -295,7 +440,12 @@ var CompanyProfile = React.createClass({
                         <label>phone</label>
                       </div>
                       <div className="large-15 columns">
-                        <input name="sc-phone" value={this.state.supportContact.name} />
+                        <input
+                          type="text" name="sc-phone"
+                          value={this.state.supportContact.phone}
+                          onChange={_.bindKey(this, '_handleContactChange', 'supportContact', 'phone')}
+                          onBlur={this._handleInputBlur}
+                        />
                       </div>
                     </div>
                   </div>
@@ -305,7 +455,12 @@ var CompanyProfile = React.createClass({
                         <label>email</label>
                       </div>
                       <div className="large-15 columns">
-                        <input name="sc-email" value={this.state.supportContact.name} />
+                        <input
+                          type="text" name="sc-email"
+                          value={this.state.supportContact.email}
+                          onChange={_.bindKey(this, '_handleContactChange', 'supportContact', 'email')}
+                          onBlur={this._handleInputBlur}
+                        />
                       </div>
                     </div>
                   </div>
@@ -314,7 +469,7 @@ var CompanyProfile = React.createClass({
             </div>
           </div>
         </div>
-      </div>
+      </form>
     )
   }
 });

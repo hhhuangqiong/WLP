@@ -66,6 +66,10 @@ var portalUserSchema = new mongoose.Schema({
   assignedGroup: {
     type: String
   },
+  assignedCompanies: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Company'
+  }],
   status: {
     type: String,
     // TODO introduce enum-like statuses

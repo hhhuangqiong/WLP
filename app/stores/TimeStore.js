@@ -1,4 +1,3 @@
-'use strict';
 import {createStore} from 'fluxible/addons';
 
 var TimeStore = createStore({

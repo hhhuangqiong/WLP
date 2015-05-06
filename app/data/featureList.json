@@ -1,0 +1,214 @@
+{
+  "WL": {
+    "member visibility": {
+      "memberVisibility": {
+        "label": "member visibility (view APP users only)"
+      }
+    },
+    "registration flow customization": {
+      "standardSignupFlow": {
+        "label": "standard signup flow"
+      },
+      "apiSignupSupport": {
+        "label": "API signup support"
+      },
+      "callbackForEndUserLifeCycle": {
+        "label": "callback for end-user life cycle"
+      }
+    },
+    "IVR": {
+      "chargeForIVRCallPerCarrier": {
+        "label": "charge for IVR call per carrier"
+      },
+      "partitionToPlayDifferentPromptPerCarrier": {
+        "label": "partition to play different prompt per carrier"
+      }
+    },
+    "SMS": {
+      "chargeForSMSPerCarrier": {
+        "label": "charge for SMS per carrier"
+      },
+      "differentSMSCConnection": {
+        "label": "different SMSC connection"
+      }
+    },
+    "facebook integration": {
+      "facebookIntegration": {
+        "label": "facebook integration"
+      }
+    },
+    "friend finding": {
+      "friendFinding": {
+        "label": "Friend finding"
+      }
+    },
+    "end-user rate table": {
+      "endUserRateTable": {
+        "label": "End-user Rate table"
+      }
+    },
+    "API Server": {
+      "topUpApi": {
+        "label": "Topup API"
+      },
+      "promotionalIMApi": {
+        "label": "Promotional IM API"
+      }
+    },
+    "IM-to-SMS": {
+      "iMToSMS": {
+        "label": "IM-to-SMS"
+      }
+    },
+    "Virtual storefront": {
+      "virtualGoodsSupport": {
+        "label": "virtual goods support"
+      },
+      "sticker": {
+        "label": "sticker"
+      },
+      "animation": {
+        "label": "animation"
+      },
+      "voiceSticker": {
+        "label": "voice sticker"
+      },
+      "credit": {
+        "label": "credit"
+      },
+      "customizedVirtualGoods": {
+        "label": "customized virtual goods"
+      }
+    },
+    "Blocking": {
+      "blocking": {
+        "label": "blocking"
+      }
+    },
+    "call": {
+      "onNet": {
+        "label": "on-net"
+      },
+      "offNet": {
+        "label": "off-net"
+      }
+    },
+    "In-call effect": {
+      "standardPackage": {
+        "label": "standard package"
+      }
+    },
+    "Video caller ID": {
+      "videoCallerID": {
+        "label": "video caller ID"
+      }
+    },
+    "Chat": {
+      "text": {
+        "label": "text"
+      },
+      "picture": {
+        "label": "picture"
+      },
+      "video": {
+        "label": "video"
+      },
+      "audioNote": {
+        "label": "audio note"
+      },
+      "timeout": {
+        "label": "timeout"
+      },
+      "emoticon": {
+        "label": "emoticon"
+      },
+      "sticker": {
+        "label": "sticker"
+      },
+      "animation": {
+        "label": "animation"
+      },
+      "voiceSticker": {
+        "label": "voice sticker"
+      },
+      "iTunesSharing": {
+        "label": "iTunes sharing"
+      },
+      "youtubeSharing": {
+        "label": "youtube sharing"
+      },
+      "youkuSharing": {
+        "label": "youku sharing (for china only)"
+      },
+      "groupChat": {
+        "label": "group chat (different group size)"
+      },
+      "perCarrierSpecific": {
+        "label": "per carrier specific (emoji, sticker, animation, voice sticker)"
+      },
+      "locationTagging": {
+        "label": "location tagging"
+      }
+    },
+    "In-app banner": {
+      "inAppBanner": {
+        "label": "in-app banner"
+      }
+    },
+    "Language support": {
+      "standardSupport": {
+        "label": "standard support"
+      },
+      "customizedSupport": {
+        "label": "customized support"
+      }
+    },
+    "Call termination path": {
+      "callTerminationPath": {
+        "label": "Call termination path"
+      }
+    },
+    "Carrier settlement": {
+      "postpaid": {
+        "label": "postpaid"
+      },
+      "prepaid": {
+        "label": "prepaid"
+      }
+    },
+    "Operation support": {
+      "manualBannerUpdate": {
+        "label": "Manual banner update"
+      },
+      "rateTableUpdate": {
+        "label": "Rate table update"
+      }
+    }
+  },
+  "SDK": {
+    "call": {
+      "onNet": {
+        "label": "on-net"
+      },
+      "offNet": {
+        "label": "off-net"
+      }
+    },
+    "IM": {
+      "clientToClient": {
+        "label": "client to client"
+      },
+      "serverToClient": {
+        "label": "server to client"
+      },
+      "clientToServer": {
+        "label": "client to server"
+      }
+    },
+    "stand-alone PUSH": {
+      "standAlonePUSH": {
+        "label": "stand-alone PUSH"
+      }
+    }
+  }
+}

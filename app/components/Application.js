@@ -9,7 +9,7 @@ import {PublicHtml, AuthenticatedHtml} from './Wrapper';
 import ApplicationStore from '../stores/ApplicationStore';
 
 class Application extends React.Component {
-  // not sure about this signuature though
+  // not sure about this signature though
   constructor(props, context) {
     super(props, context);
   }
@@ -21,17 +21,14 @@ class Application extends React.Component {
     let authenticated = !(/signin|home/.test(url));
     let Handler = this.props.currentRoute.get('handler');
 
-    // keep it in the meantimes
-    if(/company/.test(url)) {
-      Handler = <Companies context={this.props.context} subPage={this.state.route.params.subPage}/>;
-    }
+    let params = this.props.currentRoute.get('params').size > 0 ? this.props.currentRoute.get('params') : null;
 
     //Handler component is passed as prop children to wrapper component
     //see this: https://facebook.github.io/react/docs/reusable-components.html#single-child
     if (authenticated) {
       return (
         <AuthenticatedHtml pageTitle={this.props.pageTitle}>
-          <Handler />
+          <Handler params={params} />
         </AuthenticatedHtml>
       )
     } else {
@@ -43,12 +40,12 @@ class Application extends React.Component {
     }
   }
 
-  componentDidUpdate(prevProps, prevState) {
-    var newState = this.state;
-    if (newState.pageTitle === prevState.pageTitle) {
+  componentDidUpdate(prevProps) {
+    let newProps = this.props;
+    if (newProps.ApplicationStore.pageTitle === prevProps.ApplicationStore.pageTitle) {
       return;
     }
-    document.title = newState.pageTitle;
+    document.title = newProps.ApplicationStore.pageTitle;
   }
 }
 

@@ -44,21 +44,8 @@ export default {
       done();
     }
   },
-  dynamicpage: {
-    handler: require('../components/Page'),
-    path: '/page/:id',
-    method: 'get',
-    page: 'page',
-    action: function (context, payload, done) {
-      // imitating async request here
-      setTimeout(function() {
-        context.dispatch('LOAD_PAGE', { id: payload.params.id, contents: 'i am a good boy' });
-      }, 5000);
-      context.dispatch('UPDATE_PAGE_TITLE', { pageTitle: payload.params.id + ' [Dynamic Page] | flux-examples | routing' });
-      done();
-    }
-  },
   adminOverview: {
+    handler: require('../components/Overview'),
     path: '/admin',
     method: 'get',
     page: 'overview',
@@ -68,6 +55,7 @@ export default {
     }
   },
   adminCompanies: {
+    handler: require('../components/Companies'),
     path: '/admin/companies',
     method: 'get',
     page: 'companies',
@@ -98,6 +86,18 @@ export default {
       }
     }
   },
+  adminNewCompany: {
+    handler: require('../components/Companies'),
+    path: '/admin/companies/new',
+    method: 'get',
+    page: 'company',
+    label: 'new company',
+    action: function (context, payload, done) {
+      context.dispatch('NEW_COMPANY');
+      context.dispatch('UPDATE_PAGE_TITLE', { pageTitle: 'company > create new company' });
+      done();
+    }
+  },
   /**
    * routeName adminCompany
    * method GET
@@ -110,17 +110,15 @@ export default {
    * /admin/companies/:carrierId/settings/widget
    */
   adminCompany: {
-    path: '/admin/companies/:carrierId/settings/:subPage(service|widget)?',
+    handler: require('../components/Companies'),
+    path: '/admin/companies/:carrierId/settings/:subPage(profile|service|widget)?',
     method: 'get',
     page: 'company',
     action: function(context, payload, done) {
-
-      // for Fluxible 0.4.x
-      //let carrierId = payload.get('params').get('carrierId');
-      let carrierId = payload.params.carrierId;
+      let carrierId = payload.get('params').get('carrierId');
 
       request
-        .get(`http://localhost:3000/companies/company/${carrierId}`)
+        .get(`http://localhost:3000/companies/${carrierId}`)
         .set('Accept', 'application/json')
         .end(function(err, res){
           // server-side only function

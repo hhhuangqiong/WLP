@@ -1,27 +1,25 @@
 import _ from 'lodash';
 import React from 'react';
-import {FluxibleMixin} from 'fluxible';
 import classNames from 'classnames';
 
-import OverviewWidget from 'app/components/CompanyWidgetOverview';
-import StoresWidget from 'app/components/CompanyWidgetStores';
-import CallsWidget from 'app/components/CompanyWidgetCalls';
-import IMWidget from 'app/components/CompanyWidgetIM';
+import OverviewWidget from './CompanyWidgetOverview';
+import StoresWidget from './CompanyWidgetStores';
+import CallsWidget from './CompanyWidgetCalls';
+import IMWidget from './CompanyWidgetIM';
 
-import CompanyStore from 'app/stores/CompanyStore';
+import CompanyStore from '../stores/CompanyStore';
 
 var CompanyWidget = React.createClass({
-  mixins: [FluxibleMixin],
-  statics: {
-    storeListeners: [CompanyStore]
-  },
   getInitialState: function() {
     return {
-      currentTab: 'overview'
+      currentTab: 'overview',
+      _id: this.props._id
     };
   },
-  onChange: function() {
-
+  _handleInputChange: function(widgetName, stateName, e) {
+    this.setState({
+      [widgetName]: _.assign(this.state[widgetName], {[stateName]: e.target.value.trim()})
+    });
   },
   _handleTabChange: function(tab) {
     this.setState({
@@ -29,42 +27,46 @@ var CompanyWidget = React.createClass({
     });
   },
   render: function() {
-
-    let widget = <OverviewWidget/>;
-
-    switch (this.state.currentTab) {
-      case 'overview':
-        widget = <OverviewWidget/>;
-        break;
-      case 'stores':
-        widget = <StoresWidget/>;
-        break;
-      case 'calls':
-        widget = <CallsWidget/>;
-        break;
-      case 'im':
-        widget = <IMWidget/>;
-        break;
-    }
-
     return (
-      <div className="large-15 large-centered columns">
-        <div className="contents-panel">
-          <div className="row">
-            <div className="large-24 columns">
-              <div className="contents-panel__title">
-                <ul className="tab-panel row">
-                  <li className={classNames('left', {active: this.state.currentTab == 'overview'})} onClick={_.bindKey(this, '_handleTabChange', 'overview')}>overivew</li>
-                  <li className={classNames('left', {active: this.state.currentTab == 'stores'})} onClick={_.bindKey(this, '_handleTabChange', 'stores')}>stores</li>
-                  <li className={classNames('left', {active: this.state.currentTab == 'calls'})} onClick={_.bindKey(this, '_handleTabChange', 'calls')}>calls</li>
-                  <li className={classNames('left', {active: this.state.currentTab == 'im'})} onClick={_.bindKey(this, '_handleTabChange', 'im')}>im</li>
-                </ul>
+      <form ref="companyFrom">
+        <input type="hidden" name="_id" value={this.props._id} />
+        <div className="large-15 large-centered columns">
+          <div className="contents-panel">
+            <div className="row">
+              <div className="large-24 columns">
+                <div className="contents-panel__title">
+                  <ul className="tab-panel row">
+                    <li className={classNames('left', {active: this.state.currentTab == 'overview'})} onClick={_.bindKey(this, '_handleTabChange', 'overview')}>overivew</li>
+                    <li className={classNames('left', {active: this.state.currentTab == 'stores'})} onClick={_.bindKey(this, '_handleTabChange', 'stores')}>stores</li>
+                    <li className={classNames('left', {active: this.state.currentTab == 'calls'})} onClick={_.bindKey(this, '_handleTabChange', 'calls')}>calls</li>
+                    <li className={classNames('left', {active: this.state.currentTab == 'im'})} onClick={_.bindKey(this, '_handleTabChange', 'im')}>im</li>
+                  </ul>
+                </div>
               </div>
+              <OverviewWidget
+                isHidden={this.state.currentTab != 'overview'}
+                widgets={this.props.widgets}
+                onDataChange={_.bindKey(this, '_handleInputChange', 'overview')}
+              />
+              <StoresWidget
+                isHidden={this.state.currentTab != 'stores'}
+                widgets={this.props.widgets}
+                onDataChange={_.bindKey(this, '_handleInputChange', 'stores')}
+              />
+              <CallsWidget
+                isHidden={this.state.currentTab != 'calls'}
+                widgets={this.props.widgets}
+                onDataChange={_.bindKey(this, '_handleInputChange', 'calls')}
+              />
+              <IMWidget
+                isHidden={this.state.currentTab != 'im'}
+                widgets={this.props.widgets}
+                onDataChange={_.bindKey(this, '_handleInputChange', 'im')}
+              />
             </div>
-            {widget}
           </div>
         </div>
-      </div>
+      </form>
     )
   }
 });

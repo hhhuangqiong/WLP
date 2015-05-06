@@ -1,11 +1,10 @@
-'use strict';
 import React from 'react';
 import {FluxibleMixin} from 'fluxible';
 
-import CompanyStore from 'app/stores/CompanyStore';
+import CompanyStore from '../stores/CompanyStore';
 
-import Company from 'app/components/Company';
-import CompanyList from 'app/components/CompanyList';
+import Company from './Company';
+import CompanyList from './CompanyList';
 
 var Companies = React.createClass({
   mixins: [FluxibleMixin],
@@ -20,13 +19,16 @@ var Companies = React.createClass({
     this.setState(state);
   },
   render: function() {
+
+    let subPage = this.props.params ? this.props.params.get('subPage') : null;
+
     return (
       <div className="row">
         <div className="large-7 columns">
           <CompanyList companies={this.state.companies}/>
         </div>
         <div className="large-17 columns">
-          <Company company={this.state.currentCompany} subPage={this.props.subPage}/>
+          <Company company={this.state.currentCompany} subPage={subPage}/>
         </div>
       </div>
     );

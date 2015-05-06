@@ -1,9 +1,8 @@
-'use strict';
 import _ from 'lodash';
 import React from 'react';
 import {NavLink} from 'fluxible-router';
 
-var Countries = require('../../../app/data/countries.json');
+var Countries = require('../data/countries.json');
 
 var CompanyList = React.createClass({
   getInitialState: function () {
@@ -16,17 +15,21 @@ var CompanyList = React.createClass({
       searchCompany: e.target.value.trim()
     });
   },
+  /**
+   * Filter property of companies with keyword starting from 3 or more characters
+   * supports only company name matching
+   *
+   * @returns {Object} returns companies Object or empty Array
+   */
   getFilteredCompanies: function() {
-    // do filtering only when keyword is with 2 more characters
     if (this.state.searchCompany.length >= 2) {
       return _.filter(this.props.companies, (company)=>{
-        return _.contains(company.name, this.state.searchCompany);
+        return _.contains(company.name.toLowerCase(), this.state.searchCompany.toLowerCase());
       });
     }
 
     return this.props.companies || [];
-  }
-  ,
+  },
   render: function() {
     return (
       <div className="companies-list-bar">
@@ -44,7 +47,7 @@ var CompanyList = React.createClass({
   },
   renderCompanyListItem: function(company) {
 
-    let href = `/admin/companies/${company.carrierId}/settings`;
+    let href = `/admin/companies/${company.carrierId}/settings/profile`;
 
     return (
       <NavLink href={href}>

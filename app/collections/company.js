@@ -57,7 +57,8 @@ var schema = new mongoose.Schema({
     type: String
   },
   features: {
-    type: Array
+    type: Object,
+    default: []
   },
   businessContact: {
     name: {
@@ -92,16 +93,24 @@ var schema = new mongoose.Schema({
       type: String
     }
   },
+  widgets: {
+    overview: [],
+    stores: [],
+    calls: [],
+    im: []
+  },
   serviceConfig: {
     applications: {
       ios: {
         name: {
-          type: String
+          type: String,
+          default: null
         }
       },
       android: {
         name: {
-          type: String
+          type: String,
+          default: null
         }
       }
     }
@@ -131,6 +140,11 @@ var schema = new mongoose.Schema({
 
 schema.method('isRootCompany', function() {
   return this.parentCompany == null;
+});
+
+schema.method('getServiceType', function() {
+  // regex pattern or indexOf?
+  return this.carrierId.indexOf('.maaii.com') > -1 ? 'WL' : 'SDK';
 });
 
 module.exports = mongoose.model(collectionName, schema);

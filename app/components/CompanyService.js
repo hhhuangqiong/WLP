@@ -3,45 +3,124 @@ import React from 'react';
 import {FluxibleMixin} from 'fluxible';
 import classNames from 'classnames';
 
-import IOSApplication from 'app/components/CompanyServiceiOS';
-import AndroidApplication from 'app/components/CompanyServiceAndroid';
-import InfoBlock from 'app/components/InfoBlock';
+import IOSApplication from './CompanyServiceiOS';
+import AndroidApplication from './CompanyServiceAndroid';
+import InfoBlock from './InfoBlock';
 
-import CompanyStore from 'app/stores/CompanyStore';
+import CompanyStore from '../stores/CompanyStore';
+
+var featureList = require('../data/featureList.json');
+
+var FeatureItem = React.createClass({
+  render: function() {
+    return (
+      <div className="info-panel__block__contents__feature-item">
+        <div className="large-24 columns">
+          <div className="large-17 columns">
+            <span>{this.props.label}</span>
+          </div>
+          <div className="large-7 columns">
+            <div className="switch round tiny" onClick={this.props.onChange}>
+              <input
+                type="radio" name={this.props.name}
+                checked={this.props.checked}
+              />
+              <label></label>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+});
 
 var CompanyService = React.createClass({
-  mixins: [FluxibleMixin],
-  statics: {
-    storeListeners: [CompanyStore]
+  /**
+   * Construct a features list Object for initial state
+   *
+   * @param features {Object} features JSON Object
+   * @returns {{}} returns constructed features Object
+   */
+  getFeatures: function(features) {
+    let list = {};
+
+    _.forEach(features, (feature)=>{
+      _.forEach(feature, (item, key)=>{
+        _.merge(list, {[key]: this.props.features[key] || false});
+      });
+    });
+
+    return list;
+  },
+  /**
+   * Get company service type as a determinant of features
+   *
+   * @returns {String} returns service type in string to be used as Object Key
+   */
+  getServiceType: function() {
+    if (this.props.carrierId.indexOf('.m800-api.com') > -1) {
+      return 'SDK';
+    } else {
+      return 'WL';
+    }
   },
   getInitialState: function() {
     return {
-      currentTab: 'ios'
+      currentTab: 'ios',
+      features: this.getFeatures(featureList[this.getServiceType()]),
+      serviceConfig: {
+        applications: {
+          ios: {
+            name: this.props.serviceConfig.applications.ios.name || null
+          },
+          android: {
+            name: this.props.serviceConfig.applications.android.name || null
+          }
+        }
+      }
     }
-  },
-  onChange: function() {
-
   },
   _handleTabChange: function(tab) {
     this.setState({
       currentTab: tab
     });
   },
+  _handleApplicationInputChange: function(platformName, e) {
+    this.setState({
+      serviceConfig: {
+        applications: _.merge(this.state.serviceConfig.applications, {[platformName]: {name: e.target.value}})
+      }
+    });
+  },
+  _handleApplicationInputBlur: function(platformName, e) {
+    this.setState({
+      serviceConfig: {
+        applications: _.merge(this.state.serviceConfig.applications, {[platformName]: {name: e.target.value.trim()}})
+      }
+    });
+  },
+  _handleToggleSwitch: function(featureKey) {
+    let featureValue = this.state.features[featureKey];
+    this.setState({
+      features: _.assign(this.state.features, {[featureKey]: !featureValue})
+    });
+  },
   render: function() {
 
-    let application = <IOSApplication/>;
+    let application;
 
     switch (this.state.currentTab) {
       case 'ios':
-        application = <IOSApplication/>;
+        application = <IOSApplication name={this.state.serviceConfig.applications.ios.name} onDataChange={_.bindKey(this, '_handleApplicationInputChange', 'ios')}/>;
         break;
       case 'android':
-        application = <AndroidApplication/>;
+        application = <AndroidApplication name={this.state.serviceConfig.applications.android.name} onDataChange={_.bindKey(this, '_handleApplicationInputChange', 'android')}/>;
         break;
     }
 
     return (
-      <div>
+      <form ref="companyFrom">
+        <input type="hidden" name="_id" value={this.props._id} />
         <div className="large-15 columns">
           <div className="contents-panel">
             <div className="row">
@@ -60,7 +139,9 @@ var CompanyService = React.createClass({
                   <label>application ID</label>
                 </div>
                 <div className="large-15 columns">
-                  <input type="text" name="application-id" placeholder="application ID"/>
+                  <input
+                    type="text" name="application-id" placeholder="application ID" readOnly
+                  />
                 </div>
               </div>
               <div className="large-24 columns">
@@ -68,7 +149,9 @@ var CompanyService = React.createClass({
                   <label>developer key</label>
                 </div>
                 <div className="large-15 columns">
-                  <input type="text" name="developer-key" placeholder="developer key" />
+                  <input
+                    type="text" name="developer-key" placeholder="developer key" readOnly
+                  />
                 </div>
               </div>
               <div className="large-24 columns">
@@ -76,7 +159,9 @@ var CompanyService = React.createClass({
                   <label>developer secret</label>
                 </div>
                 <div className="large-15 columns">
-                  <input type="text" name="developer-secret" placeholder="developer secret" />
+                  <input
+                    type="text" name="developer-secret" placeholder="developer secret" readOnly
+                  />
                 </div>
               </div>
               <div className="large-24 columns">
@@ -88,7 +173,18 @@ var CompanyService = React.createClass({
                 </div>
               </div>
               <div className="large-24 columns">
-                {application}
+                <IOSApplication
+                  isHidden={this.state.currentTab != 'ios'}
+                  applicationName={this.state.serviceConfig.applications.ios.name}
+                  onDataChange={_.bindKey(this, '_handleApplicationInputChange', 'ios')}
+                  onDataChanged={_.bindKey(this, '_handleApplicationInputBlur', 'ios')}
+                />
+                <AndroidApplication
+                  isHidden={this.state.currentTab != 'android'}
+                  applicationName={this.state.serviceConfig.applications.android.name}
+                  onDataChange={_.bindKey(this, '_handleApplicationInputChange', 'android')}
+                  onDataChanged={_.bindKey(this, '_handleApplicationInputBlur', 'android')}
+                />
               </div>
             </div>
           </div>
@@ -100,93 +196,26 @@ var CompanyService = React.createClass({
                 <div className="info-panel__header">
                   <h5 className="info-panel__header__title">features list</h5>
                 </div>
-                <InfoBlock className="info-panel__block__contents__feature-list" title="common features">
-                  <div className="info-panel__block__contents__feature-item">
-                    <div className="large-24 columns">
-                      <div className="large-17 columns">
-                        <span>member matching(visibility)</span>
-                      </div>
-                      <div className="large-7 columns">
-                        <div className="switch round tiny">
-                          <input type="radio" name="testGroup" />
-                          <label></label>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="info-panel__block__contents__feature-item">
-                    <div className="large-24 columns">
-                      <div className="large-17 columns">
-                        <span>FB integration</span>
-                      </div>
-                      <div className="large-7 columns">
-                        <div className="switch round tiny">
-                          <input type="radio" name="testGroup" />
-                          <label></label>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="info-panel__block__contents__feature-item">
-                    <div className="large-24 columns">
-                      <div className="large-17 columns">
-                        <span>friend finding</span>
-                      </div>
-                      <div className="large-7 columns">
-                        <div className="switch round tiny">
-                          <input type="radio" name="testGroup" />
-                          <label></label>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </InfoBlock>
-                <InfoBlock className="info-panel__block__contents__feature-list" title="other features">
-                  <div className="info-panel__block__contents__feature-item">
-                    <div className="large-24 columns">
-                      <div className="large-17 columns">
-                        <span>member matching(visibility)</span>
-                      </div>
-                      <div className="large-7 columns">
-                        <div className="switch round tiny">
-                          <input type="radio" name="testGroup" />
-                          <label></label>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="info-panel__block__contents__feature-item">
-                    <div className="large-24 columns">
-                      <div className="large-17 columns">
-                        <span>FB integration</span>
-                      </div>
-                      <div className="large-7 columns">
-                        <div className="switch round tiny">
-                          <input type="radio" name="testGroup" />
-                          <label></label>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="info-panel__block__contents__feature-item">
-                    <div className="large-24 columns">
-                      <div className="large-17 columns">
-                        <span>friend finding</span>
-                      </div>
-                      <div className="large-7 columns">
-                        <div className="switch round tiny">
-                          <input type="radio" name="testGroup" />
-                          <label></label>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </InfoBlock>
+                {_.map(featureList[this.getServiceType()], (feature, key)=>{
+                  return (
+                    <InfoBlock className="info-panel__block__contents__feature-list" title={key}>
+                      {_.map(feature, (item, itemKey)=>{
+                        return (
+                          <FeatureItem
+                            name={itemKey} label={item.label}
+                            checked={this.state.features[itemKey]}
+                            onChange={_.bindKey(this, '_handleToggleSwitch', itemKey)}
+                          />
+                        );
+                      })}
+                    </InfoBlock>
+                  )
+                })}
               </div>
             </div>
           </div>
         </div>
-      </div>
+      </form>
     )
   }
 });
