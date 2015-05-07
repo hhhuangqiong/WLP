@@ -1,73 +1,40 @@
 
 'use strict'
 var React = require('react');
-var DatePicker = require('react-date-picker');
 var moment = require('moment')
-var assign = require('object-assign')
 
 var Picker = React.createClass({
   getDefaultProps: function() {
     return {
-      dateFormat: 'YYYY-MM-DD'
+      minDate:new Date(2007, 1 - 1, 1),
+      inputClass:"datepickerInput",
+      inputName:"datepickerFeild"
     };
   },
   getInitialState:function(){
-    return{date:Date.now()}
+    return{value:""}
   },
-  componentDidMount:function(){
-    var datepicker =$('.date-picker')
-    var targetInput =$('.datepicker__input')
-    targetInput.on('focus',function(event){
-      datepicker.show();
-      datepicker.mouseover(function() {
-        datepicker.show();
-      })
-      .mouseout(function() {
-        datepicker.hide();
-      });
-    })
-
+  handleDatePickerChange: function (event){
+    this.setState({value:event.target.value})
   },
-  displayEvent:function(event){
-
-  },
-  onChange:function(dateString, moment){
-    this.setState({
-      date: dateString
+  componentDidMount: function () {
+    var textBoxId = this.props.inputClass;
+    var minDate = this.props.minDate
+    var maxDate = this.props.maxDate
+    $("." + textBoxId).datepicker({
+      minDate: minDate,
+      maxDate:"+1m +1w"
     });
   },
-  render: function(){
-    var date = this.state.date;
-    var today = Date.now();
-    var myStyle = {"display":"none"}
+  render: function() {
+    console.log("render datepicker");
     return (
       <div className='row'>
-        <div className='large-10 large-centered column'>
-            <div className="row collapse postfix-round">
-              <div className="small-9 columns">
-                <input
-                  ref="input"
-                  type="text"
-                  value={moment(this.state.date).format('DD/MM/YYYY')}
-                  onFocus={this.handleFocus}
-                  className="datepicker__input"
-                  placeholder="Please select date" />
-              </div>
-            </div>
-          <DatePicker
-            ref="datepicker"
-            minDate='2000-04-04'
-            maxDate={today}
-            date={date}
-            onChange={this.onChange}
-            hideFooter='true'
-            navOnDateClick='false'
-            style={myStyle}
-            />
-          </div>
+        <div className="small-10 small-centered columns text-center">
+          <input type='text' value={this.state.value} className={this.props.inputClass} name={this.props.inputName}  onChange={this.handleDatePickerChange}/>
+        </div>
       </div>
-
-    )
+    );
   }
 });
 export default Picker;
