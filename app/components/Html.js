@@ -11,7 +11,7 @@ var Html = React.createClass({
         <meta name="viewport" content="width=device-width, user-scalable=no" />
         <link rel="stylesheet" href="/stylesheets/style.css" />
         <link rel="stylesheet" href="/stylesheets/main.css" />
-        <link rel="stylesheet" href="/stylesheets/react-date-picker.css" />
+        <link rel="stylesheet" href="/vendor/react-datepicker/react-date-picker.css" />
       </head>
       <body>
       <div id="app" dangerouslySetInnerHTML={{__html: this.props.markup}}></div>
