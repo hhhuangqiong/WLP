@@ -13,7 +13,7 @@ import CompanyWidget from './CompanyWidget';
 import createCompany from '../actions/createCompany';
 import updateCompany from '../actions/updateCompany';
 
-var Company = React.createClass({
+let Company = React.createClass({
   contextTypes: {
     executeAction: React.PropTypes.func.isRequired
   },

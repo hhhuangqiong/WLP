@@ -1,3 +1,5 @@
+'use strict';
+
 var mongoose = require('mongoose');
 var collectionName = 'Company';
 var schema = new mongoose.Schema({
@@ -139,7 +141,7 @@ var schema = new mongoose.Schema({
 }, { collection: collectionName });
 
 schema.method('isRootCompany', function() {
-  return this.parentCompany == null;
+  return !this.parentCompany;
 });
 
 schema.method('getServiceType', function() {

@@ -1,11 +1,12 @@
 var path = require("path");
 
 module.exports = {
+  devtool: "eval",
   context: __dirname,
   //entry: "./app/client.js",
   module: {
     loaders: [
-      { test: /\.js$/, exclude: /node_modules/, loader: "babel-loader" },
+      { test: /\.js$/, exclude: /node_modules/, loader: "babel?cacheDirectory=true" },
       { test: /\.json$/, loader: "json" }
     ]
   },

@@ -1,3 +1,5 @@
+'use strict';
+
 var mongoose = require('mongoose');
 var collectionName = 'Email';
 var schema = new mongoose.Schema({

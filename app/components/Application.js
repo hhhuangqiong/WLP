@@ -60,7 +60,6 @@ Application = connectToStores(Application, [ApplicationStore], function (stores,
   };
 });
 
-// not save scroll position in history state for now
 Application = handleHistory(Application, {enableScroll: false});
 
 Application = provideContext(Application);
