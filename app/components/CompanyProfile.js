@@ -101,6 +101,9 @@ var CompanyProfile = React.createClass({
       reseller: isReseller
     });
   },
+  _handleClickOnLogo: function() {
+    React.findDOMNode(this.refs.logoInput).click();
+  },
   _renderTimezoneOption: function(timezone) {
     return (
       <option value={timezone.value}>{timezone.name}</option>
@@ -120,7 +123,7 @@ var CompanyProfile = React.createClass({
       }
 
       return (
-        <img src={logo} />
+        <img src={logo} onClick={this._handleClickOnLogo} />
       );
     }
   },
@@ -146,7 +149,7 @@ var CompanyProfile = React.createClass({
               <div className="large-24 columns">
                 <div className="contents-panel__logo">
                   {this._renderLogoImage()}
-                  <input type="file" name="logo" onChange={this._handleLogoChange} />
+                  <input ref="logoInput" className="hide" type="file" name="logo" onChange={this._handleLogoChange} />
                 </div>
               </div>
               <div className="large-24 columns">
