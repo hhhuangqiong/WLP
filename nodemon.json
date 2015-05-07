@@ -3,7 +3,8 @@
     "public/javascript/bundle.js",
     "gulpfile.coffee",
     "nodemon.json",
-    "package.json"
+    "package.json",
+    "webpack.config.js"
   ],
   "ignore": [
     ".git",
