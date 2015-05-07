@@ -54,9 +54,11 @@ function initialize(port) {
 
   var ioc = require('./server/initializers/ioc').init(nconf);
 
-  require('./server/initializers/kue')(ioc, nconf, {
-    uiPort: nconf.get('queue:uiPort')
-  });
+  if(nconf.get('queue:enable')) {
+    require('./server/initializers/kue')(ioc, nconf, {
+      uiPort: nconf.get('queue:uiPort')
+    });
+  }
 
   require('./server/initializers/logging')();
   require('./server/initializers/viewHelpers')(server);

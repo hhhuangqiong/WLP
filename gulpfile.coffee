@@ -53,8 +53,8 @@ gulp.task 'watch', ['watch:js'], ->
   gulp.watch 'locales/client/en/*.json', ['locale']
   return
 
-gulp.task 'watch:js', ['client-react'], ->
-  gulp.watch src.allJS, ['client-react']
+gulp.task 'watch:js', ['client-js'], ->
+  gulp.watch src.allJS, ['client-js']
   return
 
 gulp.task 'clean', ->
@@ -90,16 +90,15 @@ gulp.task 'babel', ->
     .pipe sourcemaps.write '.'
     .pipe gulp.dest dest.app
 
-gulp.task 'client-react', ->
+gulp.task 'client-js', ->
   gulp.src('./app/client.js')
   .pipe(webpack(require './webpack.config.js'))
   .pipe gulp.dest('public/javascript/')
 
-gulp.task 'nodemon', ['scss', 'client-react'], ->
+gulp.task 'nodemon', ['scss', 'client-js'], ->
   nodemon
     script: 'bin/www'
-    # TODO investigate why this is not picked up by nodemon
-    #ext: 'js json'
+    # prefer to keep configuration in "nodemon.json"
     nodeArgs: [ if argv.debug then '--debug' else '' ]
   .on 'restart', ->
     console.log 'nodemon restarted!'

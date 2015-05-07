@@ -4,12 +4,14 @@
     "gulpfile.coffee",
     "nodemon.json",
     "package.json",
-    "webpack.config.js"
+    "webpack.config.js",
+    "app/config/*.json "
   ],
   "ignore": [
     ".git",
     ".sass-cache",
     "*.map"
   ],
+  "ext": "js, json",
   "verbose": true
 }
