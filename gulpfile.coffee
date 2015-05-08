@@ -94,7 +94,8 @@ gulp.task 'babel', ->
 gulp.task 'webpack', (cb)->
   webpack webpackConfig, (err, stats) ->
     throw new gutil.PluginError("webpack", err) if err
-    gutil.log "[webpack]", stats.toString()
+    # https://webpack.github.io/docs/node.js-api.html#stats
+    gutil.log "[webpack]", stats.toString { timings: true, colors: true }
     cb()
   return
 

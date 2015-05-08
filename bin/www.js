@@ -1,5 +1,6 @@
 // Register babel to have ES6 support on the server
-require('babel/register');
+// 'react-router' is required for we're using a forked branch (not a build)
+require('babel/register')({ only: /(app|react-router)/ });
 
 const http   = require('http');
 const port   = 3000;
@@ -9,4 +10,3 @@ const debug  = require('debug')('wlp');
 http.createServer(server).listen(port, function() {
   debug('Express server listening on port %s (env: %s)', port, process.env.NODE_ENV);
 });
-

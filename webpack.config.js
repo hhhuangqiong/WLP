@@ -2,12 +2,17 @@ var path = require('path');
 
 module.exports = {
   devtool: 'eval',
-  entry: './app/client.js',
+  entry: './app/client/index.js',
   module: {
     loaders: [
       { test: /\.js$/, exclude: /node_modules/, loader: 'babel?cacheDirectory=true' },
+      // using a forked branch; no build yet
+      { test: /\.js$/, include: /node_modules\/react-router/, loader: 'babel' },
       { test: /\.json$/, loader: 'json' }
     ]
+  },
+  resolve: {
+
   },
   output: {
     path: path.join(__dirname, 'public', 'javascript'),

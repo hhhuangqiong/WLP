@@ -1,11 +1,13 @@
 /**
  * Check below for path patterns
- * https://github.com/component/path-to-regexp*
+ * https://github.com/pillarjs/path-to-regexp
  *
  * DOES NOT support nested routing
  */
-import request from 'superagent';
+
 import debug from 'debug';
+import request from 'superagent';
+
 import env from '../utils/env';
 
 import showCompanies from '../actions/showCompanies';

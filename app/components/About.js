@@ -1,7 +1,9 @@
 import React from 'react';
-import {NavLink} from 'fluxible-router';
 
-let About = React.createClass({
+var Router = require('react-router');
+var Link = Router.Link;
+
+var About = React.createClass({
   getInitialState: function () {
     return {};
   },
@@ -9,7 +11,7 @@ let About = React.createClass({
     return (
       <div>
         <p>About component!</p>
-        <NavLink href="/page/1">Page 1</NavLink>
+        <Link to="temp">Temporary home page</Link>
       </div>
     );
   }

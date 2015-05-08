@@ -1,41 +1,23 @@
-import React from 'react';
+/*TODO rename this file as 'app'*/
 import Fluxible from 'fluxible';
-import fetchrPlugin from 'fluxible-plugin-fetchr';
-import { RouteStore } from 'fluxible-router';
-
-import Application from './components/Application';
 
 import ApplicationStore from './stores/ApplicationStore';
-import TimeStore from './stores/TimeStore';
-import PageStore from './stores/PageStore';
 import CompanyStore from './stores/CompanyStore';
 import EndUserStore from './stores/EndUserStore';
 
-import routes from './config/routes';
+// seems not passing anything is okay
+var app = new Fluxible();
 
-// not sure about how this plug in help; keep for future reference
-//import routrPlugin from 'fluxible-plugin-routr';
+app.plug(require('./utils/apiPlugin'));
+app.plug(require('./utils/cookiePlugin'));
+app.plug(require('./utils/routerPlugin')());
 
-var app = new Fluxible({
-  component: Application
-});
+// provide authentication support; the only store for now
+app.registerStore(require('./stores/AuthStore'));
 
-// fluxible-plugin-fetchr requires a path for accessing RESTful service
-// default and examples use `/api` which has been occupied by making MUMS/BOSS API calls
-// so arbitrarily take `/fetchr`
-app.plug(fetchrPlugin({
-  xhrPath: '/fetchr'
-}));
-
-//app.plug(routrPlugin({
-  //routes: routes
-//}));
-
-app.registerStore(RouteStore.withStaticRoutes(routes));
+// TODO should start register other stores below
 app.registerStore(ApplicationStore);
 app.registerStore(CompanyStore);
-app.registerStore(PageStore);
-app.registerStore(TimeStore);
 app.registerStore(EndUserStore);
 
 export default app;

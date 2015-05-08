@@ -5,18 +5,22 @@ import _ from 'lodash';
 import logger from 'winston';
 import path from 'path';
 
-// react-related
+// react & flux -related
 import React from 'react';
 import serialize from 'serialize-javascript';
-import { navigateAction } from 'fluxible-router';
-
-const HtmlComponent = React.createFactory(require('./components/Html'));
+import FluxibleComponent from 'fluxible/addons/FluxibleComponent';
+import Router from 'react-router';
+import routes from './routes';
+const HtmlComponent = require('./components/Html');
 
 // express-related
 import express from 'express';
+
+// the following 2 are sure to be included in this isomorphic setup
 import bodyParser from 'body-parser';
-import compression from 'compression';
 import cookieParser from 'cookie-parser';
+
+import compression from 'compression';
 import expressValidator from 'express-validator';
 import favicon from 'serve-favicon';
 import flash from 'connect-flash';
@@ -25,12 +29,18 @@ import morgan from 'morgan';
 import session from 'express-session';
 //import csrf from 'csurf';
 
-import app from './index';
-
 var debug = require('debug')('wlp:server');
 var RedisStore = require('connect-redis')(session);
 
 const PROJ_ROOT = path.join(__dirname, '..');
+
+//TODO rename the file as 'app'
+import app from './index';
+
+// shared with client via `context`
+var config = require('./config');
+var fetchData = require('./utils/fetchData');
+var loadSession = require('./actions/loadSession');
 
 function initialize(port) {
   if (!port) throw new Error('Please specify port');
@@ -38,7 +48,6 @@ function initialize(port) {
   var server = express();
   debug('starting app');
 
-  // serverlication settings
   server.set('port', port);
   server.set('views', path.join(PROJ_ROOT, 'views'));
   server.set('view engine', 'jade');
@@ -46,6 +55,7 @@ function initialize(port) {
 
   var env = server.get('env');
 
+  // let 'nconf' be the first initializer so configuration is accessed thru it
   var nconf = require('./server/initializers/nconf')(env, path.join(__dirname, 'config'));
 
   // database initialization + data seeding
@@ -54,7 +64,7 @@ function initialize(port) {
 
   var ioc = require('./server/initializers/ioc').init(nconf);
 
-  if(nconf.get('queue:enable')) {
+  if (nconf.get('queue:enable')) {
     require('./server/initializers/kue')(ioc, nconf, {
       uiPort: nconf.get('queue:uiPort')
     });
@@ -108,100 +118,97 @@ function initialize(port) {
   // ensure express.session() is before passport.session()
   server.use(passport.session());
 
+  // keep but not supposed to be used as the main way to communicate message (result)
   server.use(flash());
 
-  // Get access to the fetchr plugin instance
-  let fetchrPlugin = app.getPlugin('FetchrPlugin');
-  // IMPORTANT!!
-  // Register ALL our REST services here
-  fetchrPlugin.registerService(require('./services/company'));
-  // Set up the fetchr middleware
-  server.use(fetchrPlugin.getXhrPath(), fetchrPlugin.getMiddleware());
-
   // Routes
-  var routes = require('./server/routes');
-  server.use(routes);
+  // TODO: replace with API
+  server.use(require('./server/routes'));
 
-  // react startup point
-  server.use(
-    // TODO: routing middleware to be extracted
-    // whitelist paths to be refactored
-    function(req, res, next) {
-      var path = req.path;
-      if (req.user) {
-        // authenticated paths;
-        if (_.includes(['/', '/signin', '/forgot'], path)) {
-          return res.redirect('/about');
-        }
-      } else {
-        // unauthenticated paths
-        if (path == '/' || !_.includes(['/signin', '/forgot'], path)) {
-          return res.redirect('/signin');
-        }
+  // TODO export from another file
+  var renderApp = function(context, location, cb) {
+    var router = Router.create({
+      routes: routes,
+      location: location,
+      transitionContext: context,
+      onAbort: function(redirect) {
+        cb({
+          redirect: redirect
+        });
+      },
+      onError: function(err) {
+        debug('Routing Error', err);
+        cb(err);
+      }
+    });
+
+    router.run(function(Handler, routerState) {
+      if (routerState.routes[0].name === 'not-found') {
+        var html = React.renderToStaticMarkup(React.createElement(Handler));
+        cb({
+          notFound: true
+        }, html);
+        return;
       }
 
-      next();
-    },
-
-    function(req, res, next) {
-      let context = app.createContext({
-        req: req
-      });
-
-      debug('Executing navigate action');
-      context.executeAction(navigateAction, { url: req.url, type: 'pageload' }, function(err) {
+      fetchData(context, routerState, function(err) {
         if (err) {
-          logger.error('error during initalizing ReactApp:', err);
-          if (err.status && err.status === 404) {
-            next();
-          } else {
-            next(err);
-          }
-          return;
+          return cb(err);
         }
 
-        debug('Exposing context state');
-        let exposed = 'window.App=' + serialize(app.dehydrate(context)) + ';';
-
-        debug('Rendering Application component into html');
-
-        let html = React.renderToStaticMarkup(HtmlComponent({
-          state: exposed,
-          markup: React.renderToString(context.createElement()),
-          context: context.getComponentContext()
+        var dehydratedState = 'window.__DATA__=' + serialize(app.dehydrate(context)) + ';';
+        var appMarkup = React.renderToString(React.createElement(
+          FluxibleComponent, {
+            context: context.getComponentContext()
+          },
+          React.createElement(Handler)
+        ));
+        var html = React.renderToStaticMarkup(React.createElement(HtmlComponent, {
+          state: dehydratedState,
+          markup: appMarkup
         }));
+        cb(null, html);
+      });
+    });
+  };
 
-        debug('Sending markup');
+  server.use(function(req, res, next) {
+    if (config.DISABLE_ISOMORPHISM) {
+      // Send empty HTML with just the config values
+      // all rendering will be done by the client
+      var serializedConfig = 'window.__CONFIG__=' + serialize(config) + ';';
+      var html = React.renderToStaticMarkup(React.createElement(HtmlComponent, {
+        config: serializedConfig
+      }));
+      res.send(html);
+      return;
+    }
+
+    var context = app.createContext({
+      req: req,
+      res: res,
+      config: config
+    });
+
+    context.getActionContext().executeAction(loadSession, {}, function() {
+      renderApp(context, req.url, function(err, html) {
+        if (err && err.notFound) {
+          return res.status(404).send(html);
+        }
+        if (err && err.redirect) {
+          return res.redirect(303, err.redirect.to);
+        }
+        if (err) {
+          return next(err);
+        }
         res.send(html);
       });
-    }
-  );
-
-  // catch 404 and forward to error handler
-  server.use(function(req, res, next) {
-    let err = new Error('Not Found');
-    // Error does not contain Property of .status
-    err.status = 404;
-    next(err);
-  });
-
-  // error handlers
-  server.use(function(err, req, res, next) {
-    let view, status = err.status || 500;
-    if (err.status === 404) {
-      view = 'pages/errors/not-found';
-    } else {
-      logger.error(err, err.message, err.stack);
-      view = 'pages/errors/error';
-    }
-    res.status(status);
-    res.render(view, {
-      message: err.message,
-      error: ((env === 'development') ? err : {})
     });
   });
 
+  // before there was an application error handler here, (err, req, res, next) => {}
   return server;
 }
 
 exports.initialize = initialize;
+
