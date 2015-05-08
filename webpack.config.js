@@ -1,22 +1,21 @@
-var path = require("path");
+var path = require('path');
 
 module.exports = {
-  devtool: "eval",
-  context: __dirname,
-  //entry: "./app/client.js",
+  devtool: 'eval',
+  entry: './app/client.js',
   module: {
     loaders: [
-      { test: /\.js$/, exclude: /node_modules/, loader: "babel?cacheDirectory=true" },
-      { test: /\.json$/, loader: "json" }
+      { test: /\.js$/, exclude: /node_modules/, loader: 'babel?cacheDirectory=true' },
+      { test: /\.json$/, loader: 'json' }
     ]
   },
-  // necessary? even `gulp.dest` exists
   output: {
-    path: path.join(__dirname, "dist"),
-    filename: "bundle.js"
+    path: path.join(__dirname, 'public', 'javascript'),
+    filename: 'bundle.js',
+    publicPath: '/javascript'
   },
   node: {
-    "net": "empty",
-    "dns": "empty"
+    'net': 'empty',
+    'dns': 'empty'
   }
 };

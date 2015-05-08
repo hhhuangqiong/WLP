@@ -2,22 +2,23 @@
 
 console.time 'Loading plugins'
 
-autoprefixer = require 'gulp-autoprefixer'
-babel        = require 'gulp-babel'
-del          = require 'del'
-extend       = require 'gulp-extend'
-gulp         = require 'gulp'
-gutil        = require 'gulp-util'
-istanbul     = require 'gulp-istanbul'
-mocha        = require 'gulp-mocha'
-nodemon      = require 'gulp-nodemon'
+autoprefixer  = require 'gulp-autoprefixer'
+babel         = require 'gulp-babel'
+del           = require 'del'
+extend        = require 'gulp-extend'
+gulp          = require 'gulp'
+gutil         = require 'gulp-util'
+istanbul      = require 'gulp-istanbul'
+mocha         = require 'gulp-mocha'
+nodemon       = require 'gulp-nodemon'
 # 'libsass' version, http://sass-compatibility.github.io/
-sass         = require 'gulp-sass'
-source       = require 'vinyl-source-stream'
-sourcemaps   = require 'gulp-sourcemaps'
-webpack      = require 'gulp-webpack'
-{argv}       = require 'yargs'
-{exec}       = require 'child_process'
+sass          = require 'gulp-sass'
+source        = require 'vinyl-source-stream'
+sourcemaps    = require 'gulp-sourcemaps'
+webpack       = require 'webpack'
+webpackConfig = require './webpack.config'
+{argv}        = require 'yargs'
+{exec}        = require 'child_process'
 
 console.timeEnd 'Loading plugins'
 
@@ -53,8 +54,8 @@ gulp.task 'watch', ['watch:js'], ->
   gulp.watch 'locales/client/en/*.json', ['locale']
   return
 
-gulp.task 'watch:js', ['client-js'], ->
-  gulp.watch src.allJS, ['client-js']
+gulp.task 'watch:js', ['webpack'], ->
+  gulp.watch src.allJS, ['webpack']
   return
 
 gulp.task 'clean', ->
@@ -70,7 +71,7 @@ gulp.task 'scss', ->
     .pipe autoprefixer( browsers: ['last 2 versions'] )
     .pipe sourcemaps.write '.'
     .pipe gulp.dest 'public/stylesheets'
-    .pipe (if ( browserSync? && browserSync.active ) then browserSync.reload {stream: true} else gutil.noop())
+    .pipe (if (browserSync? && browserSync.active) then browserSync.reload {stream: true} else gutil.noop())
 
 # https://github.com/gulpjs/gulp/issues/71#issuecomment-41512070
 _continueOnError = (fn) ->
@@ -90,12 +91,18 @@ gulp.task 'babel', ->
     .pipe sourcemaps.write '.'
     .pipe gulp.dest dest.app
 
-gulp.task 'client-js', ->
+gulp.task 'webpack', (cb)->
+  webpack webpackConfig, (err, stats) ->
+    throw new gutil.PluginError("webpack", err) if err
+    gutil.log "[webpack]", stats.toString()
+    cb()
+  return
+
   gulp.src('./app/client.js')
-  .pipe(webpack(require './webpack.config.js'))
+  .pipe(webpack(webpackConfig))
   .pipe gulp.dest('public/javascript/')
 
-gulp.task 'nodemon', ['scss', 'client-js'], ->
+gulp.task 'nodemon', ['scss', 'webpack'], ->
   nodemon
     script: 'bin/www'
     # prefer to keep configuration in "nodemon.json"
