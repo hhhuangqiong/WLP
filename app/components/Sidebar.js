@@ -9,22 +9,22 @@ var Sidebar = React.createClass({
       sections: [
         {
           name: 'overview',
-          icon: 'icon-menu-overview',
+          icon: 'icon-menuoverview',
           link: '/admin'
         },
         {
           name: 'account',
-          icon: 'icon-menu-account',
+          icon: 'icon-menuaccount',
           link: '/admin'
         },
         {
           name: 'company',
-          icon: 'icon-menu-company',
+          icon: 'icon-menucompany',
           link: '/admin/companies'
         },
         {
           name: 'setting',
-          icon: 'icon-menu-setting',
+          icon: 'icon-menusetting',
           link: '/admin'
         }]
     }

@@ -1,10 +1,10 @@
 @font-face {
 	font-family: 'icomoon';
-	src:url('/fonts/icomoon.eot?-o7mggn');
-	src:url('/fonts/icomoon.eot?#iefix-o7mggn') format('embedded-opentype'),
-		url('/fonts/icomoon.woff?-o7mggn') format('woff'),
-		url('/fonts/icomoon.ttf?-o7mggn') format('truetype'),
-		url('/fonts/icomoon.svg?-o7mggn#icomoon') format('svg');
+	src:url('/fonts/icomoon.eot?u2hrqa');
+	src:url('/fonts/icomoon.eot?#iefixu2hrqa') format('embedded-opentype'),
+		url('/fonts/icomoon.woff?u2hrqa') format('woff'),
+		url('/fonts/icomoon.ttf?u2hrqa') format('truetype'),
+		url('/fonts/icomoon.svg?u2hrqa#icomoon') format('svg');
 	font-weight: normal;
 	font-style: normal;
 }
@@ -23,7 +23,15 @@
 	-moz-osx-font-smoothing: grayscale;
 }
 
-.icon-menu-overview:before {
+.icon-change-password:before {
+	content: "\e623";
+}
+
+.icon-logout:before {
+	content: "\e63a";
+}
+
+.icon-menuoverview:before {
 	content: "\e621";
 }
 
@@ -59,7 +67,7 @@
 	content: "\e607";
 }
 
-.icon-company-menu:before {
+.icon-companymenu:before {
 	content: "\e608";
 }
 
@@ -139,35 +147,35 @@
 	content: "\e61b";
 }
 
-.icon-menu-account:before {
+.icon-menuaccount:before {
 	content: "\e61c";
 }
 
-.icon-menu-calls:before {
+.icon-menucalls:before {
 	content: "\e61d";
 }
 
-.icon-menu-company:before {
+.icon-menucompany:before {
 	content: "\e61e";
 }
 
-.icon-menu-enduser:before {
+.icon-menuenduser:before {
 	content: "\e61f";
 }
 
-.icon-menu-im:before {
+.icon-menuim:before {
 	content: "\e620";
 }
 
-.icon-menu-setting:before {
+.icon-menusetting:before {
 	content: "\e622";
 }
 
-.icon-menu-store:before {
+.icon-menustore:before {
 	content: "\e624";
 }
 
-.icon-menu-topup:before {
+.icon-menutopup:before {
 	content: "\e625";
 }
 
