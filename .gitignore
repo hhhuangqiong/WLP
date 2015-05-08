@@ -45,6 +45,7 @@ public/javascript/bundle.js
 public/stylesheets/*.css
 public/stylesheets/*.map
 .sass-cache
+!public/stylesheets/iconic-fonts.css
 
 # Assume no '.ts' being written under 'app/' (temporary setting)
 app/**/*.ts
