@@ -1,3 +1,4 @@
+'use strict';
 var logger     = require('winston');
 var Q          = require('q');
 var _          = require('lodash');
@@ -9,26 +10,33 @@ var PortalUser = require('../../collections/portalUser');
 function initialize(seedFilePath) {
   // assume there can only have 1 and only 1 root user
   PortalUser.findOne({ isRoot: true }, function (err, user) {
-    if (err) throw err;
+    if (err) {
+      throw err;
+    }
 
     if (!user) {
         // read file content; blocking
         var content = JSON.parse(fs.readFileSync(seedFilePath, { encoding: 'utf8' }));
         var rootUser = content.rootUser;
         var hashInfo = Q.nbind(PortalUser.hashInfo, PortalUser);
-        var seedUser = function (hashInfo) {
-            return Q.ninvoke(PortalUser, 'create', _.merge(rootUser, hashInfo));
+        var seedUser = function (hashResult) {
+            return Q.ninvoke(PortalUser, 'create', _.merge(rootUser, hashResult));
         };
         var seedCompany = function () {
-            var companyInfo = content.rootCompany;
-            var criteria = { name: companyInfo.name };
-            return Q.ninvoke(Company, 'findOneAndUpdate', criteria, companyInfo, { upsert: true });
+          var companyInfo = content.rootCompany;
+          var criteria = { name: companyInfo.name };
+          return Q.ninvoke(Company, 'findOneAndUpdate', criteria, companyInfo, { upsert: true });
         };
         var infoLogger = function (model) {
-            logger.info('Seeded: %j', model, {});
+          logger.info('Seeded: %j', model, {});
         };
-        hashInfo(rootUser.password).then(seedUser).then(infoLogger).then(seedCompany).then(infoLogger).catch(function (err) {
-            logger.error('Error during data seeding', err.stack);
+        hashInfo(rootUser.password)
+          .then(seedUser)
+          .then(infoLogger)
+          .then(seedCompany)
+          .then(infoLogger)
+          .catch(function (error) {
+            logger.error('Error during data seeding', error.stack);
         });
     }
   });

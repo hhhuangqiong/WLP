@@ -6,7 +6,7 @@
     "build": "npm run clean && npm run transpile && npm run test:report",
     "clean": "gulp clean",
     "doc": "npm run transpile && jsdoc -r node_modules/app -d build/docs",
-    "transpile": "gulp babel",
+    "transpile": "gulp babel && gulp webpack",
     "server": "node bin/www",
     "pretest": "npm run transpile",
     "test": "gulp test",

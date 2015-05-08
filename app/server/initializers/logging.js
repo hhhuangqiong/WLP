@@ -1,5 +1,8 @@
+'use strict';
+
 var nconf = require('nconf');
 var winston = require('winston');
+
 function initialize() {
     var opts = nconf.get('logging:winston') || {};
     var transports = opts.transports || [];
@@ -9,8 +12,8 @@ function initialize() {
             winston.add(eval(t.type), t.options);
         });
     }
-    winston.info("Logging initialized");
+    winston.info('Logging initialized');
     return winston;
 }
-;
+
 module.exports = initialize;
