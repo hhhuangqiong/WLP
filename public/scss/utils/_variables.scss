@@ -45,6 +45,21 @@ $brand-primary: #e05353;
 $brand-secondary: #8b4343;
 $brand-extend: #c24848;
 
+//top-bar--inner
+$topbar-inner-height: rem-calc(55);
+$topbar-inner-bg-color: $brand-extend;
+$topbar-inner-item-bg-color: transparent;
+$topbar-inner-link-color: rgba(255,255,255,0.5);
+$topbar-inner-link-color-active: rgba(255,255,255,1);
+$topbar-inner-link-bg-color: transparent;
+
+//tabs-inverted
+$tab-inverted-border: 1px solid rgba(255,255,255,0.2);
+
+
+//company-sidebar
+$company-sidebar-height: $topbar-inner-height;
+
 //form elements
 $place-holder-color: #999;
 
