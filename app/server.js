@@ -49,7 +49,7 @@ function initialize(port) {
   var nconf = require('./server/initializers/nconf')(env, path.join(__dirname, 'config'));
 
   // database initialization + data seeding
-  var postDBInit = require('./server/initializers/dataseed')( './data/rootUser.json');
+  var postDBInit = require('./server/initializers/dataseed')(path.resolve(__dirname, 'data/rootUser.json'));
   require('./server/initializers/database')(nconf.get('mongodb:uri'), nconf.get('mongodb:options'), postDBInit);
 
   var ioc = require('./server/initializers/ioc').init(nconf);
