@@ -78,7 +78,7 @@
     "gulp-autoprefixer": "^2.1.0",
     "gulp-babel": "^5.0.0",
     "gulp-extend": "^0.2.0",
-    "gulp-istanbul": "^0.8.0",
+    "gulp-istanbul": "^0.9.0",
     "gulp-mocha": "^2.0.0",
     "gulp-nodemon": "^2.0.2",
     "gulp-sass": "^2.0.0",

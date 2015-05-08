@@ -1,16 +1,6 @@
 doctype html
 html(lang="#{lang||'en'}" ng-app="AuthApp")
   include ./meta
-    block scripts
-      script(src='/vendor/jquery/dist/jquery.min.js')
-      script(src='/vendor/angular/angular.min.js')
-      script(src='/vendor/angular-translate/angular-translate.js')
-      script(src='/vendor/angular-translate-loader-static-files/angular-translate-loader-static-files.min.js')
-      script(src='/vendor/angular-ui-router/release/angular-ui-router.min.js')
-      script(src='/vendor/angular-animate/angular-animate.min.js')
-      script(src='/vendor/angular-messages/angular-messages.min.js')
-      script(src='/vendor/angular-resource/angular-resource.min.js')
-      script(src='javascript/application.js')
   head
     title= title
     link(rel='stylesheet', href='/stylesheets/style.css')
@@ -25,6 +15,6 @@ html(lang="#{lang||'en'}" ng-app="AuthApp")
     block content
     block scripts
       //-TODO let all these handled by build tool (inject & version tag & minimize)
-      script(src='/vendor/jQuery/dist/jquery.min.js')
+      script(src='/vendor/jquery/dist/jquery.min.js')
       script(src='/vendor/i18next/i18next.min.js')
       script(src='/javascript/bundle.js')

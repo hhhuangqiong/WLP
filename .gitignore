@@ -39,8 +39,7 @@ migrations/*
 *.js.map
 public/locales/
 
-# Concatenated output (from AngularJS)
-public/javascript/
+public/javascript/bundle.js
 
 # Assume all css are generated from SCSS
 public/stylesheets/*.css
