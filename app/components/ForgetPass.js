@@ -54,17 +54,20 @@ var ForgetPass = React.createClass({
   },
   render: function() {
     return (
+      <div className='row'>
+
         <form onSubmit={this.handleSubmit} noValidate>
-          <div className='row'>
-            <div className="small-3 small-centered columns text-center">
-              <h3>Reset Password</h3>
-              <p>Reset your password by entering your resisted email</p>
-              <input type="email"  placeholder="Email address" id='email' valueLink={this.linkState('email')}  onBlur={this.handleValidation('email')}/>
-              {this.renderHelpText(this.getValidationMessages('email'))}
-              <input type="submit" value="Submit" className="button radius" />
-            </div>
-          </div>
+          <h3>Reset Password</h3>
+          <p>Reset your password by entering your resisted email</p>
+          <input type="email" placeholder="Email address" id='email' valueLink={this.linkState('email')}
+                 onBlur={this.handleValidation('email')}/>
+          {this.renderHelpText(this.getValidationMessages('email'))}
+          <p className="text-center">
+            <a className="button radius" href="/signin">Cancel</a>
+            <input type="submit" value="Submit" className="button radius"/>
+          </p>
         </form>
+      </div>
     );
   }
 });

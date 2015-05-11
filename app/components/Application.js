@@ -18,7 +18,7 @@ class Application extends React.Component {
     let url = this.props.currentNavigate.url;
 
     // looking for alternatives, and better be negative default
-    let authenticated = !(/signin|home/.test(url));
+    let authenticated = !(/signin|home|forgot/.test(url));
     let Handler = this.props.currentRoute.get('handler');
 
     let params = this.props.currentRoute.get('params').size > 0 ? this.props.currentRoute.get('params') : null;
