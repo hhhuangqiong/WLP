@@ -139,189 +139,206 @@ var CompanyProfile = React.createClass({
       <form ref="companyFrom" encType="multipart/form-data">
         {this._renderIdInput()}
         <div className="large-15 columns">
-          <div className="contents-panel">
+          <div className="panel">
             <div className="row">
               <div className="large-24 columns">
-                <div className="contents-panel__title">
+                <div className="panel__title">
                   <h4>basic information</h4>
                 </div>
+                <div className="panel__body">
+                  <div className="row">
+                    <div className="panel__logo">
+                      {this._renderLogoImage()}
+                      <input ref="logoInput" className="hide" type="file" name="logo" onChange={this._handleLogoChange} />
+                    </div>
+                  </div>
+
+                  <div className="row">
+                    <div className="large-9 columns">
+                      <label>company name</label>
+                    </div>
+                    <div className="large-15 columns">
+                      <input
+                        type="text" name="name" placeholder="company name"
+                        value={this.state.name}
+                        onChange={_.bindKey(this, '_handleInputChange', 'name')}
+                        onBlur={this._handleInputBlur}
+                      />
+                    </div>
+                  </div>
+
+                  <div className="row">
+                    <div className="large-9 columns">
+                      <label>carrier ID</label>
+                    </div>
+                    <div className="large-15 columns">
+                      <input
+                        type="text" name="carrierId" placeholder="company name"
+                        value={this.state.carrierId}
+                        onChange={_.bindKey(this, '_handleInputChange', 'carrierId')}
+                        onBlur={this._handleCarrierIdBlur}
+                      />
+                    </div>
+                  </div>
+
+                  <div className="row">
+                    <div className="large-9 columns">
+                      <label>company address</label>
+                    </div>
+                    <div className="large-15 columns">
+                      <textarea
+                        name="address"
+                        value={this.state.address}
+                        onChange={_.bindKey(this, '_handleInputChange', 'address')}
+                        onBlur={this._handleInputBlur}
+                      />
+                    </div>
+                  </div>
+
+                  <div className="row">
+                    <div className="large-9 columns">
+                      <label>company type</label>
+                    </div>
+                    <div className="large-15 columns">
+                      <ul className="button-switcher">
+                        <li>
+                          <a
+                            className={classNames('button-switcher__button', {active: !this.state.reseller})}
+                            onClick={_.bindKey(this, '_handleSetReseller', false)}
+                          >
+                            default
+                          </a>
+                          <input className="hide" type="radio" name="reseller" value="0" checked={!this.state.reseller} readOnly />
+                        </li>
+                        <li>
+                          <a
+                            className={classNames('button-switcher__button', {active: this.state.reseller})}
+                            onClick={_.bindKey(this, '_handleSetReseller', true)}
+                          >
+                            reseller
+                          </a>
+                          <input className="hide" type="radio" name="reseller" value="1" checked={this.state.reseller} readOnly />
+                        </li>
+                      </ul>
+                    </div>
+                  </div>
+
+                  <div className="row">
+                    <div className="large-9 columns">
+                      <label>parent company</label>
+                    </div>
+                    <div className="large-15 columns">
+                      <select name="parent-company">
+                        <option value="551bbd63003fd58975b12284">m800</option>
+                      </select>
+                    </div>
+                  </div>
+
+                  <div className="row">
+                    <div className="large-9 columns">
+                      <label>service type</label>
+                    </div>
+                    <div className="large-15 columns">
+                      <ul className="button-switcher">
+                        <li>
+                          <a className={classNames('button-switcher__button', {active: this.isWhiteLabel()})}>whitelabel</a>
+                        </li>
+                        <li>
+                          <a className={classNames('button-switcher__button', {active: this.isSDK()})}>sdk</a>
+                        </li>
+                      </ul>
+                    </div>
+                  </div>
+
+                  <div className="row">
+                    <div className="large-9 columns">
+                      <label>account manager</label>
+                    </div>
+                    <div className="large-15 columns">
+                      <input
+                        type="text" name="accountManager" placeholder="account manager"
+                        value={this.state.accountManager}
+                        onChange={_.bindKey(this, '_handleInputChange', 'accountManager')}
+                        onBlur={this._handleInputBlur}
+                      />
+                    </div>
+                  </div>
+
+                  <div className="row">
+                    <div className="large-9 columns">
+                      <label>bill code</label>
+                    </div>
+                    <div className="large-15 columns">
+                      <input
+                        type="text" name="billCode" placeholder="bill code"
+                        value={this.state.billCode}
+                        onChange={_.bindKey(this, '_handleInputChange', 'billCode')}
+                        onBlur={this._handleInputBlur}
+                      />
+                    </div>
+                  </div>
+
+                  <div className="row">
+                    <div className="large-9 columns">
+                      <label>category ID</label>
+                    </div>
+                    <div className="large-15 columns">
+                      <input
+                        type="text" name="categoryID" placeholder="category ID"
+                        value={this.state.categoryID}
+                        onChange={_.bindKey(this, '_handleInputChange', 'categoryID')}
+                        onBlur={this._handleInputBlur}
+                      />
+                    </div>
+                  </div>
+
+                  <div className="row">
+                    <div className="large-9 columns">
+                      <label>expected service date</label>
+                    </div>
+                    <div className="large-15 columns">
+                      <input
+                        type="text" name="expectedServiceDate" placeholder="expected service date"
+                        value={this.state.expectedServiceDate}
+                        onChange={_.bindKey(this, '_handleInputChange', 'expectedServiceDate')}
+                        onBlur={this._handleInputBlur}
+                      />
+                    </div>
+                  </div>
+
+                  <div className="row">
+                    <div className="large-9 columns">
+                      <label>country</label>
+                    </div>
+                    <div className="large-15 columns">
+                      <select name="country" value={this.state.country} onChange={_.bindKey(this, '_handleInputChange', 'country')}>
+                        <option>please select</option>
+                        {Countries.map(this._renderCountryOption)}
+                      </select>
+                    </div>
+                  </div>
+
+                  <div className="row">
+                    <div className="large-9 columns">
+                      <label>timezone</label>
+                    </div>
+                    <div className="large-15 columns">
+                      <select name="timezone" value={this.state.timezone} onChange={_.bindKey(this, '_handleInputChange', 'timezone')}>
+                        <option>please select</option>
+                        {Timezones.map(this._renderTimezoneOption)}
+                      </select>
+                    </div>
+                    </div>
+                  </div>
+
               </div>
-              <div className="large-24 columns">
-                <div className="contents-panel__logo">
-                  {this._renderLogoImage()}
-                  <input ref="logoInput" className="hide" type="file" name="logo" onChange={this._handleLogoChange} />
-                </div>
-              </div>
-              <div className="large-24 columns">
-                <div className="large-9 columns">
-                  <label>company name</label>
-                </div>
-                <div className="large-15 columns">
-                  <input
-                    type="text" name="name" placeholder="company name"
-                    value={this.state.name}
-                    onChange={_.bindKey(this, '_handleInputChange', 'name')}
-                    onBlur={this._handleInputBlur}
-                  />
-                </div>
-              </div>
-              <div className="large-24 columns">
-                <div className="large-9 columns">
-                  <label>carrier ID</label>
-                </div>
-                <div className="large-15 columns">
-                  <input
-                    type="text" name="carrierId" placeholder="company name"
-                    value={this.state.carrierId}
-                    onChange={_.bindKey(this, '_handleInputChange', 'carrierId')}
-                    onBlur={this._handleCarrierIdBlur}
-                  />
-                </div>
-              </div>
-              <div className="large-24 columns">
-                <div className="large-9 columns">
-                  <label>company address</label>
-                </div>
-                <div className="large-15 columns">
-                  <textarea
-                    name="address"
-                    value={this.state.address}
-                    onChange={_.bindKey(this, '_handleInputChange', 'address')}
-                    onBlur={this._handleInputBlur}
-                  />
-                </div>
-              </div>
-              <div className="large-24 columns">
-                <div className="large-9 columns">
-                  <label>company type</label>
-                </div>
-                <div className="large-15 columns">
-                  <ul className="button-switcher">
-                    <li>
-                      <a
-                        className={classNames('button-switcher__button', {active: !this.state.reseller})}
-                        onClick={_.bindKey(this, '_handleSetReseller', false)}
-                      >
-                        default
-                      </a>
-                      <input className="hide" type="radio" name="reseller" value="0" checked={!this.state.reseller} readOnly />
-                    </li>
-                    <li>
-                      <a
-                        className={classNames('button-switcher__button', {active: this.state.reseller})}
-                        onClick={_.bindKey(this, '_handleSetReseller', true)}
-                      >
-                        reseller
-                      </a>
-                      <input className="hide" type="radio" name="reseller" value="1" checked={this.state.reseller} readOnly />
-                    </li>
-                  </ul>
-                </div>
-              </div>
-              <div className="large-24 columns">
-                <div className="large-9 columns">
-                  <label>parent company</label>
-                </div>
-                <div className="large-15 columns">
-                  <select name="parent-company">
-                    <option value="551bbd63003fd58975b12284">m800</option>
-                  </select>
-                </div>
-              </div>
-              <div className="large-24 columns">
-                <div className="large-9 columns">
-                  <label>service type</label>
-                </div>
-                <div className="large-15 columns">
-                  <ul className="button-switcher">
-                    <li>
-                      <a className={classNames('button-switcher__button', {active: this.isWhiteLabel()})}>whitelabel</a>
-                    </li>
-                    <li>
-                      <a className={classNames('button-switcher__button', {active: this.isSDK()})}>sdk</a>
-                    </li>
-                  </ul>
-                </div>
-              </div>
-              <div className="large-24 columns">
-                <div className="large-9 columns">
-                  <label>account manager</label>
-                </div>
-                <div className="large-15 columns">
-                  <input
-                    type="text" name="accountManager" placeholder="account manager"
-                    value={this.state.accountManager}
-                    onChange={_.bindKey(this, '_handleInputChange', 'accountManager')}
-                    onBlur={this._handleInputBlur}
-                  />
-                </div>
-              </div>
-              <div className="large-24 columns">
-                <div className="large-9 columns">
-                  <label>bill code</label>
-                </div>
-                <div className="large-15 columns">
-                  <input
-                    type="text" name="billCode" placeholder="bill code"
-                    value={this.state.billCode}
-                    onChange={_.bindKey(this, '_handleInputChange', 'billCode')}
-                    onBlur={this._handleInputBlur}
-                  />
-                </div>
-              </div>
-              <div className="large-24 columns">
-                <div className="large-9 columns">
-                  <label>category ID</label>
-                </div>
-                <div className="large-15 columns">
-                  <input
-                    type="text" name="categoryID" placeholder="category ID"
-                    value={this.state.categoryID}
-                    onChange={_.bindKey(this, '_handleInputChange', 'categoryID')}
-                    onBlur={this._handleInputBlur}
-                  />
-                </div>
-              </div>
-              <div className="large-24 columns">
-                <div className="large-9 columns">
-                  <label>expected service date</label>
-                </div>
-                <div className="large-15 columns">
-                  <input
-                    type="text" name="expectedServiceDate" placeholder="expected service date"
-                    value={this.state.expectedServiceDate}
-                    onChange={_.bindKey(this, '_handleInputChange', 'expectedServiceDate')}
-                    onBlur={this._handleInputBlur}
-                  />
-                </div>
-              </div>
-              <div className="large-24 columns">
-                <div className="large-9 columns">
-                  <label>country</label>
-                </div>
-                <div className="large-15 columns">
-                  <select name="country" value={this.state.country} onChange={_.bindKey(this, '_handleInputChange', 'country')}>
-                    <option>please select</option>
-                    {Countries.map(this._renderCountryOption)}
-                  </select>
-                </div>
-              </div>
-              <div className="large-24 columns">
-                <div className="large-9 columns">
-                  <label>timezone</label>
-                </div>
-                <div className="large-15 columns">
-                  <select name="timezone" value={this.state.timezone} onChange={_.bindKey(this, '_handleInputChange', 'timezone')}>
-                    <option>please select</option>
-                    {Timezones.map(this._renderTimezoneOption)}
-                  </select>
-                </div>
-              </div>
+
             </div>
           </div>
         </div>
+
         <div className="large-9 columns">
-          <div className="contents-panel info-panel">
+          <div className="panel info-panel">
             <div className="row">
               <div className="large-24 columns">
                 <div className="info-panel__header">

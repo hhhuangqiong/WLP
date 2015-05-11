@@ -140,6 +140,23 @@
                         color: $topbar-inner-link-color-active;
                     }
                 }
+                &.tab--inverted{
+                    a{
+                        position: relative;                    
+                        &.active{
+                            $arrowWidth: 8px;
+                            $arrowHeight: 5px;
+                            &:before{
+                                content: "";
+                                margin-left: -($arrowWidth/2);
+                                position: absolute;
+                                left: 50%;
+                                bottom: $arrowHeight;
+                                @include arrowUp($body-bg-color, 8px, 5px);
+                            }
+                        }
+                    }
+                }
                 &.right{
                     button{
                         @extend .button--primary;

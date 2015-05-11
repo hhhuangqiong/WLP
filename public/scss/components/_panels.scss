@@ -1,12 +1,21 @@
 .panel {
-    &--default {
-    	@include panel();
-    	@include border-radius($global-radius);
-    	@include box-shadow(0 2px 3px rgba(0, 0, 0, 0.1));
-    	h1{
-    		text-transform: uppercase;
-    		padding-top: rem-calc(30);
-    		padding-bottom: rem-calc(40);
-    	}
+	margin-top: rem-calc(20);
+    @include panel(
+    	$padding: 0
+    );
+    @include border-radius($global-radius);
+    @include box-shadow(0 2px 3px rgba(0, 0, 0, 0.1));
+    h4 {
+        text-transform: uppercase;
+        font-size: rem-calc(20);
+        padding: 0;
+        margin: 0;
+    }
+    &__title,
+    &__body{
+    	padding: $column-gutter;
+    }
+    &__title{
+    	border-bottom: 1px solid #eee;
     }
 }

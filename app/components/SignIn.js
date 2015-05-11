@@ -58,7 +58,7 @@ class SignIn extends React.Component {
               <label>remember me</label>
             </div>
             <div className="large-8 columns">
-              <button className="button--custom round right" onClick={this._onSubmit}>sign in</button>
+              <button className="button--primary round right" onClick={this._onSubmit}>sign in</button>
             </div>
             </div>
           </form>
