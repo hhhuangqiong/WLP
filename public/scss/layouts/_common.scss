@@ -1,20 +1,19 @@
 .full-height {
-  height: 100% !important;
+    height: 100% !important;
 }
 
 .full-width {
-  width: 100% !important;
+    width: 100% !important;
 }
 
 .valign-middle {
-  display: table;
-
-  > .columns {
-    display: table-cell;
-    vertical-align: middle;
-  }
-
-  > .columns, > [class*="column"] + [class*="column"]:last-child {
-    float: none;
-  }
+    display: table;
+    > .columns {
+        display: table-cell;
+        vertical-align: middle;
+    }
+    > .columns,
+    > [class*="column"] + [class*="column"]:last-child {
+        float: none;
+    }
 }
