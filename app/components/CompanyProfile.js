@@ -199,27 +199,25 @@ var CompanyProfile = React.createClass({
                     <div className="large-9 columns">
                       <label>company type</label>
                     </div>
-                    <div className="large-15 columns">
-                      <ul className="button-switcher">
-                        <li>
+                    <div className="large-10 columns left">
+                    <ul className="button-group round even-2">
+                      <li>
+                        <a className={classNames('button', {active: !this.state.reseller})}
+                              onClick={_.bindKey(this, '_handleSetReseller', false)}
+                            >
+                              default
+                        </a>
+                      </li>
+                      <li>
                           <a
-                            className={classNames('button-switcher__button', {active: !this.state.reseller})}
-                            onClick={_.bindKey(this, '_handleSetReseller', false)}
-                          >
-                            default
-                          </a>
-                          <input className="hide" type="radio" name="reseller" value="0" checked={!this.state.reseller} readOnly />
-                        </li>
-                        <li>
-                          <a
-                            className={classNames('button-switcher__button', {active: this.state.reseller})}
+                            className={classNames('button', {active: this.state.reseller})}
                             onClick={_.bindKey(this, '_handleSetReseller', true)}
                           >
                             reseller
                           </a>
                           <input className="hide" type="radio" name="reseller" value="1" checked={this.state.reseller} readOnly />
                         </li>
-                      </ul>
+                    </ul>
                     </div>
                   </div>
 
@@ -238,13 +236,13 @@ var CompanyProfile = React.createClass({
                     <div className="large-9 columns">
                       <label>service type</label>
                     </div>
-                    <div className="large-15 columns">
-                      <ul className="button-switcher">
+                    <div className="large-10 columns left">
+                      <ul className="button-group round even-2">
                         <li>
-                          <a className={classNames('button-switcher__button', {active: this.isWhiteLabel()})}>whitelabel</a>
+                          <a className={classNames('button', {active: this.isWhiteLabel()})}>whitelabel</a>
                         </li>
                         <li>
-                          <a className={classNames('button-switcher__button', {active: this.isSDK()})}>sdk</a>
+                          <a className={classNames('button', {active: this.isSDK()})}>sdk</a>
                         </li>
                       </ul>
                     </div>

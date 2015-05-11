@@ -14,6 +14,7 @@ $black: #000;
 $gray-darker: #333;
 $gray-dark: #666;
 $gray: #999;
+$gray-light: #bbb;
 
 //form elements
 $place-holder-color: #999;
@@ -61,6 +62,12 @@ $topbar-inner-link-bg-color: transparent;
 //tabs-inverted
 $tab-inverted-border: 1px solid rgba(255,255,255,0.2);
 
+//panels
+$panels-h1-font-size: rem-calc(40);
+$panels-h4-font-size: rem-calc(20);
+
+//button-groups
+$button-groups-padding: rem-calc(10);
 
 //company-sidebar
 $company-sidebar-height: $topbar-inner-height;

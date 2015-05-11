@@ -5,17 +5,24 @@
     );
     @include border-radius($global-radius);
     @include box-shadow(0 2px 3px rgba(0, 0, 0, 0.1));
-    h4 {
-        text-transform: uppercase;
-        font-size: rem-calc(20);
-        padding: 0;
-        margin: 0;
+    h1,h2,h3,h4,h5,h6{
+		text-transform: uppercase;
+		padding: 0;
+	    margin: 0;
     }
+    h1 {font-size: $panels-h1-font-size;}
+    h4 {font-size: $panels-h4-font-size;;}
     &__title,
     &__body{
     	padding: $column-gutter;
     }
     &__title{
     	border-bottom: 1px solid #eee;
+    }
+    &__title--prelogin{
+    	padding: $column-gutter*2 $column-gutter*2 $column-gutter $column-gutter*2;
+    }
+    &__body--prelogin{
+    	padding: $column-gutter $column-gutter*2 $column-gutter*2 $column-gutter*2;
     }
 }

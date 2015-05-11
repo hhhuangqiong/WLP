@@ -3,3 +3,6 @@ input[type="password"],
 textarea{
     @include border-radius($input-border-radius);
 }
+select{
+	@include border-radius($global-radius);
+}

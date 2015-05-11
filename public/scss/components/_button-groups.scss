@@ -1,0 +1,22 @@
+.button-group{
+  @include button-group-container();
+  .button{
+    @include button(
+      $bg: $white
+    );
+    color: $brand-primary;
+    border: 1px solid $gray-light !important;
+    border-right: 0 !important;
+    border-left: 0 !important;
+  }
+  li:first-child{
+    .button{
+      border-left: 1px solid $gray-light !important;
+    }
+  }
+  li:last-child{
+    .button{
+      border-right: 1px solid $gray-light !important;
+    }
+  }
+}
