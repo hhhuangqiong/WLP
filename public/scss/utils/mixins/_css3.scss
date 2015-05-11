@@ -308,9 +308,18 @@ $defaultOperaSupport: true;
 // @see http://www.w3.org/TR/css3-background/#box-shadow
 //
 //============================================================
+@mixin box-shadow($arguments1,$arguments2:false, $arguments3:false, $arguments4:false, $arguments5:false) {
+  $params: $arguments1;
+  @if $arguments2 
+    { $params: $arguments1, $arguments2; }
+    @if $arguments3 != false
+      { $params: $arguments1, $arguments2, $arguments3; }
+      @if $arguments4 != false
+        { $params: $arguments1, $arguments2, $arguments3, $arguments4; }
+        @if $arguments5 != false
+          { $params: $arguments1, $arguments2, $arguments3, $arguments4, $arguments5; }
 
-@mixin box-shadow($arguments) {
-  @include prefix-property(box-shadow, unquote($arguments));
+  @include prefix-property(box-shadow, unquote($params));
 }
 
 
@@ -328,8 +337,18 @@ $defaultOperaSupport: true;
 //
 //============================================================
 
-@mixin text-shadow($arguments) {
-  @include prefix-property(text-shadow, unquote($arguments), false, false, false, false);
+@mixin text-shadow($arguments1,$arguments2:false, $arguments3:false, $arguments4:false, $arguments5:false) {
+  $params: $arguments1;
+  @if $arguments2 
+    { $params: $arguments1, $arguments2; }
+    @if $arguments3 != false
+      { $params: $arguments1, $arguments2, $arguments3; }
+      @if $arguments4 != false
+        { $params: $arguments1, $arguments2, $arguments3, $arguments4; }
+        @if $arguments5 != false
+          { $params: $arguments1, $arguments2, $arguments3, $arguments4, $arguments5; }
+
+  @include prefix-property(text-shadow, unquote($params), false, false, false, false);
 }
 
 
