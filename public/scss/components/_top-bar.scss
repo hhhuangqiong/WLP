@@ -62,11 +62,19 @@
                 li {
                     min-width: 60%;
                     > a {
-                        // @media #{$medium-up} {
                         line-height: rem-calc(50);
                         min-width: 100%;
                         min-height: initial;
-                        // }
+                        i{
+                            margin-right: rem-calc(20);
+                            // display: inline-block;
+                            // float: left;
+                        }
+                        i,span{
+                            line-height: 3.5rem;
+                            display: inline-block;
+                            float: left;
+                        }
                     }
                     &:first-child {
                         margin-top: rem-calc(5);
@@ -74,6 +82,9 @@
                     }
                     &:last-child {
                         @include border-radius(0 0 $global-radius $global-radius);
+                        span{
+                            min-width: initial;
+                        }
                     }
                     &:before {
                         display: none;
@@ -114,6 +125,7 @@
         background: $topbar-inner-bg-color;
         .top-bar-section{
             @extend .row;
+            padding-right: $column-gutter;
             ul{
                 li{
                     background: $topbar-inner-item-bg-color;
@@ -126,6 +138,11 @@
                     }
                     &:active{
                         color: $topbar-inner-link-color-active;
+                    }
+                }
+                &.right{
+                    button{
+                        @extend .button--primary;
                     }
                 }
             }

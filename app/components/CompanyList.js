@@ -51,21 +51,37 @@ var CompanyList = React.createClass({
     let href = `/admin/companies/${company.carrierId}/settings/profile`;
 
     return (
+      /*
       <NavLink href={href}>
-        <li className="company-sidebar__list__list-item">
-          <div className="company-sidebar__list__list-item__logo left">
-            logo
-          </div>
-          <div className="company-sidebar__list__list-item__info left">
-            <div className="company-sidebar__list__list-item__info__title">
+        <li className="company-sidebar__list__item">
+          <span className="company-sidebar__list__item__logo left">
+            <img src="/images/logo-yato.png"/>
+          </span>
+          <span className="company-sidebar__list__item__info left">
+            <span className="company-sidebar__list__item--title">
               {company.name}
-            </div>
-            <div className="company-sidebar__list__list-item__info__location">
+            </span>
+            <span className="company-sidebar__list__item--location">
               {_.pluck(_.filter(Countries, {'alpha2': company.country}), 'name')}
-            </div>
-          </div>
+            </span>
+          </span>
         </li>
-      </NavLink>
+      </NavLink>*/
+      <li className="company-sidebar__list__item">
+        <NavLink href={href}>
+          <span className="company-sidebar__list__item__logo left">
+            <img src="/images/logo-yato.png"/>
+          </span>
+          <span className="company-sidebar__list__item__info left">
+            <span className="company-sidebar__list__item__info__title">
+              {company.name}
+            </span>
+            <span className="company-sidebar__list__item__info__location">
+              Toronto, Canada
+            </span>
+          </span>
+        </NavLink>
+      </li>
     )
   }
 });

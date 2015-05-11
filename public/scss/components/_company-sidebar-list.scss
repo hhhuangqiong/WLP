@@ -1,14 +1,4 @@
 .company-sidebar {
-    &__search-bar {
-        background: #707070;
-        padding: 0 20px;
-        height: $company-sidebar-height;
-        > input {
-            @include inputBoxReset;
-            @include inputBoxWithIcon;
-            @include border-radius(rem-calc(6));
-        }
-    }
     &__list {
         margin: 0;
         padding: 0;
@@ -29,9 +19,18 @@
                 width: 65%;
                 text-align: left;
                 text-transform: capitalize;
-                &--title {}
-                &--location {
-                    color: #CCC;
+                &__title,
+                &location{
+                    line-height: 1.2;
+                    display: block;
+                    clear: both;
+                }
+                &__title {
+                    color: $black;
+                    margin-top: rem-calc(8);
+                }
+                &__location {
+                    color: $gray;
                     font-size: $description-font-size;
                 }
             }

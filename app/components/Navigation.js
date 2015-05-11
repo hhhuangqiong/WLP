@@ -39,11 +39,11 @@ var Navigation = React.createClass({
             </a>
             <ul className="dropdown">
               <li className="navigation-bar__item">
-                <a href="/logout">change password</a>
+                <a href="/logout"><i className="icon-change-password"></i>change password</a>
               </li>
               <li className="divider"></li>
               <li className="navigation-bar__item">
-                <a href="/logout">logout</a>
+                <a href="/logout"><i className="icon-logout"></i>logout</a>
               </li>
             </ul>
           </li>

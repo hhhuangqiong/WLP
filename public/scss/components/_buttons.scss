@@ -1,6 +1,8 @@
-button {
-  &--custom{
-    @include button();
+.button--primary { 	
+    @include button(
+		$bg: $brand-primary,
+		$radius: $global-rounded
+	);
+	@include box-shadow(inset 0px 1px 1px rgba(255,255,255,0.2), inset 0px -1px 1px rgba(0,0,0,0.2));
     min-width: rem-calc(100);
-  }
 }
