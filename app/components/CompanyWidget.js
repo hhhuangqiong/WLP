@@ -10,6 +10,9 @@ import IMWidget from './CompanyWidgetIM';
 import CompanyStore from '../stores/CompanyStore';
 
 var CompanyWidget = React.createClass({
+  propTypes: {
+    widgets: React.PropTypes.any.isRequired
+  },
   getInitialState: function() {
     return {
       currentTab: 'overview',
@@ -31,10 +34,10 @@ var CompanyWidget = React.createClass({
       <form ref="companyFrom">
         <input type="hidden" name="_id" value={this.props._id} />
         <div className="large-15 large-centered columns">
-          <div className="contents-panel">
+          <div className="panel">
             <div className="row">
               <div className="large-24 columns">
-                <div className="contents-panel__title">
+                <div className="panel__title">
                   <ul className="tab-panel row">
                     <li className={classNames('left', {active: this.state.currentTab == 'overview'})} onClick={_.bindKey(this, '_handleTabChange', 'overview')}>overivew</li>
                     <li className={classNames('left', {active: this.state.currentTab == 'stores'})} onClick={_.bindKey(this, '_handleTabChange', 'stores')}>stores</li>

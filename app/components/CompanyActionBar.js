@@ -15,10 +15,10 @@ var CompanyActionBar = React.createClass({
               </li>
             </ul>
             <ul className="right">
-              <li><button>cancel</button></li>
+              <li><button className="company-action-bar__button">cancel</button></li>
               <li>
                 <button
-                  className={classNames({disable: !this.props.errors})}
+                  className={classNames('company-action-bar__button', {disable: this.props.errors})}
                   onClick={this.props.onSaveClick}
                 >
                   create
@@ -46,7 +46,7 @@ var CompanyActionBar = React.createClass({
             <ul className="right">
               <li>
                 <button
-                  className={classNames({disable: !this.props.errors})}
+                  className={classNames('company-action-bar__button', {disable: !this.props.errors})}
                   onClick={this.props.onSaveClick}
                 >
                   save

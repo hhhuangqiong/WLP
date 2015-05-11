@@ -66,9 +66,12 @@
       }]
     }
   },
+  "localhost": {
+    "baseUrl": "http://localhost:3000"
+  },
   "mumsApi": {
     "name": "mums",
-    "baseUrl": "http://this.is.mumsapi.com/api/1.0",
+    "baseUrl": "http://192.168.118.12:8080",
     "timeout": 5000,
     "format": {
       "timestamp": ""
@@ -76,7 +79,7 @@
   },
   "bossApi": {
     "name": "boss",
-    "baseUrl": "http://this.is.bossapi.com/api",
+    "baseUrl": "http://192.168.135.167:10080",
     "timeout": 5000,
     "format": {
       "timestamp": "YYYYMMDDHHmmss"
@@ -84,7 +87,7 @@
   },
   "dataProviderApi": {
     "name": "dataProvider",
-    "baseUrl": "http://this.is.dataproviderapi.com/api/v1",
+    "baseUrl": "http://192.168.118.12:8080",
     "timeout": 5000,
     "format": {
       "timestamp": "x"

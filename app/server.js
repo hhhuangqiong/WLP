@@ -110,6 +110,14 @@ function initialize(port) {
 
   server.use(flash());
 
+  // Get access to the fetchr plugin instance
+  let fetchrPlugin = app.getPlugin('FetchrPlugin');
+  // IMPORTANT!!
+  // Register ALL our REST services here
+  fetchrPlugin.registerService(require('./services/company'));
+  // Set up the fetchr middleware
+  server.use(fetchrPlugin.getXhrPath(), fetchrPlugin.getMiddleware());
+
   // Routes
   var routes = require('./server/routes');
   server.use(routes);
@@ -136,12 +144,12 @@ function initialize(port) {
     },
 
     function(req, res, next) {
-      let context = app.createContext();
+      let context = app.createContext({
+        req: req
+      });
 
       debug('Executing navigate action');
-      context.executeAction(navigateAction, {
-        url: req.url
-      }, function(err) {
+      context.executeAction(navigateAction, { url: req.url, type: 'pageload' }, function(err) {
         if (err) {
           logger.error('error during initalizing ReactApp:', err);
           if (err.status && err.status === 404) {

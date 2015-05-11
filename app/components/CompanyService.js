@@ -35,6 +35,19 @@ var FeatureItem = React.createClass({
 });
 
 var CompanyService = React.createClass({
+  propTypes: {
+    currentTab: React.PropTypes.string,
+    features: React.PropTypes.object,
+    serviceConfig: React.PropTypes.shape({
+      applications: React.PropTypes.shape({
+        ios: React.PropTypes.shape({
+          name: React.PropTypes.string,
+          applicationKey: React.PropTypes.string,
+          applicationSecret: React.PropTypes.string
+        })
+      })
+    })
+  },
   /**
    * Construct a features list Object for initial state
    *
@@ -68,13 +81,17 @@ var CompanyService = React.createClass({
     return {
       currentTab: 'ios',
       features: this.getFeatures(featureList[this.getServiceType()]),
-      serviceConfig: {
+      serviceConfig: this.props.serviceConfig || {
         applications: {
           ios: {
-            name: this.props.serviceConfig.applications.ios.name || null
+            name: null,
+            applicationKey: null,
+            applicationSecret: null
           },
           android: {
-            name: this.props.serviceConfig.applications.android.name || null
+            name: null,
+            applicationKey: null,
+            applicaationSecret: null
           }
         }
       }
@@ -122,15 +139,15 @@ var CompanyService = React.createClass({
       <form ref="companyFrom">
         <input type="hidden" name="_id" value={this.props._id} />
         <div className="large-15 columns">
-          <div className="contents-panel">
+          <div className="panel">
             <div className="row">
               <div className="large-24 columns">
-                <div className="contents-panel__title">
+                <div className="panel__title">
                   <h4>service config information</h4>
                 </div>
               </div>
               <div className="large-24 columns">
-                <div className="contents-panel_subtitle">
+                <div className="panel_subtitle">
                   <h5>general info</h5>
                 </div>
               </div>
@@ -165,7 +182,7 @@ var CompanyService = React.createClass({
                 </div>
               </div>
               <div className="large-24 columns">
-                <div className="contents-panel__title">
+                <div className="panel__title">
                   <ul className="tab-panel row">
                     <li className={classNames('left', {active: this.state.currentTab == 'ios'})} onClick={_.bindKey(this, '_handleTabChange', 'ios')}>iOS</li>
                     <li className={classNames('left', {active: this.state.currentTab == 'android'})} onClick={_.bindKey(this, '_handleTabChange', 'android')}>android</li>
@@ -190,7 +207,7 @@ var CompanyService = React.createClass({
           </div>
         </div>
         <div className="large-9 columns">
-          <div className="contents-panel info-panel">
+          <div className="panel info-panel">
             <div className="row">
               <div className="large-24 columns">
                 <div className="info-panel__header">

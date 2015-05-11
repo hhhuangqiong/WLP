@@ -19,6 +19,10 @@ router.get('/:carrierId', (req, res, next)=>{
   return companyCtrl.getCompany(req, res, next);
 });
 
+router.get('/:carrierId/applications', (req, res, next)=>{
+  return companyCtrl.getApplications(req, res, next);
+});
+
 router.put('/:carrierId/settings/profile', multipart, (req, res, next)=>{
   return companyCtrl.saveProfile(req, res, next);
 });

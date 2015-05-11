@@ -20,14 +20,15 @@ class Application extends React.Component {
     // looking for alternatives, and better be negative default
     let authenticated = !(/signin|home|forgot/.test(url));
     let Handler = this.props.currentRoute.get('handler');
-
+    let pageTitle = this.props.ApplicationStore.pageTitle;
     let params = this.props.currentRoute.get('params').size > 0 ? this.props.currentRoute.get('params') : null;
+
 
     //Handler component is passed as prop children to wrapper component
     //see this: https://facebook.github.io/react/docs/reusable-components.html#single-child
     if (authenticated) {
       return (
-        <AuthenticatedHtml pageTitle={this.props.pageTitle}>
+        <AuthenticatedHtml pageTitle={pageTitle}>
           <Handler params={params} />
         </AuthenticatedHtml>
       )

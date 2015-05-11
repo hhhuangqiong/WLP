@@ -30,6 +30,7 @@
     "express-session": "^1.9.3",
     "express-validator": "^2.7.0",
     "fluxible": "^0.4.6",
+    "fluxible-plugin-fetchr": "^0.3.0",
     "fluxible-plugin-routr": "^0.3.0",
     "fluxible-router": "^0.1.1",
     "gridfs-stream": "^1.1.0",

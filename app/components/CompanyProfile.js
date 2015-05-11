@@ -2,6 +2,7 @@ import _ from 'lodash';
 import React from 'react';
 import {FluxibleMixin} from 'fluxible';
 import classNames from 'classnames';
+import request from 'superagent';
 
 import CompanyStore from '../stores/CompanyStore';
 
@@ -16,6 +17,9 @@ const imageDataRegex = /^data:.+\/(.+);base64,(.*)$/;
 const newContactObject = {name: '', phone: '', email: ''};
 
 var CompanyProfile = React.createClass({
+  contextTypes: {
+    executeAction: React.PropTypes.func.isRequired
+  },
   getInitialState: function () {
     return {
       errors: null,
@@ -31,6 +35,7 @@ var CompanyProfile = React.createClass({
       categoryID: this.props.categoryID || '',
       country: this.props.country || '',
       timezone: this.props.timezone || '',
+      serviceConfig: this.props.serviceConfig || {},
       businessContact: this.props.businessContact || newContactObject,
       technicalContact: this.props.technicalContact || newContactObject,
       supportContact: this.props.supportContact || newContactObject
@@ -56,18 +61,36 @@ var CompanyProfile = React.createClass({
         categoryID: nextProps.categoryID || '',
         country: nextProps.country || '',
         timezone: nextProps.timezone || '',
+        serviceConfig: nextProps.serviceConfig || {},
         businessContact: nextProps.businessContact || newContactObject,
         technicalContact: nextProps.technicalContact || newContactObject,
         supportContact: nextProps.supportContact || newContactObject
       });
     }
   },
+  /**
+   * check if the Company is WL
+   *
+   * @returns {boolean} isWhiteLabel
+   */
   isWhiteLabel: function() {
-    return this.state.carrierId.indexOf('.maaii.com') > -1;
+    return !!this.state.carrierId && this.state.carrierId.indexOf('.maaii.com') > -1;
   },
+  /**
+   * check if the Company is SDK
+   *
+   * @returns {boolean} isSDK
+   */
   isSDK: function() {
-    return this.state.carrierId.indexOf('.m800-api.com') > -1;
+    return !!this.state.carrierId && this.state.carrierId.indexOf('.m800-api.com') > -1;
   },
+  /**
+   * handle input values changes for <input /> and <select />
+   *
+   * @param stateName {String} state name
+   * @param e {Object} target DOM
+   * @private
+   */
   _handleInputChange: function(stateName, e) {
     this.setState({[stateName]: e.target.value || e.target.selected});
   },
@@ -76,6 +99,21 @@ var CompanyProfile = React.createClass({
       [stateName]: _.merge(this.state[stateName], {[key]: e.target.value})
     });
   },
+  /**
+   * trigger opening file selection window by clicking on Logo image
+   *
+   * @private
+   */
+  _handleClickOnLogo: function() {
+    React.findDOMNode(this.refs.logoInput).click();
+  },
+  /**
+   * read File Input with File Reader API
+   * and put into state
+   *
+   * @param e {Object} target DOM
+   * @private
+   */
   _handleLogoChange: function(e) {
     var reader = new FileReader();
     reader.onload = (e) => {
@@ -85,13 +123,6 @@ var CompanyProfile = React.createClass({
     };
     reader.readAsDataURL(e.target.files[0]);
   },
-  _handleCarrierIdBlur: function(e) {
-    // make an api call for application ID
-    // false logic is currently used to see the effect
-    this.setState({
-      isValidated: this.state.carrierId.indexOf('.maaii.com') > -1
-    });
-  },
   _handleInputBlur: function() {
     // do validation and return errors if any
     //this.props.onDataChange(['validation error']);
@@ -100,9 +131,6 @@ var CompanyProfile = React.createClass({
     this.setState({
       reseller: isReseller
     });
-  },
-  _handleClickOnLogo: function() {
-    React.findDOMNode(this.refs.logoInput).click();
   },
   _renderTimezoneOption: function(timezone) {
     return (
@@ -199,28 +227,29 @@ var CompanyProfile = React.createClass({
                     <div className="large-9 columns">
                       <label>company type</label>
                     </div>
-                    <div className="large-10 columns left">
-                    <ul className="button-group round even-2">
-                      <li>
-                        <a className={classNames('button', {active: !this.state.reseller})}
-                              onClick={_.bindKey(this, '_handleSetReseller', false)}
-                            >
-                              default
-                        </a>
-                      </li>
-                      <li>
+                    <div className="large-15 columns">
+                      <ul className="button-switcher">
+                        <li>
                           <a
-                            className={classNames('button', {active: this.state.reseller})}
+                            className={classNames('button-switcher__button', {active: !this.state.reseller})}
+                            onClick={_.bindKey(this, '_handleSetReseller', false)}
+                            >
+                            default
+                          </a>
+                          <input className="hide" type="radio" name="reseller" value="0" checked={!this.state.reseller} readOnly />
+                        </li>
+                        <li>
+                          <a
+                            className={classNames('button-switcher__button', {active: this.state.reseller})}
                             onClick={_.bindKey(this, '_handleSetReseller', true)}
-                          >
+                            >
                             reseller
                           </a>
                           <input className="hide" type="radio" name="reseller" value="1" checked={this.state.reseller} readOnly />
                         </li>
-                    </ul>
+                      </ul>
                     </div>
                   </div>
-
                   <div className="row">
                     <div className="large-9 columns">
                       <label>parent company</label>
@@ -236,13 +265,13 @@ var CompanyProfile = React.createClass({
                     <div className="large-9 columns">
                       <label>service type</label>
                     </div>
-                    <div className="large-10 columns left">
-                      <ul className="button-group round even-2">
+                    <div className="large-15 columns">
+                      <ul className="button-switcher">
                         <li>
-                          <a className={classNames('button', {active: this.isWhiteLabel()})}>whitelabel</a>
+                          <a className={classNames('button-switcher__button', {active: this.isWhiteLabel()})}>whitelabel</a>
                         </li>
                         <li>
-                          <a className={classNames('button', {active: this.isSDK()})}>sdk</a>
+                          <a className={classNames('button-switcher__button', {active: this.isSDK()})}>sdk</a>
                         </li>
                       </ul>
                     </div>
@@ -328,13 +357,10 @@ var CompanyProfile = React.createClass({
                     </div>
                     </div>
                   </div>
-
               </div>
-
             </div>
           </div>
         </div>
-
         <div className="large-9 columns">
           <div className="panel info-panel">
             <div className="row">

@@ -4,6 +4,9 @@ var Grid      = require('gridfs-stream');
 var logger    = require('winston');
 var mongoose  = require('mongoose');
 var Q         = require('q');
+var nconf     = require('nconf');
+
+import {ApplicationRequest} from '../../lib/requests/Application';
 
 var Company   = require('../../collections/company');
 var PortalUser = require('../../collections/portalUser');
@@ -26,41 +29,6 @@ export default class CompanyController {
       this.rejected(res, error);
     }).done();
   };
-
-  /**
-   * Acquire the application payload with carrierId
-   *
-   * @param company {Object} normalized payload
-   * @returns {*|promise} return a payload merged with application configs
-   */
-  getApplication(company) {
-    var deferred = Q.defer();
-
-    // TODO: turn into applcation request class and make real request
-    setTimeout(function() {
-      var serviceConfig = {serviceConfig: {
-        "developerKey": "mdevac0645a7-a956-4e5d-833f-7983d7cc44dc",
-        "developerSecret": "bacbd718-6f17-47ad-8a95-f8edd93ae030",
-        "applicationIdentifier": "com.maaii-api.xxx",
-        "applications": {
-          ios: {
-            "applicationKey": "mapp6a245b5c-6933-7951-7825-4e55646d487b",
-            "applicationSecret": "64705066-4f5c-2777-7e6b-7b32792f2e25",
-            "platform": "com.maaii.platform.ios"
-          },
-          android: {
-            "applicationKey": "mapp6a245b5c-6933-7951-7825-4e55646d487c",
-            "applicationSecret": "64705066-4f5c-2777-7e6b-7b32792f2e26",
-            "platform": "com.maaii.platform.android"
-          }
-        }
-      }};
-
-      return deferred.resolve(_.merge(company, serviceConfig));
-    }, 0);
-
-    return deferred.promise;
-  }
 
   /**
    * Controller Middleware
@@ -104,7 +72,7 @@ export default class CompanyController {
         var actions = [];
         for (let key in companies) {
           companies[key] = companies[key].toJSON();
-          actions[key] = this.getApplication(companies[key]);
+          //actions[key] = this.getApplication(companies[key]);
         }
 
         return Q.allSettled(actions).then(()=>{
@@ -114,7 +82,7 @@ export default class CompanyController {
       .then((companies)=>{
         this.fulfilled(res, companies);
       })
-      .fail(function (error) {
+      .fail((error)=>{
         logger.error(error);
         this.rejected(res, error);
       })
@@ -495,5 +463,97 @@ export default class CompanyController {
           error: err
         });
       })
+  };
+
+  /**
+   * Acquire the application service configs with carrierId
+   *
+   * @param company {Object} normalized payload
+   * @returns {*|promise} return a payload merged with application configs
+   */
+  getApplications(req, res) {
+    let carrierId = req.params.carrierId;
+
+    var makeApiRequest = _.bind(function() {
+      let request = new ApplicationRequest({ baseUrl: nconf.get('mumsApi:baseUrl') });
+      let carrierId = this.carrierId;
+
+      return Q.allSettled([
+          Q.ninvoke(request, 'getApplications', carrierId),
+          Q.ninvoke(request, 'getApiService', carrierId)
+        ])
+        .spread((applications, services)=>{
+          if (applications.state == 'rejected' || services.state == 'rejected') {
+            res.status(500).json(JSON.parse(services.reason.response.text));
+          }
+
+          let result = {
+            applications: {
+              ios: {},
+              android: {}
+            }
+          };
+
+          _.filter(services.value, function(service) {
+            if (service.type == 'API') {
+              _.assign(result, _.pick(service, ['key', 'secret']));
+            }
+          });
+
+          _.filter(applications.value, function(application) {
+            if (application.platform.match(/.ios$/)) {
+              result.applications.ios = application;
+            } else if (application.platform.match(/.android$/)) {
+              result.applications.android = application;
+            }
+          });
+
+          return result;
+        })
+    }, { carrierId: carrierId });
+
+    var hasPermission = function(user, cb) {
+
+      logger.debug('checking permission %j', user, {});
+
+      // Root and M800 Admin has same permission here
+      if (user.isRoot) {
+        return cb(null, true);
+      }
+
+      // besides Root and M800 Admin, M800 Dev is the only role
+      // who has permission to edit, and hence, to fetch the Company applications
+      var isM800AdminOrDev = function() {
+        Q.ninvoke(PortalUser, 'findOne', {
+          _id: user._id,
+          affiliatedCompany: 'M800',
+          assignedGroup: {
+            $or: ['admin', 'dev']
+          }
+        }).then((company)=>{
+          return cb(null, !!company);
+        });
+      };
+
+
+      throw new Error('permission denied');
+    };
+
+    Q.nfcall(hasPermission, req.user)
+      .then((isPermitted)=>{
+        if (!isPermitted) throw new Error('permission denied');
+      })
+      .then(makeApiRequest)
+      .then((result)=>{
+        res.status(200).json({
+          services: result
+        });
+      })
+      .catch((err)=>{
+        logger.error(err);
+        res.status(500).json({
+          error: err
+        });
+      });
   };
 }

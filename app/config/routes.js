@@ -8,6 +8,8 @@ import request from 'superagent';
 import debug from 'debug';
 import env from '../utils/env';
 
+import showCompanies from '../actions/showCompanies';
+
 const bootstrapDebug = debug('wlp:routes');
 
 export default {
@@ -50,7 +52,7 @@ export default {
     method: 'get',
     page: 'overview',
     action: function(context, payload, done) {
-      context.dispatch('UPDATE_PAGE_TITLE', { pageTitle: 'Overview' });
+      context.dispatch('UPDATE_PAGE_TITLE', { pageTitle: 'overview' });
       done();
     }
   },
@@ -60,30 +62,12 @@ export default {
     method: 'get',
     page: 'companies',
     action: function(context, payload, done) {
-      // doing this will disable the server rendering ability
-      request
-        .get('http://localhost:3000/companies')
-        .send({
-          includeWL: true
-        })
-        .set('Accept', 'application/json')
-        .end(function(err, res){
-          context.dispatch('LOAD_COMPANIES', {
-            companies: res.body.result
-          });
-
-          if (env.SERVER) {
-            done();
-          }
-        });
+      context.executeAction(showCompanies, {}, done);
 
       // handle state reset
       // seems strange to handle it here
       context.dispatch('RESET_CURRENT_COMPANY', { currentCompany: null });
-      context.dispatch('UPDATE_PAGE_TITLE', { pageTitle: 'Company' });
-      if (env.CLIENT) {
-        done();
-      }
+      context.dispatch('UPDATE_PAGE_TITLE', { pageTitle: 'company' });
     }
   },
   adminNewCompany: {
@@ -93,6 +77,7 @@ export default {
     page: 'company',
     label: 'new company',
     action: function (context, payload, done) {
+      context.executeAction(showCompanies, {}, done);
       context.dispatch('NEW_COMPANY');
       context.dispatch('UPDATE_PAGE_TITLE', { pageTitle: 'company > create new company' });
       done();
@@ -116,39 +101,11 @@ export default {
     page: 'company',
     action: function(context, payload, done) {
       let carrierId = payload.get('params').get('carrierId');
-
-      request
-        .get(`http://localhost:3000/companies/${carrierId}`)
-        .set('Accept', 'application/json')
-        .end(function(err, res){
-          // server-side only function
-          // if we are running in client side, companies has to be already existed
-          // otherwise, the company list will be empty upon full browser reload
-          //if (env.SERVER) {
-          //  context.dispatch('LOAD_COMPANIES', {
-          //    companies: [
-          //      { name: 'm800', location: 'Tornoto, Canada', logo: '', carrierId: 'www.m800.com' },
-          //      { name: 'maaii', location: 'Tornoto, Canada', logo: '', carrierId: 'www.maaii.com' },
-          //      { name: 'yato .inc', location: 'Tornoto, Canada', logo: '', carrierId: 'yato.maaii.com' },
-          //      { name: 'adidas', location: 'Tornoto, Canada', logo: '', carrierId: 'adidas.maaii.com' },
-          //      { name: 'nike', location: 'Tornoto, Canada', logo: '', carrierId: 'nike.maaii.com' }
-          //    ]
-          //  });
-          //}
-
-          context.dispatch('LOAD_COMPANY', {
-            company: res.body.company
-          });
-
-          if (env.SERVER) {
-            done();
-          }
-        });
-
-      context.dispatch('UPDATE_PAGE_TITLE', { pageTitle: 'Company' });
-      if (env.CLIENT) {
-        done();
-      }
+      context.executeAction(showCompanies, { carrierId: carrierId }, done);
+      context.dispatch('UPDATE_PAGE_TITLE', { pageTitle: 'company' });
+      //if (env.CLIENT) {
+      //  done();
+      //}
     }
   }
 };

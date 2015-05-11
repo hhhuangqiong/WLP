@@ -11,9 +11,17 @@ var Companies = React.createClass({
   statics: {
     storeListeners: [CompanyStore]
   },
+  /**
+   * get states of Company List and Current Company from CompanyStore
+   *
+   * @returns {Object}
+   */
   getInitialState: function () {
     return this.getStore(CompanyStore).getState();
   },
+  /**
+   * capture Company Store changes and take effect
+   */
   onChange: function() {
     let state = this.getStore(CompanyStore).getState();
     this.setState(state);

@@ -1,4 +1,5 @@
 import _ from 'lodash';
+import Q from 'q';
 import {createStore} from 'fluxible/addons';
 
 const newContactObject = {name: '', phone: '', email: ''};
@@ -8,13 +9,22 @@ var CompanyStore = createStore({
   initialize: function () {
     this.companies = [];
   },
-  handleCompaniesChange: function (payload) {
-    this.companies = payload.companies;
-    this.emitChange();
+  getAll: function() {
+    return this.companies;
   },
-  handleCompanyChange: function (payload) {
-    this.currentCompany = payload.company;
-    this.emitChange();
+  getCompanyById: function(_id, cb) {
+    _.filter(this.companies, (value, key)=>{
+      if (value._id == _id) {
+        return cb(this.companies[key]);
+      }
+    });
+  },
+  getCompanyByCarrierId: function(carrierId, cb) {
+    _.forEach(this.companies, (value, key)=>{
+      if (value.carrierId == carrierId) {
+        return cb(this.companies[key]);
+      }
+    });
   },
   handleCompanyReset: function () {
     this.currentCompany = null;
@@ -43,7 +53,7 @@ var CompanyStore = createStore({
     this.companies.push(company);
     this.emitChange();
   },
-  handleCompanyUpdated: function(company) {
+  handleProfileUpdated: function(company) {
     _.filter(this.companies, (value, key)=>{
       if (value._id == company._id) {
         this.companies[key] = company;
@@ -51,12 +61,40 @@ var CompanyStore = createStore({
     });
     this.emitChange();
   },
+  handleServicesUpdated: function(payload) {
+    this.getCompanyById(payload._id, (company)=>{
+      if (!company) {
+        // how do we handle store update errors?
+      } else {
+        _.merge(company, { serviceConfig: payload.services });
+        this.emitChange();
+      }
+    })
+  },
+  receiveCompanies: function(companies) {
+    // TODO: assign a key of _id to this.companies Object
+    this.companies = companies;
+    this.emitChange();
+
+    // any kind of async method does not work in Store?
+    //Q.all(_.forEach(companies, (company)=>{
+    //  _.merge(this.companies, { [company._id]: company });
+    //})).then(()=>{
+    //  this.emitChange();
+    //});
+  },
+  receiveCompany: function(company) {
+    this.currentCompany = company;
+    this.emitChange();
+  },
   handlers: {
-    'LOAD_COMPANIES': 'handleCompaniesChange',
-    'LOAD_COMPANY': 'handleCompanyChange',
+    'RECEIVE_COMPANIES': 'receiveCompanies',
+    'RECEIVE_COMPANY': 'receiveCompany',
     'NEW_COMPANY': 'handleCompanyCreate',
     'CREATE_COMPANY_SUCCESS': 'handleCompanyCreated',
-    'UPDATE_COMPANY_SUCCESS': 'handleCompanyUpdated',
+    'UPDATE_COMPANY_PROFILE_SUCCESS': 'handleProfileUpdated',
+    'UPDATE_COMPANY_SERVICES_SUCCESS': 'handleServicesUpdated',
+    'UPDATE_COMPANY_WIDGETS_SUCCESS': 'handleWidgetUpdated',
     'RESET_CURRENT_COMPANY': 'handleCompanyReset'
   },
   getState: function () {

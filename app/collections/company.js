@@ -102,6 +102,15 @@ var schema = new mongoose.Schema({
     im: []
   },
   serviceConfig: {
+    developerKey: {
+      type: String
+    },
+    developerSecret: {
+      type: String
+    },
+    applicationId: {
+      type: String
+    },
     applications: {
       ios: {
         name: {

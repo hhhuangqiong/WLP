@@ -9,6 +9,7 @@ import companyRouter        from './company';
 import dashboardRouter      from './dashboard';
 import dataRouter           from './data';
 import endUsersRouter       from './endUsers';
+import fetchrRouter         from './fetchr';
 import forgotPasswordRouter from './forgotPassword';
 import loginRouter          from './login'
 import logoutRouter         from './logout'
@@ -22,6 +23,7 @@ var ensureAuthenticated = fetchDep(nconf.get('containerName'), 'middlewares.ensu
 
 module.exports = (() => {
   return Router()
+    .use('/fetchr',         ensureAuthenticated, fetchrRouter)
     .use('/api/1.0',        ensureAuthenticated, apiRouter)
     .use('/app',            ensureAuthenticated, appRouter)
     .use('/app/accounts',   ensureAuthenticated, accountsRouter)
