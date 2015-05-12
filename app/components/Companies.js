@@ -31,11 +31,11 @@ var Companies = React.createClass({
     let subPage = this.props.params ? this.props.params.get('subPage') : null;
 
     return (
-      <div className="row">
-        <div className="large-6 columns">
+      <div className="row" data-equalizer>
+        <div className="large-6 columns" data-equalizer-watch>
           <CompanyList companies={this.state.companies}/>
         </div>
-        <div className="large-18 columns">
+        <div className="large-18 columns" data-equalizer-watch>
           <Company company={this.state.currentCompany} subPage={subPage}/>
         </div>
       </div>

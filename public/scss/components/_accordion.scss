@@ -1,0 +1,41 @@
+.accordion {
+  @include accordion-container; //becoz with same class name to foundation one.
+  margin: 0;
+  list-style: none;
+    &__item {
+        &__head {
+            font-size: rem-calc(14);
+            color: $accordion-item-link-color;
+            cursor: pointer;
+            background-color: $gray-lighter;
+            padding: rem-calc(6) rem-calc(30);
+            display: block;
+            &:before {
+                content: '-';
+                display: inline-block;
+                width: auto;
+                padding-right: rem-calc(20);
+            }
+            &:hover{
+              color: scale-color($accordion-item-link-color, $lightness: $link-function-factor);
+            }
+        }
+        &__body {
+            max-height: 100%;
+            overflow: hidden;
+            transition: max-height ease-in-out 0.28s, background linear 0.1s;
+            // &__feature-item {
+            //   font-size: 12px;
+            //   padding: 10px 0;
+            //   border-bottom: 1px solid lightgray;
+            //   overflow: hidden;
+            //   &:last-child {
+            //     border-bottom: 0 none;
+            //   }
+            // }
+            &.collapsed {
+                max-height: 0;
+            }
+        }
+    }
+}

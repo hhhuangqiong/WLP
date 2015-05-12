@@ -20,7 +20,7 @@ export var PublicHtml = React.createClass({
         </nav>
         <div className="public-container row">
           <div className="large-8 large-centered columns">
-            <div className="panel">
+            <div className="panel panel--extra">
               <div className="row">
                 <div className="large-24 columns">
                   {this.props.children}

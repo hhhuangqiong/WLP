@@ -50,6 +50,12 @@ var CompanyList = React.createClass({
 
     let href = `/admin/companies/${company.carrierId}/settings/profile`;
 
+    $(document).foundation({
+      equalizer : {
+        equalize_on_stack: true
+      }
+    });
+
     return (
       /*
       <NavLink href={href}>
@@ -79,6 +85,9 @@ var CompanyList = React.createClass({
             <span className="company-sidebar__list__item__info__location">
               Toronto, Canada
             </span>
+          </span>
+          <span className="company-sidebar__list__item__status left">
+            <span className="status--active"></span>
           </span>
         </NavLink>
       </li>

@@ -1,7 +1,7 @@
 .company-sidebar {
     &__search {
-        background: #707070;
-        padding: 0 20px;
+        background: $gray-dark;
+        padding: 0 rem-calc(20);
         height: $company-sidebar-height;
         > input {
             @include inputBoxReset;

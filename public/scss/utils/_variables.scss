@@ -4,17 +4,23 @@
 theme setting
 *********************************************/
 //main body color
-$body-bg-color: #e7e7e7;
+$body-bg-color-1: #e7e7e7;
+$body-bg-color-2: rgba(0,0,0,0.1);
 
 $brand-primary: #e05353;
 $brand-secondary: #8f4646;
 $brand-extend: #c24848;
+$brand-addon: #b87879;
 
 $black: #000;
 $gray-darker: #333;
 $gray-dark: #666;
 $gray: #999;
 $gray-light: #bbb;
+$gray-lighter: #ddd;
+
+//link
+$link-function-factor: -50%;
 
 //form elements
 $place-holder-color: #999;
@@ -31,7 +37,6 @@ $company-switcher-bg-color: $dropdown-bg-color;
 
 
 //need to rework
-
 $description-font-size: 12px;
 
 // z-index
@@ -46,11 +51,6 @@ components setting
 $menu-sidebar-width: 17.5rem;
 $menu-sidebar-offcanvas-width: 5rem;
 
-//theme variables: m800
-$brand-primary: #e05353;
-$brand-secondary: #8b4343;
-$brand-extend: #c24848;
-
 //top-bar--inner
 $topbar-inner-height: rem-calc(55);
 $topbar-inner-bg-color: $brand-extend;
@@ -62,9 +62,15 @@ $topbar-inner-link-bg-color: transparent;
 //tabs-inverted
 $tab-inverted-border: 1px solid rgba(255,255,255,0.2);
 
+//accordion
+$accordion-item-link-color: #8d929a;
+
 //panels
 $panels-h1-font-size: rem-calc(40);
 $panels-h4-font-size: rem-calc(20);
+$panels-border-radius: rem-calc(10);
+$panels-addon-title-color: #fff;
+$panels-addon-title-bg-color: $brand-addon;
 
 //button-groups
 $button-groups-padding: rem-calc(10);
@@ -74,6 +80,9 @@ $company-sidebar-height: $topbar-inner-height;
 
 //form elements
 $place-holder-color: #999;
+
+//status colors
+$status-active: #4bdb40;
 
 //general dropdown color
 $dropdown-bg-color: #555;

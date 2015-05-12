@@ -10,9 +10,10 @@
 //layouts
 @import 'layouts/common';
 @import 'layouts/default';
+@import 'layouts/mainmenu-bar';
+@import 'layouts/content-frame';
 @import 'layouts/header';
 @import 'layouts/page';
-@import 'layouts/mainmenu-bar';
 @import 'layouts/company-sidebar';
 
 //import all components
@@ -24,6 +25,7 @@
 @import 'components/panels';
 @import 'components/company-sidebar-list';
 @import 'components/company-sidebar-search';
+@import 'components/accordion';
 
 //page specific style
 @import 'pages/account';
@@ -32,13 +34,11 @@
 
 
 //need to rework these items
-@import 'layouts/sidebar';
-@import 'layouts/slider';
-@import 'layouts/control-bar';
-@import 'layouts/content-frame';
-// @import 'layouts/contents-panel';
-@import 'layouts/info-panel';
+// @import 'layouts/sidebar';
+// @import 'layouts/slider';
+// @import 'layouts/control-bar';
+// @import 'layouts/info-panel';
 
-@import 'elements/button-switcher';
-@import 'elements/input-block';
-@import 'elements/loading-bar';
+// @import 'elements/button-switcher';
+// @import 'elements/input-block';
+// @import 'elements/loading-bar';

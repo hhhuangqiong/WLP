@@ -1,8 +1,8 @@
-input[type="text"],
-input[type="password"],
-textarea{
-    @include border-radius($input-border-radius);
-}
-select{
-	@include border-radius($global-radius);
+form {
+    label{
+    	text-transform: capitalize;
+    }
+    textarea,input,select{
+    	margin-bottom: rem-calc(20) !important;
+    }
 }

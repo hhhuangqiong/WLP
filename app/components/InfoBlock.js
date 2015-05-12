@@ -14,14 +14,13 @@ var InfoBlock = React.createClass({
   },
   render: function() {
     return (
-      <div className="info-panel__block">
-        <div className="info-panel__block__header" onClick={this._toggleIsCollapsed}>
-          <span>{this.props.title}</span>
-        </div>
-        <div className={classNames('info-panel__block__contents', {collapsed: this.state.isCollapsed})}>
+      <li className="accordion__item">
+        <a className="accordion__item__head" onClick={this._toggleIsCollapsed}>{this.props.title}
+        </a>
+        <div className={classNames('accordion__item__body', {collapsed: this.state.isCollapsed})}>
           {this.props.children}
         </div>
-      </div>
+      </li>
     )
   }
 });

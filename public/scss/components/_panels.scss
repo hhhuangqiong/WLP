@@ -1,28 +1,64 @@
 .panel {
-	margin-top: rem-calc(20);
-    @include panel(
-    	$padding: 0
-    );
-    @include border-radius($global-radius);
+    margin-top: rem-calc(20);
+    @include panel( $padding: 0);
+    @include border-radius($panels-border-radius);
     @include box-shadow(0 2px 3px rgba(0, 0, 0, 0.1));
-    h1,h2,h3,h4,h5,h6{
-		text-transform: uppercase;
-		padding: 0;
-	    margin: 0;
+    h1, h2, h3, h4, h5, h6 {
+        text-transform: uppercase;
+        padding: 0;
+        margin: 0;
     }
-    h1 {font-size: $panels-h1-font-size;}
-    h4 {font-size: $panels-h4-font-size;;}
+    h1 {
+        font-size: $panels-h1-font-size;
+    }
+    h4 {
+        font-size: $panels-h4-font-size;
+        ;
+    }
+    //default panel body & title
     &__title,
-    &__body{
-    	padding: $column-gutter;
+    &__body {
+        padding: $column-gutter;
     }
-    &__title{
-    	border-bottom: 1px solid #eee;
+    &__title {
+        border-bottom: 1px solid #eee;
     }
-    &__title--prelogin{
-    	padding: $column-gutter*2 $column-gutter*2 $column-gutter $column-gutter*2;
+    [class*="__title"]{
+        @include border-radius($global-radius $global-radius 0 0);
     }
-    &__body--prelogin{
-    	padding: $column-gutter $column-gutter*2 $column-gutter*2 $column-gutter*2;
+    //for prelogin pages
+    &--extra {
+        &__title {
+            padding: $column-gutter*2 $column-gutter*2 $column-gutter $column-gutter*2;
+        }
+    }
+    &--extra {
+        &__body {
+            padding: $column-gutter $column-gutter*2 $column-gutter*2 $column-gutter*2;
+        }
+    }
+    //for addon panels
+    &--addon {
+        &__title {
+            background: $panels-addon-title-bg-color;
+            h1, h2, h3, h4, h5, h6{
+                color: $panels-addon-title-color;
+            }
+        }
+        &__title,
+        &__body{
+            padding: rem-calc(20) $column-gutter;
+        }
+        &__body{
+            padding-top: 0;
+        }
+        .accordion__item__head{
+            margin: 0 (-$column-gutter);
+        }
+        .accordion__item__body{
+            .row:first-child{
+                margin-top: rem-calc(20);
+            }
+        }
     }
 }

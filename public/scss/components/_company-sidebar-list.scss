@@ -6,11 +6,14 @@
         &__item {
             width: 100%;
             border-bottom: 1px solid #e5e5e5;
-            padding: rem-calc(10) 0;
+            padding: rem-calc(10) rem-calc(20);
             overflow: hidden;
+            a {
+                display: flex;
+                align-items: center;
+            }
             &__logo {
-                text-align: center;
-                width: rem-calc(90);
+                width: rem-calc(70);
                 img {
                     @include border-radius($company-switcher-width/4);
                 }
@@ -19,19 +22,30 @@
                 width: 65%;
                 text-align: left;
                 text-transform: capitalize;
-                &__title,
-                &location{
+                &__title, &location {
                     line-height: 1.2;
                     display: block;
                     clear: both;
                 }
                 &__title {
                     color: $black;
-                    margin-top: rem-calc(8);
                 }
                 &__location {
                     color: $gray;
                     font-size: $description-font-size;
+                }
+            }
+            &__status {
+                [class^="status--"] {
+                    width: rem-calc(10);
+                    height: rem-calc(10);
+                    display: block;
+                    @include border-radius(rem-calc(10));
+                }
+                .status {
+                    &--active {
+                        background: $status-active;
+                    }
                 }
             }
         }

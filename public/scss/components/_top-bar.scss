@@ -152,7 +152,7 @@
                                 position: absolute;
                                 left: 50%;
                                 bottom: $arrowHeight;
-                                @include arrowUp($body-bg-color, 8px, 5px);
+                                @include arrowUp($body-bg-color-1, 8px, 5px);
                             }
                         }
                     }

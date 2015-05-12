@@ -4,10 +4,17 @@
     @include button(
       $bg: $white
     );
-    color: $brand-primary;
+    color: $gray-light;
     border: 1px solid $gray-light !important;
     border-right: 0 !important;
     border-left: 0 !important;
+    &:hover{
+      color: scale-color($gray-light, $lightness: $link-function-factor);
+      background: transparent;
+    }
+    &.active{
+      color: $brand-primary;
+    }
   }
   li:first-child{
     .button{

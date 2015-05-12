@@ -186,7 +186,7 @@ var CompanyProfile = React.createClass({
                       <label>company name</label>
                     </div>
                     <div className="large-15 columns">
-                      <input
+                      <input className="radius"
                         type="text" name="name" placeholder="company name"
                         value={this.state.name}
                         onChange={_.bindKey(this, '_handleInputChange', 'name')}
@@ -200,7 +200,7 @@ var CompanyProfile = React.createClass({
                       <label>carrier ID</label>
                     </div>
                     <div className="large-15 columns">
-                      <input
+                      <input className="radius"
                         type="text" name="carrierId" placeholder="company name"
                         value={this.state.carrierId}
                         onChange={_.bindKey(this, '_handleInputChange', 'carrierId')}
@@ -214,7 +214,7 @@ var CompanyProfile = React.createClass({
                       <label>company address</label>
                     </div>
                     <div className="large-15 columns">
-                      <textarea
+                      <textarea className="radius"
                         name="address"
                         value={this.state.address}
                         onChange={_.bindKey(this, '_handleInputChange', 'address')}
@@ -255,7 +255,7 @@ var CompanyProfile = React.createClass({
                       <label>parent company</label>
                     </div>
                     <div className="large-15 columns">
-                      <select name="parent-company">
+                      <select className="radius" name="parent-company">
                         <option value="551bbd63003fd58975b12284">m800</option>
                       </select>
                     </div>
@@ -282,7 +282,7 @@ var CompanyProfile = React.createClass({
                       <label>account manager</label>
                     </div>
                     <div className="large-15 columns">
-                      <input
+                      <input className="radius"
                         type="text" name="accountManager" placeholder="account manager"
                         value={this.state.accountManager}
                         onChange={_.bindKey(this, '_handleInputChange', 'accountManager')}
@@ -296,7 +296,7 @@ var CompanyProfile = React.createClass({
                       <label>bill code</label>
                     </div>
                     <div className="large-15 columns">
-                      <input
+                      <input className="radius"
                         type="text" name="billCode" placeholder="bill code"
                         value={this.state.billCode}
                         onChange={_.bindKey(this, '_handleInputChange', 'billCode')}
@@ -310,7 +310,7 @@ var CompanyProfile = React.createClass({
                       <label>category ID</label>
                     </div>
                     <div className="large-15 columns">
-                      <input
+                      <input className="radius"
                         type="text" name="categoryID" placeholder="category ID"
                         value={this.state.categoryID}
                         onChange={_.bindKey(this, '_handleInputChange', 'categoryID')}
@@ -324,7 +324,7 @@ var CompanyProfile = React.createClass({
                       <label>expected service date</label>
                     </div>
                     <div className="large-15 columns">
-                      <input
+                      <input className="radius"
                         type="text" name="expectedServiceDate" placeholder="expected service date"
                         value={this.state.expectedServiceDate}
                         onChange={_.bindKey(this, '_handleInputChange', 'expectedServiceDate')}
@@ -338,7 +338,7 @@ var CompanyProfile = React.createClass({
                       <label>country</label>
                     </div>
                     <div className="large-15 columns">
-                      <select name="country" value={this.state.country} onChange={_.bindKey(this, '_handleInputChange', 'country')}>
+                      <select className="radius" name="country" value={this.state.country} onChange={_.bindKey(this, '_handleInputChange', 'country')}>
                         <option>please select</option>
                         {Countries.map(this._renderCountryOption)}
                       </select>
@@ -350,7 +350,7 @@ var CompanyProfile = React.createClass({
                       <label>timezone</label>
                     </div>
                     <div className="large-15 columns">
-                      <select name="timezone" value={this.state.timezone} onChange={_.bindKey(this, '_handleInputChange', 'timezone')}>
+                      <select className="radius" name="timezone" value={this.state.timezone} onChange={_.bindKey(this, '_handleInputChange', 'timezone')}>
                         <option>please select</option>
                         {Timezones.map(this._renderTimezoneOption)}
                       </select>
@@ -362,153 +362,130 @@ var CompanyProfile = React.createClass({
           </div>
         </div>
         <div className="large-9 columns">
-          <div className="panel info-panel">
+          <div className="panel panel--addon">
             <div className="row">
               <div className="large-24 columns">
-                <div className="info-panel__header">
-                  <h5 className="info-panel__header__title">contacts</h5>
+                <div className="panel--addon__title">
+                  <h6>contacts</h6>
                 </div>
-                <InfoBlock title="business contact">
-                  <div className="large-24 columns">
-                    <div className="row">
-                      <div className="large-9 columns">
-                        <label>name</label>
+                <div className="panel--addon__body">
+                  <ul className="accordion">
+                    <InfoBlock title="Business contact">
+                        <div className="row">
+                          <div className="large-9 columns">
+                            <label>name</label>
+                          </div>
+                          <div className="large-15 columns">
+                            <input className="radius"
+                              type="text" name="bc-name"
+                              value={this.state.businessContact.name}
+                              onChange={_.bindKey(this, '_handleContactChange', 'businessContact', 'name')}
+                              onBlur={this._handleInputBlur} />
+                          </div>
+                        </div>
+                        <div className="row">
+                          <div className="large-9 columns">
+                            <label>phone</label>
+                          </div>
+                          <div className="large-15 columns">
+                            <input className="radius"
+                              type="text" name="bc-phone"
+                              value={this.state.businessContact.phone}
+                              onChange={_.bindKey(this, '_handleContactChange', 'businessContact', 'phone')}
+                              onBlur={this._handleInputBlur} />
+                          </div>
+                        </div>
+                        <div className="row">
+                          <div className="large-9 columns">
+                            <label>email</label>
+                          </div>
+                          <div className="large-15 columns">
+                            <input className="radius"
+                              type="text" name="bc-email"
+                              value={this.state.businessContact.email}
+                              onChange={_.bindKey(this, '_handleContactChange', 'businessContact', 'email')}
+                              onBlur={this._handleInputBlur} />
+                          </div>
+                        </div>
+                    </InfoBlock>
+                    <InfoBlock title="Technical contact">
+                        <div className="row">
+                          <div className="large-9 columns">
+                            <label>name</label>
+                          </div>
+                          <div className="large-15 columns">
+                            <input className="radius"
+                              type="text" name="tc-name"
+                              value={this.state.technicalContact.name}
+                              onChange={_.bindKey(this, '_handleContactChange', 'technicalContact', 'name')}
+                              onBlur={this._handleInputBlur} />
+                          </div>
+                        </div>
+                        <div className="row">
+                          <div className="large-9 columns">
+                            <label>phone</label>
+                          </div>
+                          <div className="large-15 columns">
+                            <input className="radius"
+                              type="text" name="tc-phone"
+                              value={this.state.technicalContact.phone}
+                              onChange={_.bindKey(this, '_handleContactChange', 'technicalContact', 'phone')}
+                              onBlur={this._handleInputBlur} />
+                          </div>
+                        </div>
+                        <div className="row">
+                          <div className="large-9 columns">
+                            <label>email</label>
+                          </div>
+                          <div className="large-15 columns">
+                            <input className="radius"
+                              type="text" name="tc-email"
+                              value={this.state.technicalContact.email}
+                              onChange={_.bindKey(this, '_handleContactChange', 'technicalContact', 'email')}
+                              onBlur={this._handleInputBlur} />
+                          </div>
                       </div>
-                      <div className="large-15 columns">
-                        <input
-                          type="text" name="bc-name"
-                          value={this.state.businessContact.name}
-                          onChange={_.bindKey(this, '_handleContactChange', 'businessContact', 'name')}
-                          onBlur={this._handleInputBlur}
-                        />
+                    </InfoBlock>
+                    <InfoBlock title="7 x 24 contact">
+                        <div className="row">
+                          <div className="large-9 columns">
+                            <label>name</label>
+                          </div>
+                          <div className="large-15 columns">
+                            <input className="radius"
+                              type="text" name="sc-name"
+                              value={this.state.supportContact.name}
+                              onChange={_.bindKey(this, '_handleContactChange', 'supportContact', 'name')}
+                              onBlur={this._handleInputBlur} />
+                          </div>
+                        </div>
+                        <div className="row">
+                          <div className="large-9 columns">
+                            <label>phone</label>
+                          </div>
+                          <div className="large-15 columns">
+                            <input className="radius"
+                              type="text" name="sc-phone"
+                              value={this.state.supportContact.phone}
+                              onChange={_.bindKey(this, '_handleContactChange', 'supportContact', 'phone')}
+                              onBlur={this._handleInputBlur} />
+                          </div>
+                        </div>
+                        <div className="row">
+                          <div className="large-9 columns">
+                            <label>email</label>
+                          </div>
+                          <div className="large-15 columns">
+                            <input className="radius"
+                              type="text" name="sc-email"
+                              value={this.state.supportContact.email}
+                              onChange={_.bindKey(this, '_handleContactChange', 'supportContact', 'email')}
+                              onBlur={this._handleInputBlur} />
+                          </div>
                       </div>
-                    </div>
-                  </div>
-                  <div className="large-24 columns">
-                    <div className="row">
-                      <div className="large-9 columns">
-                        <label>phone</label>
-                      </div>
-                      <div className="large-15 columns">
-                        <input
-                          type="text" name="bc-phone"
-                          value={this.state.businessContact.phone}
-                          onChange={_.bindKey(this, '_handleContactChange', 'businessContact', 'phone')}
-                          onBlur={this._handleInputBlur}
-                        />
-                      </div>
-                    </div>
-                  </div>
-                  <div className="large-24 columns">
-                    <div className="row">
-                      <div className="large-9 columns">
-                        <label>email</label>
-                      </div>
-                      <div className="large-15 columns">
-                        <input
-                          type="text" name="bc-email"
-                          value={this.state.businessContact.email}
-                          onChange={_.bindKey(this, '_handleContactChange', 'businessContact', 'email')}
-                          onBlur={this._handleInputBlur}
-                        />
-                      </div>
-                    </div>
-                  </div>
-                </InfoBlock>
-                <InfoBlock title="technical contact">
-                  <div className="large-24 columns">
-                    <div className="row">
-                      <div className="large-9 columns">
-                        <label>name</label>
-                      </div>
-                      <div className="large-15 columns">
-                        <input
-                          type="text" name="tc-name"
-                          value={this.state.technicalContact.name}
-                          onChange={_.bindKey(this, '_handleContactChange', 'technicalContact', 'name')}
-                          onBlur={this._handleInputBlur}
-                        />
-                      </div>
-                    </div>
-                  </div>
-                  <div className="large-24 columns">
-                    <div className="row">
-                      <div className="large-9 columns">
-                        <label>phone</label>
-                      </div>
-                      <div className="large-15 columns">
-                        <input
-                          type="text" name="tc-phone"
-                          value={this.state.technicalContact.phone}
-                          onChange={_.bindKey(this, '_handleContactChange', 'technicalContact', 'phone')}
-                          onBlur={this._handleInputBlur}
-                        />
-                      </div>
-                    </div>
-                  </div>
-                  <div className="large-24 columns">
-                    <div className="row">
-                      <div className="large-9 columns">
-                        <label>email</label>
-                      </div>
-                      <div className="large-15 columns">
-                        <input
-                          type="text" name="tc-email"
-                          value={this.state.technicalContact.email}
-                          onChange={_.bindKey(this, '_handleContactChange', 'technicalContact', 'email')}
-                          onBlur={this._handleInputBlur}
-                        />
-                      </div>
-                    </div>
-                  </div>
-                </InfoBlock>
-                <InfoBlock title="7 x 24 contact">
-                  <div className="large-24 columns">
-                    <div className="row">
-                      <div className="large-9 columns">
-                        <label>name</label>
-                      </div>
-                      <div className="large-15 columns">
-                        <input
-                          type="text" name="sc-name"
-                          value={this.state.supportContact.name}
-                          onChange={_.bindKey(this, '_handleContactChange', 'supportContact', 'name')}
-                          onBlur={this._handleInputBlur}
-                        />
-                      </div>
-                    </div>
-                  </div>
-                  <div className="large-24 columns">
-                    <div className="row">
-                      <div className="large-9 columns">
-                        <label>phone</label>
-                      </div>
-                      <div className="large-15 columns">
-                        <input
-                          type="text" name="sc-phone"
-                          value={this.state.supportContact.phone}
-                          onChange={_.bindKey(this, '_handleContactChange', 'supportContact', 'phone')}
-                          onBlur={this._handleInputBlur}
-                        />
-                      </div>
-                    </div>
-                  </div>
-                  <div className="large-24 columns">
-                    <div className="row">
-                      <div className="large-9 columns">
-                        <label>email</label>
-                      </div>
-                      <div className="large-15 columns">
-                        <input
-                          type="text" name="sc-email"
-                          value={this.state.supportContact.email}
-                          onChange={_.bindKey(this, '_handleContactChange', 'supportContact', 'email')}
-                          onBlur={this._handleInputBlur}
-                        />
-                      </div>
-                    </div>
-                  </div>
-                </InfoBlock>
+                    </InfoBlock>
+                  </ul>
+                </div>
               </div>
             </div>
           </div>
