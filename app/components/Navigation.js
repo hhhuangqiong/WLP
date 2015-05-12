@@ -1,9 +1,22 @@
 import React from 'react';
 import {NavLink} from 'fluxible-router';
+import Modal from './Modal';
+import Warning from './Warning';
 
 import CompanySwitcher from './CompanySwitcher';
 
 var Navigation = React.createClass({
+  getInitialState:function(){
+    return{modal:"close"}
+  },
+  modalControl:function(){
+    this.setState({modal:(this.state.modal =="close")?"open":"close"})
+    $("#myModal").foundation('reveal', this.state.modal);
+  },
+  onFormSubmit: function(data, callback) {
+    console.log(data); // for form submit action
+    this.modalControl();
+  },
   render: function() {
     return (
       <section className="top-bar-section navigation-bar">
@@ -28,7 +41,7 @@ var Navigation = React.createClass({
             </a>
             <ul className="dropdown">
               <li className="navigation-bar__item">
-                <a href="/logout"><i className="icon-change-password"></i>change password</a>
+                <a onClick={this.modalControl}><i className="icon-change-password"></i><span>change password</span></a>
               </li>
               <li className="divider"></li>
               <li className="navigation-bar__item">
@@ -37,6 +50,7 @@ var Navigation = React.createClass({
             </ul>
           </li>
         </ul>
+          <Warning type="changePass" modalControl={this.modalControl} modalTitle="CHANGE PASSWORD" formSubmit={this.onFormSubmit}/>
       </section>
     );
   }
