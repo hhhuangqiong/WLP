@@ -207,27 +207,31 @@ var CompanyService = React.createClass({
           </div>
         </div>
         <div className="large-9 columns">
-          <div className="panel info-panel">
+          <div className="panel panel--addon">
             <div className="row">
               <div className="large-24 columns">
-                <div className="info-panel__header">
-                  <h5 className="info-panel__header__title">features list</h5>
+                <div className="panel--addon__title">
+                  <h6>contacts</h6>
                 </div>
-                {_.map(featureList[this.getServiceType()], (feature, key)=>{
-                  return (
-                    <InfoBlock className="info-panel__block__contents__feature-list" title={key}>
-                      {_.map(feature, (item, itemKey)=>{
-                        return (
-                          <FeatureItem
-                            name={itemKey} label={item.label}
-                            checked={this.state.features[itemKey]}
-                            onChange={_.bindKey(this, '_handleToggleSwitch', itemKey)}
-                          />
-                        );
-                      })}
-                    </InfoBlock>
-                  )
-                })}
+                <div className="panel--addon__body">
+                  <ul className="accordion">
+                  {_.map(featureList[this.getServiceType()], (feature, key)=>{
+                    return (
+                      <InfoBlock className="panel--addon__block__contents__feature-list" title={key}>
+                        {_.map(feature, (item, itemKey)=>{
+                          return (
+                            <FeatureItem
+                              name={itemKey} label={item.label}
+                              checked={this.state.features[itemKey]}
+                              onChange={_.bindKey(this, '_handleToggleSwitch', itemKey)}
+                            />
+                          );
+                        })}
+                      </InfoBlock>
+                    )
+                  })}
+                  </ul>
+                </div>
               </div>
             </div>
           </div>

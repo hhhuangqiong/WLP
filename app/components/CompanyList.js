@@ -5,6 +5,14 @@ import {NavLink} from 'fluxible-router';
 var Countries = require('../data/countries.json');
 
 var CompanyList = React.createClass({
+  componentDidMount: function() {
+	// equalise the height of the list and main area
+	$(document).foundation({
+      equalizer : {
+        equalize_on_stack: true
+      }
+    });
+  },
   getInitialState: function () {
     return {
       searchCompany: ''
@@ -50,11 +58,7 @@ var CompanyList = React.createClass({
 
     let href = `/admin/companies/${company.carrierId}/settings/profile`;
 
-    $(document).foundation({
-      equalizer : {
-        equalize_on_stack: true
-      }
-    });
+    let logo = !!company.logo ? `/data/${company.logo}` : '/images/logo-yato.png';
 
     return (
       /*
@@ -76,14 +80,14 @@ var CompanyList = React.createClass({
       <li className="company-sidebar__list__item">
         <NavLink href={href}>
           <span className="company-sidebar__list__item__logo left">
-            <img src="/images/logo-yato.png"/>
+            <img src={logo} />
           </span>
           <span className="company-sidebar__list__item__info left">
             <span className="company-sidebar__list__item__info__title">
               {company.name}
             </span>
             <span className="company-sidebar__list__item__info__location">
-              Toronto, Canada
+              {_.pluck(_.filter(Countries, {'alpha2': company.country}), 'name')}
             </span>
           </span>
           <span className="company-sidebar__list__item__status left">

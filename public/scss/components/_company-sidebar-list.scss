@@ -16,6 +16,7 @@
                 width: rem-calc(70);
                 img {
                     @include border-radius($company-switcher-width/4);
+                    max-width: rem-calc(50);
                 }
             }
             &__info {
