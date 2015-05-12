@@ -71,7 +71,7 @@
   },
   "mumsApi": {
     "name": "mums",
-    "baseUrl": "http://192.168.118.12:8080",
+    "baseUrl": "http://192.168.118.12:8080/1.0",
     "timeout": 5000,
     "format": {
       "timestamp": ""

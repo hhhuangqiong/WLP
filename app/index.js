@@ -9,6 +9,7 @@ import ApplicationStore from './stores/ApplicationStore';
 import TimeStore from './stores/TimeStore';
 import PageStore from './stores/PageStore';
 import CompanyStore from './stores/CompanyStore';
+import EndUserStore from './stores/EndUserStore';
 
 import routes from './config/routes';
 
@@ -35,5 +36,6 @@ app.registerStore(ApplicationStore);
 app.registerStore(CompanyStore);
 app.registerStore(PageStore);
 app.registerStore(TimeStore);
+app.registerStore(EndUserStore);
 
 export default app;

@@ -26,7 +26,15 @@ var ApplicationStore = createStore({
       currentPage: this.currentPage,
       pages: this.pages,
       route: this.currentRoute,
-      pageTitle: this.pageTitle
+      pageTitle: this.pageTitle,
+
+      // FIXME only for testing
+      availableCompanies: [{
+        name: 'Maaii',
+        carrierId: 'maaiitest.com',
+        logoUri: '/images/logo-yato.png',
+        country: 'Hong Kong'
+      }]
     };
   },
   dehydrate: function () {
