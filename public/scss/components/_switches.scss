@@ -1,0 +1,30 @@
+.switch-wrapper{
+	height: rem-calc(70);
+	border-bottom: 1px solid $gray-lightest;
+	display: flex;
+	align-items: center;
+	&:last-child{
+		border: 0;
+	}
+	> label{
+		line-height: rem-calc(20);
+		width: 70%;
+		float: left;
+	}
+	.switch{
+		width: 30%;
+		@include switch($height: rem-calc($switch-height-tiny), $active-color: $success-color);
+		label{
+			width: rem-calc(50);
+			margin: 0;
+			float: right;
+			&:after{
+				width: rem-calc(($switch-height-tiny - 4));
+				height: rem-calc(($switch-height-tiny - 4));
+				top: rem-calc(($switch-height-tiny - ($switch-height-tiny - 4)) / 2);
+				left: rem-calc(($switch-height-tiny - ($switch-height-tiny - 4)) / 2);
+				@include box-shadow(0 1px 1px rgba(0,0,0,0.1));
+			}
+		}
+	}
+}

@@ -38,4 +38,15 @@
             }
         }
     }
+    &--reset{
+        margin: 0 (-($column-gutter));
+        .accordion__item__head{
+            margin: 0;
+        }
+        .accordion__item__body{
+            > *{
+                padding: 0 $column-gutter;
+            }
+        }
+    }
 }

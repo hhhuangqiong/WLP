@@ -39,6 +39,13 @@ var CompanyList = React.createClass({
     return this.props.companies || [];
   },
   render: function() {
+
+    // $(document).foundation({
+    //   equalizer : {
+    //     equalize_on_stack: true
+    //   }
+    // });
+
     return (
       <div className="company-sidebar">
         <nav className="top-bar company-sidebar__search" data-topbar role="navigation">
@@ -57,7 +64,7 @@ var CompanyList = React.createClass({
   renderCompanyListItem: function(company) {
 
     let href = `/admin/companies/${company.carrierId}/settings/profile`;
-
+    
     let logo = !!company.logo ? `/data/${company.logo}` : '/images/logo-yato.png';
 
     return (

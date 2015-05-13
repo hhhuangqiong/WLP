@@ -4,6 +4,7 @@
 theme setting
 *********************************************/
 //main body color
+$body-font-color: #414651;
 $body-bg-color-1: #e7e7e7;
 $body-bg-color-2: rgba(0,0,0,0.1);
 
@@ -18,6 +19,7 @@ $gray-dark: #666;
 $gray: #999;
 $gray-light: #bbb;
 $gray-lighter: #ddd;
+$gray-lightest: #efefef;
 
 //link
 $link-function-factor: -50%;
@@ -68,6 +70,7 @@ $accordion-item-link-color: #8d929a;
 //panels
 $panels-h1-font-size: rem-calc(40);
 $panels-h4-font-size: rem-calc(20);
+$panels-h5-font-size: rem-calc(16);
 $panels-border-radius: rem-calc(10);
 $panels-addon-title-color: #fff;
 $panels-addon-title-bg-color: $brand-addon;
@@ -93,3 +96,6 @@ $dropdown-divider-lightness: 0%;
 //company switcher
 $company-switcher-width: 270px;
 $company-switcher-bg-color: $dropdown-bg-color;
+
+//swtich
+$switch-height-tiny: 24px;

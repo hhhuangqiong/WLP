@@ -227,11 +227,11 @@ var CompanyProfile = React.createClass({
                     <div className="large-9 columns">
                       <label>company type</label>
                     </div>
-                    <div className="large-15 columns">
-                      <ul className="button-switcher">
+                    <div className="large-10 columns left">
+                      <ul className="button-group round even-2">
                         <li>
                           <a
-                            className={classNames('button-switcher__button', {active: !this.state.reseller})}
+                            className={classNames('button', {active: !this.state.reseller})}
                             onClick={_.bindKey(this, '_handleSetReseller', false)}
                             >
                             default
@@ -240,7 +240,7 @@ var CompanyProfile = React.createClass({
                         </li>
                         <li>
                           <a
-                            className={classNames('button-switcher__button', {active: this.state.reseller})}
+                            className={classNames('button', {active: this.state.reseller})}
                             onClick={_.bindKey(this, '_handleSetReseller', true)}
                             >
                             reseller
@@ -265,13 +265,13 @@ var CompanyProfile = React.createClass({
                     <div className="large-9 columns">
                       <label>service type</label>
                     </div>
-                    <div className="large-15 columns">
-                      <ul className="button-switcher">
+                    <div className="large-10 columns left">
+                      <ul className="button-group round even-2">
                         <li>
-                          <a className={classNames('button-switcher__button', {active: this.isWhiteLabel()})}>whitelabel</a>
+                          <a className={classNames('button', {active: this.isWhiteLabel()})}>whitelabel</a>
                         </li>
                         <li>
-                          <a className={classNames('button-switcher__button', {active: this.isSDK()})}>sdk</a>
+                          <a className={classNames('button', {active: this.isSDK()})}>sdk</a>
                         </li>
                       </ul>
                     </div>
@@ -366,16 +366,16 @@ var CompanyProfile = React.createClass({
             <div className="row">
               <div className="large-24 columns">
                 <div className="panel--addon__title">
-                  <h6>contacts</h6>
+                  <h5>contacts</h5>
                 </div>
                 <div className="panel--addon__body">
                   <ul className="accordion">
                     <InfoBlock title="Business contact">
                         <div className="row">
-                          <div className="large-9 columns">
+                          <div className="large-7 columns">
                             <label>name</label>
                           </div>
-                          <div className="large-15 columns">
+                          <div className="large-17 columns">
                             <input className="radius"
                               type="text" name="bc-name"
                               value={this.state.businessContact.name}
@@ -384,10 +384,10 @@ var CompanyProfile = React.createClass({
                           </div>
                         </div>
                         <div className="row">
-                          <div className="large-9 columns">
+                          <div className="large-7 columns">
                             <label>phone</label>
                           </div>
-                          <div className="large-15 columns">
+                          <div className="large-17 columns">
                             <input className="radius"
                               type="text" name="bc-phone"
                               value={this.state.businessContact.phone}
@@ -396,10 +396,10 @@ var CompanyProfile = React.createClass({
                           </div>
                         </div>
                         <div className="row">
-                          <div className="large-9 columns">
+                          <div className="large-7 columns">
                             <label>email</label>
                           </div>
-                          <div className="large-15 columns">
+                          <div className="large-17 columns">
                             <input className="radius"
                               type="text" name="bc-email"
                               value={this.state.businessContact.email}
@@ -410,10 +410,10 @@ var CompanyProfile = React.createClass({
                     </InfoBlock>
                     <InfoBlock title="Technical contact">
                         <div className="row">
-                          <div className="large-9 columns">
+                          <div className="large-7 columns">
                             <label>name</label>
                           </div>
-                          <div className="large-15 columns">
+                          <div className="large-17 columns">
                             <input className="radius"
                               type="text" name="tc-name"
                               value={this.state.technicalContact.name}
@@ -422,10 +422,10 @@ var CompanyProfile = React.createClass({
                           </div>
                         </div>
                         <div className="row">
-                          <div className="large-9 columns">
+                          <div className="large-7 columns">
                             <label>phone</label>
                           </div>
-                          <div className="large-15 columns">
+                          <div className="large-17 columns">
                             <input className="radius"
                               type="text" name="tc-phone"
                               value={this.state.technicalContact.phone}
@@ -434,10 +434,10 @@ var CompanyProfile = React.createClass({
                           </div>
                         </div>
                         <div className="row">
-                          <div className="large-9 columns">
+                          <div className="large-7 columns">
                             <label>email</label>
                           </div>
-                          <div className="large-15 columns">
+                          <div className="large-17 columns">
                             <input className="radius"
                               type="text" name="tc-email"
                               value={this.state.technicalContact.email}
@@ -448,10 +448,10 @@ var CompanyProfile = React.createClass({
                     </InfoBlock>
                     <InfoBlock title="7 x 24 contact">
                         <div className="row">
-                          <div className="large-9 columns">
+                          <div className="large-7 columns">
                             <label>name</label>
                           </div>
-                          <div className="large-15 columns">
+                          <div className="large-17 columns">
                             <input className="radius"
                               type="text" name="sc-name"
                               value={this.state.supportContact.name}
@@ -460,10 +460,10 @@ var CompanyProfile = React.createClass({
                           </div>
                         </div>
                         <div className="row">
-                          <div className="large-9 columns">
+                          <div className="large-7 columns">
                             <label>phone</label>
                           </div>
-                          <div className="large-15 columns">
+                          <div className="large-17 columns">
                             <input className="radius"
                               type="text" name="sc-phone"
                               value={this.state.supportContact.phone}
@@ -472,10 +472,10 @@ var CompanyProfile = React.createClass({
                           </div>
                         </div>
                         <div className="row">
-                          <div className="large-9 columns">
+                          <div className="large-7 columns">
                             <label>email</label>
                           </div>
-                          <div className="large-15 columns">
+                          <div className="large-17 columns">
                             <input className="radius"
                               type="text" name="sc-email"
                               value={this.state.supportContact.email}

@@ -54,6 +54,7 @@
                 width: auto;
                 min-width: 80%;
                 max-width: 80%;
+                margin-top: rem-calc(5);
                 @include border-radius($global-radius $global-radius);
                 @include box-shadow(0 30px 40px rgba(0, 0, 0, 0.2));
                 @media #{$medium-up}{
@@ -95,7 +96,6 @@
                     width: rem-calc($company-switcher-width);
                     right: auto !important;
                     padding: rem-calc(20);
-                    margin-top: rem-calc(5);
                     margin-left: rem-calc(- $company-switcher-width/2);
                     left: 50%;
                     background: $company-switcher-bg-color;
@@ -132,12 +132,12 @@
                     a{
                         color: $topbar-inner-link-color;
                         background: $topbar-inner-link-bg-color !important;
+                        &.active{
+                            color: $topbar-inner-link-color-active;
+                        }
                     }
                     &:before {
                         display: none;
-                    }
-                    &:active{
-                        color: $topbar-inner-link-color-active;
                     }
                 }
                 &.tab--inverted{

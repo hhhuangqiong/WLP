@@ -13,17 +13,22 @@
     }
     h4 {
         font-size: $panels-h4-font-size;
-        ;
+    }
+    h5 {
+        font-size: $panels-h5-font-size;
     }
     //default panel body & title
     &__title,
     &__body {
         padding: $column-gutter;
     }
-    &__title {
-        border-bottom: 1px solid #eee;
+    &__body{
+        border-top: 1px solid #eee;
+        &__subtitle{
+          padding: 0 0 $column-gutter;  
+        }
     }
-    [class*="__title"]{
+    [class^="panel"][class$="__title"]{
         @include border-radius($global-radius $global-radius 0 0);
     }
     //for prelogin pages
