@@ -38,8 +38,7 @@
             }
         }
     }
-    &--reset{
-        margin: 0 (-($column-gutter));
+    &.margin-offset{
         .accordion__item__head{
             margin: 0;
         }

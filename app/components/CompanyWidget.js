@@ -33,39 +33,51 @@ var CompanyWidget = React.createClass({
     return (
       <form ref="companyFrom">
         <input type="hidden" name="_id" value={this.props._id} />
-        <div className="large-15 large-centered columns">
+        <div className="large-14 large-centered columns">
           <div className="panel">
             <div className="row">
               <div className="large-24 columns">
                 <div className="panel__title">
-                  <ul className="tab-panel row">
-                    <li className={classNames('left', {active: this.state.currentTab == 'overview'})} onClick={_.bindKey(this, '_handleTabChange', 'overview')}>overivew</li>
-                    <li className={classNames('left', {active: this.state.currentTab == 'stores'})} onClick={_.bindKey(this, '_handleTabChange', 'stores')}>stores</li>
-                    <li className={classNames('left', {active: this.state.currentTab == 'calls'})} onClick={_.bindKey(this, '_handleTabChange', 'calls')}>calls</li>
-                    <li className={classNames('left', {active: this.state.currentTab == 'im'})} onClick={_.bindKey(this, '_handleTabChange', 'im')}>im</li>
+                  <ul className="tab margin-bottom-reset">
+                    <li className="tab__title">
+                      <a className={classNames({active: this.state.currentTab == 'overview'})} onClick={_.bindKey(this, '_handleTabChange', 'overview')}>overivew</a>
+                    </li>
+                    <li className="tab__title">
+                      <a className={classNames({active: this.state.currentTab == 'stores'})} onClick={_.bindKey(this, '_handleTabChange', 'stores')}>stores</a>
+                    </li>
+                    <li className="tab__title">
+                      <a className={classNames({active: this.state.currentTab == 'calls'})} onClick={_.bindKey(this, '_handleTabChange', 'calls')}>calls</a>
+                    </li>
+                    <li className="tab__title">
+                      <a className={classNames({active: this.state.currentTab == 'im'})} onClick={_.bindKey(this, '_handleTabChange', 'im')}>im</a>
+                    </li>
                   </ul>
                 </div>
+                <div className="panel__body">
+                  <div className="row">
+                    <OverviewWidget
+                      isHidden={this.state.currentTab != 'overview'}
+                      widgets={this.props.widgets}
+                      onDataChange={_.bindKey(this, '_handleInputChange', 'overview')}
+                    />
+                    <StoresWidget
+                      isHidden={this.state.currentTab != 'stores'}
+                      widgets={this.props.widgets}
+                      onDataChange={_.bindKey(this, '_handleInputChange', 'stores')}
+                    />
+                    <CallsWidget
+                      isHidden={this.state.currentTab != 'calls'}
+                      widgets={this.props.widgets}
+                      onDataChange={_.bindKey(this, '_handleInputChange', 'calls')}
+                    />
+                    <IMWidget
+                      isHidden={this.state.currentTab != 'im'}
+                      widgets={this.props.widgets}
+                      onDataChange={_.bindKey(this, '_handleInputChange', 'im')}
+                    />
+                  </div>
+                </div>
               </div>
-              <OverviewWidget
-                isHidden={this.state.currentTab != 'overview'}
-                widgets={this.props.widgets}
-                onDataChange={_.bindKey(this, '_handleInputChange', 'overview')}
-              />
-              <StoresWidget
-                isHidden={this.state.currentTab != 'stores'}
-                widgets={this.props.widgets}
-                onDataChange={_.bindKey(this, '_handleInputChange', 'stores')}
-              />
-              <CallsWidget
-                isHidden={this.state.currentTab != 'calls'}
-                widgets={this.props.widgets}
-                onDataChange={_.bindKey(this, '_handleInputChange', 'calls')}
-              />
-              <IMWidget
-                isHidden={this.state.currentTab != 'im'}
-                widgets={this.props.widgets}
-                onDataChange={_.bindKey(this, '_handleInputChange', 'im')}
-              />
             </div>
           </div>
         </div>

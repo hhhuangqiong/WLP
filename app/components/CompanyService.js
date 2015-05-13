@@ -152,6 +152,8 @@ var CompanyService = React.createClass({
                         type="text" name="application-id" placeholder="application ID" readOnly
                       />
                     </div>
+                  </div>
+                  <div className="row">
                     <div className="large-9 columns">
                       <label>developer key</label>
                     </div>
@@ -160,6 +162,8 @@ var CompanyService = React.createClass({
                         type="text" name="developer-key" placeholder="developer key" readOnly
                       />
                     </div>
+                  </div>
+                  <div className="row">
                     <div className="large-9 columns">
                       <label>developer secret</label>
                     </div>
@@ -179,20 +183,18 @@ var CompanyService = React.createClass({
                       <a className={classNames({active: this.state.currentTab == 'android'})} onClick={_.bindKey(this, '_handleTabChange', 'android')}>Android</a>
                     </li>
                   </ul>
-                  <div className="row">
-                    <IOSApplication
-                      isHidden={this.state.currentTab != 'ios'}
-                      applicationName={this.state.serviceConfig.applications.ios.name}
-                      onDataChange={_.bindKey(this, '_handleApplicationInputChange', 'ios')}
-                      onDataChanged={_.bindKey(this, '_handleApplicationInputBlur', 'ios')}
-                    />
-                    <AndroidApplication
-                      isHidden={this.state.currentTab != 'android'}
-                      applicationName={this.state.serviceConfig.applications.android.name}
-                      onDataChange={_.bindKey(this, '_handleApplicationInputChange', 'android')}
-                      onDataChanged={_.bindKey(this, '_handleApplicationInputBlur', 'android')}
-                    />
-                  </div>
+                  <IOSApplication
+                    isHidden={this.state.currentTab != 'ios'}
+                    applicationName={this.state.serviceConfig.applications.ios.name}
+                    onDataChange={_.bindKey(this, '_handleApplicationInputChange', 'ios')}
+                    onDataChanged={_.bindKey(this, '_handleApplicationInputBlur', 'ios')}
+                  />
+                  <AndroidApplication
+                    isHidden={this.state.currentTab != 'android'}
+                    applicationName={this.state.serviceConfig.applications.android.name}
+                    onDataChange={_.bindKey(this, '_handleApplicationInputChange', 'android')}
+                    onDataChanged={_.bindKey(this, '_handleApplicationInputBlur', 'android')}
+                  />
                 </div>
               </div>
             </div>
@@ -205,8 +207,8 @@ var CompanyService = React.createClass({
                 <div className="panel--addon__title">
                   <h5>features list</h5>
                 </div>
-                <div className="panel--addon__body">
-                  <ul className="accordion accordion--reset">
+                <div className="panel--addon__body padding-bottom-reset">
+                  <ul className="accordion margin-offset">
                     {_.map(featureList[this.getServiceType()], (feature, key)=>{
                       return (
                         <InfoBlock title={key}>

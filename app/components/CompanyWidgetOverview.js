@@ -19,78 +19,77 @@ var CompanyWidgetOverview = React.createClass({
     return (
       <div className={classNames({'hide': this.props.isHidden})}>
         <div className="large-24 columns">
-          <p>overview</p>
-        </div>
-        <div className="large-24 columns">
-          <div className="large-9 columns">
-            <label>widget 1</label>
+          <div className="row">
+            <div className="large-9 columns">
+              <label>widget 1</label>
+            </div>
+            <div className="large-15 columns">
+              <input className="radius"
+                type="text" name="overview-widget-1" placeholder="url"
+                value={this.state['widget-0']}
+                onChange={_.bindKey(this, '_handleInputChange', 'widget-0')}
+              />
+            </div>
           </div>
-          <div className="large-15 columns">
-            <input
-              type="text" name="overview-widget-1" placeholder="url"
-              value={this.state['widget-0']}
-              onChange={_.bindKey(this, '_handleInputChange', 'widget-0')}
-            />
+          <div className="row">
+            <div className="large-9 columns">
+              <label>widget 2</label>
+            </div>
+            <div className="large-15 columns">
+              <input className="radius"
+                type="text" name="overview-widget-2" placeholder="url"
+                value={this.state['widget-1']}
+                onChange={_.bindKey(this, '_handleInputChange', 'widget-1')}
+              />
+            </div>
           </div>
-        </div>
-        <div className="large-24 columns">
-          <div className="large-9 columns">
-            <label>widget 2</label>
+          <div className="row">
+            <div className="large-9 columns">
+              <label>widget 3</label>
+            </div>
+            <div className="large-15 columns">
+              <input className="radius"
+                type="text" name="overview-widget-3" placeholder="url"
+                value={this.state['widget-2']}
+                onChange={_.bindKey(this, '_handleInputChange', 'widget-2')}
+              />
+            </div>
           </div>
-          <div className="large-15 columns">
-            <input
-              type="text" name="overview-widget-2" placeholder="url"
-              value={this.state['widget-1']}
-              onChange={_.bindKey(this, '_handleInputChange', 'widget-1')}
-            />
+          <div className="row">
+            <div className="large-9 columns">
+              <label>widget 4</label>
+            </div>
+            <div className="large-15 columns">
+              <input className="radius"
+                type="text" name="overview-widget-4" placeholder="url"
+                value={this.state['widget-3']}
+                onChange={_.bindKey(this, '_handleInputChange', 'widget-3')}
+              />
+            </div>
           </div>
-        </div>
-        <div className="large-24 columns">
-          <div className="large-9 columns">
-            <label>widget 3</label>
+          <div className="row">
+            <div className="large-9 columns">
+              <label>widget 5</label>
+            </div>
+            <div className="large-15 columns">
+              <input className="radius"
+                type="text" name="overview-widget-5" placeholder="url"
+                value={this.state['widget-4']}
+                onChange={_.bindKey(this, '_handleInputChange', 'widget-4')}
+              />
+            </div>
           </div>
-          <div className="large-15 columns">
-            <input
-              type="text" name="overview-widget-3" placeholder="url"
-              value={this.state['widget-2']}
-              onChange={_.bindKey(this, '_handleInputChange', 'widget-2')}
-            />
-          </div>
-        </div>
-        <div className="large-24 columns">
-          <div className="large-9 columns">
-            <label>widget 4</label>
-          </div>
-          <div className="large-15 columns">
-            <input
-              type="text" name="overview-widget-4" placeholder="url"
-              value={this.state['widget-3']}
-              onChange={_.bindKey(this, '_handleInputChange', 'widget-3')}
-            />
-          </div>
-        </div>
-        <div className="large-24 columns">
-          <div className="large-9 columns">
-            <label>widget 5</label>
-          </div>
-          <div className="large-15 columns">
-            <input
-              type="text" name="overview-widget-5" placeholder="url"
-              value={this.state['widget-4']}
-              onChange={_.bindKey(this, '_handleInputChange', 'widget-4')}
-            />
-          </div>
-        </div>
-        <div className="large-24 columns">
-          <div className="large-9 columns">
-            <label>widget 6</label>
-          </div>
-          <div className="large-15 columns">
-            <input
-              type="text" name="overview-widget-6" placeholder="url"
-              value={this.state['widget-5']}
-              onChange={_.bindKey(this, '_handleInputChange', 'widget-5')}
-            />
+          <div className="row">
+            <div className="large-9 columns">
+              <label>widget 6</label>
+            </div>
+            <div className="large-15 columns">
+              <input className="radius"
+                type="text" name="overview-widget-6" placeholder="url"
+                value={this.state['widget-5']}
+                onChange={_.bindKey(this, '_handleInputChange', 'widget-5')}
+              />
+            </div>
           </div>
         </div>
       </div>
