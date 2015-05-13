@@ -59,6 +59,9 @@
       }]
     }
   },
+  "display": {
+    "dateFormat": "YYYY-MM-DD"
+  },
   "localhost": {
     "baseUrl": "/"
   },

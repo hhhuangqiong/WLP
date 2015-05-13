@@ -1,6 +1,7 @@
-var logger  = require('winston');
-//var nock    = require('nock');
+import moment from 'moment';
+
 var Q       = require('q');
+var logger  = require('winston');
 var request = require('superagent');
 var util    = require('util');
 
@@ -40,11 +41,21 @@ export default class UsersRequest extends BaseRequest {
     super(opts);
   }
 
-  getUsers(queries, cb) {
-    logger.debug('get users from %s', queries.carrierId);
-
+  /**
+   * get registered users from MUMS
+   *
+   * @param carrierId {String}
+   * @param queries {Object} {fromTime: ISO8601 String, toTime: ISO8601 String, pageNumberIndex: Int}
+   * @param cb
+   */
+  getUsers(carrierId, queries, cb) {
     var base = this.opts.baseUrl;
-    var url = util.format(this.opts.methods.LIST.URL, queries.carrierId);
+    var url = util.format(this.opts.methods.LIST.URL, carrierId);
+
+    queries.fromTime = moment(queries.fromTime).startOf('day').toISOString();
+    queries.toTime = moment(queries.toTime).endOf('day').toISOString();
+
+    logger.debug('get users from %s with %j', carrierId, queries, {});
 
     request
       .get(util.format('%s%s', base, url))
@@ -58,38 +69,18 @@ export default class UsersRequest extends BaseRequest {
       });
   }
 
-  getUser(params, cb) {
-    var carrierId = params.carrierId;
-    var username = params.username;
-
+  /**
+   * get a registered user's detail from MUMS
+   *
+   * @param carrierId {String}
+   * @param username {String}
+   * @param cb
+   */
+  getUser(carrierId, username, cb) {
     var base = this.opts.baseUrl;
     var url = util.format(this.opts.methods.DETAILS.URL, carrierId, username);
 
-    //nock(base)
-      //.get(url)
-      //.delay(1000)
-      //.reply(200, {
-        //"carrierId": `${carrierId}`,
-        //"userDetails": {
-          //"username": "+85291111111",
-          //"pin": "1lc3cvds2",
-          //"displayName": `${username}`,
-          //"creationDate": "2015-01-09T16:00:00Z",
-          //"verified": true,
-          //"email": "demo-user@maaii.com",
-          //"birthDate": "1970-01-01",
-          //"gender": "male",
-          //"countryCode": "us",
-          //"devices": [
-            //{
-              //"plaform": "iOS",
-              //"appVersionNumber": "2.4.0",
-              //"appLanguage": "en"
-            //}
-          //],
-          //"accountStatus": "ACTIVE"
-        //}
-      //});
+    logger.debug('get user from %s with username %s', carrierId, username);
 
     request
       .get(util.format('%s%s', base, url))
@@ -100,20 +91,20 @@ export default class UsersRequest extends BaseRequest {
         if (res.status >= 400) return cb(this.handleError(res.body.err));
         cb(null, res.body);
       });
-
-    logger.debug('get user from %s with username %s', carrierId, username);
   }
 
+  /**
+   * suspend a registered user from MUMS
+   *
+   * @param carrierId {String}
+   * @param username {String}
+   * @param cb
+   */
   suspendUser(carrierId, username, cb) {
     var base = this.opts.baseUrl;
     var url = util.format(this.opts.methods.SUSPENSION.URL, carrierId, username);
 
-    //nock(base)
-      //.post(url)
-      //.delay(1000)
-      //.reply(200, {
-        //"carrierId": `${carrierId}`
-      //});
+    logger.debug('suspend user from %s with username %s', carrierId, username);
 
     request
       .post(util.format('%s%s', base, url))
@@ -126,16 +117,18 @@ export default class UsersRequest extends BaseRequest {
       });
   }
 
+  /**
+   * reactivate a registered user from MUMS
+   *
+   * @param carrierId {String}
+   * @param username {String}
+   * @param cb
+   */
   reactivateUser(carrierId, username, cb) {
     var base = this.opts.baseUrl;
     var url = util.format(this.opts.methods.REACTIVATE.URL, carrierId, username);
 
-    nock(base)
-      .delete(url)
-      .delay(1000)
-      .reply(200, {
-        "carrierId": `${carrierId}`
-      });
+    logger.debug('reactivate user from %s with username %s', carrierId, username);
 
     request
       .del(util.format('%s%s', base, url))
@@ -148,16 +141,18 @@ export default class UsersRequest extends BaseRequest {
       });
   }
 
+  /**
+   * terminate a registered user from MUMS
+   *
+   * @param carrierId
+   * @param username
+   * @param cb
+   */
   terminateUser(carrierId, username, cb) {
     var base = this.opts.baseUrl;
     var url = util.format(this.opts.methods.TERMINATE.URL, carrierId, username);
 
-    //nock(base)
-      //.delete(url)
-      //.delay(1000)
-      //.reply(200, {
-        //"carrierId": `${carrierId}`
-      //});
+    logger.debug('terminate user from %s with username %s', carrierId, username);
 
     request
       .del(util.format('%s%s', base, url))

@@ -1,3 +1,6 @@
+import moment from 'moment';
+import nconf from 'nconf';
+
 var _ = require('lodash');
 var Q = require('q');
 
@@ -39,9 +42,9 @@ export default class Api {
   }
 
   getCalls(req, res) {
-    req.checkQuery('carrierId').notEmpty();
-    req.checkQuery('from').notEmpty();
-    req.checkQuery('to').notEmpty();
+    req.checkQuery('carrierId').notEmpty().isString();
+    req.checkQuery('from').notEmpty().isString();
+    req.checkQuery('to').notEmpty().isInt();
 
     if (req.validationErrors())
       return res.status(400).json({
@@ -122,15 +125,24 @@ export default class Api {
 
   listEndUsers(req, res) {
     req.checkParams('carrierId').notEmpty();
+    req.checkQuery('fromTime').notEmpty();
+    req.checkQuery('toTime').notEmpty();
+    req.checkQuery('pageNumberIndex').notEmpty().isInt();
 
-    if (req.validationErrors())
+    let carrierId = req.params.carrierId;
+    let queries = req.query;
+
+    var DateFormatErrors = function() {
+      let dateFormat = nconf.get('display:dateFormat');
+      return !moment(queries.fromTime, dateFormat).isValid() || !moment(queries.toTime, dateFormat).isValid();
+    };
+
+    if (req.validationErrors() || DateFormatErrors())
       return res.status(400).json({
         error: "missing/invalid mandatory field(s)."
       });
 
-    var params = req.params;
-
-    this.endUserRequest.getUsers(params, (err, result) => {
+    this.endUserRequest.getUsers(carrierId, queries, (err, result) => {
       if (err)
         return res.status(err.status).json({
           error: err
