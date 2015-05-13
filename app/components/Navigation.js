@@ -1,6 +1,8 @@
 import React from 'react';
 import {NavLink} from 'fluxible-router';
 
+import CompanySwitcher from './CompanySwitcher';
+
 var Navigation = React.createClass({
   render: function() {
     return (
@@ -18,20 +20,7 @@ var Navigation = React.createClass({
             <NavLink routeName="about">
               <i className="icon-companymenu"/>
             </NavLink>
-            <ul className="dropdown dropdown--company-switcher">
-              <li className="navigation-bar__item">
-                <a href="/logout"><img src="/images/logo-yato.png"/></a>
-              </li>
-              <li className="navigation-bar__item">
-                <a href="/logout"><img src="/images/logo-yato.png"/></a>
-              </li>
-              <li className="navigation-bar__item">
-                <a href="/logout"><img src="/images/logo-yato.png"/></a>
-              </li>
-              <li className="navigation-bar__item">
-                <a href="/logout"><img src="/images/logo-yato.png"/></a>
-              </li>
-            </ul>
+            <CompanySwitcher />
           </li>
           <li className="has-dropdown not-click navigation-bar__item">
             <a>hi, username

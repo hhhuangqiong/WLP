@@ -26,6 +26,31 @@ var Sidebar = React.createClass({
           name: 'setting',
           icon: 'icon-menusetting',
           link: '/admin'
+        },
+        {
+          name: 'End users',
+          icon: 'icon-menuenduser',
+          link: '/w/maaiitest.com/end-users'
+        },
+        {
+          name: 'Top up',
+          icon: 'icon-menutopup',
+          link: '/w/maaiitest.com/top-up'
+        },
+        {
+          name: 'Calls',
+          icon: 'icon-menucalls',
+          link: '/w/maaiitest.com/calls'
+        },
+        {
+          name: 'IM',
+          icon: 'icon-menuim',
+          link: '/w/maaiitest.com/im'
+        },
+        {
+          name: 'Store',
+          icon: 'icon-menustore',
+          link: '/w/maaiitest.com/vsf'
         }]
     }
   },

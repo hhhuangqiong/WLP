@@ -9,6 +9,8 @@ import debug from 'debug';
 import env from '../utils/env';
 
 import showCompanies from '../actions/showCompanies';
+import {fetchEndUsers} from '../actions/fetchEndUsers';
+import {fetchEndUser} from '../actions/fetchEndUsers';
 
 const bootstrapDebug = debug('wlp:routes');
 
@@ -106,6 +108,32 @@ export default {
       //if (env.CLIENT) {
       //  done();
       //}
+    }
+  },
+
+  endUsers: {
+    handler: require('../components/EndUsers'),
+    path: '/w/:carrierId/end-users',
+    method: 'get',
+    page: 'end-users',
+    action: function (context, payload, done) {
+      let carrierId = payload.get('params').get('carrierId');
+      context.dispatch('UPDATE_PAGE_TITLE', { pageTitle: 'End users' });
+      context.executeAction(fetchEndUsers, { carrierId }, done);
+    }
+  },
+
+  endUsersDetails: {
+    handler: require('../components/EndUsers'),
+    path: '/w/:carrierId/end-users/:username',
+    method: 'get',
+    page: 'end-users-details',
+    action: function (context, payload, done) {
+      let username = payload.get('params').get('username');
+      let carrierId = payload.get('params').get('carrierId');
+
+      context.dispatch('UPDATE_PAGE_TITLE', { pageTitle: 'End users' });
+      context.executeAction(fetchEndUser, {carrierId, username}, done);
     }
   }
 };
