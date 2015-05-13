@@ -66,6 +66,9 @@
       }]
     }
   },
+  "display": {
+    "dateFormat": "YYYY-MM-DD"
+  },
   "localhost": {
     "baseUrl": "http://localhost:3000"
   },
