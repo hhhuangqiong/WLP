@@ -13,11 +13,8 @@ var App = React.createClass({
   render: function() {
     return (
       <div>
-        <p>
-
-          <Link to="about">About</Link>
-          <RouteHandler />
-        </p>
+        <Link to="about">About</Link>
+        <RouteHandler />
       </div>
     );
   }
