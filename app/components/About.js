@@ -11,7 +11,6 @@ var About = React.createClass({
     return (
       <div>
         <p>About component!</p>
-        <Link to="temp">Temporary home page</Link>
       </div>
     );
   }

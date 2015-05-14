@@ -1,76 +1,81 @@
-import React from 'react';
-import {NavLink} from 'fluxible-router';
 import _ from 'lodash';
 import debug from 'debug';
+import React from 'react';
+import {Link} from 'react-router';
+import {connectToStores} from 'fluxible/addons';
+
+import AuthStore from '../stores/AuthStore';
+import SignInStore from '../stores/SignInStore';
+
+import signIn from '../actions/signIn';
 
 const bootstrapDebug = debug('wlp:components:signin');
 
 class SignIn extends React.Component {
   constructor(props, context) {
     super(props, context);
-    this.state = {
-      username: '',
-      password: '',
-      rememberMe: false
-    }
   }
 
-  _onSubmit(e) {
-    // TODO: send post request
-  }
+  handleSignIn(e){
+    e.preventDefault();
 
-  _handleChange(stateName, event) {
-    debug(stateName, event);
-    // es6 computed property name
-    this.setState({
-      [stateName]: event.target.type == 'checkbox' ? event.target.checked : event.target.value
+    let username = this.refs.username.getDOMNode().value.trim();
+    let password = this.refs.password.getDOMNode().value.trim();
+    let rememberMe = this.refs.rememberMe.getDOMNode().checked;
+
+    this.context.executeAction(signIn, {
+      username: username,
+      password: password,
+      rememberMe: rememberMe
     });
   }
 
   render() {
     return (
-          <form method="POST" action="/login" onSubmit={this._onSubmit}>
-            <div className="panel--extra__title row">
-              <div className="large-offset-1 large-22 columns">
-                <h1 className="text-center">Sign In</h1>
+      <form method="POST" onSubmit={this.handleSignIn.bind(this)}>
+        <div className="panel--extra__title row">
+          <div className="large-offset-1 large-22 columns">
+            <h1 className="text-center">Sign In</h1>
+          </div>
+        </div>
+        <div className="panel--extra__body row">
+          <div className="large-offset-1 large-22 columns">
+            <div className="row">
+              <input ref="username" className="radius" type="text" name="username" placeholder="email" />
+            </div>
+            <div className="row">
+              <input ref="password" className="radius" type="password" name="password" placeholder="password" />
+            </div>
+            <div className="row">
+              <Link to="about">Forgot password?</Link>
+            </div>
+            <div className="row">
+              <div className="large-16 columns">
+                <input ref="rememberMe" type="checkbox" name="rememberMe" />
+                <label>Remember me</label>
+              </div>
+              <div className="large-8 columns">
+                <button className="button--primary round right" onClick={this.handleSignIn.bind(this)}>sign in</button>
               </div>
             </div>
-            <div className="panel--extra__body row">
-              <div className="large-offset-1 large-22 columns">
-                <div className="row">
-                  <input className="radius"
-                    type="text" name="username" placeholder="email"
-                    value={this.state.username}
-                    onChange={_.bindKey(this, '_handleChange', 'username')}
-                  />
-                </div>
-                <div className="row">
-                  <input className="radius"
-                    type="password" name="password" placeholder="password"
-                    value={this.state.password}
-                    onChange={_.bindKey(this, '_handleChange', 'password')}
-                  />
-                </div>
-                <div className="row">
-                  <NavLink routeName="forgot">Forgot password?</NavLink>
-                </div>
-                <div className="row">
-                  <div className="large-16 columns">
-                    <input
-                      type="checkbox" name="rememberMe"
-                      onChange={_.bindKey(this, '_handleChange', 'rememberMe')}
-                    />
-                    <label>Remember me</label>
-                  </div>
-                  <div className="large-8 columns">
-                    <button className="button--primary round right" onClick={this._onSubmit}>sign in</button>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </form>
+          </div>
+        </div>
+      </form>
     );
   }
 }
+
+SignIn.contextTypes = {
+  getStore: React.PropTypes.func,
+  executeAction: React.PropTypes.func
+};
+
+SignIn = connectToStores(SignIn, [AuthStore, SignInStore], function (stores, props) {
+  return {
+    numberOfTrial: stores.SignInStore.getNumberOfTrial(),
+    isSigningIn: stores.AuthStore.isSigningIn(),
+    error: stores.AuthStore.getSignInError()
+  };
+});
 
 export default SignIn;

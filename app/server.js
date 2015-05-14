@@ -122,8 +122,9 @@ function initialize(port) {
   server.use(flash());
 
   // Routes
-  // TODO: replace with API
-  server.use(require('./server/routes'));
+  server.use('/api', require('./server/api'));
+  // disabled all the resources for now
+  //server.use(require('./server/routes'));
 
   // TODO export from another file
   var renderApp = function(context, location, cb) {

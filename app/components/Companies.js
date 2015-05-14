@@ -1,5 +1,7 @@
 import React from 'react';
-import {FluxibleMixin} from 'fluxible';
+import FluxibleMixin from 'fluxible/addons/FluxibleMixin';
+
+import AuthMixin from '../utils/AuthMixin';
 
 import CompanyStore from '../stores/CompanyStore';
 
@@ -7,7 +9,7 @@ import Company from './Company';
 import CompanyList from './CompanyList';
 
 var Companies = React.createClass({
-  mixins: [FluxibleMixin],
+  mixins: [FluxibleMixin, AuthMixin],
   statics: {
     storeListeners: [CompanyStore]
   },
