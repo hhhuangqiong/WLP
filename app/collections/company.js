@@ -1,5 +1,3 @@
-'use strict';
-
 var mongoose = require('mongoose');
 var collectionName = 'Company';
 var schema = new mongoose.Schema({
@@ -156,6 +154,18 @@ schema.method('isRootCompany', function() {
 schema.method('getServiceType', function() {
   // regex pattern or indexOf?
   return this.carrierId.indexOf('.maaii.com') > -1 ? 'WL' : 'SDK';
+});
+
+schema.method('getUrlPrefix', function() {
+  if (this.isRootCompany()) {
+    return this.carrierId ? '/a/' + this.carrierId : '/a';
+  }
+
+  if (this.reseller) {
+    return '/r/' + this.carrierId;
+  }
+
+  return '/w/' + this.carrierId;
 });
 
 module.exports = mongoose.model(collectionName, schema);

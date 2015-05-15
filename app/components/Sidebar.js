@@ -1,60 +1,64 @@
 import React from 'react';
 import classnames from 'classnames';
+import {Link} from 'react-router';
+import {connectToStores} from 'fluxible/addons';
 
-import {NavLink} from 'fluxible-router';
+import AuthStore from '../stores/AuthStore';
 
-var Sidebar = React.createClass({
-  getInitialState: function() {
-    return {
-      sections: [
-        {
-          name: 'overview',
-          icon: 'icon-menuoverview',
-          link: '/admin'
-        },
-        {
-          name: 'account',
-          icon: 'icon-menuaccount',
-          link: '/admin'
-        },
-        {
-          name: 'company',
-          icon: 'icon-menucompany',
-          link: '/admin/companies'
-        },
-        {
-          name: 'setting',
-          icon: 'icon-menusetting',
-          link: '/admin'
-        },
-        {
-          name: 'End users',
-          icon: 'icon-menuenduser',
-          link: '/w/maaiitest.com/end-users'
-        },
-        {
-          name: 'Top up',
-          icon: 'icon-menutopup',
-          link: '/w/maaiitest.com/top-up'
-        },
-        {
-          name: 'Calls',
-          icon: 'icon-menucalls',
-          link: '/w/maaiitest.com/calls'
-        },
-        {
-          name: 'IM',
-          icon: 'icon-menuim',
-          link: '/w/maaiitest.com/im'
-        },
-        {
-          name: 'Store',
-          icon: 'icon-menustore',
-          link: '/w/maaiitest.com/vsf'
-        }]
-    }
+let navSections = [
+  {
+    name: 'overview',
+    icon: 'icon-menuoverview',
+    link: '/overview'
   },
-  render: function() {
+  {
+    name: 'account',
+    icon: 'icon-menuaccount',
+    link: '/accounts'
+  },
+  {
+    name: 'company',
+    icon: 'icon-menucompany',
+    link: '/companies'
+  },
+  {
+    name: 'setting',
+    icon: 'icon-menusetting',
+    link: '/settings'
+  },
+  {
+    name: 'End users',
+    icon: 'icon-menuenduser',
+    link: '/end-users'
+  },
+  {
+    name: 'Top up',
+    icon: 'icon-menutopup',
+    link: '/top-up'
+  },
+  {
+    name: 'Calls',
+    icon: 'icon-menucalls',
+    link: '/calls'
+  },
+  {
+    name: 'IM',
+    icon: 'icon-menuim',
+    link: '/im'
+  },
+  {
+    name: 'Store',
+    icon: 'icon-menustore',
+    link: '/vsf'
+  }
+];
+
+class Sidebar extends React.Component{
+  constructor(props, context) {
+    super(props, context);
+  }
+
+  render() {
     return (
       <div
         className={classnames('mainmenu-bar','vertical', {offcanvas: this.props.isOffCanvas})}
@@ -65,20 +69,21 @@ var Sidebar = React.createClass({
           <li>
             <a className="item mainmenu-bar__item" href="#">
               <label>
-              <i><img src="/images/logo-m800.png"/></i>
-              <span>company name</span>
+                <i><img src="/images/logo-m800.png"/></i>
+                <span>company name</span>
               </label>
             </a>
           </li>
-          {this.state.sections.map((section,idx)=>{
+          {navSections.map((section,idx)=>{
+            let href = `${this.props.urlPrefix}/${section.link}`;
             return (
               <li>
-                <NavLink className="item mainmenu-bar__item" href={section.link} key={idx}>
+                <Link className="item mainmenu-bar__item" href={href} key={idx}>
                   <label>
                     <i className={section.icon} />
                     {section.name}
                   </label>
-                </NavLink>
+                </Link>
               </li>
             );
           })}
@@ -86,6 +91,20 @@ var Sidebar = React.createClass({
       </div>
     )
   }
+}
+
+Sidebar.contextTypes = {
+  getStore: React.PropTypes.func,
+  executeAction: React.PropTypes.func
+};
+
+// TODO: we can get navSections in NavStore
+// with fetchData method to acquire accessible sections from server
+Sidebar = connectToStores(Sidebar, [AuthStore], function (stores, props) {
+  return {
+    carrierId: stores.AuthStore.getCarrierId(),
+    urlPrefix: stores.AuthStore.getUserUrlPrefix()
+  };
 });
 
 export default Sidebar;

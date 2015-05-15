@@ -1,9 +1,18 @@
+import _ from 'lodash';
 import express from 'express';
 import passport from 'passport';
 
 import db from './db';
 
 var api = express.Router();
+
+function getAuthUser(user) {
+  return {
+    _id: user._id,
+    carrierId: user.affiliatedCompany.carrierId,
+    urlPrefix: user.affiliatedCompany.getUrlPrefix()
+  };
+};
 
 api.post('/signin', function(req, res, next) {
   passport.authenticate('local', function(err, user, info) {
@@ -26,9 +35,10 @@ api.post('/signin', function(req, res, next) {
       }
 
       let token = req.sessionID;
+      let authUser = getAuthUser(user);
 
       db.createSession(token);
-      return res.json({ token: token });
+      return res.json({ token: token, user: authUser });
     });
   })(req, res, next);
 });
@@ -60,7 +70,7 @@ api.use(validateTokenMiddleware);
 
 // Check if auth token is a valid session
 api.get('/session', function(req, res) {
-  res.sendStatus(200);
+  return res.sendStatus(200);
 });
 
 api.all('*', function(req, res) {

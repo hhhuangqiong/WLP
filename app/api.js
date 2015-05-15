@@ -27,6 +27,7 @@ Api.prototype.signIn = function(username, password, cb) {
           status: res.status
         };
       }
+
       cb(err, res && res.body);
     });
 };

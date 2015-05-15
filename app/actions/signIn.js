@@ -13,14 +13,18 @@ module.exports = function(context, payload, done) {
       return;
     }
     debug('Success');
-    context.dispatch('SIGN_IN_SUCCESS', auth.token);
+    context.dispatch('SIGN_IN_SUCCESS', auth);
     context.cookie.set('token', auth.token);
+    context.cookie.set('user', auth.user._id);
+    context.cookie.set('carrierId', auth.user.carrierId);
+    context.cookie.set('urlPrefix', auth.user.urlPrefix);
     // NOTE: possible race condition here
     // the AuthStore needs to set its state to "authenticated"
     // before the transition
 
-    // TODO: how to determine the identity so as the prefix /w, /r, /admin
-    context.getRouter().transitionTo('/companies');
+    // TODO: change companies to default landing page
+    let destination = `${auth.user.urlPrefix}/companies`;
+    context.getRouter().transitionTo(destination);
     done();
   });
 };

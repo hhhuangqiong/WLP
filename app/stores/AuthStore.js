@@ -15,13 +15,15 @@ var AuthStore = createStore({
 
   initialize: function() {
     this.token = null;
+    this.user = null;
     this.signingIn = false;
     this.signingOut = false;
     this.signInError = null;
   },
 
-  loadSession: function(token) {
-    this.token = token;
+  loadSession: function(auth) {
+    this.token = auth.token;
+    this.user = auth.user;
     this.emitChange();
   },
 
@@ -37,10 +39,11 @@ var AuthStore = createStore({
     this.emitChange();
   },
 
-  signIn: function(token) {
+  signIn: function(auth) {
     this.signingIn = false;
     this.signInError = null;
-    this.token = token;
+    this.token = auth.token;
+    this.user = auth.user;
     this.emitChange();
   },
 
@@ -57,6 +60,7 @@ var AuthStore = createStore({
   signOut: function() {
     this.signingOut = false;
     this.token = null;
+    this.user = null;
     this.emitChange();
   },
 
@@ -66,6 +70,18 @@ var AuthStore = createStore({
 
   getToken: function() {
     return this.token;
+  },
+
+  getUserId: function() {
+    return this.user._id;
+  },
+
+  getUserUrlPrefix: function() {
+    return this.user && this.user.urlPrefix;
+  },
+
+  getCarrierId: function() {
+    return this.user && this.user.carrierId;
   },
 
   isSigningIn: function() {
@@ -83,6 +99,7 @@ var AuthStore = createStore({
   dehydrate: function() {
     return {
       token: this.token,
+      user: this.user,
       signingIn: this.signingIn,
       signingOut: this.signingOut,
       signInError: this.signInError
@@ -91,6 +108,7 @@ var AuthStore = createStore({
 
   rehydrate: function(state) {
     this.token = state.token;
+    this.user = state.user;
     this.signingIn = state.signingIn;
     this.signingOut = state.signingOut;
     this.signInError = state.signInError;
