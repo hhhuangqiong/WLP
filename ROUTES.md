@@ -15,8 +15,8 @@ Pre-login
 ---------
 
 ```
-GET  /signin # sign in form
-POST /signin # where sign in form submitted
+GET  /sign-in # sign in form
+POST /signin # not used yet; where sign in form submitted
 
 # forgot password
 GET  /password/recover

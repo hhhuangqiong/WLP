@@ -1,6 +1,6 @@
 import React from 'react';
 import FluxibleMixin from 'fluxible/addons/FluxibleMixin';
-import {NavLink} from 'fluxible-router';
+import {Link} from 'fluxible-router';
 
 import ApplicationStore from '../stores/ApplicationStore'
 
@@ -24,7 +24,7 @@ var CompanySwitcher = React.createClass({
     let buttons = this.state.companies.map((c) => {
         var href = "/w/" + c.carrierId + "/end-users";
         return <li className="navigation-bar__item" title={c.name} key={c.carrierId}>
-          <NavLink href={href}><img src={c.logoUri}/></NavLink>
+          <Link href={href}><img src={c.logoUri}/></Link>
         </li>
       }
     );

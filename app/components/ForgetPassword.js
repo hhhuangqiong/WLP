@@ -4,8 +4,8 @@ import ValidationMixin from 'react-validation-mixin';
 import Joi from 'joi';
 import Message from './ValidateErrorMsg';
 
-var ForgetPass = React.createClass({
-  displayName: 'ForgetPass',
+var ForgetPassword = React.createClass({
+  displayName: 'ForgetPassword',
   mixins: [ValidationMixin, React.addons.LinkedStateMixin],
   validatorTypes:  {
     email: Joi.string().regex(/^([\w-]+(?:\.[\w-]+)*)@((?:[\w-]+\.)*\w[\w-]{0,66})\.([a-z]{2,6}(?:\.[a-z]{2})?)$/i).label('Email Address')
@@ -71,4 +71,4 @@ var ForgetPass = React.createClass({
     );
   }
 });
-export default ForgetPass;
+export default ForgetPassword;

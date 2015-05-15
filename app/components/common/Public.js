@@ -1,11 +1,11 @@
-import React  from 'react';
-import {Link} from 'react-router';
-import AuthMixin from '../../Utils/AuthMixin';
+import React from 'react';
 
-const TemporaryMain = React.createClass({
-  mixins: [AuthMixin],
+import {RouteHandler} from 'react-router';
 
+var Public = React.createClass({
   render: function() {
+    console.log('props', this.props, 'state', this.state);
+
     return (
       <div>
         <nav className="top-bar public-header" data-topbar role="navigation">
@@ -20,7 +20,7 @@ const TemporaryMain = React.createClass({
             <div className="panel panel--extra">
               <div className="row">
                 <div className="large-24 columns">
-                  <Link to="about">About page</Link>
+                  <RouteHandler/>
                 </div>
               </div>
             </div>
@@ -28,7 +28,7 @@ const TemporaryMain = React.createClass({
         </div>
       </div>
     );
-  },
+  }
 });
 
-export default TemporaryMain;
+export default Public;

@@ -1,5 +1,5 @@
 'use strict';
-var debug = require('debug')('app:loadSession');
+var debug = require('debug')('wlp:loadSession');
 
 module.exports = function(context, payload, done) {
   debug('Started');

@@ -7,9 +7,9 @@ module.exports = {
         .getActionContext().getStore(AuthStore).isAuthenticated();
 
       if (!isAuthenticated) {
-        transition.redirect('/signin');
+        // TODO externalize the path
+        transition.redirect('/sign-in');
       }
     }
   }
 };
-

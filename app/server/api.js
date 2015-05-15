@@ -14,7 +14,7 @@ function getAuthUser(user) {
   };
 };
 
-api.post('/signin', function(req, res, next) {
+api.post('/sign-in', function(req, res, next) {
   passport.authenticate('local', function(err, user, info) {
     let signInError = function() {
       return res.status(401).json({

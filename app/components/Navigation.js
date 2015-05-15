@@ -1,13 +1,16 @@
-import React from 'react';
-import {NavLink} from 'fluxible-router';
-import Modal from './Modal';
+import React   from 'react';
+import {Link}  from 'react-router';
+
+import Modal   from './Modal';
 import Warning from './Warning';
 
 import CompanySwitcher from './CompanySwitcher';
 
 var Navigation = React.createClass({
-  getInitialState:function(){
-    return{modal:"close"}
+  getInitialState: function(){
+    return {
+      modal: "close"
+    }
   },
   modalControl:function(){
     this.setState({modal:(this.state.modal =="close")?"open":"close"})
@@ -22,17 +25,17 @@ var Navigation = React.createClass({
       <section className="top-bar-section navigation-bar">
         <ul className="right">
           <li className="navigation-bar__item">
-            <NavLink routeName="about">report issue</NavLink>
+            <Link to="about">report issue</Link>
           </li>
           <li className="navigation-bar__item">
-            <NavLink routeName="about">
+            <Link to="about">
               <i className="icon-question"/>
-            </NavLink>
+            </Link>
           </li>
           <li className="has-dropdown not-click navigation-bar__item">
-            <NavLink routeName="about">
+            <Link to="about">
               <i className="icon-companymenu"/>
-            </NavLink>
+            </Link>
             <CompanySwitcher />
           </li>
           <li className="has-dropdown not-click navigation-bar__item">

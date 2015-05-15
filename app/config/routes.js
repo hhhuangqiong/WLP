@@ -29,7 +29,7 @@ export default {
     }
   },
   forgot: {
-    handler: require('../components/ForgetPass'),
+    handler: require('../components/ForgetPassword'),
     path: '/forgot',
     method: 'get',
     page: 'forgot',

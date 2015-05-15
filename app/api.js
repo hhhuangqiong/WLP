@@ -12,7 +12,7 @@ function Api(options) {
 
 Api.prototype.signIn = function(username, password, cb) {
   superagent
-    .post(this._getHost() + '/signin')
+    .post(this._getHost() + '/sign-in')
     .accept('json')
     .send({
       username: username,
