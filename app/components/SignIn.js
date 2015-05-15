@@ -1,20 +1,40 @@
 import _ from 'lodash';
 import debug from 'debug';
 import React from 'react';
-import {Link} from 'react-router';
-import {connectToStores} from 'fluxible/addons';
+import FluxibleMixin from 'fluxible/addons/FluxibleMixin';
+import {Link} from 'react-router'
 
 import AuthStore from '../stores/AuthStore';
 import SignInStore from '../stores/SignInStore';
 
-import signIn from '../actions/signIn';
+import signInAction from '../actions/signIn';
+
+import PublicOnlyMixin from '../utils/PublicOnlyMixin';
 
 const bootstrapDebug = debug('wlp:components:signin');
 
-class SignIn extends React.Component {
-  constructor(props, context) {
-    super(props, context);
-  }
+let SignIn = React.createClass({
+  mixins: [FluxibleMixin, PublicOnlyMixin],
+
+  statics: {
+    storeListeners: [AuthStore, SignInStore]
+  },
+
+  getInitialState: function() {
+    return this.getStateFromStores();
+  },
+
+  getStateFromStores: function () {
+    return {
+      numberOfTrial: this.getStore(SignInStore).getNumberOfTrial(),
+      isSigningIn: this.getStore(AuthStore).isSigningIn(),
+      error: this.getStore(AuthStore).getSignInError()
+    };
+  },
+
+  onChange: function() {
+    this.setState(this.getStateFromStores());
+  },
 
   handleSignIn(e){
     e.preventDefault();
@@ -23,16 +43,16 @@ class SignIn extends React.Component {
     let password = this.refs.password.getDOMNode().value.trim();
     let rememberMe = this.refs.rememberMe.getDOMNode().checked;
 
-    this.context.executeAction(signIn, {
+    this.context.executeAction(signInAction, {
       username: username,
       password: password,
       rememberMe: rememberMe
     });
-  }
+  },
 
   render() {
     return (
-      <form method="POST" onSubmit={this.handleSignIn.bind(this)}>
+      <form method="POST" onSubmit={this.handleSignIn}>
         <div className="panel--extra__title row">
           <div className="large-offset-1 large-22 columns">
             <h1 className="text-center">Sign In</h1>
@@ -55,7 +75,7 @@ class SignIn extends React.Component {
                 <label>Remember me</label>
               </div>
               <div className="large-8 columns">
-                <button className="button--primary round right" onClick={this.handleSignIn.bind(this)}>sign in</button>
+                <button className="button--primary round right" onClick={this.handleSignIn}>sign in</button>
               </div>
             </div>
           </div>
@@ -63,19 +83,6 @@ class SignIn extends React.Component {
       </form>
     );
   }
-}
-
-SignIn.contextTypes = {
-  getStore: React.PropTypes.func,
-  executeAction: React.PropTypes.func
-};
-
-SignIn = connectToStores(SignIn, [AuthStore, SignInStore], function (stores, props) {
-  return {
-    numberOfTrial: stores.SignInStore.getNumberOfTrial(),
-    isSigningIn: stores.AuthStore.isSigningIn(),
-    error: stores.AuthStore.getSignInError()
-  };
 });
 
 export default SignIn;
