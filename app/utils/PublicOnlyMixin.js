@@ -6,8 +6,13 @@ module.exports = {
       let isAuthenticated = transition.context
         .getActionContext().getStore(AuthStore).isAuthenticated();
 
-      if (!isAuthenticated) {
-        transition.redirect('/signin');
+      let urlPrefix = transition.context
+        .getActionContext().getStore(AuthStore).getUserUrlPrefix();
+
+      let destination = `${urlPrefix}/companies`;
+
+      if (isAuthenticated) {
+        transition.redirect(destination);
       }
     }
   }

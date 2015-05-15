@@ -54,8 +54,13 @@ Api.prototype.getSession = function(token, cb) {
       if (err) {
         debug('error', err);
       }
-      token = res && res.ok ? token : null;
-      cb(err, token);
+      if (!res.ok) {
+        err = (res.body && res.body.error) || {
+          status: res.status
+        };
+      }
+
+      cb(err, res && res.body);
     });
 };
 
