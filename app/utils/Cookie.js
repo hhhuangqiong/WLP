@@ -14,6 +14,14 @@ function Cookie(options) {
   if (env.SERVER && !this._res) {
     throw new Error('Express `res` is a required option');
   }
+
+  this._getExpireTime = function() {
+    let now = new Date();
+    let time = now.getTime();
+    now.setTime(time + options.maxAge);
+
+    return now.toGMTString();
+  }
 }
 
 Cookie.prototype.get = function(name) {
@@ -32,7 +40,8 @@ Cookie.prototype.set = function(name, value) {
   if (env.SERVER) {
     return this._res.cookie(name, value);
   }
-  document.cookie = name + '=' + value;
+
+  document.cookie = name + '=' + value + ';expires=' + this._getExpireTime() + ';path=/';
 };
 
 Cookie.prototype.clear = function(name) {
