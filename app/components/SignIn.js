@@ -67,7 +67,7 @@ let SignIn = React.createClass({
               <input ref="password" className="radius" type="password" name="password" placeholder="password" />
             </div>
             <div className="row">
-              <Link to="about">Forgot password?</Link>
+              <Link to="forget-password">Forgot password?</Link>
             </div>
             <div className="row">
               <div className="large-16 columns">
