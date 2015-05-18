@@ -1,5 +1,6 @@
 import _ from 'lodash';
 import express from 'express';
+import logger from 'winston';
 import passport from 'passport';
 
 import db from './db';
@@ -7,10 +8,12 @@ import db from './db';
 var api = express.Router();
 
 function getAuthUser(user) {
+  // TODO double check if this is necessary for the data model
+  let affiliatedCompany = user.affiliatedCompany  || {}
   return {
     _id: user._id,
-    carrierId: user.affiliatedCompany.carrierId,
-    urlPrefix: user.affiliatedCompany.getUrlPrefix()
+    carrierId: affiliatedCompany.carrierId,
+    urlPrefix: affiliatedCompany.getUrlPrefix ? affiliatedCompany.getUrlPrefix() : ''
   };
 };
 
@@ -25,12 +28,14 @@ api.post('/sign-in', function(req, res, next) {
       });
     };
 
+    // TODO simplify this
     if (err || !user || !user.hasValidOneTimePassword(req.body.onetimepassword)) {
       return signInError();
     };
 
     req.logIn(user, function(err) {
       if (err) {
+        logger.error('failed during `req.logIn`', err);
         return signInError();
       }
 
