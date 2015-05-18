@@ -1,6 +1,6 @@
 import React from 'react';
 import FluxibleMixin from 'fluxible/addons/FluxibleMixin';
-import {NavLink} from 'fluxible-router';
+import {Link} from 'react-router';
 
 import EndUserStore from '../stores/EndUserStore';
 
@@ -10,31 +10,45 @@ import _ from 'lodash';
 var Countries = require('../data/countries.json');
 
 var EndUserTable = React.createClass({
-  mixins: [FluxibleMixin],
-  statics: {
-    storeListeners: [EndUserStore]
+  contextTypes: {
+    router: React.PropTypes.func.isRequired
   },
-  getInitialState: function () {
-    return {
-      users:[]
-    };
-  },
-  onChange: function() {
-    let state = this.getStore(EndUserStore).getState();
-    this.setState(state);
-    console.log("changed:", state);
-  },
-  render: function() {
 
+  componentWillReceiveProps: function(nextProps) {
+    this.props.users = nextProps.users;
+    this.props.current = nextProps.current;
+    this.props.per = nextProps.per;
+  },
+
+  getFirstRecord: function() {
+    return (this.props.current - 1) * this.props.per;
+  },
+
+  getLastRecord: function() {
+    return this.props.current * this.props.per;
+  },
+
+  render: function() {
+    let params = this.context.router.getCurrentParams();
     // `/w/maaiitest.com/end-users/${u.username}`
-    let rows = this.state.users.slice(0, 10).map((u) => {
+    //<td>{u.username}</td>
+    //<td><Link href={'/w/maaiitest.com/end-users/' + u.username}>{u.username}</Link></td>
+    let rows = this.props.users.slice(this.getFirstRecord(), this.getLastRecord()).map((u) => {
         let country = _.find(Countries, (c) => {
           return c.alpha2.toLowerCase() == u.countryCode
         });
         let creationDate = moment(u.creationDate).format('MMM. D, YYYY [at] h:mm A z');
         return <tr>
           <td>{u.verified ? "Yes" : "No"}</td>
-          <td><NavLink href={'/w/maaiitest.com/end-users/' + u.username}>{u.username}</NavLink></td>
+          <td>
+            <Link to="end-user" params={{
+              identity: params.identity,
+              carrierId: params.carrierId,
+              username: u.username
+            }}>
+              {u.username}
+            </Link>
+          </td>
           <td>{country.name}</td>
           <td>{u.username}</td>
           <td>{creationDate}</td>

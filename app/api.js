@@ -54,27 +54,35 @@ Api.prototype.getSession = function(token, cb) {
       if (err) {
         debug('error', err);
       }
-      if (!res.ok) {
-        err = (res.body && res.body.error) || {
-          status: res.status
-        };
-      }
-
-      cb(err, res && res.body);
+      token = res && res.ok ? token : null;
+      cb(err, token);
     });
 };
 
-Api.prototype.getContacts = function(cb) {
+Api.prototype.getEndUsers = function(params, cb) {
   superagent
-    .get(this._getHost() + '/contacts')
+    .get(`${this._getHost()}/carriers/${params.carrierId}/users`)
     .accept('json')
     .set('Authorization', this._getToken())
-    .end(function(err, res) {
+    .end(function (err, res) {
       if (err) {
         debug('error', err);
       }
       cb(err, res && res.body);
     });
 };
+
+Api.prototype.getEndUser = function(params, cb) {
+  superagent
+    .get(`${this._getHost()}/carriers/${params.carrierId}/users/${params.username}`)
+    .accept('json')
+    .set('Authorization', this._getToken())
+    .end(function (err, res) {
+      if (err) {
+        debug('error', err)
+      }
+      cb(err, res && res.body);
+    });
+}
 
 module.exports = Api;

@@ -2,38 +2,36 @@ var debug = require('debug')('wlp:fetchEndUsers');
 
 import request from 'superagent';
 
-export function fetchEndUsers(context, { carrierId }, done) {
-  request
-    .get(`http://localhost:3000/api/1.0/carriers/${carrierId}/users`)
-    .set('Accept', 'application/json')
-    .end(function (err, res) {
-      if (err) {
-        done();
-        return;
-      }
-      context.dispatch('LOAD_END_USERS', {
-        users: res.body.userList
-      });
-
+export function fetchEndUsers(context, params, done) {
+  debug('Started');
+  context.dispatch('FETCH_END_USERS_START');
+  context.api.getEndUsers(params, function(err, users) {
+    if (err) {
+      debug('Failed');
+      context.dispatch('FETCH_END_USERS_FAILURE', err);
       done();
-    });
+      return;
+    }
+
+    debug('Success');
+    context.dispatch('FETCH_END_USERS_SUCCESS', users);
+    done();
+  });
 };
 
-export function fetchEndUser(context, { carrierId, username }, done) {
-
-  request
-    .get(`http://localhost:3000/api/1.0/carriers/${carrierId}/users/${username}`)
-    .set('Accept', 'application/json')
-    .end(function(err, res){
-      if (err) {
-        done();
-        return;
-      }
-
-      context.dispatch('LOAD_END_USER', {
-        user: res.body
-      });
-
+export function fetchEndUser(context, params, done) {
+  debug('Started');
+  context.dispatch('FETCH_END_USER_START');
+  context.api.getEndUser(params, function(err, user) {
+    if (err) {
+      debug('Failed');
+      context.dispatch('FETCH_END_USER_FAILURE', err);
       done();
-    });
+      return;
+    }
+
+    debug('Success');
+    context.dispatch('FETCH_END_USER_SUCCESS', user);
+    done();
+  });
 };
