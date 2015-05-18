@@ -368,7 +368,7 @@ var CompanyProfile = React.createClass({
                 <div className="panel--addon__title">
                   <h5>contacts</h5>
                 </div>
-                <div className="panel--addon__body">
+                <div className="panel--addon__body padding-bottom-reset">
                   <ul className="accordion">
                     <InfoBlock title="Business contact">
                         <div className="row">

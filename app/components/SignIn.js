@@ -61,13 +61,19 @@ let SignIn = React.createClass({
         <div className="panel--extra__body row">
           <div className="large-offset-1 large-22 columns">
             <div className="row">
-              <input ref="username" className="radius" type="text" name="username" placeholder="email" />
+              <div className="large-24 columns">
+                <input ref="username" className="radius" type="text" name="username" placeholder="email" />
+              </div>
             </div>
             <div className="row">
-              <input ref="password" className="radius" type="password" name="password" placeholder="password" />
+              <div className="large-24 columns">
+                <input ref="password" className="radius" type="password" name="password" placeholder="password" />
+              </div>
             </div>
             <div className="row">
-              <Link to="forget-password">Forgot password?</Link>
+              <div className="large-24 columns">
+                <Link to="forget-password">Forgot password?</Link>
+              </div>
             </div>
             <div className="row">
               <div className="large-16 columns">
@@ -75,7 +81,7 @@ let SignIn = React.createClass({
                 <label>Remember me</label>
               </div>
               <div className="large-8 columns">
-                <button className="button--primary round right" onClick={this.handleSignIn}>sign in</button>
+                <button className="button--primary right" onClick={this.handleSignIn}>sign in</button>
               </div>
             </div>
           </div>
