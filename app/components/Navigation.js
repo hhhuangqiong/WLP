@@ -2,7 +2,8 @@ import React   from 'react';
 import {Link}  from 'react-router';
 
 import Modal   from './Modal';
-import Warning from './Warning';
+import showModal from '../actions/showModal';
+import ChangePass from './ChangePass';
 
 import CompanySwitcher from './CompanySwitcher';
 
@@ -12,10 +13,8 @@ var Navigation = React.createClass({
       modal: "close"
     }
   },
-  modalControl:function(){
-    this.setState({modal:(this.state.modal =="close")?"open":"close"})
-    $("#myModal").foundation('reveal', this.state.modal);
-  },
+  modalControl: function () {
+    this.context.executeAction(showModal, {title: "Change Password", content: <ChangePass onFormSubmit={this.onFormSubmit}/>})},
   onFormSubmit: function(data, callback) {
     console.log(data); // for form submit action
     this.modalControl();
@@ -53,11 +52,13 @@ var Navigation = React.createClass({
             </ul>
           </li>
         </ul>
-          <Warning type="changePass" modalControl={this.modalControl} modalTitle="CHANGE PASSWORD" formSubmit={this.onFormSubmit}/>
       </section>
     );
   }
 });
-
+Navigation.contextTypes = {
+  getStore: React.PropTypes.func.isRequired,
+  executeAction: React.PropTypes.func.isRequired
+};
 
 export default Navigation;

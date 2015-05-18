@@ -1,5 +1,6 @@
 import React from 'react';
 import {RouteHandler} from 'react-router';
+import Modal from '../Modal';
 
 var Public = React.createClass({
   render: function() {
@@ -19,6 +20,7 @@ var Public = React.createClass({
                 <div className="large-24 columns">
                   <RouteHandler/>
                 </div>
+                <Modal/>
               </div>
             </div>
           </div>

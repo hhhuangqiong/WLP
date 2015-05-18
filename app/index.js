@@ -6,6 +6,7 @@ import CompanyStore from './stores/CompanyStore';
 import EndUserStore from './stores/EndUserStore';
 import SignInStore from './stores/SignInStore';
 
+import ModalStore from './stores/ModalStore';
 // seems not passing anything is okay
 var app = new Fluxible();
 
@@ -21,5 +22,6 @@ app.registerStore(ApplicationStore);
 app.registerStore(CompanyStore);
 app.registerStore(EndUserStore);
 app.registerStore(SignInStore);
+app.registerStore(ModalStore);
 
 export default app;

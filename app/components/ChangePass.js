@@ -69,6 +69,14 @@ var ChangePass = React.createClass({
     this.setState(this.getInitialState());
   },
   render: function() {
+    var myStyle={
+      "font-size": "inherit",
+      "line-height": "inherit",
+      "position": "inherit",
+      "color": "#FFF",
+      "font-weight": "inherit"
+
+  }
     return (
       <form onSubmit={this.handleSubmit} noValidate>
         <div className='row'>
@@ -83,7 +91,7 @@ var ChangePass = React.createClass({
           {this.renderHelpRePassText(this.getValidationMessages('repass'))}
           <hr/>
           <p className="text-center">
-            <a className="button radius" onClick={this.props.modalControl}>Cancel</a>
+            <a className="button radius close-reveal-modal" style={myStyle} aria-label="Close">Cancel</a>
             <input type="submit" value="Change" className="button radius" />
           </p>
         </div>
