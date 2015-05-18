@@ -3,6 +3,7 @@ import classnames     from 'classnames';
 import {RouteHandler} from 'react-router';
 import Sidebar        from '../Sidebar';
 import Navigation     from '../Navigation';
+import Modal     from '../Modal';
 
 var Protected = React.createClass({
   getInitialState: function() {
@@ -34,6 +35,7 @@ var Protected = React.createClass({
             <div className="large-24 columns">
               <RouteHandler/>
             </div>
+            <Modal/>
           </div>
         </div>
       </div>
