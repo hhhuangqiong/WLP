@@ -123,6 +123,7 @@ function initialize(port) {
 
   // Routes
   server.use('/api', require('./server/api'));
+  server.use('/data', require('./server/routes/data'));
   // disabled all the resources for now
   //server.use(require('./server/routes'));
 

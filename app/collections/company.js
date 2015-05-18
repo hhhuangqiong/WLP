@@ -149,6 +149,22 @@ var schema = new mongoose.Schema({
   }
 }, { collection: collectionName });
 
+schema.virtual('role').get(function() {
+  if (this.isRootCompany) {
+    return 'a';
+  }
+
+  if (this.reseller) {
+    return 'r';
+  }
+
+  return 'w';
+});
+
+schema.virtual('identity').get(function() {
+  return this.carrierId || null;
+});
+
 schema.method('isRootCompany', function() {
   return !this.parentCompany;
 });

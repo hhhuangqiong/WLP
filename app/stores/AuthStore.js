@@ -73,7 +73,7 @@ var AuthStore = createStore({
   },
 
   getUserId: function() {
-    return this.user._id;
+    return this.user && this.user._id;
   },
 
   getUserUrlPrefix: function() {

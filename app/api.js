@@ -8,6 +8,7 @@ function Api(options) {
 
   this._getHost = options.getHost || noop;
   this._getToken = options.getToken || noop;
+  this._getUserId = options.getUserId || noop;
 }
 
 Api.prototype.signIn = function(username, password, cb) {
@@ -56,6 +57,23 @@ Api.prototype.getSession = function(token, cb) {
       }
       token = res && res.ok ? token : null;
       cb(err, token);
+    });
+};
+
+Api.prototype.getManagingCompanies = function(params, cb) {
+  superagent
+    .get(`${this._getHost()}/switcher/companies`)
+    .accept('json')
+    .set('Authorization', this._getToken())
+    .query({
+      userId: this._getUserId()
+    })
+    .end(function(err, res) {
+      if (err) {
+        debug('error', err);
+      }
+
+      cb(err, res && res.body);
     });
 };
 

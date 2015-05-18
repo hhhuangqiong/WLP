@@ -1,31 +1,38 @@
 import React from 'react';
 import FluxibleMixin from 'fluxible/addons/FluxibleMixin';
-import {Link} from 'fluxible-router';
+import {Link} from 'react-router';
 
 import ApplicationStore from '../stores/ApplicationStore'
 
 var CompanySwitcher = React.createClass({
   mixins: [FluxibleMixin],
+
   statics: {
     storeListeners: [ApplicationStore]
   },
-  getInitialState: function () {
+
+  getInitialState: function() {
     return this.getStateFromStore();
   },
+
   getStateFromStore: function() {
     return {
-      companies: this.getStore(ApplicationStore).getState().availableCompanies || []
+      companies: this.getStore(ApplicationStore).getManagingCompanies() || []
     };
   },
+
   onChange: function() {
     this.setState(this.getStateFromStore());
   },
+
   render: function() {
     let buttons = this.state.companies.map((c) => {
-        var href = "/w/" + c.carrierId + "/end-users";
-        return <li className="navigation-bar__item" title={c.name} key={c.carrierId}>
-          <Link href={href}><img src={c.logoUri}/></Link>
-        </li>
+        let logoUri = c.logo ? `/data/${c.logo}` : '/images/default-logo.png';
+        return (
+          <li className="navigation-bar__item" title={c.name} key={c.carrierId}>
+            <Link to="overview" params={{ role: c.role, identity: c.identity}}><img src={logoUri} /></Link>
+          </li>
+        );
       }
     );
     return (

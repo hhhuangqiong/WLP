@@ -4,7 +4,7 @@ import {Link}  from 'react-router';
 import showModal from '../actions/showModal';
 import ChangePass from './ChangePass';
 
-//import CompanySwitcher from './CompanySwitcher';
+import CompanySwitcher from './CompanySwitcher';
 
 var Navigation = React.createClass({
   getInitialState: function(){
@@ -12,6 +12,7 @@ var Navigation = React.createClass({
       modal: "close"
     }
   },
+
   modalControl: function () {
     this.context.executeAction(showModal, {title: "Change Password", content: <ChangePass />})},
   onFormSubmit: function(data, callback) {
@@ -19,7 +20,6 @@ var Navigation = React.createClass({
     this.modalControl();
   },
 
-  //<CompanySwitcher />
   render: function() {
     return (
       <section className="top-bar-section navigation-bar">
@@ -36,6 +36,7 @@ var Navigation = React.createClass({
             <Link to="about">
               <i className="icon-companymenu"/>
             </Link>
+            <CompanySwitcher />
           </li>
           <li className="has-dropdown not-click navigation-bar__item">
             <a>hi, username

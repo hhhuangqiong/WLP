@@ -17,6 +17,10 @@ module.exports = {
 
           getToken: function() {
             return actionContext.getStore(AuthStore).getToken();
+          },
+
+          getUserId: function() {
+            return actionContext.getStore(AuthStore).getUserId();
           }
         });
       },

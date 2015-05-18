@@ -9,6 +9,9 @@ import passport from 'passport';
 import db from './db';
 import { fetchDep } from './initializers/ioc';
 
+import Company from '../collections/company';
+import PortalUser from '../collections/portalUser';
+
 var endUserRequest = fetchDep(nconf.get('containerName'), 'EndUserRequest');
 var walletRequest = fetchDep(nconf.get('containerName'), 'WalletRequest');
 
@@ -83,6 +86,46 @@ api.use(validateTokenMiddleware);
 // Check if auth token is a valid session
 api.get('/session', function(req, res) {
   return res.sendStatus(200);
+});
+
+api.get('/switcher/companies', function(req, res) {
+  req.checkQuery('userId').notEmpty();
+
+  let userId = req.query.userId;
+
+  Q.ninvoke(PortalUser, 'findOne', { _id: userId })
+    .then((user)=>{
+      if (!user)
+        return res.status(401).json({
+          error: ''
+        });
+
+      if (user.isRoot) {
+        return Q.ninvoke(Company, 'find', {}, 'name carrierId logo status');
+      } else {
+        return Q.ninvoke(Company, 'find', {}, 'name carrierId logo status');
+      }
+    })
+    .then((companies)=>{
+
+      let _companies = [];
+
+      for (let key in companies) {
+        _companies[key] = _.merge(companies[key].toObject(), { role: companies[key].role, identity: companies[key].identity });
+
+        if (key == companies.length - 1) {
+          return res.json({
+            companies: _companies
+          })
+        }
+      }
+    })
+    .catch(function(err) {
+      if (err)
+        return res.status(err.status).json({
+          error: err
+        });
+    });
 });
 
 api.get('/carriers/:carrierId/users', function(req, res) {

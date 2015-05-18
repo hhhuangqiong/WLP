@@ -1,51 +1,39 @@
 import {createStore} from 'fluxible/addons';
 
-import routesConfig from '../config/routes';
-
 var debug = require('debug')('ApplicationStore');
 
 var ApplicationStore = createStore({
   storeName: 'ApplicationStore',
+
   handlers: {
-    'UPDATE_PAGE_TITLE' : 'updatePageTitle'
+    'FETCH_MANGAING_COMPANIES_SUCCESS':  'loadedCompanies'
   },
-  updatePageTitle: function (payload) {
-    this.pageTitle = payload.pageTitle;
+
+  loadedCompanies: function(companies) {
+    this.managingCompanies = companies;
     this.emitChange();
   },
-  //initialize: function () {
-    //this.currentPageName = null;
-    //this.currentPage = null;
-    //this.currentRoute = null;
-    //this.pages = routesConfig;
-    //this.pageTitle = '';
-  //},
+
+  getManagingCompanies: function() {
+    return this.managingCompanies;
+  },
+
   getState: function() {
     return {
       currentPageName: this.currentPageName,
       currentPage: this.currentPage,
       pages: this.pages,
       route: this.currentRoute,
-      pageTitle: this.pageTitle,
-
-      // FIXME only for testing
-      availableCompanies: [{
-        name: 'Maaii',
-        carrierId: 'maaiitest.com',
-        logoUri: '/images/logo-yato.png',
-        country: 'Hong Kong'
-      }]
+      pageTitle: this.pageTitle
     };
   },
+
   dehydrate: function () {
     return this.getState();
   },
+
   rehydrate: function (state) {
-    this.currentPageName = state.currentPageName;
-    this.currentPage = state.currentPage;
-    this.pages = state.pages;
-    this.currentRoute = state.route;
-    this.pageTitle = state.pageTitle;
+    this.managingCompanies = state.managingCompanies
   }
 });
 
