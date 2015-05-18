@@ -77,8 +77,8 @@ class Sidebar extends React.Component{
           {navSections.map((section,idx)=>{
             let href = `${this.props.urlPrefix}/${section.link}`;
             return (
-              <li>
-                <Link className="item mainmenu-bar__item" href={href} key={idx}>
+              <li key={idx}>
+                <Link className="item mainmenu-bar__item" to={href}>
                   <label>
                     <i className={section.icon} />
                     {section.name}
