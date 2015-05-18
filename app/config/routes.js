@@ -14,7 +14,7 @@ import showCompanies from '../actions/showCompanies';
 import {fetchEndUsers} from '../actions/fetchEndUsers';
 import {fetchEndUser} from '../actions/fetchEndUsers';
 
-const bootstrapDebug = debug('wlp:routes');
+const bootstrapDebug = debug('app:routes');
 
 export default {
   signin: {

@@ -29,13 +29,13 @@ var Protected = React.createClass({
                 <h1>{this.props.pageTitle}</h1>
               </li>
             </ul>
-            <Navigation/>
+            <Navigation />
           </nav>
           <div className="row">
             <div className="large-24 columns">
               <RouteHandler/>
             </div>
-            <Modal/>
+            <Modal />
           </div>
         </div>
       </div>

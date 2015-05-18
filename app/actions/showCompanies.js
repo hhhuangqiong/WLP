@@ -1,4 +1,4 @@
-var debug = require('debug')('wlp:showCompanyAction');
+var debug = require('debug')('app:showCompanyAction');
 
 import CompanyStore from '../stores/CompanyStore';
 

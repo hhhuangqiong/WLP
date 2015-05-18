@@ -29,7 +29,7 @@ import morgan from 'morgan';
 import session from 'express-session';
 //import csrf from 'csurf';
 
-var debug = require('debug')('wlp:server');
+var debug = require('debug')('app:server');
 var RedisStore = require('connect-redis')(session);
 
 const PROJ_ROOT = path.join(__dirname, '..');

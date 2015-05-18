@@ -1,4 +1,4 @@
-var debug = require('debug')('wlp:fetchEndUsers');
+var debug = require('debug')('app:fetchEndUsers');
 
 import request from 'superagent';
 

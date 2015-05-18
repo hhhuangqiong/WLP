@@ -1,3 +1,5 @@
+'use strict';
+
 var debug = require('debug')('app:signIn');
 
 module.exports = function(context, payload, done) {
@@ -14,6 +16,7 @@ module.exports = function(context, payload, done) {
     }
     debug('Success');
     context.dispatch('SIGN_IN_SUCCESS', auth);
+
     context.cookie.set('token', auth.token);
     context.cookie.set('user', auth.user._id);
     context.cookie.set('carrierId', auth.user.carrierId);
@@ -24,6 +27,7 @@ module.exports = function(context, payload, done) {
 
     // TODO: change companies to default landing page
     let destination = `${auth.user.urlPrefix}/companies`;
+    console.log('destination', destination);
     context.getRouter().transitionTo(destination);
     done();
   });

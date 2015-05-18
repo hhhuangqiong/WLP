@@ -11,7 +11,7 @@ import signInAction from '../actions/signIn';
 
 import PublicOnlyMixin from '../utils/PublicOnlyMixin';
 
-const bootstrapDebug = debug('wlp:components:signin');
+const bootstrapDebug = debug('app:components:signin');
 
 let SignIn = React.createClass({
   mixins: [FluxibleMixin, PublicOnlyMixin],

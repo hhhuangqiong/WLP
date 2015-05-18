@@ -8,7 +8,7 @@ var FluxibleMixin = require('fluxible/addons/FluxibleMixin');
 var Router = require('react-router');
 var Link = Router.Link;
 
-// not handled here
+// TODO: handle this somewhere else
 //var signOut = require('../actions/signOut');
 
 var SignInOrOut = React.createClass({
@@ -43,11 +43,11 @@ var SignInOrOut = React.createClass({
     if (!this.state.isAuthenticated) {
       return (
         <Public {...props}/>
-      )
+      );
     } else {
       return (
         <Protected {...props}/>
-      )
+      );
     }
   }
 
