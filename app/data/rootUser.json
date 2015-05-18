@@ -1,5 +1,5 @@
 {
-  "rootUser": {
+  "user": {
     "isRoot": true,
     "username": "root@maaii.com",
     "password": "whitelabel2014",
@@ -9,10 +9,9 @@
     },
     "carrierDomains": "",
     "assignedGroup": "root",
-    "status": "active",
-    "affiliatedCompany": null
+    "status": "active"
   },
-  "rootCompany":{
+  "company":{
     "parentCompany": null,
     "carrierId": "m800",
     "name": "M800",
