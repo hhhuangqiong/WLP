@@ -5,9 +5,9 @@ module.exports = {
   entry: './app/client/index.js',
   module: {
     loaders: [
-      { test: /\.js$/, exclude: /node_modules/, loader: 'babel?cacheDirectory=true' },
+      { test: /\.js$/, exclude: /node_modules/, loader: 'babel?cacheDirectory' },
       // using a forked branch; no build yet
-      { test: /\.js$/, include: /node_modules\/react-router/, loader: 'babel?cacheDirectory=true' },
+      { test: /\.js$/, include: /node_modules\/react-router/, loader: 'babel?cacheDirectory' },
       { test: /\.json$/, loader: 'json' }
     ]
   },

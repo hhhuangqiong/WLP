@@ -1,7 +1,6 @@
 import React  from 'react';
 import {Link} from 'react-router';
-import AuthMixin from '../../Utils/AuthMixin';
-
+import AuthMixin from '../../utils/AuthMixin'; 
 const TemporaryMain = React.createClass({
   mixins: [AuthMixin],
 

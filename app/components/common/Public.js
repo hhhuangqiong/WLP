@@ -1,11 +1,8 @@
 import React from 'react';
-
 import {RouteHandler} from 'react-router';
 
 var Public = React.createClass({
   render: function() {
-    console.log('props', this.props, 'state', this.state);
-
     return (
       <div>
         <nav className="top-bar public-header" data-topbar role="navigation">
