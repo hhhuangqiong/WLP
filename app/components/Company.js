@@ -1,6 +1,5 @@
 import _ from 'lodash';
 import React from 'react';
-import {Link} from 'react-router';
 import request from 'superagent';
 
 // Components

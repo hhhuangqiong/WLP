@@ -68,22 +68,6 @@ var CompanyList = React.createClass({
     let logo = !!company.logo ? `/data/${company.logo}` : '/images/logo-yato.png';
 
     return (
-      /*
-      <Link href={href}>
-        <li className="company-sidebar__list__item">
-          <span className="company-sidebar__list__item__logo left">
-            <img src="/images/logo-yato.png"/>
-          </span>
-          <span className="company-sidebar__list__item__info left">
-            <span className="company-sidebar__list__item--title">
-              {company.name}
-            </span>
-            <span className="company-sidebar__list__item--location">
-              {_.pluck(_.filter(Countries, {'alpha2': company.country}), 'name')}
-            </span>
-          </span>
-        </li>
-      </Link>*/
       <li className="company-sidebar__list__item">
         <Link to="company" params={{ role: company.role, identity: company.identity, carrierId: company.carrierId, companyCarrierId: company.carrierId, subPage: 'profile' }}>
           <span className="company-sidebar__list__item__logo left">

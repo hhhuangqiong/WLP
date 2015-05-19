@@ -1,67 +1,59 @@
 {
-  "WL": {
-    "member visibility": {
-      "memberVisibility": {
+  "wl": {
+    "member_visibility": {
+      "member_visibility": {
         "label": "member visibility (view APP users only)"
       }
     },
-    "registration flow customization": {
-      "standardSignupFlow": {
+    "registration_flow_customization": {
+      "standard_signup_flow": {
         "label": "standard signup flow"
       },
-      "apiSignupSupport": {
+      "api_signup_support": {
         "label": "API signup support"
       },
-      "callbackForEndUserLifeCycle": {
+      "callback_for_end_user_life_cycle": {
         "label": "callback for end-user life cycle"
       }
     },
-    "IVR": {
-      "chargeForIVRCallPerCarrier": {
+    "ivr": {
+      "charge_for_ivr_call_per_carrier": {
         "label": "charge for IVR call per carrier"
       },
-      "partitionToPlayDifferentPromptPerCarrier": {
+      "partition_to_play_different_prompt_per_carrier": {
         "label": "partition to play different prompt per carrier"
       }
     },
-    "SMS": {
-      "chargeForSMSPerCarrier": {
+    "sms": {
+      "charge_for_sms_per_carrier": {
         "label": "charge for SMS per carrier"
       },
-      "differentSMSCConnection": {
+      "different_smsc_connection": {
         "label": "different SMSC connection"
       }
     },
-    "facebook integration": {
-      "facebookIntegration": {
-        "label": "facebook integration"
-      }
+    "facebook_integration": {
+      "label": "facebook integration"
     },
-    "friend finding": {
-      "friendFinding": {
-        "label": "Friend finding"
-      }
+    "friend_finding": {
+      "label": "Friend finding"
     },
-    "end-user rate table": {
-      "endUserRateTable": {
-        "label": "End-user Rate table"
-      }
+    "end_user_rate_table": {
+      "label": "End-user Rate table"
     },
-    "API Server": {
-      "topUpApi": {
+    "api_server": {
+      "top_up_api": {
         "label": "Topup API"
       },
-      "promotionalIMApi": {
+      "promotional_im_api": {
         "label": "Promotional IM API"
       }
     },
-    "IM-to-SMS": {
-      "iMToSMS": {
-        "label": "IM-to-SMS"
-      }
+    "im_to_sms": {
+      "label": "IM-to-SMS"
     },
-    "Virtual storefront": {
-      "virtualGoodsSupport": {
+    "virtual_storefront": {
+      "virtual_goods_support": {
         "label": "virtual goods support"
       },
       "sticker": {
@@ -70,40 +62,36 @@
       "animation": {
         "label": "animation"
       },
-      "voiceSticker": {
+      "voice_sticker": {
         "label": "voice sticker"
       },
       "credit": {
         "label": "credit"
       },
-      "customizedVirtualGoods": {
+      "customized_virtual_goods": {
         "label": "customized virtual goods"
       }
     },
-    "Blocking": {
-      "blocking": {
-        "label": "blocking"
-      }
+    "blocking": {
+      "label": "blocking"
     },
     "call": {
-      "onNet": {
+      "on_net": {
         "label": "on-net"
       },
-      "offNet": {
+      "off_net": {
         "label": "off-net"
       }
     },
     "In-call effect": {
-      "standardPackage": {
+      "standard_package": {
         "label": "standard package"
       }
     },
-    "Video caller ID": {
-      "videoCallerID": {
-        "label": "video caller ID"
-      }
+    "video_caller_id": {
+      "label": "video caller ID"
     },
-    "Chat": {
+    "chat": {
       "text": {
         "label": "text"
       },
@@ -113,7 +101,7 @@
       "video": {
         "label": "video"
       },
-      "audioNote": {
+      "audio_note": {
         "label": "audio note"
       },
       "timeout": {
@@ -128,47 +116,41 @@
       "animation": {
         "label": "animation"
       },
-      "voiceSticker": {
+      "voice_sticker": {
         "label": "voice sticker"
       },
-      "iTunesSharing": {
+      "itunes_sharing": {
         "label": "iTunes sharing"
       },
-      "youtubeSharing": {
+      "youtube_sharing": {
         "label": "youtube sharing"
       },
-      "youkuSharing": {
+      "youku_sharing": {
         "label": "youku sharing (for china only)"
       },
-      "groupChat": {
+      "group_chat": {
         "label": "group chat (different group size)"
       },
-      "perCarrierSpecific": {
+      "per_carrier_specific": {
         "label": "per carrier specific (emoji, sticker, animation, voice sticker)"
       },
-      "locationTagging": {
+      "location_tagging": {
         "label": "location tagging"
       }
     },
-    "In-app banner": {
-      "inAppBanner": {
-        "label": "in-app banner"
-      }
+    "inapp_banner": {
+      "label": "in-app banner"
     },
-    "Language support": {
-      "standardSupport": {
-        "label": "standard support"
-      },
-      "customizedSupport": {
-        "label": "customized support"
-      }
+    "standard_support": {
+      "label": "standard support"
     },
-    "Call termination path": {
-      "callTerminationPath": {
-        "label": "Call termination path"
-      }
+    "customized_support": {
+      "label": "customized support"
     },
-    "Carrier settlement": {
+    "call_termination_path": {
+      "label": "Call termination path"
+    },
+    "carrier_settlement": {
       "postpaid": {
         "label": "postpaid"
       },
@@ -176,39 +158,37 @@
         "label": "prepaid"
       }
     },
-    "Operation support": {
-      "manualBannerUpdate": {
+    "operation_support": {
+      "manual_banner_update": {
         "label": "Manual banner update"
       },
-      "rateTableUpdate": {
+      "rate_table_update": {
         "label": "Rate table update"
       }
     }
   },
-  "SDK": {
+  "sdk": {
     "call": {
-      "onNet": {
+      "on_net": {
         "label": "on-net"
       },
-      "offNet": {
+      "off_net": {
         "label": "off-net"
       }
     },
-    "IM": {
-      "clientToClient": {
+    "im": {
+      "client_to_client": {
         "label": "client to client"
       },
-      "serverToClient": {
+      "server_to_client": {
         "label": "server to client"
       },
-      "clientToServer": {
+      "client_to_server": {
         "label": "client to server"
       }
     },
-    "stand-alone PUSH": {
-      "standAlonePUSH": {
-        "label": "stand-alone PUSH"
-      }
+    "stand_alone_push": {
+      "label": "stand-alone PUSH"
     }
   }
 }
