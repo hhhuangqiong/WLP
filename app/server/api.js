@@ -58,16 +58,6 @@ api.post('/sign-in', function(req, res, next) {
   })(req, res, next);
 });
 
-api.post('/signout', function(req, res) {
-  req.logout(function() {
-    var token = req.header('Authorization');
-    if (token) {
-      db.revokeSession(token);
-    }
-    return res.sendStatus(200);
-  });
-});
-
 function validateTokenMiddleware(req, res, next) {
   var token = req.header('Authorization');
   if (!(token && db.checkSession(token))) {
@@ -86,6 +76,20 @@ api.use(validateTokenMiddleware);
 // Check if auth token is a valid session
 api.get('/session', function(req, res) {
   return res.sendStatus(200);
+});
+
+api.post('/sign-out', function(req, res) {
+  let token = req.header('Authorization');
+
+  if (token) {
+    req.logout();
+    db.revokeSession(token);
+    return res.sendStatus(200);
+  } else {
+    return res.status(500).json({
+      error: 'signout failed'
+    });
+  }
 });
 
 api.get('/switcher/companies', function(req, res) {

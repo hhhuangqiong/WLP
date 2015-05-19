@@ -1,4 +1,3 @@
-'use strict';
 var debug = require('debug')('app:signOut');
 
 module.exports = function(context, payload, done) {
@@ -14,10 +13,13 @@ module.exports = function(context, payload, done) {
     debug('Success');
     context.dispatch('SIGN_OUT_SUCCESS');
     context.cookie.clear('token');
+    context.cookie.clear('user');
+    context.cookie.clear('carrierId');
+    context.cookie.clear('urlPrefix');
     // NOTE: possible race condition here
     // the AuthStore needs to set its state to "not authenticated"
     // before the transition
-    context.getRouter().transitionTo('/signin');
+    context.getRouter().transitionTo('/sign-in');
     done();
   });
 };

@@ -35,7 +35,7 @@ Api.prototype.signIn = function(username, password, cb) {
 
 Api.prototype.signOut = function(cb) {
   superagent
-    .post(this._getHost() + '/signout')
+    .post(this._getHost() + '/sign-out')
     .accept('json')
     .set('Authorization', this._getToken())
     .end(function(err, res) {

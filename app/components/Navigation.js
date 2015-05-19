@@ -1,10 +1,11 @@
 import React   from 'react';
 import {Link}  from 'react-router';
 
-import showModal from '../actions/showModal';
 import ChangePass from './ChangePass';
-
 import CompanySwitcher from './CompanySwitcher';
+
+import showModal from '../actions/showModal';
+import signOut from '../actions/signOut';
 
 var Navigation = React.createClass({
   getInitialState: function(){
@@ -18,6 +19,11 @@ var Navigation = React.createClass({
   onFormSubmit: function(data, callback) {
     console.log(data); // for form submit action
     this.modalControl();
+  },
+
+  handleSignOut: function(e) {
+    e.preventDefault();
+    this.context.executeAction(signOut, {});
   },
 
   render: function() {
@@ -48,7 +54,10 @@ var Navigation = React.createClass({
               </li>
               <li className="divider"></li>
               <li className="navigation-bar__item">
-                <a href="/logout"><i className="icon-logout"></i>logout</a>
+                <a href="" onClick={this.handleSignOut}>
+                  <i className="icon-logout"></i>
+                  logout
+                </a>
               </li>
             </ul>
           </li>
@@ -57,6 +66,7 @@ var Navigation = React.createClass({
     );
   }
 });
+
 Navigation.contextTypes = {
   getStore: React.PropTypes.func.isRequired,
   executeAction: React.PropTypes.func.isRequired
