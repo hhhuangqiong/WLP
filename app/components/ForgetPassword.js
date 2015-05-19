@@ -1,5 +1,4 @@
 'use strict';
-
 import React from 'react';
 import ValidationMixin from 'react-validation-mixin';
 import Joi from 'joi';
@@ -11,11 +10,9 @@ var ForgetPassword = React.createClass({
   validatorTypes:  {
     email: Joi.string().regex(/^([\w-]+(?:\.[\w-]+)*)@((?:[\w-]+\.)*\w[\w-]{0,66})\.([a-z]{2,6}(?:\.[a-z]{2})?)$/i).label('Email Address')
   },
-
   getInitialState: function() {
     return {email:''};
   },
-
   handleSubmit: function(e) {
     e.preventDefault();
     var onValidate = function(error, validationErrors) {
@@ -23,14 +20,12 @@ var ForgetPassword = React.createClass({
         var userEmail = this.state.email.trim();
         this.onFormSubmit({
           userEmail: userEmail,
-          // TODO should not be hardcoded
           url: "/api/submit"
         });
       }
     }.bind(this);
     this.validate(onValidate);
   },
-
   renderHelpText: function(message) {
     var userEmail = this.state.email.trim();
     if(this.state.errors!=undefined){
@@ -74,7 +69,7 @@ var ForgetPassword = React.createClass({
                 </div>
               </div>
               <div className="row">
-                <div className="large-24 columns text-center">
+                <div className="large-24 columns text-center tooltips">
                   <input className="radius" type="email" placeholder="Email address" id='email' valueLink={this.linkState('email')}
                          onBlur={this.handleValidation('email')}/>
                   {this.renderHelpText(this.getValidationMessages('email'))}

@@ -5,9 +5,9 @@ var Message = React.createClass({
   render:function(){
     return(
       <div className="error-message-box">
-        <label className="error">
+        <span className="error">
           {this.props.message}
-        </label>
+        </span>
       </div>
     )
   }

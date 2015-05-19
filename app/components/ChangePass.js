@@ -81,18 +81,30 @@ var ChangePass = React.createClass({
       <form onSubmit={this.handleSubmit} noValidate>
         <div className='row'>
           <p>Please enter your current password</p>
-          <input type="password"  placeholder="Current Password"Ne id='current' valueLink={this.linkState('current')}  onBlur={this.handleValidation('current')}/>
-          {this.renderHelpCurrentText(this.getValidationMessages('current'))}
+
+          <div className="error-message-box tooltips">
+            <input type="password" placeholder="Current Password" Ne id='current' valueLink={this.linkState('current')}
+                   onBlur={this.handleValidation('current')}/>
+            {this.renderHelpCurrentText(this.getValidationMessages('current'))}
+          </div>
           <br/>
+
           <p>and your new password</p>
-          <input type="password"  placeholder="New Password" id='pass' valueLink={this.linkState('pass')}  onBlur={this.handleValidation('pass')}/>
-          {this.renderHelpPassText(this.getValidationMessages('pass'))}
-          <input type="password"  placeholder="Re-type password" id='repass' valueLink={this.linkState('repass')}  onBlur={this.handleValidation('repass')}/>
-          {this.renderHelpRePassText(this.getValidationMessages('repass'))}
+
+          <div className="error-message-box tooltips">
+            <input type="password" placeholder="New Password" id='pass' valueLink={this.linkState('pass')}
+                   onBlur={this.handleValidation('pass')}/>
+            {this.renderHelpPassText(this.getValidationMessages('pass'))}
+          </div>
+          <div className="error-message-box tooltips">
+            <input type="password" placeholder="Re-type password" id='repass' valueLink={this.linkState('repass')}
+                   onBlur={this.handleValidation('repass')}/>
+            {this.renderHelpRePassText(this.getValidationMessages('repass'))}
+          </div>
           <hr/>
           <p className="text-center">
             <a className="button radius close-reveal-modal" style={myStyle} aria-label="Close">Cancel</a>
-            <input type="submit" value="Change" className="button radius" />
+            <input type="submit" value="Change" className="button radius"/>
           </p>
         </div>
       </form>

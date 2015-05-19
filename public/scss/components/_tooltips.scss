@@ -1,0 +1,31 @@
+.tooltips{
+  position: relative;
+  span{
+    position: absolute;
+    width:140px;
+    color: #FFFFFF;
+    background: #828282;
+    height: 30px;
+    line-height: 30px;
+    text-align: center;
+    visibility: visible;
+    border-radius: 6px;
+    opacity: 0.7;
+    left: 100%;
+    top: 50%;
+    margin-top: -15px;
+    margin-left: 10px;
+    z-index: 999;
+  }
+  span:after{
+    content: '';
+    position: absolute;
+    top: 50%;
+    right: 100%;
+    margin-top: -8px;
+    width: 0; height: 0;
+    border-right: 8px solid #828282;
+    border-top: 8px solid transparent;
+    border-bottom: 8px solid transparent;
+  }
+}
