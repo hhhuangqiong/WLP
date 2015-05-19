@@ -20,11 +20,7 @@ var ApplicationStore = createStore({
 
   getState: function() {
     return {
-      currentPageName: this.currentPageName,
-      currentPage: this.currentPage,
-      pages: this.pages,
-      route: this.currentRoute,
-      pageTitle: this.pageTitle
+      managingCompanies: this.managingCompanies
     };
   },
 
@@ -33,7 +29,7 @@ var ApplicationStore = createStore({
   },
 
   rehydrate: function (state) {
-    this.managingCompanies = state.managingCompanies
+    this.managingCompanies = state.managingCompanies;
   }
 });
 
