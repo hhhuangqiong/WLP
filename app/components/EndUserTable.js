@@ -42,8 +42,8 @@ var EndUserTable = React.createClass({
           <td>{u.verified ? "Yes" : "No"}</td>
           <td>
             <Link to="end-user" params={{
+              role: params.role,
               identity: params.identity,
-              carrierId: params.carrierId,
               username: u.username
             }}>
               {u.username}

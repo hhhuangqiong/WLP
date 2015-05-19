@@ -44,11 +44,13 @@ var Pagination = React.createClass({
   getAvailablePages: function() {
     let pages = [];
 
-    let _from = this.getFromPage();
-    let _to = this.getToPage();
+    if (this.props.total > 0) {
+      let _from = this.getFromPage();
+      let _to = this.getToPage();
 
-    for (let i = _from; i <= _to; ++i) {
-      pages.push(i);
+      for (let i = _from; i <= _to; ++i) {
+        pages.push(i);
+      }
     }
 
     return pages;
@@ -61,7 +63,7 @@ var Pagination = React.createClass({
 
   render: function() {
     return (
-      <ul className="pagination" role="menubar" aria-label="Pagination">
+      <ul className={classNames('pagination', { 'hide': this.props.total == 0 })} role="menubar" aria-label="Pagination">
         <li className={classNames('arrow', { 'unavailable': this.props.current == 1 })} aria-disabled="true"><a href="">&lt;</a></li>
         {this.getAvailablePages().map((i)=>{
           return (

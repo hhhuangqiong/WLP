@@ -27,7 +27,7 @@ var EndUserProfile = React.createClass({
     fetchData: function(context, params, query, done) {
       concurrent([
         context.executeAction.bind(context, fetchEndUser, {
-          carrierId: params.carrierId,
+          carrierId: params.identity,
           username: params.username
         })
       ], done || function() {});

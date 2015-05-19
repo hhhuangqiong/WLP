@@ -27,7 +27,7 @@ var EndUsers = React.createClass({
     fetchData: function(context, params, query, done) {
       concurrent([
         context.executeAction.bind(context, fetchEndUsers, {
-          carrierId: params.carrierId,
+          carrierId: params.identity,
           fromTime: query.fromTime || moment().startOf('day'),
           toTime: query.fromTime || moment().endOf('day'),
           page: query.page || 0
