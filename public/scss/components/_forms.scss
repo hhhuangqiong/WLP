@@ -1,13 +1,13 @@
 form {
-  font-size: $form-label-font-size;
-  label{
-    color: $gray;
-    text-transform: capitalize;
-  }
-  input[type="submit"]{
-    @extend .button--primary;
-  }
-  textarea,input,select{
-    margin-bottom: rem-calc(20) !important;
-  }
+	font-size: $form-label-font-size;
+    label{
+    	// color: $gray;
+    	text-transform: capitalize;
+    }
+    input[type="submit"]{
+    	@extend .button--primary;
+    }
+    textarea,input,select{
+    	margin-bottom: rem-calc(20) !important;
+    }
 }

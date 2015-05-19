@@ -81,12 +81,23 @@ var EndUsers = React.createClass({
 
     return (
       <div className="row">
-        <div className="contents-panel info-panel large-18 columns">
-          <EndUserTable users={this.state.users} current={this.state.current} per={this.state.per} />
-          <Pagination total={this.state.userCount} current={this.state.current} per={this.state.per} onPageChange={this.handlePageChange} />
-        </div>
-        <div className="large-6 columns">
-          {userDetails}
+        <nav className="top-bar top-bar--inner" data-topbar role="navigation">
+          <section className="top-bar-section">
+            <ul className="right">
+              <li>
+                <button>create</button>
+              </li>
+            </ul>
+          </section>
+        </nav>
+        <div className="large-24 columns">
+          <div className="large-18 columns">
+            <EndUserTable users={this.state.users} current={this.state.current} per={this.state.per} />
+            <Pagination total={this.state.userCount} current={this.state.current} per={this.state.per} onPageChange={this.handlePageChange} />
+          </div>
+          <div className="large-6 columns">
+            {userDetails}
+          </div>
         </div>
       </div>
     );

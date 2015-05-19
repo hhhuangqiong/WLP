@@ -1,0 +1,14 @@
+ul.pagination {
+    @include pagination;
+    > li {
+        > a {
+            // text-align: center;
+            width: rem-calc(24);
+            height: rem-calc(24);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            @include border-radius($global-rounded);
+        }
+    }
+}

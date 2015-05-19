@@ -64,15 +64,15 @@ var Pagination = React.createClass({
   render: function() {
     return (
       <ul className={classNames('pagination', { 'hide': this.props.total == 0 })} role="menubar" aria-label="Pagination">
-        <li className={classNames('arrow', { 'unavailable': this.props.current == 1 })} aria-disabled="true"><a href="">&lt;</a></li>
+        <li className={classNames('arrow', { 'unavailable': this.props.current == 1 })} aria-disabled="true"><a href="">&#x3008;</a></li>
         {this.getAvailablePages().map((i)=>{
           return (
-            <li key={i} className={classNames({'active': this.props.current == i})} onClick={_.bindKey(this.props, 'onPageChange', i)}>
+            <li key={i} className={classNames({'current': this.props.current == i})} onClick={_.bindKey(this.props, 'onPageChange', i)}>
               <a>{i}</a>
             </li>
           );
         })}
-        <li className={classNames('arrow', { 'unavailable': this.props.current == this.getLastPage() })}><a href="">&gt;</a></li>
+        <li className={classNames('arrow', { 'unavailable': this.props.current == this.getLastPage() })}><a href="">&#x3009;</a></li>
       </ul>
     );
   }
