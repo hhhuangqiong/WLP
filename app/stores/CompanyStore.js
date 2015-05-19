@@ -74,6 +74,7 @@ var CompanyStore = createStore({
   receiveCompanies: function(companies) {
     // TODO: assign a key of _id to this.companies Object
     this.companies = companies;
+    this.receiveCompany(companies[0]);
     this.emitChange();
 
     // any kind of async method does not work in Store?
@@ -95,7 +96,8 @@ var CompanyStore = createStore({
     'UPDATE_COMPANY_PROFILE_SUCCESS': 'handleProfileUpdated',
     'UPDATE_COMPANY_SERVICES_SUCCESS': 'handleServicesUpdated',
     'UPDATE_COMPANY_WIDGETS_SUCCESS': 'handleWidgetUpdated',
-    'RESET_CURRENT_COMPANY': 'handleCompanyReset'
+    'RESET_CURRENT_COMPANY': 'handleCompanyReset',
+    'FETCH_MANGAING_COMPANIES_SUCCESS': 'receiveCompanies'
   },
   getState: function () {
     return {

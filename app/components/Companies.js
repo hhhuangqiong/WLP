@@ -4,6 +4,7 @@ import FluxibleMixin from 'fluxible/addons/FluxibleMixin';
 import AuthMixin from '../utils/AuthMixin';
 
 import CompanyStore from '../stores/CompanyStore';
+import showCompanies from '../actions/showCompanies';
 
 import Company from './Company';
 import CompanyList from './CompanyList';
@@ -29,8 +30,8 @@ var Companies = React.createClass({
     this.setState(state);
   },
   render: function() {
-
-    let subPage = this.props.params ? this.props.params.get('subPage') : null;
+    // temporarily set default subPage as 'profile'
+    let subPage = this.props.params ? this.props.params.get('subPage') : 'profile';
 
     return (
       <div className="row" data-equalizer>

@@ -1,6 +1,6 @@
 import _ from 'lodash';
 import React from 'react';
-import {NavLink} from 'fluxible-router';
+import {Link} from 'react-router';
 import request from 'superagent';
 
 // Components

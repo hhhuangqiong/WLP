@@ -1,6 +1,6 @@
 import _ from 'lodash';
 import React from 'react';
-import {NavLink} from 'fluxible-router';
+import {Link} from 'react-router';
 
 var Countries = require('../data/countries.json');
 
@@ -64,12 +64,12 @@ var CompanyList = React.createClass({
   renderCompanyListItem: function(company) {
 
     let href = `/admin/companies/${company.carrierId}/settings/profile`;
-    
+
     let logo = !!company.logo ? `/data/${company.logo}` : '/images/logo-yato.png';
 
     return (
       /*
-      <NavLink href={href}>
+      <Link href={href}>
         <li className="company-sidebar__list__item">
           <span className="company-sidebar__list__item__logo left">
             <img src="/images/logo-yato.png"/>
@@ -83,9 +83,9 @@ var CompanyList = React.createClass({
             </span>
           </span>
         </li>
-      </NavLink>*/
+      </Link>*/
       <li className="company-sidebar__list__item">
-        <NavLink href={href}>
+        <Link to="company" params={{ role: company.role, identity: company.identity, carrierId: company.carrierId, companyCarrierId: company.carrierId, subPage: 'profile' }}>
           <span className="company-sidebar__list__item__logo left">
             <img src={logo} />
           </span>
@@ -100,7 +100,7 @@ var CompanyList = React.createClass({
           <span className="company-sidebar__list__item__status left">
             <span className="status--active"></span>
           </span>
-        </NavLink>
+        </Link>
       </li>
     )
   }

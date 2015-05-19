@@ -1,5 +1,5 @@
 import React from 'react';
-import {NavLink} from 'fluxible-router';
+import {Link} from 'react-router';
 
 class Home extends React.component {
   getInitialState() {
@@ -10,7 +10,7 @@ class Home extends React.component {
     return (
       <div>
         <p>Home component!</p>
-        <NavLink href="/signin">to sign in</NavLink>
+        <Link href="/signin">to sign in</Link>
       </div>
     );
   }

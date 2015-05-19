@@ -13,6 +13,7 @@ export default (
     <Route name="companies" path="/:role/:identity?/companies" handler={require('./components/Companies')}>
       <Route name="company" path=":companyCarrierId" handler={require('./components/Company')}/>
     </Route>
+    <Route name="adminCompany" path=":carrierId" handler={require('./components/CompanyActionBar')}/>
     <Route name="accounts" path="/:role/:identity?/accounts" handler={require('./components/Overview')} />
     <Route name="end-users" path="/:role/:identity?/endusers" handler={require('./components/EndUsers')}>
       <Route name="end-user" path=":username" handler={require('./components/EndUserProfile')}/>
