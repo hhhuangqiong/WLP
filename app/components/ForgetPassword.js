@@ -4,6 +4,7 @@ import ValidationMixin from 'react-validation-mixin';
 import Joi from 'joi';
 import Message from './ValidateErrorMsg';
 import formMixin from '../utils/formMixin';
+import {Link} from 'react-router';
 
 var ForgetPassword = React.createClass({
   displayName: 'ForgetPassword',
@@ -75,7 +76,7 @@ var ForgetPassword = React.createClass({
               </div>
               <div className="row">
                 <div className="large-24 columns text-center">
-                  <a className="button--secondary" href="/signin">Cancel</a>
+                  <Link className="button--secondary" to="sign-in">Cancel</Link>
                   <input type="submit" value="Submit" className="button--primary"/>
                 </div>
               </div>

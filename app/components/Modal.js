@@ -9,16 +9,13 @@ var modal = React.createClass({
     storeListeners: [ModalStore]
   },
   /**
-   * get states of Company List and Current Company from CompanyStore
+   * get states of title and content  from modalStore
    *
    * @returns {Object}
    */
   getInitialState: function () {
     return this.getStore(ModalStore).getState();
   },
-  /**
-   * capture Company Store changes and take effect
-   */
   handleChange:function(){
     //rendering modal content
     var contentDiv = $('<div>');
