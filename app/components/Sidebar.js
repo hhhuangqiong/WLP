@@ -9,47 +9,47 @@ let navSections = [
   {
     name: 'overview',
     icon: 'icon-menuoverview',
-    link: '/overview'
+    routeName: 'overview'
   },
   {
     name: 'account',
     icon: 'icon-menuaccount',
-    link: '/accounts'
+    routeName: 'accounts'
   },
   {
     name: 'company',
     icon: 'icon-menucompany',
-    link: '/companies'
+    routeName: 'companies'
   },
   {
     name: 'setting',
     icon: 'icon-menusetting',
-    link: '/settings'
+    routeName: 'settings'
   },
   {
     name: 'End users',
     icon: 'icon-menuenduser',
-    link: '/end-users'
+    routeName: 'end-users'
   },
   {
     name: 'Top up',
     icon: 'icon-menutopup',
-    link: '/top-up'
+    routeName: 'top-up'
   },
   {
     name: 'Calls',
     icon: 'icon-menucalls',
-    link: '/calls'
+    routeName: 'calls'
   },
   {
     name: 'IM',
     icon: 'icon-menuim',
-    link: '/im'
+    routeName: 'im'
   },
   {
     name: 'Store',
     icon: 'icon-menustore',
-    link: '/vsf'
+    routeName: 'vsf'
   }
 ];
 
@@ -59,6 +59,10 @@ class Sidebar extends React.Component{
   }
 
   render() {
+    let navParams = this.context.router.getCurrentParams();
+    let role = navParams.role || this.props.role;
+    let identity = navParams.identity || this.props.carrierId;
+
     return (
       <div
         className={classnames('mainmenu-bar','vertical', {offcanvas: this.props.isOffCanvas})}
@@ -75,10 +79,13 @@ class Sidebar extends React.Component{
             </a>
           </li>
           {navSections.map((section,idx)=>{
-            let href = `${this.props.urlPrefix}/${section.link}`;
             return (
               <li key={idx}>
-                <Link className="item mainmenu-bar__item" to={href}>
+                <Link
+                  className="item mainmenu-bar__item"
+                  to={section.routeName}
+                  params={{ role: role, identity: identity }}
+                >
                   <label>
                     <i className={section.icon} />
                     {section.name}
@@ -94,6 +101,7 @@ class Sidebar extends React.Component{
 }
 
 Sidebar.contextTypes = {
+  router: React.PropTypes.func.isRequired,
   getStore: React.PropTypes.func,
   executeAction: React.PropTypes.func
 };
@@ -102,8 +110,8 @@ Sidebar.contextTypes = {
 // with fetchData method to acquire accessible sections from server
 Sidebar = connectToStores(Sidebar, [AuthStore], function (stores, props) {
   return {
-    carrierId: stores.AuthStore.getCarrierId(),
-    urlPrefix: stores.AuthStore.getUserUrlPrefix()
+    role: stores.AuthStore.getUserRole(),
+    carrierId: stores.AuthStore.getCarrierId()
   };
 });
 

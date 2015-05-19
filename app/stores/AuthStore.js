@@ -76,8 +76,8 @@ var AuthStore = createStore({
     return this.user && this.user._id;
   },
 
-  getUserUrlPrefix: function() {
-    return this.user && this.user.urlPrefix;
+  getUserRole: function() {
+    return this.user && this.user.role;
   },
 
   getCarrierId: function() {

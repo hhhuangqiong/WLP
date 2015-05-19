@@ -6,7 +6,7 @@ module.exports = function(context, payload, done) {
   let token = context.cookie.get('token');
   let user = context.cookie.get('user');
   let carrierId = context.cookie.get('carrierId');
-  let urlPrefix = context.cookie.get('urlPrefix');
+  let role = context.cookie.get('role');
   if (!token) {
     context.dispatch('LOAD_SESSION', null);
     done();
@@ -25,7 +25,7 @@ module.exports = function(context, payload, done) {
       user: {
         _id: user,
         carrierId: carrierId,
-        urlPrefix: urlPrefix
+        role: role
       }
     });
     // !IMPORTANT
@@ -39,7 +39,7 @@ module.exports = function(context, payload, done) {
       context.cookie.clear('token');
       context.cookie.clear('user');
       context.cookie.clear('carrierId');
-      context.cookie.clear('urlPrefix');
+      context.cookie.clear('role');
     }
     done();
   });

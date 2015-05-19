@@ -6,10 +6,16 @@ module.exports = {
       let isAuthenticated = transition.context
         .getActionContext().getStore(AuthStore).isAuthenticated();
 
-      let urlPrefix = transition.context
-        .getActionContext().getStore(AuthStore).getUserUrlPrefix();
+      let role = transition.context
+        .getActionContext().getStore(AuthStore).getUserRole();
 
-      let destination = `${urlPrefix}/companies`;
+      let identity = transition.context
+        .getActionContext().getStore(AuthStore).getCarrierId();
+
+      role = role ? '/' + role : '';
+      identity = identity ? '/' + identity : '';
+
+      let destination = `${role}${identity}/overview`;
 
       if (isAuthenticated) {
         transition.redirect(destination);

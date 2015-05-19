@@ -14,20 +14,21 @@ module.exports = function(context, payload, done) {
       done();
       return;
     }
+
     debug('Success');
     context.dispatch('SIGN_IN_SUCCESS', auth);
 
     context.cookie.set('token', auth.token);
     context.cookie.set('user', auth.user._id);
     context.cookie.set('carrierId', auth.user.carrierId);
-    context.cookie.set('urlPrefix', auth.user.urlPrefix);
+    context.cookie.set('role', auth.user.role);
+
     // NOTE: possible race condition here
     // the AuthStore needs to set its state to "authenticated"
     // before the transition
-
-    // TODO: change companies to default landing page
-    let destination = `${auth.user.urlPrefix}/companies`;
-    console.log('destination', destination);
+    let role = auth.user.role ? '/' + auth.user.role : '';
+    let identity = auth.user.carrierId ? '/' + auth.user.carrierId : '';
+    let destination = `${role}${identity}/overview`;
     context.getRouter().transitionTo(destination);
     done();
   });

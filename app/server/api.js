@@ -19,11 +19,11 @@ var api = express.Router();
 
 function getAuthUser(user) {
   // TODO double check if this is necessary for the data model
-  let affiliatedCompany = user.affiliatedCompany  || {}
+  let affiliatedCompany = user.affiliatedCompany  || {};
   return {
     _id: user._id,
     carrierId: affiliatedCompany.carrierId,
-    urlPrefix: affiliatedCompany.getUrlPrefix ? affiliatedCompany.getUrlPrefix() : ''
+    role: affiliatedCompany.role
   };
 };
 
