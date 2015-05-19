@@ -52,9 +52,7 @@ function initialize(seedFilePath) {
     seedCompany(content.company)
       .then(putAffiliateIdInScope)
       .then(infoLogger)
-      .then(hashInfo(rootUser.password))
-      .then(seedUser)
-      .then(infoLogger)
+      .then(hashInfo(rootUser.password).then(seedUser).then(infoLogger))
       .catch(function (error) {
         logger.error('Error during data seeding', error.stack);
     });
