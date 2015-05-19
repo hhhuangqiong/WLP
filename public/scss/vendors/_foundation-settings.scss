@@ -120,6 +120,7 @@ $white       : #FFFFFF;
 // $primary-color: #008CBA;
 // $secondary-color: #e7e7e7;
 // $alert-color: #f04124;
+$alert-color: #ee5072;
 $success-color: #62d464;
 // $warning-color: #f08a24;
 // $info-color: #a0d3e8;
@@ -257,7 +258,7 @@ $header-font-color: $body-font-color;
 // $anchor-text-decoration: none;
 // $anchor-text-decoration-hover: none;
 // $anchor-font-color: $primary-color;
-$anchor-font-color: $brand-primary;
+$anchor-font-color: $body-font-color;
 // $anchor-font-color-hover: scale-color($primary-color, $lightness: -14%);
 
 // We use these to style the <hr> element
@@ -622,6 +623,7 @@ $form-label-pointer: cursor;
 // $form-label-font-size: rem-calc(14);
 // $form-label-font-weight: $font-weight-normal;
 $form-label-line-height: 2.4;
+$form-label-font-color: $gray;
 // $form-label-font-color: scale-color($black, $lightness: 30%);
 $form-label-small-transform: capitalize;
 // $form-label-bottom-margin: 0;
@@ -791,7 +793,7 @@ $icon-bar-icon-size: 1.35rem;
 // We use these to style the label text
 // $label-font-sizing: rem-calc(11);
 // $label-font-weight: $font-weight-normal;
-// $label-font-color: $oil;
+$label-font-color: $gray;
 // $label-font-color-alt: $white;
 // $label-font-family: $body-font-family;
 
@@ -935,9 +937,9 @@ $icon-bar-icon-size: 1.35rem;
 // $pagination-li-margin: rem-calc(5);
 
 // We use these for the pagination anchor links
-// $pagination-link-pad: rem-calc(1 10 1);
+$pagination-link-pad: rem-calc(0);
 // $pagination-link-font-color: $aluminum;
-// $pagination-link-active-bg: scale-color($white, $lightness: -10%);
+$pagination-link-active-bg: scale-color($white, $lightness: -10%);
 
 // We use these for disabled anchor links
 // $pagination-link-unavailable-cursor: default;
@@ -945,11 +947,11 @@ $icon-bar-icon-size: 1.35rem;
 // $pagination-link-unavailable-bg-active: transparent;
 
 // We use these for currently selected anchor links
-// $pagination-link-current-background: $primary-color;
+$pagination-link-current-background: $link-secondary;
 // $pagination-link-current-font-color: $white;
 // $pagination-link-current-font-weight: $font-weight-bold;
 // $pagination-link-current-cursor: default;
-// $pagination-link-current-active-bg: $primary-color;
+$pagination-link-current-active-bg: $link-secondary;
 
 // 21. Panels
 // - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -1273,23 +1275,23 @@ $panel-border-size: 0;
 // $include-html-table-classes: $include-html-classes;
 
 // These control the background color for the table and even rows
-// $table-bg: $white;
-// $table-even-row-bg: $snow;
+$table-bg: transparent;
+$table-even-row-bg: $table-bg;
 
 // These control the table cell border style
 // $table-border-style: solid;
-// $table-border-size: 1px;
+$table-border-size: 0px;
 // $table-border-color: $gainsboro;
 
 // These control the table head styles
-// $table-head-bg: $white-smoke  ;
-// $table-head-font-size: rem-calc(14);
-// $table-head-font-color: $jet;
-// $table-head-font-weight: $font-weight-bold;
-// $table-head-padding: rem-calc(8 10 10);
+$table-head-bg: #e4e4e4;
+$table-head-font-size: rem-calc(13);
+$table-head-font-color: $accordion-item-link-color;
+$table-head-font-weight: $font-weight-normal;
+$table-head-padding: rem-calc(20 10);
 
 // These control the row padding and font styles
-// $table-row-padding: rem-calc(9 10);
+$table-row-padding: rem-calc(20 10);
 // $table-row-font-size: rem-calc(14);
 // $table-row-font-color: $jet;
 // $table-line-height: rem-calc(18);

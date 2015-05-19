@@ -5,7 +5,7 @@ theme setting
 *********************************************/
 //main body color
 $body-font-color: #414651;
-$body-bg-color-1: #e7e7e7;
+$body-bg-color-1: #fff;
 $body-bg-color-2: rgba(0,0,0,0.1);
 
 $brand-primary: #e05353;
@@ -20,6 +20,8 @@ $gray: #999;
 $gray-light: #bbb;
 $gray-lighter: #ddd;
 $gray-lightest: #efefef;
+
+$link-secondary: #8d929a;
 
 //link
 $link-function-factor: -50%;
@@ -66,7 +68,7 @@ $topbar-inner-link-bg-color: transparent;
 $tab-inverted-border: 1px solid rgba(255,255,255,0.2);
 
 //accordion
-$accordion-item-link-color: #8d929a;
+$accordion-item-link-color: $link-secondary;
 
 //panels
 $panels-h1-font-size: rem-calc(40);

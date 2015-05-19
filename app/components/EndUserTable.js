@@ -39,7 +39,7 @@ var EndUserTable = React.createClass({
         });
         let creationDate = moment(u.creationDate).format('MMM. D, YYYY [at] h:mm A z');
         return <tr>
-          <td>{u.verified ? "Yes" : "No"}</td>
+          <td className="text-center"><span className={u.verified ? "label status success" : "label status alert"}></span></td>
           <td>
             <Link to="end-user" params={{
               role: params.role,
@@ -57,7 +57,7 @@ var EndUserTable = React.createClass({
     );
 
     return (
-      <table className="large-24">
+      <table className="large-24 clickable">
         <thead>
           <tr>
             <th></th>

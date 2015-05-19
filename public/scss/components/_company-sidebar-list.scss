@@ -36,19 +36,6 @@
                     font-size: $description-font-size;
                 }
             }
-            &__status {
-                [class^="status--"] {
-                    width: rem-calc(10);
-                    height: rem-calc(10);
-                    display: block;
-                    @include border-radius(rem-calc(10));
-                }
-                .status {
-                    &--active {
-                        background: $status-active;
-                    }
-                }
-            }
         }
     }
 }

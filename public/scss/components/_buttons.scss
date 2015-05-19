@@ -1,24 +1,22 @@
-.button--primary {
-  @include button(
+.button--primary { 	
+    @include button(
 		$bg: $brand-primary,
 		$radius: $global-rounded
 	);
 }
 
 .button--secondary{
-  @include button(
-    $bg: scale-color($brand-secondary, $lightness: -3%),
-    $radius: $global-rounded
-  );
+	@include button(
+		$bg: scale-color($brand-secondary, $lightness: -3%),
+		$radius: $global-rounded
+	);
 }
 
 .button--primary,
 .button--secondary{
-  @include box-shadow(inset 0px 1px 1px rgba(255,255,255,0.2), inset 0px -1px 1px rgba(0,0,0,0.2));
-  min-width: rem-calc(100);
-  ~ input[type="submit"]{
-    margin-left: rem-calc(20);
-  }
+	@include box-shadow(inset 0px 1px 1px rgba(255,255,255,0.2), inset 0px -1px 1px rgba(0,0,0,0.2));
+    min-width: rem-calc(100);
+    ~ input[type="submit"]{
+    	margin-left: rem-calc(20);
+    }
 }
-
-

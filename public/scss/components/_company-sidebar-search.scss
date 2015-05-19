@@ -6,7 +6,6 @@
         > input {
             @include inputBoxReset;
             @include inputBoxWithIcon;
-            @include border-radius(rem-calc(6));
         }
     }
 }
