@@ -13,7 +13,7 @@ var Navigation = React.createClass({
     }
   },
   modalControl: function () {
-    this.context.executeAction(showModal, {title: "Change Password", content: <ChangePass onFormSubmit={this.onFormSubmit}/>})},
+    this.context.executeAction(showModal, {title: "Change Password", content: <ChangePass />})},
   onFormSubmit: function(data, callback) {
     console.log(data); // for form submit action
     this.modalControl();

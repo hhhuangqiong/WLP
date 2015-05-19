@@ -3,10 +3,11 @@ import React from 'react';
 import ValidationMixin from 'react-validation-mixin';
 import Joi from 'joi';
 import Message from './ValidateErrorMsg';
+import formMixin from '../utils/formMixin';
 
 var ForgetPassword = React.createClass({
   displayName: 'ForgetPassword',
-  mixins: [ValidationMixin, React.addons.LinkedStateMixin],
+  mixins: [ValidationMixin, React.addons.LinkedStateMixin,formMixin],
   validatorTypes:  {
     email: Joi.string().regex(/^([\w-]+(?:\.[\w-]+)*)@((?:[\w-]+\.)*\w[\w-]{0,66})\.([a-z]{2,6}(?:\.[a-z]{2})?)$/i).label('Email Address')
   },
@@ -18,7 +19,7 @@ var ForgetPassword = React.createClass({
     var onValidate = function(error, validationErrors) {
       if (!error) {
         var userEmail = this.state.email.trim();
-        this.onFormSubmit({
+        this.onSubmit({
           userEmail: userEmail,
           url: "/api/submit"
         });
@@ -48,9 +49,6 @@ var ForgetPassword = React.createClass({
     event.preventDefault();
     this.clearValidations();
     this.setState(this.getInitialState());
-  },
-  onFormSubmit: function(data, callback){
-    console.log(data)
   },
   render: function() {
     return (

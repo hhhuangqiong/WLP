@@ -3,10 +3,10 @@ import React from 'react';
 import ValidationMixin from 'react-validation-mixin';
 import Joi from 'joi';
 import Message from './ValidateErrorMsg.js';
-
+import formMixin from '../utils/formMixin';
 var ChangePass = React.createClass({
   displayName: 'ChangePass',
-  mixins: [ValidationMixin, React.addons.LinkedStateMixin],
+  mixins: [ValidationMixin, React.addons.LinkedStateMixin,formMixin],
   validatorTypes:  {
     pass: Joi.string().regex(/[a-zA-Z0-9]{8,20}/),
     repass: Joi.any().valid(Joi.ref('pass')).required(),
@@ -22,7 +22,7 @@ var ChangePass = React.createClass({
         var pass = this.state.pass.trim();
         var repass = this.state.repass.trim();
 
-        this.props.onFormSubmit({
+        this.onSubmit({
           pass:pass,
           repass: repass,
           url: "/api/submit"
