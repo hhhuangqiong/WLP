@@ -12,8 +12,9 @@ export default (
     <Route name="overview" path="/:role/:identity?/overview" handler={require('./components/Overview')}/>
     <Route name="companies" path="/:role/:identity?/companies" handler={require('./components/Companies')}>
       <Route name="company" path=":companyCarrierId" handler={require('./components/Company')}/>
+      <Route name="adminCompany" path=":carrierId" handler={require('./components/CompanyActionBar')}/>
     </Route>
-    <Route name="adminCompany" path=":carrierId" handler={require('./components/CompanyActionBar')}/>
+
     <Route name="accounts" path="/:role/:identity?/accounts" handler={require('./components/Overview')} />
     <Route name="end-users" path="/:role/:identity?/endusers" handler={require('./components/EndUsers')}>
       <Route name="end-user" path=":username" handler={require('./components/EndUserProfile')}/>
@@ -23,7 +24,9 @@ export default (
     <Route name="calls" path="/:role/:identity?/calls" handler={require('./components/Overview')} />
     <Route name="im" path="/:role/:identity?/im" handler={require('./components/Overview')} />
     <Route name="vsf" path="/:role/:identity?/vsf" handler={require('./components/Overview')} />
-    <Route name="temp" handler={require('./components/common/TemporaryMain')}/>
+
+    <Route name="temp" handler={require('./components/Overview')}/>
+
     <Redirect from="/" to="temp" />
     <NotFoundRoute name="not-found" handler={require('./components/common/NotFound')}/>
   </Route>
