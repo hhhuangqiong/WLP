@@ -31,15 +31,15 @@ var Navigation = React.createClass({
       <section className="top-bar-section navigation-bar">
         <ul className="right">
           <li className="navigation-bar__item">
-            <Link to="about">report issue</Link>
+            <Link to="TODO">report issue</Link>
           </li>
           <li className="navigation-bar__item">
-            <Link to="about">
+            <Link to="TODO">
               <i className="icon-question"/>
             </Link>
           </li>
           <li className="has-dropdown not-click navigation-bar__item">
-            <Link to="about">
+            <Link to="TODO">
               <i className="icon-companymenu"/>
             </Link>
             <CompanySwitcher />

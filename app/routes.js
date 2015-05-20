@@ -3,8 +3,10 @@ import { Route, NotFoundRoute, Redirect, DefaultRoute } from 'react-router';
 
 export default (
   <Route path="/" handler={require('./components/App')}>
+    //
+    <Route name="TODO" handler={require('./components/_TODO')}/>
+
     // public pages, for readability, please use '-'
-    <Route name="about" handler={require('./components/About')}/>
     <Route name="forget-password" handler={require('./components/ForgetPassword')}/>
     <Route name="sign-in" handler={require('./components/SignIn')}/>
 

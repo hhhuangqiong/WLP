@@ -1,7 +1,6 @@
 'use strict';
 
 import React from 'react';
-import {Link} from 'react-router';
 import AuthMixin from '../utils/AuthMixin';
 
 var Overview = React.createClass({
@@ -11,7 +10,6 @@ var Overview = React.createClass({
     return (
       <div>
         <p>This is Overview component!</p>
-        <Link to="about">About page</Link>
       </div>
     );
   }

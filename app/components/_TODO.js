@@ -1,16 +1,10 @@
 import React from 'react';
 
-var Router = require('react-router');
-var Link = Router.Link;
-
 var About = React.createClass({
-  getInitialState: function () {
-    return {};
-  },
   render: function() {
     return (
       <div>
-        <p>About component!</p>
+        <p>Placeholder component. Please implement.</p>
       </div>
     );
   }
