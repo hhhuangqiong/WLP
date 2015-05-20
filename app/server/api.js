@@ -19,6 +19,7 @@ var companyCtrl  = new CompanyCtrl();
 
 var endUserRequest = fetchDep(nconf.get('containerName'), 'EndUserRequest');
 var walletRequest = fetchDep(nconf.get('containerName'), 'WalletRequest');
+var callsRequest = fetchDep(nconf.get('containerName'), 'CallsRequest');
 
 var api = express.Router();
 
@@ -251,6 +252,31 @@ api.get('/carriers/:carrierId/users/:username', function(req, res) {
         error: err
       });
     });
+});
+
+api.get('/calls/carriers/:carrierId', function(req, res) {
+  req.checkParams('carrierId').notEmpty();
+
+  let params = {
+    // TODO  carrierId to be changed in the future
+    caller_carrier : (req.params.carrierId == 'm800') ? 'maaiitest.com' : req.params.carrierId,
+    type : (req.params.type) ? req.params.type : '',
+    from : (req.params.fromTime) ? moment(req.params.fromTime).format('X') : '',
+    to : (req.params.toTime) ? moment(req.params.toTime).format('X') : '',
+    caller : (req.params.caller) ? req.params.caller : '',
+    callee : (req.params.callee) ? req.params.callee : '',
+    page : (req.params.page) ? req.params.page : 0,
+    size : 10,
+  }
+
+  callsRequest.getCalls(params, (err, result) => {
+    if (err)
+      return res.status(err.status).json({
+        error: err
+      });
+
+    return res.json(result);
+  });
 });
 
 api.all('*', function(req, res) {

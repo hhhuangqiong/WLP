@@ -9,14 +9,14 @@
     "timeout": 5000
   },
   "bossApi": {
-    "baseUrl": "http://192.168.56.42:8080",
+    "baseUrl": "http://192.168.135.167:10080",
     "timeout": 5000,
     "format": {
       "timestamp": "YYYYMMDD"
     }
   },
   "dataProviderApi": {
-    "baseUrl": "http://192.168.118.12:8080",
+    "baseUrl": "http://192.168.118.26:9998",
     "timeout": 5000,
     "format": {
       "timestamp": "x"

@@ -26,6 +26,8 @@ export default class CallsRequest extends BaseRequest {
     super(opts);
   }
 
+
+  // formatQueryData is not needed, keeping it for now for reference purpose.
   /**
    * @method formatQueryData Format and Normalize query string for Calls request
    *
@@ -99,14 +101,16 @@ export default class CallsRequest extends BaseRequest {
    * @param cb {Function} Callback function from API controller
    */
   getCalls(params, cb) {
-    logger.debug('get calls from carrier %s', params.carrierId);
+    //logger.debug('get calls from carrier %s', params);
 
-    Q.ninvoke(this, 'formatQueryData', params)
-      .then((params) => {
-        this.sendRequest(params, cb);
-      })
-      .catch((err) => {
-        return cb(this.handleError(err, err.status || 500));
-      });
+    // Q.ninvoke(this, 'formatQueryData', params)
+    //   .then((params) => {
+    //     this.sendRequest(params, cb);
+    //   })
+    //   .catch((err) => {
+    //     return cb(this.handleError(err, err.status || 500));
+    //   });
+
+    this.sendRequest(params, cb);
   }
 }
