@@ -69,22 +69,27 @@ export default class CompanyController {
     var criteria = this.getCriteria(req.params);
     Q.ninvoke(Company, 'find', criteria)
       .then((companies)=>{
-        var actions = [];
-        for (let key in companies) {
-          companies[key] = companies[key].toJSON();
-          //actions[key] = this.getApplication(companies[key]);
-        }
+        let actions = [];
+
+        let _companies = _(companies).reduce(function(prev, current) {
+          prev[current.carrierId] = current.toObject();
+          return prev;
+        }, {});
 
         return Q.allSettled(actions).then(()=>{
-          return companies;
+          return _companies;
         });
       })
       .then((companies)=>{
-        this.fulfilled(res, companies);
+        return res.json({
+          companies: companies
+        });
       })
-      .fail((error)=>{
-        logger.error(error);
-        this.rejected(res, error);
+      .fail((err)=>{
+        logger.error(err);
+        return res.status(err.status).json({
+          error: err
+        });
       })
       .done();
   };

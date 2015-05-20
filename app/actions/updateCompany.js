@@ -1,14 +1,18 @@
-export function updateProfile(context, company, done) {
-  context.dispatch('UPDATE_COMPANY_PROFILE_SUCCESS', company);
-  done();
-};
+var debug = require('debug')('wlp:updateCompany');
 
-export function updateServices(context, payload, done) {
-  context.dispatch('UPDATE_COMPANY_SERVICES_SUCCESS', payload);
-  done();
-};
+export default function(context, params, done) {
+  debug('Started');
+  context.dispatch(`UPDATE_COMPANY_${params.subPage.toUpperCase()}_START`);
+  context.api.updateCompany(params, function(err, result) {
+    if (err) {
+      debug('Failed');
+      context.dispatch(`CREATE_COMPANY_${params.subPage.toUpperCase()}_FAILURE`, err);
+      done();
+      return;
+    }
 
-export function updateWidgets(context, company, done) {
-  context.dispatch('UPDATE_COMPANY_WIDGETS_SUCCESS', company);
-  done();
+    debug('Success');
+    context.dispatch(`CREATE_COMPANY_${params.subPage.toUpperCase()}_SUCCESS`, result.company);
+    done();
+  });
 };

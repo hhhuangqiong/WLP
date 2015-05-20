@@ -11,6 +11,8 @@ import InfoBlock from './InfoBlock';
 var Countries = require('../data/countries.json');
 var Timezones = require('../data/timezones.json');
 
+var debug = require('debug')('wlp:companyProfile');
+
 // determinant of logo image src
 const imageDataRegex = /^data:.+\/(.+);base64,(.*)$/;
 
@@ -18,8 +20,9 @@ const newContactObject = {name: '', phone: '', email: ''};
 
 var CompanyProfile = React.createClass({
   contextTypes: {
-    executeAction: React.PropTypes.func.isRequired
+    router: React.PropTypes.func.isRequired
   },
+
   getInitialState: function () {
     return {
       errors: null,
@@ -41,6 +44,7 @@ var CompanyProfile = React.createClass({
       supportContact: this.props.supportContact || newContactObject
     };
   },
+
   componentWillReceiveProps: function(nextProps) {
     // errors should always be null upon selecting another company
     // it applies only with difference in carrierId
@@ -68,6 +72,7 @@ var CompanyProfile = React.createClass({
       });
     }
   },
+
   /**
    * check if the Company is WL
    *
@@ -76,6 +81,7 @@ var CompanyProfile = React.createClass({
   isWhiteLabel: function() {
     return !!this.state.carrierId && this.state.carrierId.indexOf('.maaii.com') > -1;
   },
+
   /**
    * check if the Company is SDK
    *
@@ -84,6 +90,7 @@ var CompanyProfile = React.createClass({
   isSDK: function() {
     return !!this.state.carrierId && this.state.carrierId.indexOf('.m800-api.com') > -1;
   },
+
   /**
    * handle input values changes for <input /> and <select />
    *
@@ -94,11 +101,13 @@ var CompanyProfile = React.createClass({
   _handleInputChange: function(stateName, e) {
     this.setState({[stateName]: e.target.value || e.target.selected});
   },
+
   _handleContactChange: function(stateName, key, e) {
     this.setState({
       [stateName]: _.merge(this.state[stateName], {[key]: e.target.value})
     });
   },
+
   /**
    * trigger opening file selection window by clicking on Logo image
    *
@@ -107,6 +116,7 @@ var CompanyProfile = React.createClass({
   _handleClickOnLogo: function() {
     React.findDOMNode(this.refs.logoInput).click();
   },
+
   /**
    * read File Input with File Reader API
    * and put into state
@@ -123,25 +133,44 @@ var CompanyProfile = React.createClass({
     };
     reader.readAsDataURL(e.target.files[0]);
   },
-  _handleInputBlur: function() {
+
+  _handleInputBlur: function(e) {
     // do validation and return errors if any
     //this.props.onDataChange(['validation error']);
   },
+
+  _handleCarrierIdBlur: function(e) {
+    // do just input checking here
+    // it will not change data in Stores, so no actions
+    let carrierId = e.target.value.trim();
+    this.context.api.getApplications({ carrierId: carrierId }, function(err, result) {
+      if (err)
+        debug(err);
+
+      if (!result) {
+        // setError to make save button disabled
+      }
+    });
+  },
+
   _handleSetReseller: function(isReseller) {
     this.setState({
       reseller: isReseller
     });
   },
+
   _renderTimezoneOption: function(timezone) {
     return (
       <option value={timezone.value}>{timezone.name}</option>
     );
   },
+
   _renderCountryOption: function(country) {
     return (
       <option value={country.alpha2}>{country.name}</option>
     );
   },
+
   _renderLogoImage: function() {
     if (this.state.logo) {
       let logo = this.state.logo;
@@ -155,6 +184,7 @@ var CompanyProfile = React.createClass({
       );
     }
   },
+
   _renderIdInput: function() {
     if (this.props._id) {
       return (
@@ -162,6 +192,7 @@ var CompanyProfile = React.createClass({
       );
     };
   },
+
   render: function() {
     return (
       <form ref="companyFrom" encType="multipart/form-data">

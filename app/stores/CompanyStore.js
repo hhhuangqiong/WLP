@@ -6,12 +6,31 @@ const newContactObject = {name: '', phone: '', email: ''};
 
 var CompanyStore = createStore({
   storeName: 'CompanyStore',
+
+  handlers: {
+    'FETCH_COMPANIES_SUCCESS': 'receiveCompanies',
+    'FETCH_COMPANY_SUCCESS': 'receiveCompany',
+    'FETCH_COMPANY_APPLICATION_SUCCESS': 'receiveCompanyApplications',
+    'CREATE_NEW_COMPANY': 'handleCompanyCreate',
+    'CREATE_COMPANY_SUCCESS': 'handleCompanyCreated',
+    'UPDATE_COMPANY_PROFILE_SUCCESS': 'handleProfileUpdated',
+    'UPDATE_COMPANY_SERVICES_SUCCESS': 'handleServicesUpdated',
+    'UPDATE_COMPANY_WIDGETS_SUCCESS': 'handleWidgetUpdated',
+    'RESET_CURRENT_COMPANY': 'handleCompanyReset'
+  },
+
   initialize: function () {
     this.companies = [];
   },
-  getAll: function() {
+
+  getCompanies: function() {
     return this.companies;
   },
+
+  getCurrentCompany: function() {
+    return this.currentCompany;
+  },
+
   getCompanyById: function(_id, cb) {
     _.filter(this.companies, (value, key)=>{
       if (value._id == _id) {
@@ -19,17 +38,20 @@ var CompanyStore = createStore({
       }
     });
   },
-  getCompanyByCarrierId: function(carrierId, cb) {
+
+  getCompanyByCarrierId: function(carrierId) {
     _.forEach(this.companies, (value, key)=>{
       if (value.carrierId == carrierId) {
-        return cb(this.companies[key]);
+        return this.companies[key];
       }
     });
   },
+
   handleCompanyReset: function () {
     this.currentCompany = null;
     this.emitChange();
   },
+
   handleCompanyCreate: function() {
     this.currentCompany = {
       name: null,
@@ -49,10 +71,12 @@ var CompanyStore = createStore({
     };
     this.emitChange();
   },
+
   handleCompanyCreated: function(company) {
     this.companies.push(company);
     this.emitChange();
   },
+
   handleProfileUpdated: function(company) {
     _.filter(this.companies, (value, key)=>{
       if (value._id == company._id) {
@@ -61,6 +85,7 @@ var CompanyStore = createStore({
     });
     this.emitChange();
   },
+
   handleServicesUpdated: function(payload) {
     this.getCompanyById(payload._id, (company)=>{
       if (!company) {
@@ -71,43 +96,33 @@ var CompanyStore = createStore({
       }
     })
   },
-  receiveCompanies: function(companies) {
-    // TODO: assign a key of _id to this.companies Object
-    this.companies = companies;
-    this.receiveCompany(companies[0]);
-    this.emitChange();
 
-    // any kind of async method does not work in Store?
-    //Q.all(_.forEach(companies, (company)=>{
-    //  _.merge(this.companies, { [company._id]: company });
-    //})).then(()=>{
-    //  this.emitChange();
-    //});
+  receiveCompanies: function(companies) {
+    this.companies = companies;
+    this.emitChange();
   },
+
   receiveCompany: function(company) {
     this.currentCompany = company;
     this.emitChange();
   },
-  handlers: {
-    'RECEIVE_COMPANIES': 'receiveCompanies',
-    'RECEIVE_COMPANY': 'receiveCompany',
-    'NEW_COMPANY': 'handleCompanyCreate',
-    'CREATE_COMPANY_SUCCESS': 'handleCompanyCreated',
-    'UPDATE_COMPANY_PROFILE_SUCCESS': 'handleProfileUpdated',
-    'UPDATE_COMPANY_SERVICES_SUCCESS': 'handleServicesUpdated',
-    'UPDATE_COMPANY_WIDGETS_SUCCESS': 'handleWidgetUpdated',
-    'RESET_CURRENT_COMPANY': 'handleCompanyReset',
-    'FETCH_MANGAING_COMPANIES_SUCCESS': 'receiveCompanies'
+
+  receiveCompanyApplications: function(carrierId, applications) {
+    _.merge(this.companies[carrierId], applications);c
+    this.emitChange();
   },
+
   getState: function () {
     return {
       companies: this.companies,
       currentCompany: this.currentCompany
     };
   },
+
   dehydrate: function () {
     return this.getState();
   },
+
   rehydrate: function (state) {
     this.companies = state.companies;
     this.currentCompany = state.currentCompany;

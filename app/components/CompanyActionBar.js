@@ -3,7 +3,16 @@ import classNames from 'classnames';
 import {Link} from 'react-router';
 
 var CompanyActionBar = React.createClass({
+  contextTypes: {
+    router: React.PropTypes.func.isRequired
+  },
+
   render: function() {
+    let navParams = this.context.router.getCurrentParams();
+    let role = navParams.role || null;
+    let identity = navParams.identity || null;
+    let carrierId = navParams.carrierId || null;
+
     // for create company
     if (!this.props._id) {
       return (
@@ -34,13 +43,13 @@ var CompanyActionBar = React.createClass({
           <section className="top-bar-section">
             <ul className="left top-bar--inner tab--inverted">
               <li className="top-bar--inner tab--inverted__title">
-                <Link to="adminCompany" params={{role: this.props.role, carrierId: this.props.carrierId, subPage: 'profile'}}>company profile</Link>
+                <Link to="company" params={{ role: role, identity: identity, carrierId: carrierId, subPage: 'profile'}}>company profile</Link>
               </li>
               <li className="top-bar--inner tab--inverted__title">
-                <Link to="adminCompany" params={{role: this.props.role, carrierId: this.props.carrierId, subPage: 'service'}}>service config</Link>
+                <Link to="company" params={{ role: role, identity: identity, carrierId: carrierId, subPage: 'service'}}>service config</Link>
               </li>
               <li className="top-bar--inner tab--inverted__title">
-                <Link to="adminCompany" params={{role: this.props.role, carrierId: this.props.carrierId, subPage: 'widget'}}>widget config</Link>
+                <Link to="company" params={{ role: role, identity: identity, carrierId: carrierId, subPage: 'widget'}}>widget config</Link>
               </li>
             </ul>
             <ul className="right">

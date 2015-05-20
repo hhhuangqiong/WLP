@@ -13,10 +13,9 @@ export default (
     // protected page
     <Route name="overview" path="/:role/:identity?/overview" handler={require('./components/Overview')}/>
     <Route name="companies" path="/:role/:identity?/companies" handler={require('./components/Companies')}>
-      <Route name="company" path=":companyCarrierId" handler={require('./components/Company')}/>
-      <Route name="adminCompany" path=":carrierId" handler={require('./components/CompanyActionBar')}/>
+      <Route name="company-create" path="create" handler={require('./components/Company')} />
+      <Route name="company" path=":carrierId/:subPage" handler={require('./components/Company')} />
     </Route>
-
     <Route name="accounts" path="/:role/:identity?/accounts" handler={require('./components/Overview')} />
     <Route name="end-users" path="/:role/:identity?/endusers" handler={require('./components/EndUsers')}>
       <Route name="end-user" path=":username" handler={require('./components/EndUserProfile')}/>

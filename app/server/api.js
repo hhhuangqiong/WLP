@@ -12,6 +12,11 @@ import { fetchDep } from './initializers/ioc';
 import Company from '../collections/company';
 import PortalUser from '../collections/portalUser';
 
+import CompanyCtrl  from './controllers/company';
+
+var multipart = require('connect-multiparty')();
+var companyCtrl  = new CompanyCtrl();
+
 var endUserRequest = fetchDep(nconf.get('containerName'), 'EndUserRequest');
 var walletRequest = fetchDep(nconf.get('containerName'), 'WalletRequest');
 
@@ -90,6 +95,30 @@ api.post('/sign-out', function(req, res) {
       error: 'signout failed'
     });
   }
+});
+
+api.get('/companies', function(req, res) {
+  return companyCtrl.getCompanies(req, res);
+});
+
+api.post('/companies', multipart, function(req, res) {
+  return companyCtrl.saveProfile(req, res);
+});
+
+api.get('/companies/:carrierId/applications', function(req, res) {
+  return companyCtrl.getApplications(req, res);
+});
+
+api.put('/companies/:carrierId/profile', multipart, function(req, res) {
+  return companyCtrl.saveProfile(req, res);
+});
+
+api.put('/companies/:carrierId/service', multipart, function(req, res) {
+  return companyCtrl.saveService(req, res);
+});
+
+api.put('/companies/:carrierId/widget', multipart, function(req, res) {
+  return companyCtrl.saveWidget(req, res);
 });
 
 api.get('/switcher/companies', function(req, res) {

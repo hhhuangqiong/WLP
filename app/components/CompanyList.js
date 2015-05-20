@@ -5,24 +5,31 @@ import {Link} from 'react-router';
 var Countries = require('../data/countries.json');
 
 var CompanyList = React.createClass({
+  contextTypes: {
+    router: React.PropTypes.func.isRequired
+  },
+
   componentDidMount: function() {
-	// equalise the height of the list and main area
-	$(document).foundation({
+	  // equalise the height of the list and main area
+	  $(document).foundation({
       equalizer : {
         equalize_on_stack: true
       }
     });
   },
+
   getInitialState: function () {
     return {
       searchCompany: ''
     };
   },
+
   _handleSearchChange: function(e) {
     this.setState({
       searchCompany: e.target.value.trim()
     });
   },
+
   /**
    * Filter property of companies with keyword starting from 3 or more characters
    * supports only company name matching
@@ -36,16 +43,10 @@ var CompanyList = React.createClass({
       });
     }
 
-    return this.props.companies || [];
+    return _.values(this.props.companies) || [];
   },
+
   render: function() {
-
-    // $(document).foundation({
-    //   equalizer : {
-    //     equalize_on_stack: true
-    //   }
-    // });
-
     return (
       <div className="company-sidebar">
         <nav className="top-bar company-sidebar__search" data-topbar role="navigation">
@@ -61,15 +62,18 @@ var CompanyList = React.createClass({
       </div>
     );
   },
+
   renderCompanyListItem: function(company) {
+    let navParams = this.context.router.getCurrentParams();
+    let role = navParams.role || this.props.role;
+    let identity = navParams.identity || this.props.carrierId;
 
-    let href = `/admin/companies/${company.carrierId}/settings/profile`;
-
+    // TODO: replace the temp logo
     let logo = !!company.logo ? `/data/${company.logo}` : '/images/logo-yato.png';
 
     return (
       <li className="company-sidebar__list__item">
-        <Link to="company" params={{ role: company.role, identity: company.identity, carrierId: company.carrierId, companyCarrierId: company.carrierId, subPage: 'profile' }}>
+        <Link to="company" params={{ role: role, identity: identity, carrierId: company.carrierId, subPage: 'profile' }}>
           <span className="company-sidebar__list__item__logo left">
             <img src={logo} />
           </span>

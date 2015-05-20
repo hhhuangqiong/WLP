@@ -1,6 +1,5 @@
-'use strict';
 var superagent = require('superagent');
-var debug = require('debug')('app:Api');
+var debug = require('debug')('wlp:Api');
 
 function Api(options) {
   options = options || {};
@@ -68,6 +67,67 @@ Api.prototype.getManagingCompanies = function(params, cb) {
     .query({
       userId: this._getUserId()
     })
+    .end(function(err, res) {
+      if (err) {
+        debug('error', err);
+      }
+
+      cb(err, res && res.body);
+    });
+};
+
+Api.prototype.getCompanies = function(params, cb) {
+  superagent
+    .get(`${this._getHost()}/companies`)
+    .accept('json')
+    .set('Authorization', this._getToken())
+    .query({
+      userId: this._getUserId()
+    })
+    .end(function(err, res) {
+      if (err) {
+        debug('error', err);
+      }
+
+      cb(err, res && res.body);
+    });
+};
+
+Api.prototype.createCompany = function(params, cb) {
+  superagent
+    .post(`${this._getHost()}/companies`)
+    .accept('json')
+    .set('Authorization', this._getToken())
+    .send(params.data)
+    .end(function(err, res) {
+      if (err) {
+        debug('error', err);
+      }
+
+      cb(err, res && res.body);
+    });
+};
+
+Api.prototype.getApplication = function(params, cb) {
+  superagent
+    .get(`${this._getHost()}/companies/${params.carrierId}/applications`)
+    .accept('json')
+    .set('Authorization', this._getToken())
+    .end(function(err, res) {
+      if (err) {
+        debug('error', err);
+      }
+
+      cb(err, res && res.body);
+    })
+};
+
+Api.prototype.updateCompany = function(params, cb) {
+  superagent
+    .put(`${this._getHost()}/companies/${params.carrierId}/${params.subPage}`)
+    .accept('json')
+    .set('Authorization', this._getToken())
+    .send(params.data)
     .end(function(err, res) {
       if (err) {
         debug('error', err);
