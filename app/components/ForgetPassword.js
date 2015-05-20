@@ -5,10 +5,11 @@ import Joi from 'joi';
 import Message from './ValidateErrorMsg';
 import formMixin from '../utils/formMixin';
 import {Link} from 'react-router';
+import PublicOnlyMixin from '../utils/PublicOnlyMixin';
 
 var ForgetPassword = React.createClass({
   displayName: 'ForgetPassword',
-  mixins: [ValidationMixin, React.addons.LinkedStateMixin,formMixin],
+  mixins: [ValidationMixin, React.addons.LinkedStateMixin,formMixin, PublicOnlyMixin],
   validatorTypes:  {
     email: Joi.string().regex(/^([\w-]+(?:\.[\w-]+)*)@((?:[\w-]+\.)*\w[\w-]{0,66})\.([a-z]{2,6}(?:\.[a-z]{2})?)$/i).label('Email Address')
   },
