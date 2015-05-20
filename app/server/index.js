@@ -10,8 +10,8 @@ import React from 'react';
 import serialize from 'serialize-javascript';
 import FluxibleComponent from 'fluxible/addons/FluxibleComponent';
 import Router from 'react-router';
-import routes from './routes';
-const HtmlComponent = require('./components/Html');
+import routes from '../routes';
+const HtmlComponent = require('../components/Html');
 
 // express-related
 import express from 'express';
@@ -32,15 +32,15 @@ import session from 'express-session';
 var debug = require('debug')('app:server');
 var RedisStore = require('connect-redis')(session);
 
-const PROJ_ROOT = path.join(__dirname, '..');
+const PROJ_ROOT = path.join(__dirname, '../..');
 
 //TODO rename the file as 'app'
-import app from './index';
+import app from '../index';
 
 // shared with client via `context`
-var config = require('./config');
-var fetchData = require('./utils/fetchData');
-var loadSession = require('./actions/loadSession');
+var config = require('../config');
+var fetchData = require('../utils/fetchData');
+var loadSession = require('../actions/loadSession');
 
 function initialize(port) {
   if (!port) throw new Error('Please specify port');
@@ -56,25 +56,25 @@ function initialize(port) {
   var env = server.get('env');
 
   // let 'nconf' be the first initializer so configuration is accessed thru it
-  var nconf = require('./server/initializers/nconf')(env, path.join(__dirname, 'config'));
+  var nconf = require('./initializers/nconf')(env, path.resolve(__dirname, '../config'));
 
   // database initialization + data seeding
-  var postDBInit = require('./server/initializers/dataseed')(path.resolve(__dirname, 'data/rootUser.json'));
-  require('./server/initializers/database')(nconf.get('mongodb:uri'), nconf.get('mongodb:options'), postDBInit);
+  var postDBInit = require('./initializers/dataseed')(path.resolve(__dirname, '../data/rootUser.json'));
+  require('./initializers/database')(nconf.get('mongodb:uri'), nconf.get('mongodb:options'), postDBInit);
 
-  var ioc = require('./server/initializers/ioc').init(nconf);
+  var ioc = require('./initializers/ioc').init(nconf);
 
   if (nconf.get('queue:enable') !== 'false') {
-    require('./server/initializers/kue')(ioc, nconf, {
+    require('./initializers/kue')(ioc, nconf, {
       uiPort: nconf.get('queue:uiPort')
     });
   }
 
-  require('./server/initializers/logging')();
-  require('./server/initializers/viewHelpers')(server);
+  require('./initializers/logging')();
+  require('./initializers/viewHelpers')(server);
 
   // i18next init
-  require('./server/initializers/i18next')(server);
+  require('./initializers/i18next')(server);
 
   if (nconf.get('trustProxy'))
     server.enable('trust proxy');
@@ -113,7 +113,7 @@ function initialize(port) {
 
   server.use(morgan('dev'));
 
-  var passport = require('./server/initializers/passport')();
+  var passport = require('./initializers/passport')();
   server.use(passport.initialize());
   // ensure express.session() is before passport.session()
   server.use(passport.session());
@@ -122,10 +122,10 @@ function initialize(port) {
   server.use(flash());
 
   // Routes
-  server.use('/api', require('./server/api'));
-  server.use('/data', require('./server/routes/data'));
+  server.use('/api', require('./api'));
+  server.use('/data', require('./routes/data'));
   // disabled all the resources for now
-  //server.use(require('./server/routes'));
+  //server.use(require('./routes'));
 
   // TODO export from another file
   var renderApp = function(context, location, cb) {
