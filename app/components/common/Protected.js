@@ -1,11 +1,21 @@
-import React          from 'react';
-import classnames     from 'classnames';
-import {RouteHandler} from 'react-router';
-import Sidebar        from '../Sidebar';
-import Navigation     from '../Navigation';
-import Modal     from '../Modal';
+import React                  from 'react';
+import classnames             from 'classnames';
+import {RouteHandler}         from 'react-router';
+import {concurrent}           from 'contra';
+import Sidebar                from '../Sidebar';
+import Navigation             from '../Navigation';
+import Modal                  from '../Modal';
+import fetchManagingCompanies from '../../actions/fetchManagingCompanies';
 
 var Protected = React.createClass({
+  statics: {
+    fetchData: function(context, params, query, done) {
+      concurrent([
+        context.executeAction.bind(context, fetchManagingCompanies, {})
+      ], done || function() {});
+    }
+  },
+
   getInitialState: function() {
     return {
       isOffCanvas: true
