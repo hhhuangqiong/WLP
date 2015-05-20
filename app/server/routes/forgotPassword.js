@@ -7,7 +7,6 @@ module.exports = (() => {
   var controller  = new Controller(fetchDep(nconf.get('containerName'), 'PortalUserManager'));
 
   return Router()
-    .get('/', controller.index)
     .post('/', controller.submit)
     .get('/success', controller.success)
     .get('/retry', controller.retry);

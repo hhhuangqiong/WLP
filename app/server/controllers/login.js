@@ -11,7 +11,6 @@ export default class Login {
           res.redirect(nconf.get('landing:authenticated:path'));
       } else {
         res.render('pages/login', {
-          title: req.i18n.t('login:login.title'),
           username: req.flash('username'),
           captcha: protector.needCaptcha(req),
           message: req.flash('error')

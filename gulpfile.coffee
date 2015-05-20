@@ -45,7 +45,7 @@ gulp.task 'test', (cb) ->
   return
 
 # not trigger 'browser-sync'; `gulp browser-sync` separately if needed
-gulp.task 'default', ['clean', 'locale', 'nodemon', 'watch'], ->
+gulp.task 'default', ['clean', 'nodemon', 'watch'], ->
   console.log 'done \uD83D\uDE80'
   return
 
@@ -124,7 +124,7 @@ gulp.task 'browser-sync', ->
     port: 3333
   return
 
-# probably not needed in the future
+# probably not needed for React component
 gulp.task 'locale', ->
   gulp.src 'locales/client/en/*.json'
     .pipe extend('en.json')

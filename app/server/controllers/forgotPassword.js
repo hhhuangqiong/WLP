@@ -35,20 +35,13 @@ export default class ForgotPassword {
     });
   }
 
-  index(req, res, next) {
-    res.render('pages/forgotpassword', {
-      title: req.i18n.t('forgotpassword:index.title'),
-      body: req.i18n.t('forgotpassword:index.body')
-    });
-  }
-
   retry(req, res, next) {
     if (req.flash('afterPost')[0] === true) {
       var errorMessage = req.flash('afterPostError');
       res.render('pages/forgotpassword', {
-        title: req.i18n.t('forgotpassword:fail.' + errorMessage + '.title'),
-        body: req.i18n.t('forgotpassword:index.body'),
-        message: req.i18n.t('forgotpassword:fail.' + errorMessage + '.message')
+        title: "Invalid user",
+        body: "<p>Reset your password by entering</p><p>your registered email</p>",
+        message: "User not found. Please input valid email and try again"
       });
     } else {
       res.redirect('/forgotpassword');
@@ -57,9 +50,7 @@ export default class ForgotPassword {
 
   success(req, res, next) {
     if (req.flash('afterPost')[0] === true) {
-      res.render('pages/forgotpassword-success', {
-        title: req.i18n.t('forgotpassword:index.title')
-      });
+      res.render('pages/forgotpassword-success');
     } else {
       res.redirect('/forgotpassword');
     }

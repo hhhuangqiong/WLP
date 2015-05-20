@@ -18,8 +18,7 @@ export default function setup() {
     });
   });
 
-  // Local strategy
-  //TODO do i18n at this level?
+  // TODO do i18n at this level?
   passport.use('local', new LocalStrategy((username, password, done) => {
     PortalUser
       .findOne({username: username})
