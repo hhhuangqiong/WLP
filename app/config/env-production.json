@@ -64,26 +64,5 @@
   },
   "localhost": {
     "baseUrl": "/"
-  },
-  "mumsApi": {
-    "name": "mums",
-    "baseUrl": "http://192.168.118.12:8080",
-    "timeout": 5000
-  },
-  "bossApi": {
-    "name": "boss",
-    "baseUrl": "http://192.168.56.42:8080",
-    "timeout": 5000,
-    "format": {
-      "timestamp": "YYYYMMDD"
-    }
-  },
-  "dataProviderApi": {
-    "name": "dataProvider",
-    "baseUrl": "http://192.168.118.12:8080",
-    "timeout": 5000,
-    "format": {
-      "timestamp": "x"
-    }
   }
 }

@@ -1,6 +1,25 @@
 {
+  "timeout": 5000,
   "containerName": "m800",
   "email": {
     "from": "noreply@m800.com"
+  },
+  "mumsApi": {
+    "baseUrl": "http://192.168.118.12:8080",
+    "timeout": 5000
+  },
+  "bossApi": {
+    "baseUrl": "http://192.168.56.42:8080",
+    "timeout": 5000,
+    "format": {
+      "timestamp": "YYYYMMDD"
+    }
+  },
+  "dataProviderApi": {
+    "baseUrl": "http://192.168.118.12:8080",
+    "timeout": 5000,
+    "format": {
+      "timestamp": "x"
+    }
   }
 }

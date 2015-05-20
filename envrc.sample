@@ -2,6 +2,9 @@
 
 # development
 export WL_API_HKBOSS=192.168.135.167:10180
+export mumsApi__baseUrl=http://192.168.118.12:8080
+export bossApi__baseUrl=http://192.168.56.42:8080
+export dataProviderApi__baseUrl=http://192.168.118.12:8080
 
 # testing
 #export WL_API_HKBOSS=192.168.135.167:10080
