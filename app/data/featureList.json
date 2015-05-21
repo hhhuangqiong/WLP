@@ -1,9 +1,7 @@
 {
   "wl": {
     "member_visibility": {
-      "member_visibility": {
-        "label": "member visibility (view APP users only)"
-      }
+      "label": "member visibility (view APP users only)"
     },
     "registration_flow_customization": {
       "standard_signup_flow": {

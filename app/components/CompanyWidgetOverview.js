@@ -5,8 +5,8 @@ import classNames from 'classnames';
 var CompanyWidgetOverview = React.createClass({
   getInitialState: function() {
     let state = {};
-    for (let key in this.props.widgets.calls) {
-      _.assign(state, {['widget-' + key]: this.props.widgets.overview[key]});
+    for (let key in this.props.widgets) {
+      _.assign(state, {['widget-' + key]: this.props.widgets[key]});
     }
     return state;
   },
@@ -18,6 +18,9 @@ var CompanyWidgetOverview = React.createClass({
   render: function() {
     return (
       <div className={classNames({'hide': this.props.isHidden})}>
+        <div className="large-24 columns">
+          <p>overview</p>
+        </div>
         <div className="large-24 columns">
           <div className="row">
             <div className="large-9 columns">

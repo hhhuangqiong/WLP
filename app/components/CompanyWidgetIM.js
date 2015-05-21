@@ -5,8 +5,8 @@ import classNames from 'classnames';
 var CompanyWidgetIM = React.createClass({
   getInitialState: function() {
     let state = {};
-    for (let key in this.props.widgets.calls) {
-      _.assign(state, {['widget-' + key]: this.props.widgets.im[key]});
+    for (let key in this.props.widgets) {
+      _.assign(state, {['widget-' + key]: this.props.widgets[key]});
     }
     return state;
   },

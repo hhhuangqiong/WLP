@@ -12,7 +12,7 @@ var CompanyServiceAndroid = React.createClass({
           <div className="large-15 columns">
             <input className="radius"
               type="text" name="android-application-name" placeholder="application name"
-              value={this.props.applicationName}
+              value={this.props.application.name}
               onChange={this.props.onDataChange}
               onBlur={this.props.onDataChanged}
             />
@@ -23,9 +23,7 @@ var CompanyServiceAndroid = React.createClass({
             <label>application key</label>
           </div>
           <div className="large-15 columns">
-            <input className="radius"
-              type="text" name="android-application-key" placeholder="application key" readOnly
-            />
+            <input className="radius" type="text" name="android-application-key" placeholder="application key" value={this.props.application.applicationKey} readOnly />
           </div>
         </div>
         <div className="row">
@@ -33,9 +31,7 @@ var CompanyServiceAndroid = React.createClass({
             <label>application secret</label>
           </div>
           <div className="large-15 columns">
-            <input className="radius"
-              type="text" name="android-application-secret" placeholder="application secret" readOnly
-            />
+            <input className="radius" type="text" name="android-application-secret" placeholder="application secret" value={this.props.application.applicationSecret} readOnly />
           </div>
         </div>
       </section>

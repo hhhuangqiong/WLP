@@ -15,6 +15,8 @@ export default function(context, params, done) {
     context.dispatch('FETCH_COMPANIES_SUCCESS', result.companies);
     if (params.carrierId) {
       context.dispatch('FETCH_COMPANY_SUCCESS', result.companies[params.carrierId]);
+    } else {
+      context.dispatch('RESET_COMPANY');
     }
 
     done();

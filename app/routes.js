@@ -18,8 +18,10 @@ export default (
     <Route handler={require('./components/common/Protected')}>
       <Route name="overview" path="/:role/:identity?/overview" handler={require('./components/Overview')}/>
       <Route name="companies" path="/:role/:identity?/companies" handler={require('./components/Companies')}>
-        <Route name="company-create" path="create" handler={require('./components/Company')} />
-        <Route name="company" path=":carrierId/:subPage" handler={require('./components/Company')} />
+        <Route name="company-create" path="create" handler={require('./components/CompanyNewProfile')} />
+        <Route name="company-profile" path=":carrierId/profile" handler={require('./components/CompanyProfile')} />
+        <Route name="company-service" path=":carrierId/service" handler={require('./components/CompanyService')} />
+        <Route name="company-widget" path=":carrierId/widget" handler={require('./components/CompanyWidget')} />
       </Route>
       <Route name="accounts" path="/:role/:identity?/accounts" handler={require('./components/Overview')} />
       <Route name="end-users" path="/:role/:identity?/endusers" handler={require('./components/EndUsers')}>
@@ -35,7 +37,7 @@ export default (
       <Route name="main" handler={require('./components/Overview')}/>
     </Route>
 
-    // shared by both "public" & "protected"
+    // shared by both "public" &amp; "protected"
     <NotFoundRoute name="not-found" handler={require('./components/common/NotFound')}/>
   </Route>
 );

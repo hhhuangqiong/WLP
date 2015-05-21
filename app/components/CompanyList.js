@@ -73,7 +73,7 @@ var CompanyList = React.createClass({
 
     return (
       <li className="company-sidebar__list__item">
-        <Link to="company" params={{ role: role, identity: identity, carrierId: company.carrierId, subPage: 'profile' }}>
+        <Link to="company-profile" params={{ role: role, identity: identity, carrierId: company.carrierId }}>
           <span className="company-sidebar__list__item__logo left">
             <img src={logo} />
           </span>

@@ -1,3 +1,4 @@
+import _ from 'lodash';
 import React   from 'react';
 import {Link}  from 'react-router';
 
@@ -6,6 +7,9 @@ import CompanySwitcher from './CompanySwitcher';
 
 import showModal from '../actions/showModal';
 import signOut from '../actions/signOut';
+
+const companyPages = ['companies', 'company-create', 'company-profile', 'company-widget', 'company-service'];
+const accountPages = ['accounts', 'account-create'];
 
 var Navigation = React.createClass({
   getInitialState: function(){
@@ -26,10 +30,42 @@ var Navigation = React.createClass({
     this.context.executeAction(signOut, {});
   },
 
+  renderCreateButton: function() {
+    let currentRoute = _.last(this.context.router.getCurrentRoutes());
+    let { role, identity } = this.context.router.getCurrentParams();
+
+    if (_.includes(companyPages, currentRoute.name)) {
+      return (
+        <li>
+          <Link to="company-create" params={{ role: role, identity: identity }}>
+            create new company
+          </Link>
+        </li>
+      )
+    } else if (_.includes(accountPages, currentRoute.name)) {
+      return (
+        <li>
+          <Link to="account-create" params={{ role: role, identity: identity }}>
+            create new account
+          </Link>
+        </li>
+      )
+    };
+
+    return null;
+  },
+
   render: function() {
+    let { role, identity } = this.context.router.getCurrentParams();
+
     return (
       <section className="top-bar-section navigation-bar">
         <ul className="right">
+          <li>
+            <Link to="company-create" params={{ role: role, identity: identity }}>
+              create new company
+            </Link>
+          </li>
           <li className="navigation-bar__item">
             <Link to="TODO">report issue</Link>
           </li>
@@ -69,7 +105,8 @@ var Navigation = React.createClass({
 
 Navigation.contextTypes = {
   getStore: React.PropTypes.func.isRequired,
-  executeAction: React.PropTypes.func.isRequired
+  executeAction: React.PropTypes.func.isRequired,
+  router: React.PropTypes.func.isRequired
 };
 
 export default Navigation;

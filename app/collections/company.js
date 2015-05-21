@@ -171,7 +171,7 @@ schema.method('isRootCompany', function() {
 
 schema.method('getServiceType', function() {
   // regex pattern or indexOf?
-  return this.carrierId.indexOf('.maaii.com') > -1 ? 'WL' : 'SDK';
+  return this.carrierId.indexOf('.m800-api.com') > -1 ? 'SDK' : 'WL';
 });
 
 schema.method('getUrlPrefix', function() {

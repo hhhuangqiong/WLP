@@ -1,15 +1,12 @@
 import _ from 'lodash';
 import React from 'react';
+import {RouteHandler} from 'react-router';
 
 // Components
 import CompanyActionBar from  './CompanyActionBar';
 import CompanyProfile from './CompanyProfile';
 import CompanyService from './CompanyService';
 import CompanyWidget from './CompanyWidget';
-
-// Actions
-import createCompany from '../actions/createCompany';
-import updateCompany from '../actions/updateCompany';
 
 /**
  * This is a page handler between Companies & Company Profile/Services/Widgets
@@ -98,7 +95,7 @@ let Company = React.createClass({
           errors={this.state.errors}
           onSaveClick={this._handleSubmit}
         />
-        {subPageComponent}
+        <RouteHandler />
       </div>
     );
   }

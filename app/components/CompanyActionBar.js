@@ -24,11 +24,10 @@ var CompanyActionBar = React.createClass({
               </li>
             </ul>
             <ul className="right">
-              <li><button className="company-action-bar__button">cancel</button></li>
               <li>
                 <button
                   className={classNames('company-action-bar__button', {disable: this.props.errors})}
-                  onClick={this.props.onSaveClick}
+                  onClick={this.props.onSave}
                 >
                   create
                 </button>
@@ -43,21 +42,29 @@ var CompanyActionBar = React.createClass({
           <section className="top-bar-section">
             <ul className="left top-bar--inner tab--inverted">
               <li className="top-bar--inner tab--inverted__title">
-                <Link to="company" params={{ role: role, identity: identity, carrierId: carrierId, subPage: 'profile'}}>company profile</Link>
+                <Link to="company-profile" params={{ role: role, identity: identity, carrierId: carrierId }}>company profile</Link>
               </li>
               <li className="top-bar--inner tab--inverted__title">
-                <Link to="company" params={{ role: role, identity: identity, carrierId: carrierId, subPage: 'service'}}>service config</Link>
+                <Link to="company-service" params={{ role: role, identity: identity, carrierId: carrierId }}>service config</Link>
               </li>
               <li className="top-bar--inner tab--inverted__title">
-                <Link to="company" params={{ role: role, identity: identity, carrierId: carrierId, subPage: 'widget'}}>widget config</Link>
+                <Link to="company-widget" params={{ role: role, identity: identity, carrierId: carrierId }}>widget config</Link>
               </li>
             </ul>
             <ul className="right">
               <li>
-                <button
-                  className={classNames('company-action-bar__button', {disable: !this.props.errors})}
-                  onClick={this.props.onSaveClick}
-                >
+                <button className="hide" onClick={this.props.onToggleActivate}>deactivate</button>
+              </li>
+              <li>
+                <button className="hide" onClick={this.props.onDelete}>delete</button>
+              </li>
+              <li>
+                <button className={classNames('company-action-bar__button', 'hide')} onClick={this.props.onDiscard}>
+                  discard
+                </button>
+              </li>
+              <li>
+                <button className={classNames('company-action-bar__button', {disable: !this.props.errors})} onClick={this.props.onSave}>
                   save
                 </button>
               </li>

@@ -108,7 +108,24 @@ Api.prototype.createCompany = function(params, cb) {
     });
 };
 
-Api.prototype.getApplication = function(params, cb) {
+Api.prototype.getCompanyService = function(params, cb) {
+  superagent
+    .get(`${this._getHost()}/companies/${params.carrierId}/service`)
+    .accept('json')
+    .set('Authorization', this._getToken())
+    .query({
+      userId: this._getUserId()
+    })
+    .end(function(err, res) {
+      if (err) {
+        debug('error', err);
+      }
+
+      cb(err, res && res.body);
+    })
+};
+
+Api.prototype.getApplications = function(params, cb) {
   superagent
     .get(`${this._getHost()}/companies/${params.carrierId}/applications`)
     .accept('json')
@@ -122,9 +139,39 @@ Api.prototype.getApplication = function(params, cb) {
     })
 };
 
-Api.prototype.updateCompany = function(params, cb) {
+Api.prototype.updateCompanyProfile = function(params, cb) {
   superagent
-    .put(`${this._getHost()}/companies/${params.carrierId}/${params.subPage}`)
+    .put(`${this._getHost()}/companies/${params.carrierId}/profile`)
+    .accept('json')
+    .set('Authorization', this._getToken())
+    .send(params.data)
+    .end(function(err, res) {
+      if (err) {
+        debug('error', err);
+      }
+
+      cb(err, res && res.body);
+    });
+};
+
+Api.prototype.updateCompanyService = function(params, cb) {
+  superagent
+    .put(`${this._getHost()}/companies/${params.carrierId}/service`)
+    .accept('json')
+    .set('Authorization', this._getToken())
+    .send(params.data)
+    .end(function(err, res) {
+      if (err) {
+        debug('error', err);
+      }
+
+      cb(err, res && res.body);
+    });
+};
+
+Api.prototype.updateCompanyWidget = function(params, cb) {
+  superagent
+    .put(`${this._getHost()}/companies/${params.carrierId}/widget`)
     .accept('json')
     .set('Authorization', this._getToken())
     .send(params.data)

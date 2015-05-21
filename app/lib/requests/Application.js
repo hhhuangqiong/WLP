@@ -1,4 +1,4 @@
-/** @module requests/whitelist */
+/** @module requests/application */
 
 import _ from 'lodash'
 import assign from 'object-assign';
@@ -17,6 +17,7 @@ export class ApplicationRequest {
   constructor(opts) {
     if(!opts.baseUrl) throw new Error('`baseUrl is required`');
     this._baseUrl = opts.baseUrl;
+    this._timeout = opts.timeout || 5000;
   }
 
   _processPath(contentType, carrierId) {
@@ -39,7 +40,11 @@ export class ApplicationRequest {
         return response.services;
         break;
       case CONTENT_TYPE_APPLICATIONS:
-        return response.applicationDetails.applications;
+        //return response.applicationDetails.applications;
+        return {
+          applicationId: response.applicationDetails.applicationIdentifier,
+          applications: response.applicationDetails.applications
+        };
         break;
       default:
         throw new Error('Content Type requested is not available');
@@ -55,21 +60,12 @@ export class ApplicationRequest {
     this._get(carrierId, CONTENT_TYPE_APPLICATIONS, cb);
   }
 
-  /**
-   * Get the whitelist specified by the carrier ID
-   *
-   * @param {string} carrierId Carrier ID
-   * @param {Object} [opts={}] Optional parameters
-   * @param {Whitelist~getCB}
-   *
-   * @see {@link: http://issuetracking.maaii.com:8090/display/MAAIIP/MUMS+User+Management+by+Carrier+HTTP+API#MUMSUserManagementbyCarrierHTTPAPI-7.GetWhitelist}
-   */
   _get(carrierId, contentType, cb) {
     if (!carrierId) throw new Error('`carrierId` is required');
     if (!cb || !_.isFunction(cb)) throw new Error('`cb` is required and must be a function');
 
     let path  = this._processPath(contentType, carrierId);
-    let scope = request.get(path);
+    let scope = request.get(path).timeout(this._timeout);
 
     scope.end((err, res) => {
       // TODO DRY this

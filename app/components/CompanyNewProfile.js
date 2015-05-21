@@ -17,7 +17,7 @@ import CompanyStore from '../stores/CompanyStore';
 var Countries = require('../data/countries.json');
 var Timezones = require('../data/timezones.json');
 
-var debug = require('debug')('wlp:companyProfile');
+var debug = require('debug')('wlp:companyNewProfile');
 
 // determinant of logo image src
 const imageDataRegex = /^data:.+\/(.+);base64,(.*)$/;
@@ -41,16 +41,7 @@ var CompanyProfile = React.createClass({
   },
 
   getInitialState: function () {
-    return this.getStateFromStores();
-  },
-
-  getStateFromStores: function() {
-    let { carrierId } = this.context.router.getCurrentParams();
-
-    // carrierId is the determinant of create & update profile
-    if (carrierId) {
-      return this.getStore(CompanyStore).getCompanyByCarrierId(carrierId)
-    }
+    return this.getStore(CompanyStore).getNewCompany()
   },
 
   /**
@@ -60,7 +51,7 @@ var CompanyProfile = React.createClass({
    *
    */
   onChange: function() {
-    this.setState(this.getStateFromStores());
+    this.setState(this.getStore(CompanyStore).getNewCompany());
   },
 
   _getServiceType: function(carrierId) {

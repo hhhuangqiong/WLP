@@ -106,6 +106,10 @@ api.post('/companies', multipart, function(req, res) {
   return companyCtrl.saveProfile(req, res);
 });
 
+api.get('/companies/:carrierId/service', function(req, res) {
+  return companyCtrl.getApplications(req, res);
+});
+
 api.get('/companies/:carrierId/applications', function(req, res) {
   return companyCtrl.getApplications(req, res);
 });

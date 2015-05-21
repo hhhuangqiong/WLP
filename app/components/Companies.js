@@ -1,16 +1,18 @@
 import {concurrent} from 'contra';
 
 import React from 'react';
+import {RouteHandler} from 'react-router';
 
 import FluxibleMixin from 'fluxible/addons/FluxibleMixin';
 import AuthMixin from '../utils/AuthMixin';
 
-import CompanyStore from '../stores/CompanyStore';
-
 import fetchCompanies from '../actions/fetchCompanies';
 
-import Company from './Company';
-import CompanyList from './CompanyList';
+import Company from '../components/Company';
+import CompanyActionBar from  '../components/CompanyActionBar';
+import CompanyList from '../components/CompanyList';
+
+import CompanyStore from '../stores/CompanyStore';
 
 var Companies = React.createClass({
   contextTypes: {
@@ -52,17 +54,19 @@ var Companies = React.createClass({
     this.setState(this.getStateFromStores());
   },
 
+  // let navParams = this.context.router.getCurrentParams();
+  // let subPage = navParams.subPage || 'profile';
+  // <Company company={this.state.company} subPage={subPage}/>
   render: function() {
-    let navParams = this.context.router.getCurrentParams();
-    let subPage = navParams.subPage || 'profile';
-
     return (
       <div className="row" data-equalizer>
         <div className="large-6 columns" data-equalizer-watch>
           <CompanyList companies={this.state.companies}/>
         </div>
         <div className="large-18 columns" data-equalizer-watch>
-          <Company company={this.state.company} subPage={subPage}/>
+          <div className="row">
+            <RouteHandler />
+          </div>
         </div>
       </div>
     );

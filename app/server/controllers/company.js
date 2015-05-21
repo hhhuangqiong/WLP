@@ -32,34 +32,6 @@ export default class CompanyController {
 
   /**
    * Controller Middleware
-   * get a Company with carrierId resource in JSON format
-   *
-   * @param req
-   * @param res
-   */
-  getCompany(req, res) {
-    let user = req.user;
-    let carrierId = req.params.carrierId;
-    let criteria = {
-      carrierId: carrierId
-    };
-
-    Q.ninvoke(Company, 'findOne', criteria)
-      .then((company)=>{
-        res.status(200).json({
-          company: company
-        })
-      })
-      .catch((err)=>{
-        res.status(500).json({
-          err: err
-        });
-      })
-      .done();
-  }
-
-  /**
-   * Controller Middleware
    * get all user managing Companies resource in JSON format
    *
    * @param req
@@ -67,6 +39,63 @@ export default class CompanyController {
    */
   getCompanies(req, res) {
     var criteria = this.getCriteria(req.params);
+
+    /**
+     * get applications and services by carrierId
+     *
+     * @param carrierId {String}
+     * @returns {Promise.<T>|*}
+     */
+    var getApplications = function(carrierId) {
+      let request = new ApplicationRequest({ baseUrl: nconf.get('mumsApi:baseUrl') });
+
+      return Q.allSettled([
+          Q.ninvoke(request, 'getApplications', carrierId),
+          Q.ninvoke(request, 'getApiService', carrierId)
+        ])
+        .spread((applications, services)=>{
+          let result = {
+            carrierId: carrierId,
+            applicationId: null,
+            developerKey: null,
+            developerSecret: null,
+            applications: {
+              ios: {},
+              android: {}
+            }
+          };
+
+          if (services.value) {
+            _.filter(services.value, function(service) {
+              if (service.type == 'API') {
+                _.merge(result, {
+                  developerKey: service['key'],
+                  developerSecret: service['secret']
+                });
+              }
+            });
+          }
+
+          if (applications.value) {
+            result.applicationId = applications.value.applicationId;
+
+            _.filter(applications.value.applications, function(application) {
+              if (application.platform.match(/.ios$/)) {
+                result.applications.ios = application;
+              } else if (application.platform.match(/.android$/)) {
+                result.applications.android = application;
+              }
+            });
+          }
+
+          return result;
+        })
+        .catch((error)=>{
+          logger.error(error);
+          return null;
+        })
+    };
+
     Q.ninvoke(Company, 'find', criteria)
       .then((companies)=>{
         let actions = [];
@@ -76,22 +105,44 @@ export default class CompanyController {
           return prev;
         }, {});
 
-        return Q.allSettled(actions).then(()=>{
+        // Changed, we do lazy load now
+
+        //_.forEach(_companies, function(company, key) {
+        //  actions.push(getApplications(_companies[key].carrierId));
+        //});
+
+        return Q.allSettled(actions).then((results)=>{
+
+          //results.forEach(function (result) {
+          //  if (result.state === "fulfilled") {
+          //    _.merge(_companies[result.value.carrierId], {
+          //      serviceConfig: {
+          //        applicationId: result.value.applicationId,
+          //        developerKey: result.value.developerKey,
+          //        developerSecret: result.value.developerSecret,
+          //        applications: result.value.applications
+          //      }
+          //    });
+          //  }
+          //});
+
           return _companies;
+        })
+        .then((companies)=>{
+          return res.status(200).json({
+            companies: companies
+          })
+        })
+        .catch((error)=>{
+          throw error;
         });
       })
-      .then((companies)=>{
-        return res.json({
-          companies: companies
-        });
-      })
-      .fail((err)=>{
+      .catch((err)=>{
         logger.error(err);
         return res.status(err.status).json({
           error: err
         });
       })
-      .done();
   };
 
   // By Kareem and is not reviewed yet
@@ -219,8 +270,8 @@ export default class CompanyController {
         let gfs = new Grid(db, mongoDriver);
 
         let writeStream = gfs.createWriteStream({
-          filename: file['originalFilename'],
-          content_type: file['content-type']
+          filename: file.originalFilename,
+          content_type: file.headers['content-type']
         });
 
         // writing file into mongodb
@@ -317,7 +368,7 @@ export default class CompanyController {
       return Q.ninvoke(Company, 'findOne', {_id: this._id})
         .then((company)=>{
           if (!company) throw new Error('company does not exist');
-          return company.getServiceType();
+          return company.getServiceType().toLowerCase();
         })
         .catch((err)=> {
           throw new Error(err);
@@ -336,10 +387,14 @@ export default class CompanyController {
       let params = this.params;
       let features = {};
 
-      _.forEach(featureList[serviceType], function(feature) {
-        _.forEach(feature, function(item, key) {
-          _.assign(features, {[key]: params[key] == 'on' ? true : false});
-        });
+      _.forEach(featureList[serviceType], function(feature, key) {
+        if (_.first(Object.keys(feature)).toLowerCase() != 'label') {
+          _.forEach(feature, function(subFeature, subKey) {
+            _.merge(features, {[subKey]: params[subKey] == 'on' ? true : false});
+          });
+        } else {
+          _.merge(features, {[key]: params[key] == 'on' ? true : false});
+        }
       });
 
       let payload = {
@@ -362,7 +417,7 @@ export default class CompanyController {
     }, {params: req.body});
 
     var saveCompany = _.bind(function(payload) {
-      logger.debug('updating company widget with payload %j', payload, {});
+      logger.debug('updating company service with payload %j', payload, {});
       return Q.ninvoke(Company, 'findOneAndUpdate', {_id: this._id}, {$set: payload}, {'new': true});
     }, {_id: req.body._id});
 
@@ -391,7 +446,6 @@ export default class CompanyController {
 
   saveWidget(req, res) {
     //req.checkBody('carrierId').notEmpty();
-
     /**
      * Update Company widgets
      *
@@ -477,10 +531,18 @@ export default class CompanyController {
    * @returns {*|promise} return a payload merged with application configs
    */
   getApplications(req, res) {
+    req.checkParams('carrierId').notEmpty();
+    req.checkQuery('userId').notEmpty();
+
+    if (req.validationErrors()) {
+      return res.status(400);
+    };
+
+    let userId = req.query.userId;
     let carrierId = req.params.carrierId;
 
     var makeApiRequest = _.bind(function() {
-      let request = new ApplicationRequest({ baseUrl: nconf.get('mumsApi:baseUrl') });
+      let request = new ApplicationRequest({ baseUrl: nconf.get('mumsApi:baseUrl'), timeout: nconf.get('mumsApi:timeout') });
       let carrierId = this.carrierId;
 
       return Q.allSettled([
@@ -488,38 +550,49 @@ export default class CompanyController {
           Q.ninvoke(request, 'getApiService', carrierId)
         ])
         .spread((applications, services)=>{
-          if (applications.state == 'rejected' || services.state == 'rejected') {
-            res.status(500).json(JSON.parse(services.reason.response.text));
-          }
-
           let result = {
+            applicationId: null,
+            developerKey: null,
+            developerSecret: null,
             applications: {
               ios: {},
               android: {}
             }
           };
 
-          _.filter(services.value, function(service) {
-            if (service.type == 'API') {
-              _.assign(result, _.pick(service, ['key', 'secret']));
-            }
-          });
+          if (services.value) {
+            _.filter(services.value, function(service) {
+              if (service.type == 'API') {
+                _.merge(result, {
+                  developerKey: service['key'],
+                  developerSecret: service['secret']
+                });
+              }
+            });
+          }
 
-          _.filter(applications.value, function(application) {
-            if (application.platform.match(/.ios$/)) {
-              result.applications.ios = application;
-            } else if (application.platform.match(/.android$/)) {
-              result.applications.android = application;
-            }
-          });
+          if (applications.value) {
+            result.applicationId = applications.value.applicationId;
+
+            _.filter(applications.value.applications, function(application) {
+              if (application.platform.match(/.ios$/)) {
+                result.applications.ios = application;
+              } else if (application.platform.match(/.android$/)) {
+                result.applications.android = application;
+              }
+            });
+          }
 
           return result;
+        })
+        .catch((error)=>{
+          logger.error(error);
+          return null;
         })
     }, { carrierId: carrierId });
 
     var hasPermission = function(user, cb) {
-
-      logger.debug('checking permission %j', user, {});
+      logger.debug('checking permission for user %j', user, {});
 
       // Root and M800 Admin has same permission here
       if (user.isRoot) {
@@ -537,16 +610,26 @@ export default class CompanyController {
           }
         }).then((company)=>{
           return cb(null, !!company);
+        }).catch((error)=>{
+          throw error;
         });
       };
 
-
-      throw new Error('permission denied');
+      isM800AdminOrDev();
     };
 
-    Q.nfcall(hasPermission, req.user)
+    Q.ninvoke(PortalUser, 'findOne', { _id: userId })
+      .then((user)=>{
+        if (!user) {
+          res.status(401);
+        };
+
+        return Q.nfcall(hasPermission, user);
+      })
       .then((isPermitted)=>{
-        if (!isPermitted) throw new Error('permission denied');
+        if (!isPermitted) {
+          res.status(401);
+        }
       })
       .then(makeApiRequest)
       .then((result)=>{
