@@ -12,8 +12,9 @@ callResponse = require './responses/call.json'
 describe 'CallRequest', ->
   request = null
   params  = {}
-  baseUrl = 'http://this.is.dataprovider.com/api/v1'
-  url     = '/sip/cdr/query'
+  #baseUrl = 'http://this.is.dataprovider.com/api/v1'
+  baseUrl = 'http://this.is.dataprovider.com'
+  url     = '/api/v1/sip/cdr/query'
   delay   = 20
   timeout = 100
 
@@ -23,7 +24,7 @@ describe 'CallRequest', ->
       timeout = 100
       request = new CallRequest(baseUrl, timeout)
       params  = {
-        carrierId: 'maaiitest.com',
+        caller_carrier: 'maaiitest.com',
         from: '02/24/2015',
         to: '02/24/2015',
         page: 0,
@@ -43,7 +44,7 @@ describe 'CallRequest', ->
 
     it 'should swap startDate with endDate if startDate is later than endDate', (done)->
       params = {
-        carrierId: 'maaiitest.com',
+        caller_carrier: 'maaiitest.com',
         from: '02/02/2015',
         to: '02/01/2015'
       }
@@ -55,7 +56,7 @@ describe 'CallRequest', ->
 
     it 'should convert date into unix timestamp', ->
       params = {
-        carrierId: 'maaiitest.com',
+        caller_carrier: 'maaiitest.com',
         from: '02/01/2015',
         to: '02/02/2015'
       }
@@ -67,7 +68,7 @@ describe 'CallRequest', ->
     it 'should return error if timeout', (done) ->
       timeout = 10
       params = {
-        carrierId: 'maaiitest.com',
+        caller_carrier: 'maaiitest.com',
         from: '02/24/2015',
         to: '02/24/2015'
       }
@@ -81,7 +82,7 @@ describe 'CallRequest', ->
 
     it 'should return an array of history objects in successful request', (done) ->
       params = {
-        carrierId: 'maaiitest.com',
+        caller_carrier: 'maaiitest.com',
         from: '02/24/2015',
         to: '02/24/2015'
       }

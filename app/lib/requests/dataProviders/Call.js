@@ -17,7 +17,7 @@ export default class CallsRequest extends BaseRequest {
       timeout: timeout,
       methods: {
         CALLS: {
-          URL: '/sip/cdr/query',
+          URL: '/api/v1/sip/cdr/query',
           METHOD: 'GET'
         }
       }
