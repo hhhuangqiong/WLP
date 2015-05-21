@@ -1,9 +1,11 @@
+'use strict';
+
 // Register babel to have ES6 support on the server
 // 'react-router' is required for we're using a forked branch (not a build)
 require('babel/register')({ only: /(app|react-router)/ });
 
 const http   = require('http');
-const port   = 3000;
+const port   = process.env.PORT || 3000;
 const server = require('../app/server').initialize(port);
 const debug  = require('debug')('app');
 
