@@ -16,23 +16,23 @@ export default class UsersRequest extends BaseRequest {
       timeout: timeout,
       methods: {
         LIST: {
-          URL: '/carriers/%s/users',
+          URL: '/1.0/carriers/%s/users',
           METHOD: 'GET'
         },
         DETAILS: {
-          URL: '/carriers/%s/users/%s',
+          URL: '/1.0/carriers/%s/users/%s',
           METHOD: 'GET'
         },
         SUSPENSION: {
-          URL: '/carriers/%s/users/%s/suspension',
+          URL: '/1.0/carriers/%s/users/%s/suspension',
           METHOD: 'POST'
         },
         REACTIVATE: {
-          URL: '/carriers/%s/users/%s/suspension',
+          URL: '/1.0/carriers/%s/users/%s/suspension',
           METHOD: 'DELETE'
         },
         TERMINATE: {
-          URL: '/carriers/%s/users/%s/',
+          URL: '/1.0/carriers/%s/users/%s/',
           METHOD: 'DELETE'
         }
       }
