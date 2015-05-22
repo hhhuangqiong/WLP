@@ -161,6 +161,21 @@ Api.prototype.getEndUser = function(params, cb) {
       }
       cb(err, res && res.body);
     });
-}
+};
+
+Api.prototype.getCalls = function(params, cb) {
+  console.log('Authorization token',this._getToken());
+  console.log(this._getHost()+'/calls/carriers/'+params.carrierId);
+  superagent
+    .get(`${this._getHost()}/calls/carriers/${params.carrierId}`)
+    .accept('json')
+    .set('Authorization', this._getToken())
+    .end(function (err, res) {
+      if (err) {
+        debug('error', err);
+      }
+      cb(err, res && res.body);
+    });
+};
 
 module.exports = Api;
