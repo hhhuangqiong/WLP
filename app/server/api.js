@@ -256,17 +256,20 @@ api.get('/carriers/:carrierId/users/:username', function(req, res) {
 
 api.get('/calls/carriers/:carrierId', function(req, res) {
   req.checkParams('carrierId').notEmpty();
+  req.checkParams('fromTime').notEmpty();
+  req.checkParams('toTime').notEmpty();
+  req.checkParams('page').notEmpty();
 
   let params = {
     // TODO  carrierId to be changed in the future
     caller_carrier : (req.params.carrierId == 'm800') ? 'maaiitest.com' : req.params.carrierId,
     type : (req.params.type) ? req.params.type : '',
-    from : (req.params.fromTime) ? moment(req.params.fromTime).format('X') : '',
-    to : (req.params.toTime) ? moment(req.params.toTime).format('X') : '',
-    caller : (req.params.caller) ? req.params.caller : '',
-    callee : (req.params.callee) ? req.params.callee : '',
-    page : (req.params.page) ? req.params.page : 0,
-    size : 10,
+    from : (req.query.fromTime) ? req.query.fromTime : moment().endOf('day').format('X'),
+    to : (req.query.toTime) ? req.query.toTime : moment('2015-01-01').format('X'),
+    caller : (req.query.caller) ? req.query.caller : '',
+    callee : (req.query.callee) ? req.query.callee : '',
+    page : (req.query.page) ? req.query.page : 0,
+    size : (req.query.size) ? req.query.size : 10,
   }
 
   callsRequest.getCalls(params, (err, result) => {

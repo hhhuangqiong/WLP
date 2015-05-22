@@ -164,10 +164,9 @@ Api.prototype.getEndUser = function(params, cb) {
 };
 
 Api.prototype.getCalls = function(params, cb) {
-  console.log('Authorization token',this._getToken());
-  console.log(this._getHost()+'/calls/carriers/'+params.carrierId);
   superagent
     .get(`${this._getHost()}/calls/carriers/${params.carrierId}`)
+    .query(params)
     .accept('json')
     .set('Authorization', this._getToken())
     .end(function (err, res) {

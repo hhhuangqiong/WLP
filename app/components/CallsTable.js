@@ -15,7 +15,7 @@ var CallsTable = React.createClass({
   },
 
   componentWillReceiveProps: function(nextProps) {
-    this.props.users = nextProps.users;
+    this.props.calls = nextProps.calls;
     this.props.current = nextProps.current;
     this.props.per = nextProps.per;
   },
@@ -30,7 +30,7 @@ var CallsTable = React.createClass({
 
   render: function() {
     let params = this.context.router.getCurrentParams();
-
+    
     let rows = this.props.calls.map((u) => {
 
         let callerCountry = _.find(Countries, (c) => {
@@ -45,7 +45,7 @@ var CallsTable = React.createClass({
         let callEnd = moment(u.end_time).format('h:mm:ss a');
         let callDate = moment(u.start_time).format('MMMM DD YYYY');
 
-        return <tr className="calls-table--row">
+        return <tr className="calls-table--row" key={u.call_id}>
           <td className="text-center calls-table--cell"><span className={u.success ? "label status success" : "label status alert"}></span></td>
           <td className="calls-table--cell">
             <span className="left duration">{u.duration}s</span>

@@ -101,7 +101,7 @@ export default class CallsRequest extends BaseRequest {
    * @param cb {Function} Callback function from API controller
    */
   getCalls(params, cb) {
-    //logger.debug('get calls from carrier %s', params);
+    logger.debug('get calls from carrier %s', params);
 
     // Q.ninvoke(this, 'formatQueryData', params)
     //   .then((params) => {
@@ -110,7 +110,6 @@ export default class CallsRequest extends BaseRequest {
     //   .catch((err) => {
     //     return cb(this.handleError(err, err.status || 500));
     //   });
-
     this.sendRequest(params, cb);
   }
 }
