@@ -1,23 +1,34 @@
-var path = require('path');
+var path    = require('path');
+var webpack = require('webpack');
+var port    = process.env.HOT_LOAD_PORT || 8888;
 
 module.exports = {
+  custom: {
+    hotLoadPort: port,
+  },
   devtool: 'eval',
-  entry: './app/client/index.js',
+  entry: [
+    'webpack-dev-server/client?http://localhost:' + port,
+    'webpack/hot/only-dev-server',
+    './app/client/index.js'
+  ],
   module: {
     loaders: [
-      { test: /\.js$/, exclude: /node_modules/, loader: 'babel?cacheDirectory' },
-      // using a forked branch; no build yet
+      { test: /\.js$/, exclude: /node_modules/, loaders: [ 'react-hot', 'babel?cacheDirectory' ]},
+      // using a forked branch; have to `babel` it
       { test: /\.js$/, include: /node_modules\/react-router/, loader: 'babel?cacheDirectory' },
       { test: /\.json$/, loader: 'json' }
     ]
   },
-  resolve: {
-
-  },
+  plugins: [
+    new webpack.HotModuleReplacementPlugin(),
+    new webpack.NoErrorsPlugin()
+  ],
   output: {
-    path: path.join(__dirname, 'public', 'javascript'),
+    path: path.resolve(__dirname, 'public', 'javascript'),
     filename: 'bundle.js',
-    publicPath: '/javascript'
+    // use 'webpack-dev-server' url, otherwise will have unexpected token error
+    publicPath: 'http://localhost:' + port + '/'
   },
   node: {
     'net': 'empty',

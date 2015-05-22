@@ -2,29 +2,31 @@
 
 console.time 'Loading plugins'
 
-autoprefixer  = require 'gulp-autoprefixer'
-babel         = require 'gulp-babel'
-del           = require 'del'
-extend        = require 'gulp-extend'
-gulp          = require 'gulp'
-gutil         = require 'gulp-util'
-istanbul      = require 'gulp-istanbul'
-mocha         = require 'gulp-mocha'
-nodemon       = require 'gulp-nodemon'
+autoprefixer     = require 'gulp-autoprefixer'
+babel            = require 'gulp-babel'
+del              = require 'del'
+extend           = require 'gulp-extend'
+gulp             = require 'gulp'
+gutil            = require 'gulp-util'
+istanbul         = require 'gulp-istanbul'
+mocha            = require 'gulp-mocha'
+nodemon          = require 'gulp-nodemon'
 # 'libsass' version, http://sass-compatibility.github.io/
-sass          = require 'gulp-sass'
-source        = require 'vinyl-source-stream'
-sourcemaps    = require 'gulp-sourcemaps'
-webpack       = require 'webpack'
-webpackConfig = require './webpack.config'
-{argv}        = require 'yargs'
-{exec}        = require 'child_process'
+sass             = require 'gulp-sass'
+source           = require 'vinyl-source-stream'
+sourcemaps       = require 'gulp-sourcemaps'
+webpack          = require 'webpack'
+webpackConfig    = require './webpack.config'
+WebpackDevServer = require 'webpack-dev-server'
+
+{argv}           = require 'yargs'
+{exec}           = require 'child_process'
 
 console.timeEnd 'Loading plugins'
 
 # reduce startup loading time
 browserSync = null
-isNodemonRunning = false
+
 
 src =
   allJS:    'app/**/*.js'
@@ -44,18 +46,13 @@ gulp.task 'test', (cb) ->
         .on 'end', cb
   return
 
-# not trigger 'browser-sync'; `gulp browser-sync` separately if needed
-gulp.task 'default', ['clean', 'nodemon', 'watch'], ->
+gulp.task 'default', ['clean', 'webpack-dev-server', 'nodemon', 'watch'], ->
   console.log 'done \uD83D\uDE80'
   return
 
-gulp.task 'watch', ['watch:js'], ->
+gulp.task 'watch', ->
   gulp.watch 'public/scss/**/*.scss', ['scss']
-  gulp.watch 'locales/client/en/*.json', ['locale']
-  return
-
-gulp.task 'watch:js', ['webpack'], ->
-  gulp.watch src.allJS, ['webpack']
+  #gulp.watch 'locales/client/en/*.json', ['locale']
   return
 
 gulp.task 'clean', ->
@@ -103,18 +100,36 @@ gulp.task 'webpack', (cb)->
   .pipe(webpack(webpackConfig))
   .pipe gulp.dest('public/javascript/')
 
-gulp.task 'nodemon', ['scss', 'webpack'], ->
+gulp.task "webpack-dev-server", ['scss', 'webpack'], (callback) ->
+  hotLoadPort = webpackConfig.custom.hotLoadPort
+  devServer = new WebpackDevServer(webpack(webpackConfig),
+    # 'redirect loop' occurs if using 'http://<host>:<hotLoadPort>'
+    contentBase: webpackConfig.output.path
+    hot: true
+    noInfo: true
+    watchDelay: 100
+    headers:
+      'Access-Control-Allow-Origin': '*'
+  )
+  devServer.listen hotLoadPort, "0.0.0.0", (err) ->
+    throw new gutil.PluginError("webpack-dev-server", err) if err
+    gutil.log "[webpack-dev-server]", "http://localhost:#{hotLoadPort}"
+    callback()
+
+  return
+
+gulp.task 'nodemon', ->
   nodemon
     script: 'bin/www'
     # prefer to keep configuration in "nodemon.json"
     nodeArgs: [ if argv.debug then '--debug' else '' ]
   .on 'restart', ->
-    console.log 'nodemon restarted!'
+    console.log 'nodemon restarted! \uD83D\uDE80'
     return
   isNodemonRunning = true
-  return
 
-# intentionally not using `['nodemon']` as deps
+
+# not trigger 'browser-sync'; `gulp browser-sync` separately if needed
 gulp.task 'browser-sync', ->
   browserSync = require 'browser-sync'
   browserSync

@@ -1,7 +1,13 @@
 'use strict';
 import React from 'react';
 
+ //TODO may need to detect which file to import based on environment
+import webpackConfig from '../../webpack.config.js';
+
+const bundlePath = 'http://localhost:' + (process.env.HOT_LOAD_PORT || webpackConfig.custom.hotLoadPort) + '/bundle.js';
+
 var Html = React.createClass({
+
   render: function() {
     return (
       <html>
@@ -22,7 +28,7 @@ var Html = React.createClass({
       <script src="/vendor/modernizr/modernizr.js"></script>
       <script src="/vendor/foundation/js/foundation.js"></script>
       <script src="/vendor/jquery-ui/ui/datepicker.js"></script>
-      <script src="/javascript/bundle.js" defer></script>
+      <script src={bundlePath} defer></script>
       </html>
     );
   }

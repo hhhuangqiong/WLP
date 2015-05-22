@@ -1,11 +1,12 @@
 {
   "watch": [
-    "public/javascript/bundle.js",
     "gulpfile.coffee",
     "nodemon.json",
     "package.json",
-    "webpack.config.js",
-    "app/config/*.json "
+    "app/collections/",
+    "app/config/",
+    "app/lib/",
+    "app/server/"
   ],
   "ignore": [
     ".git",
