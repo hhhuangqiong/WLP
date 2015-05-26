@@ -15,10 +15,10 @@ app.plug(require('./utils/apiPlugin'));
 app.plug(require('./utils/cookiePlugin'));
 app.plug(require('./utils/routerPlugin')());
 
-// provide authentication support; the only store for now
+// authentication support
 app.registerStore(require('./stores/AuthStore'));
 
-// TODO should start register other stores below
+// register other stores below
 app.registerStore(ApplicationStore);
 app.registerStore(CompanyStore);
 app.registerStore(EndUserStore);

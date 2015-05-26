@@ -6,7 +6,8 @@
     "app/collections/",
     "app/config/",
     "app/lib/",
-    "app/server/"
+    "app/server/",
+    "app/*.js"
   ],
   "ignore": [
     ".git",

@@ -5,13 +5,15 @@ import _ from 'lodash';
 import logger from 'winston';
 import path from 'path';
 
+// NB: not use in file
+// but `React.addons` becomes undefined if not imported
+import FluxibleComponent from 'fluxible/addons/FluxibleComponent';
+
 // react & flux -related
 import React from 'react';
 import serialize from 'serialize-javascript';
-import FluxibleComponent from 'fluxible/addons/FluxibleComponent';
-import Router from 'react-router';
+import Html from '../components/Html';
 import routes from '../routes';
-const HtmlComponent = require('../components/Html');
 
 // express-related
 import express from 'express';
@@ -27,6 +29,7 @@ import flash from 'connect-flash';
 import methodOverride from 'method-override';
 import morgan from 'morgan';
 import session from 'express-session';
+// TODO restore csrf protection
 //import csrf from 'csurf';
 
 var debug = require('debug')('app:server');
@@ -37,7 +40,7 @@ const PROJ_ROOT = path.join(__dirname, '../..');
 //TODO rename the file as 'app'
 import app from '../index';
 
-// shared with client via `context`
+// access via `context`
 var config = require('../config');
 var fetchData = require('../utils/fetchData');
 var loadSession = require('../actions/loadSession');
@@ -124,62 +127,17 @@ function initialize(port) {
   // Routes
   server.use('/api', require('./api'));
   server.use('/data', require('./routes/data'));
-  // disabled all the resources for now
+  // TODO re-examine 'server-side' routes
   //server.use(require('./routes'));
 
-  // TODO export from another file
-  var renderApp = function(context, location, cb) {
-    var router = Router.create({
-      routes: routes,
-      location: location,
-      transitionContext: context,
-      onAbort: function(redirect) {
-        cb({
-          redirect: redirect
-        });
-      },
-      onError: function(err) {
-        debug('Routing Error', err);
-        cb(err);
-      }
-    });
-
-    router.run(function(Handler, routerState) {
-      if (routerState.routes[0].name === 'not-found') {
-        var html = React.renderToStaticMarkup(React.createElement(Handler));
-        cb({
-          notFound: true
-        }, html);
-        return;
-      }
-
-      fetchData(context, routerState, function(err) {
-        if (err) {
-          return cb(err);
-        }
-
-        var dehydratedState = 'window.__DATA__=' + serialize(app.dehydrate(context)) + ';';
-        var appMarkup = React.renderToString(React.createElement(
-          FluxibleComponent, {
-            context: context.getComponentContext()
-          },
-          React.createElement(Handler)
-        ));
-        var html = React.renderToStaticMarkup(React.createElement(HtmlComponent, {
-          state: dehydratedState,
-          markup: appMarkup
-        }));
-        cb(null, html);
-      });
-    });
-  };
+  var renderApp = require('./render')(app);
 
   server.use(function(req, res, next) {
     if (config.DISABLE_ISOMORPHISM) {
       // Send empty HTML with just the config values
       // all rendering will be done by the client
       var serializedConfig = 'window.__CONFIG__=' + serialize(config) + ';';
-      var html = React.renderToStaticMarkup(React.createElement(HtmlComponent, {
+      var html = React.renderToStaticMarkup(React.createElement(Html, {
         config: serializedConfig
       }));
       res.send(html);
@@ -197,10 +155,12 @@ function initialize(port) {
         if (err && err.notFound) {
           return res.status(404).send(html);
         }
+        // `onAbort` in `Router.create`
         if (err && err.redirect) {
           return res.redirect(303, err.redirect.to);
         }
         if (err) {
+          // TODO not handled at the moment, maybe render '500' component using express controller
           return next(err);
         }
         res.send(html);
@@ -208,7 +168,6 @@ function initialize(port) {
     });
   });
 
-  // before there was an application error handler here, (err, req, res, next) => {}
   return server;
 }
 
