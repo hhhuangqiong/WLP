@@ -55,6 +55,10 @@ gulp.task 'watch', ->
   #gulp.watch 'locales/client/en/*.json', ['locale']
   return
 
+gulp.task 'watch:js', ['babel'], ->
+  gulp.watch src.allJS, ['babel']
+  return
+
 gulp.task 'clean', ->
   del([ "#{dest.app}", "#{dest.build}/**/*" ])
 
@@ -79,9 +83,8 @@ _continueOnError = (fn) ->
     return
   _fn
 
-b = if /^watch/.test argv._[0] then _continueOnError babel else babel()
-
 gulp.task 'babel', ->
+  b = if /^watch/.test argv._[0] then _continueOnError babel else babel()
   gulp.src src.allJS
     .pipe b
     .pipe sourcemaps.init()
@@ -97,8 +100,8 @@ gulp.task 'webpack', (cb)->
   return
 
   gulp.src('./app/client.js')
-  .pipe(webpack(webpackConfig))
-  .pipe gulp.dest('public/javascript/')
+    .pipe webpack(webpackConfig)
+    .pipe gulp.dest('public/javascript/')
 
 gulp.task "webpack-dev-server", ['scss', 'webpack'], (callback) ->
   hotLoadPort = webpackConfig.custom.hotLoadPort
