@@ -34,25 +34,4 @@ export default class ForgotPassword {
       res.redirect('/forgotpassword/retry');
     });
   }
-
-  retry(req, res, next) {
-    if (req.flash('afterPost')[0] === true) {
-      var errorMessage = req.flash('afterPostError');
-      res.render('pages/forgotpassword', {
-        title: "Invalid user",
-        body: "<p>Reset your password by entering</p><p>your registered email</p>",
-        message: "User not found. Please input valid email and try again"
-      });
-    } else {
-      res.redirect('/forgotpassword');
-    }
-  }
-
-  success(req, res, next) {
-    if (req.flash('afterPost')[0] === true) {
-      res.render('pages/forgotpassword-success');
-    } else {
-      res.redirect('/forgotpassword');
-    }
-  }
 }

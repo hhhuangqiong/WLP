@@ -13,7 +13,7 @@ import FluxibleComponent from 'fluxible/addons/FluxibleComponent';
 import React from 'react';
 import serialize from 'serialize-javascript';
 import Html from '../components/Html';
-import routes from '../routes';
+//import routes from '../routes';
 
 // express-related
 import express from 'express';

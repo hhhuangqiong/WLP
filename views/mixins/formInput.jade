@@ -1,7 +1,0 @@
-mixin input(name, type, label, model)
-  label(ng-class="{'error': (accountForm.#{name}.$submitted || accountForm.#{name}.$touched) && accountForm.#{name}.$invalid}")= label
-    input(name=name type=type placeholder=label ng-model=model)&attributes(attributes)
-  div(ng-show="(accountForm.#{name}.$submitted || accountForm.#{name}.$touched)" ng-messages="accountForm.#{name}.$error")
-    small(class="error" ng-message="required") #{name} is required
-    small(class="error" ng-message="email") please enter a valid email
-    small(class="error" ng-message="maxlength") #{name} is too long

@@ -13,8 +13,9 @@ var Html = React.createClass({
       <html>
       <head>
         <meta charSet="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge"  />
         <title>{this.props.title}</title>
-        <meta name="viewport" content="width=device-width, user-scalable=no" />
         <link href="http://fonts.googleapis.com/css?family=Roboto:500,300,700,400" rel="stylesheet" type="text/css" />
         <link rel="stylesheet" href="/stylesheets/iconic-fonts.css" />
         <link rel="stylesheet" href="/stylesheets/main.css" />

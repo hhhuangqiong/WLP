@@ -8,6 +8,4 @@ module.exports = (() => {
 
   return Router()
     .post('/', controller.submit)
-    .get('/success', controller.success)
-    .get('/retry', controller.retry);
 })();

@@ -18,10 +18,6 @@ export default class SignupController {
     this.portalUserManager = portalUserManager;
   }
 
-  invalidSignUp(req, res) {
-    res.render('pages/signUp/invalid');
-  }
-
   verifyRequest(req, res, next) {
     req.checkQuery('username').notEmpty().isEmail();
     req.checkQuery('token').notEmpty();
@@ -74,24 +70,6 @@ export default class SignupController {
       });
   }
 
-  /**
-   * Render the form containing the Google Auth QR code image
-   *
-   */
-  renderForm(req, res, next) {
-    var user = req.signUpUser;
-    if(!user)
-      return next(new Error('Invalid request: No sign up user'));
-
-    var googleAuth = user.googleAuthInfo(nconf.get('speakeasy:name')).get('googleAuth');
-    res.render('pages/signUp/form', {
-      username:       user.username,
-      google_auth_qr: googleAuth.qrCodeUrl,
-      // for redirect
-      token:          req.sanitize('token').trim()
-    });
-  }
-
   preSignUp(req, res, next) {
     req.checkBody('username').notEmpty().isEmail();
     req.checkBody('password').notEmpty().equals(req.sanitize('rePassword'));
@@ -131,22 +109,4 @@ export default class SignupController {
     res.redirect(`./?username=${username}&token=${token}`);
   }
 
-  /**
-   * TODO
-   * - this is the new flow; not yet verified the correctness
-   */
-  signUp(req, res, next) {
-    Q.ninvoke(User, 'findOne', { username: req.sanitize('username') })
-      .then(function(user){
-        SignUp.activate(user, req.sanitize('password'), function(err, ...others) {
-          console.log('others', others);
-
-          if(err) throw new Error('Failed to sign user up')
-          res.render('pages/signUp/done'); // no render data?
-        })
-      }).catch(function(reason) {
-        logger.error('Error during signup process', reason.stack);
-        res.render('pages/signUp/denied');
-      });
-  }
 }

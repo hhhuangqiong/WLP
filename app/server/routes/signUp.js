@@ -9,8 +9,7 @@ module.exports = (() => {
   var c         = new Controller(container.PortalUserManager);
 
   return Router()
-    .get('/',         c.verifyRequest, c.validateSignUpUser, c.renderForm)
-    .get('/invalid',  container.middlewares.flash, c.invalidSignUp)
+    .get('/',         c.verifyRequest, c.validateSignUpUser)
     .post('/process', c.preSignUp, c.passwordStrengthTest, c.signUp, c.bounceBack);
 
 }());
