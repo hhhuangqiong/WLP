@@ -36,7 +36,7 @@ var Navigation = React.createClass({
 
     if (_.includes(companyPages, currentRoute.name)) {
       return (
-        <li>
+        <li className="navigation-bar__item no-border">
           <Link to="company-create" params={{ role: role, identity: identity }}>
             create new company
           </Link>
@@ -44,7 +44,7 @@ var Navigation = React.createClass({
       )
     } else if (_.includes(accountPages, currentRoute.name)) {
       return (
-        <li>
+        <li className="navigation-bar__item no-border">
           <Link to="account-create" params={{ role: role, identity: identity }}>
             create new account
           </Link>
@@ -61,11 +61,7 @@ var Navigation = React.createClass({
     return (
       <section className="top-bar-section navigation-bar">
         <ul className="right">
-          <li>
-            <Link to="company-create" params={{ role: role, identity: identity }}>
-              create new company
-            </Link>
-          </li>
+          {this.renderCreateButton()}
           <li className="navigation-bar__item">
             <Link to="TODO">report issue</Link>
           </li>

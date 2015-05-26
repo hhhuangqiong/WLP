@@ -10,8 +10,8 @@ WalletRequest = require 'app/lib/requests/boss/Wallet'
 describe 'WalletRequest', ->
   request = null
   params  = {}
-  baseUrl = 'http://this.is.mums/api/1.0'
-  url     = '/walletBalance'
+  baseUrl = 'http://this.is.mums'
+  url     = '/api/walletBalance'
   delay   = 20
   timeout = 100
 

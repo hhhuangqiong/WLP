@@ -172,9 +172,9 @@ export default class Api {
 
     var prepareWalletRequestParams = function(user) {
       return {
-        carrierId: user.carrierId,
+        carrier: user.carrierId,
         number: user.userDetails.username,
-        sessionUserName: user.userDetails.displayName
+        sessionUserName: 'WhiteLabel-Portal'
       }
     };
 

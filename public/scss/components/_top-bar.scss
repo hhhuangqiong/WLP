@@ -24,13 +24,15 @@
                         line-height: 3.5rem;
                     }
                 }
-                &:before {
+                &:not(.no-border) {
+                  &:before {
                     width: rem-calc(1);
                     height: rem-calc(12);
                     background: rgba(255, 255, 255, 0.5);
                     content: "";
                     position: absolute;
                     top: rem-calc(24);
+                  }
                 }
                 &:last-child {
                     > a {
@@ -141,7 +143,7 @@
                 }
                 &.tab--inverted{
                     a{
-                        position: relative;                    
+                        position: relative;
                         &.active{
                             $arrowWidth: 8px;
                             $arrowHeight: 5px;
