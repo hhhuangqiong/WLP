@@ -6,6 +6,7 @@ import CompanyStore from './stores/CompanyStore';
 import EndUserStore from './stores/EndUserStore';
 import SignInStore from './stores/SignInStore';
 import CallsStore from './stores/CallsStore';
+import TopUpStore from './stores/TopUpStore';
 
 import ModalStore from './stores/ModalStore';
 // seems not passing anything is okay
@@ -25,5 +26,6 @@ app.registerStore(EndUserStore);
 app.registerStore(SignInStore);
 app.registerStore(ModalStore);
 app.registerStore(CallsStore);
+app.registerStore(TopUpStore);
 
 export default app;

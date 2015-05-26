@@ -20,6 +20,7 @@ var companyCtrl  = new CompanyCtrl();
 var endUserRequest = fetchDep(nconf.get('containerName'), 'EndUserRequest');
 var walletRequest = fetchDep(nconf.get('containerName'), 'WalletRequest');
 var callsRequest = fetchDep(nconf.get('containerName'), 'CallsRequest');
+var topUpRequest = fetchDep(nconf.get('containerName'), 'TopUpRequest');
 
 var api = express.Router();
 
@@ -274,9 +275,35 @@ api.get('/calls/carriers/:carrierId', function(req, res) {
     callee : (req.query.callee) ? req.query.callee : '',
     page : (req.query.page) ? req.query.page : 0,
     size : (req.query.size) ? req.query.size : 10,
-  }
+  };
 
   callsRequest.getCalls(params, (err, result) => {
+    if (err)
+      return res.status(err.status).json({
+        error: err
+      });
+
+    return res.json(result);
+  });
+});
+
+api.get('/carriers/:carrierId/topup', function(req, res) {
+  req.checkParams('carrierId').notEmpty();
+  req.checkQuery('startDate').notEmpty();
+  req.checkQuery('endDate').notEmpty();
+  req.checkQuery('page').notEmpty().isInt();
+  req.checkQuery('pageRec').notEmpty().isInt();
+
+  let params = {
+    carrier: req.params.carrierId,
+    startDate: req.query.startDate,
+    endDate: req.query.endDate,
+    number: req.query.number,
+    page: req.query.page,
+    pageRec: req.query.pageRec
+  };
+
+  topUpRequest.getTopUp(params, (err, result) => {
     if (err)
       return res.status(err.status).json({
         error: err

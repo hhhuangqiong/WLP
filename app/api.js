@@ -224,4 +224,18 @@ Api.prototype.getCalls = function(params, cb) {
     });
 };
 
+Api.prototype.getTopUpHistory = function(params, cb) {
+  superagent
+    .get(`${this._getHost()}/carriers/${params.carrierId}/topup`)
+    .query(params)
+    .accept('json')
+    .set('Authorization', this._getToken())
+    .end(function (err, res) {
+      if (err) {
+        debug('error', err);
+      }
+      cb(err, res && res.body);
+    });
+};
+
 module.exports = Api;

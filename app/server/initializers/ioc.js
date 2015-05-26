@@ -61,7 +61,7 @@ export function init(nconf) {
 
   ioc.constant('BOSS_API_BASE_URL', nconf.get('bossApi:baseUrl'));
   ioc.constant('BOSS_API_TIMEOUT', nconf.get('bossApi:timeout'));
-  ioc.service('TransactionRequest', require('../../lib/requests/boss/Transaction'), 'BOSS_API_BASE_URL', 'BOSS_API_TIMEOUT');
+  ioc.service('TopUpRequest', require('../../lib/requests/boss/TopUp'), 'BOSS_API_BASE_URL', 'BOSS_API_TIMEOUT');
   ioc.service('WalletRequest', require('../../lib/requests/boss/Wallet'), 'BOSS_API_BASE_URL', 'BOSS_API_TIMEOUT');
 
   return ioc;

@@ -28,7 +28,7 @@ export default (
         <Route name="end-user" path=":username" handler={require('./components/EndUserProfile')}/>
       </Route>
       <Route name="settings" path="/:role/:identity?/settings" handler={require('./components/Overview')} />
-      <Route name="top-up" path="/:role/:identity?/top-up" handler={require('./components/Overview')} />
+      <Route name="top-up" path="/:role/:identity?/top-up" handler={require('./components/TopUp')} />
       <Route name="calls" path="/:role/:identity?/calls" handler={require('./components/Calls')} />
       <Route name="im" path="/:role/:identity?/im" handler={require('./components/Overview')} />
       <Route name="vsf" path="/:role/:identity?/vsf" handler={require('./components/Overview')} />

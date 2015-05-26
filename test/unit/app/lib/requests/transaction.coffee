@@ -5,13 +5,13 @@ moment     = require 'moment'
 util       = require 'util'
 
 # object under test
-TransactionRequest = require 'app/lib/requests/boss/Transaction'
+TransactionRequest = require 'app/lib/requests/boss/TopUp'
 
 describe 'TransactionRequest', ->
   request = null
   params  = {}
-  baseUrl = 'http://this.is.boss/api'
-  url     = '/transactionHistory'
+  baseUrl = 'http://this.is.boss'
+  url     = '/api/transactionHistory'
   delay   = 20
   timeout = 100
 
@@ -89,7 +89,7 @@ describe 'TransactionRequest', ->
         startDate: '02/24/2015',
         endDate: '02/24/2015'
       }
-      request.getTransactions params, (err, val) ->
+      request.getTopUp params, (err, val) ->
         expect err
         .to.be.an 'object'
           .with.a.property 'timeout', timeout
@@ -102,11 +102,15 @@ describe 'TransactionRequest', ->
         startDate: '02/24/2015',
         endDate: '02/24/2015'
       }
-      request.getTransactions params, (err, body) ->
+      request.getTopUp params, (err, body) ->
         expect body
-        .to.be.an 'array'
+        .to.be.an 'object'
+        .that.has.all.keys [
+          'totalRec',
+          'history'
+        ];
 
-        expect body[0]
+        expect body['history'][0]
         .to.be.an 'object'
         .that.have.all.keys [
           'orderNo',

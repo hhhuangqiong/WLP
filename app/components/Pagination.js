@@ -5,6 +5,11 @@ import classNames from 'classnames';
 const maxDisplay = 10;
 
 var Pagination = React.createClass({
+  propTypes: {
+    current: React.PropTypes.number,
+    per: React.PropTypes.per
+  },
+
   getInitialState: function () {
     return {
       current: this.props.current,
@@ -17,8 +22,13 @@ var Pagination = React.createClass({
     return {
       current: 1,
       total: 0,
-      per: 10
+      per: 10,
+      maxDisplay: 10
     };
+  },
+
+  componentWillReceiveProps: function(nextProps) {
+    this.props = nextProps;
   },
 
   getLastPage: function() {
@@ -26,19 +36,23 @@ var Pagination = React.createClass({
   },
 
   getFromPage: function() {
-    if (this.getLastPage() - this.props.current < maxDisplay/2) {
-      return this.getLastPage() - maxDisplay + 1;
-    }
-
-    return _.max([this.props.current + 1 - maxDisplay/2, 1]);
-  },
-
-  getToPage: function() {
-    if (this.getLastPage() - this.props.current <= maxDisplay/2) {
+    if (this.getLastPage() <= this.props.maxDisplay/2) {
       return this.getLastPage();
     }
 
-    return _.min([this.getLastPage(), _.max([this.props.current + maxDisplay/2, maxDisplay])]);
+    if (this.getLastPage() - this.props.current < this.props.maxDisplay/2) {
+      return this.getLastPage() - this.props.maxDisplay + 1;
+    }
+
+    return _.max([this.props.current + 1 - this.props.maxDisplay/2, 1]);
+  },
+
+  getToPage: function() {
+    if (this.getLastPage() - this.props.current <= this.props.maxDisplay/2) {
+      return this.getLastPage();
+    }
+
+    return _.min([this.getLastPage(), _.max([this.props.current + this.props.maxDisplay/2, this.props.maxDisplay])]);
   },
 
   getAvailablePages: function() {
@@ -62,9 +76,37 @@ var Pagination = React.createClass({
   },
 
   render: function() {
+    let leftArrow = (
+      <li className="arrow" onClick={_.bindKey(this.props, 'onPageChange', this.props.current - 1)}>
+        <a href="">&#x3008;</a>
+      </li>
+    );
+
+    if (this.props.current == 1) {
+      leftArrow = (
+        <li className="arrow unavailable" aria-disabled="true">
+          <a href="">&#x3008;</a>
+        </li>
+      )
+    }
+
+    let rightArrow = (
+      <li className="arrow" onClick={_.bindKey(this.props, 'onPageChange', this.props.current + 1)}>
+        <a href="">&#x3009;</a>
+      </li>
+    );
+
+    if (this.props.current == this.getLastPage()) {
+      rightArrow = (
+        <li className="arrow unavailable" aria-disabled="true">
+          <a href="">&#x3009;</a>
+        </li>
+      )
+    }
+
     return (
       <ul className={classNames('pagination', { 'hide': this.props.total == 0 })} role="menubar" aria-label="Pagination">
-        <li className={classNames('arrow', { 'unavailable': this.props.current == 1 })} aria-disabled="true"><a href="">&#x3008;</a></li>
+        {leftArrow}
         {this.getAvailablePages().map((i)=>{
           return (
             <li key={i} className={classNames({'current': this.props.current == i})} onClick={_.bindKey(this.props, 'onPageChange', i)}>
@@ -72,7 +114,7 @@ var Pagination = React.createClass({
             </li>
           );
         })}
-        <li className={classNames('arrow', { 'unavailable': this.props.current == this.getLastPage() })}><a href="">&#x3009;</a></li>
+        {rightArrow}
       </ul>
     );
   }

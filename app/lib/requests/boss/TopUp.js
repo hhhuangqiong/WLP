@@ -8,7 +8,7 @@ var util    = require('util');
 
 import BaseRequest from '../Base';
 
-export default class TransactionRequest extends BaseRequest {
+export default class TopUpRequest extends BaseRequest {
 
   constructor(baseUrl, timeout) {
 
@@ -17,7 +17,7 @@ export default class TransactionRequest extends BaseRequest {
       timeout: timeout,
       methods: {
         LIST: {
-          URL: '/transactionHistory',
+          URL: '/api/transactionHistory',
           METHOD: 'GET'
         }
       }
@@ -54,6 +54,7 @@ export default class TransactionRequest extends BaseRequest {
       return params;
     }
 
+    // originally for AngularJS multiple selections
     function stringifyArray() {
       for (var key in params) {
         if (params[key] instanceof Array) {
@@ -78,12 +79,12 @@ export default class TransactionRequest extends BaseRequest {
       .end((err, res) => {
         // Do we need to distinguish different Errors? Timeout and ENOTFOUND
         if (err) return cb(this.handleError(err, err.status || 400));
-        if (res.status >= 400) return cb(this.handleError(res.body.error.description), res.status);
-        return cb(null, res.body.result.history);
+        if (res.error) return cb(this.handleError(res.body.error.description, res.error.code));
+        return cb(null, res.body.result);
       });
   }
 
-  getTransactions(params, cb) {
+  getTopUp(params, cb) {
     logger.debug('get transaction history from BOSS with params', params);
 
     Q.ninvoke(this, 'formatQueryData', params)
