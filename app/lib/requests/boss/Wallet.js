@@ -14,7 +14,7 @@ export default class WalletRequest extends BaseRequest {
       timeout: timeout,
       methods: {
         LIST: {
-          URL: '/walletBalance',
+          URL: '/api/walletBalance',
           METHOD: 'GET'
         }
       }
@@ -24,7 +24,7 @@ export default class WalletRequest extends BaseRequest {
   }
 
   validateQuery(params, cb) {
-    logger.debug('validate user wallet request query');
+    logger.debug('validate user wallet request query, %j', params, {});
 
     if (!params.number || !params.carrier || !params.sessionUserName)
       return cb(new Error('missing mandatory fields.'), null);
@@ -75,6 +75,7 @@ export default class WalletRequest extends BaseRequest {
         this.sendRequest(params, cb);
       })
       .catch((err)=>{
+        logger.error(err);
         this.rejectRequest(err, cb);
       });
   }

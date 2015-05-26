@@ -210,9 +210,9 @@ api.get('/carriers/:carrierId/users/:username', function(req, res) {
 
   var prepareWalletRequestParams = function(user) {
     return {
-      carrierId: user.carrierId,
+      carrier: user.carrierId,
       number: user.userDetails.username,
-      sessionUserName: user.userDetails.displayName
+      sessionUserName: 'Whitelabel-Portal'
     }
   };
 

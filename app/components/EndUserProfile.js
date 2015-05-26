@@ -39,13 +39,26 @@ var EndUserProfile = React.createClass({
   },
 
   render: function() {
-    return (
-      <InfoPanel title={this.props.user.userDetails.displayName}>
+
+    let wallet = (
+      <Section title="Wallet Info">
+        <p>Wallet not found!</p>
+      </Section>
+    );
+
+    if (this.props.user.wallet) {
+      wallet = (
         <Section title="Wallet Info">
           <Item label="Total"></Item>
           <Item label="Paid"></Item>
           <Item label="Free"></Item>
         </Section>
+      );
+    }
+
+    return (
+      <InfoPanel title={this.props.user.userDetails.displayName}>
+        {wallet}
         <Section title="Account Info">
           <Item label="Created Time">{this.props.user.userDetails.creationDate}</Item>
           <Item label="Verified">{this.props.user.userDetails.verified}</Item>
