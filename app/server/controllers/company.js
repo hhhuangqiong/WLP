@@ -11,7 +11,6 @@ import {ApplicationRequest} from '../../lib/requests/Application';
 var Company   = require('../../collections/company');
 var PortalUser = require('../../collections/portalUser');
 
-var countries = require('../../data/countries.json');
 var featureList = require('../../data/featureList.json');
 
 export default class CompanyController {
@@ -28,7 +27,7 @@ export default class CompanyController {
     }).fail(function (error) {
       this.rejected(res, error);
     }).done();
-  };
+  }
 
   /**
    * Controller Middleware

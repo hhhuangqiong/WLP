@@ -6,6 +6,5 @@ import { fetchDep } from '../initializers/ioc';
 module.exports = (() => {
   var controller  = new Controller(fetchDep(nconf.get('containerName'), 'PortalUserManager'));
 
-  return Router()
-    .post('/', controller.submit)
+  return Router().post('/', controller.submit)
 })();

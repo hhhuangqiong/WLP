@@ -1,18 +1,17 @@
 var superagent = require('superagent');
-var debug = require('debug')('wlp:Api');
+var debug = require('debug')('app:Api');
 
-function Api(options) {
-  options = options || {};
-  var noop = function() {};
+function Api(options = {}) {
+  var noop = Function.prototype;
 
-  this._getHost = options.getHost || noop;
-  this._getToken = options.getToken || noop;
+  this._getHost   = options.getHost || noop;
+  this._getToken  = options.getToken || noop;
   this._getUserId = options.getUserId || noop;
 }
 
 Api.prototype.signIn = function(username, password, cb) {
   superagent
-    .post(this._getHost() + '/sign-in')
+    .post(`${this._getHost()}/api/sign-in`)
     .accept('json')
     .send({
       username: username,
@@ -34,7 +33,7 @@ Api.prototype.signIn = function(username, password, cb) {
 
 Api.prototype.signOut = function(cb) {
   superagent
-    .post(this._getHost() + '/sign-out')
+    .post(`${this._getHost()}/api/sign-out`)
     .accept('json')
     .set('Authorization', this._getToken())
     .end(function(err, res) {
@@ -47,7 +46,7 @@ Api.prototype.signOut = function(cb) {
 
 Api.prototype.getSession = function(token, cb) {
   superagent
-    .get(this._getHost() + '/session')
+    .get(`${this._getHost()}/api/session`)
     .accept('json')
     .set('Authorization', token)
     .end(function(err, res) {
@@ -61,7 +60,7 @@ Api.prototype.getSession = function(token, cb) {
 
 Api.prototype.getManagingCompanies = function(params, cb) {
   superagent
-    .get(`${this._getHost()}/switcher/companies`)
+    .get(`${this._getHost()}/api/switcher/companies`)
     .accept('json')
     .set('Authorization', this._getToken())
     .query({
@@ -78,7 +77,7 @@ Api.prototype.getManagingCompanies = function(params, cb) {
 
 Api.prototype.getCompanies = function(params, cb) {
   superagent
-    .get(`${this._getHost()}/companies`)
+    .get(`${this._getHost()}/api/companies`)
     .accept('json')
     .set('Authorization', this._getToken())
     .query({
@@ -95,7 +94,7 @@ Api.prototype.getCompanies = function(params, cb) {
 
 Api.prototype.createCompany = function(params, cb) {
   superagent
-    .post(`${this._getHost()}/companies`)
+    .post(`${this._getHost()}/api/companies`)
     .accept('json')
     .set('Authorization', this._getToken())
     .send(params.data)
@@ -110,7 +109,7 @@ Api.prototype.createCompany = function(params, cb) {
 
 Api.prototype.getCompanyService = function(params, cb) {
   superagent
-    .get(`${this._getHost()}/companies/${params.carrierId}/service`)
+    .get(`${this._getHost()}/api/companies/${params.carrierId}/service`)
     .accept('json')
     .set('Authorization', this._getToken())
     .query({
@@ -127,7 +126,7 @@ Api.prototype.getCompanyService = function(params, cb) {
 
 Api.prototype.getApplications = function(params, cb) {
   superagent
-    .get(`${this._getHost()}/companies/${params.carrierId}/applications`)
+    .get(`${this._getHost()}/api/companies/${params.carrierId}/applications`)
     .accept('json')
     .set('Authorization', this._getToken())
     .end(function(err, res) {
@@ -141,7 +140,7 @@ Api.prototype.getApplications = function(params, cb) {
 
 Api.prototype.updateCompanyProfile = function(params, cb) {
   superagent
-    .put(`${this._getHost()}/companies/${params.carrierId}/profile`)
+    .put(`${this._getHost()}/api/companies/${params.carrierId}/profile`)
     .accept('json')
     .set('Authorization', this._getToken())
     .send(params.data)
@@ -156,7 +155,7 @@ Api.prototype.updateCompanyProfile = function(params, cb) {
 
 Api.prototype.updateCompanyService = function(params, cb) {
   superagent
-    .put(`${this._getHost()}/companies/${params.carrierId}/service`)
+    .put(`${this._getHost()}/api/companies/${params.carrierId}/service`)
     .accept('json')
     .set('Authorization', this._getToken())
     .send(params.data)
@@ -171,7 +170,7 @@ Api.prototype.updateCompanyService = function(params, cb) {
 
 Api.prototype.updateCompanyWidget = function(params, cb) {
   superagent
-    .put(`${this._getHost()}/companies/${params.carrierId}/widget`)
+    .put(`${this._getHost()}/api/companies/${params.carrierId}/widget`)
     .accept('json')
     .set('Authorization', this._getToken())
     .send(params.data)
@@ -186,7 +185,7 @@ Api.prototype.updateCompanyWidget = function(params, cb) {
 
 Api.prototype.getEndUsers = function(params, cb) {
   superagent
-    .get(`${this._getHost()}/carriers/${params.carrierId}/users`)
+    .get(`${this._getHost()}/api/carriers/${params.carrierId}/users`)
     .accept('json')
     .set('Authorization', this._getToken())
     .end(function (err, res) {
@@ -199,7 +198,7 @@ Api.prototype.getEndUsers = function(params, cb) {
 
 Api.prototype.getEndUser = function(params, cb) {
   superagent
-    .get(`${this._getHost()}/carriers/${params.carrierId}/users/${params.username}`)
+    .get(`${this._getHost()}/api/carriers/${params.carrierId}/users/${params.username}`)
     .accept('json')
     .set('Authorization', this._getToken())
     .end(function (err, res) {
@@ -212,7 +211,7 @@ Api.prototype.getEndUser = function(params, cb) {
 
 Api.prototype.getCalls = function(params, cb) {
   superagent
-    .get(`${this._getHost()}/calls/carriers/${params.carrierId}`)
+    .get(`${this._getHost()}/api/calls/carriers/${params.carrierId}`)
     .query(params)
     .accept('json')
     .set('Authorization', this._getToken())
@@ -226,7 +225,7 @@ Api.prototype.getCalls = function(params, cb) {
 
 Api.prototype.getTopUpHistory = function(params, cb) {
   superagent
-    .get(`${this._getHost()}/carriers/${params.carrierId}/topup`)
+    .get(`${this._getHost()}/api/carriers/${params.carrierId}/topup`)
     .query(params)
     .accept('json')
     .set('Authorization', this._getToken())

@@ -13,7 +13,6 @@ import FluxibleComponent from 'fluxible/addons/FluxibleComponent';
 import React from 'react';
 import serialize from 'serialize-javascript';
 import Html from '../components/Html';
-//import routes from '../routes';
 
 // express-related
 import express from 'express';
@@ -121,14 +120,12 @@ function initialize(port) {
   // ensure express.session() is before passport.session()
   server.use(passport.session());
 
-  // keep but not supposed to be used as the main way to communicate message (result)
+  // use cases for using flash message for result?
   server.use(flash());
 
   // Routes
-  server.use('/api', require('./routes/api'));
+  server.use('/api', require('./routes'));
   server.use('/data', require('./routes/data'));
-  // TODO re-examine 'server-side' routes
-  //server.use(require('./routes'));
 
   var renderApp = require('./render')(app);
 
