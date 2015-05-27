@@ -125,7 +125,7 @@ function initialize(port) {
   server.use(flash());
 
   // Routes
-  server.use('/api', require('./api'));
+  server.use('/api', require('./routes/api'));
   server.use('/data', require('./routes/data'));
   // TODO re-examine 'server-side' routes
   //server.use(require('./routes'));

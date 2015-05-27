@@ -3,8 +3,7 @@ var Immutable = require('immutable');
 var db = {};
 
 db._state = Immutable.fromJS({
-  sessions: {},
-  contacts: {}  //keep here for demonstration way of exposing other data
+  sessions: {}
 });
 
 db.createSession = function(token) {
