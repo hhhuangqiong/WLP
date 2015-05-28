@@ -209,6 +209,36 @@ Api.prototype.getEndUser = function(params, cb) {
     });
 };
 
+Api.prototype.getSMS = function(params, cb) {
+  superagent
+    .get(`${this._getHost()}/api/carriers/${params.carrierId}/sms`)
+    .query(params)
+    .accept('json')
+    .set('Authorization', this._getToken())
+    .end(function (err, res) {
+      if (err) {
+        debug('error', err)
+      }
+      cb(err, res && res.body);
+    });
+};
+
+Api.prototype.getSMSWidgets = function(params, cb) {
+  superagent
+    .get(`${this._getHost()}/api/carriers/${params.carrierId}/widgets/sms`)
+    .accept('json')
+    .set('Authorization', this._getToken())
+    .query({
+      userId: this._getUserId()
+    })
+    .end(function (err, res) {
+      if (err) {
+        debug('error', err)
+      }
+      cb(err, res && res.body);
+    });
+};
+
 Api.prototype.getCalls = function(params, cb) {
   superagent
     .get(`${this._getHost()}/api/calls/carriers/${params.carrierId}`)

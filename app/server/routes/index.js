@@ -29,13 +29,5 @@ router
   .use(require('./companies'))
   .use(require('./forgotPassword'))
   .use(require('./signUp'))
-  .use('*', function(req, res) {
-    return res.status(400).json({
-      error: {
-        name: 'BadUrl',
-        message: 'No endpoint for given URL'
-      }
-    });
-  });
 
 export default router;

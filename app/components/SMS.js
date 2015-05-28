@@ -3,17 +3,21 @@ import moment from 'moment';
 import {concurrent} from 'contra';
 
 import React from 'react';
-import FluxibleMixin from 'fluxible/addons/FluxibleMixin';
+import {Link} from 'react-router';
 
+import FluxibleMixin from 'fluxible/addons/FluxibleMixin';
 import AuthMixin from '../utils/AuthMixin';
 
-import TopUpStore from '../stores/TopUpStore';
+import SMSStore from '../stores/SMSStore';
 
-import fetchTopUpHistory from '../actions/fetchTopUpHistory';
+import fetchSMS from '../actions/fetchSMS';
 
-import TopUpTable from '../components/TopUpTable';
+import SMSTable from '../components/SMSTable';
 
-var TopUp = React.createClass({
+const defaultStartDate = moment().startOf('day').subtract(1, 'day').format('L');
+const defaultEndDate = moment().endOf('day').format('L');
+
+var SMS = React.createClass({
   contextTypes: {
     router: React.PropTypes.func.isRequired
   },
@@ -21,14 +25,14 @@ var TopUp = React.createClass({
   mixins: [FluxibleMixin, AuthMixin],
 
   statics: {
-    storeListeners: [TopUpStore],
+    storeListeners: [SMSStore],
 
     fetchData: function(context, params, query, done) {
       concurrent([
-        context.executeAction.bind(context, fetchTopUpHistory, {
+        context.executeAction.bind(context, fetchSMS, {
           carrierId: params.identity,
-          startDate: query.startDate || moment().startOf('day').subtract(1, 'day').format('L'),
-          endDate: query.endDate || moment().endOf('day').format('L'),
+          startDate: query.number ? (query.startDate || '') : (query.startDate || defaultStartDate),
+          endDate: query.number ? (query.endDate || '') : (query.endDate || defaultEndDate),
           number: query.number || '',
           page: query.page || 1,
           pageRec: query.pageRec || 10
@@ -39,15 +43,15 @@ var TopUp = React.createClass({
 
   getStateFromStores: function() {
     return {
-      histories: this.getStore(TopUpStore).getHistories(),
-      totalRec: this.getStore(TopUpStore).getTotalRec()
+      SMSRecords: this.getStore(SMSStore).getSMSRecords(),
+      totalRec: this.getStore(SMSStore).getTotalRec()
     }
   },
 
   getInitialState: function () {
     let query = _.merge({
-      startDate: null,
-      endDate: null,
+      startDate: defaultStartDate,
+      endDate: defaultEndDate,
       number: null,
       page: 1,
       pageRec: 10
@@ -110,29 +114,41 @@ var TopUp = React.createClass({
   },
 
   render: function() {
+    let params = this.context.router.getCurrentParams();
+
     return (
       <div className="row">
         <nav className="top-bar top-bar--inner" data-topbar role="navigation">
           <section className="top-bar-section">
             <ul className="left">
               <li>
-                <input type="text" name="startDate" value={this.state.startDate} onChange={this.handleStartDateChange} onKeyPress={this.onSubmitQuery} />
+                <Link to="sms-overview" params={params}>Overview</Link>
               </li>
-              <li>
-                <input type="text" name="endDate" value={this.state.endDate} onChange={this.handleEndDateChange} onKeyPress={this.onSubmitQuery} />
+              <li className="active">
+                <Link to="sms-details" params={params}>Details Report</Link>
               </li>
             </ul>
             <ul className="right">
-              <li>
+              <li className="left">
+                <input type="text" name="startDate" value={this.state.startDate} onChange={this.handleStartDateChange} onKeyPress={this.onSubmitQuery} />
+              </li>
+              <li className="left">
+                <input type="text" name="endDate" value={this.state.endDate} onChange={this.handleEndDateChange} onKeyPress={this.onSubmitQuery} />
+              </li>
+              <li className="left">
+                <button>type1</button>
+                <button>type2</button>
+              </li>
+              <li className="right">
                 <input type="text" name="username" value={this.state.number} onChange={this.handleUsernameChange} onKeyPress={this.onSubmitQuery} />
               </li>
             </ul>
           </section>
         </nav>
         <div className="large-24 columns">
-          <TopUpTable
+          <SMSTable
             totalRec={this.state.totalRec}
-            histories={this.state.histories}
+            SMSRecords={this.state.SMSRecords}
             page={this.state.page}
             pageRec={this.state.pageRec}
             onPageChange={this.handlePageChange}
@@ -143,4 +159,4 @@ var TopUp = React.createClass({
   }
 });
 
-export default TopUp;
+export default SMS;

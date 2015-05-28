@@ -27,6 +27,8 @@ export default (
       <Route name="end-users" path="/:role/:identity?/endusers" handler={require('./components/EndUsers')}>
         <Route name="end-user" path=":username" handler={require('./components/EndUserProfile')}/>
       </Route>
+      <Route name="sms-overview" path="/:role/:identity?/sms" handler={require('./components/SMSOverview')} />
+      <Route name="sms-details" path="/:role/:identity?/sms/details" handler={require('./components/SMS')} />
       <Route name="settings" path="/:role/:identity?/settings" handler={require('./components/Overview')} />
       <Route name="top-up" path="/:role/:identity?/top-up" handler={require('./components/TopUp')} />
       <Route name="calls" path="/:role/:identity?/calls" handler={require('./components/Calls')} />

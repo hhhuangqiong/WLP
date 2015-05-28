@@ -6,6 +6,7 @@ import CompanyStore from './stores/CompanyStore';
 import EndUserStore from './stores/EndUserStore';
 import SignInStore from './stores/SignInStore';
 import CallsStore from './stores/CallsStore';
+import SMSStore from './stores/SMSStore';
 import TopUpStore from './stores/TopUpStore';
 
 import ModalStore from './stores/ModalStore';
@@ -26,6 +27,7 @@ app.registerStore(EndUserStore);
 app.registerStore(SignInStore);
 app.registerStore(ModalStore);
 app.registerStore(CallsStore);
+app.registerStore(SMSStore);
 app.registerStore(TopUpStore);
 
 export default app;

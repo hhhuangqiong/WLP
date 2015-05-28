@@ -3,9 +3,11 @@ import Q from 'q';
 import {Router} from 'express';
 import CompanyCtrl  from '../controllers/company';
 import PortalUser from '../../collections/portalUser';
+import Company from '../../collections/company';
 
 var api = Router();
 var multipart = require('connect-multiparty')();
+var companyCtrl = new CompanyCtrl();
 
 api.get('/companies', function(req, res) {
   return companyCtrl.getCompanies(req, res);

@@ -11,9 +11,14 @@ var walletRequest  = fetchDep(nconf.get('containerName'), 'WalletRequest');
 var callsRequest   = fetchDep(nconf.get('containerName'), 'CallsRequest');
 var topUpRequest   = fetchDep(nconf.get('containerName'), 'TopUpRequest');
 
+import smsRequest from '../../lib/requests/SMS';
+
+import PortalUser from '../../collections/portalUser';
+import Company from '../../collections/company';
+
 var api = express.Router();
 
-api.get('/:carrierId/users', function(req, res) {
+api.get('/carriers/:carrierId/users', function(req, res) {
   req.checkParams('carrierId').notEmpty();
   req.checkQuery('fromTime').notEmpty();
   req.checkQuery('toTime').notEmpty();
@@ -159,5 +164,68 @@ api.get('/carriers/:carrierId/topup', function(req, res) {
   });
 });
 
+api.get('/carriers/:carrierId/widgets/:type(calls|im|overview|store|sms)', function(req, res) {
+  req.checkParams('carrierId').notEmpty();
+  req.checkParams('type').notEmpty();
+  req.checkQuery('userId').notEmpty();
+
+  let carrierId = req.params.carrierId;
+  let type = req.params.type;
+  let userId = req.query.userId;
+
+  Q.ninvoke(PortalUser, 'findOne', { _id: userId })
+    .then((user) => {
+      if (!user) {
+        return res.status(401).json({
+          error: {
+            name: 'InvalidUser'
+          }
+        });
+      }
+
+      return Q.ninvoke(Company, 'findOne', {
+        carrierId: carrierId
+      }, { lean: true });
+    })
+    .then((company) => {
+      return res.json({
+        carrierId: carrierId,
+        widgets: company.widgets && company.widgets[type]
+      });
+    })
+    .catch(function(err) {
+      if (err)
+        return res.status(err.status).json({
+          error: err
+        });
+    });
+});
+
+api.get('/carriers/:carrierId/sms', function(req, res) {
+  req.checkParams('carrierId').notEmpty();
+  req.checkQuery('page').notEmpty().isInt();
+  req.checkQuery('pageRec').notEmpty().isInt();
+
+  let carrierId = req.params.carrierId;
+
+  let query = {
+    from: req.query.startDate,
+    to: req.query.endDate,
+    source_address_inbound: req.query.number,
+    page: req.query.page,
+    size: req.query.pageRec
+  };
+
+  let request = new smsRequest({ baseUrl: nconf.get('dataProviderApi:baseUrl'), timeout: nconf.get('dataProviderApi:timeout') });
+
+  request.get(carrierId, query, (err, result) => {
+    if (err)
+      return res.status(err.status).json({
+        error: err
+      });
+
+    return res.json(result);
+  });
+});
 
 module.exports = api;

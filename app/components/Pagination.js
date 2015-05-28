@@ -6,8 +6,8 @@ const maxDisplay = 10;
 
 var Pagination = React.createClass({
   propTypes: {
-    current: React.PropTypes.number,
-    per: React.PropTypes.per
+    current: React.PropTypes.number.isRequired,
+    per: React.PropTypes.number.isRequired
   },
 
   getInitialState: function () {
