@@ -159,13 +159,5 @@ api.get('/carriers/:carrierId/topup', function(req, res) {
   });
 });
 
-api.all('*', function(req, res) {
-  return res.status(400).json({
-    error: {
-      name: 'BadUrl',
-      message: 'No endpoint for given URL'
-    }
-  });
-});
 
 module.exports = api;

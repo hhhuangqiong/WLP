@@ -15,11 +15,6 @@ function getAuthUser(user) {
   };
 }
 
-// Check if auth token is a valid session
-api.get('/session', function(req, res) {
-  return res.sendStatus(200);
-});
-
 api.post('/sign-out', function(req, res) {
   let token = req.header('Authorization');
 
