@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import nconf      from 'nconf';
 import Controller from '../controllers/signUp';
-import { fetchContainerInstance } from '../initializers/ioc';
+import { fetchContainerInstance } from '../utils/bottle';
 
 module.exports = (() => {
   var ioc       = fetchContainerInstance( nconf.get('containerName') );

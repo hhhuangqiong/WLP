@@ -4,7 +4,7 @@ import express from 'express';
 import nconf from 'nconf';
 import moment from 'moment';
 
-import { fetchDep } from '../initializers/ioc';
+import { fetchDep } from '../utils/bottle';
 
 var endUserRequest = fetchDep(nconf.get('containerName'), 'EndUserRequest');
 var walletRequest  = fetchDep(nconf.get('containerName'), 'WalletRequest');

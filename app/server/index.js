@@ -64,7 +64,7 @@ function initialize(port) {
   var postDBInit = require('./initializers/dataseed')(path.resolve(__dirname, '../data/rootUser.json'));
   require('./initializers/database')(nconf.get('mongodb:uri'), nconf.get('mongodb:options'), postDBInit);
 
-  var ioc = require('./initializers/ioc').init(nconf);
+  var ioc = require('./initializers/ioc')(nconf);
 
   if (nconf.get('queue:enable') !== 'false') {
     require('./initializers/kue')(ioc, nconf, {

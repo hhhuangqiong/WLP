@@ -1,6 +1,6 @@
 import nconf from 'nconf';
 import { Router } from 'express';
-import { fetchDep } from '../initializers/ioc';
+import { fetchDep } from '../utils/bottle';
 import db from '../db';
 
 //var ensureAuthenticated = fetchDep(nconf.get('containerName'), 'middlewares.ensureAuthenticated');

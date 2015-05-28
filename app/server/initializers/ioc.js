@@ -10,7 +10,7 @@ import {SignUp} from '../../lib/portal/SignUp';
  *
  * @param {*} nconf nconf instance
  */
-export function init(nconf) {
+export default function init(nconf) {
   // intentionally not calling with `new`; otherwise `fetchContainerInstance` cannot work
   var ioc = Bottle(nconf.get('containerName'));
 
@@ -67,38 +67,3 @@ export function init(nconf) {
   return ioc;
 }
 
-/**
- * Retrieve the container with the specified name
- *
- * NB: only able to retrieve those using Bottle as function (instead of Constructor)
- *
- * Usage:
- * ```
- * import { fetchContainerInstance } from 'app/server/initializers/ioc';
- * fetchContainerInstance( nconf.get('containerName') );
- * ```
- *
- * @param {String} name The name of the container instantiated
- * @return {*} container or the dependencies
- */
-export function fetchContainerInstance(name) {
-  return Bottle.pop(name);
-}
-
-/**
- * Retrieve the dependency registered with that container with the specified name
- *
- * @param {String} name The name of the container instantiated
- * @param {String} depIdentifier Dependency identifier
- *
- * @return {*} The registered dependency
- */
-export function fetchDep(name, depIdentifer) {
-  var ioc = fetchContainerInstance(name);
-  if(ioc) {
-    //TODO prevent the 'identifier.' case
-    return depIdentifer.split('.').reduce( (result, key) => {
-      return result[key];
-    }, ioc.container);
-  }
-}
