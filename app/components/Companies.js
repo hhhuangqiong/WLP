@@ -8,7 +8,6 @@ import AuthMixin from '../utils/AuthMixin';
 
 import fetchCompanies from '../actions/fetchCompanies';
 
-import Company from '../components/Company';
 import CompanyActionBar from  '../components/CompanyActionBar';
 import CompanyList from '../components/CompanyList';
 
@@ -42,8 +41,7 @@ var Companies = React.createClass({
 
   getStateFromStores: function() {
     return {
-      companies: this.getStore(CompanyStore).getCompanies(),
-      company: this.getStore(CompanyStore).getCurrentCompany()
+      companies: this.getStore(CompanyStore).getCompanies()
     };
   },
 
@@ -54,9 +52,6 @@ var Companies = React.createClass({
     this.setState(this.getStateFromStores());
   },
 
-  // let navParams = this.context.router.getCurrentParams();
-  // let subPage = navParams.subPage || 'profile';
-  // <Company company={this.state.company} subPage={subPage}/>
   render: function() {
     return (
       <div className="row" data-equalizer>

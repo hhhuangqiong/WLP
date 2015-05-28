@@ -6,6 +6,23 @@ var debug = require('debug')('wlp:companyStore');
 
 const newContactObject = {name: '', phone: '', email: ''};
 
+const defaultCompanyObject = {
+  name: null,
+  address: null,
+  carrierId: null,
+  reseller: null,
+  logo: null,
+  accountManager: null,
+  billCode: null,
+  expectedServiceDate: null,
+  categoryID: null,
+  country: null,
+  timezone: null,
+  businessContact: {name: '', phone: '', email: ''},
+  technicalContact: {name: '', phone: '', email: ''},
+  supportContact: {name: '', phone: '', email: ''}
+};
+
 var CompanyStore = createStore({
   storeName: 'CompanyStore',
 
@@ -30,51 +47,15 @@ var CompanyStore = createStore({
   },
 
   getNewCompany: function() {
-    this.newCompany = {
-      name: null,
-      address: null,
-      carrierId: null,
-      reseller: null,
-      logo: null,
-      accountManager: null,
-      billCode: null,
-      expectedServiceDate: null,
-      categoryID: null,
-      country: null,
-      timezone: null,
-      businessContact: _.clone(newContactObject),
-      technicalContact: _.clone(newContactObject),
-      supportContact: _.clone(newContactObject)
-    };
-
-    return this.newCompany;
-  },
-
-  getCurrentCompany: function() {
-    return this.currentCompany;
+    return _.clone(defaultCompanyObject, true);
   },
 
   getCompanyByCarrierId: function(carrierId) {
-    return this.companies[carrierId];
+    return _.merge(_.clone(defaultCompanyObject, true), this.companies[carrierId]);
   },
 
   handleCompanyReset: function () {
-    this.currentCompany = {
-      name: null,
-      address: null,
-      carrierId: null,
-      reseller: null,
-      logo: null,
-      accountManager: null,
-      billCode: null,
-      expectedServiceDate: null,
-      categoryID: null,
-      country: null,
-      timezone: null,
-      businessContact: _.clone(newContactObject),
-      technicalContact: _.clone(newContactObject),
-      supportContact: _.clone(newContactObject)
-    };
+    this.currentCompany = _.clone(defaultCompanyObject, true);
     this.emitChange();
   },
 
@@ -99,9 +80,7 @@ var CompanyStore = createStore({
   },
 
   receiveCompanyService: function({ carrierId, result }) {
-    _.merge(this.companies[carrierId], {
-      serviceConfig: result.services
-    });
+    _.merge(this.companies[carrierId], { serviceConfig: result.services });
     this.emitChange();
   },
 

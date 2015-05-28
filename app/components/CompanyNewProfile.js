@@ -9,7 +9,7 @@ import FluxibleMixin from 'fluxible/addons/FluxibleMixin';
 import createCompany from '../actions/createCompany';
 import updateCompanyProfile from '../actions/updateCompanyProfile';
 
-import CompanyActionBar from '../components/CompanyActionBar';
+import CompanyActionBar from '../components/CompanyNewActionBar';
 import InfoBlock from '../components/InfoBlock';
 
 import CompanyStore from '../stores/CompanyStore';
@@ -22,13 +22,6 @@ var debug = require('debug')('wlp:companyNewProfile');
 // determinant of logo image src
 const imageDataRegex = /^data:.+\/(.+);base64,(.*)$/;
 
-/**
- * Company Profile Component
- * this is shared with the following two paths
- *
- * - /:role/:identity/companies/create
- * - /:role/:identity/companies/:carrierId/profile
- */
 var CompanyProfile = React.createClass({
   contextTypes: {
     router: React.PropTypes.func.isRequired
@@ -44,12 +37,6 @@ var CompanyProfile = React.createClass({
     return this.getStore(CompanyStore).getNewCompany()
   },
 
-  /**
-   * capture the change of Companies in Company Store
-   * only need to do this in CompanyProfile, as it is always
-   * the entry point of Company details
-   *
-   */
   onChange: function() {
     this.setState(this.getStore(CompanyStore).getNewCompany());
   },
