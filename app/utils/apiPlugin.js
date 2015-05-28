@@ -1,5 +1,5 @@
 'use strict';
-var Api = require('../api');
+var Api = require('../Api');
 var AuthStore = require('../stores/AuthStore');
 
 module.exports = {

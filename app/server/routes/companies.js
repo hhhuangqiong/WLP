@@ -1,40 +1,41 @@
-import _ from 'lodash';
 import Q from 'q';
+import _ from 'lodash';
 import {Router} from 'express';
-import CompanyCtrl  from '../controllers/company';
+
+import Controller from '../controllers/company';
+import Company    from '../../collections/company';
 import PortalUser from '../../collections/portalUser';
-import Company from '../../collections/company';
 
 var api = Router();
 var multipart = require('connect-multiparty')();
-var companyCtrl = new CompanyCtrl();
+var controller = new Controller();
 
 api.get('/companies', function(req, res) {
-  return companyCtrl.getCompanies(req, res);
+  return controller.getCompanies(req, res);
 });
 
 api.post('/companies', multipart, function(req, res) {
-  return companyCtrl.saveProfile(req, res);
+  return controller.saveProfile(req, res);
 });
 
 api.get('/companies/:carrierId/service', function(req, res) {
-  return companyCtrl.getApplications(req, res);
+  return controller.getApplications(req, res);
 });
 
 api.get('/companies/:carrierId/applications', function(req, res) {
-  return companyCtrl.getApplications(req, res);
+  return controller.getApplications(req, res);
 });
 
 api.put('/companies/:carrierId/profile', multipart, function(req, res) {
-  return companyCtrl.saveProfile(req, res);
+  return controller.saveProfile(req, res);
 });
 
 api.put('/companies/:carrierId/service', multipart, function(req, res) {
-  return companyCtrl.saveService(req, res);
+  return controller.saveService(req, res);
 });
 
 api.put('/companies/:carrierId/widget', multipart, function(req, res) {
-  return companyCtrl.saveWidget(req, res);
+  return controller.saveWidget(req, res);
 });
 
 //TODO maybe create another file for this

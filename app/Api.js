@@ -1,6 +1,9 @@
 var superagent = require('superagent');
 var debug = require('debug')('app:Api');
 
+import assign from 'object-assign';
+import {API_HOST, API_PATH_PREFIX} from './config';
+
 function Api(options = {}) {
   var noop = Function.prototype;
 
@@ -8,55 +11,6 @@ function Api(options = {}) {
   this._getToken  = options.getToken || noop;
   this._getUserId = options.getUserId || noop;
 }
-
-Api.prototype.signIn = function(username, password, cb) {
-  superagent
-    .post(`${this._getHost()}/api/sign-in`)
-    .accept('json')
-    .send({
-      username: username,
-      password: password
-    })
-    .end(function(err, res) {
-      if (err) {
-        debug('error', err);
-      }
-      if (!res.ok) {
-        err = (res.body && res.body.error) || {
-          status: res.status
-        };
-      }
-
-      cb(err, res && res.body);
-    });
-};
-
-Api.prototype.signOut = function(cb) {
-  superagent
-    .post(`${this._getHost()}/api/sign-out`)
-    .accept('json')
-    .set('Authorization', this._getToken())
-    .end(function(err, res) {
-      if (err) {
-        debug('error', err);
-      }
-      cb(err, res && res.body);
-    });
-};
-
-Api.prototype.getSession = function(token, cb) {
-  superagent
-    .get(`${this._getHost()}/api/session`)
-    .accept('json')
-    .set('Authorization', token)
-    .end(function(err, res) {
-      if (err) {
-        debug('error', err);
-      }
-      token = res && res.ok ? token : null;
-      cb(err, token);
-    });
-};
 
 Api.prototype.getManagingCompanies = function(params, cb) {
   superagent
@@ -266,5 +220,11 @@ Api.prototype.getTopUpHistory = function(params, cb) {
       cb(err, res && res.body);
     });
 };
+
+assign(
+  Api.prototype,
+  require('./server/api/auth')(API_HOST, API_PATH_PREFIX),
+  require('./server/api/session')(API_HOST, API_PATH_PREFIX)
+);
 
 module.exports = Api;

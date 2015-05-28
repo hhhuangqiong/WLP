@@ -47,9 +47,10 @@ function initialize(port) {
   debug('starting app');
 
   server.set('port', port);
-  server.set('views', path.join(PROJ_ROOT, 'views'));
-  server.set('view engine', 'jade');
-  server.set('view cache', env !== 'development');
+
+  //server.set('views', path.join(PROJ_ROOT, 'views'));
+  //server.set('view engine', 'jade');
+  //server.set('view cache', env !== 'development');
 
   var env = server.get('env');
 
@@ -120,8 +121,8 @@ function initialize(port) {
   server.use(flash());
 
   // Routes
-  server.use('/api', require('./routes'));
-  server.use('/data', require('./routes/data'));
+  server.use(config.API_PATH_PREFIX,         require('./routes'));
+  server.use(config.FILE_UPLOAD_PATH_PREFIX, require('./routes/data'));
 
   var renderApp = require('./render')(app);
 

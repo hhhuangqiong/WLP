@@ -1,8 +1,10 @@
 import {Router} from 'express';
 import passport from 'passport';
-import db from '../db';
 
-var api = Router();
+import db from '../db';
+import {SIGN_IN, SIGN_OUT} from '../paths.js';
+
+var router = Router();
 
 // TODO double check if this is necessary for the data model
 function getAuthUser(user) {
@@ -15,21 +17,7 @@ function getAuthUser(user) {
   };
 }
 
-api.post('/sign-out', function(req, res) {
-  let token = req.header('Authorization');
-
-  if (token) {
-    req.logout();
-    db.revokeSession(token);
-    return res.sendStatus(200);
-  } else {
-    return res.status(500).json({
-      error: 'signout failed'
-    });
-  }
-});
-
-api.post('/sign-in', function(req, res, next) {
+router.post(SIGN_IN, function(req, res, next) {
   passport.authenticate('local', function(err, user, info) {
     let signInError = function() {
       return res.status(401).json({
@@ -43,7 +31,7 @@ api.post('/sign-in', function(req, res, next) {
     // TODO simplify this
     if (err || !user || !user.hasValidOneTimePassword(req.body.onetimepassword)) {
       return signInError();
-    };
+    }
 
     req.logIn(user, function(err) {
       if (err) {
@@ -60,4 +48,19 @@ api.post('/sign-in', function(req, res, next) {
   })(req, res, next);
 });
 
-export default api;
+router.post(SIGN_OUT, function(req, res) {
+  let token = req.header('Authorization');
+
+  if (token) {
+    req.logout();
+    db.revokeSession(token);
+    return res.sendStatus(200);
+  } else {
+    return res.status(500).json({
+      error: 'signout failed'
+    });
+  }
+});
+
+export default router;
+
