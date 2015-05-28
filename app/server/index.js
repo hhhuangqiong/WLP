@@ -5,10 +5,6 @@ import _ from 'lodash';
 import logger from 'winston';
 import path from 'path';
 
-// NB: not use in file
-// but `React.addons` becomes undefined if not imported
-import FluxibleComponent from 'fluxible/addons/FluxibleComponent';
-
 // react & flux -related
 import React from 'react';
 import serialize from 'serialize-javascript';
