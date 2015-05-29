@@ -83,7 +83,7 @@ var CallsTable = React.createClass({
             <th className="calls-table--cell">Remark</th>
           </tr>
         </thead>
-        <tbody className="calls-table--body">
+        <tbody className="calls-table--body" key="calls-table--body">
           {rows}
         </tbody>
       </table>

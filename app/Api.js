@@ -195,7 +195,7 @@ Api.prototype.getSMSWidgets = function(params, cb) {
 
 Api.prototype.getCalls = function(params, cb) {
   superagent
-    .get(`${this._getHost()}/api/calls/carriers/${params.carrierId}`)
+    .get(`${this._getHost()}/api/carriers/${params.carrierId}/calls`)
     .query(params)
     .accept('json')
     .set('Authorization', this._getToken())

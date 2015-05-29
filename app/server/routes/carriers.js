@@ -110,23 +110,20 @@ api.get('/carriers/:carrierId/users/:username', function(req, res) {
     });
 });
 
-api.get('/calls/carriers/:carrierId', function(req, res) {
+api.get('/carriers/:carrierId/calls', function(req, res) {
   req.checkParams('carrierId').notEmpty();
   req.checkParams('fromTime').notEmpty();
   req.checkParams('toTime').notEmpty();
   req.checkParams('page').notEmpty();
 
-  let params = {
-    // TODO  carrierId to be changed in the future
-    caller_carrier : (req.params.carrierId == 'm800') ? 'maaiitest.com' : req.params.carrierId,
-    type : (req.params.type) ? req.params.type : '',
-    from : (req.query.fromTime) ? req.query.fromTime : moment().endOf('day').format('X'),
-    to : (req.query.toTime) ? req.query.toTime : moment('2015-01-01').format('X'),
-    caller : (req.query.caller) ? req.query.caller : '',
-    callee : (req.query.callee) ? req.query.callee : '',
-    page : (req.query.page) ? req.query.page : 0,
-    size : (req.query.size) ? req.query.size : 10,
-  };
+  // TODO  carrierId to be changed in the future
+  req.query.caller_carrier = (req.params.carrierId == 'm800') ? 'maaiitest.com' : req.params.carrierId;
+  req.query.from = req.query.fromTime;
+  req.query.to = req.query.toTime;
+  req.query.caller = req.query.search;
+  req.query.callee = req.query.search;
+
+  let params =  _.pick(req.query,['caller_carrier','type','from','to','caller','callee','page','size']);
 
   callsRequest.getCalls(params, (err, result) => {
     if (err)
