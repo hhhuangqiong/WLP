@@ -55,6 +55,7 @@
     "react": "^0.13.1",
     "react-crouton": "^0.2.5",
     "react-date-picker": "^2.0.18",
+    "react-datepicker": "git://github.com/iam4x/react-datepicker.git",
     "react-router": "bobpace/react-router#a805f919c6deaa50e2a1f4a5a69a18f8de77f8b1",
     "react-validation-mixin": "^4.0.3",
     "serialize-javascript": "^1.0.0",

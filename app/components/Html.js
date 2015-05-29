@@ -19,6 +19,7 @@ var Html = React.createClass({
         <link href="http://fonts.googleapis.com/css?family=Roboto:500,300,700,400" rel="stylesheet" type="text/css" />
         <link rel="stylesheet" href="/stylesheets/iconic-fonts.css" />
         <link rel="stylesheet" href="/stylesheets/main.css" />
+        <link rel="stylesheet" href="/vendor/react-date-picker/dist/react-datepicker.min.css" />
         <link rel="stylesheet" href="/vendor/jquery-ui/themes/base/jquery-ui.css" />
       </head>
       <body>
