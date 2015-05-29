@@ -120,19 +120,58 @@ api.get('/carriers/:carrierId/calls', function(req, res) {
   req.query.caller_carrier = (req.params.carrierId == 'm800') ? 'maaiitest.com' : req.params.carrierId;
   req.query.from = req.query.fromTime;
   req.query.to = req.query.toTime;
-  req.query.caller = req.query.search;
-  req.query.callee = req.query.search;
+  // TODO determine text search functionality
+  req.query.caller = (_.isEmpty(req.query.search)) ? '' : '*'+req.query.search+'*';
+  req.query.callee = (_.isEmpty(req.query.search)) ? '' : '*'+req.query.search+'*';
 
   let params =  _.pick(req.query,['caller_carrier','type','from','to','caller','callee','page','size']);
 
-  callsRequest.getCalls(params, (err, result) => {
-    if (err)
-      return res.status(err.status).json({
-        error: err
-      });
+  if (!_.isEmpty(params.caller) || !_.isEmpty(params.callee)) {
+    var caller_result, callee_result;
 
-    return res.json(result);
-  });
+    var getCallerResult = function() {
+      let callee_param = params;
+      callee_param.caller = '';
+      callsRequest.getCalls(callee_param, (err, result) => {
+        if (err)
+          return res.status(err.status).json({
+            error: err
+          });
+
+        callee_result = result;
+        getCalleeResult();
+      });
+    }
+
+    var getCalleeResult = function () {
+      let caller_param = params;
+      caller_param.caller = caller_param.callee;
+      caller_param.callee = '';
+      callsRequest.getCalls(caller_param, (err, result) => {
+        if (err)
+          return res.status(err.status).json({
+            error: err
+          });
+
+        caller_result = result;
+
+        let allResult = _.merge(caller_result,callee_result);
+
+        return res.json(allResult);
+      });
+    }
+
+    getCallerResult();
+  } else {
+    callsRequest.getCalls(params, (err, result) => {
+      if (err)
+        return res.status(err.status).json({
+          error: err
+        });
+
+      return res.json(result);
+    });
+  }
 });
 
 api.get('/carriers/:carrierId/topup', function(req, res) {

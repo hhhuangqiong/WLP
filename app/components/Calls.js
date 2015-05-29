@@ -1,6 +1,6 @@
 // TODO need to fix empty data after refresh problem
 
-
+import _ from 'lodash';
 import moment from 'moment';
 import {concurrent} from 'contra';
 
@@ -235,7 +235,7 @@ var Calls = React.createClass({
             </form>
           </div>
         </dl>
-        
+
         <div className="large-24 columns">
             <CallsTable calls={this.state.calls} current={this.state.current} per={this.state.per} />
             <Pagination total={this.state.callsCount} current={this.state.current} per={this.state.per} onPageChange={this.handlePageChange} />
