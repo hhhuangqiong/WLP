@@ -6,6 +6,7 @@ import Sidebar                from '../Sidebar';
 import Navigation             from '../Navigation';
 import Modal                  from '../Modal';
 import SystemMessage          from './SystemMessage';
+import LoadingSpinner         from './LoadingSpinner';
 import fetchManagingCompanies from '../../actions/fetchManagingCompanies';
 
 var Protected = React.createClass({
@@ -49,6 +50,7 @@ var Protected = React.createClass({
           </div>
         </div>
         <SystemMessage />
+        <LoadingSpinner />
       </div>
     );
   }

@@ -13,7 +13,10 @@ var SystemMessageStore = createStore({
   storeName: 'SystemMessageStore',
 
   handlers: {
-    'SIGN_IN_FAILURE': 'handleSignInFailure'
+    'SIGN_IN_FAILURE': 'handleSignInFailure',
+    'UPDATE_COMPANY_PROFILE_SUCCESS': 'handleUpdateCompanySuccess',
+    'UPDATE_COMPANY_SERVICE_SUCCESS': 'handleUpdateCompanySuccess',
+    'UPDATE_COMPANY_WIDGET_SUCCESS': 'handleUpdateCompanySuccess'
   },
 
   // do not change this
@@ -30,6 +33,15 @@ var SystemMessageStore = createStore({
     this.buttons = null;
     this.hidden = true;
     this.timeout = 5000;
+  },
+
+  handleUpdateCompanySuccess: function(data) {
+    this.id = Date.now();
+    this.type = 'success';
+    this.message = 'Saved.';
+    this.hidden = false;
+
+    this.emitChange();
   },
 
   /**
@@ -50,7 +62,7 @@ var SystemMessageStore = createStore({
   // a better name like `handleErrorMessage`
   handleSignInFailure: function(err) {
     this.id = Date.now();
-    this.type = 'error';
+    this.type = 'secondary';
     this.message = err.message;
     this.hidden = false;
 

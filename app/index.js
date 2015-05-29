@@ -9,6 +9,7 @@ import CallsStore from './stores/CallsStore';
 import SMSStore from './stores/SMSStore';
 import TopUpStore from './stores/TopUpStore';
 import SystemMessageStore from './stores/SystemMessageStore';
+import LoadingSpinnerStore from './stores/LoadingSpinnerStore';
 
 import ModalStore from './stores/ModalStore';
 // seems not passing anything is okay
@@ -30,6 +31,7 @@ app.registerStore(ModalStore);
 app.registerStore(CallsStore);
 app.registerStore(SMSStore);
 app.registerStore(SystemMessageStore);
+app.registerStore(LoadingSpinnerStore);
 app.registerStore(TopUpStore);
 
 export default app;

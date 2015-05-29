@@ -12,7 +12,7 @@ export default function(context, params, done) {
     }
 
     debug('Success');
-    context.dispatch(`UPDATE_COMPANY_PROFILE_SUCCESS`, result.company);
+    context.dispatch(`UPDATE_COMPANY_PROFILE_SUCCESS`, result.company, 'saved');
     done();
   });
 };

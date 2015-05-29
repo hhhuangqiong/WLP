@@ -3,6 +3,7 @@ import React              from 'react';
 import FluxibleMixin      from 'fluxible/addons/FluxibleMixin';
 import {RouteHandler}     from 'react-router';
 import SystemMessage      from './SystemMessage';
+import LoadingSpinner     from './LoadingSpinner';
 import Modal              from '../Modal';
 
 var Public = React.createClass({
@@ -29,6 +30,7 @@ var Public = React.createClass({
           </div>
         </div>
         <SystemMessage />
+        <LoadingSpinner />
       </div>
     );
   }
