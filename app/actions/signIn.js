@@ -1,6 +1,4 @@
-'use strict';
-
-var debug = require('debug')('app:signIn');
+var debug = require('debug')('wlp:signIn');
 
 module.exports = function(context, payload, done) {
   debug('Started');

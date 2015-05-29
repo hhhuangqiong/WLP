@@ -8,6 +8,7 @@ import SignInStore from './stores/SignInStore';
 import CallsStore from './stores/CallsStore';
 import SMSStore from './stores/SMSStore';
 import TopUpStore from './stores/TopUpStore';
+import SystemMessageStore from './stores/SystemMessageStore';
 
 import ModalStore from './stores/ModalStore';
 // seems not passing anything is okay
@@ -28,6 +29,7 @@ app.registerStore(SignInStore);
 app.registerStore(ModalStore);
 app.registerStore(CallsStore);
 app.registerStore(SMSStore);
+app.registerStore(SystemMessageStore);
 app.registerStore(TopUpStore);
 
 export default app;

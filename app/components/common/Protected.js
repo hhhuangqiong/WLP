@@ -5,6 +5,7 @@ import {concurrent}           from 'contra';
 import Sidebar                from '../Sidebar';
 import Navigation             from '../Navigation';
 import Modal                  from '../Modal';
+import SystemMessage          from './SystemMessage';
 import fetchManagingCompanies from '../../actions/fetchManagingCompanies';
 
 var Protected = React.createClass({
@@ -45,9 +46,9 @@ var Protected = React.createClass({
             <div className="large-24 columns">
               <RouteHandler/>
             </div>
-            <Modal />
           </div>
         </div>
+        <SystemMessage />
       </div>
     );
   }

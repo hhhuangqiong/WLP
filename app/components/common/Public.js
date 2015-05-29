@@ -1,6 +1,9 @@
-import React from 'react';
-import {RouteHandler} from 'react-router';
-import Modal from '../Modal';
+import _                  from 'lodash';
+import React              from 'react';
+import FluxibleMixin      from 'fluxible/addons/FluxibleMixin';
+import {RouteHandler}     from 'react-router';
+import SystemMessage      from './SystemMessage';
+import Modal              from '../Modal';
 
 var Public = React.createClass({
   render: function() {
@@ -25,6 +28,7 @@ var Public = React.createClass({
             </div>
           </div>
         </div>
+        <SystemMessage />
       </div>
     );
   }

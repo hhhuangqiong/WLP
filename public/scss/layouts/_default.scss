@@ -18,6 +18,16 @@ body {
   overflow: hidden;
 }
 
+.system-message-container {
+  position: fixed;
+  top: rem-calc(80);
+  left: 0;
+  height: auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
 .row {
   max-width: 100%;
 }
