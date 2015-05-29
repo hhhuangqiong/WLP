@@ -2,7 +2,24 @@
 
 ## Deployment
 
-TODO
+```
+npm i -g pm2
+
+pm2 start bin/www -i 0
+
+pm2 stop all
+
+pm2 logs
+
+pm2 status
+
+# for 'bind EADDRINUSE'
+pm2 kill
+```
+
+Tools:
+
+- [PM2](https://github.com/Unitech/pm2)
 
 ## Diagram
 

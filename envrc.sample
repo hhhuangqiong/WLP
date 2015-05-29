@@ -5,6 +5,10 @@ export WL_API_HKBOSS=192.168.135.167:10180
 export mumsApi__baseUrl=http://192.168.118.12:8080
 export bossApi__baseUrl=http://192.168.56.42:8080
 export dataProviderApi__baseUrl=http://192.168.118.12:8080
+export dataProviderApi__baseUrl=http://192.168.118.12:8080
+
+export redis__host=192.168.118.19
+export redis__port=26379
 
 # testing
 #export WL_API_HKBOSS=192.168.135.167:10080

@@ -64,9 +64,12 @@ function initialize(port) {
   var ioc = require('./initializers/ioc')(nconf);
 
   if (nconf.get('queue:enable') !== 'false') {
-    require('./initializers/kue')(ioc, nconf, {
-      uiPort: nconf.get('queue:uiPort')
+    let kue = require('./initializers/kue')(nconf.get('redis'), {
+      uiPort: nconf.get('queue:uiPort'),
+      prefix: nconf.get('queue:prefix')
     });
+
+    ioc.factory('JobQueue', () => { return kue; });
   }
 
   require('./initializers/logging')();

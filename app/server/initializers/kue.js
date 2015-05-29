@@ -7,25 +7,27 @@ import logger from 'winston';
  * Register the job queue with the IoC container for later retrieval
  *
  * @param {Object} iocContainer
- * @param {Object} nconf
+ * @param {Object} redisConnOpts
  * @param {Object} opts queue configuration
  * @param {number} opts.uiPort Port number for the Kue UI
+ * @param {string} [opts.prefix='q'] Prefix used for the queue
+ *
+ * @return {Object} The kue object
  *
  * @see {@link: https://github.com/LearnBoost/kue#redis-connection-settings}
  */
-export default function(iocContainer, nconf, opts = {}) {
+export default function(redisConnOpts, opts = {prefix: 'q'}) {
   var uiPort = opts.uiPort;
 
   if(uiPort) {
-    logger.info(`Kue UI started on port ${uiPort}`);
+    logger.info(`Kue UI started on port: ${uiPort}`);
 
     kue.createQueue({
-      prefix: nconf.get('queue:prefix'),
-      redis:  nconf.get('redis')
+      prefix: opts.prefix,
+      redis:  redisConnOpts
     });
     kue.app.listen(uiPort);
   }
-
-  iocContainer.service('JobQueue', kue);
+  return kue;
 }
 
