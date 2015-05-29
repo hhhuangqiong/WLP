@@ -2,6 +2,8 @@ import superagent from 'superagent';
 
 import { SIGN_IN, SIGN_OUT } from '../paths';
 
+var debug = require('debug')('wlp:AuthApi');
+
 /**
  * @param {String} [host='']
  * @param {String} [apiPrefix='']

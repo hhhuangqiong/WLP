@@ -2,6 +2,8 @@ import superagent from 'superagent';
 
 import { SESSION } from '../paths';
 
+var debug = require('debug')('wlp:SessionApi');
+
 export default function(host = '', apiPrefix = '') {
   return {
     getSession: function(token, cb) {
