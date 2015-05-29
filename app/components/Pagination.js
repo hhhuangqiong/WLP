@@ -37,7 +37,7 @@ var Pagination = React.createClass({
 
   getFromPage: function() {
     if (this.getLastPage() <= this.props.maxDisplay/2) {
-      return this.getLastPage();
+      return 1;
     }
 
     if (this.getLastPage() - this.props.current < this.props.maxDisplay/2) {
