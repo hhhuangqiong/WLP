@@ -13,7 +13,6 @@ var SystemMessageStore = createStore({
   storeName: 'SystemMessageStore',
 
   handlers: {
-    'FETCH_TOP_UP_SUCCESS': 'handleHistoryChange',
     'SIGN_IN_FAILURE': 'handleSignInFailure'
   },
 
