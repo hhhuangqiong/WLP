@@ -57,6 +57,7 @@ function initialize(port) {
   // let 'nconf' be the first initializer so configuration is accessed thru it
   var nconf = require('./initializers/nconf')(env, path.resolve(__dirname, '../config'));
 
+
   // database initialization + data seeding
   var postDBInit = require('./initializers/dataseed')(path.resolve(__dirname, '../data/rootUser.json'));
   require('./initializers/database')(nconf.get('mongodb:uri'), nconf.get('mongodb:options'), postDBInit);
@@ -106,11 +107,20 @@ function initialize(port) {
   // static resources
   server.use(express.static(path.join(PROJ_ROOT, 'public')));
 
+  // TODO move this part into its own initializer
+  let redisStore;
+  if(env !== 'development') {
+    redisStore = new RedisStore(nconf.get('redis'))
+  } else {
+    var Redis = require('ioredis');
+    redisStore = new RedisStore({ client: new Redis(nconf.get('redis')) })
+  }
+
   server.use(session({
-    resave: false,
+    resave:            false,
     saveUninitialized: true,
-    secret: nconf.get('secret:session'),
-    store: new RedisStore(nconf.get('redis'))
+    secret:            nconf.get('secret:session'),
+    store:             redisStore
   }));
 
   server.use(morgan('dev'));

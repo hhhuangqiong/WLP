@@ -14,10 +14,11 @@
     }
   },
   "redis": {
-    "host": "localhost",
-    "port": 6379,
-    "ttl": 1800,
-    "db": 10
+    "sentinels": [
+      { "host": "192.168.118.19", "port": 26379 },
+      { "host": "192.168.118.19", "port": 26380 }
+    ],
+    "name": "redis-hk-dev-master"
   },
   "queue": {
     "enable": true,
