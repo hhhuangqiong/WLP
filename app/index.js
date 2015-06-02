@@ -8,6 +8,7 @@ import SignInStore from './stores/SignInStore';
 import CallsStore from './stores/CallsStore';
 import SMSStore from './stores/SMSStore';
 import TopUpStore from './stores/TopUpStore';
+import ImStore from './stores/ImStore';
 import SystemMessageStore from './stores/SystemMessageStore';
 import LoadingSpinnerStore from './stores/LoadingSpinnerStore';
 
@@ -33,5 +34,6 @@ app.registerStore(SMSStore);
 app.registerStore(SystemMessageStore);
 app.registerStore(LoadingSpinnerStore);
 app.registerStore(TopUpStore);
+app.registerStore(ImStore);
 
 export default app;

@@ -7,8 +7,8 @@ var LoadingSpinnerStore = createStore({
   storeName: 'LoadingSpinnerStore',
 
   handlers: {
-    'FETCH_CALLS_START': 'showSpinner',
-    'FETCH_CALLS_END': 'hideSpinner'
+    'FETCH_START': 'showSpinner',
+    'FETCH_END': 'hideSpinner'
   },
 
   showSpinner: function() {

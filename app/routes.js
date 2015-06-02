@@ -32,7 +32,7 @@ export default (
       <Route name="settings" path="/:role/:identity?/settings" handler={require('./components/Overview')} />
       <Route name="top-up" path="/:role/:identity?/top-up" handler={require('./components/TopUp')} />
       <Route name="calls" path="/:role/:identity?/calls" handler={require('./components/Calls')} />
-      <Route name="im" path="/:role/:identity?/im" handler={require('./components/Overview')} />
+      <Route name="im" path="/:role/:identity?/im" handler={require('./components/Im')} />
       <Route name="vsf" path="/:role/:identity?/vsf" handler={require('./components/Overview')} />
 
       // keep this name until we are sure of making use of 'overview' above

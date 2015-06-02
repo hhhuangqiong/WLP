@@ -1,7 +1,6 @@
-var _       = require('lodash');
 var logger  = require('winston');
-var moment  = require('moment');
 var nconf   = require('nconf');
+var moment  = require('moment');
 var Q       = require('q');
 var request = require('superagent');
 var util    = require('util');
@@ -17,8 +16,8 @@ export default class ImRequest extends BaseRequest {
       baseUrl: baseUrl,
       timeout: timeout,
       methods: {
-        LIST: {
-          URL: '/im/tdr/query',
+        CALLS: {
+          URL: '/api/v1/im/tdr/query',
           METHOD: 'GET'
         }
       }
@@ -27,6 +26,8 @@ export default class ImRequest extends BaseRequest {
     super(opts);
   }
 
+
+  // formatQueryData is not needed, keeping it for now for reference purpose.
   /**
    * @method formatQueryData Format and Normalize query string for Calls request
    *
@@ -62,7 +63,7 @@ export default class ImRequest extends BaseRequest {
       query.size    = params.size || 20;
 
       if (params.username)
-        query.sender = params.username;
+        query.caller = params.username;
 
       if (params.type)
         query.type = params.type;
@@ -71,11 +72,15 @@ export default class ImRequest extends BaseRequest {
     }
   }
 
+  /**
+   * @method sendRequest Send request with SuperAgent
+   *
+   * @param params {Object} Formatted query object
+   * @param cb {Function} Callback function from @method getCalls
+   */
   sendRequest(params, cb) {
-    logger.debug('sending im message statistics request');
-
     var base = this.opts.baseUrl;
-    var url = this.opts.methods.LIST.URL;
+    var url = this.opts.methods.CALLS.URL;
 
     request
       .get(util.format('%s%s', base, url))
@@ -84,21 +89,27 @@ export default class ImRequest extends BaseRequest {
       .timeout(this.opts.timeout)
       .end((err, res) => {
         if (err) return cb(this.handleError(err, err.status || 400));
-        //if (res.status >= 400) return cb(this.handleError(res.body.error.description), res.status);
-        return cb(null, this.composeResponse(res.body));
+        //if (res.status >= 400) return cb(this.handleError(res.body.error.message, res.body.error.httpStatus));
+        cb(null, this.composeResponse(res.body));
       });
   }
 
-  getImStat(params, cb) {
+  /**
+   * @method getCalls
+   *
+   * @param params {Object} Raw query data object
+   * @param cb {Function} Callback function from API controller
+   */
+   getImStat(params, cb) {
     logger.debug('get im message statistic from BOSS with params', params);
 
-    Q.ninvoke(this, 'formatQueryData', params)
-      .then((params) => {
-        this.sendRequest(params, cb);
-      })
-      .catch((err) => {
-        logger.error(err);
-        return cb(this.handleError(err, err.status || 500));
-      });
+    // Q.ninvoke(this, 'formatQueryData', params)
+    //   .then((params) => {
+    //     this.sendRequest(params, cb);
+    //   })
+    //   .catch((err) => {
+    //     return cb(this.handleError(err, err.status || 500));
+    //   });
+    this.sendRequest(params, cb);
   }
 }

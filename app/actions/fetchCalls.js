@@ -5,15 +5,14 @@ import request from 'superagent';
 export function fetchCalls(context, params, done) {
   debug('Started');
 
-  var start = setTimeout(function() {
-    context.dispatch('FETCH_CALLS_START');
-  }, 2000);
+  context.dispatch('FETCH_START');
+  context.dispatch('FETCH_CALLS_START');
 
   context.api.getCalls(params, function(err, calls) {
-
-    clearTimeout(start);
+    calls.params = params;
+    
     context.dispatch('FETCH_CALLS_END');
-
+    context.dispatch('FETCH_END');
     if (err) {
       debug('Failed');
       context.dispatch('FETCH_CALLS_FAILURE', err);
