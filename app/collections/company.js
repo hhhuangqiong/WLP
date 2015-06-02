@@ -150,7 +150,7 @@ var schema = new mongoose.Schema({
 }, { collection: collectionName });
 
 schema.virtual('role').get(function() {
-  if (this.isRootCompany) {
+  if (this.isRootCompany()) {
     return 'a';
   }
 
