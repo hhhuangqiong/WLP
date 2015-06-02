@@ -36,11 +36,11 @@ var CallsTable = React.createClass({
       rows = this.props.calls.map((u) => {
 
           let callerCountry = _.find(Countries, (c) => {
-            return c.alpha2.toLowerCase() == u.caller_country
+            return c.alpha2.toLowerCase() == u.origin
           });
 
           let calleeCountry = _.find(Countries, (c) => {
-            return c.alpha2.toLowerCase() == u.callee_country
+            return c.alpha2.toLowerCase() == u.destination
           });
 
           let callStart = moment(u.start_time).format('h:mm:ss a');
@@ -56,16 +56,16 @@ var CallsTable = React.createClass({
                 <span className="call_date">{callDate}</span>
               </div>
             </td>
-            <td className="calls-table--cell"><span className={"call_type icon-" + u.type.toLowerCase()}></span></td>
+            <td className="calls-table--cell"><span className={"call_type " + u.type.toLowerCase()}>{u.message_type}</span></td>
             <td className="calls-table--cell">
               <div className="caller_info">
                 <span className={u.caller_country}></span>
                 <span className="caller">{u.caller}</span>
-                <span>{callerCountry.name}</span>
+                <span>{(callerCountry) ? callerCountry.name : ''}</span>
               </div>
               <div className="callee_info">
                 <span className={u.callee_country ? u.callee_country : ''}></span>
-                <span className="callee">{u.callee}</span>
+                <span className="callee">{u.recipient}</span>
                 <span>{(calleeCountry) ? calleeCountry.name : ''}</span>
               </div>
             </td>

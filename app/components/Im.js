@@ -1,3 +1,5 @@
+// TODO need to fix empty data after refresh problem
+
 import _ from 'lodash';
 import moment from 'moment';
 import {concurrent} from 'contra';
@@ -8,12 +10,11 @@ import DatePicker from 'react-datepicker';
 
 import AuthMixin from '../utils/AuthMixin';
 
-import CallsStore from '../stores/CallsStore';
+import ImStore from '../stores/ImStore';
 
-import {fetchCalls} from '../actions/fetchCalls';
-//import {fetchCallsPage} from '../actions/fetchCallsPage';
+import {fetchIm} from '../actions/fetchIm';
 
-import CallsTable from './CallsTable';
+import ImTable from './ImTable';
 import Pagination from './Pagination';
 import LoadingSpinner from './common/LoadingSpinner';
 
@@ -25,7 +26,7 @@ var getToTime = function(dateString=moment()) {
   return (_.isEmpty(dateString)) ? moment().local().endOf('day').format('x') : moment(dateString).local().endOf('day').format('x');
 }
 
-var Calls = React.createClass({
+var Im = React.createClass({
   contextTypes: {
     router: React.PropTypes.func.isRequired
   },
@@ -33,16 +34,16 @@ var Calls = React.createClass({
   mixins: [FluxibleMixin, AuthMixin],
 
   statics: {
-    storeListeners: [CallsStore],
+    storeListeners: [ImStore],
 
     fetchData: function(context, params, query, done) {
       concurrent([
-        context.executeAction.bind(context, fetchCalls, {
+        context.executeAction.bind(context, fetchIm, {
           carrierId: params.identity,
-          fromTime: query.fromTime || getFromTime(moment().subtract(2,'month').startOf('day')),
+          fromTime: query.fromTime || getFromTime(moment().startOf('month')),
           toTime: query.toTime || getToTime(),
           size: 10,
-          page: query.page || 0
+          page: query.page || 1
         })
       ], done || function() {});
     }
@@ -51,14 +52,13 @@ var Calls = React.createClass({
   getInitialState: function () {
     let params = this.context.router.getCurrentParams();
     let query = this.context.router.getCurrentQuery();
-
     return {
       current: 1,
       per: 10,
-      calls: this.getStore(CallsStore).getCalls(),
-      callsCount: this.getStore(CallsStore).getCallsCount(),
+      calls: this.getStore(ImStore).getCalls(),
+      callsCount: this.getStore(ImStore).getCallsCount(),
       carrierId: params.identity,
-      startDate: moment().subtract(2,'month').startOf('day'),
+      startDate: moment().subtract(1,'year').startOf('day'),
       endDate: moment().endOf('day'),
       type: '',
       search: '',
@@ -68,7 +68,7 @@ var Calls = React.createClass({
   },
 
   onChange: function() {
-    let state = this.getStore(CallsStore).getState();
+    let state = this.getStore(ImStore).getState();
     this.setState(state);
   },
 
@@ -85,7 +85,7 @@ var Calls = React.createClass({
   },
 
   handlePageChange: function(page) {
-    this.executeAction(fetchCalls, {
+    this.executeAction(fetchIm, {
       carrierId: this.state.carrierId,
       fromTime: getFromTime(this.state.startDate),
       toTime: getToTime(this.state.endDate),
@@ -101,7 +101,7 @@ var Calls = React.createClass({
   },
 
   handleStartDateChange: function(date) {
-    this.executeAction(fetchCalls, {
+    this.executeAction(fetchIm, {
       carrierId: this.state.carrierId,
       fromTime: getFromTime(date),
       toTime: getToTime(this.state.endDate),
@@ -117,7 +117,7 @@ var Calls = React.createClass({
   },
 
   handleEndDateChange: function(date) {
-    this.executeAction(fetchCalls, {
+    this.executeAction(fetchIm, {
       carrierId: this.state.carrierId,
       fromTime: getFromTime(this.state.startDate),
       toTime: getToTime(date),
@@ -136,7 +136,7 @@ var Calls = React.createClass({
   handleOnnetClick: function(e) {
     e.preventDefault();
 
-    this.executeAction(fetchCalls, {
+    this.executeAction(fetchIm, {
       carrierId: this.state.carrierId,
       fromTime: getFromTime(this.state.startDate),
       toTime: getToTime(this.state.endDate),
@@ -154,7 +154,7 @@ var Calls = React.createClass({
   handleOffnetClick: function(e) {
     e.preventDefault();
 
-    this.executeAction(fetchCalls, {
+    this.executeAction(fetchIm, {
       carrierId: this.state.carrierId,
       fromTime: getFromTime(this.state.startDate),
       toTime: getToTime(this.state.endDate),
@@ -172,7 +172,7 @@ var Calls = React.createClass({
   handleSearchSubmit: function(e) {
     e.preventDefault();
 
-    this.executeAction(fetchCalls, {
+    this.executeAction(fetchIm, {
       carrierId: this.state.carrierId,
       fromTime: getFromTime(this.state.startDate),
       toTime: getToTime(this.state.endDate),
@@ -188,7 +188,7 @@ var Calls = React.createClass({
       search: e.target.value
     });
 
-    this.executeAction(fetchCalls, {
+    this.executeAction(fetchIm, {
       carrierId: this.state.carrierId,
       fromTime: getFromTime(this.state.startDate),
       toTime: getToTime(this.state.endDate),
@@ -212,7 +212,6 @@ var Calls = React.createClass({
                 <a className="active" href="">Details Report</a>
               </li>
             </ul>
-
             <div className="start-date-wrap large-2 columns left">
               <DatePicker
                 key="start-date"
@@ -224,7 +223,7 @@ var Calls = React.createClass({
               />
             </div>
 
-            <div className="end-date-wrap large-2 columns left">
+            <div className="end-date-wrap large-2 large-offset-0 columns left">
               <DatePicker
                 key="end-date"
                 dateFormat="MM/DD/YYYY"
@@ -235,10 +234,13 @@ var Calls = React.createClass({
               />
             </div>
 
-            <div className="call-type-filter large-3 columns left top-bar-section">
+            <div className="call-type-filter large-2 columns left top-bar-section">
               <ul className="button-group round">
-                <li><a className="button icon-onnet" onClick={this.handleOnnetClick}></a></li>
-                <li><a className="button icon-offnet" onClick={this.handleOffnetClick}></a></li>
+                <li><a className="button icon-text" onClick={this.handleOnnetClick}></a></li>
+                <li><a className="button icon-image" onClick={this.handleOffnetClick}></a></li>
+                <li><a className="button icon-audio" onClick={this.handleOffnetClick}></a></li>
+                <li><a className="button icon-video" onClick={this.handleOffnetClick}></a></li>
+                <li><a className="button icon-ituneyoutube" onClick={this.handleOffnetClick}></a></li>
               </ul>
             </div>
 
@@ -251,7 +253,7 @@ var Calls = React.createClass({
         </nav>
 
         <div className="large-24 columns">
-            <CallsTable calls={this.state.calls} current={this.state.current} per={this.state.per} />
+            <ImTable calls={this.state.calls} current={this.state.current} per={this.state.per} />
             <Pagination total={this.state.callsCount} current={this.state.current} per={this.state.per} onPageChange={this.handlePageChange} />
         </div>
         <LoadingSpinner/>
@@ -260,4 +262,4 @@ var Calls = React.createClass({
   }
 });
 
-export default Calls;
+export default Im;

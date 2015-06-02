@@ -10,6 +10,7 @@ var endUserRequest = fetchDep(nconf.get('containerName'), 'EndUserRequest');
 var walletRequest  = fetchDep(nconf.get('containerName'), 'WalletRequest');
 var callsRequest   = fetchDep(nconf.get('containerName'), 'CallsRequest');
 var topUpRequest   = fetchDep(nconf.get('containerName'), 'TopUpRequest');
+var imRequest   = fetchDep(nconf.get('containerName'), 'ImRequest');
 
 import smsRequest from '../../lib/requests/SMS';
 
@@ -255,6 +256,33 @@ api.get('/carriers/:carrierId/sms', function(req, res) {
   let request = new smsRequest({ baseUrl: nconf.get('dataProviderApi:baseUrl'), timeout: nconf.get('dataProviderApi:timeout') });
 
   request.get(carrierId, query, (err, result) => {
+    if (err)
+      return res.status(err.status).json({
+        error: err
+      });
+
+    return res.json(result);
+  });
+});
+
+api.get('/carriers/:carrierId/im', function(req, res) {
+  // req.checkParams('carrierId').notEmpty();
+  // req.checkQuery('startDate').notEmpty();
+  // req.checkQuery('endDate').notEmpty();
+  // req.checkQuery('page').notEmpty().isInt();
+  // req.checkQuery('pageRec').notEmpty().isInt();
+
+  // TODO  carrierId to be changed in the future
+  req.query.carrier = (req.params.carrierId == 'm800') ? '' : req.params.carrierId;
+  req.query.from = req.query.fromTime;
+  req.query.to = req.query.toTime;
+  // TODO determine text search functionality
+  //req.query.caller = (_.isEmpty(req.query.search)) ? '' : '*'+req.query.search+'*';
+  //req.query.callee = (_.isEmpty(req.query.search)) ? '' : '*'+req.query.search+'*';
+
+  let params =  _.pick(req.query,['caller_carrier','type','from','to','caller','callee','page','size']);
+
+  imRequest.getImStat(params, (err, result) => {
     if (err)
       return res.status(err.status).json({
         error: err

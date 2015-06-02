@@ -1,12 +1,12 @@
 import _ from 'lodash';
 import {createStore} from 'fluxible/addons';
 
-var CallsStore = createStore({
-  storeName: 'CallsStore',
+var ImStore = createStore({
+  storeName: 'ImStore',
 
   handlers: {
-    'FETCH_CALLS_SUCCESS': 'handleCallsChange',
-    'FETCH_CALLS_PAGE_SUCCESS': 'handleCallsChange'
+    'FETCH_IM_SUCCESS': 'handleCallsChange',
+    'FETCH_IM_PAGE_SUCCESS': 'handleCallsChange'
   },
 
   initialize: function () {
@@ -16,18 +16,22 @@ var CallsStore = createStore({
     this.pageSize = 10;
     this.callsCount = 0;
     this.totalPages = 0;
-    this.params = {};
   },
 
   handleCallsChange: function (payload) {
-    this.calls = payload.contents;
-    this.offset = payload.offset;
-    this.pageNumber = payload.pageNumber;
-    this.pageSize = payload.pageSize;
-    this.callsCount = payload.totalElements;
-    this.totalPages = payload.totalPages;
-    this.params = payload.params;
-    this.emitChange();
+    try {
+      this.calls = payload.contents;
+      this.offset = payload.offset;
+      this.pageNumber = payload.pageNumber;
+      this.pageSize = payload.pageSize;
+      this.callsCount = payload.totalElements;
+      this.totalPages = payload.totalPages;
+      this.loaded = true;
+    } catch (e) {
+      console.log(e);
+    } finally {
+      this.emitChange();
+    }
   },
 
   getCallsCount: function() {
@@ -46,7 +50,7 @@ var CallsStore = createStore({
       pageSize: this.pageSize,
       callsCount: this.callsCount,
       totalPages: this.totalPages,
-      params: this.params
+      loaded: true
     };
   },
 
@@ -61,8 +65,7 @@ var CallsStore = createStore({
     this.pageSize = state.pageSize;
     this.callsCount = state.callsCount;
     this.totalPages = state.totalPages;
-    this.params = state.params;
   }
 });
 
-export default CallsStore;
+export default ImStore;
