@@ -135,10 +135,6 @@ var SMS = React.createClass({
               <li className="left">
                 <input type="text" name="endDate" value={this.state.endDate} onChange={this.handleEndDateChange} onKeyPress={this.onSubmitQuery} />
               </li>
-              <li className="left">
-                <button>type1</button>
-                <button>type2</button>
-              </li>
               <li className="right">
                 <input type="text" name="username" value={this.state.number} onChange={this.handleUsernameChange} onKeyPress={this.onSubmitQuery} />
               </li>

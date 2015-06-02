@@ -67,7 +67,9 @@ var SMSOverview = React.createClass({
         <div className="large-24 columns">
           <ul>
           {this.state.widgets.map((widget) => {
-            return <li>{widget}</li>;
+            if (widget != '') {
+              return <li className="left" dangerouslySetInnerHTML={{__html: widget}}></li>;
+            }
           })}
           </ul>
         </div>
