@@ -19,7 +19,7 @@
     "db": 10
   },
   "queue": {
-    "enable": false,
+    "enable": true,
     "prefix": "q",
     "uiPort": 3100
   },

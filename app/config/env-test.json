@@ -17,7 +17,8 @@
       { "host": "192.168.118.19", "port": 26379 },
       { "host": "192.168.118.19", "port": 26380 }
     ],
-    "name": "redis-hk-dev-master"
+    "name": "redis-hk-dev-master",
+    "role": "master"
   },
   "queue": {
     "enable": true,
