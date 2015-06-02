@@ -26,11 +26,17 @@
     &__body{
         border-top: 1px solid #eee;
         &__subtitle{
-          padding: 0 0 $column-gutter;  
+          padding: 0 0 $column-gutter;
         }
     }
     [class^="panel"][class$="__title"]{
         @include border-radius($global-radius $global-radius 0 0);
+    }
+    &__logo{
+      img {
+        max-width: rem-calc(120);
+        border-radius: rem-calc(60);
+      }
     }
     //for prelogin pages
     &--extra {

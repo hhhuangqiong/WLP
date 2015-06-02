@@ -193,7 +193,11 @@ var CompanyProfile = React.createClass({
       logo = !this.state.logo.match(imageDataRegex) ? `/data/${this.state.logo}` : this.state.logo;
     }
 
-    return <img src={logo} onClick={this._handleClickOnLogo}/>;
+    return (
+      <p className="text-center">
+        <img src={logo} onClick={this._handleClickOnLogo}/>
+      </p>
+    );
   },
 
   /**
