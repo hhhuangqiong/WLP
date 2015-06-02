@@ -2,7 +2,7 @@ import _ from 'lodash';
 import React from 'react';
 import classNames from 'classnames';
 
-var CompanyWidgetStores = React.createClass({
+var CompanyWidgetSMS = React.createClass({
   getInitialState: function() {
     let state = {};
     for (let key in this.props.widgets) {
@@ -27,7 +27,7 @@ var CompanyWidgetStores = React.createClass({
           </div>
           <div className="large-15 columns">
             <input
-              type="text" name="stores-widget-1" placeholder="url"
+              type="text" name="sms-widget-1" placeholder="url"
               value={this.state['widget-0']}
               onChange={_.bindKey(this, '_handleInputChange', 'widget-0')}
             />
@@ -39,7 +39,7 @@ var CompanyWidgetStores = React.createClass({
           </div>
           <div className="large-15 columns">
             <input
-              type="text" name="stores-widget-2" placeholder="url"
+              type="text" name="sms-widget-2" placeholder="url"
               value={this.state['widget-1']}
               onChange={_.bindKey(this, '_handleInputChange', 'widget-1')}
             />
@@ -51,7 +51,7 @@ var CompanyWidgetStores = React.createClass({
           </div>
           <div className="large-15 columns">
             <input
-              type="text" name="stores-widget-3" placeholder="url"
+              type="text" name="sms-widget-3" placeholder="url"
               value={this.state['widget-2']}
               onChange={_.bindKey(this, '_handleInputChange', 'widget-2')}
             />
@@ -63,7 +63,7 @@ var CompanyWidgetStores = React.createClass({
           </div>
           <div className="large-15 columns">
             <input
-              type="text" name="stores-widget-4" placeholder="url"
+              type="text" name="sms-widget-4" placeholder="url"
               value={this.state['widget-3']}
               onChange={_.bindKey(this, '_handleInputChange', 'widget-3')}
             />
@@ -75,7 +75,7 @@ var CompanyWidgetStores = React.createClass({
           </div>
           <div className="large-15 columns">
             <input
-              type="text" name="stores-widget-5" placeholder="url"
+              type="text" name="sms-widget-5" placeholder="url"
               value={this.state['widget-4']}
               onChange={_.bindKey(this, '_handleInputChange', 'widget-4')}
             />
@@ -87,7 +87,7 @@ var CompanyWidgetStores = React.createClass({
           </div>
           <div className="large-15 columns">
             <input
-              type="text" name="stores-widget-6" placeholder="url"
+              type="text" name="sms-widget-6" placeholder="url"
               value={this.state['widget-5']}
               onChange={_.bindKey(this, '_handleInputChange', 'widget-5')}
             />
@@ -98,4 +98,4 @@ var CompanyWidgetStores = React.createClass({
   }
 });
 
-export default CompanyWidgetStores;
+export default CompanyWidgetSMS;

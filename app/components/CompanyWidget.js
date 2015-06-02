@@ -11,6 +11,7 @@ import OverviewWidget from '../components/CompanyWidgetOverview';
 import StoresWidget from '../components/CompanyWidgetStores';
 import CallsWidget from '../components/CompanyWidgetCalls';
 import IMWidget from '../components/CompanyWidgetIM';
+import SMSWidget from '../components/CompanyWidgetSMS';
 
 import CompanyStore from '../stores/CompanyStore';
 
@@ -18,7 +19,8 @@ const defaultState = {
   overview: [],
   stores: [],
   calls: [],
-  im: []
+  im: [],
+  sms: []
 };
 
 var CompanyWidget = React.createClass({
@@ -53,7 +55,7 @@ var CompanyWidget = React.createClass({
 
   _handleInputChange: function(widgetName, stateName, e) {
     this.setState({
-      [widgetName]: _.assign(this.state[widgetName], {[stateName]: e.target.value.trim()})
+      [widgetName]: _.assign(this.state[widgetName], {[stateName]: e.target.value})
     });
   },
 
@@ -76,7 +78,7 @@ var CompanyWidget = React.createClass({
         />
         <form ref="companyForm" onSubmit={this._handleSubmit}>
           <input type="hidden" name="_id" value={this.state._id} />
-          <div className="large-14 large-centered columns">
+          <div className="large-16 large-centered columns">
             <div className="panel">
               <div className="row">
                 <div className="large-24 columns">
@@ -93,6 +95,9 @@ var CompanyWidget = React.createClass({
                       </li>
                       <li className="tab__title">
                         <a className={classNames({active: this.state.currentTab == 'im'})} onClick={_.bindKey(this, '_handleTabChange', 'im')}>im</a>
+                      </li>
+                      <li className="tab__title">
+                        <a className={classNames({active: this.state.currentTab == 'sms'})} onClick={_.bindKey(this, '_handleTabChange', 'sms')}>sms</a>
                       </li>
                     </ul>
                   </div>
@@ -117,6 +122,11 @@ var CompanyWidget = React.createClass({
                         isHidden={this.state.currentTab != 'im'}
                         widgets={this.state.data.im}
                         onDataChange={_.bindKey(this, '_handleInputChange', 'im')}
+                      />
+                      <SMSWidget
+                        isHidden={this.state.currentTab != 'sms'}
+                        widgets={this.state.data.sms}
+                        onDataChange={_.bindKey(this, '_handleInputChange', 'sms')}
                       />
                     </div>
                   </div>

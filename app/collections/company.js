@@ -99,7 +99,8 @@ var schema = new mongoose.Schema({
     overview: [],
     stores: [],
     calls: [],
-    im: []
+    im: [],
+    sms: []
   },
   serviceConfig: {
     developerKey: {

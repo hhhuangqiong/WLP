@@ -221,7 +221,7 @@ api.get('/carriers/:carrierId/widgets/:type(calls|im|overview|store|sms)', funct
 
       return Q.ninvoke(Company, 'findOne', {
         carrierId: carrierId
-      }, { lean: true });
+      }, '', { lean: true });
     })
     .then((company) => {
       return res.json({

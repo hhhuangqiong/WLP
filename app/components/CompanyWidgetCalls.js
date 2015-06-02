@@ -12,7 +12,7 @@ var CompanyWidgetCalls = React.createClass({
   },
   _handleInputChange: function(stateName, e) {
     this.setState({
-      [stateName]: e.target.value.trim()
+      [stateName]: e.target.value
     });
   },
   render: function() {

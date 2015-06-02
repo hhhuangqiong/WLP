@@ -494,6 +494,14 @@ export default class CompanyController {
               params['im-widget-4'],
               params['im-widget-5'],
               params['im-widget-6']
+            ],
+            sms: [
+              params['sms-widget-1'],
+              params['sms-widget-2'],
+              params['sms-widget-3'],
+              params['sms-widget-4'],
+              params['sms-widget-5'],
+              params['sms-widget-6']
             ]
           },
           updateAt: params.updateAt,
