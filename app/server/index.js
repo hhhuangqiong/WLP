@@ -109,7 +109,7 @@ function initialize(port) {
 
   // TODO move this part into its own initializer
   let redisStore;
-  if(env !== 'development') {
+  if(env === 'development') {
     redisStore = new RedisStore(nconf.get('redis'))
   } else {
     var Redis = require('ioredis');
