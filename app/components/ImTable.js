@@ -56,7 +56,7 @@ var CallsTable = React.createClass({
                 <span className="call_date">{callDate}</span>
               </div>
             </td>
-            <td className="calls-table--cell"><span className={"call_type " + u.type.toLowerCase()}>{u.message_type}</span></td>
+            <td className="calls-table--cell"><span className={"im_type " + u.type.toLowerCase()}>{u.message_type}</span></td>
             <td className="calls-table--cell">
               <div className="caller_info">
                 <span className={u.caller_country}></span>
