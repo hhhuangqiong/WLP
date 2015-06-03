@@ -1,6 +1,34 @@
 # M800 White Label Portal
 
+## Branch
+
+```
+# To checkout based on the remote branch, 'bolt'
+git checkout -t origin/<branch> -b <topic-branch-name>;
+# e.g.,
+git checkout -t origin/bolt -b my-task
+
+# To update *existing* topic branch to track new remote branch
+git branch -u origin/<branch>
+# e.g.,
+git branch -u origin/bolt
+
+# To push for code review
+git push origin @:refs/for/<branch>;
+# e.g.,
+git push origin @:refs/for/bolt
+
+# To rebase after fetch, `git fetch`
+git rebase -p origin/<branch>;
+# e.g.,
+git rebase -p origin/bolt;
+```
+
 ## Deployment
+
+Tools:
+
+- [PM2](https://github.com/Unitech/pm2)
 
 ```
 npm i -g pm2
@@ -17,11 +45,11 @@ pm2 status
 pm2 kill
 ```
 
-Tools:
-
-- [PM2](https://github.com/Unitech/pm2)
-
 ## Diagram
+
+Tool:
+
+- [Mermaid](https://github.com/knsv/mermaid)
 
 Steps:
 
@@ -37,6 +65,4 @@ mermaid COMPONENTS.md -v
 - [Requirements](http://issuetracking.maaii.com:8090/display/MAAIIPR/WL+Portal+Requirements)
 - [wireframe](http://192.168.118.63/~louislam/m800-white-label-portal-v2/)
 - [layout preview](http://issuetracking.maaii.com:8080/browse/UMWP-45)
-- Tools / libraries
-  - [Mermaid](https://github.com/knsv/mermaid)
 
