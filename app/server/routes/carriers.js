@@ -276,20 +276,61 @@ api.get('/carriers/:carrierId/im', function(req, res) {
   req.query.carrier = (req.params.carrierId == 'm800') ? '' : req.params.carrierId;
   req.query.from = req.query.fromTime;
   req.query.to = req.query.toTime;
+  req.query.message_type = req.query.type;
   // TODO determine text search functionality
-  //req.query.caller = (_.isEmpty(req.query.search)) ? '' : '*'+req.query.search+'*';
-  //req.query.callee = (_.isEmpty(req.query.search)) ? '' : '*'+req.query.search+'*';
+  req.query.sender = (_.isEmpty(req.query.search)) ? '' : '*'+req.query.search+'*';
+  req.query.recipient = (_.isEmpty(req.query.search)) ? '' : '*'+req.query.search+'*';
 
-  let params =  _.pick(req.query,['caller_carrier','type','from','to','caller','callee','page','size']);
 
-  imRequest.getImStat(params, (err, result) => {
-    if (err)
-      return res.status(err.status).json({
-        error: err
+  let params =  _.pick(req.query,['carrier','message_type','from','to','sender','recipient','page','size']);
+
+  if (!_.isEmpty(params.sender) || !_.isEmpty(params.recipient)) {
+    var sender_result, recipient_result;
+
+    var getSenderResult = function() {
+      let recipient_param = params;
+      recipient_param.sender = '';
+      imRequest.getImStat(recipient_param, (err, result) => {
+        if (err)
+          return res.status(err.status).json({
+            error: err
+          });
+
+          recipient_result = result;
+        getRecipientResult();
       });
+    }
 
-    return res.json(result);
-  });
+    var getRecipientResult = function () {
+      let sender_param = params;
+      sender_param.sender = sender_param.recipient;
+      sender_param.recipient = '';
+      imRequest.getImStat(sender_param, (err, result) => {
+        if (err)
+          return res.status(err.status).json({
+            error: err
+          });
+
+          sender_result = result;
+
+        let allResult = _.merge(sender_result,recipient_result);
+
+        return res.json(allResult);
+      });
+    }
+
+    getSenderResult();
+  } else {
+    imRequest.getImStat(params, (err, result) => {
+      if (err)
+        return res.status(err.status).json({
+          error: err
+        });
+
+      return res.json(result);
+    });
+  }
+
 });
 
 module.exports = api;

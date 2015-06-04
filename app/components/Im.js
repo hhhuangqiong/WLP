@@ -16,7 +16,7 @@ import {fetchIm} from '../actions/fetchIm';
 
 import ImTable from './ImTable';
 import Pagination from './Pagination';
-import ToggleButton from './ToggleButton';
+//import ToggleButton from './ToggleButton';
 import LoadingSpinner from './common/LoadingSpinner';
 
 var getFromTime = function(dateString=moment()) {
@@ -134,39 +134,93 @@ var Im = React.createClass({
     });
   },
 
-  handleOnnetClick: function(e) {
+  handleTextTypeClick: function(e) {
     e.preventDefault();
 
     this.executeAction(fetchIm, {
       carrierId: this.state.carrierId,
       fromTime: getFromTime(this.state.startDate),
       toTime: getToTime(this.state.endDate),
-      type: 'ONNET',
+      type: 'text',
       search: this.state.search,
       size: this.state.per,
       page: 0
     });
 
     this.setState({
-      type: 'ONNET'
+      type: 'text'
     });
   },
 
-  handleOffnetClick: function(e) {
+  handleImageTypeClick: function(e) {
     e.preventDefault();
 
     this.executeAction(fetchIm, {
       carrierId: this.state.carrierId,
       fromTime: getFromTime(this.state.startDate),
       toTime: getToTime(this.state.endDate),
-      type: 'OFFNET',
+      type: 'image',
       search: this.state.search,
       size: this.state.per,
       page: 0
     });
 
     this.setState({
-      type: 'OFFNET'
+      type: 'image'
+    });
+  },
+
+  handleAudioTypeClick: function(e) {
+    e.preventDefault();
+
+    this.executeAction(fetchIm, {
+      carrierId: this.state.carrierId,
+      fromTime: getFromTime(this.state.startDate),
+      toTime: getToTime(this.state.endDate),
+      type: 'audio',
+      search: this.state.search,
+      size: this.state.per,
+      page: 0
+    });
+
+    this.setState({
+      type: 'audio'
+    });
+  },
+
+  handleVideoTypeClick: function(e) {
+    e.preventDefault();
+
+    this.executeAction(fetchIm, {
+      carrierId: this.state.carrierId,
+      fromTime: getFromTime(this.state.startDate),
+      toTime: getToTime(this.state.endDate),
+      type: 'video',
+      search: this.state.search,
+      size: this.state.per,
+      page: 0
+    });
+
+    this.setState({
+      type: 'video'
+    });
+  },
+
+  handleOtherTypeClick: function(e) {
+    e.preventDefault();
+
+    this.executeAction(fetchIm, {
+      carrierId: this.state.carrierId,
+      fromTime: getFromTime(this.state.startDate),
+      toTime: getToTime(this.state.endDate),
+      type: 'other',
+      search: this.state.search,
+      size: this.state.per,
+      page: 0
+    });
+
+    this.setState({
+      type: 'other'
     });
   },
 
@@ -189,15 +243,21 @@ var Im = React.createClass({
       search: e.target.value
     });
 
-    this.executeAction(fetchIm, {
-      carrierId: this.state.carrierId,
-      fromTime: getFromTime(this.state.startDate),
-      toTime: getToTime(this.state.endDate),
-      type: this.state.type,
-      search: this.state.search,
-      size: this.state.per,
-      page: 0
-    });
+    // this.executeAction(fetchIm, {
+    //   carrierId: this.state.carrierId,
+    //   fromTime: getFromTime(this.state.startDate),
+    //   toTime: getToTime(this.state.endDate),
+    //   type: this.state.type,
+    //   search: this.state.search,
+    //   size: this.state.per,
+    //   page: 0
+    // });
+  },
+
+  handleTypeChange: function(actionContext, payload, done) {
+    let status = _.merge(this.state.type,payload);
+    console.log(status);
+    this.setState({type:status});
   },
 
   render: function() {
@@ -237,11 +297,11 @@ var Im = React.createClass({
 
             <div className="im-type large-2 columns left top-bar-section">
               <ul className="button-group round">
-                <ToggleButton type="text" class="icon-text" status={false} />
-                <ToggleButton type="image" class="icon-image" status={false} />
-                <ToggleButton type="audio" class="icon-audio" status={false} />
-                <ToggleButton type="video" class="icon-video" status={false} />
-                <ToggleButton type="other" class="icon-ituneyoutube" status={false} />
+                <li><a className="button icon-text" onClick={this.handleTextTypeClick}></a></li>
+                <li><a className="button icon-image" onClick={this.handleImageTypeClick}></a></li>
+                <li><a className="button icon-audio" onClick={this.handleAudioTypeClick}></a></li>
+                <li><a className="button icon-video" onClick={this.handleVideoTypeClick}></a></li>
+                <li><a className="button icon-ituneyoutube" onClick={this.handleOtherTypeClick}></a></li>
               </ul>
             </div>
 
@@ -254,7 +314,7 @@ var Im = React.createClass({
         </nav>
 
         <div className="large-24 columns">
-            <ImTable calls={this.state.calls} current={this.state.current} per={this.state.per} />
+            <ImTable im={this.state.calls} current={this.state.current} per={this.state.per} />
             <Pagination total={this.state.callsCount} current={this.state.current} per={this.state.per} onPageChange={this.handlePageChange} />
         </div>
         <LoadingSpinner/>
