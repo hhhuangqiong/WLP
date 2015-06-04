@@ -63,7 +63,7 @@ var Navigation = React.createClass({
         <ul className="right">
           {this.renderCreateButton()}
           <li className="navigation-bar__item">
-            <Link to="TODO">report issue</Link>
+            <a href="http://support.maaii.com" target="_new">report issue</a>
           </li>
           <li className="navigation-bar__item">
             <Link to="TODO">
