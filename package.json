@@ -1,6 +1,6 @@
 {
   "name": "m800-whitelabel-portal",
-  "version": "0.0.1",
+  "version": "1.0.0",
   "private": true,
   "scripts": {
     "build": "npm run clean && npm run transpile && npm run test:report",
