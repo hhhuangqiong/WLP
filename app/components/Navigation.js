@@ -62,7 +62,7 @@ var Navigation = React.createClass({
       <section className="top-bar-section navigation-bar">
         <ul className="right">
           <li className="navigation-bar__item">
-            <Link to="TODO">report issue</Link>
+            <a href="http://support.maaii.com" target="_new">report issue</a>
           </li>
           <li className="has-dropdown not-click navigation-bar__item">
             <a>hi, username
