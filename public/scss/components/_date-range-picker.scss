@@ -1,0 +1,38 @@
+.date-range-picker {
+  width: auto;
+  height: rem-calc(28);
+  line-height: rem-calc(26);
+  margin: rem-calc(16) rem-calc(25) 0 rem-calc(15);
+  padding: 0 rem-calc(15);
+  border-radius: rem-calc(14);
+  border: 1px solid #bbb;
+  color: white;
+
+  .date-input-wrap {
+    position: relative;
+
+    > div {
+      position: absolute;
+      top: 0;
+
+      .datepicker__input {
+        opacity: 0;
+        z-index: -999;
+      }
+    }
+  }
+
+  &__icon {
+    font-size: rem-calc(18);
+    line-height: rem-calc(26);
+    margin-right: rem-calc(10);
+  }
+
+  &__separator {
+    padding: 0 rem-calc(5);
+  }
+
+  &__date-span {
+    color: white;
+  }
+}

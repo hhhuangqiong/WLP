@@ -1,8 +1,6 @@
-var debug = require('debug')('app:fetchCalls');
+var debug = require('debug')('wlp:fetchCalls');
 
-import request from 'superagent';
-
-export function fetchCalls(context, params, done) {
+export default function(context, params, done) {
   debug('Started');
 
   context.dispatch('FETCH_START');
@@ -10,7 +8,7 @@ export function fetchCalls(context, params, done) {
 
   context.api.getCalls(params, function(err, calls) {
     calls.params = params;
-    
+
     context.dispatch('FETCH_CALLS_END');
     context.dispatch('FETCH_END');
     if (err) {

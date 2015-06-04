@@ -1,7 +1,10 @@
 import React from 'react';
 import FluxibleMixin from 'fluxible/addons/FluxibleMixin';
 import {Link} from 'react-router';
+import classNames from 'classnames';
 
+import Pagination from './Pagination';
+import Remark from './Remark';
 import CallsStore from '../stores/CallsStore';
 
 import moment from 'moment';
@@ -12,20 +15,6 @@ var Countries = require('../data/countries.json');
 var CallsTable = React.createClass({
   contextTypes: {
     router: React.PropTypes.func.isRequired
-  },
-
-  componentWillReceiveProps: function(nextProps) {
-    this.props.calls = nextProps.calls;
-    this.props.current = nextProps.current;
-    this.props.per = nextProps.per;
-  },
-
-  getFirstRecord: function() {
-    return (this.props.current - 1) * this.props.per;
-  },
-
-  getLastRecord: function() {
-    return this.props.current * this.props.per;
   },
 
   render: function() {
@@ -53,23 +42,49 @@ var CallsTable = React.createClass({
               <span className="left duration">{u.duration}s</span>
               <div className="left timestamp">
                 <span className="call_time">{callStart} - {callEnd}</span>
+                <br/>
                 <span className="call_date">{callDate}</span>
               </div>
             </td>
-            <td className="calls-table--cell"><span className={"call_type icon-" + u.type.toLowerCase()}></span></td>
             <td className="calls-table--cell">
-              <div className="caller_info">
-                <span className={u.caller_country}></span>
-                <span className="caller">{u.caller}</span>
-                <span>{callerCountry.name}</span>
-              </div>
-              <div className="callee_info">
-                <span className={u.callee_country ? u.callee_country : ''}></span>
-                <span className="callee">{u.callee}</span>
-                <span>{(calleeCountry) ? calleeCountry.name : ''}</span>
+              <span className={"call_type icon-" + u.type.toLowerCase()}></span>
+            </td>
+            <td className="calls-table--cell">
+              <div className="large-24 columns">
+                <div className="row">
+                  <div className="large-11 columns">
+                    <div className="caller_info">
+                      <span className={u.caller_country}></span>
+                      <div className="left">
+                        <span className="caller">{u.caller}</span>
+                        <br/>
+                        <span>{callerCountry.name}</span>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="large-1 columns">
+                    <div className="calls-table__arrow">
+                      <i className="icon-arrow" />
+                    </div>
+                  </div>
+                  <div className="large-11 columns">
+                    <div className="callee_info">
+                      <span className={u.callee_country ? u.callee_country : ''}></span>
+                      <div className="left">
+                        <span className="callee">{u.callee}</span>
+                        <br/>
+                        <span>{(calleeCountry) ? calleeCountry.name : ''}</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
               </div>
             </td>
-            <td className="calls-table--cell"><span className="remark">{u.bye_reason}</span></td>
+            <td className="calls-table--cell">
+              {!u.success && u.bye_reason && u.bye_reason != 'null' ? (
+                <Remark tip={u.bye_reason} />
+              ) : null}
+            </td>
           </tr>
         }
       );
@@ -90,13 +105,25 @@ var CallsTable = React.createClass({
             <th className="calls-table--cell"></th>
             <th className="calls-table--cell">Duration</th>
             <th className="calls-table--cell">Type</th>
-            <th className="calls-table--cell">Mobile & Destination</th>
+            <th className="calls-table--cell">Mobile &amp; Destination</th>
             <th className="calls-table--cell">Remark</th>
           </tr>
         </thead>
         <tbody className="calls-table--body" key="calls-table--body">
           {rows}
         </tbody>
+        <tfoot>
+          <tr>
+            <td colSpan="5">
+              <Pagination
+                total={parseInt(this.props.totalRec)}
+                current={parseInt(this.props.page)}
+                per={parseInt(this.props.pageRec)}
+                onPageChange={this.props.onPageChange}
+              />
+            </td>
+          </tr>
+        </tfoot>
       </table>
     );
   }
