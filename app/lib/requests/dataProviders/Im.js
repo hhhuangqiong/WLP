@@ -81,7 +81,7 @@ export default class ImRequest extends BaseRequest {
   sendRequest(params, cb) {
     var base = this.opts.baseUrl;
     var url = this.opts.methods.CALLS.URL;
-
+    
     request
       .get(util.format('%s%s', base, url))
       .query(params)
