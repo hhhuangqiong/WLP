@@ -1,29 +1,18 @@
 import _ from 'lodash';
 import moment from 'moment';
 import {concurrent} from 'contra';
+import classNames from 'classnames';
 
 import React from 'react';
 import FluxibleMixin from 'fluxible/addons/FluxibleMixin';
+import {Link} from 'react-router';
 import DatePicker from 'react-datepicker';
 
 import AuthMixin from '../utils/AuthMixin';
-
-import CallsStore from '../stores/CallsStore';
-
-import {fetchCalls} from '../actions/fetchCalls';
-//import {fetchCallsPage} from '../actions/fetchCallsPage';
+import fetchCalls from '../actions/fetchCalls';
 
 import CallsTable from './CallsTable';
-import Pagination from './Pagination';
-import LoadingSpinner from './common/LoadingSpinner';
-
-var getFromTime = function(dateString=moment()) {
-  return (_.isEmpty(dateString)) ? moment().local().startOf('day').format('x') : moment(dateString).local().startOf('day').format('x');
-}
-
-var getToTime = function(dateString=moment()) {
-  return (_.isEmpty(dateString)) ? moment().local().endOf('day').format('x') : moment(dateString).local().endOf('day').format('x');
-}
+import CallsStore from '../stores/CallsStore';
 
 var Calls = React.createClass({
   contextTypes: {
@@ -39,222 +28,205 @@ var Calls = React.createClass({
       concurrent([
         context.executeAction.bind(context, fetchCalls, {
           carrierId: params.identity,
-          fromTime: query.fromTime || getFromTime(moment().subtract(2,'month').startOf('day')),
-          toTime: query.toTime || getToTime(),
+          startDate: query.startDate || moment().subtract(2, 'day').startOf('day').format('L'),
+          endDate: query.endDate || moment().endOf('day').format('L'),
           size: 10,
-          page: query.page || 0
+          page: query.page || 1,
+          type: query.type || '',
+          search: query.search || ''
         })
       ], done || function() {});
     }
   },
 
-  getInitialState: function () {
-    let params = this.context.router.getCurrentParams();
-    let query = this.context.router.getCurrentQuery();
-
+  getStateFromStores: function() {
     return {
-      current: 1,
-      per: 10,
       calls: this.getStore(CallsStore).getCalls(),
-      callsCount: this.getStore(CallsStore).getCallsCount(),
-      carrierId: params.identity,
-      startDate: moment().subtract(2,'month').startOf('day'),
-      endDate: moment().endOf('day'),
-      type: '',
-      search: '',
-      minDate: moment().subtract(1,'year'),
-      maxDate: moment(),
+      callsCount: this.getStore(CallsStore).getCallsCount()
     };
   },
 
+  getInitialState: function () {
+    let query = _.merge({
+      page: 1,
+      size: 10,
+      startDate: moment().subtract(2, 'day').startOf('day').format('L'),
+      endDate: moment().endOf('day').format('L'),
+      type: '',
+      search: ''
+    }, this.context.router.getCurrentQuery());
+
+    return _.merge(this.getStateFromStores(), query);
+  },
+
   onChange: function() {
-    let state = this.getStore(CallsStore).getState();
-    this.setState(state);
+    let query = _.merge({
+      page: 1,
+      size: 10,
+      startDate: moment().subtract(2, 'day').startOf('day').format('L'),
+      endDate: moment().endOf('day').format('L'),
+      type: '',
+      search: ''
+    }, this.context.router.getCurrentQuery());
+
+    this.setState(_.merge(this.getStateFromStores(), query));
   },
 
-  getNewCurrentPage(per, nextPer) {
-    return Math.ceil(this.state.current * per / nextPer);
+  getQueryFromState: function() {
+    return {
+      startDate: this.state.startDate && this.state.startDate.trim(),
+      endDate: this.state.endDate && this.state.endDate.trim(),
+      search: this.state.search && this.state.search.trim(),
+      page: 1,
+      size: this.state.size && parseInt(this.state.size),
+      type: this.state.type && this.state.type.trim()
+    }
   },
 
-  handlePerChange: function(e) {
-    let per = e.target.value;
-    this.setState({
-     current: this.getNewCurrentPage(this.state.per, per),
-     per: per
-    })
+  handleQueryChange: function(newQuery) {
+    let routeName = _.last(this.context.router.getCurrentRoutes()).name;
+    let params = this.context.router.getCurrentParams();
+    let query = _.merge(this.context.router.getCurrentQuery(), this.getQueryFromState(), newQuery);
+
+    this.context.router.transitionTo(routeName, params, _.omit(query, function(value) {
+      return !value;
+    }));
   },
 
   handlePageChange: function(page) {
-    this.executeAction(fetchCalls, {
-      carrierId: this.state.carrierId,
-      fromTime: getFromTime(this.state.startDate),
-      toTime: getToTime(this.state.endDate),
-      type: this.state.type,
-      size: this.state.per,
-      page: +page-1 || 0
-    });
-
-    this.setState({
-      current: page,
-      pageNumber: page
-    });
+    this.handleQueryChange({ page: page });
   },
 
-  handleStartDateChange: function(date) {
-    this.executeAction(fetchCalls, {
-      carrierId: this.state.carrierId,
-      fromTime: getFromTime(date),
-      toTime: getToTime(this.state.endDate),
-      type: this.state.type,
-      size: this.state.per,
-      page: 0
-    });
-
-    this.setState({
-      startDate: date,
-      current: 1
-    });
+  handleStartDateChange: function(momentDate) {
+    let date = moment(momentDate).format('L');
+    this.handleQueryChange({ startDate: date, page: 1 });
   },
 
-  handleEndDateChange: function(date) {
-    this.executeAction(fetchCalls, {
-      carrierId: this.state.carrierId,
-      fromTime: getFromTime(this.state.startDate),
-      toTime: getToTime(date),
-      type: this.state.type,
-      search: this.state.search,
-      size: this.state.per,
-      page: 0
-    });
-
-    this.setState({
-      endDate: date,
-      current: 1
-    });
+  handleEndDateChange: function(momentDate) {
+    let date = moment(momentDate).format('L');
+    this.handleQueryChange({ endDate: date, page: 1 });
   },
 
   handleOnnetClick: function(e) {
     e.preventDefault();
 
-    this.executeAction(fetchCalls, {
-      carrierId: this.state.carrierId,
-      fromTime: getFromTime(this.state.startDate),
-      toTime: getToTime(this.state.endDate),
-      type: 'ONNET',
-      search: this.state.search,
-      size: this.state.per,
-      page: 0
-    });
+    let type = null;
 
-    this.setState({
-      type: 'ONNET'
-    });
+    if (this.state.type !== 'ONNET') {
+      type = 'ONNET'
+    }
+
+    this.handleQueryChange({ type: type });
   },
 
   handleOffnetClick: function(e) {
     e.preventDefault();
 
-    this.executeAction(fetchCalls, {
-      carrierId: this.state.carrierId,
-      fromTime: getFromTime(this.state.startDate),
-      toTime: getToTime(this.state.endDate),
-      type: 'OFFNET',
-      search: this.state.search,
-      size: this.state.per,
-      page: 0
-    });
+    let type = null;
 
+    if (this.state.type !== 'OFFNET') {
+      type = 'OFFNET'
+    }
+
+    this.handleQueryChange({ type: type });
+  },
+
+  handleUsernameChange: function(e) {
     this.setState({
-      type: 'OFFNET'
+      search: e.target.value
     });
   },
 
   handleSearchSubmit: function(e) {
-    e.preventDefault();
-
-    this.executeAction(fetchCalls, {
-      carrierId: this.state.carrierId,
-      fromTime: getFromTime(this.state.startDate),
-      toTime: getToTime(this.state.endDate),
-      type: this.state.type,
-      search: this.state.search,
-      size: this.state.per,
-      page: 0
-    });
+    // on enter pressed
+    if (e.which == 13) {
+      this.handleQueryChange();
+    }
   },
 
-  handleSearchChange: function(e) {
-    this.setState({
-      search: e.target.value
-    });
+  _handleStartDateClick: function() {
+    this.refs.startDatePicker.handleFocus();
+  },
 
-    this.executeAction(fetchCalls, {
-      carrierId: this.state.carrierId,
-      fromTime: getFromTime(this.state.startDate),
-      toTime: getToTime(this.state.endDate),
-      type: this.state.type,
-      search: this.state.search,
-      size: this.state.per,
-      page: 0
-    });
+  _handleEndDateClick: function() {
+    this.refs.endDatePicker.handleFocus();
   },
 
   render: function() {
+    let params = this.context.router.getCurrentParams();
+
     return (
       <div className="row">
         <nav className="top-bar top-bar--inner">
           <div className="top-bar-section">
             <ul className="left top-bar--inner tab--inverted">
               <li className="top-bar--inner tab--inverted__title">
-                <a className="" href="">Overview</a>
+                <Link to="calls-overview" params={params}>Overview</Link>
               </li>
               <li className="top-bar--inner tab--inverted__title">
-                <a className="active" href="">Details Report</a>
+                <Link to="calls-details" params={params}>Details Report</Link>
               </li>
             </ul>
 
-            <div className="start-date-wrap large-2 columns left">
-              <DatePicker
-                key="start-date"
-                dateFormat="MM/DD/YYYY"
-                selected={this.state.startDate}
-                minDate={this.state.minDate}
-                maxDate={this.state.maxDate}
-                onChange={this.handleStartDateChange}
-              />
-            </div>
-
-            <div className="end-date-wrap large-2 columns left">
-              <DatePicker
-                key="end-date"
-                dateFormat="MM/DD/YYYY"
-                selected={this.state.endDate}
-                minDate={this.state.minDate}
-                maxDate={this.state.maxDate}
-                onChange={this.handleEndDateChange}
-              />
-            </div>
+            <ul className="left top-bar--inner">
+              <li className="top-bar--inner">
+                <div className="date-range-picker left">
+                  <i className="date-range-picker__icon icon-calendar left" />
+                  <div className="date-input-wrap left" onClick={this._handleStartDateClick}>
+                    <span className="left date-range-picker__date-span">{this.state.startDate}</span>
+                    <DatePicker
+                      ref="startDatePicker"
+                      key="start-date"
+                      dateFormat="MM/DD/YYYY"
+                      selected={moment(this.state.startDate, 'L')}
+                      maxDate={moment(this.state.endDate, 'L')}
+                      onChange={this.handleStartDateChange}
+                    />
+                  </div>
+                  <i className="date-range-picker__separator left">-</i>
+                  <div className="date-input-wrap left" onClick={this._handleEndDateClick}>
+                    <span className="left date-range-picker__date-span">{this.state.endDate}</span>
+                    <DatePicker
+                      ref="endDatePicker"
+                      key="end-date"
+                      dateFormat="MM/DD/YYYY"
+                      selected={moment(this.state.endDate, 'L')}
+                      minDate={moment(this.state.startDate, 'L')}
+                      onChange={this.handleEndDateChange}
+                    />
+                  </div>
+                </div>
+              </li>
+            </ul>
 
             <div className="call-type-filter large-3 columns left top-bar-section">
               <ul className="button-group round">
-                <li><a className="button icon-onnet" onClick={this.handleOnnetClick}></a></li>
-                <li><a className="button icon-offnet" onClick={this.handleOffnetClick}></a></li>
+                <li>
+                  <a className={classNames('button', 'icon-onnet', { active: this.state.type == 'ONNET' })} onClick={this.handleOnnetClick}></a>
+                </li>
+                <li>
+                  <a className={classNames('button', 'icon-offnet', { active: this.state.type == 'OFFNET' })} onClick={this.handleOffnetClick}></a>
+                </li>
               </ul>
             </div>
 
-            <div className="call-search large-3 columns right">
+            <div className="call-search top-bar-section right">
               <form onSubmit={this.handleSearchSubmit}>
-                <input type="text" placeholder="Username/Mobile" onChange={this.handleSearchChange} />
+                <input className="top-bar-section__query-input" type="text" placeholder="Username/Mobile" onChange={this.handleUsernameChange} onKeyPress={this.handleSearchSubmit} />
               </form>
             </div>
           </div>
         </nav>
 
         <div className="large-24 columns">
-            <CallsTable calls={this.state.calls} current={this.state.current} per={this.state.per} />
-            <Pagination total={this.state.callsCount} current={this.state.current} per={this.state.per} onPageChange={this.handlePageChange} />
+          <CallsTable
+            totalRec={this.state.callsCount}
+            calls={this.state.calls}
+            page={this.state.page}
+            pageRec={this.state.size}
+            onPageChange={this.handlePageChange}
+          />
         </div>
-        <LoadingSpinner/>
       </div>
     );
   }

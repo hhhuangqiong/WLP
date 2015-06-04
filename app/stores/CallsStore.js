@@ -6,10 +6,12 @@ var CallsStore = createStore({
 
   handlers: {
     'FETCH_CALLS_SUCCESS': 'handleCallsChange',
-    'FETCH_CALLS_PAGE_SUCCESS': 'handleCallsChange'
+    'FETCH_CALLS_PAGE_SUCCESS': 'handleCallsChange',
+    'FETCH_CALLS_WIDGETS_SUCCESS': 'handleCallsWidgetsChange'
   },
 
   initialize: function () {
+    this.widgets = [];
     this.calls = [];
     this.offset = 0;
     this.pageNumber = 1;
@@ -30,12 +32,26 @@ var CallsStore = createStore({
     this.emitChange();
   },
 
+  handleCallsWidgetsChange: function(payload) {
+    if (payload && payload.widgets) {
+      this.widgets = payload.widgets;
+    } else {
+      this.widgets = [];
+    }
+
+    this.emitChange();
+  },
+
   getCallsCount: function() {
     return this.callsCount;
   },
 
   getCalls: function() {
     return this.calls;
+  },
+
+  getWidgets: function() {
+    return this.widgets;
   },
 
   getState: function () {
@@ -46,7 +62,8 @@ var CallsStore = createStore({
       pageSize: this.pageSize,
       callsCount: this.callsCount,
       totalPages: this.totalPages,
-      params: this.params
+      params: this.params,
+      widgets: this.widgets
     };
   },
 
@@ -62,6 +79,7 @@ var CallsStore = createStore({
     this.callsCount = state.callsCount;
     this.totalPages = state.totalPages;
     this.params = state.params;
+    this.widgets = state.widgets;
   }
 });
 

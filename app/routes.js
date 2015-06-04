@@ -31,7 +31,8 @@ export default (
       <Route name="sms-details" path="/:role/:identity?/sms/details" handler={require('./components/SMS')} />
       <Route name="settings" path="/:role/:identity?/settings" handler={require('./components/Overview')} />
       <Route name="top-up" path="/:role/:identity?/top-up" handler={require('./components/TopUp')} />
-      <Route name="calls" path="/:role/:identity?/calls" handler={require('./components/Calls')} />
+      <Route name="calls-overview" path="/:role/:identity?/calls" handler={require('./components/CallsOverview')} />
+      <Route name="calls-details" path="/:role/:identity?/calls/details" handler={require('./components/Calls')} />
       <Route name="im" path="/:role/:identity?/im" handler={require('./components/Im')} />
       <Route name="vsf" path="/:role/:identity?/vsf" handler={require('./components/Overview')} />
 

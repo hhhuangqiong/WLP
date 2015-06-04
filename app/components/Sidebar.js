@@ -39,7 +39,7 @@ let navSections = [
   {
     name: 'Calls',
     icon: 'icon-menucalls',
-    routeName: 'calls'
+    routeName: 'calls-overview'
   },
   {
     name: 'IM',

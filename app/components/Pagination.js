@@ -2,8 +2,6 @@ import _ from 'lodash';
 import React from 'react';
 import classNames from 'classnames';
 
-const maxDisplay = 10;
-
 var Pagination = React.createClass({
   propTypes: {
     current: React.PropTypes.number.isRequired,
@@ -70,9 +68,11 @@ var Pagination = React.createClass({
     return pages;
   },
 
-  goToPage: function() {
-    let page = this.refs.goInput.getDOMNode().value.trim();
-    this.props.onPageChange(page);
+  _goToPage: function() {
+    let page = React.findDOMNode(this.refs.goPageInput).value.trim();
+    if (page > 0 && page <= this.getLastPage()) {
+      this.props.onPageChange(page);
+    }
   },
 
   render: function() {
@@ -105,17 +105,33 @@ var Pagination = React.createClass({
     }
 
     return (
-      <ul className={classNames('pagination', { 'hide': this.props.total == 0 })} role="menubar" aria-label="Pagination">
-        {leftArrow}
-        {this.getAvailablePages().map((i)=>{
-          return (
-            <li key={i} className={classNames({'current': this.props.current == i})} onClick={_.bindKey(this.props, 'onPageChange', i)}>
-              <a>{i}</a>
-            </li>
-          );
-        })}
-        {rightArrow}
-      </ul>
+      <div>
+        <ul className={classNames('left', 'pagination', { 'hide': this.props.total == 0 })} role="menubar" aria-label="Pagination">
+          {leftArrow}
+          {this.getAvailablePages().map((i)=>{
+            return (
+              <li key={i} className={classNames({'current': this.props.current == i})} onClick={_.bindKey(this.props, 'onPageChange', i)}>
+                <a>{i}</a>
+              </li>
+            );
+          })}
+          {rightArrow}
+        </ul>
+        <form>
+          <div className="row">
+            <div className="large-3 columns">
+              <div className="row collapse postfix-round">
+                <div className="large-13 columns">
+                  <input ref="goPageInput" type="text" name="goPage" placeholder="Value" />
+                </div>
+                <div className="large-11 columns">
+                  <a className="button postfix" onClick={this._goToPage}>Go</a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </form>
+      </div>
     );
   }
 });

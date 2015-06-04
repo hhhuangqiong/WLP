@@ -121,6 +121,12 @@
                 }
             }
         }
+
+      &__query-input {
+        width: rem-calc(220);
+        font-size: rem-calc(12);
+        border-radius: rem-calc(14);
+      }
     }
     &--inner{
         height: $topbar-inner-height;
