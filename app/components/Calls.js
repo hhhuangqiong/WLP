@@ -188,15 +188,15 @@ var Calls = React.createClass({
       search: e.target.value
     });
 
-    this.executeAction(fetchCalls, {
-      carrierId: this.state.carrierId,
-      fromTime: getFromTime(this.state.startDate),
-      toTime: getToTime(this.state.endDate),
-      type: this.state.type,
-      search: this.state.search,
-      size: this.state.per,
-      page: 0
-    });
+    // this.executeAction(fetchCalls, {
+    //   carrierId: this.state.carrierId,
+    //   fromTime: getFromTime(this.state.startDate),
+    //   toTime: getToTime(this.state.endDate),
+    //   type: this.state.type,
+    //   search: this.state.search,
+    //   size: this.state.per,
+    //   page: 0
+    // });
   },
 
   render: function() {

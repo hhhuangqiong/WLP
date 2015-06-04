@@ -2,20 +2,18 @@ import React from 'react';
 import FluxibleMixin from 'fluxible/addons/FluxibleMixin';
 import {Link} from 'react-router';
 
-import CallsStore from '../stores/CallsStore';
-
 import moment from 'moment';
 import _ from 'lodash';
 
 var Countries = require('../data/countries.json');
 
-var CallsTable = React.createClass({
+var ImTable = React.createClass({
   contextTypes: {
     router: React.PropTypes.func.isRequired
   },
 
   componentWillReceiveProps: function(nextProps) {
-    this.props.calls = nextProps.calls;
+    this.props.im = nextProps.im;
     this.props.current = nextProps.current;
     this.props.per = nextProps.per;
   },
@@ -32,8 +30,8 @@ var CallsTable = React.createClass({
     let params = this.context.router.getCurrentParams();
 
     let rows;
-    if (!_.isEmpty(this.props.calls)) {
-      rows = this.props.calls.map((u) => {
+    if (!_.isEmpty(this.props.im)) {
+      rows = this.props.im.map((u) => {
 
           let callerCountry = _.find(Countries, (c) => {
             return c.alpha2.toLowerCase() == u.origin
@@ -43,58 +41,54 @@ var CallsTable = React.createClass({
             return c.alpha2.toLowerCase() == u.destination
           });
 
-          let callStart = moment(u.start_time).format('h:mm:ss a');
-          let callEnd = moment(u.end_time).format('h:mm:ss a');
-          let callDate = moment(u.start_time).format('MMMM DD YYYY');
+          let imDate = moment(u.timestamp).format('MMMM DD YYYY, hh:mm:ss a');
 
-          return <tr className="calls-table--row" key={u.call_id}>
-            <td className="text-center calls-table--cell"><span className={u.success ? "label status success" : "label status alert"}></span></td>
-            <td className="calls-table--cell">
-              <span className="left duration">{u.duration}s</span>
+          let type = u.message_type
+
+          return <tr className="im-table--row" key={u.timestamp}>
+            <td className="im-table--cell">
               <div className="left timestamp">
-                <span className="call_time">{callStart} - {callEnd}</span>
-                <span className="call_date">{callDate}</span>
+                <span className="call_date">{imDate}</span>
               </div>
             </td>
-            <td className="calls-table--cell"><span className={"call_type " + u.type.toLowerCase()}>{u.message_type}</span></td>
-            <td className="calls-table--cell">
-              <div className="caller_info">
-                <span className={u.caller_country}></span>
-                <span className="caller">{u.caller}</span>
+            <td className="im-table--cell"><span className={"im_type " + u.type.toLowerCase()}>{(u.file_size>0)?u.file_size:u.message_size}</span></td>
+            <td className="im-table--cell">
+              <div className="sender_info">
+                <span className={u.origin}></span>
+                <span className="sender">{u.sender}</span>
                 <span>{(callerCountry) ? callerCountry.name : ''}</span>
               </div>
-              <div className="callee_info">
-                <span className={u.callee_country ? u.callee_country : ''}></span>
-                <span className="callee">{u.recipient}</span>
+            </td>
+            <td className="im-table--cell">
+              <div className="recipient_info">
+                <span className={u.destination ? u.destination : ''}></span>
+                <span className="recipient">{u.recipient}</span>
                 <span>{(calleeCountry) ? calleeCountry.name : ''}</span>
               </div>
             </td>
-            <td className="calls-table--cell"><span className="remark">{u.bye_reason}</span></td>
           </tr>
         }
       );
     } else {
-      rows = <tr className="calls-table--row">
-          <td className="text-center calls-table--cell"></td>
-          <td className="calls-table--cell"></td>
-          <td className="calls-table--cell"></td>
-          <td className="calls-table--cell"></td>
-          <td className="calls-table--cell"></td>
+      rows = <tr className="im-table--row">
+          <td className="im-table--cell"></td>
+          <td className="im-table--cell"></td>
+          <td className="im-table--cell"></td>
+          <td className="im-table--cell"></td>
         </tr>
     }
 
     return (
-      <table className="large-24 clickable calls-table" key="calls-table">
-        <thead className="calls-table--head">
-          <tr className="calls-table--row">
-            <th className="calls-table--cell"></th>
-            <th className="calls-table--cell">Duration</th>
-            <th className="calls-table--cell">Type</th>
-            <th className="calls-table--cell">Mobile & Destination</th>
-            <th className="calls-table--cell">Remark</th>
+      <table className="large-24 clickable im-table" key="im-table">
+        <thead className="im-table--head">
+          <tr className="im-table--row">
+            <th className="im-table--cell">Date & Time</th>
+            <th className="im-table--cell">Type/Filesize/ID</th>
+            <th className="im-table--cell">Mobile & Destination</th>
+            <th className="im-table--cell"></th>
           </tr>
         </thead>
-        <tbody className="calls-table--body" key="calls-table--body">
+        <tbody className="im-table--body" key="im-table--body">
           {rows}
         </tbody>
       </table>
@@ -102,4 +96,4 @@ var CallsTable = React.createClass({
   }
 });
 
-export default CallsTable;
+export default ImTable;
