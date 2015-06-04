@@ -7,36 +7,6 @@ import AuthStore from '../stores/AuthStore';
 
 let navSections = [
   {
-    name: 'overview',
-    icon: 'icon-menuoverview',
-    routeName: 'overview'
-  },
-  {
-    name: 'account',
-    icon: 'icon-menuaccount',
-    routeName: 'accounts'
-  },
-  {
-    name: 'company',
-    icon: 'icon-menucompany',
-    routeName: 'companies'
-  },
-  {
-    name: 'setting',
-    icon: 'icon-menusetting',
-    routeName: 'settings'
-  },
-  {
-    name: 'End users',
-    icon: 'icon-menuenduser',
-    routeName: 'end-users'
-  },
-  {
-    name: 'Top up',
-    icon: 'icon-menutopup',
-    routeName: 'top-up'
-  },
-  {
     name: 'Calls',
     icon: 'icon-menucalls',
     routeName: 'calls'
@@ -45,16 +15,6 @@ let navSections = [
     name: 'IM',
     icon: 'icon-menuim',
     routeName: 'im'
-  },
-  {
-    name: 'SMS',
-    icon: 'icon-menuim',
-    routeName: 'sms-overview'
-  },
-  {
-    name: 'Store',
-    icon: 'icon-menustore',
-    routeName: 'vsf'
   }
 ];
 

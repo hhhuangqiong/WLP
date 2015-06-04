@@ -71,11 +71,6 @@ let SignIn = React.createClass({
               </div>
             </div>
             <div className="row">
-              <div className="large-24 columns">
-                <Link to="forget-password">Forgot password?</Link>
-              </div>
-            </div>
-            <div className="row">
               <div className="large-16 columns">
                 <input ref="rememberMe" type="checkbox" name="rememberMe" />
                 <label>Remember me</label>

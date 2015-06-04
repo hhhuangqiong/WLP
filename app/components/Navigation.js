@@ -61,30 +61,14 @@ var Navigation = React.createClass({
     return (
       <section className="top-bar-section navigation-bar">
         <ul className="right">
-          {this.renderCreateButton()}
           <li className="navigation-bar__item">
             <Link to="TODO">report issue</Link>
-          </li>
-          <li className="navigation-bar__item">
-            <Link to="TODO">
-              <i className="icon-question"/>
-            </Link>
-          </li>
-          <li className="has-dropdown not-click navigation-bar__item">
-            <Link to="TODO">
-              <i className="icon-companymenu"/>
-            </Link>
-            <CompanySwitcher />
           </li>
           <li className="has-dropdown not-click navigation-bar__item">
             <a>hi, username
               <i className="icon-more"/>
             </a>
             <ul className="dropdown">
-              <li className="navigation-bar__item">
-                <a onClick={this.modalControl}><i className="icon-change-password"></i><span>change password</span></a>
-              </li>
-              <li className="divider"></li>
               <li className="navigation-bar__item">
                 <a href="" onClick={this.handleSignOut}>
                   <i className="icon-logout"></i>
