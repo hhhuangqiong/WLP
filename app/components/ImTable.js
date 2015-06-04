@@ -5,6 +5,8 @@ import {Link} from 'react-router';
 import moment from 'moment';
 import _ from 'lodash';
 
+import Pagination from './Pagination';
+
 var Countries = require('../data/countries.json');
 
 var Tooltip = require('rc-tooltip');
@@ -45,7 +47,17 @@ var ImTable = React.createClass({
 
           let imDate = moment(u.timestamp).format('MMMM DD YYYY, hh:mm:ss a');
 
-          let messageTypeClasses = [text=>'icon-text',image=>'icon-image',audio=>'icon-audio',video=>'icon-video',sharing=>'icon-ituneyoutube',undefined=>'undefined'];
+          let messageTypeClasses = {
+            animation: 'icon-animation',
+            text: 'icon-text',
+            image: 'icon-image',
+            audio: 'icon-audio',
+            video: 'icon-video',
+            sharing: 'icon-ituneyoutube',
+            sticker: 'icon-sticker',
+            undefined: 'undefined',
+            'voice_sticker': 'icon-audio'
+          };
 
           let type = messageTypeClasses[u.message_type];
 
@@ -77,7 +89,7 @@ var ImTable = React.createClass({
             <td className="im-table--cell">
               <span className={"im-message-type-icon " + type + " " + u.message_type}></span>
               <div className="im-message-type-info">
-                <span className={"im-message-type-text"}>{(u.message_type)?u.message_type:'N/A'}</span>
+                <span className={"im-message-type-text"}>{(u.message_type && u.message_type !== 'undefined')?u.message_type:'N/A'}</span>
                 <br/>
                 <span className={"im-message-type-size"}>{(u.file_size>0) ? u.file_size+'kb' : u.message_size+'b'}</span>
               </div>
@@ -102,7 +114,6 @@ var ImTable = React.createClass({
       );
     } else {
       rows = <tr className="im-table--row">
-          <td className="text-center im-table--cell"></td>
           <td className="im-table--cell"></td>
           <td className="im-table--cell"></td>
           <td className="im-table--cell"></td>
@@ -115,10 +126,9 @@ var ImTable = React.createClass({
       <table className="large-24 clickable im-table" key="im-table">
         <thead className="im-table--head">
           <tr className="im-table--row">
-            <th className="im-table--cell"></th>
-            <th className="im-table--cell">Date & Time</th>
+            <th className="im-table--cell">Date &amp; Time</th>
             <th className="im-table--cell">Type / Filesize</th>
-            <th className="im-table--cell">Mobile & Destination</th>
+            <th className="im-table--cell">Mobile &amp; Destination</th>
             <th className="im-table--cell"></th>
             <th className="im-table--cell"></th>
           </tr>
@@ -126,6 +136,13 @@ var ImTable = React.createClass({
         <tbody className="im-table--body" key="im-table--body">
           {rows}
         </tbody>
+        <tfoot>
+          <tr>
+            <td colSpan="5">
+              <Pagination total={this.props.total} current={this.props.current} per={this.props.per} onPageChange={this.props.onPageChange} />
+            </td>
+          </tr>
+        </tfoot>
       </table>
     );
   }

@@ -4,7 +4,6 @@ import { Route, NotFoundRoute, Redirect, DefaultRoute } from 'react-router';
 // convention: separate path by "-" following the component name
 export default (
   <Route handler={require('./components/App')}>
-    <Redirect from="/" to="main" />
 
     // placeholder for not-yet-complete components/link
     <Route name="TODO" handler={require('./components/_TODO')}/>

@@ -15,8 +15,6 @@ import ImStore from '../stores/ImStore';
 import {fetchIm} from '../actions/fetchIm';
 
 import ImTable from './ImTable';
-import Pagination from './Pagination';
-//import ToggleButton from './ToggleButton';
 import LoadingSpinner from './common/LoadingSpinner';
 
 var getFromTime = function(dateString=moment()) {
@@ -314,8 +312,7 @@ var Im = React.createClass({
         </nav>
 
         <div className="large-24 columns">
-            <ImTable im={this.state.calls} current={this.state.current} per={this.state.per} />
-            <Pagination total={this.state.callsCount} current={this.state.current} per={this.state.per} onPageChange={this.handlePageChange} />
+            <ImTable im={this.state.calls} total={this.state.callsCount} current={this.state.current} per={this.state.per} onPageChange={this.handlePageChange} />
         </div>
         <LoadingSpinner/>
       </div>

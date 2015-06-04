@@ -355,7 +355,7 @@ api.get('/carriers/:carrierId/im', function(req, res) {
             error: err
           });
 
-          recipient_result = result;
+        recipient_result = result;
         getRecipientResult();
       });
     }
@@ -370,7 +370,7 @@ api.get('/carriers/:carrierId/im', function(req, res) {
             error: err
           });
 
-          sender_result = result;
+        sender_result = result;
 
         let allResult = _.merge(sender_result,recipient_result);
 
