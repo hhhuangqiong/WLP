@@ -3,8 +3,8 @@
 ## Branch
 
 ```
-# To checkout based on the remote branch, 'bolt'
-git checkout -t origin/<branch> -b <topic-branch-name>;
+# To checkout based on the remote branch
+git checkout -t origin/<branch> -b <topic-branch-name>
 # e.g.,
 git checkout -t origin/bolt -b my-task
 
@@ -14,14 +14,14 @@ git branch -u origin/<branch>
 git branch -u origin/bolt
 
 # To push for code review
-git push origin @:refs/for/<branch>;
+git push origin @:refs/for/<branch>
 # e.g.,
 git push origin @:refs/for/bolt
 
 # To rebase after fetch, `git fetch`
-git rebase -p origin/<branch>;
+git rebase -p origin/<branch>
 # e.g.,
-git rebase -p origin/bolt;
+git rebase -p origin/bolt
 ```
 
 ## Deployment

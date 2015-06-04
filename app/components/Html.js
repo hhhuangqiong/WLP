@@ -1,6 +1,8 @@
 'use strict';
 import React from 'react';
 
+import Version from './common/Version';
+
  //TODO may need to detect which file to import based on environment
 import webpackConfig from '../../webpack.config.js';
 
@@ -24,7 +26,8 @@ var Html = React.createClass({
         <link rel="stylesheet" href="/stylesheets/map-sprite.css" />
       </head>
       <body>
-      <div id="app" dangerouslySetInnerHTML={{__html: this.props.markup}}></div>
+        <div id="app" dangerouslySetInnerHTML={{__html: this.props.markup}}></div>
+        <Version />
       </body>
       <script dangerouslySetInnerHTML={{__html: this.props.state}}></script>
       <script src="/vendor/jQuery/dist/jquery.js"></script>
