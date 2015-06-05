@@ -72,8 +72,6 @@ let SignIn = React.createClass({
             </div>
             <div className="row">
               <div className="large-16 columns">
-                <input ref="rememberMe" type="checkbox" name="rememberMe" />
-                <label>Remember me</label>
               </div>
               <div className="large-8 columns">
                 <button className="button--primary right" onClick={this.handleSignIn}>sign in</button>
