@@ -19,6 +19,9 @@ webpack          = require 'webpack'
 webpackConfig    = require './webpack.config'
 WebpackDevServer = require 'webpack-dev-server'
 
+spriteSmith = require 'gulp.spritesmith'
+merge       = require 'merge-stream'
+
 {argv}           = require 'yargs'
 {exec}           = require 'child_process'
 
@@ -27,13 +30,14 @@ console.timeEnd 'Loading plugins'
 # reduce startup loading time
 browserSync = null
 
-
 src =
   allJS:    'app/**/*.js'
 
 dest =
   build: './build'
-  app: "./node_modules/app"
+  app:   './node_modules/app'
+  css:   'public/stylesheets'
+  image: 'public/images'
 
 gulp.task 'test', (cb) ->
   gulp.src [ "#{dest.app}/**/*.js" ]
@@ -49,6 +53,21 @@ gulp.task 'test', (cb) ->
 gulp.task 'default', ['clean', 'webpack-dev-server', 'nodemon', 'watch'], ->
   console.log 'done \uD83D\uDE80'
   return
+
+gulp.task 'sprite', ->
+  spriteData = gulp.src("#{dest.image}/flag_256/*png")
+    .pipe spriteSmith({
+      imgName: '../images/map-sprite.png'
+      cssName: 'map-sprite.css'
+    })
+
+  imgStream = spriteData.img
+    .pipe gulp.dest(dest.image)
+
+  cssStream = spriteData.css
+    .pipe gulp.dest(dest.css)
+
+  merge imgStream, cssStream
 
 gulp.task 'watch', ->
   gulp.watch 'public/scss/**/*.scss', ['scss']
@@ -130,7 +149,6 @@ gulp.task 'nodemon', ->
     console.log 'nodemon restarted! \uD83D\uDE80'
     return
   isNodemonRunning = true
-
 
 # not trigger 'browser-sync'; `gulp browser-sync` separately if needed
 gulp.task 'browser-sync', ->
