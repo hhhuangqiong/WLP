@@ -7,6 +7,8 @@ import _ from 'lodash';
 
 var Countries = require('../data/countries.json');
 
+var Tooltip = require('rc-tooltip');
+
 var ImTable = React.createClass({
   contextTypes: {
     router: React.PropTypes.func.isRequired
@@ -43,7 +45,27 @@ var ImTable = React.createClass({
 
           let imDate = moment(u.timestamp).format('MMMM DD YYYY, hh:mm:ss a');
 
-          let type = u.message_type
+          let messageTypeClasses = [text=>'icon-text',image=>'icon-image',audio=>'icon-audio',video=>'icon-video',sharing=>'icon-ituneyoutube',undefined=>'undefined'];
+
+          let type = messageTypeClasses[u.message_type];
+
+          let recipient_info;
+
+          if (u.recipients != null && _.isArray(u.recipients)) {
+            recipient_info = <div className="recipient_info">
+                      <div className="icon-multiuser"></div>
+                        <Tooltip placement="right" trigger={['hover']} overlay={u.recipients.map((n)=>{return <span className="recip-info">{n}</span>})}>
+                          <span className="recipient-num">{u.recipients.length} Recipients</span>
+                        </Tooltip>
+                    </div>
+          } else {
+            recipient_info =  <div className="recipient_info">
+                                <span className={u.destination ? u.destination : ''}></span>
+                                <span className="recipient">{u.recipient}</span>
+                                <br/>
+                                <span>{(calleeCountry) ? calleeCountry.name : ''}</span>
+                              </div>
+          }
 
           return <tr className="im-table--row" key={u.timestamp}>
             <td className="text-center im-table--cell"><span className={u.success ? "label status success" : "label status alert"}></span></td>
@@ -52,20 +74,28 @@ var ImTable = React.createClass({
                 <span className="call_date">{imDate}</span>
               </div>
             </td>
-            <td className="im-table--cell"><span className={"im_type " + u.type.toLowerCase()}>{u.message_type}</span></td>
             <td className="im-table--cell">
+              <span className={"im-message-type-icon " + type + " " + u.message_type}></span>
+              <div className="im-message-type-info">
+                <span className={"im-message-type-text"}>{(u.message_type)?u.message_type:'N/A'}</span>
+                <br/>
+                <span className={"im-message-type-size"}>{(u.file_size>0) ? u.file_size+'kb' : u.message_size+'b'}</span>
+              </div>
+            </td>
+            <td className="im-table--cell">
+              <span className={u.origin}></span>
               <div className="sender_info">
-                <span className={u.origin}></span>
                 <span className="sender">{u.sender}</span>
+                <br/>
                 <span>{(callerCountry) ? callerCountry.name : ''}</span>
               </div>
             </td>
             <td className="im-table--cell">
-              <div className="recipient_info">
-                <span className={u.destination ? u.destination : ''}></span>
-                <span className="recipient">{u.recipient}</span>
-                <span>{(calleeCountry) ? calleeCountry.name : ''}</span>
-              </div>
+                <div className="icon-arrow">
+                </div>
+            </td>
+            <td className="im-table--cell">
+                {recipient_info}
             </td>
           </tr>
         }
@@ -73,6 +103,7 @@ var ImTable = React.createClass({
     } else {
       rows = <tr className="im-table--row">
           <td className="text-center im-table--cell"></td>
+          <td className="im-table--cell"></td>
           <td className="im-table--cell"></td>
           <td className="im-table--cell"></td>
           <td className="im-table--cell"></td>
@@ -86,8 +117,9 @@ var ImTable = React.createClass({
           <tr className="im-table--row">
             <th className="im-table--cell"></th>
             <th className="im-table--cell">Date & Time</th>
-            <th className="im-table--cell">Type/Filesize/ID</th>
+            <th className="im-table--cell">Type / Filesize</th>
             <th className="im-table--cell">Mobile & Destination</th>
+            <th className="im-table--cell"></th>
             <th className="im-table--cell"></th>
           </tr>
         </thead>
