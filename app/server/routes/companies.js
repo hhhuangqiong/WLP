@@ -18,6 +18,10 @@ api.post('/companies', multipart, function(req, res) {
   return controller.saveProfile(req, res);
 });
 
+api.get('/companies/:carrierId/info', function(req, res) {
+  return controller.getInfo(req, res);
+});
+
 api.get('/companies/:carrierId/service', function(req, res) {
   return controller.getApplications(req, res);
 });

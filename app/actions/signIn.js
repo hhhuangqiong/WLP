@@ -20,6 +20,8 @@ module.exports = function(context, payload, done) {
 
     context.cookie.set('token', auth.token);
     context.cookie.set('user', auth.user._id);
+    context.cookie.set('username', auth.user.username);
+    context.cookie.set('displayName', auth.user.displayName);
     context.cookie.set('carrierId', auth.user.carrierId);
     context.cookie.set('role', auth.user.role);
 
