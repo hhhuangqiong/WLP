@@ -53,6 +53,7 @@
     "q": "^1.1.2",
     "qs": "^3.0.0",
     "rand-token": "^0.2.1",
+    "rc-tooltip": "^1.2.0",
     "react": "^0.13.1",
     "react-crouton": "^0.2.5",
     "react-datepicker": "^0.8.0",
