@@ -15,7 +15,7 @@ module.exports = {
       role = role ? '/' + role : '';
       identity = identity ? '/' + identity : '';
 
-      let destination = `${role}${identity}/calls-overview`;
+      let destination = `${role}${identity}/calls`;
 
       if (isAuthenticated) {
         transition.redirect(destination);

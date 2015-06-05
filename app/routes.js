@@ -12,7 +12,8 @@ export default (
     </Route>
 
     <Route handler={require('./components/common/Protected')}>
-      <Route name="calls" path="/:role/:identity?/calls" handler={require('./components/Calls')} />
+      <Route name="calls-overview" path="/:role/:identity?/calls" handler={require('./components/CallsOverview')} />
+      <Route name="calls-details" path="/:role/:identity?/calls/details" handler={require('./components/Calls')} />
       <Route name="im" path="/:role/:identity?/im" handler={require('./components/Im')} />
     </Route>
 

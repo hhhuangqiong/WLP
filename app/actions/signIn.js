@@ -28,7 +28,7 @@ module.exports = function(context, payload, done) {
     // before the transition
     let role = auth.user.role ? '/' + auth.user.role : '';
     let identity = auth.user.carrierId ? '/' + auth.user.carrierId : '';
-    let destination = `${role}${identity}/calls-overview`;
+    let destination = `${role}${identity}/calls`;
     context.getRouter().transitionTo(destination);
     done();
   });
