@@ -16,6 +16,7 @@ import {fetchIm} from '../actions/fetchIm';
 
 import ImTable from './ImTable';
 import Pagination from './Pagination';
+import ToggleButton from './ToggleButton';
 import LoadingSpinner from './common/LoadingSpinner';
 
 var getFromTime = function(dateString=moment()) {
@@ -40,7 +41,7 @@ var Im = React.createClass({
       concurrent([
         context.executeAction.bind(context, fetchIm, {
           carrierId: params.identity,
-          fromTime: query.fromTime || getFromTime(moment().startOf('month')),
+          fromTime: query.fromTime || getFromTime(moment().subtract(2,'month').startOf('day')),
           toTime: query.toTime || getToTime(),
           size: 10,
           page: query.page || 1
@@ -58,7 +59,7 @@ var Im = React.createClass({
       calls: this.getStore(ImStore).getCalls(),
       callsCount: this.getStore(ImStore).getCallsCount(),
       carrierId: params.identity,
-      startDate: moment().subtract(1,'year').startOf('day'),
+      startDate: moment().subtract(2,'month').startOf('day'),
       endDate: moment().endOf('day'),
       type: '',
       search: '',
@@ -234,17 +235,17 @@ var Im = React.createClass({
               />
             </div>
 
-            <div className="call-type-filter large-2 columns left top-bar-section">
+            <div className="im-type large-2 columns left top-bar-section">
               <ul className="button-group round">
-                <li><a className="button icon-text" onClick={this.handleOnnetClick}></a></li>
-                <li><a className="button icon-image" onClick={this.handleOffnetClick}></a></li>
-                <li><a className="button icon-audio" onClick={this.handleOffnetClick}></a></li>
-                <li><a className="button icon-video" onClick={this.handleOffnetClick}></a></li>
-                <li><a className="button icon-ituneyoutube" onClick={this.handleOffnetClick}></a></li>
+                <ToggleButton type="text" class="icon-text" status={false} />
+                <ToggleButton type="image" class="icon-image" status={false} />
+                <ToggleButton type="audio" class="icon-audio" status={false} />
+                <ToggleButton type="video" class="icon-video" status={false} />
+                <ToggleButton type="other" class="icon-ituneyoutube" status={false} />
               </ul>
             </div>
 
-            <div className="call-search large-3 columns right">
+            <div className="im-search large-3 columns right">
               <form onSubmit={this.handleSearchSubmit}>
                 <input type="text" placeholder="Username/Mobile" onChange={this.handleSearchChange} />
               </form>
