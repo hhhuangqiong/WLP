@@ -31,12 +31,14 @@
 @import 'components/accordion';
 @import 'components/system-message';
 @import 'components/loading-spinner';
+@import 'components/tooltips';
 
 //page specific style
 @import 'pages/account';
 @import 'pages/company';
 @import 'pages/signin';
 @import 'pages/calls';
+@import 'pages/im';
 
 
 //need to rework these items
