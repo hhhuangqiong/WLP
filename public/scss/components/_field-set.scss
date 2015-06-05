@@ -1,0 +1,18 @@
+.field-set {
+
+  &--validation {
+    position: relative;
+  }
+
+  &--indicator {
+    position: absolute;
+    top: 6px;
+    right: 5px;
+    font-size: 20px;
+    color: rgb(226, 82, 115);
+
+    &:hover {
+      color: rgb(82, 205, 234);
+    }
+  }
+}
