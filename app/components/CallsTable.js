@@ -47,7 +47,7 @@ var CallsTable = React.createClass({
           let callEnd = moment(u.end_time).format('h:mm:ss a');
           let callDate = moment(u.start_time).format('MMMM DD YYYY');
 
-          return <tr className="calls-table--row" key={u.call_id}>
+          return <tr className="calls-table--row" key={u.record_id}>
             <td className="text-center calls-table--cell"><span className={u.success ? "label status success" : "label status alert"}></span></td>
             <td className="calls-table--cell">
               <span className="left duration">{u.duration}s</span>
