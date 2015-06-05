@@ -7,12 +7,14 @@ import Navigation             from '../Navigation';
 import Modal                  from '../Modal';
 import SystemMessage          from './SystemMessage';
 import LoadingSpinner         from './LoadingSpinner';
+import fetchCurrentCompanyInfo from '../../actions/fetchCurrentCompanyInfo';
 import fetchManagingCompanies from '../../actions/fetchManagingCompanies';
 
 var Protected = React.createClass({
   statics: {
     fetchData: function(context, params, query, done) {
       concurrent([
+        context.executeAction.bind(context, fetchCurrentCompanyInfo, { carrierId: params.identity }),
         context.executeAction.bind(context, fetchManagingCompanies, {})
       ], done || function() {});
     }

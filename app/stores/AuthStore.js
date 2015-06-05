@@ -72,6 +72,10 @@ var AuthStore = createStore({
     return this.token;
   },
 
+  getDisplayName: function() {
+    return this.user && this.user.displayName;
+  },
+
   getUserId: function() {
     return this.user && this.user._id;
   },

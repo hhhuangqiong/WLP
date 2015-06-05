@@ -1,6 +1,7 @@
 import _ from 'lodash';
 import React   from 'react';
 import {Link}  from 'react-router';
+import FluxibleMixin from 'fluxible/addons/FluxibleMixin';
 
 import ChangePass from './ChangePass';
 import CompanySwitcher from './CompanySwitcher';
@@ -8,14 +9,33 @@ import CompanySwitcher from './CompanySwitcher';
 import showModal from '../actions/showModal';
 import signOut from '../actions/signOut';
 
+import AuthStore from '../stores/AuthStore';
+
 const companyPages = ['companies', 'company-create', 'company-profile', 'company-widget', 'company-service'];
 const accountPages = ['accounts', 'account-create'];
 
 var Navigation = React.createClass({
+  context: {
+    getStore: React.PropTypes.func.isRequired
+  },
+
+  mixins: [FluxibleMixin],
+
+  statics: {
+    storelisteners: [AuthStore]
+  },
+
   getInitialState: function(){
     return {
-      modal: "close"
+      modal: "close",
+      displayName: this.context.getStore(AuthStore).getDisplayName()
     }
+  },
+
+  onChange: function() {
+    this.setState({
+      displayName: this.context.getStore(AuthStore).getDisplayName()
+    });
   },
 
   modalControl: function () {
@@ -65,7 +85,8 @@ var Navigation = React.createClass({
             <a href="http://support.maaii.com" target="_new">report issue</a>
           </li>
           <li className="has-dropdown not-click navigation-bar__item">
-            <a>hi, username
+            <a>
+              <span>hi, {this.state.displayName}</span>
               <i className="icon-more"/>
             </a>
             <ul className="dropdown">

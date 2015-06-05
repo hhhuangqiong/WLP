@@ -650,5 +650,28 @@ export default class CompanyController {
           error: err
         });
       });
-  };
+  }
+
+  getInfo(req, res) {
+    let { carrierId } = req.params;
+
+    Q.ninvoke(Company, 'findOne', { carrierId: carrierId }, 'name carrierId logo')
+      .then((company)=>{
+        if (!company) {
+          return res.status(404).json({
+            error: 'company not found'
+          });
+        }
+        console.log(company);
+        return res.status(200).json({
+          company: company
+        });
+      })
+      .catch((err)=>{
+        logger.error(err);
+        res.status(err.status).json({
+          error: err
+        });
+      });
+  }
 }

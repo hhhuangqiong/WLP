@@ -117,6 +117,10 @@ portalUserSchema.virtual('password').get(function() {
   this._password = password;
 });
 
+portalUserSchema.virtual('displayName').get(function() {
+  return this.name.first + ' ' + this.name.last;
+});
+
 portalUserSchema.pre('save', function(next) {
   if (this.hashedPassword && !this.password)
     return next();

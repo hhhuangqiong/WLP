@@ -5,8 +5,11 @@ module.exports = function(context, payload, done) {
   debug('Started');
   let token = context.cookie.get('token');
   let user = context.cookie.get('user');
+  let username = context.cookie.get('username');
+  let displayName = context.cookie.get('displayName');
   let carrierId = context.cookie.get('carrierId');
   let role = context.cookie.get('role');
+
   if (!token) {
     context.dispatch('LOAD_SESSION', null);
     done();
@@ -24,6 +27,8 @@ module.exports = function(context, payload, done) {
       token: token,
       user: {
         _id: user,
+        username: username,
+        displayName: displayName,
         carrierId: carrierId,
         role: role
       }

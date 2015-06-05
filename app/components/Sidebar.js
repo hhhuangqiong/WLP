@@ -3,6 +3,7 @@ import classnames from 'classnames';
 import {Link} from 'react-router';
 import {connectToStores} from 'fluxible/addons';
 
+import ApplicationStore from '../stores/ApplicationStore';
 import AuthStore from '../stores/AuthStore';
 
 let navSections = [
@@ -28,6 +29,12 @@ class Sidebar extends React.Component{
     let role = navParams.role || this.props.role;
     let identity = navParams.identity || this.props.carrierId;
 
+    let companyName = this.props.currentCompany && this.props.currentCompany.name;
+    let logoSrc = '/images/logo-m800.png';
+    if (this.props.currentCompany && this.props.currentCompany.name != 'M800') {
+      logoSrc = `/data/${this.props.currentCompany && this.props.currentCompany.logo}`;
+    }
+
     return (
       <div
         className={classnames('mainmenu-bar','vertical', {offcanvas: this.props.isOffCanvas})}
@@ -38,8 +45,8 @@ class Sidebar extends React.Component{
           <li>
             <a className="item mainmenu-bar__item" href="#">
               <label>
-                <i><img src="/images/logo-m800.png"/></i>
-                <span>company name</span>
+                <i><img src={logoSrc} /></i>
+                <span>{companyName}</span>
               </label>
             </a>
           </li>
@@ -73,10 +80,11 @@ Sidebar.contextTypes = {
 
 // TODO: we can get navSections in NavStore
 // with fetchData method to acquire accessible sections from server
-Sidebar = connectToStores(Sidebar, [AuthStore], function (stores, props) {
+Sidebar = connectToStores(Sidebar, [AuthStore, ApplicationStore], function (stores, props) {
   return {
     role: stores.AuthStore.getUserRole(),
-    carrierId: stores.AuthStore.getCarrierId()
+    carrierId: stores.AuthStore.getCarrierId(),
+    currentCompany: stores.ApplicationStore.getCurrentCompany()
   };
 });
 

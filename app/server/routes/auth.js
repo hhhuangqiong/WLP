@@ -4,6 +4,8 @@ import passport from 'passport';
 import db from '../db';
 import {SIGN_IN, SIGN_OUT} from '../paths.js';
 
+import logger from 'winston';
+
 var router = Router();
 
 // TODO double check if this is necessary for the data model
@@ -12,6 +14,8 @@ function getAuthUser(user) {
 
   return {
     _id: user._id,
+    username: user.username,
+    displayName: user.displayName,
     carrierId: affiliatedCompany.carrierId,
     role: affiliatedCompany.role
   };
