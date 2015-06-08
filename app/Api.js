@@ -223,6 +223,22 @@ Api.prototype.getCallsWidgets = function(params, cb) {
     });
 };
 
+Api.prototype.getImWidgets = function(params, cb) {
+  superagent
+    .get(`${this._getHost()}/api/carriers/${params.carrierId}/widgets/im`)
+    .accept('json')
+    .set('Authorization', this._getToken())
+    .query({
+      userId: this._getUserId()
+    })
+    .end(function (err, res) {
+      if (err) {
+        debug('error', err)
+      }
+      cb(err, res && res.body);
+    });
+};
+
 Api.prototype.getTopUpHistory = function(params, cb) {
   superagent
     .get(`${this._getHost()}/api/carriers/${params.carrierId}/topup`)

@@ -14,7 +14,8 @@ export default (
     <Route handler={require('./components/common/Protected')}>
       <Route name="calls-overview" path="/:role/:identity?/calls" handler={require('./components/CallsOverview')} />
       <Route name="calls-details" path="/:role/:identity?/calls/details" handler={require('./components/Calls')} />
-      <Route name="im" path="/:role/:identity?/im" handler={require('./components/Im')} />
+      <Route name="im-overview" path="/:role/:identity?/im" handler={require('./components/ImOverview')} />
+      <Route name="im" path="/:role/:identity?/im/details" handler={require('./components/Im')} />
     </Route>
 
     // shared by both "public" &amp; "protected"
