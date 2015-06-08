@@ -5,6 +5,7 @@ import moment from 'moment';
 import {concurrent} from 'contra';
 
 import React from 'react';
+import {Link} from 'react-router';
 import FluxibleMixin from 'fluxible/addons/FluxibleMixin';
 import DatePicker from 'react-datepicker';
 
@@ -259,16 +260,18 @@ var Im = React.createClass({
   },
 
   render: function() {
+    let params = this.context.router.getCurrentParams();
+    
     return (
       <div className="row">
         <nav className="top-bar top-bar--inner">
           <div className="top-bar-section">
             <ul className="left top-bar--inner tab--inverted">
               <li className="top-bar--inner tab--inverted__title">
-                <a className="" href="">Overview</a>
+                <Link to="im-overview" params={params}>Overview</Link>
               </li>
               <li className="top-bar--inner tab--inverted__title">
-                <a className="active" href="">Details Report</a>
+                <Link to="im" params={params}>Details Report</Link>
               </li>
             </ul>
             <div className="start-date-wrap large-2 columns left">

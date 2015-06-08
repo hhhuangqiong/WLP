@@ -30,7 +30,8 @@ export default (
       <Route name="top-up" path="/:role/:identity?/top-up" handler={require('./components/TopUp')} />
       <Route name="calls-overview" path="/:role/:identity?/calls" handler={require('./components/CallsOverview')} />
       <Route name="calls-details" path="/:role/:identity?/calls/details" handler={require('./components/Calls')} />
-      <Route name="im" path="/:role/:identity?/im" handler={require('./components/Im')} />
+      <Route name="im-overview" path="/:role/:identity?/im" handler={require('./components/ImOverview')} />
+      <Route name="im" path="/:role/:identity?/im/details" handler={require('./components/Im')} />
       <Route name="vsf" path="/:role/:identity?/vsf" handler={require('./components/Overview')} />
 
       // keep this name until we are sure of making use of 'overview' above

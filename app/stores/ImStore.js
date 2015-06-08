@@ -5,8 +5,9 @@ var ImStore = createStore({
   storeName: 'ImStore',
 
   handlers: {
-    'FETCH_IM_SUCCESS': 'handleCallsChange',
-    'FETCH_IM_PAGE_SUCCESS': 'handleCallsChange'
+    'FETCH_IM_SUCCESS': 'handleImChange',
+    'FETCH_IM_PAGE_SUCCESS': 'handleImChange',
+    'FETCH_IM_WIDGETS_SUCCESS': 'handleImWidgetsChange'
   },
 
   initialize: function () {
@@ -18,7 +19,7 @@ var ImStore = createStore({
     this.totalPages = 0;
   },
 
-  handleCallsChange: function (payload) {
+  handleImChange: function (payload) {
     try {
       this.calls = payload.contents;
       this.offset = payload.offset;
@@ -34,12 +35,26 @@ var ImStore = createStore({
     }
   },
 
+  handleImWidgetsChange: function(payload) {
+    if (payload && payload.widgets) {
+      this.widgets = payload.widgets;
+    } else {
+      this.widgets = [];
+    }
+
+    this.emitChange();
+  },
+
   getCallsCount: function() {
     return this.callsCount;
   },
 
   getCalls: function() {
     return this.calls;
+  },
+
+  getWidgets: function() {
+    return this.widgets;
   },
 
   getState: function () {
@@ -50,6 +65,7 @@ var ImStore = createStore({
       pageSize: this.pageSize,
       callsCount: this.callsCount,
       totalPages: this.totalPages,
+      widgets: this.widgets,
       loaded: true
     };
   },
@@ -65,6 +81,7 @@ var ImStore = createStore({
     this.pageSize = state.pageSize;
     this.callsCount = state.callsCount;
     this.totalPages = state.totalPages;
+    this.widgets = state.widgets;
   }
 });
 
