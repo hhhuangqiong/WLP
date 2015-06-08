@@ -4,7 +4,7 @@ import React from 'react';
  //TODO may need to detect which file to import based on environment
 import webpackConfig from '../../webpack.config.js';
 
-const bundlePath = 'http://localhost:' + (process.env.HOT_LOAD_PORT || webpackConfig.custom.hotLoadPort) + '/bundle.js';
+const bundlePath = (process.env.NODE_ENV==="development"? ('http://localhost:' + (process.env.HOT_LOAD_PORT || webpackConfig.custom.hotLoadPort)):'/javascript') +  '/bundle.js';
 
 var Html = React.createClass({
 
