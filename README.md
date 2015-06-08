@@ -1,5 +1,8 @@
 # M800 White Label Portal
 
+## Setup
+Copy envrc.sample as .envrc in the root directory. This provide the essential environmental variables for the server to load. 
+
 ## Deployment
 
 ```
