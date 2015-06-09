@@ -68,10 +68,13 @@ var Pagination = React.createClass({
     return pages;
   },
 
-  _goToPage: function() {
-    let page = React.findDOMNode(this.refs.goPageInput).value.trim();
-    if (page > 0 && page <= this.getLastPage()) {
-      this.props.onPageChange(page);
+  _goToPage: function(e) {
+    if (e.which == 13 || e.type == 'click') {
+      e.preventDefault();
+      let page = React.findDOMNode(this.refs.goPageInput).value.trim();
+      if (page > 0 && page <= this.getLastPage()) {
+        this.props.onPageChange(page);
+      }
     }
   },
 
