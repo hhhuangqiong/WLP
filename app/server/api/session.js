@@ -8,7 +8,7 @@ export default function(host = '', apiPrefix = '') {
   return {
     getSession: function(token, cb) {
       superagent
-        .get(`${host}${apiPrefix}${SESSION}`)
+        .get(`${this._getHost()}${apiPrefix}${SESSION}`)
         .accept('json')
         .set('Authorization', token)
         .end(function(err, res) {
