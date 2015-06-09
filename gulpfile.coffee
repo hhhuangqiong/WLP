@@ -61,6 +61,11 @@ gulp.task 'sprite', ->
     .pipe spriteSmith({
       imgName: '../images/map-sprite.png'
       cssName: 'map-sprite.css'
+      padding: 5
+      cssOpts:
+        functions: false,
+        cssSelector: (item) ->
+          '.flag--' + item.name
     })
 
   imgStream = spriteData.img

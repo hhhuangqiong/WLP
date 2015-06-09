@@ -9,1383 +9,1383 @@ Icon classes can be used entirely standalone. They are named after their origina
 <img class="icon-home" />
 ```
 */
-.icon-ad {
+.flag--ad {
   background-image: url(../images/map-sprite.png);
-  background-position: -1536px -1536px;
+  background-position: -783px -1822px;
   width: 256px;
   height: 256px;
 }
-.icon-ae {
+.flag--ae {
   background-image: url(../images/map-sprite.png);
-  background-position: -2048px -2560px;
+  background-position: -1305px -2866px;
   width: 256px;
   height: 256px;
 }
-.icon-af {
+.flag--af {
   background-image: url(../images/map-sprite.png);
-  background-position: -512px -256px;
+  background-position: 0px -517px;
   width: 256px;
   height: 256px;
 }
-.icon-ag {
+.flag--ag {
   background-image: url(../images/map-sprite.png);
-  background-position: 0px -512px;
+  background-position: -261px -517px;
   width: 256px;
   height: 256px;
 }
-.icon-ai {
+.flag--ai {
   background-image: url(../images/map-sprite.png);
-  background-position: -256px -512px;
+  background-position: -778px 0px;
   width: 256px;
   height: 256px;
 }
-.icon-al {
+.flag--al {
   background-image: url(../images/map-sprite.png);
-  background-position: -512px -512px;
+  background-position: -778px -261px;
   width: 256px;
   height: 256px;
 }
-.icon-am {
+.flag--am {
   background-image: url(../images/map-sprite.png);
-  background-position: -768px 0px;
+  background-position: 0px -778px;
   width: 256px;
   height: 256px;
 }
-.icon-an {
+.flag--an {
   background-image: url(../images/map-sprite.png);
-  background-position: -768px -256px;
+  background-position: -261px -778px;
   width: 256px;
   height: 256px;
 }
-.icon-ao {
+.flag--ao {
   background-image: url(../images/map-sprite.png);
-  background-position: -768px -512px;
+  background-position: -522px -778px;
   width: 256px;
   height: 256px;
 }
-.icon-ar {
+.flag--ar {
   background-image: url(../images/map-sprite.png);
-  background-position: 0px -768px;
+  background-position: -1039px 0px;
   width: 256px;
   height: 256px;
 }
-.icon-as {
+.flag--as {
   background-image: url(../images/map-sprite.png);
-  background-position: -256px -768px;
+  background-position: -1039px -261px;
   width: 256px;
   height: 256px;
 }
-.icon-at {
+.flag--at {
   background-image: url(../images/map-sprite.png);
-  background-position: -512px -768px;
+  background-position: -1039px -522px;
   width: 256px;
   height: 256px;
 }
-.icon-au {
+.flag--au {
   background-image: url(../images/map-sprite.png);
-  background-position: -768px -768px;
+  background-position: 0px -1039px;
   width: 256px;
   height: 256px;
 }
-.icon-aw {
+.flag--aw {
   background-image: url(../images/map-sprite.png);
-  background-position: -1024px 0px;
+  background-position: -261px -1039px;
   width: 256px;
   height: 256px;
 }
-.icon-az {
+.flag--az {
   background-image: url(../images/map-sprite.png);
-  background-position: -1024px -256px;
+  background-position: -522px -1039px;
   width: 256px;
   height: 256px;
 }
-.icon-ba {
+.flag--ba {
   background-image: url(../images/map-sprite.png);
-  background-position: -1024px -512px;
+  background-position: -783px -1039px;
   width: 256px;
   height: 256px;
 }
-.icon-bb {
+.flag--bb {
   background-image: url(../images/map-sprite.png);
-  background-position: -1024px -768px;
+  background-position: -1300px 0px;
   width: 256px;
   height: 256px;
 }
-.icon-bd {
+.flag--bd {
   background-image: url(../images/map-sprite.png);
-  background-position: 0px -1024px;
+  background-position: -1300px -261px;
   width: 256px;
   height: 256px;
 }
-.icon-be {
+.flag--be {
   background-image: url(../images/map-sprite.png);
-  background-position: -256px -1024px;
+  background-position: -1300px -522px;
   width: 256px;
   height: 256px;
 }
-.icon-bf {
+.flag--bf {
   background-image: url(../images/map-sprite.png);
-  background-position: -512px -1024px;
+  background-position: -1300px -783px;
   width: 256px;
   height: 256px;
 }
-.icon-bg {
+.flag--bg {
   background-image: url(../images/map-sprite.png);
-  background-position: -768px -1024px;
+  background-position: 0px -1300px;
   width: 256px;
   height: 256px;
 }
-.icon-bh {
+.flag--bh {
   background-image: url(../images/map-sprite.png);
-  background-position: -1024px -1024px;
+  background-position: -261px -1300px;
   width: 256px;
   height: 256px;
 }
-.icon-bi {
+.flag--bi {
   background-image: url(../images/map-sprite.png);
-  background-position: -1280px 0px;
+  background-position: -522px -1300px;
   width: 256px;
   height: 256px;
 }
-.icon-bj {
+.flag--bj {
   background-image: url(../images/map-sprite.png);
-  background-position: -1280px -256px;
+  background-position: -783px -1300px;
   width: 256px;
   height: 256px;
 }
-.icon-bm {
+.flag--bm {
   background-image: url(../images/map-sprite.png);
-  background-position: -1280px -512px;
+  background-position: -1044px -1300px;
   width: 256px;
   height: 256px;
 }
-.icon-bn {
+.flag--bn {
   background-image: url(../images/map-sprite.png);
-  background-position: -1280px -768px;
+  background-position: -1561px 0px;
   width: 256px;
   height: 256px;
 }
-.icon-bo {
+.flag--bo {
   background-image: url(../images/map-sprite.png);
-  background-position: -1280px -1024px;
+  background-position: -1561px -261px;
   width: 256px;
   height: 256px;
 }
-.icon-br {
+.flag--br {
   background-image: url(../images/map-sprite.png);
-  background-position: 0px -1280px;
+  background-position: -1561px -522px;
   width: 256px;
   height: 256px;
 }
-.icon-bs {
+.flag--bs {
   background-image: url(../images/map-sprite.png);
-  background-position: -256px -1280px;
+  background-position: -1561px -783px;
   width: 256px;
   height: 256px;
 }
-.icon-bt {
+.flag--bt {
   background-image: url(../images/map-sprite.png);
-  background-position: -512px -1280px;
+  background-position: -1561px -1044px;
   width: 256px;
   height: 256px;
 }
-.icon-bw {
+.flag--bw {
   background-image: url(../images/map-sprite.png);
-  background-position: -768px -1280px;
+  background-position: 0px -1561px;
   width: 256px;
   height: 256px;
 }
-.icon-by {
+.flag--by {
   background-image: url(../images/map-sprite.png);
-  background-position: -1024px -1280px;
+  background-position: -261px -1561px;
   width: 256px;
   height: 256px;
 }
-.icon-bz {
+.flag--bz {
   background-image: url(../images/map-sprite.png);
-  background-position: -1280px -1280px;
+  background-position: -522px -1561px;
   width: 256px;
   height: 256px;
 }
-.icon-ca {
+.flag--ca {
   background-image: url(../images/map-sprite.png);
-  background-position: -1536px 0px;
+  background-position: -783px -1561px;
   width: 256px;
   height: 256px;
 }
-.icon-cd {
+.flag--cd {
   background-image: url(../images/map-sprite.png);
-  background-position: -1536px -256px;
+  background-position: -1044px -1561px;
   width: 256px;
   height: 256px;
 }
-.icon-cf {
+.flag--cf {
   background-image: url(../images/map-sprite.png);
-  background-position: -1536px -512px;
+  background-position: -1305px -1561px;
   width: 256px;
   height: 256px;
 }
-.icon-cg {
+.flag--cg {
   background-image: url(../images/map-sprite.png);
-  background-position: -1536px -768px;
+  background-position: -1822px 0px;
   width: 256px;
   height: 256px;
 }
-.icon-ch {
+.flag--ch {
   background-image: url(../images/map-sprite.png);
-  background-position: -1536px -1024px;
+  background-position: -1822px -261px;
   width: 256px;
   height: 256px;
 }
-.icon-ci {
+.flag--ci {
   background-image: url(../images/map-sprite.png);
-  background-position: -1536px -1280px;
+  background-position: -1822px -522px;
   width: 256px;
   height: 256px;
 }
-.icon-ck {
+.flag--ck {
   background-image: url(../images/map-sprite.png);
-  background-position: 0px -1536px;
+  background-position: -1822px -783px;
   width: 256px;
   height: 256px;
 }
-.icon-cl {
+.flag--cl {
   background-image: url(../images/map-sprite.png);
-  background-position: -256px -1536px;
+  background-position: -1822px -1044px;
   width: 256px;
   height: 256px;
 }
-.icon-cm {
+.flag--cm {
   background-image: url(../images/map-sprite.png);
-  background-position: -512px -1536px;
+  background-position: -1822px -1305px;
   width: 256px;
   height: 256px;
 }
-.icon-cn {
+.flag--cn {
   background-image: url(../images/map-sprite.png);
-  background-position: -768px -1536px;
+  background-position: 0px -1822px;
   width: 256px;
   height: 256px;
 }
-.icon-co {
+.flag--co {
   background-image: url(../images/map-sprite.png);
-  background-position: -1024px -1536px;
+  background-position: -261px -1822px;
   width: 256px;
   height: 256px;
 }
-.icon-cr {
+.flag--cr {
   background-image: url(../images/map-sprite.png);
-  background-position: -1280px -1536px;
+  background-position: -522px -1822px;
   width: 256px;
   height: 256px;
 }
-.icon-cs {
+.flag--cs {
   background-image: url(../images/map-sprite.png);
   background-position: 0px 0px;
   width: 512px;
   height: 512px;
 }
-.icon-cu {
+.flag--cu {
   background-image: url(../images/map-sprite.png);
-  background-position: -1792px 0px;
+  background-position: -1044px -1822px;
   width: 256px;
   height: 256px;
 }
-.icon-cv {
+.flag--cv {
   background-image: url(../images/map-sprite.png);
-  background-position: -1792px -256px;
+  background-position: -1305px -1822px;
   width: 256px;
   height: 256px;
 }
-.icon-cx {
+.flag--cx {
   background-image: url(../images/map-sprite.png);
-  background-position: -1792px -512px;
+  background-position: -1566px -1822px;
   width: 256px;
   height: 256px;
 }
-.icon-cy {
+.flag--cy {
   background-image: url(../images/map-sprite.png);
-  background-position: -1792px -768px;
+  background-position: -2083px 0px;
   width: 256px;
   height: 256px;
 }
-.icon-cz {
+.flag--cz {
   background-image: url(../images/map-sprite.png);
-  background-position: -1792px -1024px;
+  background-position: -2083px -261px;
   width: 256px;
   height: 256px;
 }
-.icon-de {
+.flag--de {
   background-image: url(../images/map-sprite.png);
-  background-position: -1792px -1280px;
+  background-position: -2083px -522px;
   width: 256px;
   height: 256px;
 }
-.icon-dj {
+.flag--dj {
   background-image: url(../images/map-sprite.png);
-  background-position: -1792px -1536px;
+  background-position: -2083px -783px;
   width: 256px;
   height: 256px;
 }
-.icon-dk {
+.flag--dk {
   background-image: url(../images/map-sprite.png);
-  background-position: 0px -1792px;
+  background-position: -2083px -1044px;
   width: 256px;
   height: 256px;
 }
-.icon-dm {
+.flag--dm {
   background-image: url(../images/map-sprite.png);
-  background-position: -256px -1792px;
+  background-position: -2083px -1305px;
   width: 256px;
   height: 256px;
 }
-.icon-do {
+.flag--do {
   background-image: url(../images/map-sprite.png);
-  background-position: -512px -1792px;
+  background-position: -2083px -1566px;
   width: 256px;
   height: 256px;
 }
-.icon-dz {
+.flag--dz {
   background-image: url(../images/map-sprite.png);
-  background-position: -768px -1792px;
+  background-position: 0px -2083px;
   width: 256px;
   height: 256px;
 }
-.icon-ec {
+.flag--ec {
   background-image: url(../images/map-sprite.png);
-  background-position: -1024px -1792px;
+  background-position: -261px -2083px;
   width: 256px;
   height: 256px;
 }
-.icon-ee {
+.flag--ee {
   background-image: url(../images/map-sprite.png);
-  background-position: -1280px -1792px;
+  background-position: -522px -2083px;
   width: 256px;
   height: 256px;
 }
-.icon-eg {
+.flag--eg {
   background-image: url(../images/map-sprite.png);
-  background-position: -1536px -1792px;
+  background-position: -783px -2083px;
   width: 256px;
   height: 256px;
 }
-.icon-er {
+.flag--er {
   background-image: url(../images/map-sprite.png);
-  background-position: -1792px -1792px;
+  background-position: -1044px -2083px;
   width: 256px;
   height: 256px;
 }
-.icon-es {
+.flag--es {
   background-image: url(../images/map-sprite.png);
-  background-position: -2048px 0px;
+  background-position: -1305px -2083px;
   width: 256px;
   height: 256px;
 }
-.icon-et {
+.flag--et {
   background-image: url(../images/map-sprite.png);
-  background-position: -2048px -256px;
+  background-position: -1566px -2083px;
   width: 256px;
   height: 256px;
 }
-.icon-fi {
+.flag--fi {
   background-image: url(../images/map-sprite.png);
-  background-position: -2048px -512px;
+  background-position: -1827px -2083px;
   width: 256px;
   height: 256px;
 }
-.icon-fj {
+.flag--fj {
   background-image: url(../images/map-sprite.png);
-  background-position: -2048px -768px;
+  background-position: -2344px 0px;
   width: 256px;
   height: 256px;
 }
-.icon-fk {
+.flag--fk {
   background-image: url(../images/map-sprite.png);
-  background-position: -2048px -1024px;
+  background-position: -2344px -261px;
   width: 256px;
   height: 256px;
 }
-.icon-fm {
+.flag--fm {
   background-image: url(../images/map-sprite.png);
-  background-position: -2048px -1280px;
+  background-position: -2344px -522px;
   width: 256px;
   height: 256px;
 }
-.icon-fo {
+.flag--fo {
   background-image: url(../images/map-sprite.png);
-  background-position: -2048px -1536px;
+  background-position: -2344px -783px;
   width: 256px;
   height: 256px;
 }
-.icon-fr {
+.flag--fr {
   background-image: url(../images/map-sprite.png);
-  background-position: -2048px -1792px;
+  background-position: -2344px -1044px;
   width: 256px;
   height: 256px;
 }
-.icon-ga {
+.flag--ga {
   background-image: url(../images/map-sprite.png);
-  background-position: 0px -2048px;
+  background-position: -2344px -1305px;
   width: 256px;
   height: 256px;
 }
-.icon-gb {
+.flag--gb {
   background-image: url(../images/map-sprite.png);
-  background-position: -256px -2048px;
+  background-position: -2344px -1566px;
   width: 256px;
   height: 256px;
 }
-.icon-gd {
+.flag--gd {
   background-image: url(../images/map-sprite.png);
-  background-position: -512px -2048px;
+  background-position: -2344px -1827px;
   width: 256px;
   height: 256px;
 }
-.icon-ge {
+.flag--ge {
   background-image: url(../images/map-sprite.png);
-  background-position: -768px -2048px;
+  background-position: 0px -2344px;
   width: 256px;
   height: 256px;
 }
-.icon-gf {
+.flag--gf {
   background-image: url(../images/map-sprite.png);
-  background-position: -1024px -2048px;
+  background-position: -261px -2344px;
   width: 256px;
   height: 256px;
 }
-.icon-gh {
+.flag--gh {
   background-image: url(../images/map-sprite.png);
-  background-position: -1280px -2048px;
+  background-position: -522px -2344px;
   width: 256px;
   height: 256px;
 }
-.icon-gi {
+.flag--gi {
   background-image: url(../images/map-sprite.png);
-  background-position: -1536px -2048px;
+  background-position: -783px -2344px;
   width: 256px;
   height: 256px;
 }
-.icon-gl {
+.flag--gl {
   background-image: url(../images/map-sprite.png);
-  background-position: -1792px -2048px;
+  background-position: -1044px -2344px;
   width: 256px;
   height: 256px;
 }
-.icon-gm {
+.flag--gm {
   background-image: url(../images/map-sprite.png);
-  background-position: -2048px -2048px;
+  background-position: -1305px -2344px;
   width: 256px;
   height: 256px;
 }
-.icon-gn {
+.flag--gn {
   background-image: url(../images/map-sprite.png);
-  background-position: -2304px 0px;
+  background-position: -1566px -2344px;
   width: 256px;
   height: 256px;
 }
-.icon-gp {
+.flag--gp {
   background-image: url(../images/map-sprite.png);
-  background-position: -2304px -256px;
+  background-position: -1827px -2344px;
   width: 256px;
   height: 256px;
 }
-.icon-gq {
+.flag--gq {
   background-image: url(../images/map-sprite.png);
-  background-position: -2304px -512px;
+  background-position: -2088px -2344px;
   width: 256px;
   height: 256px;
 }
-.icon-gr {
+.flag--gr {
   background-image: url(../images/map-sprite.png);
-  background-position: -2304px -768px;
+  background-position: -2605px 0px;
   width: 256px;
   height: 256px;
 }
-.icon-gt {
+.flag--gt {
   background-image: url(../images/map-sprite.png);
-  background-position: -2304px -1024px;
+  background-position: -2605px -261px;
   width: 256px;
   height: 256px;
 }
-.icon-gu {
+.flag--gu {
   background-image: url(../images/map-sprite.png);
-  background-position: -2304px -1280px;
+  background-position: -2605px -522px;
   width: 256px;
   height: 256px;
 }
-.icon-gw {
+.flag--gw {
   background-image: url(../images/map-sprite.png);
-  background-position: -2304px -1536px;
+  background-position: -2605px -783px;
   width: 256px;
   height: 256px;
 }
-.icon-gy {
+.flag--gy {
   background-image: url(../images/map-sprite.png);
-  background-position: -2304px -1792px;
+  background-position: -2605px -1044px;
   width: 256px;
   height: 256px;
 }
-.icon-hk {
+.flag--hk {
   background-image: url(../images/map-sprite.png);
-  background-position: -2304px -2048px;
+  background-position: -2605px -1305px;
   width: 256px;
   height: 256px;
 }
-.icon-hn {
+.flag--hn {
   background-image: url(../images/map-sprite.png);
-  background-position: 0px -2304px;
+  background-position: -2605px -1566px;
   width: 256px;
   height: 256px;
 }
-.icon-hr {
+.flag--hr {
   background-image: url(../images/map-sprite.png);
-  background-position: -256px -2304px;
+  background-position: -2605px -1827px;
   width: 256px;
   height: 256px;
 }
-.icon-ht {
+.flag--ht {
   background-image: url(../images/map-sprite.png);
-  background-position: -512px -2304px;
+  background-position: -2605px -2088px;
   width: 256px;
   height: 256px;
 }
-.icon-hu {
+.flag--hu {
   background-image: url(../images/map-sprite.png);
-  background-position: -768px -2304px;
+  background-position: 0px -2605px;
   width: 256px;
   height: 256px;
 }
-.icon-id {
+.flag--id {
   background-image: url(../images/map-sprite.png);
-  background-position: -1024px -2304px;
+  background-position: -261px -2605px;
   width: 256px;
   height: 256px;
 }
-.icon-ie {
+.flag--ie {
   background-image: url(../images/map-sprite.png);
-  background-position: -1280px -2304px;
+  background-position: -522px -2605px;
   width: 256px;
   height: 256px;
 }
-.icon-il {
+.flag--il {
   background-image: url(../images/map-sprite.png);
-  background-position: -1536px -2304px;
+  background-position: -783px -2605px;
   width: 256px;
   height: 256px;
 }
-.icon-in {
+.flag--in {
   background-image: url(../images/map-sprite.png);
-  background-position: -1792px -2304px;
+  background-position: -1044px -2605px;
   width: 256px;
   height: 256px;
 }
-.icon-iq {
+.flag--iq {
   background-image: url(../images/map-sprite.png);
-  background-position: -2048px -2304px;
+  background-position: -1305px -2605px;
   width: 256px;
   height: 256px;
 }
-.icon-ir {
+.flag--ir {
   background-image: url(../images/map-sprite.png);
-  background-position: -2304px -2304px;
+  background-position: -1566px -2605px;
   width: 256px;
   height: 256px;
 }
-.icon-is {
+.flag--is {
   background-image: url(../images/map-sprite.png);
-  background-position: -2560px 0px;
+  background-position: -1827px -2605px;
   width: 256px;
   height: 256px;
 }
-.icon-it {
+.flag--it {
   background-image: url(../images/map-sprite.png);
-  background-position: -2560px -256px;
+  background-position: -2088px -2605px;
   width: 256px;
   height: 256px;
 }
-.icon-jm {
+.flag--jm {
   background-image: url(../images/map-sprite.png);
-  background-position: -2560px -512px;
+  background-position: -2349px -2605px;
   width: 256px;
   height: 256px;
 }
-.icon-jo {
+.flag--jo {
   background-image: url(../images/map-sprite.png);
-  background-position: -2560px -768px;
+  background-position: -2866px 0px;
   width: 256px;
   height: 256px;
 }
-.icon-jp {
+.flag--jp {
   background-image: url(../images/map-sprite.png);
-  background-position: -2560px -1024px;
+  background-position: -2866px -261px;
   width: 256px;
   height: 256px;
 }
-.icon-ke {
+.flag--ke {
   background-image: url(../images/map-sprite.png);
-  background-position: -2560px -1280px;
+  background-position: -2866px -522px;
   width: 256px;
   height: 256px;
 }
-.icon-kg {
+.flag--kg {
   background-image: url(../images/map-sprite.png);
-  background-position: -2560px -1536px;
+  background-position: -2866px -783px;
   width: 256px;
   height: 256px;
 }
-.icon-kh {
+.flag--kh {
   background-image: url(../images/map-sprite.png);
-  background-position: -2560px -1792px;
+  background-position: -2866px -1044px;
   width: 256px;
   height: 256px;
 }
-.icon-ki {
+.flag--ki {
   background-image: url(../images/map-sprite.png);
-  background-position: -2560px -2048px;
+  background-position: -2866px -1305px;
   width: 256px;
   height: 256px;
 }
-.icon-km {
+.flag--km {
   background-image: url(../images/map-sprite.png);
-  background-position: -2560px -2304px;
+  background-position: -2866px -1566px;
   width: 256px;
   height: 256px;
 }
-.icon-kn {
+.flag--kn {
   background-image: url(../images/map-sprite.png);
-  background-position: 0px -2560px;
+  background-position: -2866px -1827px;
   width: 256px;
   height: 256px;
 }
-.icon-kp {
+.flag--kp {
   background-image: url(../images/map-sprite.png);
-  background-position: -256px -2560px;
+  background-position: -2866px -2088px;
   width: 256px;
   height: 256px;
 }
-.icon-kr {
+.flag--kr {
   background-image: url(../images/map-sprite.png);
-  background-position: -512px -2560px;
+  background-position: -2866px -2349px;
   width: 256px;
   height: 256px;
 }
-.icon-kw {
+.flag--kw {
   background-image: url(../images/map-sprite.png);
-  background-position: -768px -2560px;
+  background-position: 0px -2866px;
   width: 256px;
   height: 256px;
 }
-.icon-ky {
+.flag--ky {
   background-image: url(../images/map-sprite.png);
-  background-position: -1024px -2560px;
+  background-position: -261px -2866px;
   width: 256px;
   height: 256px;
 }
-.icon-kz {
+.flag--kz {
   background-image: url(../images/map-sprite.png);
-  background-position: -1280px -2560px;
+  background-position: -522px -2866px;
   width: 256px;
   height: 256px;
 }
-.icon-la {
+.flag--la {
   background-image: url(../images/map-sprite.png);
-  background-position: -1536px -2560px;
+  background-position: -783px -2866px;
   width: 256px;
   height: 256px;
 }
-.icon-lb {
+.flag--lb {
   background-image: url(../images/map-sprite.png);
-  background-position: -1792px -2560px;
+  background-position: -1044px -2866px;
   width: 256px;
   height: 256px;
 }
-.icon-lc {
+.flag--lc {
   background-image: url(../images/map-sprite.png);
-  background-position: -512px 0px;
+  background-position: -517px 0px;
   width: 256px;
   height: 256px;
 }
-.icon-li {
+.flag--li {
   background-image: url(../images/map-sprite.png);
-  background-position: -2304px -2560px;
+  background-position: -1566px -2866px;
   width: 256px;
   height: 256px;
 }
-.icon-lk {
+.flag--lk {
   background-image: url(../images/map-sprite.png);
-  background-position: -2560px -2560px;
+  background-position: -1827px -2866px;
   width: 256px;
   height: 256px;
 }
-.icon-lr {
+.flag--lr {
   background-image: url(../images/map-sprite.png);
-  background-position: -2816px 0px;
+  background-position: -2088px -2866px;
   width: 256px;
   height: 256px;
 }
-.icon-ls {
+.flag--ls {
   background-image: url(../images/map-sprite.png);
-  background-position: -2816px -256px;
+  background-position: -2349px -2866px;
   width: 256px;
   height: 256px;
 }
-.icon-lt {
+.flag--lt {
   background-image: url(../images/map-sprite.png);
-  background-position: -2816px -512px;
+  background-position: -2610px -2866px;
   width: 256px;
   height: 256px;
 }
-.icon-lu {
+.flag--lu {
   background-image: url(../images/map-sprite.png);
-  background-position: -2816px -768px;
+  background-position: -3127px 0px;
   width: 256px;
   height: 256px;
 }
-.icon-lv {
+.flag--lv {
   background-image: url(../images/map-sprite.png);
-  background-position: -2816px -1024px;
+  background-position: -3127px -261px;
   width: 256px;
   height: 256px;
 }
-.icon-ly {
+.flag--ly {
   background-image: url(../images/map-sprite.png);
-  background-position: -2816px -1280px;
+  background-position: -3127px -522px;
   width: 256px;
   height: 256px;
 }
-.icon-ma {
+.flag--ma {
   background-image: url(../images/map-sprite.png);
-  background-position: -2816px -1536px;
+  background-position: -3127px -783px;
   width: 256px;
   height: 256px;
 }
-.icon-mc {
+.flag--mc {
   background-image: url(../images/map-sprite.png);
-  background-position: -2816px -1792px;
+  background-position: -3127px -1044px;
   width: 256px;
   height: 256px;
 }
-.icon-md {
+.flag--md {
   background-image: url(../images/map-sprite.png);
-  background-position: -2816px -2048px;
+  background-position: -3127px -1305px;
   width: 256px;
   height: 256px;
 }
-.icon-me {
+.flag--me {
   background-image: url(../images/map-sprite.png);
-  background-position: -2816px -2304px;
+  background-position: -3127px -1566px;
   width: 256px;
   height: 256px;
 }
-.icon-mf {
+.flag--mf {
   background-image: url(../images/map-sprite.png);
-  background-position: -2816px -2560px;
+  background-position: -3127px -1827px;
   width: 256px;
   height: 256px;
 }
-.icon-mg {
+.flag--mg {
   background-image: url(../images/map-sprite.png);
-  background-position: 0px -2816px;
+  background-position: -3127px -2088px;
   width: 256px;
   height: 256px;
 }
-.icon-mh {
+.flag--mh {
   background-image: url(../images/map-sprite.png);
-  background-position: -256px -2816px;
+  background-position: -3127px -2349px;
   width: 256px;
   height: 256px;
 }
-.icon-mk {
+.flag--mk {
   background-image: url(../images/map-sprite.png);
-  background-position: -512px -2816px;
+  background-position: -3127px -2610px;
   width: 256px;
   height: 256px;
 }
-.icon-ml {
+.flag--ml {
   background-image: url(../images/map-sprite.png);
-  background-position: -768px -2816px;
+  background-position: 0px -3127px;
   width: 256px;
   height: 256px;
 }
-.icon-mm {
+.flag--mm {
   background-image: url(../images/map-sprite.png);
-  background-position: -1024px -2816px;
+  background-position: -261px -3127px;
   width: 256px;
   height: 256px;
 }
-.icon-mn {
+.flag--mn {
   background-image: url(../images/map-sprite.png);
-  background-position: -1280px -2816px;
+  background-position: -522px -3127px;
   width: 256px;
   height: 256px;
 }
-.icon-mo {
+.flag--mo {
   background-image: url(../images/map-sprite.png);
-  background-position: -1536px -2816px;
+  background-position: -783px -3127px;
   width: 256px;
   height: 256px;
 }
-.icon-mq {
+.flag--mq {
   background-image: url(../images/map-sprite.png);
-  background-position: -1792px -2816px;
+  background-position: -1044px -3127px;
   width: 256px;
   height: 256px;
 }
-.icon-mr {
+.flag--mr {
   background-image: url(../images/map-sprite.png);
-  background-position: -2048px -2816px;
+  background-position: -1305px -3127px;
   width: 256px;
   height: 256px;
 }
-.icon-ms {
+.flag--ms {
   background-image: url(../images/map-sprite.png);
-  background-position: -2304px -2816px;
+  background-position: -1566px -3127px;
   width: 256px;
   height: 256px;
 }
-.icon-mt {
+.flag--mt {
   background-image: url(../images/map-sprite.png);
-  background-position: -2560px -2816px;
+  background-position: -1827px -3127px;
   width: 256px;
   height: 256px;
 }
-.icon-mu {
+.flag--mu {
   background-image: url(../images/map-sprite.png);
-  background-position: -2816px -2816px;
+  background-position: -2088px -3127px;
   width: 256px;
   height: 256px;
 }
-.icon-mv {
+.flag--mv {
   background-image: url(../images/map-sprite.png);
-  background-position: -3072px 0px;
+  background-position: -2349px -3127px;
   width: 256px;
   height: 256px;
 }
-.icon-mw {
+.flag--mw {
   background-image: url(../images/map-sprite.png);
-  background-position: -3072px -256px;
+  background-position: -2610px -3127px;
   width: 256px;
   height: 256px;
 }
-.icon-mx {
+.flag--mx {
   background-image: url(../images/map-sprite.png);
-  background-position: -3072px -512px;
+  background-position: -2871px -3127px;
   width: 256px;
   height: 256px;
 }
-.icon-my {
+.flag--my {
   background-image: url(../images/map-sprite.png);
-  background-position: -3072px -768px;
+  background-position: -3388px 0px;
   width: 256px;
   height: 256px;
 }
-.icon-mz {
+.flag--mz {
   background-image: url(../images/map-sprite.png);
-  background-position: -3072px -1024px;
+  background-position: -3388px -261px;
   width: 256px;
   height: 256px;
 }
-.icon-na {
+.flag--na {
   background-image: url(../images/map-sprite.png);
-  background-position: -3072px -1280px;
+  background-position: -3388px -522px;
   width: 256px;
   height: 256px;
 }
-.icon-nc {
+.flag--nc {
   background-image: url(../images/map-sprite.png);
-  background-position: -3072px -1536px;
+  background-position: -3388px -783px;
   width: 256px;
   height: 256px;
 }
-.icon-ne {
+.flag--ne {
   background-image: url(../images/map-sprite.png);
-  background-position: -3072px -1792px;
+  background-position: -3388px -1044px;
   width: 256px;
   height: 256px;
 }
-.icon-nf {
+.flag--nf {
   background-image: url(../images/map-sprite.png);
-  background-position: -3072px -2048px;
+  background-position: -3388px -1305px;
   width: 256px;
   height: 256px;
 }
-.icon-ng {
+.flag--ng {
   background-image: url(../images/map-sprite.png);
-  background-position: -3072px -2304px;
+  background-position: -3388px -1566px;
   width: 256px;
   height: 256px;
 }
-.icon-ni {
+.flag--ni {
   background-image: url(../images/map-sprite.png);
-  background-position: -3072px -2560px;
+  background-position: -3388px -1827px;
   width: 256px;
   height: 256px;
 }
-.icon-nl {
+.flag--nl {
   background-image: url(../images/map-sprite.png);
-  background-position: -3072px -2816px;
+  background-position: -3388px -2088px;
   width: 256px;
   height: 256px;
 }
-.icon-no {
+.flag--no {
   background-image: url(../images/map-sprite.png);
-  background-position: 0px -3072px;
+  background-position: -3388px -2349px;
   width: 256px;
   height: 256px;
 }
-.icon-np {
+.flag--np {
   background-image: url(../images/map-sprite.png);
-  background-position: -256px -3072px;
+  background-position: -3388px -2610px;
   width: 256px;
   height: 256px;
 }
-.icon-nr {
+.flag--nr {
   background-image: url(../images/map-sprite.png);
-  background-position: -512px -3072px;
+  background-position: -3388px -2871px;
   width: 256px;
   height: 256px;
 }
-.icon-nu {
+.flag--nu {
   background-image: url(../images/map-sprite.png);
-  background-position: -768px -3072px;
+  background-position: 0px -3388px;
   width: 256px;
   height: 256px;
 }
-.icon-nz {
+.flag--nz {
   background-image: url(../images/map-sprite.png);
-  background-position: -1024px -3072px;
+  background-position: -261px -3388px;
   width: 256px;
   height: 256px;
 }
-.icon-om {
+.flag--om {
   background-image: url(../images/map-sprite.png);
-  background-position: -1280px -3072px;
+  background-position: -522px -3388px;
   width: 256px;
   height: 256px;
 }
-.icon-pa {
+.flag--pa {
   background-image: url(../images/map-sprite.png);
-  background-position: -1536px -3072px;
+  background-position: -783px -3388px;
   width: 256px;
   height: 256px;
 }
-.icon-pe {
+.flag--pe {
   background-image: url(../images/map-sprite.png);
-  background-position: -1792px -3072px;
+  background-position: -1044px -3388px;
   width: 256px;
   height: 256px;
 }
-.icon-pf {
+.flag--pf {
   background-image: url(../images/map-sprite.png);
-  background-position: -2048px -3072px;
+  background-position: -1305px -3388px;
   width: 256px;
   height: 256px;
 }
-.icon-pg {
+.flag--pg {
   background-image: url(../images/map-sprite.png);
-  background-position: -2304px -3072px;
+  background-position: -1566px -3388px;
   width: 256px;
   height: 256px;
 }
-.icon-ph {
+.flag--ph {
   background-image: url(../images/map-sprite.png);
-  background-position: -2560px -3072px;
+  background-position: -1827px -3388px;
   width: 256px;
   height: 256px;
 }
-.icon-pk {
+.flag--pk {
   background-image: url(../images/map-sprite.png);
-  background-position: -2816px -3072px;
+  background-position: -2088px -3388px;
   width: 256px;
   height: 256px;
 }
-.icon-pl {
+.flag--pl {
   background-image: url(../images/map-sprite.png);
-  background-position: -3072px -3072px;
+  background-position: -2349px -3388px;
   width: 256px;
   height: 256px;
 }
-.icon-pm {
+.flag--pm {
   background-image: url(../images/map-sprite.png);
-  background-position: -3328px 0px;
+  background-position: -2610px -3388px;
   width: 256px;
   height: 256px;
 }
-.icon-pr {
+.flag--pr {
   background-image: url(../images/map-sprite.png);
-  background-position: -3328px -256px;
+  background-position: -2871px -3388px;
   width: 256px;
   height: 256px;
 }
-.icon-ps {
+.flag--ps {
   background-image: url(../images/map-sprite.png);
-  background-position: -3328px -512px;
+  background-position: -3132px -3388px;
   width: 256px;
   height: 256px;
 }
-.icon-pt {
+.flag--pt {
   background-image: url(../images/map-sprite.png);
-  background-position: -3328px -768px;
+  background-position: -3649px 0px;
   width: 256px;
   height: 256px;
 }
-.icon-pw {
+.flag--pw {
   background-image: url(../images/map-sprite.png);
-  background-position: -3328px -1024px;
+  background-position: -3649px -261px;
   width: 256px;
   height: 256px;
 }
-.icon-py {
+.flag--py {
   background-image: url(../images/map-sprite.png);
-  background-position: -3328px -1280px;
+  background-position: -3649px -522px;
   width: 256px;
   height: 256px;
 }
-.icon-qa {
+.flag--qa {
   background-image: url(../images/map-sprite.png);
-  background-position: -3328px -1536px;
+  background-position: -3649px -783px;
   width: 256px;
   height: 256px;
 }
-.icon-re {
+.flag--re {
   background-image: url(../images/map-sprite.png);
-  background-position: -3328px -1792px;
+  background-position: -3649px -1044px;
   width: 256px;
   height: 256px;
 }
-.icon-ro {
+.flag--ro {
   background-image: url(../images/map-sprite.png);
-  background-position: -3328px -2048px;
+  background-position: -3649px -1305px;
   width: 256px;
   height: 256px;
 }
-.icon-ru {
+.flag--ru {
   background-image: url(../images/map-sprite.png);
-  background-position: -3328px -2304px;
+  background-position: -3649px -1566px;
   width: 256px;
   height: 256px;
 }
-.icon-rw {
+.flag--rw {
   background-image: url(../images/map-sprite.png);
-  background-position: -3328px -2560px;
+  background-position: -3649px -1827px;
   width: 256px;
   height: 256px;
 }
-.icon-sa {
+.flag--sa {
   background-image: url(../images/map-sprite.png);
-  background-position: -3328px -2816px;
+  background-position: -3649px -2088px;
   width: 256px;
   height: 256px;
 }
-.icon-sb {
+.flag--sb {
   background-image: url(../images/map-sprite.png);
-  background-position: -3840px -1792px;
+  background-position: -4171px -1044px;
   width: 256px;
   height: 254px;
 }
-.icon-sc {
+.flag--sc {
   background-image: url(../images/map-sprite.png);
-  background-position: 0px -3328px;
+  background-position: -3649px -2610px;
   width: 256px;
   height: 256px;
 }
-.icon-sd {
+.flag--sd {
   background-image: url(../images/map-sprite.png);
-  background-position: -256px -3328px;
+  background-position: -3649px -2871px;
   width: 256px;
   height: 256px;
 }
-.icon-se {
+.flag--se {
   background-image: url(../images/map-sprite.png);
-  background-position: -512px -3328px;
+  background-position: -3649px -3132px;
   width: 256px;
   height: 256px;
 }
-.icon-sg {
+.flag--sg {
   background-image: url(../images/map-sprite.png);
-  background-position: -768px -3328px;
+  background-position: 0px -3649px;
   width: 256px;
   height: 256px;
 }
-.icon-sh {
+.flag--sh {
   background-image: url(../images/map-sprite.png);
-  background-position: -1024px -3328px;
+  background-position: -261px -3649px;
   width: 256px;
   height: 256px;
 }
-.icon-si {
+.flag--si {
   background-image: url(../images/map-sprite.png);
-  background-position: -1280px -3328px;
+  background-position: -522px -3649px;
   width: 256px;
   height: 256px;
 }
-.icon-sk {
+.flag--sk {
   background-image: url(../images/map-sprite.png);
-  background-position: -1536px -3328px;
+  background-position: -783px -3649px;
   width: 256px;
   height: 256px;
 }
-.icon-sl {
+.flag--sl {
   background-image: url(../images/map-sprite.png);
-  background-position: -1792px -3328px;
+  background-position: -1044px -3649px;
   width: 256px;
   height: 256px;
 }
-.icon-sm {
+.flag--sm {
   background-image: url(../images/map-sprite.png);
-  background-position: -2048px -3328px;
+  background-position: -1305px -3649px;
   width: 256px;
   height: 256px;
 }
-.icon-sn {
+.flag--sn {
   background-image: url(../images/map-sprite.png);
-  background-position: -2304px -3328px;
+  background-position: -1566px -3649px;
   width: 256px;
   height: 256px;
 }
-.icon-so {
+.flag--so {
   background-image: url(../images/map-sprite.png);
-  background-position: -2560px -3328px;
+  background-position: -1827px -3649px;
   width: 256px;
   height: 256px;
 }
-.icon-sr {
+.flag--sr {
   background-image: url(../images/map-sprite.png);
-  background-position: -2816px -3328px;
+  background-position: -2088px -3649px;
   width: 256px;
   height: 256px;
 }
-.icon-ss {
+.flag--ss {
   background-image: url(../images/map-sprite.png);
-  background-position: -3072px -3328px;
+  background-position: -2349px -3649px;
   width: 256px;
   height: 256px;
 }
-.icon-st {
+.flag--st {
   background-image: url(../images/map-sprite.png);
-  background-position: -3328px -3328px;
+  background-position: -2610px -3649px;
   width: 256px;
   height: 256px;
 }
-.icon-sv {
+.flag--sv {
   background-image: url(../images/map-sprite.png);
-  background-position: -3584px 0px;
+  background-position: -2871px -3649px;
   width: 256px;
   height: 256px;
 }
-.icon-sy {
+.flag--sy {
   background-image: url(../images/map-sprite.png);
-  background-position: -3584px -256px;
+  background-position: -3132px -3649px;
   width: 256px;
   height: 256px;
 }
-.icon-sz {
+.flag--sz {
   background-image: url(../images/map-sprite.png);
-  background-position: -3584px -512px;
+  background-position: -3393px -3649px;
   width: 256px;
   height: 256px;
 }
-.icon-tc {
+.flag--tc {
   background-image: url(../images/map-sprite.png);
-  background-position: -3584px -768px;
+  background-position: -3910px 0px;
   width: 256px;
   height: 256px;
 }
-.icon-td {
+.flag--td {
   background-image: url(../images/map-sprite.png);
-  background-position: -3584px -1024px;
+  background-position: -3910px -261px;
   width: 256px;
   height: 256px;
 }
-.icon-tg {
+.flag--tg {
   background-image: url(../images/map-sprite.png);
-  background-position: -3584px -1280px;
+  background-position: -3910px -522px;
   width: 256px;
   height: 256px;
 }
-.icon-th {
+.flag--th {
   background-image: url(../images/map-sprite.png);
-  background-position: -3584px -1536px;
+  background-position: -3910px -783px;
   width: 256px;
   height: 256px;
 }
-.icon-tj {
+.flag--tj {
   background-image: url(../images/map-sprite.png);
-  background-position: -3584px -1792px;
+  background-position: -3910px -1044px;
   width: 256px;
   height: 256px;
 }
-.icon-tk {
+.flag--tk {
   background-image: url(../images/map-sprite.png);
-  background-position: -3584px -2048px;
+  background-position: -3910px -1305px;
   width: 256px;
   height: 256px;
 }
-.icon-tl {
+.flag--tl {
   background-image: url(../images/map-sprite.png);
-  background-position: -3584px -2304px;
+  background-position: -3910px -1566px;
   width: 256px;
   height: 256px;
 }
-.icon-tm {
+.flag--tm {
   background-image: url(../images/map-sprite.png);
-  background-position: -3584px -2560px;
+  background-position: -3910px -1827px;
   width: 256px;
   height: 256px;
 }
-.icon-tn {
+.flag--tn {
   background-image: url(../images/map-sprite.png);
-  background-position: -3584px -2816px;
+  background-position: -3910px -2088px;
   width: 256px;
   height: 256px;
 }
-.icon-to {
+.flag--to {
   background-image: url(../images/map-sprite.png);
-  background-position: -3584px -3072px;
+  background-position: -3910px -2349px;
   width: 256px;
   height: 256px;
 }
-.icon-tr {
+.flag--tr {
   background-image: url(../images/map-sprite.png);
-  background-position: -3584px -3328px;
+  background-position: -3910px -2610px;
   width: 256px;
   height: 256px;
 }
-.icon-tt {
+.flag--tt {
   background-image: url(../images/map-sprite.png);
-  background-position: 0px -3584px;
+  background-position: -3910px -2871px;
   width: 256px;
   height: 256px;
 }
-.icon-tv {
+.flag--tv {
   background-image: url(../images/map-sprite.png);
-  background-position: -256px -3584px;
+  background-position: -3910px -3132px;
   width: 256px;
   height: 256px;
 }
-.icon-tw {
+.flag--tw {
   background-image: url(../images/map-sprite.png);
-  background-position: -512px -3584px;
+  background-position: -3910px -3393px;
   width: 256px;
   height: 256px;
 }
-.icon-tz {
+.flag--tz {
   background-image: url(../images/map-sprite.png);
-  background-position: -768px -3584px;
+  background-position: 0px -3910px;
   width: 256px;
   height: 256px;
 }
-.icon-ua {
+.flag--ua {
   background-image: url(../images/map-sprite.png);
-  background-position: -1024px -3584px;
+  background-position: -261px -3910px;
   width: 256px;
   height: 256px;
 }
-.icon-ug {
+.flag--ug {
   background-image: url(../images/map-sprite.png);
-  background-position: -1280px -3584px;
+  background-position: -522px -3910px;
   width: 256px;
   height: 256px;
 }
-.icon-us {
+.flag--us {
   background-image: url(../images/map-sprite.png);
-  background-position: -1536px -3584px;
+  background-position: -783px -3910px;
   width: 256px;
   height: 256px;
 }
-.icon-uy {
+.flag--uy {
   background-image: url(../images/map-sprite.png);
-  background-position: -1792px -3584px;
+  background-position: -1044px -3910px;
   width: 256px;
   height: 256px;
 }
-.icon-uz {
+.flag--uz {
   background-image: url(../images/map-sprite.png);
-  background-position: -2048px -3584px;
+  background-position: -1305px -3910px;
   width: 256px;
   height: 256px;
 }
-.icon-va {
+.flag--va {
   background-image: url(../images/map-sprite.png);
-  background-position: -2304px -3584px;
+  background-position: -1566px -3910px;
   width: 256px;
   height: 256px;
 }
-.icon-vc {
+.flag--vc {
   background-image: url(../images/map-sprite.png);
-  background-position: -2560px -3584px;
+  background-position: -1827px -3910px;
   width: 256px;
   height: 256px;
 }
-.icon-ve {
+.flag--ve {
   background-image: url(../images/map-sprite.png);
-  background-position: -2816px -3584px;
+  background-position: -2088px -3910px;
   width: 256px;
   height: 256px;
 }
-.icon-vg {
+.flag--vg {
   background-image: url(../images/map-sprite.png);
-  background-position: -3072px -3584px;
+  background-position: -2349px -3910px;
   width: 256px;
   height: 256px;
 }
-.icon-vi {
+.flag--vi {
   background-image: url(../images/map-sprite.png);
-  background-position: -3328px -3584px;
+  background-position: -2610px -3910px;
   width: 256px;
   height: 256px;
 }
-.icon-vn {
+.flag--vn {
   background-image: url(../images/map-sprite.png);
-  background-position: -3584px -3584px;
+  background-position: -2871px -3910px;
   width: 256px;
   height: 256px;
 }
-.icon-vu {
+.flag--vu {
   background-image: url(../images/map-sprite.png);
-  background-position: -3840px 0px;
+  background-position: -3132px -3910px;
   width: 256px;
   height: 256px;
 }
-.icon-wf {
+.flag--wf {
   background-image: url(../images/map-sprite.png);
-  background-position: -3840px -256px;
+  background-position: -3393px -3910px;
   width: 256px;
   height: 256px;
 }
-.icon-ws {
+.flag--ws {
   background-image: url(../images/map-sprite.png);
-  background-position: -3840px -512px;
+  background-position: -3654px -3910px;
   width: 256px;
   height: 256px;
 }
-.icon-ye {
+.flag--ye {
   background-image: url(../images/map-sprite.png);
-  background-position: -3840px -768px;
+  background-position: -4171px 0px;
   width: 256px;
   height: 256px;
 }
-.icon-yt {
+.flag--yt {
   background-image: url(../images/map-sprite.png);
-  background-position: -3840px -1024px;
+  background-position: -4171px -261px;
   width: 256px;
   height: 256px;
 }
-.icon-za {
+.flag--za {
   background-image: url(../images/map-sprite.png);
-  background-position: -3840px -1280px;
+  background-position: -4171px -522px;
   width: 256px;
   height: 256px;
 }
-.icon-zm {
+.flag--zm {
   background-image: url(../images/map-sprite.png);
-  background-position: -3328px -3072px;
+  background-position: -3649px -2349px;
   width: 256px;
   height: 256px;
 }
-.icon-zw {
+.flag--zw {
   background-image: url(../images/map-sprite.png);
-  background-position: -3840px -1536px;
+  background-position: -4171px -783px;
   width: 256px;
   height: 256px;
 }
