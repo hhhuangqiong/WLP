@@ -1,4 +1,3 @@
-'use strict';
 import React from 'react';
 
 import Version from './common/Version';
@@ -8,9 +7,16 @@ import webpackConfig from '../../webpack.config.js';
 
 import {baseUrl} from '../utils/url';
 
-const appUrl = baseUrl(webpackConfig.custom.hotLoadPort, process.env.APP_HOST);
-const bundleFile = process.env.NODE_ENV === 'production' ?  'javascript/bundle.js':'bundle.js' ;
-const bundlePath = `${appUrl}/${bundleFile}`;
+var appUrl, bundleFile, bundlePath;
+
+if (process.env.NODE_ENV === 'development') {
+  appUrl = baseUrl(webpackConfig.custom.hotLoadPort, process.env.APP_HOST);
+  bundleFile =  'bundle.js';
+  bundlePath = `${appUrl}/${bundleFile}`;
+}
+else {
+  bundlePath = 'javascript/bundle.js'
+}
 
 var Html = React.createClass({
 
