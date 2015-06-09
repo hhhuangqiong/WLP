@@ -68,10 +68,13 @@ var Pagination = React.createClass({
     return pages;
   },
 
-  _goToPage: function() {
-    let page = React.findDOMNode(this.refs.goPageInput).value.trim();
-    if (page > 0 && page <= this.getLastPage()) {
-      this.props.onPageChange(page);
+  _goToPage: function(e) {
+    if (e.which == 13 || e.type == 'click') {
+      e.preventDefault();
+      let page = React.findDOMNode(this.refs.goPageInput).value.trim();
+      if (page > 0 && page <= this.getLastPage()) {
+        this.props.onPageChange(page);
+      }
     }
   },
 
@@ -122,7 +125,7 @@ var Pagination = React.createClass({
             <div className="large-3 columns">
               <div className="row collapse postfix-round">
                 <div className="large-13 columns">
-                  <input ref="goPageInput" type="text" name="goPage" placeholder="Value" />
+                  <input ref="goPageInput" type="text" name="goPage" placeholder="Value" onKeyPress={this._goToPage} />
                 </div>
                 <div className="large-11 columns">
                   <a className="button postfix" onClick={this._goToPage}>Go</a>

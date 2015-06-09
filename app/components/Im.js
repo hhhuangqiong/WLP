@@ -50,9 +50,15 @@ var Im = React.createClass({
   getInitialState: function () {
     let params = this.context.router.getCurrentParams();
     let query = this.context.router.getCurrentQuery();
-    return {
-      current: 1,
+    let prevState = this.getStateFromStores();
+
+    query.startDate = (query.startDate) ? moment(query.startDate, "MM/DD/YYYY").startOf('day') : undefined;
+    query.endDate = (query.endDate) ? moment(query.endDate, "MM/DD/YYYY").endOf('day'): undefined;
+
+    query = _.merge({
+      current: query.page || 1,
       per: 10,
+      pageNumber: query.page || 1,
       calls: this.getStore(ImStore).getCalls(),
       callsCount: this.getStore(ImStore).getCallsCount(),
       carrierId: params.identity,
@@ -62,12 +68,68 @@ var Im = React.createClass({
       search: '',
       minDate: moment().subtract(1,'year'),
       maxDate: moment(),
-    };
+    }, query);
+
+    return _.merge(this.getStateFromStores(), query);
   },
 
   onChange: function() {
-    let state = this.getStore(ImStore).getState();
-    this.setState(state);
+    let currentQuery = _.omit(this.context.router.getCurrentQuery(),function(value) {return !value;});
+    if (currentQuery.startDate) {
+      currentQuery.startDate = moment(currentQuery.startDate, "MM/DD/YYYY").startOf('day');
+    }
+    if (currentQuery.endDate) {
+      currentQuery.endDate = moment(currentQuery.endDate, "MM/DD/YYYY").endOf('day');
+    }
+
+    let state = this.getStateFromStores();
+    let query = _.merge({
+      page: 1,
+      size: 10,
+      startDate: moment().subtract(2, 'month').startOf('day'),
+      endDate: moment().endOf('day'),
+      type: '',
+      search: ''
+    }, currentQuery);
+
+    this.setState(_.merge(state, query));
+  },
+
+  getStateFromStores: function() {
+    return {
+      calls: this.getStore(ImStore).getCalls(),
+      callsCount: this.getStore(ImStore).getCallsCount()
+    };
+  },
+
+  getQueryFromState: function() {
+    return {
+      startDate: this.state.startDate.format('L'),
+      endDate: this.state.endDate.format('L'),
+      search: this.state.search && this.state.search.trim(),
+      page: 1,
+      size: this.state.size && parseInt(this.state.size),
+      type: this.state.type && this.state.type.trim()
+    }
+  },
+
+  handleQueryChange: function(newQuery) {
+    let currentState = this.getQueryFromState();
+    let routeName = _.last(this.context.router.getCurrentRoutes()).name;
+    let params = this.context.router.getCurrentParams();
+    let query = _.merge(this.context.router.getCurrentQuery(), currentState, newQuery);
+
+    query.startDate = (newQuery.fromTime) ? moment(newQuery.fromTime,'x').format('L') : currentState.startDate;
+    query.endDate = (newQuery.toTime) ? moment(newQuery.toTime,'x').format('L') : currentState.endDate;
+    query.type = (newQuery.type) ? newQuery.type : currentState.type;
+    query.search = (newQuery.search) ? newQuery.search : currentState.search;
+    query.page = (newQuery.page) ? newQuery.page : currentState.page;
+
+    query = _.pick(query, ['startDate','endDate','type','search','page'] );
+
+    this.context.router.transitionTo(routeName, params, _.omit(query, function(value) {
+      return !value;
+    }));
   },
 
   getNewCurrentPage(per, nextPer) {
@@ -83,162 +145,51 @@ var Im = React.createClass({
   },
 
   handlePageChange: function(page) {
-    this.executeAction(fetchIm, {
-      carrierId: this.state.carrierId,
-      fromTime: getFromTime(this.state.startDate),
-      toTime: getToTime(this.state.endDate),
-      type: this.state.type,
-      size: this.state.per,
-      page: +page-1 || 0
-    });
-
-    this.setState({
-      current: page,
-      pageNumber: page
-    });
+    this.handleQueryChange({ page: parseInt(page), current: parseInt(page) });
   },
 
   handleStartDateChange: function(date) {
-    this.executeAction(fetchIm, {
-      carrierId: this.state.carrierId,
-      fromTime: getFromTime(date),
-      toTime: getToTime(this.state.endDate),
-      type: this.state.type,
-      size: this.state.per,
-      page: 0
-    });
-
-    this.setState({
-      startDate: date,
-      current: 1
-    });
+    this.handleQueryChange({ fromTime: getFromTime(date) });
   },
 
   handleEndDateChange: function(date) {
-    this.executeAction(fetchIm, {
-      carrierId: this.state.carrierId,
-      fromTime: getFromTime(this.state.startDate),
-      toTime: getToTime(date),
-      type: this.state.type,
-      search: this.state.search,
-      size: this.state.per,
-      page: 0
-    });
-
-    this.setState({
-      endDate: date,
-      current: 1
-    });
+    this.handleQueryChange({ toTime: getToTime(date) });
   },
 
   handleTextTypeClick: function(e) {
     e.preventDefault();
-
-    this.executeAction(fetchIm, {
-      carrierId: this.state.carrierId,
-      fromTime: getFromTime(this.state.startDate),
-      toTime: getToTime(this.state.endDate),
-      type: 'text',
-      search: this.state.search,
-      size: this.state.per,
-      page: 0
-    });
-
-    this.setState({
-      type: 'text'
-    });
+    this.handleQueryChange({ type: 'text' });
   },
 
   handleImageTypeClick: function(e) {
     e.preventDefault();
-
-    this.executeAction(fetchIm, {
-      carrierId: this.state.carrierId,
-      fromTime: getFromTime(this.state.startDate),
-      toTime: getToTime(this.state.endDate),
-      type: 'image',
-      search: this.state.search,
-      size: this.state.per,
-      page: 0
-    });
-
-    this.setState({
-      type: 'image'
-    });
+    this.handleQueryChange({ type: 'image' });
   },
 
   handleAudioTypeClick: function(e) {
     e.preventDefault();
-
-    this.executeAction(fetchIm, {
-      carrierId: this.state.carrierId,
-      fromTime: getFromTime(this.state.startDate),
-      toTime: getToTime(this.state.endDate),
-      type: 'audio',
-      search: this.state.search,
-      size: this.state.per,
-      page: 0
-    });
-
-    this.setState({
-      type: 'audio'
-    });
+    this.handleQueryChange({ type: 'audio' });
   },
 
   handleVideoTypeClick: function(e) {
     e.preventDefault();
-
-    this.executeAction(fetchIm, {
-      carrierId: this.state.carrierId,
-      fromTime: getFromTime(this.state.startDate),
-      toTime: getToTime(this.state.endDate),
-      type: 'video',
-      search: this.state.search,
-      size: this.state.per,
-      page: 0
-    });
-
-    this.setState({
-      type: 'video'
-    });
+    this.handleQueryChange({ type: 'video' });
   },
 
   handleOtherTypeClick: function(e) {
     e.preventDefault();
-
-    this.executeAction(fetchIm, {
-      carrierId: this.state.carrierId,
-      fromTime: getFromTime(this.state.startDate),
-      toTime: getToTime(this.state.endDate),
-      type: 'other',
-      search: this.state.search,
-      size: this.state.per,
-      page: 0
-    });
-
-    this.setState({
-      type: 'other'
-    });
+    this.handleQueryChange({ type: 'sharing' });
   },
 
   handleSearchSubmit: function(e) {
     e.preventDefault();
-
-    this.executeAction(fetchIm, {
-      carrierId: this.state.carrierId,
-      fromTime: getFromTime(this.state.startDate),
-      toTime: getToTime(this.state.endDate),
-      type: this.state.type,
-      search: this.state.search,
-      size: this.state.per,
-      page: 0
-    });
+    this.handleQueryChange({ search: this.state.search });
   },
 
   handleSearchChange: function(e) {
-    this.setState({
-      search: e.target.value
-    });
+    if (e.which == 13) {
+      this.handleQueryChange({ search: this.state.search });
+    }
   },
 
   handleTypeChange: function(actionContext, payload, done) {
@@ -248,7 +199,7 @@ var Im = React.createClass({
 
   render: function() {
     let params = this.context.router.getCurrentParams();
-    
+
     return (
       <div className="row">
         <nav className="top-bar top-bar--inner">
@@ -302,7 +253,7 @@ var Im = React.createClass({
         </nav>
 
         <div className="large-24 columns">
-            <ImTable im={this.state.calls} total={this.state.callsCount} current={this.state.current} per={this.state.per} onPageChange={this.handlePageChange} />
+            <ImTable im={this.state.calls} total={this.state.callsCount} current={parseInt(this.state.page)} per={this.state.per} onPageChange={this.handlePageChange} />
         </div>
         <LoadingSpinner/>
       </div>
