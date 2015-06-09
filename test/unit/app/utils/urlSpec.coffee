@@ -10,12 +10,22 @@ describe 'url utils', ->
   describe '#baseUrl', ->
 
     describe 'when no env variables have been set', ->
+      APP_HOST = null
+      APP_PORT = null
+
+      beforeEach ->
+        {APP_HOST, APP_PORT } = process.env
+        delete process.env.APP_HOST
+        delete process.env.APP_PORT
+
+      afterEach ->
+        process.env.APP_HOST = APP_HOST
+        process.env.APP_PORT = APP_PORT
 
       it 'should use "localhost" & no port as default', ->
         expect( url.baseUrl() ).to.eql 'http://localhost'
 
     describe 'when APP_HOST & APP_PORT has been set', ->
-
 
       beforeEach ->
         process.env.APP_HOST = hostname
@@ -35,7 +45,4 @@ describe 'url utils', ->
 
       it 'should be able to use "https" as protocol', ->
         expect( url.secureBaseUrl(port, hostname) ).to.eql "https://#{hostname}:#{port}"
-
-
-
 
