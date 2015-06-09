@@ -1,4 +1,4 @@
-{
+[{
   "user": {
     "isRoot": true,
     "username": "root@maaii.com",
@@ -11,11 +11,11 @@
     "assignedGroup": "root",
     "status": "active"
   },
-  "company":{
+  "company": {
     "parentCompany": null,
     "carrierId": "m800",
     "name": "M800",
     "reseller": false,
     "status": "active"
   }
-}
+}]
