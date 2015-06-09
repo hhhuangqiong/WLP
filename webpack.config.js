@@ -1,14 +1,16 @@
-var path    = require('path');
-var webpack = require('webpack');
-var port    = process.env.HOT_LOAD_PORT || 8888;
+var path        = require('path');
+var webpack     = require('webpack');
+var appHost     = process.env.APP_HOST || 'localhost';
+var hotLoadPort = process.env.HOT_LOAD_PORT || 8888;
 
 module.exports = {
   custom: {
-    hotLoadPort: port,
+    hotLoadPort: hotLoadPort,
   },
   devtool: 'eval',
   entry: [
-    'webpack-dev-server/client?http://localhost:' + port,
+    // always serve over 'http'?
+    'webpack-dev-server/client?http://' + appHost + ':' + hotLoadPort,
     'webpack/hot/only-dev-server',
     './app/client/index.js'
   ],
@@ -28,7 +30,7 @@ module.exports = {
     path: path.resolve(__dirname, 'public', 'javascript'),
     filename: 'bundle.js',
     // use 'webpack-dev-server' url, otherwise will have unexpected token error
-    publicPath: 'http://localhost:' + port + '/'
+    publicPath: 'http://' + appHost + ':' + hotLoadPort + '/'
   },
   node: {
     'net': 'empty',

@@ -10,10 +10,13 @@ var debug = require('debug')('wlp:AuthApi');
  * @return {Object} function(s) to be mixed
  */
 export default function(host = '', apiPrefix = '') {
+  //NB: 'host' above is not used, need to defer evaluation via function to get the correct 'host'
+
   return {
     signIn: function(username, password, cb) {
+      console.log('signIn host', host);
       superagent
-        .post(`${host}${apiPrefix}${SIGN_IN}`)
+        .post(`${this._getHost()}${apiPrefix}${SIGN_IN}`)
         .accept('json')
         .send({
           username: username,
@@ -34,7 +37,7 @@ export default function(host = '', apiPrefix = '') {
 
     signOut: function(cb) {
       superagent
-        .post(`${host}${apiPrefix}${SIGN_OUT}`)
+        .post(`${this._getHost()}${apiPrefix}${SIGN_OUT}`)
         .accept('json')
         //TODO explict declare this dep
         .set('Authorization', this._getToken())

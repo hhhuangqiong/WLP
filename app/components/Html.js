@@ -6,7 +6,11 @@ import Version from './common/Version';
  //TODO may need to detect which file to import based on environment
 import webpackConfig from '../../webpack.config.js';
 
-const bundlePath = (process.env.NODE_ENV==="development"? ('http://localhost:' + (process.env.HOT_LOAD_PORT || webpackConfig.custom.hotLoadPort)):'/javascript') +  '/bundle.js';
+import {baseUrl} from '../utils/url';
+
+const appUrl = baseUrl(webpackConfig.custom.hotLoadPort, process.env.APP_HOST);
+const bundleFile = process.env.NODE_ENV === 'production' ?  'javascript/bundle.js':'bundle.js' ;
+const bundlePath = `${appUrl}/${bundleFile}`;
 
 var Html = React.createClass({
 
