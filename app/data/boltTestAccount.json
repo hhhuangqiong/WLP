@@ -1,0 +1,61 @@
+[{
+  "user": {
+    "isRoot": true,
+    "username": "root@maaii.com",
+    "password": "whitelabel2014",
+    "name": {
+      "first": "user",
+      "last": "root"
+    },
+    "carrierDomains": "",
+    "assignedGroup": "root",
+    "status": "active"
+  },
+  "company": {
+    "parentCompany": null,
+    "carrierId": "m800",
+    "name": "M800",
+    "reseller": false,
+    "status": "active"
+  }
+}, {
+  "user": {
+    "isRoot": false,
+    "username": "admin@maaii.org",
+    "password": "whitelabel2014",
+    "name": {
+      "first": "Admin",
+      "last": "Maaii"
+    },
+    "carrierDomains": "",
+    "assignedGroup": "root",
+    "status": "active"
+  },
+  "company": {
+    "parentCompany": null,
+    "carrierId": "maaii.org",
+    "name": "Maaii",
+    "reseller": false,
+    "status": "active"
+  }
+}, {
+  "user": {
+    "isRoot": false,
+    "username": "admin@bolt.maaii.com",
+    "password": "whitelabel2014",
+    "name": {
+      "first": "Admin",
+      "last": "Bolt"
+    },
+    "carrierDomains": "",
+    "assignedGroup": "root",
+    "status": "active"
+  },
+  "company": {
+    "parentCompany": null,
+    "carrierId": "bolter.maaii.org",
+    "name": "Bolt",
+    "reseller": false,
+    "status": "active"
+  }
+}]

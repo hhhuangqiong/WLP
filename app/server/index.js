@@ -50,6 +50,7 @@ function initialize(port) {
   //server.set('views', path.join(PROJ_ROOT, 'views'));
   //server.set('view engine', 'jade');
   //server.set('view cache', env !== 'development');
+  
 
   var env = server.get('env');
 
@@ -57,7 +58,8 @@ function initialize(port) {
   var nconf = require('./initializers/nconf')(env, path.resolve(__dirname, '../config'));
 
   // database initialization + data seeding
-  var postDBInit = require('./initializers/dataseed')(path.resolve(__dirname, '../data/rootUser.json'));
+  var postDBInit = require('./initializers/dataseed')(path.resolve(__dirname, '../data/boltTestAccount.json'));
+
   require('./initializers/database')(nconf.get('mongodb:uri'), nconf.get('mongodb:options'), postDBInit);
 
   var ioc = require('./initializers/ioc')(nconf);
@@ -68,7 +70,9 @@ function initialize(port) {
       prefix: nconf.get('queue:prefix')
     });
 
-    ioc.factory('JobQueue', () => { return kue; });
+    ioc.factory('JobQueue', () => {
+      return kue;
+    });
   }
 
   require('./initializers/logging')();
@@ -108,10 +112,10 @@ function initialize(port) {
   let redisStore = require('./initializers/redisStore')(session, nconf, env);
 
   server.use(session({
-    resave:            false,
+    resave: false,
     saveUninitialized: true,
-    secret:            nconf.get('secret:session'),
-    store:             redisStore
+    secret: nconf.get('secret:session'),
+    store: redisStore
   }));
 
   server.use(morgan('dev'));
@@ -125,7 +129,7 @@ function initialize(port) {
   server.use(flash());
 
   // Routes
-  server.use(config.API_PATH_PREFIX,         require('./routes'));
+  server.use(config.API_PATH_PREFIX, require('./routes'));
   server.use(config.FILE_UPLOAD_PATH_PREFIX, require('./routes/data'));
 
   var renderApp = require('./render')(app);
@@ -170,4 +174,3 @@ function initialize(port) {
 }
 
 exports.initialize = initialize;
-
