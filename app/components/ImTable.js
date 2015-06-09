@@ -72,7 +72,7 @@ var ImTable = React.createClass({
                     </div>
           } else {
             recipient_info =  <div className="recipient_info">
-                                <span className={u.destination ? u.destination : ''}></span>
+                                <span className={u.destination ? 'flag--'+u.destination : ''}></span>
                                 <span className="recipient">{u.recipient}</span>
                                 <br/>
                                 <span>{(calleeCountry) ? calleeCountry.name : ''}</span>
@@ -94,7 +94,7 @@ var ImTable = React.createClass({
               </div>
             </td>
             <td className="im-table--cell">
-              <span className={u.origin}></span>
+              <span className={'flag--'+u.origin}></span>
               <div className="sender_info">
                 <span className="sender">{u.sender}</span>
                 <br/>

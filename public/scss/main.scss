@@ -44,7 +44,14 @@
 @import 'pages/calls';
 @import 'pages/im';
 
-
+// css for all country flags setting
+[class^="flag--"], [class*=" flag--"] {
+  display: block;
+  zoom: 0.1055;
+  float: left;
+  margin-right: 0.5rem;
+  margin-top: 0.2rem;
+}
 //need to rework these items
 // @import 'layouts/sidebar';
 // @import 'layouts/slider';
