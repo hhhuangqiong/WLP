@@ -10,15 +10,16 @@ var url = require('url');
  * @see {@link: https://iojs.org/api/url.html}
  *
  * @param {string} [port=APP_PORT] port number
- * @param {string} [hostname=APP_HOST] host name
+ * @param {string} [hostname=APP_HOSTNAME] host name
  * @return {string} application URL
  */
-export function baseUrl(port = process.env.APP_PORT, hostname = process.env.APP_HOST, isSecure = false) {
-  hostname  = hostname || 'localhost';
+export function baseUrl(port = process.env.APP_PORT, hostname = process.env.APP_HOSTNAME, isSecure = false) {
+  // vigorous validation later
+  hostname = hostname || 'localhost';
+  port     = port || 3000;
 
   let protocol = isSecure ? 'https:' : 'http:';
 
-  // vigorous validation later
   return url.format({ protocol, hostname, port });
 }
 

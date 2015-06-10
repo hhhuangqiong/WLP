@@ -48,7 +48,7 @@ gulp.task 'test', (cb) ->
     .on 'finish', ->
       gulp.src ['test/unit/**/*.coffee']
         .pipe mocha()
-        .pipe istanbul.writeReports({ dir:  "#{dest.build}/coverage" })
+        .pipe istanbul.writeReports({ dir: "#{dest.build}/coverage" })
         .on 'end', cb
   return
 

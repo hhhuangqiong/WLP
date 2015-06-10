@@ -10,7 +10,7 @@ import {baseUrl} from '../utils/url';
 var appUrl, bundleFile, bundlePath;
 
 if (process.env.NODE_ENV === 'development') {
-  appUrl = baseUrl(webpackConfig.custom.hotLoadPort, process.env.APP_HOST);
+  appUrl = baseUrl(webpackConfig.custom.hotLoadPort, process.env.APP_HOSTNAME);
   bundleFile =  'bundle.js';
   bundlePath = `${appUrl}/${bundleFile}`;
 }
