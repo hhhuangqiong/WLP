@@ -39,7 +39,7 @@ var CallsTable = React.createClass({
           return <tr className="calls-table--row" key={u.call_id}>
             <td className="text-center calls-table--cell"><span className={u.success ? "label status success" : "label status alert"}></span></td>
             <td className="calls-table--cell">
-              <span className="left duration">{u.duration}s</span>
+              <span className="left duration">{Math.round(u.duration/1000)}s</span>
               <div className="left timestamp">
                 <span className="call_time">{callStart} - {callEnd}</span>
                 <br/>
