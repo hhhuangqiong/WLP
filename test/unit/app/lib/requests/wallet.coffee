@@ -64,10 +64,10 @@ describe 'WalletRequest', ->
       request = null
 
     it 'should not throw error without mandatory parameters', ->
-      params = {};
+      params = {}
+
       fn = request.validateQuery params, (err, formatted) ->
-        expect err
-        .to.be.an 'object'
+        expect(err).to.not.be.undefined
 
     it 'should not return error if timeout', (done) ->
       timeout = 10
