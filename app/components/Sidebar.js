@@ -45,7 +45,7 @@ let navSections = [
   {
     name: 'IM',
     icon: 'icon-menuim',
-    routeName: 'im'
+    routeName: 'im-overview'
   },
   {
     name: 'SMS',
