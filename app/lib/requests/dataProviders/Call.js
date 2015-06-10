@@ -103,13 +103,12 @@ export default class CallsRequest extends BaseRequest {
   getCalls(params, cb) {
     logger.debug('get calls from carrier %s', params);
 
-    // Q.ninvoke(this, 'formatQueryData', params)
-    //   .then((params) => {
-    //     this.sendRequest(params, cb);
-    //   })
-    //   .catch((err) => {
-    //     return cb(this.handleError(err, err.status || 500));
-    //   });
-    this.sendRequest(params, cb);
+     Q.ninvoke(this, 'formatQueryData', params)
+      .then((params) => {
+        this.sendRequest(params, cb);
+      })
+      .catch((err) => {
+        return cb(this.handleError(err, err.status || 500));
+      });
   }
 }
