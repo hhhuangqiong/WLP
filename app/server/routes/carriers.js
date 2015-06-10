@@ -190,8 +190,7 @@ api.get('/carriers/:carrierId/calls', function(req, res) {
     var caller_result, callee_result;
 
     var getCallerResult = function() {
-      let callee_param = params;
-      callee_param.caller = '';
+      let callee_param = _.omit(_.clone(params), 'caller');
       callsRequest.getCalls(callee_param, (err, result) => {
         if (err)
           return res.status(err.status).json({
@@ -204,9 +203,7 @@ api.get('/carriers/:carrierId/calls', function(req, res) {
     };
 
     var getCalleeResult = function () {
-      let caller_param = params;
-      caller_param.caller = caller_param.callee;
-      caller_param.callee = '';
+      let caller_param = _.omit(_.clone(params), 'callee');
       callsRequest.getCalls(caller_param, (err, result) => {
         if (err)
           return res.status(err.status).json({
