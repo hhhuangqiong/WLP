@@ -2,7 +2,7 @@
 
 # development
 #export HOT_LOAD_PORT=8888
-#export APP_HOST=localhost
+#export APP_HOSTNAME=localhost
 #export APP_PORT=3000
 export WL_API_HKBOSS=192.168.135.167:10180
 export mumsApi__baseUrl=http://192.168.118.12:8080

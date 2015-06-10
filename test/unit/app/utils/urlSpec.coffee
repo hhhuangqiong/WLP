@@ -1,38 +1,40 @@
-{expect}          = require 'chai'
+{expect} = require 'chai'
 
-url = require 'app/utils/url'
+# object under test
+url      = require 'app/utils/url'
 
 describe 'url utils', ->
-
   hostname = 'example.com'
   port = 1234
+  env = process.env
 
   describe '#baseUrl', ->
+    sandbox = null
 
     describe 'when no env variables have been set', ->
-      APP_HOST = null
+      APP_HOSTNAME = null
       APP_PORT = null
 
       beforeEach ->
-        {APP_HOST, APP_PORT } = process.env
-        delete process.env.APP_HOST
+        {APP_HOSTNAME, APP_PORT } = process.env
+        delete process.env.APP_HOSTNAME
         delete process.env.APP_PORT
 
       afterEach ->
-        process.env.APP_HOST = APP_HOST
+        process.env.APP_HOSTNAME = APP_HOSTNAME
         process.env.APP_PORT = APP_PORT
 
-      it 'should use "localhost" & no port as default', ->
-        expect( url.baseUrl() ).to.eql 'http://localhost'
+      it 'should use "localhost" & port "3000" as default', ->
+        expect( url.baseUrl() ).to.eql 'http://localhost:3000'
 
-    describe 'when APP_HOST & APP_PORT has been set', ->
+    describe 'when "APP_HOSTNAME" & "APP_PORT" has been set', ->
 
       beforeEach ->
-        process.env.APP_HOST = hostname
+        process.env.APP_HOSTNAME = hostname
         process.env.APP_PORT = port
 
       afterEach ->
-        delete process.env.APP_HOST
+        delete process.env.APP_HOSTNAME
         delete process.env.APP_PORT
 
       it "should use \"#{hostname}\" as host name", ->
