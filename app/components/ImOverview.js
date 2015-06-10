@@ -63,7 +63,6 @@ var ImOverview = React.createClass({
         </nav>
         <div className="large-24 columns">
           <ul>
-          {/*N.B. error will occour when {widgets} is undefined or empty, {widgets} shell never be empty on deploy stage*/}
           { this.state.widgets.map((widget) => {
             if (widget != '') {
               return <li className="left" dangerouslySetInnerHTML={{__html: widget}}></li>;
