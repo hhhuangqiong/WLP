@@ -17,6 +17,7 @@ var ImStore = createStore({
     this.pageSize = 10;
     this.callsCount = 0;
     this.totalPages = 0;
+    this.widgets = [];
   },
 
   handleImChange: function (payload) {

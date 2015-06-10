@@ -14,7 +14,6 @@ import ImStore from '../stores/ImStore';
 import {fetchIm} from '../actions/fetchIm';
 
 import ImTable from './ImTable';
-import LoadingSpinner from './common/LoadingSpinner';
 
 var getFromTime = function(dateString=moment()) {
   return (_.isEmpty(dateString)) ? moment().local().startOf('day').format('x') : moment(dateString).local().startOf('day').format('x');
@@ -255,7 +254,7 @@ var Im = React.createClass({
         <div className="large-24 columns">
             <ImTable im={this.state.calls} total={this.state.callsCount} current={parseInt(this.state.page)} per={this.state.per} onPageChange={this.handlePageChange} />
         </div>
-        <LoadingSpinner/>
+
       </div>
     );
   }
