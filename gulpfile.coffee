@@ -17,16 +17,17 @@ source           = require 'vinyl-source-stream'
 sourcemaps       = require 'gulp-sourcemaps'
 webpack          = require 'webpack'
 WebpackDevServer = require 'webpack-dev-server'
-
-spriteSmith = require 'gulp.spritesmith'
-merge       = require 'merge-stream'
+spriteSmith      = require 'gulp.spritesmith'
+merge            = require 'merge-stream'
 
 {argv}           = require 'yargs'
 {exec}           = require 'child_process'
 
-if process.env.NODE_ENV=="development" then webpackConfig = require './webpack.config' else webpackConfig = require './webpack.production.config'
-
 console.timeEnd 'Loading plugins'
+
+env = process.env.NODE_ENV || 'development'
+
+if env == "development" then webpackConfig = require './webpack.config' else webpackConfig = require './webpack.production.config'
 
 # reduce startup loading time
 browserSync = null
