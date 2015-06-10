@@ -175,8 +175,8 @@ api.get('/carriers/:carrierId/calls', function(req, res) {
   let params = {
     // TODO  carrierId to be changed in the future
     caller_carrier: (req.params.carrierId == 'm800') ? 'maaiitest.com' : req.params.carrierId,
-    from: moment(req.query.startDate, 'L').format('x'),
-    to: moment(req.query.endDate, 'L').format('x'),
+    from: req.query.startDate,
+    to: req.query.endDate,
     // TODO determine text search functionality
     caller: (_.isEmpty(req.query.search)) ? '' : '*'+req.query.search+'*',
     callee: (_.isEmpty(req.query.search)) ? '' : '*'+req.query.search+'*',
