@@ -13,7 +13,6 @@ describe 'TransactionRequest', ->
   baseUrl = 'http://this.is.boss'
   url     = '/api/transactionHistory'
   delay   = 20
-  timeout = 100
 
   describe 'TransactionQuery', ->
 
@@ -31,10 +30,10 @@ describe 'TransactionRequest', ->
       nock(baseUrl)
         .get(util.format('%s?requestId=%s&startDate=20150224000000&endDate=20150224235959', url, params.requestId))
         .delay(delay)
-        .reply(200, {
+        .reply 200,
           "id": params.requestId,
           "success": true,
-          "result": {
+          "result":
             "totalRec":"1",
             "history": [
               {
@@ -53,8 +52,6 @@ describe 'TransactionRequest', ->
               "errorDescription":""
               }
             ]
-          }
-        })
 
     afterEach ->
       request = null
@@ -92,6 +89,8 @@ describe 'TransactionRequest', ->
       request.getTopUp params, (err, val) ->
         expect err
         .to.exist
+
+        expect(err).to.have.property 'timeout', timeout
 
         done()
 

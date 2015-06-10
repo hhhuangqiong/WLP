@@ -64,7 +64,8 @@ describe 'WalletRequest', ->
       request = null
 
     it 'should not throw error without mandatory parameters', ->
-      params = {};
+      params = {}
+
       fn = request.validateQuery params, (err, formatted) ->
         expect err
         .to.exist
