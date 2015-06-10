@@ -7,8 +7,6 @@ export default function(context, params, done) {
   context.dispatch('FETCH_CALLS_START');
 
   context.api.getCalls(params, function(err, calls) {
-    calls.params = params;
-
     context.dispatch('FETCH_CALLS_END');
     context.dispatch('FETCH_END');
     if (err) {

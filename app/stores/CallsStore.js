@@ -28,7 +28,6 @@ var CallsStore = createStore({
     this.pageSize = payload.pageSize;
     this.callsCount = payload.totalElements;
     this.totalPages = payload.totalPages;
-    this.params = payload.params;
     this.emitChange();
   },
 

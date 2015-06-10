@@ -59,11 +59,14 @@ export default class CallsRequest extends BaseRequest {
       query.carrier = params.carrierId;
       query.from    = params.from;
       query.to      = params.to;
-      query.page    = params.pageNumber || 0;
+      query.page    = params.page || 0;
       query.size    = params.size || 20;
 
-      if (params.username)
-        query.caller = params.username;
+      if (params.caller)
+        query.caller = params.caller;
+
+      if (params.callee)
+        query.callee = params.callee;
 
       if (params.type)
         query.type = params.type;
