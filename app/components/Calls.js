@@ -140,6 +140,7 @@ var Calls = React.createClass({
   handleSearchSubmit: function(e) {
     // on enter pressed
     if (e.which == 13) {
+      e.preventDefault();
       this.handleQueryChange();
     }
   },
