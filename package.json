@@ -9,12 +9,13 @@
     "doc": "npm run transpile && jsdoc -r node_modules/app -d build/docs",
     "transpile": "gulp babel webpack",
     "server": "node bin/www.js",
+    "forever": "forever bin/www.js",
     "pretest": "npm run transpile",
     "test": "gulp test",
     "test:report": "mocha --recursive test --reporter xunit > build/reports.xml"
   },
   "dependencies": {
-    "babel": "^5.2.12",
+    "babel": "^5.5.6",
     "bcrypt": "^0.8.0",
     "body-parser": "^1.8.1",
     "bottlejs": "^1.0.0",
@@ -34,7 +35,6 @@
     "fluxible": "^0.4.6",
     "forever": "^0.14.1",
     "gridfs-stream": "^1.1.0",
-    "i18next": "^1.7.8",
     "immutable": "^3.7.2",
     "ioredis": "^1.3.6",
     "joi": "^6.2.0",
@@ -68,6 +68,7 @@
     "speakeasy": "^1.0.3",
     "superagent": "^1.1.0",
     "validator": "^3.30.0",
+    "webpack": "^1.9.4",
     "winston": "^1.0.0"
   },
   "devDependencies": {
@@ -97,7 +98,6 @@
     "sinon": "^1.12.2",
     "vinyl-buffer": "^1.0.0",
     "vinyl-source-stream": "^1.0.0",
-    "webpack": "^1.9.4",
     "webpack-dev-server": "^1.9.0",
     "yargs": "^3.0.4"
   }
