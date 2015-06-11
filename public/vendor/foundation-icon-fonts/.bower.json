@@ -5,14 +5,13 @@
   ],
   "ignore": [],
   "homepage": "https://github.com/zurb/foundation-icon-fonts",
-  "_release": "312048e0c5",
+  "_release": "afed003521",
   "_resolution": {
     "type": "branch",
     "branch": "master",
-    "commit": "312048e0c5df666e5f324d1c064f7d7e6b2428a4"
+    "commit": "afed003521ff971bc614de68bba2676e16ce39f4"
   },
   "_source": "git://github.com/zurb/foundation-icon-fonts.git",
   "_target": "*",
-  "_originalSource": "foundation-icon-fonts",
-  "_direct": true
+  "_originalSource": "foundation-icon-fonts"
 }

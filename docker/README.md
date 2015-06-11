@@ -1,11 +1,9 @@
 # Prerequsites
 
 - docker
-- boot2docker
+- boot2docker (OSX users)
 
 ## boot2docker
-
-OSX only:
 
 ```
 # create the VM
@@ -17,6 +15,9 @@ boot2docker up
 
 # export env vars for the DOCKER client
 $(boot2docker shellinit)
+
+# required for `docker push` since we're using self-signed cert
+boot2docker ssh "echo $'EXTRA_ARGS=\"--insecure-registry docker.dev.maaii.com\"' | sudo tee -a /var/lib/boot2docker/profile && sudo /etc/init.d/docker restart"
 ```
 
 # Workflow
@@ -46,3 +47,15 @@ docker stop wlp
 docker ps -q -f name=wlp | xargs docker rm
 ```
 
+# Publish the Docker image
+
+```
+# docker tag <IMAGE> <TAG>
+docker tag docker.dev.maaii.com/m800/white-label-portal-devel docker.dev.maai.com/m800/white-label-portal-devel:1.0
+
+# docker push <TAG>
+docker push docker.dev.maaii.com/m800/white-label-portal-devel:1.0
+
+# to see the pushed image
+docker search docker.dev.maaii.com/m800
+```
