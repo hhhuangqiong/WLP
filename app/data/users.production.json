@@ -7,7 +7,6 @@
       "first": "user",
       "last": "root"
     },
-    "carrierDomains": "",
     "assignedGroup": "root",
     "status": "active"
   },
@@ -21,19 +20,18 @@
 }, {
   "user": {
     "isRoot": false,
-    "username": "admin@maaii.org",
+    "username": "admin@maaii.com",
     "password": "whitelabel2014",
     "name": {
       "first": "Admin",
       "last": "Maaii"
     },
-    "carrierDomains": "",
     "assignedGroup": "root",
     "status": "active"
   },
   "company": {
     "parentCompany": null,
-    "carrierId": "maaiii.org",
+    "carrierId": "maaii.com",
     "name": "Maaii",
     "reseller": false,
     "status": "active",
@@ -65,19 +63,18 @@
 }, {
   "user": {
     "isRoot": false,
-    "username": "admin@bolt.maaii.com",
+    "username": "admin@bolter.maaii.com",
     "password": "whitelabel2014",
     "name": {
       "first": "Admin",
       "last": "Bolt"
     },
-    "carrierDomains": "",
     "assignedGroup": "root",
     "status": "active"
   },
   "company": {
     "parentCompany": null,
-    "carrierId": "bolter.maaiii.org",
+    "carrierId": "bolter.maaii.com",
     "name": "Bolt",
     "reseller": false,
     "status": "active",
