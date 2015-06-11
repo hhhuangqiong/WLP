@@ -1,6 +1,7 @@
 import _ from 'lodash';
 import moment from 'moment';
 import {concurrent} from 'contra';
+import classNames from 'classnames';
 
 import React from 'react';
 import {Link} from 'react-router';
@@ -34,13 +35,17 @@ var Im = React.createClass({
     storeListeners: [ImStore],
 
     fetchData: function(context, params, query, done) {
+      let startDate = (query.startDate) ? getFromTime(query.startDate) : undefined;
+      let endDate = (query.endDate) ? getToTime(query.endDate) : undefined;
       concurrent([
         context.executeAction.bind(context, fetchIm, {
           carrierId: params.identity,
-          fromTime: query.fromTime || getFromTime(moment().subtract(2,'month').startOf('day')),
-          toTime: query.toTime || getToTime(),
+          fromTime: startDate || getFromTime(moment().subtract(2,'month').startOf('day')),
+          toTime: endDate || getToTime(),
+          type: query.type,
+          search: query.search,
           size: 10,
-          page: query.page || 0
+          page: +query.page-1 || 0
         })
       ], done || function() {});
     }
@@ -120,9 +125,9 @@ var Im = React.createClass({
 
     query.startDate = (newQuery.fromTime) ? moment(newQuery.fromTime,'x').format('L') : currentState.startDate;
     query.endDate = (newQuery.toTime) ? moment(newQuery.toTime,'x').format('L') : currentState.endDate;
-    query.type = (newQuery.type) ? newQuery.type : currentState.type;
-    query.search = (newQuery.search) ? newQuery.search : currentState.search;
-    query.page = (newQuery.page) ? newQuery.page : currentState.page;
+    query.type = (!_.isUndefined(newQuery.type)) ? newQuery.type : currentState.type;
+    query.search = (!_.isUndefined(newQuery.search)) ? newQuery.search : currentState.search;
+    query.page = (!_.isUndefined(newQuery.page)) ? newQuery.page : currentState.page;
 
     query = _.pick(query, ['startDate','endDate','type','search','page'] );
 
@@ -177,17 +182,18 @@ var Im = React.createClass({
 
   handleOtherTypeClick: function(e) {
     e.preventDefault();
-    this.handleQueryChange({ type: 'sharing' });
+    this.handleQueryChange({ type: 'remote' });
   },
 
   handleSearchSubmit: function(e) {
     e.preventDefault();
-    this.handleQueryChange({ search: this.state.search });
   },
 
   handleSearchChange: function(e) {
+    let search = e.target.value;
+    this.setState({search:search});
     if (e.which == 13) {
-      this.handleQueryChange({ search: this.state.search });
+      this.handleQueryChange({ search: search });
     }
   },
 
@@ -196,8 +202,19 @@ var Im = React.createClass({
     this.setState({type:status});
   },
 
+  _handleStartDateClick: function() {
+    this.refs.startDatePicker.handleFocus();
+  },
+
+  _handleEndDateClick: function() {
+    this.refs.endDatePicker.handleFocus();
+  },
+
   render: function() {
     let params = this.context.router.getCurrentParams();
+
+    let startDate = moment(this.state.startDate).format("MM/DD/YYYY");
+    let endDate = moment(this.state.endDate).format("MM/DD/YYYY");
 
     return (
       <div className="row">
@@ -211,41 +228,53 @@ var Im = React.createClass({
                 <Link to="im" params={params}>Details Report</Link>
               </li>
             </ul>
-            <div className="start-date-wrap large-2 columns left">
-              <DatePicker
-                key="start-date"
-                dateFormat="MM/DD/YYYY"
-                selected={this.state.startDate}
-                minDate={this.state.minDate}
-                maxDate={this.state.maxDate}
-                onChange={this.handleStartDateChange}
-              />
-            </div>
 
-            <div className="end-date-wrap large-2 large-offset-0 columns left">
-              <DatePicker
-                key="end-date"
-                dateFormat="MM/DD/YYYY"
-                selected={this.state.endDate}
-                minDate={this.state.minDate}
-                maxDate={this.state.maxDate}
-                onChange={this.handleEndDateChange}
-              />
-            </div>
+            <ul className="left top-bar--inner">
+              <li className="top-bar--inner">
+                <div className="date-range-picker left">
+                  <i className="date-range-picker__icon icon-calendar left" />
+                  <div className="date-input-wrap left" onClick={this._handleStartDateClick}>
+                    <span className="left date-range-picker__date-span">{startDate}</span>
+                    <DatePicker
+                      ref="startDatePicker"
+                      key="start-date"
+                      dateFormat="MM/DD/YYYY"
+                      selected={this.state.startDate}
+                      minDate={this.state.minDate}
+                      maxDate={this.state.maxDate}
+                      onChange={this.handleStartDateChange}
+                    />
+                  </div>
+                  <i className="date-range-picker__separator left">-</i>
+                  <div className="date-input-wrap left" onClick={this._handleEndDateClick}>
+                    <span className="left date-range-picker__date-span">{endDate}</span>
+                    <DatePicker
+                      ref="endDatePicker"
+                      key="end-date"
+                      dateFormat="MM/DD/YYYY"
+                      selected={this.state.endDate}
+                      minDate={this.state.minDate}
+                      maxDate={this.state.maxDate}
+                      onChange={this.handleEndDateChange}
+                    />
+                  </div>
+                </div>
+              </li>
+            </ul>
 
             <div className="im-type large-2 columns left top-bar-section">
               <ul className="button-group round">
-                <li><a className="button icon-text" onClick={this.handleTextTypeClick}></a></li>
-                <li><a className="button icon-image" onClick={this.handleImageTypeClick}></a></li>
-                <li><a className="button icon-audio" onClick={this.handleAudioTypeClick}></a></li>
-                <li><a className="button icon-video" onClick={this.handleVideoTypeClick}></a></li>
-                <li><a className="button icon-ituneyoutube" onClick={this.handleOtherTypeClick}></a></li>
+                <li><a className={classNames('button', 'icon-text', { active: this.state.type == 'text' })} onClick={this.handleTextTypeClick}></a></li>
+                <li><a className={classNames('button', 'icon-image', { active: this.state.type == 'image' })} onClick={this.handleImageTypeClick}></a></li>
+                <li><a className={classNames('button', 'icon-audio', { active: this.state.type == 'audio' })} onClick={this.handleAudioTypeClick}></a></li>
+                <li><a className={classNames('button', 'icon-video', { active: this.state.type == 'video' })} onClick={this.handleVideoTypeClick}></a></li>
+                <li><a className={classNames('button', 'icon-ituneyoutube', { active: this.state.type == 'remote' })} onClick={this.handleOtherTypeClick}></a></li>
               </ul>
             </div>
 
-            <div className="im-search large-3 columns right">
+            <div className="im-search top-bar-section right">
               <form onSubmit={this.handleSearchSubmit}>
-                <input type="text" placeholder="Username/Mobile" onChange={this.handleSearchChange} />
+                <input className="top-bar-section__query-input" type="text" placeholder="Username/Mobile" onKeyPress={this.handleSearchChange} />
               </form>
             </div>
           </div>

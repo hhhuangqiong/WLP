@@ -298,6 +298,7 @@ api.get('/carriers/:carrierId/im', function(req, res) {
           });
 
         recipient_result = result;
+
         getRecipientResult();
       });
     }
@@ -314,7 +315,13 @@ api.get('/carriers/:carrierId/im', function(req, res) {
 
         sender_result = result;
 
-        let allResult = _.merge(sender_result,recipient_result);
+        let allResult = { offset: sender_result.offset,
+                          contents:
+                           sender_result.contents.concat(recipient_result.contents),
+                          pageNumber: (sender_result.pageNumber>recipient_result.pageNumber)?sender_result.pageNumber:recipient_result.pageNumber,
+                          pageSize: sender_result.pageSize,
+                          totalPages: sender_result.totalPages+recipient_result.totalPages,
+                          totalElements: sender_result.totalElements+recipient_result.totalElements }
 
         return res.json(allResult);
       });

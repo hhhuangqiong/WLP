@@ -1,3 +1,4 @@
+.dark {color:#333333;}
 .im-table {
     .im-table--cell {
         color: #999999;
@@ -9,35 +10,26 @@
         }
 
         .im-message-type-info {
-          .im-message-type-text {
-              color:#333333;
-              font-size: 1rem;
-          }
-
-        }
-
-        .sender_info {
-          .sender {
-              color:#333333;
-          }
+            .im-message-type-text {
+                font-size: 1rem;
+            }
         }
 
         .recipient_info {
-          .icon-multiuser {
-            float: left;
-            font-size: 1.8rem;
-            margin-right: 1rem;
-          }
+            .icon-multiuser {
+              float: left;
+              font-size: 1.8rem;
+              margin-right: 1rem;
+            }
 
-          .recipient {
-            color:#333333;
-            font-size: 1rem;
-          }
+            .recipient {
+              font-size: 1rem;
+            }
 
-          .recipient-num {
-            font-size: 1.2rem;
-            vertical-align: text-bottom;
-          }
+            .recipient-num {
+              font-size: 1.2rem;
+              vertical-align: text-bottom;
+            }
         }
 
     }
