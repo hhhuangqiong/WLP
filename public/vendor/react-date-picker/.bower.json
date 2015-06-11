@@ -40,6 +40,5 @@
   },
   "_source": "git://github.com/Hacker0x01/react-datepicker.git",
   "_target": "~0.8.0",
-  "_originalSource": "react-date-picker",
-  "_direct": true
+  "_originalSource": "react-date-picker"
 }
