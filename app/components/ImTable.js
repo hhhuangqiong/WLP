@@ -11,6 +11,8 @@ var Countries = require('../data/countries.json');
 
 var Tooltip = require('rc-tooltip');
 
+const IM_DATETIME_FORMAT = 'MMMM DD YYYY, hh:mm:ss a';
+
 var ImTable = React.createClass({
   contextTypes: {
     router: React.PropTypes.func.isRequired
@@ -30,6 +32,22 @@ var ImTable = React.createClass({
     return this.props.current * this.props.per;
   },
 
+  getTypeSize: function(item) {
+    let typeSize = '';
+    if (item.file_size>0 && item.file_size>1024) {
+      typeSize = (Math.round((item.file_size/1024)))+'kb';
+    } else if (item.file_size>0 && item.file_size<1024) {
+      typeSize = item.file_size+'b';
+    } else {
+      if (item.message_size>0 && item.message_size>1024) {
+        typeSize = (Math.round((item.message_size/1024)))+'kb';
+      } else if (item.message_size>0 && item.message_size<1024) {
+        typeSize = item.message_size+'b';
+      }
+    }
+    return typeSize;
+  },
+
   render: function() {
     let params = this.context.router.getCurrentParams();
 
@@ -45,7 +63,7 @@ var ImTable = React.createClass({
             return c.alpha2.toLowerCase() == u.destination
           });
 
-          let imDate = moment(u.timestamp).format('MMMM DD YYYY, hh:mm:ss a');
+          let imDate = moment(u.timestamp).format(IM_DATETIME_FORMAT);
 
           let messageTypeClasses = {
             animation: 'icon-animation',
@@ -53,17 +71,34 @@ var ImTable = React.createClass({
             image: 'icon-image',
             audio: 'icon-audio',
             video: 'icon-video',
-            sharing: 'icon-ituneyoutube',
+            remote: 'icon-ituneyoutube',
             sticker: 'icon-sticker',
-            undefined: 'undefined',
             'voice_sticker': 'icon-audio'
           };
 
-          let type = messageTypeClasses[u.message_type];
+          let typeClass = messageTypeClasses[u.message_type] || '';
+
+          let typeText = _.capitalize(u.message_type);
+
+          if (typeText === 'Undefined') {
+            typeText = 'N/A';
+          }
+
+          let typeSize = this.getTypeSize(u);
+
+          if (typeText == 'Remote') {
+            typeText = 'Sharing';
+            typeSize = u.resource_id;
+            if (typeSize != 'itunes')
+              typeSize = _.capitalize(typeSize);
+          }
+
+          let sender = u.sender.split('/');
+          sender = sender[0];
 
           let recipient_info;
 
-          if (u.recipients != null && _.isArray(u.recipients)) {
+          if (_.isArray(u.recipients)) {
             recipient_info = <div className="recipient_info">
                       <div className="icon-multiuser"></div>
                         <Tooltip placement="right" trigger={['hover']} overlay={u.recipients.map((n)=>{return <span className="recip-info">{n}</span>})}>
@@ -73,7 +108,7 @@ var ImTable = React.createClass({
           } else {
             recipient_info =  <div className="recipient_info">
                                 <span className={u.destination ? 'flag--'+u.destination : ''}></span>
-                                <span className="recipient">{u.recipient}</span>
+                                <span className="recipient dark">{u.recipient}</span>
                                 <br/>
                                 <span>{(calleeCountry) ? calleeCountry.name : ''}</span>
                               </div>
@@ -83,21 +118,21 @@ var ImTable = React.createClass({
             <td className="text-center im-table--cell"><span className={u.success ? "label status success" : "label status alert"}></span></td>
             <td className="im-table--cell">
               <div className="left timestamp">
-                <span className="call_date">{imDate}</span>
+                <span className="call_date dark">{imDate}</span>
               </div>
             </td>
             <td className="im-table--cell">
-              <span className={"im-message-type-icon " + type + " " + u.message_type}></span>
+              <span className={"im-message-type-icon " + typeClass + " " + u.message_type}></span>
               <div className="im-message-type-info">
-                <span className={"im-message-type-text"}>{(u.message_type && u.message_type !== 'undefined')?u.message_type:'N/A'}</span>
+                <span className={"im-message-type-text dark"}>{typeText}</span>
                 <br/>
-                <span className={"im-message-type-size"}>{(u.file_size>0) ? u.file_size+'kb' : u.message_size+'b'}</span>
+                <span className={"im-message-type-size"}>{typeSize}</span>
               </div>
             </td>
             <td className="im-table--cell">
               <span className={'flag--'+u.origin}></span>
               <div className="sender_info">
-                <span className="sender">{u.sender}</span>
+                <span className="sender dark">{sender}</span>
                 <br/>
                 <span>{(callerCountry) ? callerCountry.name : ''}</span>
               </div>
