@@ -15,7 +15,10 @@
     "carrierId": "m800",
     "name": "M800",
     "reseller": false,
-    "status": "active"
+    "status": "active",
+    "timezone": "UTC+8",
+    "country": "Hong Kong",
+    "logoFile": "logo-m800.png"
   }
 }, {
   "user": {
@@ -35,6 +38,9 @@
     "name": "Maaii",
     "reseller": false,
     "status": "active",
+    "timezone": "UTC+8",
+    "country": "Hong Kong",
+    "logoFile": "logo-m800.png",
     "widgets": {
       "calls": [
         "<iframe src=\"https://mobiledata.m800.com/public/w/iMqgXQu7fxD2uW6pF8Jl\" width=\"301.3333339691162\" height=\"148.3333339691162\" frameborder=\"0\" scrolling=\"no\" style=\"border: solid rgba(243, 243, 232, 0.701961) 9.3333330154419px; border-radius: 5px; -moz-box-sizing: content-box; -webkit-box-sizing: content-box; box-sizing: content-box;\"></iframe>",
@@ -78,6 +84,9 @@
     "name": "Bolt",
     "reseller": false,
     "status": "active",
+    "timezone": "UTC+8",
+    "country": "Hong Kong",
+    "logoFile": "logo-bolt.jpg",
     "widgets": {
       "calls": [
         "<iframe src=\"https://mobiledata.m800.com/public/w/FeNNrmeLEGZo4VHZHS6H\" width=\"301.3333339691162\" height=\"148.3333339691162\" frameborder=\"0\" scrolling=\"no\" style=\"border: solid rgba(243, 243, 232, 0.701961) 9.3333330154419px; border-radius: 5px; -moz-box-sizing: content-box; -webkit-box-sizing: content-box; box-sizing: content-box;\"></iframe>",

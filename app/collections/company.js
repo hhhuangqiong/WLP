@@ -1,7 +1,8 @@
 'use strict';
-
 var mongoose = require('mongoose');
+var gridfs = require('./../server/utils/gridfs');
 var collectionName = 'Company';
+
 var schema = new mongoose.Schema({
   parentCompany: {
     type: mongoose.Schema.Types.ObjectId,
@@ -164,6 +165,14 @@ schema.virtual('role').get(function() {
 
 schema.virtual('identity').get(function() {
   return this.carrierId || null;
+});
+
+schema.method('addLogo', function(filePath, options, cb) {
+  gridfs.addFile(filePath, options, (err, fileDoc)=>{
+    if (err) return new Error(err);
+    this.logo = fileDoc._id;
+    return this.save(cb);
+  });
 });
 
 schema.method('isRootCompany', function() {
