@@ -3,6 +3,7 @@ var logger = require('winston');
 var Q = require('q');
 var _ = require('lodash');
 var fs = require('fs');
+var path = require('path');
 
 var Company = require('../../collections/company');
 var PortalUser = require('../../collections/portalUser');
@@ -36,7 +37,7 @@ function initialize(seedFilePath) {
         logger.info("Seeding user " +  rootUser.username);
         return Q.ninvoke(PortalUser, 'create', _.merge(rootUser, hashResult, extra));
       });
-      
+
     };
     var seedCompany = function(companyInfo) {
       var condition = {
@@ -47,6 +48,9 @@ function initialize(seedFilePath) {
         upsert: true
       };
       return Q.ninvoke(Company, 'findOneAndUpdate', condition, companyInfo, opts);
+    };
+    function addLogo(model) {
+      return Q.ninvoke(model, 'addLogo', path.join(__dirname, `../../../public/images/${data.company.logoFile}`), {});
     };
     var infoLogger = function(model) {
       logger.info('Seeded: %j', model, {});
@@ -59,6 +63,7 @@ function initialize(seedFilePath) {
 
     seedCompany(data.company)
       .then(putAffiliateIdInScope)
+      .then(addLogo)
       .then(infoLogger)
       .then(seedUser)
       .then(infoLogger)
