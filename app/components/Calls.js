@@ -193,6 +193,7 @@ var Calls = React.createClass({
                       dateFormat="MM/DD/YYYY"
                       selected={moment(this.state.endDate, 'L')}
                       minDate={moment(this.state.startDate, 'L')}
+                      maxDate={moment()}
                       onChange={this.handleEndDateChange}
                     />
                   </div>
