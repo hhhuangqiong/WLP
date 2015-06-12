@@ -4,6 +4,7 @@ import {Link} from 'react-router';
 
 import moment from 'moment';
 import _ from 'lodash';
+import classNames from 'classnames';
 
 import Pagination from './Pagination';
 
@@ -106,12 +107,20 @@ var ImTable = React.createClass({
                         </Tooltip>
                     </div>
           } else {
-            recipient_info =  <div className="recipient_info">
-                                <span className={u.destination ? 'flag--'+u.destination : ''}></span>
-                                <span className="recipient dark">{u.recipient}</span>
-                                <br/>
-                                <span>{(calleeCountry) ? calleeCountry.name : ''}</span>
-                              </div>
+            recipient_info =  (
+			  <div className="recipient_info">
+                {
+                  u.destination ? (
+                    <div className="flag__container left">
+                      <span className={classNames('flag--' + u.destination, 'left')}></span>
+                    </div>
+                  ) : null
+                }
+                <span className="recipient">{u.recipient}</span>
+                <br/>
+                <span>{(calleeCountry) ? calleeCountry.name : ''}</span>
+			  </div>
+			)
           }
 
           return <tr className="im-table--row" key={u.timestamp}>
@@ -130,7 +139,13 @@ var ImTable = React.createClass({
               </div>
             </td>
             <td className="im-table--cell">
-              <span className={'flag--'+u.origin}></span>
+              {
+                u.origin ? (
+                  <div className="flag__container left">
+                    <span className={classNames('flag--' + u.origin, 'left')}></span>
+                  </div>
+                ) : null
+              }
               <div className="sender_info">
                 <span className="sender dark">{sender}</span>
                 <br/>
