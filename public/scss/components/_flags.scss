@@ -1,0 +1,18 @@
+$flag-original-dimension: 256;
+$flag-resized-dimension: 28;
+
+[class^="flag--"], [class*=" flag--"] {
+  display: block;
+  transform: scale($flag-resized-dimension/$flag-original-dimension);
+  transform-origin: 0 0;
+}
+
+.flag {
+
+  &__container {
+    width: rem-calc($flag-resized-dimension);
+    height: rem-calc($flag-resized-dimension);
+    margin-right: 0.5rem;
+    margin-top: 0.2rem;
+  }
+}
