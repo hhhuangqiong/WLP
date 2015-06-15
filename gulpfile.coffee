@@ -33,7 +33,8 @@ if env == "development" then webpackConfig = require './webpack.config' else web
 browserSync = null
 
 src =
-  allJS:    'app/**/*.js'
+  allJS: 'app/**/*.js'
+  scss:  'public/scss/main.scss'
 
 dest =
   build: './build'
@@ -88,16 +89,25 @@ gulp.task 'watch:js', ['babel'], ->
 gulp.task 'clean', ->
   del([ "#{dest.app}", "#{dest.build}/**/*" ])
 
+autoprefixerOpts =
+  browsers: ['last 2 versions']
+
+gulp.task 'scss:production', ->
+  gulp.src src.scss
+    .pipe sass({ outputStyle: 'compressed' })
+    .pipe autoprefixer(autoprefixerOpts)
+    .pipe gulp.dest(dest.css)
+
 gulp.task 'scss', ->
-  gulp.src 'public/scss/main.scss'
+  gulp.src src.scss
     .pipe sourcemaps.init()
     .pipe sass(
       onError: (e) ->
         gutil.log e
     )
-    .pipe autoprefixer( browsers: ['last 2 versions'] )
+    .pipe autoprefixer(autoprefixerOpts)
     .pipe sourcemaps.write '.'
-    .pipe gulp.dest 'public/stylesheets'
+    .pipe gulp.dest(dest.css)
     .pipe (if (browserSync? && browserSync.active) then browserSync.reload {stream: true} else gutil.noop())
 
 # https://github.com/gulpjs/gulp/issues/71#issuecomment-41512070
