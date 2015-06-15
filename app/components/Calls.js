@@ -13,6 +13,7 @@ import fetchCalls from '../actions/fetchCalls';
 
 import CallsTable from './CallsTable';
 import CallsStore from '../stores/CallsStore';
+import Searchbox from './Searchbox';
 
 var Calls = React.createClass({
   contextTypes: {
@@ -33,7 +34,8 @@ var Calls = React.createClass({
           size: 10,
           page: query.page || 1,
           type: query.type || '',
-          search: query.search || ''
+          search: query.search || '',
+          searchType: query.searchType || '',
         })
       ], done || function() {});
     }
@@ -66,7 +68,8 @@ var Calls = React.createClass({
       startDate: moment().subtract(2, 'day').startOf('day').format('L'),
       endDate: moment().endOf('day').format('L'),
       type: '',
-      search: ''
+      search: '',
+      searchType: '',
     }, this.context.router.getCurrentQuery());
 
     this.setState(_.merge(this.getStateFromStores(), query));
@@ -79,7 +82,8 @@ var Calls = React.createClass({
       search: this.state.search && this.state.search.trim(),
       page: 1,
       size: this.state.size && parseInt(this.state.size),
-      type: this.state.type && this.state.type.trim()
+      type: this.state.type && this.state.type.trim(),
+      searchType: this.state.searchType && this.state.searchType.trim(),
     }
   },
 
@@ -145,6 +149,12 @@ var Calls = React.createClass({
     }
   },
 
+  handleSearchTypeChange: function(e) {
+    let searchType = e.target.value;
+    this.setState({searchType:searchType});
+    this.handleQueryChange({searchType:searchType});
+  },
+
   _handleStartDateClick: function() {
     this.refs.startDatePicker.handleFocus();
   },
@@ -155,6 +165,8 @@ var Calls = React.createClass({
 
   render: function() {
     let params = this.context.router.getCurrentParams();
+
+    let searchTypes = [{name:'Choose',value:''},{name:'Caller', value: 'caller'},{name:'Callee', value: 'callee'}];
 
     return (
       <div className="row">
@@ -213,9 +225,12 @@ var Calls = React.createClass({
             </div>
 
             <div className="call-search top-bar-section right">
-              <form onSubmit={this.handleSearchSubmit}>
-                <input className="top-bar-section__query-input" type="text" placeholder="Username/Mobile" onChange={this.handleUsernameChange} onKeyPress={this.handleSearchSubmit} />
-              </form>
+              <Searchbox
+                  searchTypes={searchTypes}
+                  placeHolder="Username/Mobile"
+                  onInputChangeHandler={this.handleUsernameChange}
+                  onSelectChangeHandler={this.handleSearchTypeChange}
+                  onKeyPressHandler={this.handleSearchSubmit} />
             </div>
           </div>
         </nav>
