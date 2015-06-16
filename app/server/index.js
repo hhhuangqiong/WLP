@@ -50,7 +50,7 @@ function initialize(port) {
   //server.set('views', path.join(PROJ_ROOT, 'views'));
   //server.set('view engine', 'jade');
   //server.set('view cache', env !== 'development');
-  
+
 
   var env = server.get('env');
 
@@ -77,9 +77,6 @@ function initialize(port) {
 
   require('./initializers/logging')();
   require('./initializers/viewHelpers')(server);
-
-  // i18next init
-  require('./initializers/i18next')(server);
 
   if (nconf.get('trustProxy'))
     server.enable('trust proxy');

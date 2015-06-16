@@ -1,6 +1,6 @@
 var path        = require('path');
 var webpack     = require('webpack');
-var appHostname     = process.env.APP_HOSTNAME || 'localhost';
+var appHostname = process.env.APP_HOSTNAME || 'localhost';
 var hotLoadPort = process.env.HOT_LOAD_PORT || 8888;
 
 module.exports = {
