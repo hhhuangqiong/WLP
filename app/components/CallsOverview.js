@@ -62,7 +62,7 @@ var CallsOverview = React.createClass({
           </div>
         </nav>
         <div className="large-24 columns">
-          <ul>
+          <ul className="widget-list widget-list--calls">
           {this.state.widgets.map((widget) => {
             if (widget != '') {
               return <li className="left" dangerouslySetInnerHTML={{__html: widget}}></li>;
