@@ -15,6 +15,7 @@ import ImStore from '../stores/ImStore';
 import {fetchIm} from '../actions/fetchIm';
 
 import ImTable from './ImTable';
+import Searchbox from './Searchbox';
 
 var getFromTime = function(dateString=moment()) {
   return (_.isEmpty(dateString)) ? moment().local().startOf('day').format('x') : moment(dateString).local().startOf('day').format('x');
@@ -43,6 +44,7 @@ var Im = React.createClass({
           fromTime: startDate || getFromTime(moment().subtract(2,'month').startOf('day')),
           toTime: endDate || getToTime(),
           type: query.type,
+          searchType: query.searchType,
           search: query.search,
           size: 10,
           page: +query.page-1 || 0
@@ -69,6 +71,7 @@ var Im = React.createClass({
       startDate: moment().subtract(2,'month').startOf('day'),
       endDate: moment().endOf('day'),
       type: '',
+      searchType: '',
       search: '',
       minDate: moment().subtract(1,'year'),
       maxDate: moment(),
@@ -93,6 +96,7 @@ var Im = React.createClass({
       startDate: moment().subtract(2, 'month').startOf('day'),
       endDate: moment().endOf('day'),
       type: '',
+      searchType: '',
       search: ''
     }, currentQuery);
 
@@ -110,6 +114,7 @@ var Im = React.createClass({
     return {
       startDate: this.state.startDate.format('L'),
       endDate: this.state.endDate.format('L'),
+      searchType: this.state.searchType && this.state.searchType.trim(),
       search: this.state.search && this.state.search.trim(),
       page: 1,
       size: this.state.size && parseInt(this.state.size),
@@ -126,10 +131,11 @@ var Im = React.createClass({
     query.startDate = (newQuery.fromTime) ? moment(newQuery.fromTime,'x').format('L') : currentState.startDate;
     query.endDate = (newQuery.toTime) ? moment(newQuery.toTime,'x').format('L') : currentState.endDate;
     query.type = (!_.isUndefined(newQuery.type)) ? newQuery.type : currentState.type;
+    query.searchType = (!_.isUndefined(newQuery.searchType)) ? newQuery.searchType : currentState.searchType;
     query.search = (!_.isUndefined(newQuery.search)) ? newQuery.search : currentState.search;
     query.page = (!_.isUndefined(newQuery.page)) ? newQuery.page : currentState.page;
 
-    query = _.pick(query, ['startDate','endDate','type','search','page'] );
+    query = _.pick(query, ['startDate','endDate','type','searchType','search','page'] );
 
     this.context.router.transitionTo(routeName, params, _.omit(query, function(value) {
       return !value;
@@ -162,27 +168,47 @@ var Im = React.createClass({
 
   handleTextTypeClick: function(e) {
     e.preventDefault();
-    this.handleQueryChange({ type: 'text' });
+    let type = null;
+    if (this.state.type !== 'text') {
+      type = 'text'
+    }
+    this.handleQueryChange({ type: type });
   },
 
   handleImageTypeClick: function(e) {
     e.preventDefault();
-    this.handleQueryChange({ type: 'image' });
+    let type = null;
+    if (this.state.type !== 'image') {
+      type = 'image'
+    }
+    this.handleQueryChange({ type: type });
   },
 
   handleAudioTypeClick: function(e) {
     e.preventDefault();
-    this.handleQueryChange({ type: 'audio' });
+    let type = null;
+    if (this.state.type !== 'audio') {
+      type = 'audio'
+    }
+    this.handleQueryChange({ type: type });
   },
 
   handleVideoTypeClick: function(e) {
     e.preventDefault();
-    this.handleQueryChange({ type: 'video' });
+    let type = null;
+    if (this.state.type !== 'video') {
+      type = 'video'
+    }
+    this.handleQueryChange({ type: type });
   },
 
   handleOtherTypeClick: function(e) {
     e.preventDefault();
-    this.handleQueryChange({ type: 'remote' });
+    let type = null;
+    if (this.state.type !== 'remote') {
+      type = 'remote'
+    }
+    this.handleQueryChange({ type: type });
   },
 
   handleSearchSubmit: function(e) {
@@ -195,6 +221,12 @@ var Im = React.createClass({
     if (e.which == 13) {
       this.handleQueryChange({ search: search });
     }
+  },
+
+  handleSearchTypeChange: function(e) {
+    let searchType = e.target.value;
+    this.setState({searchType:searchType});
+    this.handleQueryChange({searchType:searchType});
   },
 
   handleTypeChange: function(actionContext, payload, done) {
@@ -215,6 +247,10 @@ var Im = React.createClass({
 
     let startDate = moment(this.state.startDate).format("MM/DD/YYYY");
     let endDate = moment(this.state.endDate).format("MM/DD/YYYY");
+
+    let searchTypes = [
+        {name:'Choose',value:''},{name:'Sender', value: 'sender'},{name:'Recipient', value: 'recipient'}
+    ];
 
     return (
       <div className="row">
@@ -273,9 +309,7 @@ var Im = React.createClass({
             </div>
 
             <div className="im-search top-bar-section right">
-              <form onSubmit={this.handleSearchSubmit}>
-                <input className="top-bar-section__query-input" type="text" placeholder="Username/Mobile" onKeyPress={this.handleSearchChange} />
-              </form>
+              <Searchbox searchTypes={searchTypes} placeHolder="Username/Mobile" onSelectChangeHandler={this.handleSearchTypeChange} onKeyPressHandler={this.handleSearchChange} />
             </div>
           </div>
         </nav>

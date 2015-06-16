@@ -131,49 +131,20 @@ api.get('/carriers/:carrierId/calls', function(req, res) {
     type: req.query.type
   };
 
-  if (!_.isEmpty(params.caller) || !_.isEmpty(params.callee)) {
-    var caller_result, callee_result;
+  if (req.query.searchType === 'caller')
+    params.callee = '';
 
-    var getCallerResult = function() {
-      let callee_param = _.omit(_.clone(params), 'caller');
-      callsRequest.getCalls(callee_param, (err, result) => {
-        if (err)
-          return res.status(err.status).json({
-            error: err
-          });
+  if (req.query.searchType === 'callee')
+    params.caller = '';
 
-        callee_result = result;
-        getCalleeResult();
+  callsRequest.getCalls(params, (err, result) => {
+    if (err)
+      return res.status(err.status).json({
+        error: err
       });
-    };
 
-    var getCalleeResult = function () {
-      let caller_param = _.omit(_.clone(params), 'callee');
-      callsRequest.getCalls(caller_param, (err, result) => {
-        if (err)
-          return res.status(err.status).json({
-            error: err
-          });
-
-        caller_result = result;
-
-        let allResult = _.merge(caller_result,callee_result);
-
-        return res.json(allResult);
-      });
-    };
-
-    getCallerResult();
-  } else {
-    callsRequest.getCalls(params, (err, result) => {
-      if (err)
-        return res.status(err.status).json({
-          error: err
-        });
-
-      return res.json(result);
-    });
-  }
+    return res.json(result);
+  });
 });
 
 api.get('/carriers/:carrierId/topup', function(req, res) {
@@ -273,71 +244,31 @@ api.get('/carriers/:carrierId/im', function(req, res) {
   req.checkQuery('page').notEmpty().isInt();
 
   // TODO  carrierId to be changed in the future
-  req.query.carrier = (req.params.carrierId == 'm800') ? 'maaiii.org' : req.params.carrierId;
+  req.query.carrier = (req.params.carrierId == 'm800') ? 'maaiitest.com' : req.params.carrierId;
   req.query.from = req.query.fromTime;
   req.query.to = req.query.toTime;
   req.query.message_type = req.query.type;
-  // TODO determine text search functionality
-  req.query.sender = (_.isEmpty(req.query.search)) ? '' : '*'+req.query.search+'*';
-  req.query.recipient = (_.isEmpty(req.query.search)) ? '' : '*'+req.query.search+'*';
+  req.query.sender = '';
+  req.query.recipient = '';
+
+  if (req.query.searchType === 'sender')
+    req.query.sender = (!req.query.search) ? '' : '*'+req.query.search+'*';
+
+  if (req.query.searchType === 'recipient')
+    req.query.recipient = (!req.query.search) ? '' : '*'+req.query.search+'*';
+
   req.query.type = 'IncomingMessage';
 
-
   let params =  _.pick(req.query,['carrier','message_type','from','to','sender','recipient','page','size']);
-
-  if (!_.isEmpty(params.sender) || !_.isEmpty(params.recipient)) {
-    var sender_result, recipient_result;
-
-    var getSenderResult = function() {
-      let recipient_param = params;
-      recipient_param.sender = '';
-      imRequest.getImStat(recipient_param, (err, result) => {
-        if (err)
-          return res.status(err.status).json({
-            error: err
-          });
-
-        recipient_result = result;
-
-        getRecipientResult();
+  
+  imRequest.getImStat(params, (err, result) => {
+    if (err)
+      return res.status(err.status).json({
+        error: err
       });
-    }
 
-    var getRecipientResult = function () {
-      let sender_param = params;
-      sender_param.sender = sender_param.recipient;
-      sender_param.recipient = '';
-      imRequest.getImStat(sender_param, (err, result) => {
-        if (err)
-          return res.status(err.status).json({
-            error: err
-          });
-
-        sender_result = result;
-
-        let allResult = { offset: sender_result.offset,
-                          contents:
-                           sender_result.contents.concat(recipient_result.contents),
-                          pageNumber: (sender_result.pageNumber>recipient_result.pageNumber)?sender_result.pageNumber:recipient_result.pageNumber,
-                          pageSize: sender_result.pageSize,
-                          totalPages: sender_result.totalPages+recipient_result.totalPages,
-                          totalElements: sender_result.totalElements+recipient_result.totalElements }
-
-        return res.json(allResult);
-      });
-    }
-
-    getSenderResult();
-  } else {
-    imRequest.getImStat(params, (err, result) => {
-      if (err)
-        return res.status(err.status).json({
-          error: err
-        });
-
-      return res.json(result);
-    });
-  }
+    return res.json(result);
+  });
 
 });
 

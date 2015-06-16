@@ -58,7 +58,7 @@ var CallsTable = React.createClass({
                       <div className="left">
                         <span className="caller">{u.caller}</span>
                         <br/>
-                        <span>{callerCountry.name}</span>
+                        <span>{(callerCountry) ? callerCountry.name : ''}</span>
                       </div>
                     </div>
                   </div>
