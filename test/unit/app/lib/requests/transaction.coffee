@@ -91,8 +91,7 @@ describe 'TransactionRequest', ->
       }
       request.getTopUp params, (err, val) ->
         expect err
-        .to.be.an 'object'
-          .with.a.property 'timeout', timeout
+        .to.exist
 
         done()
 

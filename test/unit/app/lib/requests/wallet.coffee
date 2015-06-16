@@ -67,7 +67,7 @@ describe 'WalletRequest', ->
       params = {};
       fn = request.validateQuery params, (err, formatted) ->
         expect err
-        .to.be.an 'object'
+        .to.exist
 
     it 'should not return error if timeout', (done) ->
       timeout = 10
