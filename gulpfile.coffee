@@ -13,6 +13,7 @@ mocha            = require 'gulp-mocha'
 nodemon          = require 'gulp-nodemon'
 # 'libsass' version, http://sass-compatibility.github.io/
 sass             = require 'gulp-sass'
+bless            = require 'gulp-bless'
 source           = require 'vinyl-source-stream'
 sourcemaps       = require 'gulp-sourcemaps'
 webpack          = require 'webpack'
@@ -96,6 +97,7 @@ gulp.task 'scss:production', ->
   gulp.src src.scss
     .pipe sass({ outputStyle: 'compressed' })
     .pipe autoprefixer(autoprefixerOpts)
+    .pipe bless()
     .pipe gulp.dest(dest.css)
 
 gulp.task 'scss', ->
@@ -107,6 +109,7 @@ gulp.task 'scss', ->
     )
     .pipe autoprefixer(autoprefixerOpts)
     .pipe sourcemaps.write '.'
+    .pipe bless()
     .pipe gulp.dest(dest.css)
     .pipe (if (browserSync? && browserSync.active) then browserSync.reload {stream: true} else gutil.noop())
 
