@@ -5,8 +5,10 @@ var FluxibleComponent = require('fluxible/addons/FluxibleComponent');
 
 var env = require('../utils/env');
 var debug = require('debug');
+
 // make it disabled in default
 debug.disable();
+
 // enable it only for development
 if (env.isDev()) {
   // need to be exposed to window so we can
