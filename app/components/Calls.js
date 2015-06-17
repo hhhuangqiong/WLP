@@ -35,7 +35,7 @@ var Calls = React.createClass({
           page: query.page || 1,
           type: query.type || '',
           search: query.search || '',
-          searchType: query.searchType || '',
+          searchType: query.searchType || 'caller'
         })
       ], done || function() {});
     }
@@ -48,30 +48,25 @@ var Calls = React.createClass({
     };
   },
 
-  getInitialState: function () {
-    let query = _.merge({
-      page: 1,
-      size: 10,
-      startDate: moment().subtract(2, 'day').startOf('day').format('L'),
-      endDate: moment().endOf('day').format('L'),
-      type: '',
-      search: ''
-    }, this.context.router.getCurrentQuery());
-
-    return _.merge(this.getStateFromStores(), query);
-  },
-
-  onChange: function() {
-    let query = _.merge({
+  getDefaultQuery: function() {
+    return {
       page: 1,
       size: 10,
       startDate: moment().subtract(2, 'day').startOf('day').format('L'),
       endDate: moment().endOf('day').format('L'),
       type: '',
       search: '',
-      searchType: '',
-    }, this.context.router.getCurrentQuery());
+      searchType: 'caller'
+    };
+  },
 
+  getInitialState: function () {
+    let query = _.merge(this.getDefaultQuery(), this.context.router.getCurrentQuery());
+    return _.merge(this.getStateFromStores(), query);
+  },
+
+  onChange: function() {
+    let query = _.merge(this.getDefaultQuery(), this.context.router.getCurrentQuery());
     this.setState(_.merge(this.getStateFromStores(), query));
   },
 
@@ -83,7 +78,7 @@ var Calls = React.createClass({
       page: 1,
       size: this.state.size && parseInt(this.state.size),
       type: this.state.type && this.state.type.trim(),
-      searchType: this.state.searchType && this.state.searchType.trim(),
+      searchType: this.state.searchType && this.state.searchType.trim()
     }
   },
 
@@ -166,7 +161,7 @@ var Calls = React.createClass({
   render: function() {
     let params = this.context.router.getCurrentParams();
 
-    let searchTypes = [{name:'Choose',value:''},{name:'Caller', value: 'caller'},{name:'Callee', value: 'callee'}];
+    let searchTypes = [{name:'Caller', value: 'caller'},{name:'Callee', value: 'callee'}];
 
     return (
       <div className="row">
@@ -226,11 +221,11 @@ var Calls = React.createClass({
 
             <div className="call-search top-bar-section right">
               <Searchbox
-                  searchTypes={searchTypes}
-                  placeHolder="Username/Mobile"
-                  onInputChangeHandler={this.handleUsernameChange}
-                  onSelectChangeHandler={this.handleSearchTypeChange}
-                  onKeyPressHandler={this.handleSearchSubmit} />
+                searchTypes={searchTypes}
+                placeHolder="Username/Mobile"
+                onInputChangeHandler={this.handleUsernameChange}
+                onSelectChangeHandler={this.handleSearchTypeChange}
+                onKeyPressHandler={this.handleSearchSubmit} />
             </div>
           </div>
         </nav>

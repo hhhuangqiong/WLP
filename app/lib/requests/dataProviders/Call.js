@@ -56,11 +56,16 @@ export default class CallsRequest extends BaseRequest {
     function normalizeData(params) {
       var query = {};
 
-      query.carrier = params.carrierId;
       query.from    = params.from;
       query.to      = params.to;
       query.page    = params.page || 0;
       query.size    = params.size || 20;
+
+      if (params.caller_carrier)
+        query.caller_carrier = params.caller_carrier;
+
+      if (params.callee_carrier)
+        query.callee_carrier = params.callee_carrier;
 
       if (params.caller)
         query.caller = params.caller;
