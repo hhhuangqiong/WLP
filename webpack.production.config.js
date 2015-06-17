@@ -15,6 +15,9 @@ module.exports = {
     ]
   },
   plugins: [
+    new webpack.DefinePlugin({
+      'process.env': {NODE_ENV: '"production"'}
+    })
   ],
   output: {
     path: path.resolve(__dirname, 'public', 'javascript'),
