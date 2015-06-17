@@ -109,7 +109,6 @@ gulp.task 'scss', ->
     )
     .pipe autoprefixer(autoprefixerOpts)
     .pipe sourcemaps.write '.'
-    .pipe bless()
     .pipe gulp.dest(dest.css)
     .pipe (if (browserSync? && browserSync.active) then browserSync.reload {stream: true} else gutil.noop())
 
