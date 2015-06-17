@@ -39,7 +39,7 @@ var Pagination = React.createClass({
     }
 
     if (this.getLastPage() - this.props.current < this.props.maxDisplay/2) {
-      return this.getLastPage() - this.props.maxDisplay + 1;
+      return _.max([this.getLastPage() - this.props.maxDisplay + 1, 1]);
     }
 
     return _.max([this.props.current + 1 - this.props.maxDisplay/2, 1]);
@@ -78,60 +78,62 @@ var Pagination = React.createClass({
   render: function() {
     let leftArrow = (
       <li className="arrow" onClick={_.bindKey(this.props, 'onPageChange', this.props.current - 1)}>
-        <a href="">&#x3008;</a>
+        <a>&#x3008;</a>
       </li>
     );
 
     if (this.props.current == 1) {
       leftArrow = (
         <li className="arrow unavailable" aria-disabled="true">
-          <a href="">&#x3008;</a>
+          <a>&#x3008;</a>
         </li>
       )
     }
 
     let rightArrow = (
       <li className="arrow" onClick={_.bindKey(this.props, 'onPageChange', this.props.current + 1)}>
-        <a href="">&#x3009;</a>
+        <a>&#x3009;</a>
       </li>
     );
 
     if (this.props.current == this.getLastPage()) {
       rightArrow = (
         <li className="arrow unavailable" aria-disabled="true">
-          <a href="">&#x3009;</a>
+          <a>&#x3009;</a>
         </li>
       )
     }
 
     return (
-      <div>
-        <ul className={classNames('left', 'pagination', { 'hide': this.props.total == 0 })} role="menubar" aria-label="Pagination">
-          {leftArrow}
-          {this.getAvailablePages().map((i)=>{
-            return (
-              <li key={i} className={classNames({'current': this.props.current == i})} onClick={_.bindKey(this.props, 'onPageChange', i)}>
-                <a>{i}</a>
-              </li>
-            );
-          })}
-          {rightArrow}
-        </ul>
-        <form>
-          <div className="row">
-            <div className="large-3 columns">
-              <div className="row collapse postfix-round">
-                <div className="large-13 columns">
-                  <input ref="goPageInput" type="text" name="goPage" placeholder="Value" />
-                </div>
-                <div className="large-11 columns">
-                  <a className="button postfix" onClick={this._goToPage}>Go</a>
+      this.props.total > 0 ? (
+        <div>
+          <ul className={classNames('left', 'pagination')} role="menubar" aria-label="Pagination">
+            {leftArrow}
+            {this.getAvailablePages().map((i)=>{
+              return (
+                <li key={i} className={classNames({'current': this.props.current == i})} onClick={_.bindKey(this.props, 'onPageChange', i)}>
+                  <a>{i}</a>
+                </li>
+              );
+            })}
+            {rightArrow}
+          </ul>
+          <form>
+            <div className="row">
+              <div className="large-3 columns">
+                <div className="row collapse postfix-round">
+                  <div className="large-13 columns">
+                    <input ref="goPageInput" type="text" name="goPage" placeholder="Value" />
+                  </div>
+                  <div className="large-11 columns">
+                    <a className="button postfix" onClick={this._goToPage}>Go</a>
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
-        </form>
-      </div>
+          </form>
+        </div>
+      ) : null
     );
   }
 });

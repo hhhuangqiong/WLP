@@ -24,9 +24,7 @@ export default (
         <Route name="company-widget" path=":carrierId/widget" handler={require('./components/CompanyWidget')} />
       </Route>
       <Route name="accounts" path="/:role/:identity?/accounts" handler={require('./components/Overview')} />
-      <Route name="end-users" path="/:role/:identity?/endusers" handler={require('./components/EndUsers')}>
-        <Route name="end-user" path=":username" handler={require('./components/EndUserProfile')}/>
-      </Route>
+      <Route name="end-users" path="/:role/:identity?/endusers" handler={require('./components/EndUsers')} />
       <Route name="sms-overview" path="/:role/:identity?/sms" handler={require('./components/SMSOverview')} />
       <Route name="sms-details" path="/:role/:identity?/sms/details" handler={require('./components/SMS')} />
       <Route name="settings" path="/:role/:identity?/settings" handler={require('./components/Overview')} />

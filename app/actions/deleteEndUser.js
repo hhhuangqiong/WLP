@@ -1,22 +1,22 @@
-var debug = require('debug')('app:fetchEndUsers');
+var debug = require('debug')('wlp:deleteEndUser');
 
 export default function(context, params, done) {
   debug('Started');
 
+  context.dispatch('DELETE_END_USER_START');
   context.dispatch('FETCH_START');
 
-  context.api.getEndUsers(params, function(err, users) {
+  context.api.deleteEndUser(params, function(err, result) {
     if (err) {
       debug('Failed');
-      context.dispatch('FETCH_END_USERS_FAILURE', err);
+      context.dispatch('DELETE_END_USER_FAILURE', err);
       context.dispatch('FETCH_END');
       done();
       return;
     }
 
     debug('Success');
-    context.dispatch('FETCH_END_USERS_SUCCESS', users);
+    context.dispatch('DELETE_END_USER_SUCCESS', result);
     context.dispatch('FETCH_END');
-    done();
   });
 };
