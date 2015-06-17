@@ -173,11 +173,10 @@ api.get('/carriers/:carrierId/calls', function(req, res) {
   req.checkQuery('page').notEmpty();
 
   let params = {
-    // TODO  carrierId to be changed in the future
-    caller_carrier: (req.params.carrierId == 'm800') ? 'maaiitest.com' : req.params.carrierId,
+    caller_carrier: req.params.carrierId,
+    callee_carrier: req.params.carrierId,
     from: req.query.startDate,
     to: req.query.endDate,
-    // TODO determine text search functionality
     caller: (_.isEmpty(req.query.search)) ? '' : '*'+req.query.search+'*',
     callee: (_.isEmpty(req.query.search)) ? '' : '*'+req.query.search+'*',
     // this api starts with page 0
@@ -186,11 +185,15 @@ api.get('/carriers/:carrierId/calls', function(req, res) {
     type: req.query.type
   };
 
-  if (req.query.searchType === 'caller')
-    params.callee = '';
+  if (req.query.searchType === 'caller') {
+    delete params.callee_carrier;
+    delete params.callee;
+  }
 
-  if (req.query.searchType === 'callee')
-    params.caller = '';
+  if (req.query.searchType === 'callee') {
+    delete params.caller_carrier;
+    delete params.caller;
+  }
 
   callsRequest.getCalls(params, (err, result) => {
     if (err)
@@ -316,7 +319,7 @@ api.get('/carriers/:carrierId/im', function(req, res) {
   req.query.type = 'IncomingMessage';
 
   let params =  _.pick(req.query,['carrier','message_type','from','to','sender','recipient','page','size']);
-  
+
   imRequest.getImStat(params, (err, result) => {
     if (err)
       return res.status(err.status).json({

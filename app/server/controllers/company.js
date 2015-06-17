@@ -662,7 +662,6 @@ export default class CompanyController {
             error: 'company not found'
           });
         }
-        console.log(company);
         return res.status(200).json({
           company: company
         });
