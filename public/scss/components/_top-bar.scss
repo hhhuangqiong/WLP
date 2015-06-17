@@ -12,6 +12,13 @@
         }
     }
     .top-bar-section {
+        > ul {
+          // :not('.top-bar--inner')
+            &.left:first-child:not(.top-bar--inner) {
+                padding-left: rem-calc(30);
+            }
+        }
+
         ul {
             font-size: rem-calc(14);
             li {
@@ -155,6 +162,7 @@
         .top-bar-section{
             @extend .row;
             padding-right: $column-gutter;
+
             ul{
                 li{
                     background: $topbar-inner-item-bg-color;

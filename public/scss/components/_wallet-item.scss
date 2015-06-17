@@ -1,0 +1,65 @@
+.wallet-item {
+  font-size: rem-calc(14);
+  overflow: hidden;
+
+  &--inner {
+    padding: rem-calc(14) 0;
+  }
+
+  &--paid {
+    background-color: aliceblue;
+
+    .wallet-item__type-label {
+      background-color: #5D95B6;
+    }
+  }
+
+  &--free {
+    background-color: honeydew;
+
+    .wallet-item__type-label {
+      background-color: rgb(73, 207, 73);
+    }
+  }
+
+  &__type-label {
+    position: absolute;
+    border-radius: 0 0 rem-calc(8) rem-calc(8);
+    top: 0;
+    right: 0;
+    padding: 0 rem-calc(20);
+    color: white;
+  }
+
+  &--label {
+    color: grey;
+    text-transform: capitalize;
+
+    &--bold {
+      font-weight: 400;
+    }
+  }
+
+  &--overview {
+    .wallet-item__balance {
+      &--sign,
+      &--value {
+        font-size: rem-calc(24);
+      }
+    }
+  }
+
+  &__balance {
+    color: rgb(29, 228, 29);
+
+    &--sign,
+    &--value {
+      font-size: rem-calc(18);
+    }
+
+    &--code {
+      font-size: rem-calc(12);
+      margin-left: rem-calc(6);
+    }
+  }
+}

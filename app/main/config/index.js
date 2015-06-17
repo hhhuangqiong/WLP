@@ -4,6 +4,9 @@ module.exports = {
   pages: {
     topUp: {
       pageRec: 50
+    },
+    endUser: {
+      pageRec: 10
     }
   }
 };

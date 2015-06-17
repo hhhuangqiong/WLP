@@ -6,7 +6,7 @@
   },
   "mumsApi": {
     "baseUrl": "http://192.168.118.12:8080",
-    "timeout": 5000
+    "timeout": 30000
   },
   "bossApi": {
     "baseUrl": "http://192.168.135.167:10080",

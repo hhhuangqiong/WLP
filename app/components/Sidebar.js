@@ -8,6 +8,11 @@ import AuthStore from '../stores/AuthStore';
 
 let navSections = [
   {
+    name: 'Users',
+    icon: 'icon-menuenduser',
+    routeName: 'end-users'
+  },
+  {
     name: 'Calls',
     icon: 'icon-menucalls',
     routeName: 'calls-overview'
