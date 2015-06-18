@@ -33,19 +33,35 @@ var ImTable = React.createClass({
     return this.props.current * this.props.per;
   },
 
-  getTypeSize: function(item) {
+  getTypeSize: function(item,typeText) {
     let typeSize = '';
-    if (item.file_size>0 && item.file_size>1024) {
-      typeSize = (Math.round((item.file_size/1024)))+'kb';
-    } else if (item.file_size>0 && item.file_size<1024) {
-      typeSize = item.file_size+'b';
-    } else {
-      if (item.message_size>0 && item.message_size>1024) {
-        typeSize = (Math.round((item.message_size/1024)))+'kb';
-      } else if (item.message_size>0 && item.message_size<1024) {
-        typeSize = item.message_size+'b';
-      }
+    if (item.message_type !== 'undefined') {
+
+        if (item.file_size > 1024) {
+          typeSize = (Math.round((item.file_size/1024)))+'kb';
+
+        } else if (item.file_size > 0 && item.file_size < 1024) {
+          typeSize = item.file_size+'b';
+
+        } else {
+          if (item.message_size > 1024) {
+            typeSize = (Math.round((item.message_size/1024)))+'kb';
+
+          } else if (item.message_size > 0 && item.message_size < 1024) {
+            typeSize = item.message_size+'b';
+
+          }
+
+        }
+
     }
+
+    if (typeText === 'Sharing') {
+      typeSize = item.resource_id;
+      if (typeSize !== 'itunes')
+        typeSize = _.capitalize(typeSize);
+    }
+
     return typeSize;
   },
 
@@ -74,7 +90,8 @@ var ImTable = React.createClass({
             video: 'icon-video',
             remote: 'icon-ituneyoutube',
             sticker: 'icon-sticker',
-            'voice_sticker': 'icon-audio'
+            'voice_sticker': 'icon-audio',
+            'ephemeral_image': 'icon-image'
           };
 
           let typeClass = messageTypeClasses[u.message_type] || '';
@@ -85,14 +102,11 @@ var ImTable = React.createClass({
             typeText = 'N/A';
           }
 
-          let typeSize = this.getTypeSize(u);
-
-          if (typeText == 'Remote') {
+          if (typeText === 'Remote') {
             typeText = 'Sharing';
-            typeSize = u.resource_id;
-            if (typeSize != 'itunes')
-              typeSize = _.capitalize(typeSize);
           }
+
+          let typeSize = this.getTypeSize(u,typeText);
 
           let sender = u.sender.split('/');
           sender = sender[0];
