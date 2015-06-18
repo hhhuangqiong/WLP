@@ -11,7 +11,7 @@ export const SESSION = '/session';
  * @return {string} generated path
  */
 export function userPath(role, identity, path) {
-  let result = [role, identity, path].filter(p => { !!p }).join('/');
+  let result = [role, identity, path].filter(p => { return !!p }).join('/');
   return result.startsWith('/') ? result : `/${result}`
 }
 

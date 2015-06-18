@@ -29,7 +29,7 @@ module.exports = function(context, payload, done) {
     // the AuthStore needs to set its state to "authenticated"
     // before the transition
 
-    // not 'calls-overview' nor 'calls'
+    // TODO default redirect path should be configurable / injected
     context.getRouter().transitionTo(userPath(auth.user.role, auth.user.carrierId, 'overview'));
     done();
   });

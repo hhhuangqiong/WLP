@@ -4,6 +4,7 @@ import { Route, NotFoundRoute, Redirect, DefaultRoute } from 'react-router';
 // convention: separate path by "-" following the component name
 export default (
   <Route handler={require('./components/App')}>
+    <Redirect from="/" to="main" />
 
     // placeholder for not-yet-complete components/link
     <Route name="TODO" handler={require('./components/_TODO')}/>
@@ -16,6 +17,7 @@ export default (
 
     <Route handler={require('./components/common/Protected')}>
       <Route name="overview" path="/:role/:identity?/overview" handler={require('./components/Overview')}/>
+
       <Route name="companies" path="/:role/:identity?/companies" handler={require('./components/Companies')}>
         <Route name="company-create" path="create" handler={require('./components/CompanyNewProfile')} />
         <Route name="company-profile" path=":carrierId/profile" handler={require('./components/CompanyProfile')} />

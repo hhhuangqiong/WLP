@@ -252,7 +252,7 @@ var Im = React.createClass({
     let endDate = moment(this.state.endDate).format("MM/DD/YYYY");
 
     let searchTypes = [
-        {name:'Choose',value:''},{name:'Sender', value: 'sender'},{name:'Recipient', value: 'recipient'}
+        {name:'Sender', value: 'sender'},{name:'Recipient', value: 'recipient'}
     ];
 
     return (
