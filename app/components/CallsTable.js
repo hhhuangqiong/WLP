@@ -54,7 +54,9 @@ var CallsTable = React.createClass({
                 <div className="row">
                   <div className="large-11 columns">
                     <div className="caller_info">
-                      <span className={u.caller_country}></span>
+                      <div className="flag__container left">
+                        <span className={u.caller_country ? 'flag--'+u.caller_country : ''}></span>
+                      </div>
                       <div className="left">
                         <span className="caller">{u.caller}</span>
                         <br/>
@@ -69,7 +71,9 @@ var CallsTable = React.createClass({
                   </div>
                   <div className="large-11 columns">
                     <div className="callee_info">
-                      <span className={u.callee_country ? u.callee_country : ''}></span>
+                      <div className="flag__container left">
+                        <span className={u.callee_country ? 'flag--'+u.callee_country : ''}></span>
+                      </div>
                       <div className="left">
                         <span className="callee">{u.callee}</span>
                         <br/>
