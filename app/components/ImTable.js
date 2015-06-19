@@ -138,7 +138,6 @@ var ImTable = React.createClass({
           }
 
           return <tr className="im-table--row" key={u.timestamp}>
-            <td className="text-center im-table--cell"><span className={u.success ? "label status success" : "label status alert"}></span></td>
             <td className="im-table--cell">
               <div className="left timestamp">
                 <span className="call_date dark">{imDate}</span>
