@@ -4,12 +4,11 @@
   "private": true,
   "scripts": {
     "build": "npm run clean && npm run transpile && npm run test:report",
-    "deploy": "npm run clean && npm run transpile && gulp scss:production && npm run forever",
     "clean": "gulp clean",
+    "dist": "npm run clean && npm run transpile && gulp scss:production",
     "doc": "npm run transpile && jsdoc -r node_modules/app -d build/docs",
-    "transpile": "gulp babel webpack",
     "server": "node bin/www.js",
-    "forever": "forever bin/www.js",
+    "transpile": "gulp babel webpack",
     "pretest": "npm run transpile",
     "test": "gulp test",
     "test:report": "mocha --recursive test --reporter xunit > build/reports.xml"
@@ -33,7 +32,6 @@
     "express-session": "^1.9.3",
     "express-validator": "^2.7.0",
     "fluxible": "^0.4.6",
-    "forever": "^0.14.1",
     "gridfs-stream": "^1.1.0",
     "gulp-bless": "^3.0.1",
     "immutable": "^3.7.2",
