@@ -26,7 +26,7 @@ boot2docker ssh "echo $'EXTRA_ARGS=\"--insecure-registry docker.dev.maaii.com\"'
 cd <PROJECT_ROOT>
 
 # build the image based on the Dockerfile
-docker build --rm [--no-cahe] -t <TAG NAME> .
+docker build --rm [--no-cache] -t <TAG NAME> .
 # e.g.,
 docker build --rm -t wlp .
 
