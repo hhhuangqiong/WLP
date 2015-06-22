@@ -11,7 +11,8 @@
     "transpile": "gulp babel webpack",
     "pretest": "npm run transpile",
     "test": "gulp test",
-    "test:report": "mocha --recursive test --reporter xunit > build/reports.xml"
+    "test:report": "mocha --recursive test --reporter xunit > build/reports.xml",
+    "jscsx": "jscs -x ."
   },
   "dependencies": {
     "babel": "^5.5.6",
@@ -89,6 +90,7 @@
     "gulp-util": "^3.0.3",
     "gulp.spritesmith": "^3.8.2",
     "jade": "^1.10.0",
+    "jscs": "^1.13.1",
     "jsdoc": "^3.3.0",
     "json-loader": "^0.5.1",
     "merge-stream": "^0.1.7",
