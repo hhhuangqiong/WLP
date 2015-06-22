@@ -1,0 +1,5 @@
+{
+ "esnext": true,
+ "preset": "airbnb",
+ "excludeFiles": ["app/components/**", "node_modules/**", "public/javascript/**", "public/vendor/**"]
+}
