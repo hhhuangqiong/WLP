@@ -73,9 +73,16 @@ var Im = React.createClass({
       type: '',
       searchType: '',
       search: '',
-      minDate: moment().subtract(1,'year'),
-      maxDate: moment(),
+      start_minDate: moment().subtract(2,'month'),
+      start_maxDate: moment(),
+      end_minDate: moment().subtract(2,'month'),
+      end_maxDate: moment(),
     }, query);
+
+    query.start_minDate = moment(query.endDate).subtract(2,'month');
+    query.start_maxDate = query.endDate;
+    query.end_minDate = query.startDate;
+    query.end_maxDate = moment();
 
     return _.merge(this.getStateFromStores(), query);
   },
@@ -88,6 +95,11 @@ var Im = React.createClass({
     if (currentQuery.endDate) {
       currentQuery.endDate = moment(currentQuery.endDate, "MM/DD/YYYY").endOf('day');
     }
+
+    currentQuery.start_minDate = moment(currentQuery.endDate).subtract(2,'month');
+    currentQuery.start_maxDate = currentQuery.endDate;
+    currentQuery.end_minDate = currentQuery.startDate;
+    currentQuery.end_maxDate = moment();
 
     let state = this.getStateFromStores();
     let query = _.merge({
@@ -159,11 +171,13 @@ var Im = React.createClass({
   },
 
   handleStartDateChange: function(date) {
-    this.handleQueryChange({ fromTime: getFromTime(date) });
+    if (this.state.endDate.diff(date) > 0)
+      this.handleQueryChange({ fromTime: getFromTime(date) });
   },
 
   handleEndDateChange: function(date) {
-    this.handleQueryChange({ toTime: getToTime(date) });
+    if (date.diff(this.state.startDate) >= 0)
+      this.handleQueryChange({ toTime: getToTime(date) });
   },
 
   handleTextTypeClick: function(e) {
@@ -276,8 +290,8 @@ var Im = React.createClass({
                       key="start-date"
                       dateFormat="MM/DD/YYYY"
                       selected={this.state.startDate}
-                      minDate={this.state.minDate}
-                      maxDate={this.state.maxDate}
+                      minDate={this.state.start_minDate}
+                      maxDate={this.state.start_maxDate}
                       onChange={this.handleStartDateChange}
                     />
                   </div>
@@ -289,8 +303,8 @@ var Im = React.createClass({
                       key="end-date"
                       dateFormat="MM/DD/YYYY"
                       selected={this.state.endDate}
-                      minDate={this.state.minDate}
-                      maxDate={this.state.maxDate}
+                      minDate={this.state.end_minDate}
+                      maxDate={this.state.end_maxDate}
                       onChange={this.handleEndDateChange}
                     />
                   </div>
