@@ -13,10 +13,11 @@ var SystemMessageStore = createStore({
   storeName: 'SystemMessageStore',
 
   handlers: {
-    SIGN_IN_FAILURE:                'handleSignInFailure',
+    SIGN_IN_FAILURE: 'handleSignInFailure',
     UPDATE_COMPANY_PROFILE_SUCCESS: 'handleUpdateCompanySuccess',
     UPDATE_COMPANY_SERVICE_SUCCESS: 'handleUpdateCompanySuccess',
-    UPDATE_COMPANY_WIDGET_SUCCESS:  'handleUpdateCompanySuccess'
+    UPDATE_COMPANY_WIDGET_SUCCESS: 'handleUpdateCompanySuccess',
+    ERROR_MESSAGE: 'handleErrorMessage'
   },
 
   // do not change this
@@ -62,6 +63,15 @@ var SystemMessageStore = createStore({
   // so this could be served as a common function with
   // a better name like `handleErrorMessage`
   handleSignInFailure: function(err) {
+    this.id = Date.now();
+    this.type = 'secondary';
+    this.message = err.message;
+    this.hidden = false;
+
+    this.emitChange();
+  },
+
+  handleErrorMessage: function(err) {
     this.id = Date.now();
     this.type = 'secondary';
     this.message = err.message;

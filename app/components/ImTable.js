@@ -83,15 +83,20 @@ var ImTable = React.createClass({
           let imDate = moment(u.timestamp).format(IM_DATETIME_FORMAT);
 
           let messageTypeClasses = {
-            animation: 'icon-animation',
+            animation: 'icon-video',
             text: 'icon-text',
             image: 'icon-image',
             audio: 'icon-audio',
             video: 'icon-video',
             remote: 'icon-ituneyoutube',
-            sticker: 'icon-sticker',
+            sticker: 'icon-image',
             'voice_sticker': 'icon-audio',
-            'ephemeral_image': 'icon-image'
+            'ephemeral_image': 'icon-image',
+            'call_audio': 'icon-audio',
+            'conference_audio': 'icon-audio',
+            'voice_mail': 'icon-audio',
+            'call_video': 'icon-video',
+            'video_mail': 'icon-video'
           };
 
           let typeClass = messageTypeClasses[u.message_type] || '';
@@ -99,7 +104,7 @@ var ImTable = React.createClass({
           let typeText = _.capitalize(u.message_type);
 
           if (typeText === 'Undefined') {
-            typeText = 'N/A';
+            typeText = 'Unknown';
           }
 
           if (typeText === 'Remote') {
