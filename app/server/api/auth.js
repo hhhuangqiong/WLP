@@ -26,11 +26,13 @@ export default function(host = '', apiPrefix = '') {
           if (err) {
             debug('error', err);
           }
+
           if (!res.ok) {
             err = (res.body && res.body.error) || {
               status: res.status
             };
           }
+
           cb(err, res && res.body);
         });
     },
@@ -39,12 +41,14 @@ export default function(host = '', apiPrefix = '') {
       superagent
         .post(`${this._getHost()}${apiPrefix}${SIGN_OUT}`)
         .accept('json')
+
         //TODO explict declare this dep
         .set('Authorization', this._getToken())
         .end(function(err, res) {
           if (err) {
             debug('error', err);
           }
+
           cb(err, res && res.body);
         });
     }

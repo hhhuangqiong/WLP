@@ -6,12 +6,14 @@ var reduce = require('lodash/collection/reduce');
 
 function fetchData(context, routerState, cb) {
   cb = cb || function noop() {};
+
   var fetchDataRoutes = filter(routerState.routes, function(route) {
       return route.handler.fetchData;
     });
+
   if (fetchDataRoutes.length === 0) {
-      return cb();
-    }
+    return cb();
+  }
 
   var dataFetchers = reduce(fetchDataRoutes, function(result, route) {
       var fetcher = route.handler.fetchData

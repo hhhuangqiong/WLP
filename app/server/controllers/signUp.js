@@ -6,6 +6,7 @@ import util from 'util';
 import { SignUp } from '../../lib/portal/SignUp';
 
 var logger     = require('winston');
+
 // because we don't have password strength requirement at the moment
 var owasp      = require('owasp-password-strength-test');
 var PortalUser = require('../../collections/portalUser');
@@ -47,7 +48,7 @@ export default class SignupController {
         var compareTo   = moment().subtract(tokenConfig.value, tokenConfig.unit).toDate();
 
         try {
-          if(SignUp.verify(user, tokenValue, compareTo)){
+          if (SignUp.verify(user, tokenValue, compareTo)) {
             // for the next handler
             req.signUpUser = user;
             next();
@@ -64,7 +65,7 @@ export default class SignupController {
           res.redirect(INVALID_PATH);
         }
       })
-      .catch((err)=>{
+      .catch((err) => {
         logger.error('Error during validating sign up user', err.stack);
         next(err);
       });
@@ -73,13 +74,14 @@ export default class SignupController {
   preSignUp(req, res, next) {
     req.checkBody('username').notEmpty().isEmail();
     req.checkBody('password').notEmpty().equals(req.sanitize('rePassword'));
+
     // safety check
     req.checkBody('token').notEmpty();
 
     var errors = req.validationErrors();
     if (errors) {
       // copied from the sample code
-      req.flash('messages', 'Validation error(s)' + util.inspect(errors) );
+      req.flash('messages', 'Validation error(s)' + util.inspect(errors));
       req.flash('messageType', 'warning');
       next(err);
     } else {
@@ -93,6 +95,7 @@ export default class SignupController {
     if (result.failedTests.length != 1 || result.failedTests[0] != 6) {
       next(new Error('Insecure Password.'));
     }
+
     next();
   }
 
@@ -108,5 +111,4 @@ export default class SignupController {
     // redirect to the root page (i.e., /signup); don't know if this is an anti-pattern
     res.redirect(`./?username=${username}&token=${token}`);
   }
-
 }

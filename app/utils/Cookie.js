@@ -28,11 +28,13 @@ Cookie.prototype.get = function(name) {
   if (env.SERVER) {
     return this._req.cookies[name];
   }
+
   // Quick and dirty, only supports one value in the cookie
   var parsed = document.cookie.split('=');
   if (parsed.length < 2 || parsed[0] !== name) {
     return null;
   }
+
   return parsed[1];
 };
 
@@ -48,6 +50,7 @@ Cookie.prototype.clear = function(name) {
   if (env.SERVER) {
     return this._res.clearCookie(name);
   }
+
   // noop for CLIENT
 };
 

@@ -24,6 +24,7 @@ import flash from 'connect-flash';
 import methodOverride from 'method-override';
 import morgan from 'morgan';
 import session from 'express-session';
+
 // TODO restore csrf protection
 //import csrf from 'csurf';
 
@@ -50,7 +51,6 @@ function initialize(port) {
   //server.set('views', path.join(PROJ_ROOT, 'views'));
   //server.set('view engine', 'jade');
   //server.set('view cache', env !== 'development');
-
 
   var env = server.get('env');
 
@@ -119,6 +119,7 @@ function initialize(port) {
 
   var passport = require('./initializers/passport')();
   server.use(passport.initialize());
+
   // ensure express.session() is before passport.session()
   server.use(passport.session());
 
@@ -154,14 +155,17 @@ function initialize(port) {
         if (err && err.notFound) {
           return res.status(404).send(html);
         }
+
         // `onAbort` in `Router.create`
         if (err && err.redirect) {
           return res.redirect(303, err.redirect.to);
         }
+
         if (err) {
           // TODO not handled at the moment, maybe render '500' component using express controller
           return next(err);
         }
+
         res.send(html);
       });
     });

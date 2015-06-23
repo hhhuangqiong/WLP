@@ -31,9 +31,11 @@ function fetchCompany(context, payload, done) {
 function fetchCompanies(context, payload, done, cb) {
   debug('fetching companies');
 
-  context.service.read('company', {}, {}, function (err, companies) {
+  context.service.read('company', {}, {}, function(err, companies) {
     if (err) {
-      //error handling
+      debug('Error during reading company');
+      cb(err);
+      return;
     }
 
     context.dispatch('RECEIVE_COMPANIES', companies);
@@ -47,7 +49,7 @@ function fetchCompanies(context, payload, done, cb) {
 
 }
 
-module.exports = function (context, payload, done) {
+module.exports = function(context, payload, done) {
   context.dispatch('SHOW_COMPANY_START');
 
   let companyStore = context.getStore(CompanyStore);

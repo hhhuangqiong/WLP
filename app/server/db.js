@@ -19,6 +19,7 @@ db.revokeSession = function(token) {
   if (!this._state.getIn(['sessions', token])) {
     return null;
   }
+
   this._state = this._state.removeIn(['sessions', token]);
   return true;
 };

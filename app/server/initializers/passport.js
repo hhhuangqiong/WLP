@@ -23,11 +23,20 @@ export default function setup() {
     PortalUser
       .findOne({username: username})
       .populate('affiliatedCompany')
-      .exec((err, user) =>{
+      .exec((err, user) => {
         // shamelessly copy from 'passport-local' example
-        if (err) { return done(err); }
-        if (!user) { return done(null, false, { message: 'Unknown user ' + username }); }
-        if (!user.isValidPassword( password )) { return done(null, false, { message: 'Invalid password' }); }
+        if (err) {
+          return done(err);
+        }
+
+        if (!user) {
+          return done(null, false, { message: 'Unknown user ' + username });
+        }
+
+        if (!user.isValidPassword(password)) {
+          return done(null, false, { message: 'Invalid password' });
+        }
+
         // TODO check if the user has been verified (i.e., isVerified === true)
         return done(null, user);
       });

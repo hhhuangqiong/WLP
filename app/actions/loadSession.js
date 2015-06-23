@@ -15,6 +15,7 @@ module.exports = function(context, payload, done) {
     done();
     return;
   }
+
   // shadow token in parameter
   context.api.getSession(token, function(err, token) {
     if (err) {
@@ -22,6 +23,7 @@ module.exports = function(context, payload, done) {
       done();
       return;
     }
+
     debug('Success');
     context.dispatch('LOAD_SESSION', {
       token: token,
@@ -33,6 +35,7 @@ module.exports = function(context, payload, done) {
         role: role
       }
     });
+
     // !IMPORTANT
     // blindly followed Nicolas Hery
     //
@@ -46,6 +49,7 @@ module.exports = function(context, payload, done) {
       context.cookie.clear('carrierId');
       context.cookie.clear('role');
     }
+
     done();
   });
 };

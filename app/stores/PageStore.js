@@ -2,25 +2,30 @@ import {createStore} from 'fluxible/addons';
 
 var PageStore = createStore({
   storeName: 'PageStore',
-  initialize: function () {
+  initialize: function() {
     this.content = 'initial content...';
   },
-  handleContentChange: function (payload) {
-    this.content = 'content for page with id '+payload.id+':'+payload.contents;
+
+  handleContentChange: function(payload) {
+    this.content = 'content for page with id ' + payload.id + ':' + payload.contents;
     this.emitChange();
   },
+
   handlers: {
-    'LOAD_PAGE': 'handleContentChange'
+    LOAD_PAGE: 'handleContentChange'
   },
-  getState: function () {
+
+  getState: function() {
     return {
       content: this.content
     };
   },
-  dehydrate: function () {
+
+  dehydrate: function() {
     return this.getState();
   },
-  rehydrate: function (state) {
+
+  rehydrate: function(state) {
     this.content = state.content;
   }
 });

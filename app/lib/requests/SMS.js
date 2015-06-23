@@ -13,7 +13,7 @@ import errorMixin from '../requests/mixins/mumsErrorResponse';
 export default class SMSRequest {
 
   constructor(opts) {
-    if(!opts.baseUrl) throw new Error('`baseUrl is required`');
+    if (!opts.baseUrl) throw new Error('`baseUrl is required`');
     this._baseUrl = opts.baseUrl;
     this._timeout = opts.timeout || 5000;
   }
@@ -26,7 +26,7 @@ export default class SMSRequest {
     let scope = request.get(path).timeout(this._timeout).query({ carrier: carrierId });
 
     if (opts.from && opts.to) {
-      if (moment(opts.from, "L").isAfter(moment(opts.to, "L"))) {
+      if (moment(opts.from, 'L').isAfter(moment(opts.to, 'L'))) {
         let tmp = opts.to;
         opts.to = opts.from;
         opts.from = tmp;
@@ -34,13 +34,14 @@ export default class SMSRequest {
     }
 
     if (opts.from) {
-      scope.query({ from: moment(opts.from, "L").startOf("day").format("x") });
+      scope.query({ from: moment(opts.from, 'L').startOf('day').format('x') });
     }
 
     if (opts.to) {
-      scope.query({ to: moment(opts.to, "L").endOf("day").format("x") });
+      scope.query({ to: moment(opts.to, 'L').endOf('day').format('x') });
     }
 
+    // jscs:disable requireCamelCaseOrUpperCaseIdentifiers
     if (opts.source_address_inbound) {
       scope.query({ source_address_inbound: opts.source_address_inbound });
     }
@@ -60,7 +61,6 @@ export default class SMSRequest {
       cb(null, res.body);
     });
   }
-
 }
 
 assign(SMSRequest.prototype, errorMixin);

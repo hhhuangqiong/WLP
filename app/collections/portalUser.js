@@ -72,16 +72,20 @@ var portalUserSchema = new mongoose.Schema({
   }],
   status: {
     type: String,
+
     // TODO introduce enum-like statuses
     default: 'inactive'
   },
+
   // Goolge Authenticator
   googleAuth: {
     key: String,
     encoding: String,
+
     //TODO enforce valid url
     qrCodeUrl: String
   },
+
   // TODO convenince method to fetch token by event, e.g., tokenOf('signup')
   tokens: [{
     _id: false,
@@ -130,6 +134,7 @@ portalUserSchema.pre('save', function(next) {
       _.merge(this, hash);
     });
   }
+
   next();
 });
 
@@ -153,7 +158,10 @@ portalUserSchema.method('addToken', function(event, val) {
  * @returns {PortalUser}
  */
 portalUserSchema.method('removeToken', function(event) {
-  var tokens = _.reject(this.tokens, (t) => { return t.event === event; });
+  var tokens = _.reject(this.tokens, (t) => {
+    return t.event === event;
+  });
+
   this.tokens = tokens;
   return this;
 });
@@ -168,6 +176,7 @@ portalUserSchema.method('removeToken', function(event) {
  * @return this
  */
 portalUserSchema.method('googleAuthInfo', function(name = '', length = 32) {
+  // jscs:disable requireCamelCaseOrUpperCaseIdentifiers
   var result = speakeasy.generate_key({lenght: length, google_auth_qr: true, name: name});
   return this.set('googleAuth', { key: result.base32, encoding: 'base32', qrCodeUrl: result.google_auth_qr });
 });
@@ -199,7 +208,10 @@ portalUserSchema.method('isValidPassword', function(password) {
  * @return {Object|undefined} The event embedded document token itself or undefined
  */
 portalUserSchema.method('tokenOf', function(event) {
-  var found = _.filter(this.tokens, (t) => { return t.event === event});
+  var found = _.filter(this.tokens, (t) => {
+    return t.event === event
+  });
+
   return _.first(found);
 });
 
@@ -217,7 +229,7 @@ portalUserSchema.method('tokenOf', function(event) {
  */
 portalUserSchema.method('isTokenExpired', function(event, n, unit) {
   var token = this.tokenOf(event);
-  if(!token) throw new Error(`No token of "${event}"`);
+  if (!token) throw new Error(`No token of "${event}"`);
 
   var compareTo = moment().subtract(n, unit);
   return moment(token.createdAt).isBefore(compareTo);

@@ -5,23 +5,23 @@ var EndUserStore = createStore({
   storeName: 'EndUserStore',
 
   handlers: {
-    'FETCH_END_USERS_SUCCESS': 'handleEndUsersChange',
-    'FETCH_END_USER_SUCCESS': 'handleEndUserChange'
+    FETCH_END_USERS_SUCCESS: 'handleEndUsersChange',
+    FETCH_END_USER_SUCCESS: 'handleEndUserChange'
   },
 
-  initialize: function () {
+  initialize: function() {
     this.users = [];
     this.userCount = 0;
     this.currentUser = null;
   },
 
-  handleEndUsersChange: function (payload) {
+  handleEndUsersChange: function(payload) {
     this.users = payload.userList;
     this.userCount = payload.userCount;
     this.emitChange();
   },
 
-  handleEndUserChange: function (payload) {
+  handleEndUserChange: function(payload) {
     this.currentUser = payload;
     this.emitChange();
   },
@@ -38,7 +38,7 @@ var EndUserStore = createStore({
     return this.currentUser;
   },
 
-  getState: function () {
+  getState: function() {
     return {
       users: this.users,
       userCount: this.userCount,
@@ -46,11 +46,11 @@ var EndUserStore = createStore({
     };
   },
 
-  dehydrate: function () {
+  dehydrate: function() {
     return this.getState();
   },
 
-  rehydrate: function (state) {
+  rehydrate: function(state) {
     this.users = state.users;
     this.userCount = state.userCount;
     this.currentUser = state.currentUser;

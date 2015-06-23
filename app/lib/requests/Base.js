@@ -21,8 +21,8 @@ class BaseRequest {
    * @returns {*}
    */
   formatDateString(params, format) {
-    params.from = moment(params.from, "L").startOf("day").format(format);
-    params.to   = moment(params.to, "L").endOf("day").format(format);
+    params.from = moment(params.from, 'L').startOf('day').format(format);
+    params.to   = moment(params.to, 'L').endOf('day').format(format);
     return params;
   }
 
@@ -36,11 +36,12 @@ class BaseRequest {
    * @returns {*}
    */
   swapDate(params, cb) {
-    if (moment(params.from, "L").isAfter(moment(params.to, "L"))) {
+    if (moment(params.from, 'L').isAfter(moment(params.to, 'L'))) {
       let tmp = params.to;
       params.to = params.from;
       params.from = tmp;
     }
+
     return cb(null, params);
   }
 
@@ -62,6 +63,7 @@ class BaseRequest {
    * @returns {Object}
    */
   composeResponse(response) {
+    // jscs:disable requireCamelCaseOrUpperCaseIdentifiers
     return {
       offset: response.offset,
       contents: response.content,

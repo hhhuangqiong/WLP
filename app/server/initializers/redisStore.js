@@ -13,7 +13,7 @@ export default function makeRedisStore(session, nconf, env) {
   var RedisStore = require('connect-redis')(session);
   var redisStore;
 
-  if(env === 'development') {
+  if (env === 'development') {
     redisStore = new RedisStore(nconf.get('redis'))
   } else {
     var Redis = require('ioredis');

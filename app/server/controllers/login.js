@@ -11,17 +11,21 @@ export default class Login {
       if (err) {
         return next(err);
       }
+
       if (!user) {
         return next(new Error(info.message));
       }
+
       if (!user.hasValidOneTimePassword(req.body.onetimepassword)) {
         return next(new Error('Invalid one time password'));
       }
+
       req.logIn(user, function(err) {
         if (err) {
           logger.error(err);
           return next(err);
         }
+
         next();
       });
     })(req, res, next);
@@ -34,6 +38,7 @@ export default class Login {
       } else {
         req.session.cookie.expires = false;
       }
+
       req.flash('username', req.body.username);
       if (req.isAuthenticated() || !err) {
         res.redirect(nconf.get('landing:authenticated:path'));

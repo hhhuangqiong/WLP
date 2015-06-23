@@ -22,9 +22,9 @@ export default class CompanyController {
    */
   deactivateCompany(req, res) {
     var criteria = { _id: req.params.id, parentCompany: req.user.affiliatedCompany };
-    Q.ninvoke(Company, 'findOneAndUpdate', criteria, { status: 'inActive' }).then((result)=>{
+    Q.ninvoke(Company, 'findOneAndUpdate', criteria, { status: 'inActive' }).then((result)=> {
       this.fulfilled(res, result);
-    }).fail(function (error) {
+    }).fail(function(error) {
       this.rejected(res, error);
     }).done();
   }
@@ -52,7 +52,7 @@ export default class CompanyController {
           Q.ninvoke(request, 'getApplications', carrierId),
           Q.ninvoke(request, 'getApiService', carrierId)
         ])
-        .spread((applications, services)=>{
+        .spread((applications, services)=> {
           let result = {
             carrierId: carrierId,
             applicationId: null,
@@ -68,8 +68,8 @@ export default class CompanyController {
             _.filter(services.value, function(service) {
               if (service.type == 'API') {
                 _.merge(result, {
-                  developerKey: service['key'],
-                  developerSecret: service['secret']
+                  developerKey: service.key,
+                  developerSecret: service.secret
                 });
               }
             });
@@ -89,14 +89,14 @@ export default class CompanyController {
 
           return result;
         })
-        .catch((error)=>{
+        .catch((error)=> {
           logger.error(error);
           return null;
         })
     };
 
     Q.ninvoke(Company, 'find', criteria)
-      .then((companies)=>{
+      .then((companies)=> {
         let actions = [];
 
         let _companies = _(companies).reduce(function(prev, current) {
@@ -110,7 +110,7 @@ export default class CompanyController {
         //  actions.push(getApplications(_companies[key].carrierId));
         //});
 
-        return Q.allSettled(actions).then((results)=>{
+        return Q.allSettled(actions).then((results)=> {
 
           //results.forEach(function (result) {
           //  if (result.state === "fulfilled") {
@@ -127,16 +127,16 @@ export default class CompanyController {
 
           return _companies;
         })
-        .then((companies)=>{
+        .then((companies)=> {
           return res.status(200).json({
             companies: companies
           })
         })
-        .catch((error)=>{
+        .catch((error)=> {
           throw error;
         });
       })
-      .catch((err)=>{
+      .catch((err)=> {
         logger.error(err);
         return res.status(err.status).json({
           error: err
@@ -149,18 +149,20 @@ export default class CompanyController {
     var criteria = {};
     for (var key in params) {
       switch (key) {
-        case "id":
-        case "domain":
-        case "name":
-        case "address":
+        case 'id':
+        case 'domain':
+        case 'name':
+        case 'address':
           if (!_.isNull(params[key]) && !_.isUndefined(params[key])) {
             criteria[key] = params[key];
           }
+
         default:
-          logger.warn("Invalid search criteria requested: " + key);
+          logger.warn('Invalid search criteria requested: ' + key);
       }
     }
-    logger.debug("Requested search criteria: %j", criteria, {});
+
+    logger.debug('Requested search criteria: %j', criteria, {});
     return criteria;
   };
 
@@ -171,7 +173,7 @@ export default class CompanyController {
 
   // By Kareem and is not reviewed yet
   rejected(res, error) {
-    logger.error("Error while processing Request : %j ", error, {});
+    logger.error('Error while processing Request : %j ', error, {});
     res.json({ result: {} });
   };
 
@@ -247,8 +249,10 @@ export default class CompanyController {
       };
       params.createBy = params.updateBy = req.user._id;
       params.createAt = params.updateAt = new Date();
+
       // should pick what is needed rather than omitting
       _.omit(params, 'bc-name', 'bc-email', 'bc-phone', 'bc-name', 'tc-email', 'tc-phone', 'tc-name', 'sc-email', 'sc-phone');
+
       //params.parentCompany = req.user.affiliatedCompany;
       return params;
     }, {data: req.body});
@@ -270,6 +274,8 @@ export default class CompanyController {
 
         let writeStream = gfs.createWriteStream({
           filename: file.originalFilename,
+
+          // jscs:disable requireCamelCaseOrUpperCaseIdentifiers
           content_type: file.headers['content-type']
         });
 
@@ -326,7 +332,7 @@ export default class CompanyController {
     var saveCompany = function(params) {
       if (params._id) {
         logger.debug('updating company with payload %j', params, {});
-        return Q.ninvoke(Company, 'findOneAndUpdate', {_id: params._id}, params, {'new': true});
+        return Q.ninvoke(Company, 'findOneAndUpdate', {_id: params._id}, params, {new: true});
       } else {
         logger.debug('creating company with payload %j', params, {});
         return Q.ninvoke(Company, 'create', params);
@@ -343,12 +349,12 @@ export default class CompanyController {
         return Q.nfcall(unlinkImage, params);
       })
       .then(saveCompany)
-      .then((company)=>{
+      .then((company)=> {
         res.status(200).json({
           company: company
         })
       })
-      .catch((err)=>{
+      .catch((err)=> {
         logger.error(err);
         res.status(err.code || 500).json({
           error: err
@@ -365,7 +371,7 @@ export default class CompanyController {
      */
     var getCompanyServiceType = _.bind(function() {
       return Q.ninvoke(Company, 'findOne', {_id: this._id})
-        .then((company)=>{
+        .then((company)=> {
           if (!company) throw new Error('company does not exist');
           return company.getServiceType().toLowerCase();
         })
@@ -417,11 +423,11 @@ export default class CompanyController {
 
     var saveCompany = _.bind(function(payload) {
       logger.debug('updating company service with payload %j', payload, {});
-      return Q.ninvoke(Company, 'findOneAndUpdate', {_id: this._id}, {$set: payload}, {'new': true});
+      return Q.ninvoke(Company, 'findOneAndUpdate', {_id: this._id}, {$set: payload}, {new: true});
     }, {_id: req.body._id});
 
     Q.ninvoke(this, 'checkPermission', req.user, req.body._id)
-      .then((user)=>{
+      .then((user)=> {
         // user found then is permitted
         if (!user) {
           throw new Error('permission denied');
@@ -430,12 +436,12 @@ export default class CompanyController {
       .then(getCompanyServiceType)
       .then(normalizeParams)
       .then(saveCompany)
-      .then((company)=>{
+      .then((company)=> {
         res.status(200).json({
           company: company
         });
       })
-      .catch((err)=>{
+      .catch((err)=> {
         logger.error(err);
         res.status(err.code || 500).json({
           error: err
@@ -507,23 +513,23 @@ export default class CompanyController {
           updateAt: params.updateAt,
           updateBy: params.updateBy
         }
-      }, {'new': true});
+      }, {new: true});
     }, {params: req.body});
 
     Q.ninvoke(this, 'checkPermission', req.user, req.body._id)
-      .then((user)=>{
+      .then((user)=> {
         // user found then is permitted
         if (!user) {
           throw new Error('permission denied');
         }
       })
       .then(saveCompany)
-      .then((company)=>{
+      .then((company)=> {
         res.status(200).json({
           company: company
         });
       })
-      .catch((err)=>{
+      .catch((err)=> {
         logger.error(err);
         res.status(err.code || 500).json({
           error: err
@@ -556,7 +562,7 @@ export default class CompanyController {
           Q.ninvoke(request, 'getApplications', carrierId),
           Q.ninvoke(request, 'getApiService', carrierId)
         ])
-        .spread((applications, services)=>{
+        .spread((applications, services)=> {
           let result = {
             applicationId: null,
             developerKey: null,
@@ -571,8 +577,8 @@ export default class CompanyController {
             _.filter(services.value, function(service) {
               if (service.type == 'API') {
                 _.merge(result, {
-                  developerKey: service['key'],
-                  developerSecret: service['secret']
+                  developerKey: service.key,
+                  developerSecret: service.secret
                 });
               }
             });
@@ -592,7 +598,7 @@ export default class CompanyController {
 
           return result;
         })
-        .catch((error)=>{
+        .catch((error)=> {
           logger.error(error);
           return null;
         })
@@ -615,9 +621,9 @@ export default class CompanyController {
           assignedGroup: {
             $or: ['admin', 'dev']
           }
-        }).then((company)=>{
+        }).then((company)=> {
           return cb(null, !!company);
-        }).catch((error)=>{
+        }).catch((error)=> {
           throw error;
         });
       };
@@ -626,25 +632,25 @@ export default class CompanyController {
     };
 
     Q.ninvoke(PortalUser, 'findOne', { _id: userId })
-      .then((user)=>{
+      .then((user)=> {
         if (!user) {
           res.status(401);
         };
 
         return Q.nfcall(hasPermission, user);
       })
-      .then((isPermitted)=>{
+      .then((isPermitted)=> {
         if (!isPermitted) {
           res.status(401);
         }
       })
       .then(makeApiRequest)
-      .then((result)=>{
+      .then((result)=> {
         res.status(200).json({
           services: result
         });
       })
-      .catch((err)=>{
+      .catch((err)=> {
         logger.error(err);
         res.status(500).json({
           error: err
@@ -656,17 +662,18 @@ export default class CompanyController {
     let { carrierId } = req.params;
 
     Q.ninvoke(Company, 'findOne', { carrierId: carrierId }, 'name carrierId logo')
-      .then((company)=>{
+      .then((company)=> {
         if (!company) {
           return res.status(404).json({
             error: 'company not found'
           });
         }
+
         return res.status(200).json({
           company: company
         });
       })
-      .catch((err)=>{
+      .catch((err)=> {
         logger.error(err);
         res.status(err.status).json({
           error: err

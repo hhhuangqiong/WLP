@@ -13,7 +13,7 @@ var mongoose = require('mongoose');
  * @param {Function} [cb]
  */
 function initialize(mongodbURI, mongodbOpts, cb) {
-  if(!mongodbURI || !mongodbOpts) {
+  if (!mongodbURI || !mongodbOpts) {
     throw new Error('Both uri & options are required');
   }
 
@@ -36,4 +36,5 @@ function initialize(mongodbURI, mongodbOpts, cb) {
     cb();
   }
 }
+
 module.exports = initialize;

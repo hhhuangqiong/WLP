@@ -4,6 +4,7 @@ var Router = require('react-router');
 var FluxibleComponent = require('fluxible/addons/FluxibleComponent');
 var debug = require('debug');
 var bootstrapDebug = debug('app:client');
+
 // TODO rename the file as 'app'
 var app = require('../index');
 var routes = require('../routes');
@@ -37,6 +38,7 @@ if (!dehydratedState) {
   bootstrapDebug('Isomorphism disabled, creating new context');
   var config = window.__CONFIG__;
   var context = app.createContext({config: config});
+
   // For debugging
   window.context = context;
   bootstrapDebug('Loading session');
@@ -54,6 +56,7 @@ if (!dehydratedState) {
     if (err) {
       throw err;
     }
+
     // For debugging
     window.context = context;
 

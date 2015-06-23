@@ -18,7 +18,7 @@ export default class SpeakeasyWrapper {
   constructor(opts = {}) {
     var encoding = opts.encoding;
 
-    if(encoding && ENCODINGS.indexOf(encoding) < 0 )
+    if (encoding && ENCODINGS.indexOf(encoding) < 0)
       throw new Error(`Unknown encoding: ${encoding}`);
 
     this.encoding = encoding || 'ascii';
@@ -35,6 +35,7 @@ export default class SpeakeasyWrapper {
    * @return {String}
    */
   qrCodeURL(name = '', length = 32) { // do not care about the length for now
+    // jscs:disable requireCamelCaseOrUpperCaseIdentifiers
     // 'qr_codes' are not for Google Authenticator
     var qrOpts = { qr_codes: true, name: name || this.name, length: length };
 
@@ -43,5 +44,4 @@ export default class SpeakeasyWrapper {
     var target = `qr_code_${this.encoding}`;
     return result[target];
   }
-
 }

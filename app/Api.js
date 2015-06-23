@@ -142,10 +142,11 @@ Api.prototype.getEndUsers = function(params, cb) {
     .get(`${this._getHost()}/api/carriers/${params.carrierId}/users`)
     .accept('json')
     .set('Authorization', this._getToken())
-    .end(function (err, res) {
+    .end(function(err, res) {
       if (err) {
         debug('error', err);
       }
+
       cb(err, res && res.body);
     });
 };
@@ -155,10 +156,11 @@ Api.prototype.getEndUser = function(params, cb) {
     .get(`${this._getHost()}/api/carriers/${params.carrierId}/users/${params.username}`)
     .accept('json')
     .set('Authorization', this._getToken())
-    .end(function (err, res) {
+    .end(function(err, res) {
       if (err) {
         debug('error', err)
       }
+
       cb(err, res && res.body);
     });
 };
@@ -169,10 +171,11 @@ Api.prototype.getSMS = function(params, cb) {
     .query(params)
     .accept('json')
     .set('Authorization', this._getToken())
-    .end(function (err, res) {
+    .end(function(err, res) {
       if (err) {
         debug('error', err)
       }
+
       cb(err, res && res.body);
     });
 };
@@ -185,10 +188,11 @@ Api.prototype.getSMSWidgets = function(params, cb) {
     .query({
       userId: this._getUserId()
     })
-    .end(function (err, res) {
+    .end(function(err, res) {
       if (err) {
         debug('error', err)
       }
+
       cb(err, res && res.body);
     });
 };
@@ -199,10 +203,11 @@ Api.prototype.getCalls = function(params, cb) {
     .query(params)
     .accept('json')
     .set('Authorization', this._getToken())
-    .end(function (err, res) {
+    .end(function(err, res) {
       if (err) {
         debug('error', err);
       }
+
       cb(err, res && res.body);
     });
 };
@@ -215,10 +220,11 @@ Api.prototype.getCallsWidgets = function(params, cb) {
     .query({
       userId: this._getUserId()
     })
-    .end(function (err, res) {
+    .end(function(err, res) {
       if (err) {
         debug('error', err)
       }
+
       cb(err, res && res.body);
     });
 };
@@ -231,10 +237,11 @@ Api.prototype.getImWidgets = function(params, cb) {
     .query({
       userId: this._getUserId()
     })
-    .end(function (err, res) {
+    .end(function(err, res) {
       if (err) {
         debug('error', err)
       }
+
       cb(err, res && res.body);
     });
 };
@@ -245,10 +252,11 @@ Api.prototype.getTopUpHistory = function(params, cb) {
     .query(params)
     .accept('json')
     .set('Authorization', this._getToken())
-    .end(function (err, res) {
+    .end(function(err, res) {
       if (err) {
         debug('error', err);
       }
+
       cb(err, res && res.body);
     });
 };
@@ -259,10 +267,11 @@ Api.prototype.getImHistory = function(params, cb) {
     .query(params)
     .accept('json')
     .set('Authorization', this._getToken())
-    .end(function (err, res) {
+    .end(function(err, res) {
       if (err) {
         debug('error', err);
       }
+
       cb(err, res && res.body);
     });
 };
@@ -276,6 +285,7 @@ Api.prototype.getCurrentCompanyInfo = function(params, cb) {
       if (err) {
         debug('error', err);
       }
+
       cb(err, res && res.body);
     });
 };

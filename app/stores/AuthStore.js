@@ -4,13 +4,13 @@ var AuthStore = createStore({
   storeName: 'AuthStore',
 
   handlers: {
-    'LOAD_SESSION': 'loadSession',
-    'SIGN_IN_START': 'signInStart',
-    'SIGN_IN_FAILURE': 'signInFailure',
-    'SIGN_IN_SUCCESS': 'signIn',
-    'SIGN_OUT_START': 'signOutStart',
-    'SIGN_OUT_FAILURE': 'signOutFailure',
-    'SIGN_OUT_SUCCESS': 'signOut'
+    LOAD_SESSION: 'loadSession',
+    SIGN_IN_START: 'signInStart',
+    SIGN_IN_FAILURE: 'signInFailure',
+    SIGN_IN_SUCCESS: 'signIn',
+    SIGN_OUT_START: 'signOutStart',
+    SIGN_OUT_FAILURE: 'signOutFailure',
+    SIGN_OUT_SUCCESS: 'signOut'
   },
 
   initialize: function() {

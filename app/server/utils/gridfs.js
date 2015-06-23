@@ -36,6 +36,8 @@ module.exports = {
 
     let writeStream = gfs.createWriteStream({
       filename: options.fileName || filePath.split('/').pop(),
+
+      // jscs:disable requireCamelCaseOrUpperCaseIdentifiers
       content_type: mime.lookup(filePath)
     });
 

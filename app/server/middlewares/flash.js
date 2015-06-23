@@ -7,16 +7,17 @@
  *  @param {String} [opts.messagesKey='messages']
  *  @param {String} [opts.messageTypeKey='messageType']
  */
-export default function(opts = {}){
+export default function(opts = {}) {
   var keys = {};
   keys.messages    = opts.messagesKey || 'messages';
   keys.messageType = opts.messageTypeKey || 'messageType';
 
   return (req, res, next) => {
-    if(req.flash) {
+    if (req.flash) {
       res.locals.messageType = req.flash(keys.messageType)[0];
       res.locals.messages    = req.flash(keys.messages);
     }
+
     next();
   }
 }

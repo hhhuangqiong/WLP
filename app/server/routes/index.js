@@ -13,6 +13,7 @@ function validateTokenMiddleware(req, res, next) {
       }
     });
   }
+
   next();
 }
 

@@ -15,7 +15,7 @@ var router = Router();
 router.get('/:imageId', function(req, res, next) {
   function readImageProperties(imageId, cb) {
     var gfs = new Grid(db, mongoDrive);
-    gfs.findOne({ _id: imageId}, function (err, file) {
+    gfs.findOne({ _id: imageId}, function(err, file) {
       if (err) return cb(err);
       return cb(null, file);
     });

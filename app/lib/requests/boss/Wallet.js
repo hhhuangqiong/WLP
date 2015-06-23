@@ -71,10 +71,10 @@ export default class WalletRequest extends BaseRequest {
 
     Q.ninvoke(this, 'validateQuery', params)
       .then(this.appendRequestId)
-      .then((params)=>{
+      .then((params)=> {
         this.sendRequest(params, cb);
       })
-      .catch((err)=>{
+      .catch((err)=> {
         logger.error(err);
         this.rejectRequest(err, cb);
       });

@@ -7,8 +7,8 @@ var LoadingSpinnerStore = createStore({
   storeName: 'LoadingSpinnerStore',
 
   handlers: {
-    'FETCH_START': 'showSpinner',
-    'FETCH_END': 'hideSpinner'
+    FETCH_START: 'showSpinner',
+    FETCH_END:   'hideSpinner'
   },
 
   showSpinner: function() {
@@ -21,7 +21,7 @@ var LoadingSpinnerStore = createStore({
     this.emitChange();
   },
 
-  initialize: function () {
+  initialize: function() {
     this.loaded = true;
     this.options = {
       lines: 50, // The number of lines to draw
@@ -55,18 +55,18 @@ var LoadingSpinnerStore = createStore({
     return this.options;
   },
 
-  getState: function () {
+  getState: function() {
     return {
       loaded: this.loaded,
       options: this.options
     };
   },
 
-  dehydrate: function () {
+  dehydrate: function() {
     return this.getState();
   },
 
-  rehydrate: function (state) {
+  rehydrate: function(state) {
     this.loaded = state.loaded;
     this.options = state.options;
   }

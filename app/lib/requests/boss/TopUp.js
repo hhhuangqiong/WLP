@@ -40,17 +40,18 @@ export default class TopUpRequest extends BaseRequest {
       });
 
     function formatDateString() {
-      params.startDate = moment(params.startDate, "L").startOf("day").format("YYYYMMDDHHmmss");
-      params.endDate   = moment(params.endDate, "L").endOf("day").format("YYYYMMDDHHmmss");
+      params.startDate = moment(params.startDate, 'L').startOf('day').format('YYYYMMDDHHmmss');
+      params.endDate   = moment(params.endDate, 'L').endOf('day').format('YYYYMMDDHHmmss');
       return params;
     }
 
     function swapDate() {
-      if (moment(params.startDate, "L").isAfter(moment(params.endDate, "L"))) {
+      if (moment(params.startDate, 'L').isAfter(moment(params.endDate, 'L'))) {
         let tmp = params.endDate;
         params.endDate = params.startDate;
         params.startDate = tmp;
       }
+
       return params;
     }
 
@@ -58,9 +59,10 @@ export default class TopUpRequest extends BaseRequest {
     function stringifyArray() {
       for (var key in params) {
         if (params[key] instanceof Array) {
-          params[key] = params[key].join(",");
+          params[key] = params[key].join(',');
         }
       }
+
       return params;
     }
   }

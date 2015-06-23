@@ -164,5 +164,4 @@ export default class UsersRequest extends BaseRequest {
         cb(null, res.body);
       })
   }
-
 }

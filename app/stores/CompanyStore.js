@@ -27,18 +27,18 @@ var CompanyStore = createStore({
   storeName: 'CompanyStore',
 
   handlers: {
-    'FETCH_COMPANIES_SUCCESS': 'receiveCompanies',
-    'FETCH_COMPANY_SUCCESS': 'receiveCompany',
-    'FETCH_COMPANY_APPLICATION_SUCCESS': 'receiveCompanyApplications',
-    'FETCH_COMPANY_SERVICE_SUCCESS': 'receiveCompanyService',
-    'CREATE_COMPANY_SUCCESS': 'handleCompanyCreated',
-    'UPDATE_COMPANY_PROFILE_SUCCESS': 'handleCompanyUpdated',
-    'UPDATE_COMPANY_SERVICE_SUCCESS': 'handleCompanyUpdated',
-    'UPDATE_COMPANY_WIDGET_SUCCESS': 'handleCompanyUpdated',
-    'RESET_COMPANY': 'handleCompanyReset'
+    FETCH_COMPANIES_SUCCESS: 'receiveCompanies',
+    FETCH_COMPANY_SUCCESS: 'receiveCompany',
+    FETCH_COMPANY_APPLICATION_SUCCESS: 'receiveCompanyApplications',
+    FETCH_COMPANY_SERVICE_SUCCESS: 'receiveCompanyService',
+    CREATE_COMPANY_SUCCESS: 'handleCompanyCreated',
+    UPDATE_COMPANY_PROFILE_SUCCESS: 'handleCompanyUpdated',
+    UPDATE_COMPANY_SERVICE_SUCCESS: 'handleCompanyUpdated',
+    UPDATE_COMPANY_WIDGET_SUCCESS: 'handleCompanyUpdated',
+    RESET_COMPANY: 'handleCompanyReset'
   },
 
-  initialize: function () {
+  initialize: function() {
     this.companies = [];
   },
 
@@ -54,7 +54,7 @@ var CompanyStore = createStore({
     return _.merge(_.clone(defaultCompanyObject, true), this.companies[carrierId]);
   },
 
-  handleCompanyReset: function () {
+  handleCompanyReset: function() {
     this.currentCompany = _.clone(defaultCompanyObject, true);
     this.emitChange();
   },
@@ -89,18 +89,18 @@ var CompanyStore = createStore({
     this.emitChange();
   },
 
-  getState: function () {
+  getState: function() {
     return {
       companies: this.companies,
       currentCompany: this.currentCompany
     };
   },
 
-  dehydrate: function () {
+  dehydrate: function() {
     return this.getState();
   },
 
-  rehydrate: function (state) {
+  rehydrate: function(state) {
     this.companies = state.companies;
     this.currentCompany = state.currentCompany;
   }

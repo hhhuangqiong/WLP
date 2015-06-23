@@ -5,12 +5,12 @@ var CallsStore = createStore({
   storeName: 'CallsStore',
 
   handlers: {
-    'FETCH_CALLS_SUCCESS': 'handleCallsChange',
-    'FETCH_CALLS_PAGE_SUCCESS': 'handleCallsChange',
-    'FETCH_CALLS_WIDGETS_SUCCESS': 'handleCallsWidgetsChange'
+    FETCH_CALLS_SUCCESS: 'handleCallsChange',
+    FETCH_CALLS_PAGE_SUCCESS: 'handleCallsChange',
+    FETCH_CALLS_WIDGETS_SUCCESS: 'handleCallsWidgetsChange'
   },
 
-  initialize: function () {
+  initialize: function() {
     this.widgets = [];
     this.calls = [];
     this.offset = 0;
@@ -21,7 +21,7 @@ var CallsStore = createStore({
     this.params = {};
   },
 
-  handleCallsChange: function (payload) {
+  handleCallsChange: function(payload) {
     this.calls = payload.contents;
     this.offset = payload.offset;
     this.pageNumber = payload.pageNumber;
@@ -53,7 +53,7 @@ var CallsStore = createStore({
     return this.widgets;
   },
 
-  getState: function () {
+  getState: function() {
     return {
       calls: this.calls,
       offset: this.offset,
@@ -66,11 +66,11 @@ var CallsStore = createStore({
     };
   },
 
-  dehydrate: function () {
+  dehydrate: function() {
     return this.getState();
   },
 
-  rehydrate: function (state) {
+  rehydrate: function(state) {
     this.calls = state.calls;
     this.offset = state.offset;
     this.pageNumber = state.pageNumber;

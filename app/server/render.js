@@ -27,6 +27,7 @@ export default function(app) {
       onAbort: function(redirect) {
         cb({ redirect: redirect });
       },
+
       onError: function(err) {
         debug('Routing Error', err);
         cb(err);

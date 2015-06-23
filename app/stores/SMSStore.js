@@ -5,20 +5,23 @@ var SMSStore = createStore({
   storeName: 'SMSStore',
 
   handlers: {
-    'FETCH_SMS_SUCCESS': 'handleSMSChange',
-    'FETCH_SMS_WIDGETS_SUCCESS': 'handleSMSWidgetsChange'
+    FETCH_SMS_SUCCESS:         'handleSMSChange',
+    FETCH_SMS_WIDGETS_SUCCESS: 'handleSMSWidgetsChange'
   },
 
-  initialize: function () {
+  initialize: function() {
     this.SMSRecords = [];
     this.widgets = [];
     this.totalRec = 0;
   },
 
-  handleSMSChange: function (payload) {
+  handleSMSChange: function(payload) {
     if (payload) {
-      this.SMSRecords = payload['number_of_elements'] > 0 ? payload.content : [];
-      this.totalRec = payload['number_of_elements'];
+      // jscs: disable
+      this.SMSRecords = payload.number_of_elements > 0 ? payload.content : [];
+      this.totalRec = payload.number_of_elements;
+
+      // jscs: enable
     } else {
       this.SMSRecords = [];
       this.totalRec = 0;
@@ -49,7 +52,7 @@ var SMSStore = createStore({
     return this.widgets;
   },
 
-  getState: function () {
+  getState: function() {
     return {
       SMSRecords: this.SMSRecords,
       totalRec: this.totalRec,
@@ -57,11 +60,11 @@ var SMSStore = createStore({
     };
   },
 
-  dehydrate: function () {
+  dehydrate: function() {
     return this.getState();
   },
 
-  rehydrate: function (state) {
+  rehydrate: function(state) {
     this.SMSRecords = state.SMSRecords;
     this.totalRec = state.totalRec;
     this.widgets = state.widgets;

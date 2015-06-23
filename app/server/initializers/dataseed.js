@@ -34,11 +34,12 @@ function initialize(seedFilePath) {
         var extra = {
           affiliatedCompany: affiliatedCompanyId
         };
-        logger.info("Seeding user " +  rootUser.username);
+        logger.info('Seeding user ' +  rootUser.username);
         return Q.ninvoke(PortalUser, 'create', _.merge(rootUser, hashResult, extra));
       });
 
     };
+
     var seedCompany = function(companyInfo) {
       var condition = {
         name: companyInfo.name
@@ -49,15 +50,18 @@ function initialize(seedFilePath) {
       };
       return Q.ninvoke(Company, 'findOneAndUpdate', condition, companyInfo, opts);
     };
+
     function addLogo(model) {
       return Q.ninvoke(model, 'addLogo', path.join(__dirname, `../../../public/images/${data.company.logoFile}`), {});
     };
+
     var infoLogger = function(model) {
       logger.info('Seeded: %j', model, {});
     };
+
     var putAffiliateIdInScope = function(company) {
       affiliatedCompanyId = company.id;
-      logger.info("Putted affiliatedCompany in scope "+ affiliatedCompanyId);
+      logger.info('Put affiliatedCompany in scope ' + affiliatedCompanyId);
       return company;
     };
 

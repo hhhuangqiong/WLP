@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import Controller from '../controllers/login';
 
-module.exports = (() => {
+module.exports = (function() {
   // no deps?
   var controller = new Controller();
 

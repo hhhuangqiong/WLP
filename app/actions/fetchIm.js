@@ -8,7 +8,6 @@ export function fetchIm(context, params, done) {
   context.dispatch('FETCH_START');
   context.dispatch('FETCH_IM_START');
 
-
   context.api.getImHistory(params, function(err, Im) {
 
     context.dispatch('FETCH_IM_END');

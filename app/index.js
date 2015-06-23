@@ -13,6 +13,7 @@ import SystemMessageStore from './stores/SystemMessageStore';
 import LoadingSpinnerStore from './stores/LoadingSpinnerStore';
 
 import ModalStore from './stores/ModalStore';
+
 // seems not passing anything is okay
 var app = new Fluxible();
 

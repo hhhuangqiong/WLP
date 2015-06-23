@@ -15,6 +15,7 @@ export default function(host = '', apiPrefix = '') {
           if (err) {
             debug('error', err);
           }
+
           token = res && res.ok ? token : null;
           cb(err, token);
         });
