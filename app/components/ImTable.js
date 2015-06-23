@@ -83,33 +83,43 @@ var ImTable = React.createClass({
           let imDate = moment(u.timestamp).format(IM_DATETIME_FORMAT);
 
           let messageTypeClasses = {
-            animation: 'icon-video',
             text: 'icon-text',
             image: 'icon-image',
             audio: 'icon-audio',
             video: 'icon-video',
             remote: 'icon-ituneyoutube',
-            sticker: 'icon-image',
-            'voice_sticker': 'icon-audio',
-            'ephemeral_image': 'icon-image',
-            'call_audio': 'icon-audio',
-            'conference_audio': 'icon-audio',
-            'voice_mail': 'icon-audio',
-            'call_video': 'icon-video',
-            'video_mail': 'icon-video'
+            animation: '',
+            sticker: '',
+            'voice_sticker': '',
+            'ephemeral_image': '',
+            'call_audio': '',
+            'conference_audio': '',
+            'voice_mail': '',
+            'call_video': '',
+            'video_mail': ''
           };
 
           let typeClass = messageTypeClasses[u.message_type] || '';
 
-          let typeText = _.capitalize(u.message_type);
+          let messageTypeTitle = {
+            text: 'Text',
+            image: 'Image',
+            audio: 'Audio',
+            video: 'Video',
+            remote: 'Sharing',
+            animation: 'Others',
+            sticker: 'Others',
+            'voice_sticker': 'Others',
+            'ephemeral_image': 'Others',
+            'call_audio': 'Others',
+            'conference_audio': 'Others',
+            'voice_mail': 'Others',
+            'call_video': 'Others',
+            'video_mail': 'Others',
+            'undefined': 'Others'
+          };
 
-          if (typeText === 'Undefined') {
-            typeText = 'Unknown';
-          }
-
-          if (typeText === 'Remote') {
-            typeText = 'Sharing';
-          }
+          let typeText = messageTypeTitle[u.message_type] || 'Others';
 
           let typeSize = this.getTypeSize(u,typeText);
 
