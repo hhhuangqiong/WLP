@@ -211,10 +211,10 @@ var Calls = React.createClass({
             <div className="call-type-filter large-3 columns left top-bar-section">
               <ul className="button-group round">
                 <li>
-                  <a className={classNames('button', 'icon-onnet', { active: this.state.type == 'ONNET' })} onClick={this.handleOnnetClick}></a>
+                  <a className={classNames('button', { active: this.state.type == 'ONNET' })} onClick={this.handleOnnetClick}>Onnet</a>
                 </li>
                 <li>
-                  <a className={classNames('button', 'icon-offnet', { active: this.state.type == 'OFFNET' })} onClick={this.handleOffnetClick}></a>
+                  <a className={classNames('button', { active: this.state.type == 'OFFNET' })} onClick={this.handleOffnetClick}>Offnet</a>
                 </li>
               </ul>
             </div>

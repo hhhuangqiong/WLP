@@ -26,3 +26,14 @@
     }
   }
 }
+.call_type {
+  color: $white;
+  font-size: rem-calc(14);
+  text-transform: capitalize;
+  &.onnet {
+    background-color: $status-active;
+  }
+  &.offnet {
+    background-color: $status-disable;
+  }
+}

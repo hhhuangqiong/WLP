@@ -33,11 +33,12 @@ var CallsTable = React.createClass({
           });
 
           let callStart = moment(u.start_time).format('h:mm:ss a');
-          let callEnd = moment(u.end_time).format('h:mm:ss a');
+          let callEnd = (u.end_time > 0) ? moment(u.end_time).format('h:mm:ss a') : callStart;
           let callDate = moment(u.start_time).format('MMMM DD YYYY');
+          let callType = u.type.toLowerCase();
 
           return <tr className="calls-table--row" key={u.record_id}>
-            <td className="text-center calls-table--cell"><span className={u.success ? "label status success" : "label status alert"}></span></td>
+            <td className="text-center calls-table--cell"><span className={classNames('label','status',(u.success)?'success':'alert')}></span></td>
             <td className="calls-table--cell">
               <span className="left duration">{Math.round(u.duration/1000)}s</span>
               <div className="left timestamp">
@@ -47,7 +48,7 @@ var CallsTable = React.createClass({
               </div>
             </td>
             <td className="calls-table--cell">
-              <span className={"call_type icon-" + u.type.toLowerCase()}></span>
+              <span className={"call_type radius label " + u.type.toLowerCase()}>{callType}</span>
             </td>
             <td className="calls-table--cell">
               <div className="large-24 columns">
