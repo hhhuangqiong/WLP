@@ -55,8 +55,8 @@ api.get('/switcher/companies', function(req, res) {
       }
 
       return Q.ninvoke(Company, 'find', {}, 'name carrierId logo status');
-    }).then((companies)=>{
-
+    }).
+    then((companies)=> {
       let _companies = [];
 
       for (let key in companies) {
@@ -68,8 +68,8 @@ api.get('/switcher/companies', function(req, res) {
           })
         }
       }
-    })
-    .catch(function(err) {
+    }).
+    catch(function(err) {
       if (err)
         return res.status(err.status).json({
           error: err

@@ -24,10 +24,10 @@ export class SignUp {
    */
   constructor(mailer, templateObject) {
     // better to have mailer & template mailer implement the same interface
-    if(!mailer) throw new Error('`mailer` is required');
+    if (!mailer) throw new Error('`mailer` is required');
     this.mailer = mailer;
 
-    if(!templateObject) throw new Error('`templateObject` is required');
+    if (!templateObject) throw new Error('`templateObject` is required');
     this.templateObject = templateObject;
   }
 
@@ -61,7 +61,7 @@ export class SignUp {
     user.addToken(SIGNUP_EVENT, randtoken.generate(16));
 
     user.save((err, model) => {
-      if(err) return cb(err);
+      if (err) return cb(err);
 
       var to = model.username;
       logger.debug(`About to send ${to} a 'signup' email`);
@@ -103,15 +103,15 @@ export class SignUp {
    * @return {Boolean}
    */
   verify(user, tokenValue, after) {
-    if(_.isEmpty(tokenValue)) throw new Error('Token value is required');
-    if(!_.isDate(after)) throw new Error('Expect "after" to be passed as Date');
+    if (_.isEmpty(tokenValue)) throw new Error('Token value is required');
+    if (!_.isDate(after)) throw new Error('Expect "after" to be passed as Date');
 
     // skeptical about using `instanceof`
-    if(!(user instanceof PortalUser)) throw new Error('cannot only verify PortalUser data');
+    if (!(user instanceof PortalUser)) throw new Error('cannot only verify PortalUser data');
 
     var token = user.tokenOf(SIGNUP_EVENT);
-    if(!token) throw new Error(util.format('no "%s" token found', SIGNUP_EVENT));
-    if(token.value !== tokenValue) return false;
+    if (!token) throw new Error(util.format('no "%s" token found', SIGNUP_EVENT));
+    if (token.value !== tokenValue) return false;
 
     // true means not expired
     return moment(after).isBefore(token.createdAt);

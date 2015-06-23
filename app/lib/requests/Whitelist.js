@@ -16,7 +16,7 @@ export const OPERATION_TYPE_REMOVE = 'REMOVE';
 export class WhitelistRequest {
 
   constructor(opts) {
-    if(!opts.baseUrl) throw new Error('`baseUrl is required`');
+    if (!opts.baseUrl) throw new Error('`baseUrl is required`');
     this._baseUrl = opts.baseUrl;
   }
 
@@ -101,6 +101,7 @@ export class WhitelistRequest {
       cb   = opts;
       opts = {};
     }
+
     if (!cb) throw new Error('`cb` is required');
 
     let path  = this._processPath(carrierId);
@@ -110,6 +111,7 @@ export class WhitelistRequest {
     if (opts.from != undefined) {
       scope.query({from: opts.from});
     }
+
     if (opts.to) {
       scope.query({to: opts.to});
     }
@@ -121,7 +123,6 @@ export class WhitelistRequest {
       cb(null, res.body);
     });
   }
-
 }
 
 assign(WhitelistRequest.prototype, errorMixin);

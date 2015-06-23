@@ -25,10 +25,11 @@ export class EmailJob {
    * @see {@link: https://github.com/LearnBoost/kue#processing-jobs}
    */
   constructor(queue, processFn) {
-    if(!queue) throw new Error('require a Queue object');
-    if(!_.isFunction(processFn)) throw new Error('A function for how to process the job is required');
+    if (!queue) throw new Error('require a Queue object');
+    if (!_.isFunction(processFn)) throw new Error('A function for how to process the job is required');
 
     this.queue = queue;
+
     // any scenario to unbind
     this.queue.process(JOB_TYPE, processFn);
   }
@@ -55,7 +56,6 @@ export class EmailJob {
       templateData: email.templateData()
     }).save(cb);
   }
-
 }
 
 export const JOB_TYPE = 'emails';

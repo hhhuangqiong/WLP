@@ -10,11 +10,11 @@ export default class SignUp {
    * @param {Object} [extraData]
    */
   constructor(templateFolderName, mailOpts = {}, extraData = {}) {
-    if(!templateFolderName) throw new Error('`templateFolderName` is required')
+    if (!templateFolderName) throw new Error('`templateFolderName` is required')
     this.templateFolderName = templateFolderName;
 
     //TODO verify if `from` is a valid email address
-    if( !(mailOpts.from && mailOpts.subject) ) throw new Error('`from` and `subject` are required');
+    if (!(mailOpts.from && mailOpts.subject)) throw new Error('`from` and `subject` are required');
     this.from    = mailOpts.from;
     this.subject = mailOpts.subject;
 
@@ -34,9 +34,9 @@ export default class SignUp {
       first: user.first,
       last:  user.last,
       email: user.username,
+
       // url to be decided
       url: 'TODO'
     });
   }
-
 }

@@ -18,4 +18,4 @@ export default function(context, params, done) {
     context.getRouter().transitionTo('company-profile', { role: role, identity: identity, carrierId: result.company.carrierId });
     done();
   });
-};
+}

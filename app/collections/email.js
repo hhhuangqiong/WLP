@@ -57,6 +57,7 @@ var schema = new mongoose.Schema({
     if (!val) {
       return this.template[m];
     }
+
     this.template[m] = val;
     return this;
   };

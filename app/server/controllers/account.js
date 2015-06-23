@@ -14,13 +14,13 @@ export default class AccountController {
     var query = req.query;
 
     Q.ninvoke(this.portalUserManager, 'getUsers', query)
-      .then(function (users) {
+      .then(function(users) {
         res.json({
-          "result": users ? users : false
+          result: users ? users : false
         });
-      }).catch(function (err) {
+      }).catch(function(err) {
         res.json({
-          "error": err
+          error: err
         });
       });
   }
@@ -28,23 +28,24 @@ export default class AccountController {
   createAccount(req, res, next) {
     var conditions = req.body;
     var author = req.user;
+
     // user hasn't logged in
     if (!req.user) {
       res.json({
-        "result": {},
-        "message": 'Invalid permission'
+        result: {},
+        message: 'Invalid permission'
       });
     }
+
     Q.ninvoke(this.portalUserManager, 'newUser', conditions, author)
-      .then(function (user) {
+      .then(function(user) {
         res.json({
-          "user": user ? user : false
+          user: user ? user : false
         });
-      }).catch(function (err) {
+      }).catch(function(err) {
         res.json({
-          "error": err
+          error: err
         });
       });
   }
-
 }

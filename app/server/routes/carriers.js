@@ -12,7 +12,7 @@ var callsRequest   = fetchDep(nconf.get('containerName'), 'CallsRequest');
 var topUpRequest   = fetchDep(nconf.get('containerName'), 'TopUpRequest');
 var imRequest   = fetchDep(nconf.get('containerName'), 'ImRequest');
 
-import smsRequest from '../../lib/requests/SMS';
+import SmsRequest from '../../lib/requests/SMS';
 
 import PortalUser from '../../collections/portalUser';
 import Company from '../../collections/company';
@@ -120,10 +120,10 @@ api.post('/carriers/:carrierId/users/:username/suspension', function(req, res) {
   let username = req.params.username;
 
   Q.ninvoke(endUserRequest, 'suspendUser', carrierId, username)
-    .then((result)=>{
+    .then((result)=> {
       return res.json(result);
     })
-    .catch((err)=>{
+    .catch((err)=> {
       return res.status(err.status).json({
         error: err
       });
@@ -138,10 +138,10 @@ api.delete('/carriers/:carrierId/users/:username/suspension', function(req, res)
   let username = req.params.username;
 
   Q.ninvoke(endUserRequest, 'reactivateUser', carrierId, username)
-    .then((result)=>{
+    .then((result)=> {
       return res.json(result);
     })
-    .catch((err)=>{
+    .catch((err)=> {
       return res.status(err.status).json({
         error: err
       });
@@ -156,10 +156,10 @@ api.delete('/carriers/:carrierId/users/:username', function(req, res) {
   let username = req.params.username;
 
   Q.ninvoke(endUserRequest, 'terminateUser', carrierId, username)
-    .then((result)=>{
+    .then((result)=> {
       return res.json(result);
     })
-    .catch((err)=>{
+    .catch((err)=> {
       return res.status(err.status).json({
         error: err
       });
@@ -173,12 +173,15 @@ api.get('/carriers/:carrierId/calls', function(req, res) {
   req.checkQuery('page').notEmpty();
 
   let params = {
+
+    // jscs:disable requireCamelCaseOrUpperCaseIdentifiers
     caller_carrier: req.params.carrierId,
     callee_carrier: req.params.carrierId,
     from: req.query.startDate,
     to: req.query.endDate,
-    caller: (_.isEmpty(req.query.search)) ? '' : '*'+req.query.search+'*',
-    callee: (_.isEmpty(req.query.search)) ? '' : '*'+req.query.search+'*',
+    caller: (_.isEmpty(req.query.search)) ? '' : '*' + req.query.search + '*',
+    callee: (_.isEmpty(req.query.search)) ? '' : '*' + req.query.search + '*',
+
     // this api starts with page 0
     page: +req.query.page - 1,
     size: req.query.size,
@@ -283,7 +286,7 @@ api.get('/carriers/:carrierId/sms', function(req, res) {
     size: req.query.pageRec
   };
 
-  let request = new smsRequest({ baseUrl: nconf.get('dataProviderApi:baseUrl'), timeout: nconf.get('dataProviderApi:timeout') });
+  let request = new SmsRequest({ baseUrl: nconf.get('dataProviderApi:baseUrl'), timeout: nconf.get('dataProviderApi:timeout') });
 
   request.get(carrierId, query, (err, result) => {
     if (err)
@@ -311,14 +314,14 @@ api.get('/carriers/:carrierId/im', function(req, res) {
   req.query.recipient = '';
 
   if (req.query.searchType === 'sender')
-    req.query.sender = (!req.query.search) ? '' : '*'+req.query.search+'*';
+    req.query.sender = (!req.query.search) ? '' : '*' + req.query.search + '*';
 
   if (req.query.searchType === 'recipient')
-    req.query.recipient = (!req.query.search) ? '' : '*'+req.query.search+'*';
+    req.query.recipient = (!req.query.search) ? '' : '*' + req.query.search + '*';
 
   req.query.type = 'IncomingMessage';
 
-  let params =  _.pick(req.query,['carrier','message_type','from','to','sender','recipient','page','size']);
+  let params =  _.pick(req.query, ['carrier', 'message_type', 'from', 'to', 'sender', 'recipient', 'page', 'size']);
 
   imRequest.getImStat(params, (err, result) => {
     if (err)

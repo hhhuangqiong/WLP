@@ -15,13 +15,13 @@ export const CONTENT_TYPE_APPLICATIONS  = 'APPLICATIONS';
 export class ApplicationRequest {
 
   constructor(opts) {
-    if(!opts.baseUrl) throw new Error('`baseUrl is required`');
+    if (!opts.baseUrl) throw new Error('`baseUrl is required`');
     this._baseUrl = opts.baseUrl;
     this._timeout = opts.timeout || 5000;
   }
 
   _processPath(contentType, carrierId) {
-    switch(contentType) {
+    switch (contentType) {
       case CONTENT_TYPE_APISERVICE:
         return `${this._baseUrl}/1.0/carriers/${carrierId}`;
         break;
@@ -35,11 +35,12 @@ export class ApplicationRequest {
   }
 
   _trimResponse(contentType, response) {
-    switch(contentType) {
+    switch (contentType) {
       case CONTENT_TYPE_APISERVICE:
         return response.services;
         break;
       case CONTENT_TYPE_APPLICATIONS:
+
         //return response.applicationDetails.applications;
         return {
           applicationId: response.applicationDetails.applicationIdentifier,
@@ -74,7 +75,6 @@ export class ApplicationRequest {
       cb(null, this._trimResponse(contentType, res.body));
     });
   }
-
 }
 
 assign(ApplicationRequest.prototype, errorMixin);

@@ -3,23 +3,24 @@
 import _ from 'lodash';
 
 const currencies = {
-  '156': {
-    code: "CNY",
-    sign: "¥"
+  156: {
+    code: 'CNY',
+    sign: '¥'
   },
-  '840': {
-    code: "USD",
-    sign: "$"
+  840: {
+    code: 'USD',
+    sign: '$'
   },
-  '978': {
-    code: "EUR",
-    sign: "€"
+  978: {
+    code: 'EUR',
+    sign: '€'
   },
-  '998': {
-    code: "Yato Coin"
+  998: {
+    code: 'Yato Coin'
   },
-  '999': {
-    code: "MINS"
+  999: {
+    code: 'MINS'
+
     //code: "Internal Used For Minutes"
   }
 };
@@ -56,7 +57,7 @@ function setDefaultCurrency(defaultCurrency) {
   let currency;
 
   if (typeof defaultCurrency === 'string') {
-    currency = currencies[defaultCurrency] || _.find(currencies, function (c) {
+    currency = currencies[defaultCurrency] || _.find(currencies, function(c) {
       return c.code === defaultCurrency;
     });
 

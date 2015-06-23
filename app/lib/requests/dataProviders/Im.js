@@ -26,7 +26,6 @@ export default class ImRequest extends BaseRequest {
     super(opts);
   }
 
-
   // formatQueryData is not needed, keeping it for now for reference purpose.
   /**
    * @method formatQueryData Format and Normalize query string for Calls request
@@ -81,7 +80,7 @@ export default class ImRequest extends BaseRequest {
   sendRequest(params, cb) {
     var base = this.opts.baseUrl;
     var url = this.opts.methods.CALLS.URL;
-    
+
     request
       .get(util.format('%s%s', base, url))
       .query(params)
@@ -89,6 +88,7 @@ export default class ImRequest extends BaseRequest {
       .timeout(this.opts.timeout)
       .end((err, res) => {
         if (err) return cb(this.handleError(err, err.status || 400));
+
         //if (res.status >= 400) return cb(this.handleError(res.body.error.message, res.body.error.httpStatus));
         cb(null, this.composeResponse(res.body));
       });
@@ -102,14 +102,6 @@ export default class ImRequest extends BaseRequest {
    */
    getImStat(params, cb) {
     logger.debug('get im message statistic from BOSS with params', params);
-
-    // Q.ninvoke(this, 'formatQueryData', params)
-    //   .then((params) => {
-    //     this.sendRequest(params, cb);
-    //   })
-    //   .catch((err) => {
-    //     return cb(this.handleError(err, err.status || 500));
-    //   });
     this.sendRequest(params, cb);
   }
 }

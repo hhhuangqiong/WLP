@@ -1,5 +1,14 @@
 {
  "esnext": true,
  "preset": "airbnb",
- "excludeFiles": ["app/components/**", "node_modules/**", "public/javascript/**", "public/vendor/**"]
+ "excludeFiles": [
+   "app/routes.js",
+   "app/components/**",
+   "node_modules/**",
+   "public/javascript/**",
+   "public/vendor/**"
+  ],
+  "requirePaddingNewLinesAfterBlocks": {
+    "allExcept": ["inCallExpressions"]
+  }
 }

@@ -10,8 +10,9 @@ export function fetchCallsPage(context, params, done) {
 
   context.api.getCalls(params, function(err, calls) {
     calls.params = params;
-    
+
     context.dispatch('FETCH_END');
+
     if (err) {
       debug('Failed');
       context.dispatch('FETCH_CALLS_PAGE_FAILURE', err);

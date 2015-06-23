@@ -26,7 +26,6 @@ export default class CallsRequest extends BaseRequest {
     super(opts);
   }
 
-
   // formatQueryData is not needed, keeping it for now for reference purpose.
   /**
    * @method formatQueryData Format and Normalize query string for Calls request
@@ -61,6 +60,7 @@ export default class CallsRequest extends BaseRequest {
       query.page    = params.page || 0;
       query.size    = params.size || 20;
 
+      // jscs:disable requireCamelCaseOrUpperCaseIdentifiers
       if (params.caller_carrier)
         query.caller_carrier = params.caller_carrier;
 
@@ -97,6 +97,7 @@ export default class CallsRequest extends BaseRequest {
       .timeout(this.opts.timeout)
       .end((err, res) => {
         if (err) return cb(this.handleError(err, err.status || 400));
+
         //if (res.status >= 400) return cb(this.handleError(res.body.error.message, res.body.error.httpStatus));
         cb(null, this.composeResponse(res.body));
       });
@@ -111,7 +112,7 @@ export default class CallsRequest extends BaseRequest {
   getCalls(params, cb) {
     logger.debug('get calls from carrier %s', params);
 
-     Q.ninvoke(this, 'formatQueryData', params)
+    Q.ninvoke(this, 'formatQueryData', params)
       .then((params) => {
         this.sendRequest(params, cb);
       })

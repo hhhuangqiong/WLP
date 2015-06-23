@@ -22,9 +22,9 @@ export function fetchContainerInstance(name) {
  */
 export function fetchDep(name, depIdentifer) {
   var ioc = fetchContainerInstance(name);
-  if(ioc) {
+  if (ioc) {
     //TODO prevent the 'identifier.' case
-    return depIdentifer.split('.').reduce( (result, key) => {
+    return depIdentifer.split('.').reduce((result, key) => {
       return result[key];
     }, ioc.container);
   }

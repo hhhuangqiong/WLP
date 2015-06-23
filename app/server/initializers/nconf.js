@@ -18,7 +18,7 @@ const ENV_CONFIG_FILE_PREFIX = 'env-';
  */
 export default function initialize(env, configDir, opts={ envSeparator: '__' }) {
   nconf.argv();
-  nconf.env( opts.envSeparator );
+  nconf.env(opts.envSeparator);
 
   // TODO
   // - dynamically include files; assume some files (other than 'env-*') are not supposed to be included

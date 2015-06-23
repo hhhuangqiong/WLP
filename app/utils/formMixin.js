@@ -1,7 +1,7 @@
 var submitForm  = {
-  onSubmit:function(data, callback){
+  onSubmit:function(data, callback) {
     console.log(data)
-    $("#myModal").foundation('reveal', 'close');
+    $('#myModal').foundation('reveal', 'close');
   }
 };
 export default submitForm;

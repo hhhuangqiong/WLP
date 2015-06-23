@@ -13,14 +13,14 @@ var SystemMessageStore = createStore({
   storeName: 'SystemMessageStore',
 
   handlers: {
-    'SIGN_IN_FAILURE': 'handleSignInFailure',
-    'UPDATE_COMPANY_PROFILE_SUCCESS': 'handleUpdateCompanySuccess',
-    'UPDATE_COMPANY_SERVICE_SUCCESS': 'handleUpdateCompanySuccess',
-    'UPDATE_COMPANY_WIDGET_SUCCESS': 'handleUpdateCompanySuccess'
+    SIGN_IN_FAILURE:                'handleSignInFailure',
+    UPDATE_COMPANY_PROFILE_SUCCESS: 'handleUpdateCompanySuccess',
+    UPDATE_COMPANY_SERVICE_SUCCESS: 'handleUpdateCompanySuccess',
+    UPDATE_COMPANY_WIDGET_SUCCESS:  'handleUpdateCompanySuccess'
   },
 
   // do not change this
-  initialize: function () {
+  initialize: function() {
     this.id = Date.now();
     this.type = 'error';
     this.message = null;
@@ -30,6 +30,7 @@ var SystemMessageStore = createStore({
     // onDismiss has to be a function
 
     this.onDismiss = function() {};
+
     this.buttons = null;
     this.hidden = true;
     this.timeout = 5000;
@@ -69,7 +70,7 @@ var SystemMessageStore = createStore({
     this.emitChange();
   },
 
-  getState: function () {
+  getState: function() {
     return {
       id: this.id,
       type: this.type,
@@ -82,11 +83,11 @@ var SystemMessageStore = createStore({
     };
   },
 
-  dehydrate: function () {
+  dehydrate: function() {
     return this.getState();
   },
 
-  rehydrate: function (state) {
+  rehydrate: function(state) {
     this.id = state.id;
     this.type = state.type;
     this.message = state.message;

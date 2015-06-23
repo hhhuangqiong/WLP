@@ -6,16 +6,16 @@ var EndUserStore = createStore({
   storeName: 'EndUserStore',
 
   handlers: {
-    'CLEAR_END_USERS_SUCCESS': 'handleEndUsersClear',
-    'FETCH_END_USERS_SUCCESS': 'handleEndUsersChange',
-    'FETCH_END_USER_SUCCESS': 'handleEndUserChange',
-    'REACTIVATE_END_USER_SUCCESS': 'handleEndUserReactivate',
-    'DEACTIVATE_END_USER_SUCCESS': 'handleEndUserDeactivate',
-    'DELETE_END_USER_SUCCESS': 'handleEndUserDelete',
-    'FETCH_END_USERS_FAILURE': 'handleFetchEndUsersFailure'
+    CLEAR_END_USERS_SUCCESS: 'handleEndUsersClear',
+    DEACTIVATE_END_USER_SUCCESS: 'handleEndUserDeactivate',
+    DELETE_END_USER_SUCCESS: 'handleEndUserDelete',
+    FETCH_END_USERS_FAILURE: 'handleFetchEndUsersFailure',
+    FETCH_END_USERS_SUCCESS: 'handleEndUsersChange',
+    FETCH_END_USER_SUCCESS: 'handleEndUserChange',
+    REACTIVATE_END_USER_SUCCESS: 'handleEndUserReactivate'
   },
 
-  initialize: function () {
+  initialize: function() {
     this.carrierId = null;
     this.users = [];
     this.currentUser = null;
@@ -29,10 +29,11 @@ var EndUserStore = createStore({
     this.emitChange();
   },
 
-  handleEndUsersChange: function (payload) {
+  handleEndUsersChange: function(payload) {
     if (payload.carrierId != this.carrierId) {
       this.users = payload.userList;
     }
+
     this.users = payload.carrierId != this.carrierId ? payload.userList : this.users.concat(payload.userList);
     this.carrierId = payload.carrierId;
     this.fromTime = moment(payload.dateRange.fromTime, moment.ISO_8601).format('L');
@@ -42,7 +43,7 @@ var EndUserStore = createStore({
     this.emitChange();
   },
 
-  handleEndUserChange: function (payload) {
+  handleEndUserChange: function(payload) {
     this.currentUser = payload;
     this.emitChange();
   },
@@ -82,7 +83,7 @@ var EndUserStore = createStore({
     return this.hasNextPage
   },
 
-  getState: function () {
+  getState: function() {
     return {
       carrierId: this.carrierId,
       users: this.users,
@@ -101,11 +102,11 @@ var EndUserStore = createStore({
     this.hasNextPage = false;
   },
 
-  dehydrate: function () {
+  dehydrate: function() {
     return this.getState();
   },
 
-  rehydrate: function (state) {
+  rehydrate: function(state) {
     this.carrierId = state.carrierId;
     this.users = state.users;
     this.currentUser = state.currentUser;

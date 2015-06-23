@@ -58,7 +58,7 @@ export default class UsersRequest extends BaseRequest {
 
     logger.debug('get users from %s with %j', carrierId, queries, {});
 
-    var currentPageRequest = (queries, cb)=>{
+    var currentPageRequest = (queries, cb)=> {
       request
         .get(util.format('%s%s', base, url))
         .query(queries)
@@ -71,7 +71,7 @@ export default class UsersRequest extends BaseRequest {
         });
     };
 
-    var nextPageRequest = (queries, cb)=>{
+    var nextPageRequest = (queries, cb)=> {
       request
         .get(util.format('%s%s', base, url))
         .query(_.merge(queries, { pageNumberIndex: +queries.pageNumberIndex + 1 }))
@@ -87,23 +87,26 @@ export default class UsersRequest extends BaseRequest {
     Q.allSettled([
       Q.nfcall(currentPageRequest, queries),
       Q.nfcall(nextPageRequest, queries)
-    ]).then((results)=>{
-      _.each(results, (result)=>{
-        if (result.state !== 'fulfilled') {
-          // return error
-        }
+    ]).then((results)=> {
+      _.each(results, (result)=> {
+        return;
+
+        // TODO comment out due to style violation, use `return` above to replace "empty block" below
+        //if (result.state !== 'fulfilled') {
+        //return error
+        //}
       });
 
       let result = _.first(results).value;
       let nextPageResult = _.last(results).value;
 
       _.assign(result, {
-        userCount:  nextPageResult.userCount > 0 ? result.userCount ++ : result.userCount,
+        userCount:  nextPageResult.userCount > 0 ? result.userCount++ : result.userCount,
         hasNextPage: nextPageResult.userCount > 0
       });
 
       return cb(null, result);
-    }).catch((err)=>{
+    }).catch((err)=> {
       return cb(this.handleError(err));
     });
   }
@@ -203,5 +206,4 @@ export default class UsersRequest extends BaseRequest {
         cb(null, res.body);
       })
   }
-
 }

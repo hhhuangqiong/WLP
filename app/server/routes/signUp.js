@@ -3,8 +3,8 @@ import nconf      from 'nconf';
 import Controller from '../controllers/signUp';
 import { fetchContainerInstance } from '../utils/bottle';
 
-module.exports = (() => {
-  var ioc       = fetchContainerInstance( nconf.get('containerName') );
+module.exports = (function() {
+  var ioc       = fetchContainerInstance(nconf.get('containerName'));
   var container = ioc.container;
   var c         = new Controller(container.PortalUserManager);
 

@@ -1,6 +1,6 @@
 var logger  = require('winston');
 var moment  = require('moment');
-var Q       = require('q'); 
+var Q       = require('q');
 var request = require('superagent');
 var util    = require('util');
 
@@ -55,8 +55,7 @@ export default class VSFTransactionRequest extends BaseRequest {
     Q.ninvoke(this, 'formatQueryData', params)
       .then((params) => {
         this.sendRequest(carrierId, params, cb);
-      })
-      .catch((err) => {
+      }).catch((err) => {
         return this.handleError(err, 500);
       })
   }

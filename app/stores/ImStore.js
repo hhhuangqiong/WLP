@@ -5,12 +5,12 @@ var ImStore = createStore({
   storeName: 'ImStore',
 
   handlers: {
-    'FETCH_IM_SUCCESS': 'handleImChange',
-    'FETCH_IM_PAGE_SUCCESS': 'handleImChange',
-    'FETCH_IM_WIDGETS_SUCCESS': 'handleImWidgetsChange'
+    FETCH_IM_SUCCESS:         'handleImChange',
+    FETCH_IM_PAGE_SUCCESS:    'handleImChange',
+    FETCH_IM_WIDGETS_SUCCESS: 'handleImWidgetsChange'
   },
 
-  initialize: function () {
+  initialize: function() {
     this.calls = [];
     this.offset = 0;
     this.pageNumber = 1;
@@ -20,7 +20,7 @@ var ImStore = createStore({
     this.widgets = [];
   },
 
-  handleImChange: function (payload) {
+  handleImChange: function(payload) {
     try {
       this.calls = payload.contents;
       this.offset = payload.offset;
@@ -58,7 +58,7 @@ var ImStore = createStore({
     return this.widgets;
   },
 
-  getState: function () {
+  getState: function() {
     return {
       calls: this.calls,
       offset: this.offset,
@@ -71,11 +71,11 @@ var ImStore = createStore({
     };
   },
 
-  dehydrate: function () {
+  dehydrate: function() {
     return this.getState();
   },
 
-  rehydrate: function (state) {
+  rehydrate: function(state) {
     this.calls = state.calls;
     this.offset = state.offset;
     this.pageNumber = state.pageNumber;

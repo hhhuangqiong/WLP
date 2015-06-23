@@ -19,7 +19,7 @@ import Sentinel from 'redis-sentinel';
 export default function(redisConnOpts, opts = {prefix: 'q'}) {
   var uiPort = opts.uiPort;
 
-  if(uiPort) {
+  if (uiPort) {
     logger.info(`Kue UI started on port: ${uiPort}`);
 
     // use non-sentinel configuration
@@ -48,6 +48,7 @@ export default function(redisConnOpts, opts = {prefix: 'q'}) {
 
     kue.app.listen(uiPort);
   }
+
   return kue;
 }
 

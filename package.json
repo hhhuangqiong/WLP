@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "build": "npm run clean && npm run transpile && npm run test:report",
+    "build": "npm run clean && npm run jscsx && npm run transpile && npm run test:report",
     "clean": "gulp clean",
     "dist": "npm run clean && npm run transpile && gulp scss:production",
     "doc": "npm run transpile && jsdoc -r node_modules/app -d build/docs",

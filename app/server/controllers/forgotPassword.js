@@ -14,6 +14,7 @@ export default class ForgotPassword {
       if (!user) {
         throw new Error('user-not-found');
       }
+
       return Q.ninvoke(this.portalUserManager, 'makeForgotPasswordRequest', {
         user: user
       });
@@ -21,9 +22,11 @@ export default class ForgotPassword {
       if (!user) {
         throw new Error('db-error');
       }
+
       // Prepare email contents
       var username = user.username;
       var token = user.token.forgotPassword.token;
+
       // Send email
     }).then(function() {
       req.flash('afterPost', true);

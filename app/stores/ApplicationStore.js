@@ -6,8 +6,8 @@ var ApplicationStore = createStore({
   storeName: 'ApplicationStore',
 
   handlers: {
-    'FETCH_MANGAING_COMPANIES_SUCCESS':  'loadedCompanies',
-    'FETCH_COMPANY_INFO_SUCCESS': 'loadedCurrentCompany'
+    FETCH_MANGAING_COMPANIES_SUCCESS:  'loadedCompanies',
+    FETCH_COMPANY_INFO_SUCCESS: 'loadedCurrentCompany'
   },
 
   loadedCurrentCompany: function(company) {
@@ -35,11 +35,11 @@ var ApplicationStore = createStore({
     };
   },
 
-  dehydrate: function () {
+  dehydrate: function() {
     return this.getState();
   },
 
-  rehydrate: function (state) {
+  rehydrate: function(state) {
     this.currentCompany = state.currentCompany;
     this.managingCompanies = state.managingCompanies;
   }

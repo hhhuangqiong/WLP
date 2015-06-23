@@ -17,6 +17,7 @@ var schema = new mongoose.Schema({
     type: String,
     unique: true
   },
+
   // reflecting company type, either "Default" or "Reseller"
   reseller: {
     type: Boolean
@@ -168,7 +169,7 @@ schema.virtual('identity').get(function() {
 });
 
 schema.method('addLogo', function(filePath, options, cb) {
-  gridfs.addFile(filePath, options, (err, fileDoc)=>{
+  gridfs.addFile(filePath, options, (err, fileDoc)=> {
     if (err) return new Error(err);
     this.logo = fileDoc._id;
     return this.save(cb);

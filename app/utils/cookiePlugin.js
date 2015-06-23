@@ -16,13 +16,13 @@ module.exports = {
         });
       },
 
-      dehydrate: function () {
+      dehydrate: function() {
         return {
           maxAge: maxAge
         };
       },
 
-      rehydrate: function (state) {
+      rehydrate: function(state) {
         maxAge = state.maxAge;
       }
     }
