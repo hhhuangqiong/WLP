@@ -88,15 +88,10 @@ var ImTable = React.createClass({
             audio: 'icon-audio',
             video: 'icon-video',
             remote: 'icon-ituneyoutube',
-            animation: '',
-            sticker: '',
-            'voice_sticker': '',
-            'ephemeral_image': '',
-            'call_audio': '',
-            'conference_audio': '',
-            'voice_mail': '',
-            'call_video': '',
-            'video_mail': ''
+            animation: 'icon-video',
+            sticker: 'icon-image',
+            'voice_sticker': 'icon-audio',
+            'ephemeral_image': 'icon-image'
           };
 
           let typeClass = messageTypeClasses[u.message_type] || '';
@@ -107,16 +102,10 @@ var ImTable = React.createClass({
             audio: 'Audio',
             video: 'Video',
             remote: 'Sharing',
-            animation: 'Others',
-            sticker: 'Others',
-            'voice_sticker': 'Others',
-            'ephemeral_image': 'Others',
-            'call_audio': 'Others',
-            'conference_audio': 'Others',
-            'voice_mail': 'Others',
-            'call_video': 'Others',
-            'video_mail': 'Others',
-            'undefined': 'Others'
+            animation: 'Animation',
+            sticker: 'Sticker',
+            'voice_sticker': 'Voice Sticker',
+            'ephemeral_image': 'Ephemeral Image'
           };
 
           let typeText = messageTypeTitle[u.message_type] || 'Others';
