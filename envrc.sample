@@ -1,18 +1,36 @@
-# copy this file as '.envrc'
+# Copy this file as '.envrc'
+#
+# https://issuetracking.maaii.com:9443/display/MAAIIP/Application+inventory
 
 # development
 #export HOT_LOAD_PORT=8888
+
 #export APP_HOSTNAME=localhost
 #export APP_PORT=3000
-export WL_API_HKBOSS=192.168.135.167:10180
-export mumsApi__baseUrl=http://192.168.118.12:8080
-export bossApi__baseUrl=http://192.168.56.42:8080
-export dataProviderApi__baseUrl=http://192.168.118.12:8080
+
 #export redis__host=192.168.118.19
 #export redis__port=26379
 
-# testing
-#export WL_API_HKBOSS=192.168.135.167:10080
+#export bossApi__baseUrl=http://192.168.56.42:8080
+#export dataProviderApi__baseUrl=http://192.168.118.12:8080
+#export mumsApi__baseUrl=http://192.168.118.12:8080
+
+# testbed
+#export NODE_ENV=test
+#export bossApi__baseUrl=192.168.135.167:10080
+#export mumsApi__baseUrl=http://192.168.119.12:8080
+#export dataProviderApi__baseUrl=http://192.168.119.131:9998
+
+#export mongodb__uri=mongodb://192.168.119.71/m800-whitelabel-portal,mongodb://192.168.119.72/m800-whitelabel-portal,mongodb://192.168.119.73/m800-whitelabel-portal
+#export mongodb__options__user=wlp-testbed-user
+#export mongodb__options__pass=tb-wlp-user
+#export mongodb__options__mongos=false
+
+# need "\" to escape; but not the case for Docker's envfile
+#export redis__sentinals=[\{"host":"192.168.119.25","port":26379},\{"host":"192.168.119.26","port":26379}]
+#export redis__name=redis-hk-tb-master
+#export redis__role=master
 
 # production
-#export WL_API_HKBOSS=192.168.56.42:8080
+#export NODE_ENV=production
+#export bossApi__baseUrl=192.168.56.42:8080

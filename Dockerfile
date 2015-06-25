@@ -7,12 +7,14 @@ RUN git clone --depth=1 http://gerrit.dev.maaii.com/m800-white-label-portal /src
 WORKDIR /src
 
 # not put 'production' env here on purpose
-RUN npm install
+RUN npm rebuild
 
 ENV NODE_ENV=production
 
 RUN npm run dist
 
-EXPOSE 3000
+EXPOSE 3000 3100
+
+COPY docker/hacks/env.js  /src/node_modules/nconf/lib/nconf/stores/
 
 CMD ["forever", "bin/www.js"]

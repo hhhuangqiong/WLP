@@ -5,20 +5,20 @@
     "no_reply": "No-Reply@M800.com"
   },
   "mongodb": {
-    "uri": "mongodb://localhost/m800-whitelabel-portal",
+    "uri": "mongodb://192.168.119.71/m800-whitelabel-portal,mongodb://192.168.119.72/m800-whitelabel-portal,mongodb://192.168.119.73/m800-whitelabel-portal",
     "options": {
       "mongos": false,
-      "user": "",
-      "pass": "",
+      "user": "wlp-testbed-user",
+      "pass": "tb-wlp-user",
       "autoIndex": false
     }
   },
   "redis": {
     "sentinels": [
-      { "host": "192.168.118.19", "port": 26379 },
-      { "host": "192.168.118.19", "port": 26380 }
+      { "host": "192.168.119.25", "port": 26379 },
+      { "host": "192.168.119.26", "port": 26379 }
     ],
-    "name": "redis-hk-dev-master",
+    "name": "redis-hk-tb-master",
     "role": "master"
   },
   "queue": {
