@@ -17,22 +17,10 @@ var Searchbox = React.createClass({
     onKeyPressHandler: React.PropTypes.func.isRequired
   },
 
-  getInitialState: function() {
-    return {
-      hasSearchType: false,
-      searchTypes: [
-          {name: '', value: ''}
-      ],
-      placeHolder: '',
-      onInputChangeHandler: null,
-      onKeyPressHandler: null,
-      onSelectChangeHandler: null
-    }
-  },
-
   getDefaultProps: function() {
     return {
       hasSearchType: false,
+      search: null,
       searchTypes: [
         {name: '', value: ''}
       ],
@@ -67,6 +55,7 @@ var Searchbox = React.createClass({
           className={classNames('top-bar-section__query-input','right',{'with-select':this.props.hasSearchType})}
           type="text"
           name="searchInput"
+          value={this.props.search}
           placeholder={this.props.placeHolder}
           onChange={this.props.onInputChangeHandler}
           onKeyPress={this.props.onKeyPressHandler}
