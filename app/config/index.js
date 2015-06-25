@@ -10,6 +10,11 @@ module.exports = {
   DISABLE_ISOMORPHISM: Boolean(process.env.DISABLE_ISOMORPHISM) || false,
   COOKIE: {
     MAX_AGE: 1000 * 60 * 30
+  },
+  PAGES: {
+    CALLS: {
+      PAGE_SIZE: 100
+    }
   }
 };
 

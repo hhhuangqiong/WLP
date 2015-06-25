@@ -10,14 +10,18 @@ import DatePicker from 'react-datepicker';
 
 import AuthMixin from '../utils/AuthMixin';
 import fetchCalls from '../actions/fetchCalls';
+import fetchMoreCalls from '../actions/fetchMoreCalls';
 
 import CallsTable from './CallsTable';
 import CallsStore from '../stores/CallsStore';
 import Searchbox from './Searchbox';
 
+var config = require('../config');
+
 var Calls = React.createClass({
   contextTypes: {
-    router: React.PropTypes.func.isRequired
+    router: React.PropTypes.func.isRequired,
+    executeAction: React.PropTypes.func.isRequired
   },
 
   mixins: [FluxibleMixin, AuthMixin],
@@ -31,8 +35,9 @@ var Calls = React.createClass({
           carrierId: params.identity,
           startDate: query.startDate || moment().subtract(2, 'day').startOf('day').format('L'),
           endDate: query.endDate || moment().endOf('day').format('L'),
-          size: 10,
-          page: query.page || 1,
+          size: config.PAGES.CALLS.PAGE_SIZE,
+          // The page number, starting from 0, defaults to 0 if not specified.
+          page: query.page || 0,
           type: query.type || '',
           search: query.search || '',
           searchType: query.searchType || 'caller'
@@ -44,14 +49,17 @@ var Calls = React.createClass({
   getStateFromStores: function() {
     return {
       calls: this.getStore(CallsStore).getCalls(),
-      callsCount: this.getStore(CallsStore).getCallsCount()
+      callsCount: this.getStore(CallsStore).getCallsCount(),
+      page: this.getStore(CallsStore).getPageNumber(),
+      totalPages: this.getStore(CallsStore).getTotalPages()
     };
   },
 
   getDefaultQuery: function() {
     return {
-      page: 1,
-      size: 10,
+      // The page number, starting from 0, defaults to 0 if not specified.
+      page: 0,
+      size: config.PAGES.CALLS.PAGE_SIZE,
       startDate: moment().subtract(2, 'day').startOf('day').format('L'),
       endDate: moment().endOf('day').format('L'),
       type: '',
@@ -67,7 +75,7 @@ var Calls = React.createClass({
 
   onChange: function() {
     let query = _.merge(this.getDefaultQuery(), this.context.router.getCurrentQuery());
-    this.setState(_.merge(this.getStateFromStores(), query));
+    this.setState(_.merge(query, this.getStateFromStores()));
   },
 
   getQueryFromState: function() {
@@ -75,8 +83,8 @@ var Calls = React.createClass({
       startDate: this.state.startDate && this.state.startDate.trim(),
       endDate: this.state.endDate && this.state.endDate.trim(),
       search: this.state.search && this.state.search.trim(),
-      page: 1,
-      size: this.state.size && parseInt(this.state.size),
+      page: 0,
+      size: config.PAGES.CALLS.PAGE_SIZE,
       type: this.state.type && this.state.type.trim(),
       searchType: this.state.searchType && this.state.searchType.trim()
     }
@@ -92,8 +100,19 @@ var Calls = React.createClass({
     }));
   },
 
-  handlePageChange: function(page) {
-    this.handleQueryChange({ page: page });
+  handlePageChange: function(e) {
+    let { identity } = this.context.router.getCurrentParams();
+
+    this.context.executeAction(fetchMoreCalls, {
+      carrierId: identity,
+      startDate: this.state.startDate,
+      endDate: this.state.endDate,
+      page: +this.state.page + 1,
+      size: config.PAGES.CALLS.PAGE_SIZE,
+      type: this.state.type,
+      search: this.state.search,
+      searchType: this.state.searchType
+    });
   },
 
   handleStartDateChange: function(momentDate) {
@@ -146,8 +165,12 @@ var Calls = React.createClass({
 
   handleSearchTypeChange: function(e) {
     let searchType = e.target.value;
-    this.setState({searchType:searchType});
-    this.handleQueryChange({searchType:searchType});
+    this.setState({ searchType });
+
+    // only submit change if search input isn't empty
+    if (this.state.search) {
+      this.handleQueryChange({ searchType });
+    }
   },
 
   _handleStartDateClick: function() {
@@ -221,6 +244,7 @@ var Calls = React.createClass({
 
             <div className="call-search top-bar-section right">
               <Searchbox
+                search={this.state.search}
                 searchTypes={searchTypes}
                 placeHolder="Username/Mobile"
                 onInputChangeHandler={this.handleUsernameChange}
@@ -236,7 +260,8 @@ var Calls = React.createClass({
             calls={this.state.calls}
             page={this.state.page}
             pageRec={this.state.size}
-            onPageChange={this.handlePageChange}
+            totalPages={this.state.totalPages}
+            onDataLoad={this.handlePageChange}
           />
         </div>
       </div>

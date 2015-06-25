@@ -1,3 +1,4 @@
+var _       = require('lodash');
 var logger  = require('winston');
 var nconf   = require('nconf');
 var moment  = require('moment');
@@ -26,7 +27,6 @@ export default class CallsRequest extends BaseRequest {
     super(opts);
   }
 
-  // formatQueryData is not needed, keeping it for now for reference purpose.
   /**
    * @method formatQueryData Format and Normalize query string for Calls request
    *
@@ -97,10 +97,31 @@ export default class CallsRequest extends BaseRequest {
       .timeout(this.opts.timeout)
       .end((err, res) => {
         if (err) return cb(this.handleError(err, err.status || 400));
-
-        //if (res.status >= 400) return cb(this.handleError(res.body.error.message, res.body.error.httpStatus));
-        cb(null, this.composeResponse(res.body));
+        this.filterCalls(res, cb);
       });
+  }
+
+  /**
+   * @method filterCalls
+   * this is to prevent from duplicated OFFNET records
+   * the api return two types of OFFNET calls
+   * which source are either `PROXY` or `GATEWAY`
+   *
+   * @param res {Object} result return from API request
+   * @param cb {Function} Callback function from @method getCalls
+   */
+  filterCalls(res, cb) {
+    if (res.body && res.body.contents) {
+      res.body.contents = _.filter(res.body.contents, function(call) {
+        if (call.type.toLowerCase() === 'offnet') {
+          return call.source == 'GATEWAY';
+        } else {
+          return call;
+        }
+      });
+    }
+
+    cb(null, this.composeResponse(res.body));
   }
 
   /**

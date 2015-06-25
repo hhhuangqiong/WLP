@@ -29,6 +29,22 @@ table {
         background: #fff;
         .pagination{
             margin: 0;
+
+            &__button {
+                // first-letter does not work on inline element
+                display: block;
+                cursor: pointer;
+                font-size: 14px;
+                font-weight: 500;
+
+                &--inactive {
+                    cursor: none;
+                }
+
+                &:first-letter {
+                    text-transform: uppercase;
+                }
+            }
         }
     }
 }
