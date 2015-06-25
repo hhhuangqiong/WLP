@@ -172,18 +172,22 @@ api.get('/carriers/:carrierId/calls', function(req, res) {
   req.checkQuery('endDate').notEmpty();
   req.checkQuery('page').notEmpty();
 
-  let params = {
+  function prepareWildcard(search) {
+    if (!search)
+      return '';
 
+    return '*' + search.trim() + '*';
+  }
+
+  let params = {
     // jscs:disable requireCamelCaseOrUpperCaseIdentifiers
     caller_carrier: req.params.carrierId,
     callee_carrier: req.params.carrierId,
     from: req.query.startDate,
     to: req.query.endDate,
-    caller: (_.isEmpty(req.query.search)) ? '' : '*' + req.query.search + '*',
-    callee: (_.isEmpty(req.query.search)) ? '' : '*' + req.query.search + '*',
-
-    // this api starts with page 0
-    page: +req.query.page - 1,
+    caller: prepareWildcard(req.query.search),
+    callee: prepareWildcard(req.query.search),
+    page: req.query.page,
     size: req.query.size,
     type: req.query.type
   };

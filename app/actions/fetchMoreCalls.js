@@ -1,4 +1,4 @@
-var debug = require('debug')('wlp:fetchCalls');
+var debug = require('debug')('wlp:fetchMoreCalls');
 
 export default function(context, params, done) {
   debug('Started');
@@ -7,13 +7,13 @@ export default function(context, params, done) {
     context.dispatch('FETCH_END');
     if (err) {
       debug('Failed');
-      context.dispatch('FETCH_CALLS_FAILURE', err);
+      context.dispatch('FETCH_MORE_CALLS_FAILURE', err);
       done();
       return;
     }
 
     debug('Success');
-    context.dispatch('FETCH_CALLS_SUCCESS', calls);
+    context.dispatch('FETCH_MORE_CALLS_SUCCESS', calls);
     done();
   });
 
