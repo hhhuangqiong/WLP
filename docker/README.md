@@ -31,10 +31,10 @@ docker build --rm [--no-cache] -t <TAG NAME> .
 docker build --rm -t wlp .
 
 # run the container based on the image
-docker run --env-file=<ENV FILE> -p <HOST PORT>:<CONTAINER PORT> -d --rm --name <CONTAINER NAME> -t <TAG NAME>
+docker run --env-file=<ENV FILE> -p <HOST PORT>:<CONTAINER PORT> -d --rm --name <CONTAINER NAME> <TAG NAME>
 # can copy "envfile.sample" as "envfile" (ignored by git)
 # e.g.,
-docker run --env-file=docker/envfile -p 3000:3000 -d --rm --name wlp -t wlp
+docker run --env-file=docker/envfile -p 3000:3000 -p 3100:3100 -d --rm --name wlp wlp
 
 # stop the container named "wlp"
 docker stop <CONTAINER NAME or ID>
