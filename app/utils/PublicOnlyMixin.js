@@ -1,26 +1,20 @@
 import AuthStore from '../stores/AuthStore';
+import config from '../config';
+import {userPath} from '../server/paths';
 
 module.exports = {
   statics: {
     willTransitionTo: function(transition) {
-      let isAuthenticated = transition.context
-        .getActionContext().getStore(AuthStore).isAuthenticated();
+      let authStore       = transition.context.getActionContext().getStore(AuthStore);
 
-      let role = transition.context
-        .getActionContext().getStore(AuthStore).getUserRole();
-
-      let identity = transition.context
-        .getActionContext().getStore(AuthStore).getCarrierId();
-
-      role = role ? '/' + role : '';
-      identity = identity ? '/' + identity : '';
-
-      let destination = `${role}${identity}/calls`;
+      let isAuthenticated = authStore.isAuthenticated();
+      let role            = authStore.getUserRole();
+      let identity        = authStore.getCarrierId();
 
       if (isAuthenticated) {
-        transition.redirect(destination);
+        transition.redirect(userPath(role, identity, config.DEFAULT_POST_LOGIN_PATH));
       }
     }
   }
-};
+}
 

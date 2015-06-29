@@ -1,25 +1,18 @@
 import {Router} from 'express';
+import logger from 'winston';
 import passport from 'passport';
 
 import db from '../db';
 import {SIGN_IN, SIGN_OUT} from '../paths.js';
 
-import logger from 'winston';
+function getAuthUser(user) {
+  var { _id, username, displayName } = user;
+  var { carrierId, role } = user.affiliatedCompany || {};
+
+  return { _id, username, displayName, carrierId, role };
+}
 
 var router = Router();
-
-// TODO double check if this is necessary for the data model
-function getAuthUser(user) {
-  let affiliatedCompany = user.affiliatedCompany  || {};
-
-  return {
-    _id: user._id,
-    username: user.username,
-    displayName: user.displayName,
-    carrierId: affiliatedCompany.carrierId,
-    role: affiliatedCompany.role
-  };
-}
 
 router.post(SIGN_IN, function(req, res, next) {
   passport.authenticate('local', function(err, user, info) {
@@ -33,7 +26,7 @@ router.post(SIGN_IN, function(req, res, next) {
     };
 
     // TODO simplify this
-    if (err || !user || !user.hasValidOneTimePassword(req.body.onetimepassword)) {
+    if (err || !user) {
       return signInError();
     }
 
@@ -43,6 +36,7 @@ router.post(SIGN_IN, function(req, res, next) {
         return signInError();
       }
 
+      // from 'express-session'
       let token = req.sessionID;
       let authUser = getAuthUser(user);
 

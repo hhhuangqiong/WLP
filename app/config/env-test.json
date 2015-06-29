@@ -41,8 +41,7 @@
     }
   },
   "secret": {
-    "session": "fens.me",
-    "params": "fens.me"
+    "session": "fens.me"
   },
   "session": {
     "cookie": {
@@ -72,8 +71,5 @@
   },
   "display": {
     "dateFormat": "YYYY-MM-DD"
-  },
-  "localhost": {
-    "baseUrl": "http://localhost:3000"
   }
 }

@@ -237,8 +237,7 @@ portalUserSchema.method('isTokenExpired', function(event, n, unit) {
 
 portalUserSchema.method('hasValidOneTimePassword', function(number) {
   // assume root user does not need 'googleAuth'
-  //if (this.isRoot) return true;
-  return true;
+  if (this.isRoot) return true;
 
   var googleAuth = this.get('googleAuth') || {};
   return number === speakeasy.time({ key: googleAuth.key, encoding: googleAuth.encoding });

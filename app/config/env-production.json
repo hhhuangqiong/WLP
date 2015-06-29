@@ -41,8 +41,14 @@
     }
   },
   "secret": {
-    "session": "fens.me",
-    "params": "fens.me"
+    "session": "fens.me"
+  },
+  "session": {
+    "cookie": {
+      "maxAge": {
+        "default": 900000
+      }
+    }
   },
   "cookies": {
     "secret": "$ecrEt",
@@ -63,8 +69,5 @@
   },
   "display": {
     "dateFormat": "YYYY-MM-DD"
-  },
-  "localhost": {
-    "baseUrl": "/"
   }
 }

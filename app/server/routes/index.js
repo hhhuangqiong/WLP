@@ -17,15 +17,19 @@ function validateTokenMiddleware(req, res, next) {
   next();
 }
 
+// NB: cannot use `req.isAuthenticated` (passport)
+// because the app doesn't redirect the user after log in
+// so there's no 'user' in `req` object
+function ensureAuthenticated(req, res, next) {
+  return res.sendStatus(200);
+}
+
 var router = Router();
 
 router
   .use(require('./auth'))
   .use(validateTokenMiddleware)
-  .use('/session', function(req, res) {
-    // TODO see if we can make use of 'ensureAuthenticated' middleware
-    return res.sendStatus(200);
-  })
+  .use('/session', ensureAuthenticated)
   .use(require('./carriers'))
   .use(require('./companies'))
   .use(require('./forgotPassword'))

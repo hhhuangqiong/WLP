@@ -1,9 +1,19 @@
 'use strict';
 
-var env = require('./env');
+import cookie from 'cookie';
+import env from './env';
 
+/**
+ * Custom cookie object for both client & server sides
+ *
+ * @param {object} options options for initialize the cookie
+ * @param {object} [options.req] Express request object
+ * @param {object} [options.res] Express response object
+ * @param {number} [options.maxAge]
+ */
 function Cookie(options) {
-  options = options || {};
+  // not expired as default
+  this._maxAge = options.maxAge || null;
 
   this._req = options.req;
   if (env.SERVER && !this._req) {
@@ -14,28 +24,29 @@ function Cookie(options) {
   if (env.SERVER && !this._res) {
     throw new Error('Express `res` is a required option');
   }
-
-  this._getExpireTime = function() {
-    let now = new Date();
-    let time = now.getTime();
-    now.setTime(time + options.maxAge);
-
-    return now.toGMTString();
-  }
 }
 
+/**
+ * Accessor for the 'Max-Age' of cookie
+ *
+ * @return {number} number of seconds
+ */
+Cookie.prototype.maxAge = function() {
+  return this._maxAge;
+};
+
+/**
+ * get the cookie by name
+ *
+ * @param {string} name name of the cookie
+ * @return {string|undefined}
+ */
 Cookie.prototype.get = function(name) {
   if (env.SERVER) {
     return this._req.cookies[name];
   }
 
-  // Quick and dirty, only supports one value in the cookie
-  var parsed = document.cookie.split('=');
-  if (parsed.length < 2 || parsed[0] !== name) {
-    return null;
-  }
-
-  return parsed[1];
+  return cookie.parse(document.cookie)[name];
 };
 
 Cookie.prototype.set = function(name, value) {
@@ -43,7 +54,7 @@ Cookie.prototype.set = function(name, value) {
     return this._res.cookie(name, value);
   }
 
-  document.cookie = name + '=' + value + ';expires=' + this._getExpireTime() + ';path=/';
+  document.cookie = cookie.serialize(name, value, { maxAge: this.maxAge(), path: '/' });
 };
 
 Cookie.prototype.clear = function(name) {

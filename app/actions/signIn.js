@@ -1,5 +1,9 @@
 var debug = require('debug')('wlp:signIn');
 
+import {userPath} from '../server/paths';
+
+import config from '../config';
+
 module.exports = function(context, payload, done) {
   debug('Started');
   let username = payload.username;
@@ -26,10 +30,8 @@ module.exports = function(context, payload, done) {
     // NOTE: possible race condition here
     // the AuthStore needs to set its state to "authenticated"
     // before the transition
-    let role = auth.user.role ? '/' + auth.user.role : '';
-    let identity = auth.user.carrierId ? '/' + auth.user.carrierId : '';
-    let destination = `${role}${identity}/calls`;
-    context.getRouter().transitionTo(destination);
+
+    context.getRouter().transitionTo(userPath(auth.user.role, auth.user.carrierId, config.DEFAULT_POST_LOGIN_PATH));
     done();
   });
 };

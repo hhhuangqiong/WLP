@@ -1,5 +1,7 @@
 var debug = require('debug')('app:signOut');
 
+import {SIGN_IN} from '../server/paths';
+
 module.exports = function(context, payload, done) {
   debug('Started');
   context.dispatch('SIGN_OUT_START');
@@ -21,7 +23,7 @@ module.exports = function(context, payload, done) {
     // NOTE: possible race condition here
     // the AuthStore needs to set its state to "not authenticated"
     // before the transition
-    context.getRouter().transitionTo('/sign-in');
+    context.getRouter().transitionTo(SIGN_IN);
     done();
   });
 };

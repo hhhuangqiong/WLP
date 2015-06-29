@@ -44,13 +44,8 @@ function initialize(port) {
   if (!port) throw new Error('Please specify port');
 
   var server = express();
-  debug('starting app');
 
   server.set('port', port);
-
-  //server.set('views', path.join(PROJ_ROOT, 'views'));
-  //server.set('view engine', 'jade');
-  //server.set('view cache', env !== 'development');
 
   var env = server.get('env');
 

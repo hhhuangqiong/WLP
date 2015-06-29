@@ -22,7 +22,7 @@ export default function initialize(env, configDir, opts={ envSeparator: '__' }) 
 
   // TODO
   // - dynamically include files; assume some files (other than 'env-*') are not supposed to be included
-  var files = ['global.json', 'urls.json'];
+  var files = ['global.json'];
 
   files.push(envConfigName(env, opts.envConfigFilePrefix  || ENV_CONFIG_FILE_PREFIX));
 

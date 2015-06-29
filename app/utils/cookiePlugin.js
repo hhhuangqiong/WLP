@@ -4,8 +4,8 @@ module.exports = {
   name: 'CookiePlugin',
 
   plugContext: function(options) {
-    // 1000 * 60 * 30 if and only if no COOKIE.MAX_AGE in app/config
-    let maxAge = options.config && options.config.COOKIE.MAX_AGE || 1000 * 60 * 30;
+    // 30 mins (30* 60) as default
+    let maxAge = options.config && options.config.COOKIE.MAX_AGE || 60 * 30;
 
     return {
       plugActionContext: function(actionContext) {

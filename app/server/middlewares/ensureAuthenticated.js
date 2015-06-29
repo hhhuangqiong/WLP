@@ -1,7 +1,7 @@
 /**
  * Assume the "passport" module has been setup correctly
  *
- * @param {String} path
+ * @param {String} path path to be redirected to if failed
  */
 export default function ensureAuthenticated(path) {
   if (!path) throw new Error('path is required.');
