@@ -12,8 +12,6 @@ import ImStore from './stores/ImStore';
 import SystemMessageStore from './stores/SystemMessageStore';
 import LoadingSpinnerStore from './stores/LoadingSpinnerStore';
 
-import ModalStore from './stores/ModalStore';
-
 // seems not passing anything is okay
 var app = new Fluxible();
 
@@ -29,7 +27,6 @@ app.registerStore(ApplicationStore);
 app.registerStore(CompanyStore);
 app.registerStore(EndUserStore);
 app.registerStore(SignInStore);
-app.registerStore(ModalStore);
 app.registerStore(CallsStore);
 app.registerStore(SMSStore);
 app.registerStore(SystemMessageStore);

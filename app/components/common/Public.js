@@ -4,7 +4,6 @@ import FluxibleMixin      from 'fluxible/addons/FluxibleMixin';
 import {RouteHandler}     from 'react-router';
 import SystemMessage      from './SystemMessage';
 import LoadingSpinner     from './LoadingSpinner';
-import Modal              from '../Modal';
 
 var Public = React.createClass({
   render: function() {
@@ -24,7 +23,6 @@ var Public = React.createClass({
                 <div className="large-24 columns">
                   <RouteHandler/>
                 </div>
-                <Modal/>
               </div>
             </div>
           </div>
