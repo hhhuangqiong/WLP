@@ -4,7 +4,6 @@ import {RouteHandler}         from 'react-router';
 import {concurrent}           from 'contra';
 import Sidebar                from '../Sidebar';
 import Navigation             from '../Navigation';
-import Modal                  from '../Modal';
 import SystemMessage          from './SystemMessage';
 import LoadingSpinner         from './LoadingSpinner';
 import fetchCurrentCompanyInfo from '../../actions/fetchCurrentCompanyInfo';
