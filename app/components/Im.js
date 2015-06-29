@@ -74,17 +74,8 @@ var Im = React.createClass({
       endDate: moment().endOf('day'),
       type: '',
       searchType: '',
-      search: '',
-      startMinDate: moment().subtract(2,'month'),
-      startMaxDate: moment(),
-      endMinDate: moment().subtract(2,'month'),
-      endMaxDate: moment(),
+      search: ''
     }, query);
-
-    query.startMinDate = moment(query.endDate).subtract(2,'month');
-    query.startMaxDate = query.endDate;
-    query.endMinDate = query.startDate;
-    query.endMaxDate = moment();
 
     return _.merge(this.getStateFromStores(), query);
   },
@@ -97,11 +88,6 @@ var Im = React.createClass({
     if (currentQuery.endDate) {
       currentQuery.endDate = moment(currentQuery.endDate, "MM/DD/YYYY").endOf('day');
     }
-
-    currentQuery.startMinDate = moment(currentQuery.endDate).subtract(2,'month');
-    currentQuery.startMaxDate = currentQuery.endDate;
-    currentQuery.endMinDate = currentQuery.startDate;
-    currentQuery.endMaxDate = moment();
 
     let state = this.getStateFromStores();
     let query = _.merge({
@@ -293,8 +279,7 @@ var Im = React.createClass({
                       key="start-date"
                       dateFormat="MM/DD/YYYY"
                       selected={this.state.startDate}
-                      minDate={this.state.startMinDate}
-                      maxDate={this.state.startMaxDate}
+                      maxDate={moment(this.state.endDate)}
                       onChange={this.handleStartDateChange}
                     />
                   </div>
@@ -306,8 +291,8 @@ var Im = React.createClass({
                       key="end-date"
                       dateFormat="MM/DD/YYYY"
                       selected={this.state.endDate}
-                      minDate={this.state.endMinDate}
-                      maxDate={this.state.endMaxDate}
+                      minDate={moment(this.state.startDate)}
+                      maxDate={moment()}
                       onChange={this.handleEndDateChange}
                     />
                   </div>
