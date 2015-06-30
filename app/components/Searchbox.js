@@ -12,18 +12,15 @@
 import React from 'react';
 import classNames from 'classnames';
 
-var Searchbox = React.createClass({
+var SearchBox = React.createClass({
   propTypes: {
     onKeyPressHandler: React.PropTypes.func.isRequired
   },
 
   getDefaultProps: function() {
     return {
-      hasSearchType: false,
       search: null,
-      searchTypes: [
-        {name: '', value: ''}
-      ],
+      searchTypes: null,
       placeHolder: '',
       onInputChangeHandler: null,
       onKeyPressHandler: null,
@@ -31,28 +28,15 @@ var Searchbox = React.createClass({
     }
   },
 
-  componentWillReceiveProps: function(props) {
-    this.props = props;
-    this.props.hasSearchType = props.searchTypes.length > 0;
-  },
-
   handleSearchSubmit: function(e) {
     e.preventDefault();
   },
 
   render: function() {
-    let options = this.props.searchTypes.map((type) => {
-      return <option value={type.value}>{type.name}</option>
-    });
-
-    let dropDown = (this.props.hasSearchType) ?
-        <select className="top-bar-section__query-select left" name="searchDropDown" onChange={this.props.onSelectChangeHandler}>{options}</select> :
-        {};
-
     return(
       <form onSubmit={this.handleSearchSubmit}>
         <input
-          className={classNames('top-bar-section__query-input','right',{'with-select':this.props.hasSearchType})}
+          className={classNames('top-bar-section__query-input', 'right', {'with-select':this.props.searchTypes})}
           type="text"
           name="searchInput"
           value={this.props.search}
@@ -60,10 +44,16 @@ var Searchbox = React.createClass({
           onChange={this.props.onInputChangeHandler}
           onKeyPress={this.props.onKeyPressHandler}
         />
-        {dropDown}
+        <If condition={this.props.searchTypes}>
+          <select className={classNames('top-bar-section__query-select', 'left')} name="searchDropDown" onChange={this.props.onSelectChangeHandler}>
+            {this.props.searchTypes.map((type)=>{
+              return <option value={type.value}>{type.name}</option>;
+            })}
+          </select>
+        </If>
       </form>
     );
   }
 });
 
-export default Searchbox;
+export default SearchBox;
