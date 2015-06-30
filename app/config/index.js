@@ -14,6 +14,9 @@ module.exports = {
   PAGES: {
     CALLS: {
       PAGE_SIZE: 100
+    },
+    IMS: {
+      PAGE_SIZE: 100
     }
   }
 };

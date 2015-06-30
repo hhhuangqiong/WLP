@@ -6,54 +6,70 @@ import moment from 'moment';
 import _ from 'lodash';
 import classNames from 'classnames';
 
-import Pagination from './Pagination';
-
 var Countries = require('../data/countries.json');
 
 var Tooltip = require('rc-tooltip');
 
 const IM_DATETIME_FORMAT = 'MMMM DD YYYY, hh:mm:ss a';
 
+const MESSAGE_TYPES = {
+  text: {
+    className: 'icon-text',
+    title: 'text'
+  },
+  image: {
+    className: 'icon-image',
+    title: 'image'
+  },
+  audio: {
+    className: 'icon-audio',
+    title: 'audio'
+  },
+  video: {
+    className: 'icon-video',
+    title: 'video'
+  },
+  remote: {
+    className: 'icon-ituneyoutube',
+    title: 'sharing'
+  },
+  animation: {
+    className: 'icon-video',
+    title: 'animation'
+  },
+  sticker: {
+    className: 'icon-image',
+    title: 'stciker'
+  },
+  voice_sticker: {
+    className: 'icon-audio',
+    title: 'voice sticker'
+  },
+  ephemeral_image: {
+    className: 'icon-image',
+    title: 'ephemeral image'
+  }
+};
+
 var ImTable = React.createClass({
   contextTypes: {
     router: React.PropTypes.func.isRequired
   },
 
-  componentWillReceiveProps: function(nextProps) {
-    this.props.im = nextProps.im;
-    this.props.current = nextProps.current;
-    this.props.per = nextProps.per;
-  },
-
-  getFirstRecord: function() {
-    return (this.props.current - 1) * this.props.per;
-  },
-
-  getLastRecord: function() {
-    return this.props.current * this.props.per;
-  },
-
   getTypeSize: function(item,typeText) {
     let typeSize = '';
     if (item.message_type !== 'undefined') {
-
         if (item.file_size > 1024) {
           typeSize = (Math.round((item.file_size/1024)))+'kb';
-
         } else if (item.file_size > 0 && item.file_size < 1024) {
           typeSize = item.file_size+'b';
-
         } else {
           if (item.message_size > 1024) {
             typeSize = (Math.round((item.message_size/1024)))+'kb';
-
           } else if (item.message_size > 0 && item.message_size < 1024) {
             typeSize = item.message_size+'b';
-
           }
-
         }
-
     }
 
     if (typeText === 'Sharing') {
@@ -68,126 +84,86 @@ var ImTable = React.createClass({
   render: function() {
     let params = this.context.router.getCurrentParams();
 
-    let rows;
-    if (!_.isEmpty(this.props.im)) {
-      rows = this.props.im.map((u) => {
+    let rows = this.props.ims.map((u) => {
 
-          let callerCountry = _.find(Countries, (c) => {
-            return c.alpha2.toLowerCase() == u.origin
-          });
+      let callerCountry = _.find(Countries, (c) => {
+        return c.alpha2.toLowerCase() == u.origin
+      });
 
-          let calleeCountry = _.find(Countries, (c) => {
-            return c.alpha2.toLowerCase() == u.destination
-          });
+      let calleeCountry = _.find(Countries, (c) => {
+        return c.alpha2.toLowerCase() == u.destination
+      });
 
-          let imDate = moment(u.timestamp).format(IM_DATETIME_FORMAT);
+      let imDate = moment(u.timestamp).format(IM_DATETIME_FORMAT);
 
-          let messageTypeClasses = {
-            text: 'icon-text',
-            image: 'icon-image',
-            audio: 'icon-audio',
-            video: 'icon-video',
-            remote: 'icon-ituneyoutube',
-            animation: 'icon-video',
-            sticker: 'icon-image',
-            'voice_sticker': 'icon-audio',
-            'ephemeral_image': 'icon-image'
-          };
+      let imType = MESSAGE_TYPES[u.message_type];
 
-          let typeClass = messageTypeClasses[u.message_type] || '';
+      let typeSize = this.getTypeSize(u, imType.title);
 
-          let messageTypeTitle = {
-            text: 'Text',
-            image: 'Image',
-            audio: 'Audio',
-            video: 'Video',
-            remote: 'Sharing',
-            animation: 'Animation',
-            sticker: 'Sticker',
-            'voice_sticker': 'Voice Sticker',
-            'ephemeral_image': 'Ephemeral Image'
-          };
+      let sender = null;
 
-          let typeText = messageTypeTitle[u.message_type] || 'Others';
+      if (u.sender) {
+        sender = u.sender.split('/');
+        sender = sender[0];
+      }
 
-          let typeSize = this.getTypeSize(u,typeText);
-
-          let sender = u.sender.split('/');
-          sender = sender[0];
-
-          let recipient_info;
-
-          if (_.isArray(u.recipients)) {
-            recipient_info = <div className="recipient_info">
-                      <div className="icon-multiuser"></div>
-                        <Tooltip placement="right" trigger={['hover']} overlay={u.recipients.map((n)=>{return <span className="recip-info">{n}</span>})}>
-                          <span className="recipient-num">{u.recipients.length} Recipients</span>
-                        </Tooltip>
-                    </div>
-          } else {
-            recipient_info =  (
-			  <div className="recipient_info">
-                {
-                  u.destination ? (
-                    <div className="flag__container left">
-                      <span className={classNames('flag--' + u.destination, 'left')}></span>
-                    </div>
-                  ) : null
-                }
-                <span className="recipient">{u.recipient}</span>
-                <br/>
-                <span>{(calleeCountry) ? calleeCountry.name : ''}</span>
-			  </div>
-			)
-          }
-
-          return <tr className="im-table--row" key={u.timestamp}>
-            <td className="im-table--cell">
-              <div className="left timestamp">
-                <span className="call_date dark">{imDate}</span>
+      return (
+        <tr className="im-table--row" key={u.timestamp}>
+          <td className="im-table--cell">
+            <div className="left timestamp">
+              <span className="call_date dark">{imDate}</span>
+            </div>
+          </td>
+          <td className="im-table--cell">
+            <span className={classNames('im-message-type-icon', imType.className, u.message_type)}></span>
+            <div className="im-message-type-info">
+              <span className={"im-message-type-text dark"}>{imType.title || 'others'}</span>
+              <br/>
+              <span className={"im-message-type-size"}>{typeSize}</span>
+            </div>
+          </td>
+          <td className="im-table--cell">
+            <If condition={u.origin}>
+              <div className="flag__container left">
+                <span className={classNames('flag--' + u.origin, 'left')}></span>
               </div>
-            </td>
-            <td className="im-table--cell">
-              <span className={"im-message-type-icon " + typeClass + " " + u.message_type}></span>
-              <div className="im-message-type-info">
-                <span className={"im-message-type-text dark"}>{typeText}</span>
-                <br/>
-                <span className={"im-message-type-size"}>{typeSize}</span>
+            </If>
+            <div className="sender_info">
+              <span className="sender dark">{sender}</span>
+              <br/>
+              <span>{(callerCountry) ? callerCountry.name : ''}</span>
+            </div>
+          </td>
+          <td className="im-table--cell">
+            <div className="icon-arrow">
+            </div>
+          </td>
+          <td className="im-table--cell">
+            <If condition={_.isArray(u.recipients)}>
+              <div className="recipient_info">
+                <div className="icon-multiuser"></div>
+                <Tooltip placement="right" trigger={['hover']} overlay={u.recipients.map((n)=>{return <span className="recip-info">{n}</span>})}>
+                  <span className="recipient-num">{u.recipients.length} Recipients</span>
+                </Tooltip>
               </div>
-            </td>
-            <td className="im-table--cell">
-              {
-                u.origin ? (
+              <Else />
+              <div>
+                <If condition={u.destination}>
                   <div className="flag__container left">
-                    <span className={classNames('flag--' + u.origin, 'left')}></span>
+                    <span className={classNames('flag--' + u.destination, 'left')}></span>
                   </div>
-                ) : null
-              }
-              <div className="sender_info">
-                <span className="sender dark">{sender}</span>
-                <br/>
-                <span>{(callerCountry) ? callerCountry.name : ''}</span>
-              </div>
-            </td>
-            <td className="im-table--cell">
-                <div className="icon-arrow">
+                </If>
+                <div className="recipient_info">
+                  <span className="recipient">{u.recipient}</span>
+                  <br/>
+                  <span>{(calleeCountry) ? calleeCountry.name : ''}</span>
                 </div>
-            </td>
-            <td className="im-table--cell">
-                {recipient_info}
-            </td>
-          </tr>
-        }
-      );
-    } else {
-      rows = <tr className="im-table--row">
-          <td className="im-table--cell"></td>
-          <td className="im-table--cell"></td>
-          <td className="im-table--cell"></td>
-          <td className="im-table--cell"></td>
-          <td className="im-table--cell"></td>
+              </div>
+            </If>
+          </td>
         </tr>
-    }
+      );
+    });
 
     return (
       <table className="large-24 clickable im-table" key="im-table">
@@ -203,13 +179,21 @@ var ImTable = React.createClass({
         <tbody className="im-table--body" key="im-table--body">
           {rows}
         </tbody>
-        <tfoot>
-          <tr>
-            <td colSpan="5">
-              <Pagination total={this.props.total} current={this.props.current} per={this.props.per} onPageChange={this.props.onPageChange} />
-            </td>
-          </tr>
-        </tfoot>
+        <If condition={!_.isEmpty(this.props.ims)}>
+          <tfoot>
+            <tr>
+              <td colSpan="5">
+                <div className="text-center">
+                  <If condition={(this.props.totalPages - 1) > this.props.page}>
+                    <span className="pagination__button" onClick={this.props.onDataLoad}>Load More</span>
+                  <Else />
+                    <span className="pagination__button pagination__button--inactive">no more result</span>
+                  </If>
+                </div>
+              </td>
+            </tr>
+          </tfoot>
+        </If>
       </table>
     );
   }

@@ -12,18 +12,18 @@ import AuthMixin from '../utils/AuthMixin';
 
 import ImStore from '../stores/ImStore';
 
-import {fetchIm} from '../actions/fetchIm';
+import fetchIm from '../actions/fetchIm';
+import fetchMoreIms from '../actions/fetchMoreIms'
 
 import ImTable from './ImTable';
 import Searchbox from './Searchbox';
 
-var getFromTime = function(dateString=moment()) {
-  return (_.isEmpty(dateString)) ? moment().local().startOf('day').format('x') : moment(dateString).local().startOf('day').format('x');
-}
+var config = require('../config');
 
-var getToTime = function(dateString=moment()) {
-  return (_.isEmpty(dateString)) ? moment().local().endOf('day').format('x') : moment(dateString).local().endOf('day').format('x');
-}
+const searchTypes = [
+  { name: 'Sender', value: 'sender' },
+  { name: 'Recipient', value: 'recipient' }
+];
 
 var Im = React.createClass({
   contextTypes: {
@@ -36,188 +36,112 @@ var Im = React.createClass({
     storeListeners: [ImStore],
 
     fetchData: function(context, params, query, done) {
-      let startDate = (query.startDate) ? getFromTime(query.startDate) : undefined;
-      let endDate = (query.endDate) ? getToTime(query.endDate) : undefined;
       concurrent([
         context.executeAction.bind(context, fetchIm, {
           carrierId: params.identity,
-          fromTime: startDate || getFromTime(moment().subtract(2,'month').startOf('day')),
-          toTime: endDate || getToTime(),
+          fromTime: query.fromTime || moment().subtract(2, 'day').startOf('day').format('L'),
+          toTime: query.toTime || moment().endOf('day').format('L'),
           type: query.type,
           searchType: query.searchType,
           search: query.search,
-          size: 10,
-          page: +query.page-1 || 0
+          size: config.PAGES.IMS.PAGE_SIZE,
+          // The page number, starting from 0, defaults to 0 if not specified.
+          page: query.page || 0
         })
       ], done || function() {});
     }
   },
 
-  getInitialState: function () {
-    let params = this.context.router.getCurrentParams();
-    let query = this.context.router.getCurrentQuery();
-    let prevState = this.getStateFromStores();
+  getStateFromStores: function() {
+    return {
+      ims: this.getStore(ImStore).getIMs(),
+      imsCount: this.getStore(ImStore).getIMsCount(),
+      page: this.getStore(ImStore).getPageNumber(),
+      totalPages: this.getStore(ImStore).getTotalPages()
+    };
+  },
 
-    query.startDate = (query.startDate) ? moment(query.startDate, "MM/DD/YYYY").startOf('day') : undefined;
-    query.endDate = (query.endDate) ? moment(query.endDate, "MM/DD/YYYY").endOf('day'): undefined;
-
-    query = _.merge({
-      current: query.page || 1,
-      per: 10,
-      pageNumber: query.page || 1,
-      calls: this.getStore(ImStore).getCalls(),
-      callsCount: this.getStore(ImStore).getCallsCount(),
-      carrierId: params.identity,
-      startDate: moment().subtract(2,'month').startOf('day'),
-      endDate: moment().endOf('day'),
+  getDefaultQuery: function() {
+    return {
+      // The page number, starting from 0, defaults to 0 if not specified.
+      page: 0,
+      size: config.PAGES.IMS.PAGE_SIZE,
+      fromTime: moment().subtract(2, 'month').startOf('day').format('L'),
+      toTime: moment().endOf('day').format('L'),
       type: '',
-      searchType: '',
-      search: ''
-    }, query);
+      search: '',
+      searchType: ''
+    };
+  },
 
+  getInitialState: function () {
+    let defaultSearchType = _.first(searchTypes);
+    let query = _.merge(this.getDefaultQuery(), this.context.router.getCurrentQuery(), { searchType: defaultSearchType.value });
     return _.merge(this.getStateFromStores(), query);
   },
 
   onChange: function() {
-    let currentQuery = _.omit(this.context.router.getCurrentQuery(),function(value) {return !value;});
-    if (currentQuery.startDate) {
-      currentQuery.startDate = moment(currentQuery.startDate, "MM/DD/YYYY").startOf('day');
-    }
-    if (currentQuery.endDate) {
-      currentQuery.endDate = moment(currentQuery.endDate, "MM/DD/YYYY").endOf('day');
-    }
-
-    let state = this.getStateFromStores();
-    let query = _.merge({
-      page: 1,
-      size: 10,
-      startDate: moment().subtract(2, 'month').startOf('day'),
-      endDate: moment().endOf('day'),
-      type: '',
-      searchType: '',
-      search: ''
-    }, currentQuery);
-
-    this.setState(_.merge(state, query));
-  },
-
-  getStateFromStores: function() {
-    return {
-      calls: this.getStore(ImStore).getCalls(),
-      callsCount: this.getStore(ImStore).getCallsCount()
-    };
+    let query = _.merge(this.getDefaultQuery(), this.context.router.getCurrentQuery());
+    this.setState(_.merge(query, this.getStateFromStores()));
   },
 
   getQueryFromState: function() {
     return {
-      startDate: this.state.startDate.format('L'),
-      endDate: this.state.endDate.format('L'),
+      fromTime: this.state.fromTime,
+      toTime: this.state.toTime,
       searchType: this.state.searchType && this.state.searchType.trim(),
       search: this.state.search && this.state.search.trim(),
-      page: 1,
-      size: this.state.size && parseInt(this.state.size),
+      page: 0,
+      size: config.PAGES.IMS.PAGE_SIZE,
       type: this.state.type && this.state.type.trim()
     }
   },
 
   handleQueryChange: function(newQuery) {
-    let currentState = this.getQueryFromState();
     let routeName = _.last(this.context.router.getCurrentRoutes()).name;
     let params = this.context.router.getCurrentParams();
-    let query = _.merge(this.context.router.getCurrentQuery(), currentState, newQuery);
+    let query = _.merge(this.context.router.getCurrentQuery(), this.getQueryFromState(), newQuery);
 
-    query.startDate = (newQuery.fromTime) ? moment(newQuery.fromTime,'x').format('L') : currentState.startDate;
-    query.endDate = (newQuery.toTime) ? moment(newQuery.toTime,'x').format('L') : currentState.endDate;
-    query.type = (!_.isUndefined(newQuery.type)) ? newQuery.type : currentState.type;
-    query.searchType = (!_.isUndefined(newQuery.searchType)) ? newQuery.searchType : currentState.searchType;
-    query.search = (!_.isUndefined(newQuery.search)) ? newQuery.search : currentState.search;
-    query.page = (!_.isUndefined(newQuery.page)) ? newQuery.page : currentState.page;
-
-    query = _.pick(query, ['startDate','endDate','type','searchType','search','page'] );
-
-    this.context.router.transitionTo(routeName, params, _.omit(query, function(value) {
-      return !value;
+    this.context.router.transitionTo(routeName, params, _.omit(query, function(value, key) {
+      return !value || key === 'page' || key === 'size';
     }));
   },
 
-  getNewCurrentPage(per, nextPer) {
-    return Math.ceil(this.state.current * per / nextPer);
+  handlePageChange: function() {
+    let { identity } = this.context.router.getCurrentParams();
+
+    this.context.executeAction(fetchMoreIms, {
+      carrierId: identity,
+      fromTime: this.state.fromTime,
+      toTime: this.state.toTime,
+      page: +this.state.page + 1,
+      size: config.PAGES.IMS.PAGE_SIZE,
+      type: this.state.type,
+      search: this.state.search,
+      searchType: this.state.searchType
+    });
   },
 
-  handlePerChange: function(e) {
-    let per = e.target.value;
-    this.setState({
-     current: this.getNewCurrentPage(this.state.per, per),
-     per: per
-    })
+  handleStartDateChange: function(momentDate) {
+    let date = moment(momentDate).format('L');
+    this.handleQueryChange({ fromTime: date, page: 0 });
   },
 
-  handlePageChange: function(page) {
-    this.handleQueryChange({ page: parseInt(page), current: parseInt(page) });
+  handleEndDateChange: function(momentDate) {
+    let date = moment(momentDate).format('L');
+    this.handleQueryChange({ toTime: date, page: 0 });
   },
 
-  handleStartDateChange: function(date) {
-    if (this.state.endDate.diff(date) > 0)
-      this.handleQueryChange({ fromTime: getFromTime(date) });
-  },
-
-  handleEndDateChange: function(date) {
-    if (date.diff(this.state.startDate) >= 0)
-      this.handleQueryChange({ toTime: getToTime(date) });
-  },
-
-  handleTextTypeClick: function(e) {
+  handleTypeClick: function(type, e) {
     e.preventDefault();
-    let type = null;
-    if (this.state.type !== 'text') {
-      type = 'text'
-    }
-    this.handleQueryChange({ type: type });
-  },
-
-  handleImageTypeClick: function(e) {
-    e.preventDefault();
-    let type = null;
-    if (this.state.type !== 'image') {
-      type = 'image'
-    }
-    this.handleQueryChange({ type: type });
-  },
-
-  handleAudioTypeClick: function(e) {
-    e.preventDefault();
-    let type = null;
-    if (this.state.type !== 'audio') {
-      type = 'audio'
-    }
-    this.handleQueryChange({ type: type });
-  },
-
-  handleVideoTypeClick: function(e) {
-    e.preventDefault();
-    let type = null;
-    if (this.state.type !== 'video') {
-      type = 'video'
-    }
-    this.handleQueryChange({ type: type });
-  },
-
-  handleOtherTypeClick: function(e) {
-    e.preventDefault();
-    let type = null;
-    if (this.state.type !== 'remote') {
-      type = 'remote'
-    }
-    this.handleQueryChange({ type: type });
-  },
-
-  handleSearchSubmit: function(e) {
-    e.preventDefault();
+    let _type = this.state.type !== type ? type : null;
+    this.handleQueryChange({ type: _type });
   },
 
   handleSearchChange: function(e) {
     let search = e.target.value;
-    this.setState({search:search});
+    this.setState({ search: search });
+
     if (e.which == 13) {
       this.handleQueryChange({ search: search });
     }
@@ -225,13 +149,12 @@ var Im = React.createClass({
 
   handleSearchTypeChange: function(e) {
     let searchType = e.target.value;
-    this.setState({searchType:searchType});
-    this.handleQueryChange({searchType:searchType});
-  },
+    this.setState({ searchType: searchType });
 
-  handleTypeChange: function(actionContext, payload, done) {
-    let status = _.merge(this.state.type,payload);
-    this.setState({type:status});
+    // only submit change if search input isn't empty
+    if (this.state.search) {
+      this.handleQueryChange({ searchType: searchType });
+    }
   },
 
   _handleStartDateClick: function() {
@@ -244,13 +167,6 @@ var Im = React.createClass({
 
   render: function() {
     let params = this.context.router.getCurrentParams();
-
-    let startDate = moment(this.state.startDate).format("MM/DD/YYYY");
-    let endDate = moment(this.state.endDate).format("MM/DD/YYYY");
-
-    let searchTypes = [
-        {name:'Sender', value: 'sender'},{name:'Recipient', value: 'recipient'}
-    ];
 
     return (
       <div className="row">
@@ -270,25 +186,25 @@ var Im = React.createClass({
                 <div className="date-range-picker left">
                   <i className="date-range-picker__icon icon-calendar left" />
                   <div className="date-input-wrap left" onClick={this._handleStartDateClick}>
-                    <span className="left date-range-picker__date-span">{startDate}</span>
+                    <span className="left date-range-picker__date-span">{this.state.fromTime}</span>
                     <DatePicker
                       ref="startDatePicker"
                       key="start-date"
                       dateFormat="MM/DD/YYYY"
-                      selected={this.state.startDate}
-                      maxDate={moment(this.state.endDate)}
+                      selected={moment(this.state.fromTime, 'L')}
+                      maxDate={moment(this.state.toTime, 'L')}
                       onChange={this.handleStartDateChange}
                     />
                   </div>
                   <i className="date-range-picker__separator left">-</i>
                   <div className="date-input-wrap left" onClick={this._handleEndDateClick}>
-                    <span className="left date-range-picker__date-span">{endDate}</span>
+                    <span className="left date-range-picker__date-span">{this.state.toTime}</span>
                     <DatePicker
                       ref="endDatePicker"
                       key="end-date"
                       dateFormat="MM/DD/YYYY"
-                      selected={this.state.endDate}
-                      minDate={moment(this.state.startDate)}
+                      selected={moment(this.state.toTime, 'L')}
+                      minDate={moment(this.state.fromTime, 'L')}
                       maxDate={moment()}
                       onChange={this.handleEndDateChange}
                     />
@@ -299,24 +215,50 @@ var Im = React.createClass({
 
             <div className="im-type large-2 columns left top-bar-section">
               <ul className="button-group round">
-                <li><a className={classNames('button', 'icon-text', { active: this.state.type == 'text' })} onClick={this.handleTextTypeClick}></a></li>
-                <li><a className={classNames('button', 'icon-image', { active: this.state.type == 'image' })} onClick={this.handleImageTypeClick}></a></li>
-                <li><a className={classNames('button', 'icon-audio', { active: this.state.type == 'audio' })} onClick={this.handleAudioTypeClick}></a></li>
-                <li><a className={classNames('button', 'icon-video', { active: this.state.type == 'video' })} onClick={this.handleVideoTypeClick}></a></li>
-                <li><a className={classNames('button', 'icon-ituneyoutube', { active: this.state.type == 'remote' })} onClick={this.handleOtherTypeClick}></a></li>
+                <li>
+                  <a className={classNames('button', 'icon-text', { active: this.state.type == 'text' })} onClick={_.bindKey(this, 'handleTypeClick', 'text')}>
+                  </a>
+                </li>
+                <li>
+                  <a className={classNames('button', 'icon-image', { active: this.state.type == 'image' })} onClick={_.bindKey(this, 'handleTypeClick', 'image')}>
+                  </a>
+                </li>
+                <li>
+                  <a className={classNames('button', 'icon-audio', { active: this.state.type == 'audio' })} onClick={_.bindKey(this, 'handleTypeClick', 'audio')}>
+                  </a>
+                </li>
+                <li>
+                  <a className={classNames('button', 'icon-video', { active: this.state.type == 'video' })} onClick={_.bindKey(this, 'handleTypeClick', 'video')}>
+                  </a>
+                </li>
+                <li>
+                  <a className={classNames('button', 'icon-ituneyoutube', { active: this.state.type == 'remote' })} onClick={_.bindKey(this, 'handleTypeClick', 'remote')}>
+                  </a>
+                </li>
               </ul>
             </div>
 
             <div className="im-search top-bar-section right">
-              <Searchbox searchTypes={searchTypes} placeHolder="Username/Mobile" onSelectChangeHandler={this.handleSearchTypeChange} onKeyPressHandler={this.handleSearchChange} />
+              <Searchbox
+                searchTypes={searchTypes}
+                placeHolder="Username/Mobile"
+                onSelectChangeHandler={this.handleSearchTypeChange}
+                onKeyPressHandler={this.handleSearchChange}
+              />
             </div>
           </div>
         </nav>
 
         <div className="large-24 columns">
-            <ImTable im={this.state.calls} total={this.state.callsCount} current={parseInt(this.state.page)} per={this.state.per} onPageChange={this.handlePageChange} />
+          <ImTable
+            ims={this.state.ims}
+            totalRec={this.state.imsCount}
+            page={parseInt(this.state.page)}
+            pageRec={this.state.size}
+            totalPages={this.state.totalPages}
+            onDataLoad={this.handlePageChange}
+          />
         </div>
-
       </div>
     );
   }
