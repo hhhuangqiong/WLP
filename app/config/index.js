@@ -1,12 +1,11 @@
-import {baseUrl} from '../utils/url';
+/* should not include *sensitive* information here */
 
-/* blindly follow the reference project for now */
-/* should not include sensible information in the configuration */
+import {baseUrl} from '../utils/url';
+import {isDev} from '../utils/env';
+
 module.exports = {
-  // no leading "/"
   DEFAULT_POST_LOGIN_PATH: '/calls',
-  //TODO check if secure is needed, though not running the server over HTTPS directly
-  API_HOST: baseUrl(),
+  API_HOST: baseUrl(process.env.APP_PORT, process.env.APP_HOSTNAME, isDev() ? false : true),
   API_PATH_PREFIX: '/api',
   FILE_UPLOAD_PATH_PREFIX: '/data',
   DISABLE_ISOMORPHISM: Boolean(process.env.DISABLE_ISOMORPHISM) || false,

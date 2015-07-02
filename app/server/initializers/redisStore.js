@@ -1,5 +1,7 @@
 import logger from 'winston';
 
+import {isDev} from '../../utils/env';
+
 /**
  * Create a Redis store
  *
@@ -13,7 +15,7 @@ export default function makeRedisStore(session, nconf, env) {
   var RedisStore = require('connect-redis')(session);
   var redisStore;
 
-  if (env === 'development') {
+  if (isDev()) {
     redisStore = new RedisStore(nconf.get('redis'))
   } else {
     var Redis = require('ioredis');
