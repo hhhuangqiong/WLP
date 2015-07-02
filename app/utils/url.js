@@ -11,7 +11,7 @@ import url from 'url';
  *
  * @param {string} [port=3000] port number
  * @param {string} [hostname=localhost] host name
- * @param {boolean} isSecure use "Https" if true
+ * @param {boolean} [isSecure=false] use "Https" if true
  * @return {string} application URL
  */
 export function baseUrl(port, hostname, isSecure = false) {
