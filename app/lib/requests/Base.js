@@ -21,8 +21,11 @@ class BaseRequest {
    * @returns {*}
    */
   formatDateString(params, format) {
-    params.from = moment(params.from, 'L').startOf('day').format(format);
-    params.to   = moment(params.to, 'L').endOf('day').format(format);
+    if (moment(params.from, 'L').isValid()) {
+      params.from = moment(params.from, 'L').startOf('day').format(format);
+      params.to   = moment(params.to, 'L').endOf('day').format(format);
+    }
+
     return params;
   }
 
