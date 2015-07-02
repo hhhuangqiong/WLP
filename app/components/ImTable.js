@@ -96,7 +96,8 @@ var ImTable = React.createClass({
 
       let imDate = moment(u.timestamp).format(IM_DATETIME_FORMAT);
 
-      let imType = MESSAGE_TYPES[u.message_type];
+      // "message_type" can be null, which is wrong!
+      let imType = MESSAGE_TYPES[u.message_type] || {};
 
       let typeSize = this.getTypeSize(u, imType.title);
 
