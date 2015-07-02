@@ -55,7 +55,7 @@ gulp.task 'test', (cb) ->
   return
 
 gulp.task 'default', ['clean', 'webpack-dev-server', 'nodemon', 'watch'], ->
-  console.log 'done \uD83D\uDE80'
+  gutil.log '[default] done \uD83D\uDE80'
   return
 
 gulp.task 'sprite', ->
@@ -136,7 +136,7 @@ gulp.task 'webpack', (cb)->
     if argv.debug
       gutil.log "[webpack]", stats.toString { timings: true, colors: true }
     else
-      gutil.log "[webpack] Finished"
+      gutil.log "[webpack] Finished \ud83d\udc4d"
     cb()
   return
 
@@ -151,13 +151,14 @@ gulp.task "webpack-dev-server", ['scss', 'webpack'], (callback) ->
     contentBase: webpackConfig.output.path
     hot: true
     noInfo: true
-    watchDelay: 100
+    watchOptions:
+      aggregateTimeout: 100
     headers:
       'Access-Control-Allow-Origin': '*'
   )
   devServer.listen hotLoadPort, "0.0.0.0", (err) ->
     throw new gutil.PluginError("webpack-dev-server", err) if err
-    gutil.log "[webpack-dev-server]", "http://localhost:#{hotLoadPort}"
+    gutil.log "[webpack-dev-server]", "#{webpackConfig.output.publicPath}"
     callback()
 
   return
@@ -168,7 +169,7 @@ gulp.task 'nodemon', ->
     # prefer to keep configuration in "nodemon.json"
     nodeArgs: [ if argv.debug then '--debug' else '' ]
   .on 'restart', ->
-    console.log 'nodemon restarted! \uD83D\uDE80'
+    gutil.log 'nodemon restarted! \uD83D\uDE80'
     return
   isNodemonRunning = true
 

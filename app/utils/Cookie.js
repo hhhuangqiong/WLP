@@ -1,7 +1,7 @@
 'use strict';
 
 import cookie from 'cookie';
-import env from './env';
+import {SERVER} from './env';
 
 /**
  * Custom cookie object for both client & server sides
@@ -16,12 +16,12 @@ function Cookie(options) {
   this._maxAge = options.maxAge || null;
 
   this._req = options.req;
-  if (env.SERVER && !this._req) {
+  if (SERVER && !this._req) {
     throw new Error('Express `req` is a required option');
   }
 
   this._res = options.res;
-  if (env.SERVER && !this._res) {
+  if (SERVER && !this._res) {
     throw new Error('Express `res` is a required option');
   }
 }
@@ -42,7 +42,7 @@ Cookie.prototype.maxAge = function() {
  * @return {string|undefined}
  */
 Cookie.prototype.get = function(name) {
-  if (env.SERVER) {
+  if (SERVER) {
     return this._req.cookies[name];
   }
 
@@ -50,7 +50,7 @@ Cookie.prototype.get = function(name) {
 };
 
 Cookie.prototype.set = function(name, value) {
-  if (env.SERVER) {
+  if (SERVER) {
     return this._res.cookie(name, value);
   }
 
@@ -58,7 +58,7 @@ Cookie.prototype.set = function(name, value) {
 };
 
 Cookie.prototype.clear = function(name) {
-  if (env.SERVER) {
+  if (SERVER) {
     return this._res.clearCookie(name);
   }
 

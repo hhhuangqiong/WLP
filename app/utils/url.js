@@ -1,19 +1,20 @@
 'use strict';
 
-var url = require('url');
+import url from 'url';
 
 /**
- * baseUrl
+ * Generate the base URL for the application
  *
- * This is a helper function wrapper around node's built-in net module
+ * This is a helper function wrapper around Node's built-in "net" module
  *
  * @see {@link: https://iojs.org/api/url.html}
  *
- * @param {string} [port=APP_PORT] port number
- * @param {string} [hostname=APP_HOSTNAME] host name
+ * @param {string} [port=3000] port number
+ * @param {string} [hostname=localhost] host name
+ * @param {boolean} isSecure use "Https" if true
  * @return {string} application URL
  */
-export function baseUrl(port = process.env.APP_PORT, hostname = process.env.APP_HOSTNAME, isSecure = false) {
+export function baseUrl(port, hostname, isSecure = false) {
   // vigorous validation later
   hostname = hostname || 'localhost';
   port     = port || 3000;
@@ -21,15 +22,4 @@ export function baseUrl(port = process.env.APP_PORT, hostname = process.env.APP_
   let protocol = isSecure ? 'https:' : 'http:';
 
   return url.format({ protocol, hostname, port });
-}
-
-/**
- * secureBaseUrl
- *
- * @param {string} hostname host name
- * @param {string|number} port port number
- * @return {string} application URL over HTTPS
- */
-export function secureBaseUrl(hostname, port) {
-  return baseUrl(hostname, port, true);
 }

@@ -7,9 +7,11 @@ import webpackConfig from '../../webpack.config.js';
 
 import {baseUrl} from '../utils/url';
 
+import {isDev} from '../utils/env';
+
 var appUrl, bundleFile, bundlePath;
 
-if (process.env.NODE_ENV === 'development') {
+if (isDev()) {
   appUrl = baseUrl(webpackConfig.custom.hotLoadPort, process.env.APP_HOSTNAME);
   bundleFile =  'bundle.js';
   bundlePath = `${appUrl}/${bundleFile}`;
@@ -28,7 +30,7 @@ var Html = React.createClass({
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <meta httpEquiv="X-UA-Compatible" content="IE=edge" />
         <title>{this.props.title}</title>
-        <link href="http://fonts.googleapis.com/css?family=Roboto:500,300,700,400" rel="stylesheet" type="text/css" />
+        <link href="//fonts.googleapis.com/css?family=Roboto:500,300,700,400" rel="stylesheet" type="text/css" />
         <link rel="stylesheet" href="/stylesheets/iconic-fonts.css" />
         <link rel="stylesheet" href="/stylesheets/main.css" />
         <link rel="stylesheet" href="/vendor/react-date-picker/dist/react-datepicker.min.css" />
