@@ -1,7 +1,7 @@
 import cookie from 'cookie';
 
 import AuthStore from '../stores/AuthStore';
-import env from './env';
+import {CLIENT} from './env';
 import {SIGN_IN} from '../server/paths';
 
 module.exports = {
@@ -11,7 +11,7 @@ module.exports = {
       var isAuthenticated = context.getStore(AuthStore).isAuthenticated();
 
       if (isAuthenticated) {
-        if (env.CLIENT) {
+        if (CLIENT) {
           //TODO consolidate the key
           let sessionKey = 'token';
           let sessionKeyVal = cookie.parse(document.cookie)[sessionKey];

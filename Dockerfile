@@ -7,11 +7,11 @@ RUN git clone --depth=1 -b bolt http://gerrit.dev.maaii.com/m800-white-label-por
 WORKDIR /src
 
 # not put 'production' env here on purpose
-RUN npm rebuild
+RUN npm install
 
 ENV NODE_ENV=production
 
-RUN npm run dist
+RUN ["npm", "run", "dist"]
 
 EXPOSE 3000 3100
 
