@@ -64,7 +64,7 @@ export default class CallsRequest extends BaseRequest {
       if (params.caller_carrier)
         query.caller_carrier = params.caller_carrier;
 
-      if (params.callee_carrier)
+      if (params.callee_carrier && params.type.toLowerCase() !== 'offnet')
         query.callee_carrier = params.callee_carrier;
 
       if (params.caller)
@@ -97,7 +97,7 @@ export default class CallsRequest extends BaseRequest {
       .timeout(this.opts.timeout)
       .end((err, res) => {
         if (err) return cb(this.handleError(err, err.status || 400));
-        this.filterCalls(res, cb);
+        this.filterCalls(res.body, cb);
       });
   }
 
@@ -107,12 +107,12 @@ export default class CallsRequest extends BaseRequest {
    * the api return two types of OFFNET calls
    * which source are either `PROXY` or `GATEWAY`
    *
-   * @param res {Object} result return from API request
+   * @param data {Object} result return from API request
    * @param cb {Function} Callback function from @method getCalls
    */
-  filterCalls(res, cb) {
-    if (res.body && res.body.contents) {
-      res.body.contents = _.filter(res.body.contents, function(call) {
+  filterCalls(data, cb) {
+    if (data && data.content) {
+      data.content = _.filter(data.content, function(call) {
         if (call.type.toLowerCase() === 'offnet') {
           return call.source == 'GATEWAY';
         } else {
@@ -121,7 +121,7 @@ export default class CallsRequest extends BaseRequest {
       });
     }
 
-    cb(null, this.composeResponse(res.body));
+    cb(null, this.composeResponse(data));
   }
 
   /**
