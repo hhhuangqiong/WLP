@@ -117,12 +117,12 @@ var Calls = React.createClass({
 
   handleStartDateChange: function(momentDate) {
     let date = moment(momentDate).format('L');
-    this.handleQueryChange({ startDate: date, page: 1 });
+    this.handleQueryChange({ startDate: date, page: 0 });
   },
 
   handleEndDateChange: function(momentDate) {
     let date = moment(momentDate).format('L');
-    this.handleQueryChange({ endDate: date, page: 1 });
+    this.handleQueryChange({ endDate: date, page: 0 });
   },
 
   handleOnnetClick: function(e) {
