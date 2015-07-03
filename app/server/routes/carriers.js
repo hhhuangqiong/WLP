@@ -207,6 +207,14 @@ api.get('/carriers/:carrierId/widgets/:type(calls|im|overview|store|sms)', funct
       }, '', { lean: true });
     })
     .then((company) => {
+      if (!company) {
+        return res.status(404).json({
+          error: {
+            name: 'Invalid Carrier'
+          }
+        })
+      }
+
       return res.json({
         carrierId: carrierId,
         widgets: company.widgets && company.widgets[type]
