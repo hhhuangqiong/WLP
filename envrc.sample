@@ -7,6 +7,7 @@
 
 #export APP_HOSTNAME=localhost
 #export APP_PORT=3000
+#export APP_IS_SECURE=false
 
 #export redis__host=192.168.118.19
 #export redis__port=26379

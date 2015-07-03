@@ -5,7 +5,7 @@ import {isDev} from '../utils/env';
 
 module.exports = {
   DEFAULT_POST_LOGIN_PATH: '/calls',
-  API_HOST: baseUrl(process.env.APP_PORT, process.env.APP_HOSTNAME, isDev() ? false : true),
+  API_HOST: baseUrl(process.env.APP_PORT, process.env.APP_HOSTNAME, process.env.APP_IS_SECURE==='true'),
   API_PATH_PREFIX: '/api',
   FILE_UPLOAD_PATH_PREFIX: '/data',
   DISABLE_ISOMORPHISM: Boolean(process.env.DISABLE_ISOMORPHISM) || false,
