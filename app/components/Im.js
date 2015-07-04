@@ -52,15 +52,6 @@ var Im = React.createClass({
     }
   },
 
-  getStateFromStores: function() {
-    return {
-      ims: this.getStore(ImStore).getIMs(),
-      imsCount: this.getStore(ImStore).getIMsCount(),
-      page: this.getStore(ImStore).getPageNumber(),
-      totalPages: this.getStore(ImStore).getTotalPages()
-    };
-  },
-
   getDefaultQuery: function() {
     return {
       // The page number, starting from 0, defaults to 0 if not specified.
@@ -76,13 +67,17 @@ var Im = React.createClass({
 
   getInitialState: function () {
     let defaultSearchType = _.first(searchTypes);
-    let query = _.merge(this.getDefaultQuery(), this.context.router.getCurrentQuery(), { searchType: defaultSearchType.value });
-    return _.merge(this.getStateFromStores(), query);
+    let query = _.merge(this.getDefaultQuery(), this.context.router.getCurrentQuery(), {
+      searchType: defaultSearchType.value
+    });
+
+    return query;
+
   },
 
   onChange: function() {
     let query = _.merge(this.getDefaultQuery(), this.context.router.getCurrentQuery());
-    this.setState(_.merge(query, this.getStateFromStores()));
+    this.setState(query);
   },
 
   getQueryFromState: function() {
@@ -251,11 +246,6 @@ var Im = React.createClass({
 
         <div className="large-24 columns">
           <ImTable
-            ims={this.state.ims}
-            totalRec={this.state.imsCount}
-            page={parseInt(this.state.page)}
-            pageRec={this.state.size}
-            totalPages={this.state.totalPages}
             onDataLoad={this.handlePageChange}
           />
         </div>

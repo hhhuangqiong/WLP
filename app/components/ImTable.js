@@ -10,6 +10,9 @@ var Countries = require('../data/countries.json');
 
 var Tooltip = require('rc-tooltip');
 
+import ImStore from '../stores/ImStore';
+
+
 const IM_DATETIME_FORMAT = 'MMMM DD YYYY, hh:mm:ss a';
 
 const MESSAGE_TYPES = {
@@ -56,6 +59,20 @@ var ImTable = React.createClass({
     router: React.PropTypes.func.isRequired
   },
 
+  mixins: [FluxibleMixin],
+
+  statics: {
+    storeListeners: [ImStore],
+  },
+
+  onChange: function() {
+    this.setState(this.getStore(ImStore).getState());
+  },
+
+  getInitialState: function () {
+    return this.getStore(ImStore).getState();
+  },
+
   getTypeSize: function(item,typeText) {
     let typeSize = '';
     if (item.message_type !== 'undefined') {
@@ -84,7 +101,12 @@ var ImTable = React.createClass({
   render: function() {
     let params = this.context.router.getCurrentParams();
 
-    let rows = this.props.ims.map((u) => {
+    let imStore = this.getStore(ImStore);
+    let ims = imStore.getIMs();
+    let page = imStore.getPageNumber();
+    let totalPages = imStore.getTotalPages()
+
+    let rows = ims.map((u) => {
 
       let callerCountry = _.find(Countries, (c) => {
         return c.alpha2.toLowerCase() == u.origin
@@ -180,12 +202,12 @@ var ImTable = React.createClass({
         <tbody className="im-table--body" key="im-table--body">
           {rows}
         </tbody>
-        <If condition={!_.isEmpty(this.props.ims)}>
-          <tfoot>
+        <tfoot>
+          <If condition={!_.isEmpty(ims)}>
             <tr>
               <td colSpan="5">
                 <div className="text-center">
-                  <If condition={(this.props.totalPages - 1) > this.props.page}>
+                  <If condition={(totalPages - 1) > page}>
                     <span className="pagination__button" onClick={this.props.onDataLoad}>Load More</span>
                   <Else />
                     <span className="pagination__button pagination__button--inactive">no more result</span>
@@ -193,8 +215,8 @@ var ImTable = React.createClass({
                 </div>
               </td>
             </tr>
-          </tfoot>
-        </If>
+          </If>
+        </tfoot>
       </table>
     );
   }

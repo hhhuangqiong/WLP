@@ -52,6 +52,11 @@ function initialize(seedFilePath) {
     };
 
     function addLogo(model) {
+
+      if (!data.company.logoFile) {
+        return Q(true);
+      }
+
       return Q.ninvoke(model, 'addLogo', path.join(__dirname, `../../../public/images/${data.company.logoFile}`), {});
     };
 

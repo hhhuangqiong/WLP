@@ -1,6 +1,6 @@
 {
   "name": "m800-whitelabel-portal",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "private": true,
   "scripts": {
     "build": "npm run clean && npm run jscsx && npm run transpile && npm run test:report",
@@ -76,6 +76,7 @@
     "winston": "^1.0.0"
   },
   "devDependencies": {
+    "node-sass": "^3.2.0",
     "babel-loader": "^5.0.0",
     "browser-sync": "^2.0.1",
     "chai": "^3.0.0",
