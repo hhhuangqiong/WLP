@@ -269,6 +269,9 @@ api.get('/carriers/:carrierId/im', function(req, res) {
   req.query.sender = '';
   req.query.recipient = '';
 
+  if (req.query.search && !req.query.searchType)
+    req.query.searchType = 'sender';
+
   if (req.query.searchType === 'sender')
     req.query.sender = (!req.query.search) ? '' : '*' + req.query.search + '*';
 

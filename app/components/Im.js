@@ -21,8 +21,7 @@ import Searchbox from './Searchbox';
 var config = require('../config');
 
 const searchTypes = [
-  { name: 'Sender', value: 'sender' },
-  { name: 'Recipient', value: 'recipient' }
+  { name: 'Sender', value: 'sender' }
 ];
 
 var Im = React.createClass({
