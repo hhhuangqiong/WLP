@@ -10,9 +10,6 @@ var Countries = require('../data/countries.json');
 
 var Tooltip = require('rc-tooltip');
 
-import ImStore from '../stores/ImStore';
-
-
 const IM_DATETIME_FORMAT = 'MMMM DD YYYY, hh:mm:ss a';
 
 const MESSAGE_TYPES = {
@@ -42,7 +39,7 @@ const MESSAGE_TYPES = {
   },
   sticker: {
     className: 'icon-image',
-    title: 'stciker'
+    title: 'sticker'
   },
   voice_sticker: {
     className: 'icon-audio',
@@ -59,34 +56,20 @@ var ImTable = React.createClass({
     router: React.PropTypes.func.isRequired
   },
 
-  mixins: [FluxibleMixin],
-
-  statics: {
-    storeListeners: [ImStore],
-  },
-
-  onChange: function() {
-    this.setState(this.getStore(ImStore).getState());
-  },
-
-  getInitialState: function () {
-    return this.getStore(ImStore).getState();
-  },
-
   getTypeSize: function(item,typeText) {
     let typeSize = '';
     if (item.message_type !== 'undefined') {
-        if (item.file_size > 1024) {
-          typeSize = (Math.round((item.file_size/1024)))+'kb';
-        } else if (item.file_size > 0 && item.file_size < 1024) {
-          typeSize = item.file_size+'b';
-        } else {
-          if (item.message_size > 1024) {
-            typeSize = (Math.round((item.message_size/1024)))+'kb';
-          } else if (item.message_size > 0 && item.message_size < 1024) {
-            typeSize = item.message_size+'b';
-          }
+      if (item.file_size > 1024) {
+        typeSize = (Math.round((item.file_size/1024)))+'kb';
+      } else if (item.file_size > 0 && item.file_size < 1024) {
+        typeSize = item.file_size+'b';
+      } else {
+        if (item.message_size > 1024) {
+          typeSize = (Math.round((item.message_size/1024)))+'kb';
+        } else if (item.message_size > 0 && item.message_size < 1024) {
+          typeSize = item.message_size+'b';
         }
+      }
     }
 
     if (typeText === 'Sharing') {
@@ -101,12 +84,7 @@ var ImTable = React.createClass({
   render: function() {
     let params = this.context.router.getCurrentParams();
 
-    let imStore = this.getStore(ImStore);
-    let ims = imStore.getIMs();
-    let page = imStore.getPageNumber();
-    let totalPages = imStore.getTotalPages()
-
-    let rows = ims.map((u) => {
+    let rows = this.props.ims.map((u) => {
 
       let callerCountry = _.find(Countries, (c) => {
         return c.alpha2.toLowerCase() == u.origin
@@ -118,8 +96,7 @@ var ImTable = React.createClass({
 
       let imDate = moment(u.timestamp).format(IM_DATETIME_FORMAT);
 
-      // "message_type" can be null, which is wrong!
-      let imType = MESSAGE_TYPES[u.message_type] || {};
+      let imType = MESSAGE_TYPES[u.message_type];
 
       let typeSize = this.getTypeSize(u, imType.title);
 
@@ -191,25 +168,25 @@ var ImTable = React.createClass({
     return (
       <table className="large-24 clickable im-table" key="im-table">
         <thead className="im-table--head">
-          <tr className="im-table--row">
-            <th className="im-table--cell">Date &amp; Time</th>
-            <th className="im-table--cell">Type / Filesize</th>
-            <th className="im-table--cell">Mobile &amp; Destination</th>
-            <th className="im-table--cell"></th>
-            <th className="im-table--cell"></th>
-          </tr>
+        <tr className="im-table--row">
+          <th className="im-table--cell">Date &amp; Time</th>
+          <th className="im-table--cell">Type / Filesize</th>
+          <th className="im-table--cell">Mobile &amp; Destination</th>
+          <th className="im-table--cell"></th>
+          <th className="im-table--cell"></th>
+        </tr>
         </thead>
         <tbody className="im-table--body" key="im-table--body">
-          {rows}
+        {rows}
         </tbody>
         <tfoot>
-          <If condition={!_.isEmpty(ims)}>
+          <If condition={!_.isEmpty(this.props.ims)}>
             <tr>
               <td colSpan="5">
                 <div className="text-center">
-                  <If condition={(totalPages - 1) > page}>
+                  <If condition={(this.props.totalPages - 1) > this.props.page}>
                     <span className="pagination__button" onClick={this.props.onDataLoad}>Load More</span>
-                  <Else />
+                    <Else />
                     <span className="pagination__button pagination__button--inactive">no more result</span>
                   </If>
                 </div>
