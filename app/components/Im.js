@@ -52,6 +52,15 @@ var Im = React.createClass({
     }
   },
 
+  getStateFromStores: function() {
+    return {
+      ims: this.getStore(ImStore).getIMs(),
+      imsCount: this.getStore(ImStore).getIMsCount(),
+      page: this.getStore(ImStore).getPageNumber(),
+      totalPages: this.getStore(ImStore).getTotalPages()
+    };
+  },
+
   getDefaultQuery: function() {
     return {
       // The page number, starting from 0, defaults to 0 if not specified.
@@ -67,17 +76,13 @@ var Im = React.createClass({
 
   getInitialState: function () {
     let defaultSearchType = _.first(searchTypes);
-    let query = _.merge(this.getDefaultQuery(), this.context.router.getCurrentQuery(), {
-      searchType: defaultSearchType.value
-    });
-
-    return query;
-
+    let query = _.merge(this.getDefaultQuery(), this.context.router.getCurrentQuery(), { searchType: defaultSearchType.value });
+    return _.merge(this.getStateFromStores(), query);
   },
 
   onChange: function() {
     let query = _.merge(this.getDefaultQuery(), this.context.router.getCurrentQuery());
-    this.setState(query);
+    this.setState(_.merge(query, this.getStateFromStores()));
   },
 
   getQueryFromState: function() {
@@ -189,7 +194,7 @@ var Im = React.createClass({
                       selected={moment(this.state.fromTime, 'L')}
                       maxDate={moment(this.state.toTime, 'L')}
                       onChange={this.handleStartDateChange}
-                    />
+                      />
                   </div>
                   <i className="date-range-picker__separator left">-</i>
                   <div className="date-input-wrap left" onClick={this._handleEndDateClick}>
@@ -202,7 +207,7 @@ var Im = React.createClass({
                       minDate={moment(this.state.fromTime, 'L')}
                       maxDate={moment()}
                       onChange={this.handleEndDateChange}
-                    />
+                      />
                   </div>
                 </div>
               </li>
@@ -239,15 +244,20 @@ var Im = React.createClass({
                 placeHolder="Username/Mobile"
                 onSelectChangeHandler={this.handleSearchTypeChange}
                 onKeyPressHandler={this.handleSearchChange}
-              />
+                />
             </div>
           </div>
         </nav>
 
         <div className="large-24 columns">
           <ImTable
+            ims={this.state.ims}
+            totalRec={this.state.imsCount}
+            page={parseInt(this.state.page)}
+            pageRec={this.state.size}
+            totalPages={this.state.totalPages}
             onDataLoad={this.handlePageChange}
-          />
+            />
         </div>
       </div>
     );
