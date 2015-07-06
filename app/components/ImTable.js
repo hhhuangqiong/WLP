@@ -42,7 +42,7 @@ const MESSAGE_TYPES = {
   },
   sticker: {
     className: 'icon-image',
-    title: 'stciker'
+    title: 'sticker'
   },
   voice_sticker: {
     className: 'icon-audio',
