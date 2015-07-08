@@ -61,7 +61,6 @@ export default class ImRequest extends BaseRequest {
       query.to      = params.to;
       query.page    = params.page || 0;
       query.size    = params.size || 20;
-      query.recipient = '@' + params.carrier;
 
       // jscs:disable requireCamelCaseOrUpperCaseIdentifiers
       if (params.message_type)
