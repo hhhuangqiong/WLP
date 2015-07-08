@@ -59,10 +59,11 @@
   "logging": {
     "winston": {
       "transports": [{
-        "type": "winston.transports.File",
+        "type": "winston.transports.Console",
         "options": {
-          "filename": "logs/app.log",
-          "json": false
+          "level": "debug",
+          "colorize": true,
+          "timestamp": true
         }
       }]
     }

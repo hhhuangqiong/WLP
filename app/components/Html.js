@@ -12,7 +12,8 @@ import {isDev} from '../utils/env';
 var appUrl, bundleFile, bundlePath;
 
 if (isDev()) {
-  appUrl = baseUrl(webpackConfig.custom.hotLoadPort, process.env.APP_HOSTNAME);
+  //use empty root path for client side, rely on relative path resolving
+  appUrl = baseUrl(webpackConfig.custom.hotLoadPort, "");
   bundleFile =  'bundle.js';
   bundlePath = `${appUrl}/${bundleFile}`;
 }

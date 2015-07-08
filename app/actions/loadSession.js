@@ -3,7 +3,9 @@ var debug = require('debug')('app:loadSession');
 
 module.exports = function(context, payload, done) {
   debug('Started');
+
   let token = context.cookie.get('token');
+  console.log('loadSession token:', token);
   let user = context.cookie.get('user');
   let username = context.cookie.get('username');
   let displayName = context.cookie.get('displayName');

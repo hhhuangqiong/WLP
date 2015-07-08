@@ -9,12 +9,11 @@ var debug = require('debug')('wlp:AuthApi');
  * @param {String} [apiPrefix='']
  * @return {Object} function(s) to be mixed
  */
-export default function(host = '', apiPrefix = '') {
+export default function(apiPrefix = '') {
   //NB: 'host' above is not used, need to defer evaluation via function to get the correct 'host'
 
   return {
     signIn: function(username, password, cb) {
-      console.log('signIn host', host);
       superagent
         .post(`${this._getHost()}${apiPrefix}${SIGN_IN}`)
         .accept('json')

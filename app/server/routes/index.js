@@ -4,7 +4,15 @@ import { fetchDep } from '../utils/bottle';
 import db from '../db';
 
 function validateTokenMiddleware(req, res, next) {
-  var token = req.header('Authorization');
+
+  console.log('Auth Header ', req.header('Authorization'));
+  var token = req.header('Authorization')
+
+  if (token == '__session__') {
+    //from client
+    token = req.sessionID;
+  }
+
   if (!(token && db.checkSession(token))) {
     return res.status(401).json({
       error: {

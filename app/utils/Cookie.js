@@ -1,6 +1,7 @@
 'use strict';
 
 import cookie from 'cookie';
+
 import {SERVER} from './env';
 
 /**
@@ -42,24 +43,38 @@ Cookie.prototype.maxAge = function() {
  * @return {string|undefined}
  */
 Cookie.prototype.get = function(name) {
+
+  
   if (SERVER) {
-    return this._req.cookies[name];
+    console.log('Server Cookie ', name, this._req.session.data[name]);
+    return this._req.session.data[name];
   }
+
+  console.log('Client Cookie ', cookie.parse(document.cookie)[name]);
 
   return cookie.parse(document.cookie)[name];
 };
 
 Cookie.prototype.set = function(name, value) {
+
+
   if (SERVER) {
-    return this._res.cookie(name, value);
+    console.log('Service Cookie set', name, value);
+
+     this._req.session.cookie[name] = value;
+
+     this._req.session.save();
+
+     return;
   }
 
+  console.log('Client Cookie set', name, value);
   document.cookie = cookie.serialize(name, value, { maxAge: this.maxAge(), path: '/' });
 };
 
 Cookie.prototype.clear = function(name) {
   if (SERVER) {
-    return this._res.clearCookie(name);
+    delete this._req.session.cookie[name];
   }
 
   // noop for CLIENT

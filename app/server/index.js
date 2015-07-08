@@ -15,7 +15,6 @@ import express from 'express';
 
 // the following 2 are sure to be included in this isomorphic setup
 import bodyParser from 'body-parser';
-import cookieParser from 'cookie-parser';
 
 import compression from 'compression';
 import expressValidator from 'express-validator';
@@ -85,11 +84,9 @@ function initialize(port) {
   }));
   server.use(expressValidator({}));
   server.use(compression());
-  server.use(cookieParser(nconf.get('cookies:secret'), nconf.get('cookies:options')));
 
   server.use(favicon(path.join(PROJ_ROOT, 'public/favicon.ico')));
 
-  //server.use(csrf({cookie: true}));
 
   // font resources to be replaced before static resources
   server.get('/fonts/*', (req, res, next) => {
@@ -106,6 +103,7 @@ function initialize(port) {
   server.use(session({
     resave: false,
     saveUninitialized: true,
+    //must use same secret as cookie-parser, see https://github.com/expressjs/session#cookie-options
     secret: nconf.get('secret:session'),
     store: redisStore
   }));

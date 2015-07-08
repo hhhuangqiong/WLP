@@ -40,8 +40,21 @@ router.post(SIGN_IN, function(req, res, next) {
       let token = req.sessionID;
       let authUser = getAuthUser(user);
 
+      req.session.data = {
+        token: token,
+        user: authUser._id,
+        username: authUser.username,
+        displayName: authUser.displayName,
+        carrierId: authUser.carrierId,
+        role: authUser.role
+      };
+
+      req.session.save();
+
+      logger.info('session saved',req.session);
+
       db.createSession(token);
-      return res.json({ token: token, user: authUser });
+      return res.json({ token: '__session__', user: authUser });
     });
   })(req, res, next);
 });

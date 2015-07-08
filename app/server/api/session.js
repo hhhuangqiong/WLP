@@ -4,7 +4,7 @@ import { SESSION } from '../paths';
 
 var debug = require('debug')('wlp:SessionApi');
 
-export default function(host = '', apiPrefix = '') {
+export default function(apiPrefix = '') {
   return {
     getSession: function(token, cb) {
       superagent
