@@ -17,7 +17,8 @@ module.exports = {
   ],
   module: {
     loaders: [
-      { test: /\.js$/, exclude: /node_modules/, loaders: [ 'react-hot', 'babel?cacheDirectory&plugins=jsx-control-statements/babel' ]},
+      { test: /\.js$/, exclude: /node_modules/, loaders: ['react-hot', 'babel?cacheDirectory&plugins=jsx-control-statements/babel']},
+
       // using a forked branch; have to `babel` it
       { test: /\.js$/, include: /node_modules\/react-router/, loader: 'babel?cacheDirectory' },
       { test: /\.json$/, loader: 'json' }

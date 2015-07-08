@@ -18,7 +18,6 @@ export function baseUrl(port, hostname, isSecure = false) {
   // vigorous validation later
   hostname = hostname || 'localhost';
   port     = port || 3000;
-
   let protocol = isSecure ? 'https:' : 'http:';
 
   return url.format({ protocol, hostname, port });
