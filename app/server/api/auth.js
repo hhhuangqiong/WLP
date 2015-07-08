@@ -14,7 +14,6 @@ export default function(host = '', apiPrefix = '') {
 
   return {
     signIn: function(username, password, cb) {
-      console.log('signIn host', host);
       superagent
         .post(`${this._getHost()}${apiPrefix}${SIGN_IN}`)
         .accept('json')
