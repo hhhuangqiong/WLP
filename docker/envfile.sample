@@ -1,12 +1,11 @@
 # For Docker's run command, --env-file=
 
 # `boot2docker ip` for OSX
-APP_HOSTNAME=192.168.59.103
+APP_HOSTNAME=<boot2docker ip>
 APP_PORT=3000
 
-# Do not use `boot2docker ip` below
+# Do not use `boot2docker ip` or "localhost" below
 # NB: no shell expansion support
-# The IP used below are for demostration only
-redis__host=192.168.11.181
+redis__host=<your machine ip>
+mongodb__uri=mongodb://<your machine ip>/m800-whitelabel-portal
 queue__enable=false
-mongodb__uri=mongodb://192.168.11.181/m800-whitelabel-portal
