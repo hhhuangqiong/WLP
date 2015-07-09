@@ -17,8 +17,8 @@ export default function makeRedisStore(session, nconf, env) {
 
   var redisConfig = nconf.get('redis');
 
-  if (!_.has(redisConfig,'sentinels')) {
-    logger.info('LOCAL REDIS!',redisConfig);
+  if (!_.has(redisConfig, 'sentinels')) {
+    logger.info('LOCAL REDIS!', redisConfig);
     redisStore = new RedisStore(redisConfig);
   }
   else {

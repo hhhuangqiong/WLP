@@ -32,10 +32,6 @@ var SearchBox = React.createClass({
     e.preventDefault();
   },
 
-  makeSearchTypeOptKey: function(type) {
-    return `searchTyps-${type.name}-${type.value}`; // no type checking
-  },
-
   render: function() {
     return(
       <form onSubmit={this.handleSearchSubmit}>
@@ -51,7 +47,7 @@ var SearchBox = React.createClass({
         <If condition={this.props.searchTypes}>
           <select className={classNames('top-bar-section__query-select', 'left')} name="searchDropDown" onChange={this.props.onSelectChangeHandler}>
             {this.props.searchTypes.map((type)=>{
-              return <option key={this.makeSearchTypeOptKey(type)} value={type.value}>{type.name}</option>;
+              return <option value={type.value}>{type.name}</option>;
             })}
           </select>
         </If>

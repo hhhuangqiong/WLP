@@ -44,7 +44,6 @@ Cookie.prototype.maxAge = function() {
  */
 Cookie.prototype.get = function(name) {
 
-  
   if (SERVER) {
     console.log('Server Cookie ', name, this._req.session.data[name]);
     return this._req.session.data[name];
@@ -57,15 +56,14 @@ Cookie.prototype.get = function(name) {
 
 Cookie.prototype.set = function(name, value) {
 
-
   if (SERVER) {
     console.log('Service Cookie set', name, value);
 
-     this._req.session.cookie[name] = value;
+    this._req.session.cookie[name] = value;
 
-     this._req.session.save();
+    this._req.session.save();
 
-     return;
+    return;
   }
 
   console.log('Client Cookie set', name, value);

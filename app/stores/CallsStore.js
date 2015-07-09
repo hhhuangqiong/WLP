@@ -20,7 +20,6 @@ var CallsStore = createStore({
     this.callsCount = 0;
     this.totalPages = 0;
     this.params = {};
-    this.exportId = 0;
   },
 
   handleLoadMoreCalls: function(payload) {
@@ -56,10 +55,6 @@ var CallsStore = createStore({
     this.emitChange();
   },
 
-  getExportId: function() {
-    return this.exportId;
-  },
-
   getCallsCount: function() {
     return this.callsCount;
   },
@@ -89,8 +84,7 @@ var CallsStore = createStore({
       callsCount: this.callsCount,
       totalPages: this.totalPages,
       params: this.params,
-      widgets: this.widgets,
-      exportId: this.exportId
+      widgets: this.widgets
     };
   },
 
@@ -107,7 +101,6 @@ var CallsStore = createStore({
     this.totalPages = state.totalPages;
     this.params = state.params;
     this.widgets = state.widgets;
-    this.exportId = state.exportId;
   }
 });
 

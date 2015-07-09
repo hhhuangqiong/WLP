@@ -87,7 +87,6 @@ function initialize(port) {
 
   server.use(favicon(path.join(PROJ_ROOT, 'public/favicon.ico')));
 
-
   // font resources to be replaced before static resources
   server.get('/fonts/*', (req, res, next) => {
     res.header('Access-Control-Allow-Origin', '*');
@@ -103,6 +102,7 @@ function initialize(port) {
   server.use(session({
     resave: false,
     saveUninitialized: true,
+
     //must use same secret as cookie-parser, see https://github.com/expressjs/session#cookie-options
     secret: nconf.get('secret:session'),
     store: redisStore
@@ -120,7 +120,6 @@ function initialize(port) {
   server.use(flash());
 
   // Routes
-  server.use(config.EXPORT_PATH_PREFIX, require('./routes/CDRExport'));
   server.use(config.API_PATH_PREFIX, require('./routes'));
   server.use(config.FILE_UPLOAD_PATH_PREFIX, require('./routes/data'));
 
