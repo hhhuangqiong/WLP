@@ -16,16 +16,16 @@ module.exports = {
         actionContext.api = new Api({
           getHost: function() {
             try {
-            if (env.CLIENT) {
-              //use root path
-              return '';
-            } else {
-              console.log('SERVER ', url.baseUrl(process.env.APP_PORT, '127.0.0.1'));
-              return url.baseUrl(process.env.APP_PORT, '127.0.0.1');
+              if (env.CLIENT) {
+                //use root path
+                return '';
+              } else {
+                console.log('SERVER ', url.baseUrl(process.env.APP_PORT, '127.0.0.1'));
+                return url.baseUrl(process.env.APP_PORT, '127.0.0.1');
+              }
+            } catch (err) {
+              console.log(err);
             }
-          } catch (err) {
-            console.log(err);
-          }
           },
 
           getToken: function() {

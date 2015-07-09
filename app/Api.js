@@ -293,8 +293,7 @@ Api.prototype.getCurrentCompanyInfo = function(params, cb) {
 assign(
   Api.prototype,
   require('./server/api/auth')(API_PATH_PREFIX),
-  require('./server/api/session')(API_PATH_PREFIX),
-  require('./server/api/export')()
+  require('./server/api/session')(API_PATH_PREFIX)
 );
 
 module.exports = Api;

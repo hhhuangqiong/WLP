@@ -51,7 +51,7 @@ router.post(SIGN_IN, function(req, res, next) {
 
       req.session.save();
 
-      logger.info('session saved',req.session);
+      logger.info('session saved', req.session);
 
       db.createSession(token);
       return res.json({ token: '__session__', user: authUser });
