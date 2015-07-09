@@ -261,8 +261,7 @@ api.get('/carriers/:carrierId/im', function(req, res) {
   req.checkQuery('toTime').notEmpty();
   req.checkQuery('page').notEmpty().isInt();
 
-  // TODO  carrierId to be changed in the future
-  req.query.carrier = (req.params.carrierId == 'm800') ? 'maaiitest.com' : req.params.carrierId;
+  req.query.carrier = req.params.carrierId;
   req.query.from = req.query.fromTime;
   req.query.to = req.query.toTime;
   req.query.message_type = req.query.type;

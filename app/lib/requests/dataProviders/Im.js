@@ -70,7 +70,7 @@ export default class ImRequest extends BaseRequest {
         query.sender = params.sender;
 
       if (params.recipient)
-        query.recipient = params.recipient + '@' + params.carrier;
+        query.recipient = params.recipient;
 
       return query;
     }
