@@ -97,6 +97,20 @@ var Im = React.createClass({
     }
   },
 
+  getDefaultMessageTypes: function() {
+    return [
+      {title: 'Text', value: 'text'},
+      {title: 'Image', value: 'image'},
+      {title: 'Audio', value: 'audio'},
+      {title: 'Video', value: 'video'},
+      {title: 'Remote', value: 'remote'},
+      {title: 'Animation', value: 'animation'},
+      {title: 'Sticker', value: 'sticker'},
+      {title: 'Voice Sticker', value: 'voice_sticker'},
+      {title: 'Ephemeral Image', value: 'ephemeral_image'}
+    ]
+  },
+
   handleQueryChange: function(newQuery) {
     let routeName = _.last(this.context.router.getCurrentRoutes()).name;
     let params = this.context.router.getCurrentParams();
@@ -132,10 +146,15 @@ var Im = React.createClass({
     this.handleQueryChange({ toTime: date, page: 0 });
   },
 
-  handleTypeClick: function(type, e) {
+  handleTypeChange: function(e) {
     e.preventDefault();
+    let type = e.target.value;
     let _type = this.state.type !== type ? type : null;
     this.handleQueryChange({ type: _type });
+  },
+
+  getOptKey: function(messageType) {
+    return `messageType-${messageType.value}`;
   },
 
   handleSearchChange: function(e) {
@@ -214,28 +233,12 @@ var Im = React.createClass({
             </ul>
 
             <div className="im-type large-2 columns left top-bar-section">
-              <ul className="button-group round">
-                <li>
-                  <a className={classNames('button', 'icon-text', { active: this.state.type == 'text' })} onClick={_.bindKey(this, 'handleTypeClick', 'text')}>
-                  </a>
-                </li>
-                <li>
-                  <a className={classNames('button', 'icon-image', { active: this.state.type == 'image' })} onClick={_.bindKey(this, 'handleTypeClick', 'image')}>
-                  </a>
-                </li>
-                <li>
-                  <a className={classNames('button', 'icon-audio', { active: this.state.type == 'audio' })} onClick={_.bindKey(this, 'handleTypeClick', 'audio')}>
-                  </a>
-                </li>
-                <li>
-                  <a className={classNames('button', 'icon-video', { active: this.state.type == 'video' })} onClick={_.bindKey(this, 'handleTypeClick', 'video')}>
-                  </a>
-                </li>
-                <li>
-                  <a className={classNames('button', 'icon-ituneyoutube', { active: this.state.type == 'remote' })} onClick={_.bindKey(this, 'handleTypeClick', 'remote')}>
-                  </a>
-                </li>
-              </ul>
+              <select className={classNames('top-bar-section__message-type-select','left')} name="messageTypeDropDown" onChange={this.handleTypeChange}>
+                <option key={'messageType-default'} value="">Choose</option>
+                {this.getDefaultMessageTypes().map((messageType)=>{
+                  return <option key={this.getOptKey(messageType)} value={messageType.value}>{messageType.title}</option>;
+                })}
+              </select>
             </div>
 
             <div className="im-search top-bar-section right">
