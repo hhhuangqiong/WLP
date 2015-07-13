@@ -1,15 +1,17 @@
 FROM iojs:latest
 
-RUN npm install -g forever
-
-RUN git clone --depth=1 -b bolt http://gerrit.dev.maaii.com/m800-white-label-portal /src/
+# This dockerfile is designed to run from the jenkins build server, i.e. please
+# run 'npm install' and 'gulp' to prepare all dependencies and build the project.
+# The built/compiled/installed dependencies with be copied into the docker image 
+# using the COPY command instead.
+COPY / /src/
 
 WORKDIR /src
 
-# not put 'production' env here on purpose
-RUN npm install
-
 ENV NODE_ENV=production
+
+# Rebuilding necessary node modules in iojs runtime
+RUN npm rebuild node-sass bcrypt
 
 RUN ["npm", "run", "dist"]
 
@@ -17,4 +19,4 @@ EXPOSE 3000 3100
 
 COPY docker/hacks/env.js  /src/node_modules/nconf/lib/nconf/stores/
 
-CMD ["forever", "bin/www.js"]
+CMD ["node", "bin/www.js"]
