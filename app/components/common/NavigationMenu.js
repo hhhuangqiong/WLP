@@ -3,13 +3,13 @@ import React   from 'react';
 import {Link}  from 'react-router';
 import FluxibleMixin from 'fluxible/addons/FluxibleMixin';
 
-import ChangePass from './ChangePass';
-import CompanySwitcher from './CompanySwitcher';
+import ChangePass from '../ChangePass';
+import CompanySwitcher from '../CompanySwitcher';
 
-import showModal from '../actions/showModal';
-import signOut from '../actions/signOut';
+import showModal from '../../actions/showModal';
+import signOut from '../../actions/signOut';
 
-import AuthStore from '../stores/AuthStore';
+import AuthStore from '../../stores/AuthStore';
 
 const companyPages = ['companies', 'company-create', 'company-profile', 'company-widget', 'company-service'];
 const accountPages = ['accounts', 'account-create'];

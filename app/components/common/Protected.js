@@ -1,9 +1,12 @@
 import React                  from 'react';
 import classnames             from 'classnames';
-import {RouteHandler}         from 'react-router';
 import {concurrent}           from 'contra';
 import Sidebar                from '../Sidebar';
-import Navigation             from '../Navigation';
+import CanvasWrapper          from './CanvasWrapper';
+import Navigation             from './NavigationBar';
+import Title                  from './NavigationTitle';
+import Menu                   from './NavigationMenu';
+import Content                from './MainContent';
 import SystemMessage          from './SystemMessage';
 import LoadingSpinner         from './LoadingSpinner';
 import fetchCurrentCompanyInfo from '../../actions/fetchCurrentCompanyInfo';
@@ -35,21 +38,13 @@ var Protected = React.createClass({
     return (
       <div>
         <Sidebar isOffCanvas={this.state.isOffCanvas} handleOffCavnas={this._setOffCanvas} />
-        <div className={classnames('content-frame', {offcanvas: this.state.isOffCanvas})}>
-          <nav className="top-bar app-header" data-topbar role="navigation">
-            <ul className="title-area app-header__title-area">
-              <li className="name app-header__title">
-                <h1>{this.props.pageTitle}</h1>
-              </li>
-            </ul>
-            <Navigation />
-          </nav>
-          <div className="row">
-            <div className="large-24 columns">
-              <RouteHandler/>
-            </div>
-          </div>
-        </div>
+        <CanvasWrapper isOffCanvas={this.state.isOffCanvas}>
+          <Navigation>
+            <Title title={this.props.pageTitle} />
+            <Menu />
+          </Navigation>
+          <Content />
+        </CanvasWrapper>
         <SystemMessage />
         <LoadingSpinner />
       </div>
