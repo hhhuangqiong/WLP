@@ -1,11 +1,12 @@
 'use strict';
 var debug = require('debug')('app:loadSession');
+var sessionDebug = require('debug')('app:sessionFlow');
 
 module.exports = function(context, payload, done) {
   debug('Started');
 
   let token = context.cookie.get('token');
-  console.log('loadSession token:', token);
+  sessionDebug('loadSession token:', token);
   let user = context.cookie.get('user');
   let username = context.cookie.get('username');
   let displayName = context.cookie.get('displayName');

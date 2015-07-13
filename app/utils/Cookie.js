@@ -1,8 +1,8 @@
 'use strict';
 
 import cookie from 'cookie';
-
 import {SERVER} from './env';
+var sessionDebug = require('debug')('app:sessionFlow');
 
 /**
  * Custom cookie object for both client & server sides
@@ -45,11 +45,11 @@ Cookie.prototype.maxAge = function() {
 Cookie.prototype.get = function(name) {
 
   if (SERVER) {
-    console.log('Server Cookie ', name, this._req.session.data[name]);
+    sessionDebug('Server Cookie ', name, this._req.session.data[name]);
     return this._req.session.data[name];
   }
 
-  console.log('Client Cookie ', cookie.parse(document.cookie)[name]);
+  sessionDebug('Client Cookie ', cookie.parse(document.cookie)[name]);
 
   return cookie.parse(document.cookie)[name];
 };
@@ -57,7 +57,7 @@ Cookie.prototype.get = function(name) {
 Cookie.prototype.set = function(name, value) {
 
   if (SERVER) {
-    console.log('Service Cookie set', name, value);
+    sessionDebug('Service Cookie set', name, value);
 
     this._req.session.cookie[name] = value;
 
@@ -66,7 +66,7 @@ Cookie.prototype.set = function(name, value) {
     return;
   }
 
-  console.log('Client Cookie set', name, value);
+  sessionDebug('Client Cookie set', name, value);
   document.cookie = cookie.serialize(name, value, { maxAge: this.maxAge(), path: '/' });
 };
 

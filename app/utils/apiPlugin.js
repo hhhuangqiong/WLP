@@ -4,6 +4,7 @@ var Api = require('../Api');
 var AuthStore = require('../stores/AuthStore');
 var env = require('./env');
 var url = require('./url');
+var sessionDebug = require('debug')('app:sessionFlow');
 
 module.exports = {
   name: 'ApiPlugin',
@@ -18,11 +19,11 @@ module.exports = {
                 //use root path
                 return '';
               } else {
-                console.log('SERVER ', url.baseUrl(process.env.APP_PORT, '127.0.0.1'));
+                sessionDebug('SERVER ', url.baseUrl(process.env.APP_PORT, '127.0.0.1'));
                 return url.baseUrl(process.env.APP_PORT, '127.0.0.1');
               }
             } catch (err) {
-              console.log(err);
+              sessionDebug(err);
             }
           },
 
