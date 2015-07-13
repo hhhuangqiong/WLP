@@ -4,7 +4,6 @@ import {baseUrl} from '../utils/url';
 
 module.exports = {
   DEFAULT_POST_LOGIN_PATH: '/calls',
-  API_HOST: baseUrl(process.env.APP_PORT),
   API_PATH_PREFIX: '/api',
   FILE_UPLOAD_PATH_PREFIX: '/data',
   DISABLE_ISOMORPHISM: Boolean(process.env.DISABLE_ISOMORPHISM) || false,

@@ -9,8 +9,6 @@ module.exports = {
   name: 'ApiPlugin',
 
   plugContext: function(options) {
-    var apiHost = options.config && options.config.API_HOST;
-
     return {
       plugActionContext: function(actionContext) {
         actionContext.api = new Api({
@@ -36,16 +34,6 @@ module.exports = {
             return actionContext.getStore(AuthStore).getUserId();
           }
         });
-      },
-
-      dehydrate: function() {
-        return {
-          apiHost: apiHost
-        };
-      },
-
-      rehydrate: function(state) {
-        apiHost = state.apiHost;
       }
     };
   }

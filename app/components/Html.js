@@ -13,7 +13,7 @@ var appUrl, bundleFile, bundlePath;
 
 if (isDev()) {
   //use empty root path for client side, rely on relative path resolving
-  appUrl = baseUrl(webpackConfig.custom.hotLoadPort, "");
+  appUrl = baseUrl(webpackConfig.custom.hotLoadPort);
   bundleFile =  'bundle.js';
   bundlePath = `${appUrl}/${bundleFile}`;
 }
