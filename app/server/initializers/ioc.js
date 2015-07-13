@@ -1,6 +1,8 @@
 import Bottle from 'bottlejs';
 import path from 'path';
+import _ from 'lodash';
 
+import makeRedisClient from './redis';
 import ensureAuthenticated from '../middlewares/ensureAuthenticated';
 import {SignUp} from '../../lib/portal/SignUp';
 
@@ -63,6 +65,10 @@ export default function init(nconf) {
   ioc.constant('BOSS_API_TIMEOUT', nconf.get('bossApi:timeout'));
   ioc.service('TopUpRequest', require('../../lib/requests/boss/TopUp'), 'BOSS_API_BASE_URL', 'BOSS_API_TIMEOUT');
   ioc.service('WalletRequest', require('../../lib/requests/boss/Wallet'), 'BOSS_API_BASE_URL', 'BOSS_API_TIMEOUT');
+
+  ioc.service('RedisClient', (container) => {
+    return makeRedisClient(nconf.get('redis'));
+  });
 
   return ioc;
 }

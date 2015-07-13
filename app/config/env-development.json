@@ -16,7 +16,7 @@
     "host": "localhost",
     "port": 6379,
     "ttl": 1800,
-    "db": 10
+    "db": 11
   },
   "queue": {
     "enable": true,

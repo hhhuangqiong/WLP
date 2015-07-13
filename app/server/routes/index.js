@@ -1,7 +1,6 @@
 import nconf from 'nconf';
 import { Router } from 'express';
-import { fetchDep } from '../utils/bottle';
-import db from '../db';
+import sessionClient from '../initializers/sessionClient';
 var sessionDebug = require('debug')('app:sessionFlow');
 
 function validateTokenMiddleware(req, res, next) {
@@ -14,22 +13,32 @@ function validateTokenMiddleware(req, res, next) {
     token = req.sessionID;
   }
 
-  if (!(token && db.checkSession(token))) {
-    return res.status(401).json({
-      error: {
-        name: 'InvalidToken',
-        message: 'Must provide valid auth token in Authorization header'
+  sessionClient.getSession(token)
+    .then((dbToken) => {
+      if (dbToken != token) {
+        return res.status(401).json({
+          error: {
+            name: 'InvalidToken',
+            message: 'Must provide valid auth token in Authorization header'
+          }
+        });
+      } else {
+        next()
       }
-    });
-  }
-
-  next();
+    })
+    .catch((err) => {
+      logger.error(err);
+      return res.status(500).json({
+        error: err
+      })
+    })
+    .done();
 }
 
 // NB: cannot use `req.isAuthenticated` (passport)
 // because the app doesn't redirect the user after log in
 // so there's no 'user' in `req` object
-function ensureAuthenticated(req, res, next) {
+function ensureAuthenticated(req, res) {
   return res.sendStatus(200);
 }
 

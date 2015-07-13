@@ -2,7 +2,7 @@ import {Router} from 'express';
 import logger from 'winston';
 import passport from 'passport';
 
-import db from '../db';
+import sessionClient from '../initializers/sessionClient';
 import {SIGN_IN, SIGN_OUT} from '../paths.js';
 
 function getAuthUser(user) {
@@ -53,7 +53,7 @@ router.post(SIGN_IN, function(req, res, next) {
 
       logger.info('session saved', req.session);
 
-      db.createSession(token);
+      sessionClient.createSession(token);
       return res.json({ token: '__session__', user: authUser });
     });
   })(req, res, next);
@@ -64,7 +64,7 @@ router.post(SIGN_OUT, function(req, res) {
 
   if (token) {
     req.logout();
-    db.revokeSession(token);
+    sessionClient.revokeSession(token);
     return res.sendStatus(200);
   } else {
     return res.status(500).json({
