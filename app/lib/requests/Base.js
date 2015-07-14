@@ -45,17 +45,23 @@ class BaseRequest {
    * @returns {*}
    */
   swapDate(params, cb) {
-    if ( moment(params.from, 'L').isValid() &&
-         moment(params.from, 'L').isAfter(moment(params.to, 'L')) ) {
-      let tmp = params.to;
-      params.to = params.from;
-      params.from = tmp;
-    }
+    let { from, to } = params;
 
-    if ( moment(params.from, 'x').isValid() &&
-         moment(params.from, 'x').isAfter(moment(params.to, 'x')) ) {
-      let tmp = params.to;
-      params.to = params.from;
+    let isValid = (target) => {
+      return moment(from, target).isValid();
+    };
+
+    let fromIsAfterTo = (target) => {
+      return moment(from, target).isAfter(moment(to, target));
+    };
+
+    let needToBeSwapped = (target) => {
+      return isValid(target) && fromIsAfterTo(target);
+    };
+
+    if (needToBeSwapped('x') || needToBeSwapped('L')) {
+      let tmp = to;
+      params.to = from;
       params.from = tmp;
     }
 

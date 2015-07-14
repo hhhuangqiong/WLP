@@ -45,6 +45,7 @@ export default class SMSRequest {
     if (opts.source_address_inbound) {
       scope.query({ source_address_inbound: '*' + opts.source_address_inbound + '*' });
     }
+
     // jscs:enable
 
     if (opts.page) {

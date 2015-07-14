@@ -1,37 +1,53 @@
-import moment from 'moment';
-import React, {PropTypes} from 'react';
-import DatePicker from './DatePicker';
+import React from 'react';
+import Moment from 'moment';
+
+import DatePicker from 'react-datepicker';
 
 let DateRangePicker = React.createClass({
   propTypes: {
-    withIcon: PropTypes.bool,
-    startDate: PropTypes.string,
-    endDate: PropTypes.string,
-    dateFormat: PropTypes.string,
-    handleStartDateChange: PropTypes.func.isRequired,
-    handleEndDateChange: PropTypes.func.isRequired
+    displayFormat: React.PropTypes.string,
+    startDate: React.PropTypes.string,
+    endDate: React.PropTypes.string,
+    handleStartDateChange: React.PropTypes.func,
+    handleEndDateChange: React.PropTypes.func
   },
 
-  getDefaultProps: function() {
-    return {
-      withIcon: false,
-      startDate: null,
-      endDate: null,
-      dateFormat: 'L',
-      handleStartDateChange: null,
-      handleEndDateChange: null
-    }
+  handleStartDateClick() {
+    this.refs.startDatePicker.handleFocus();
   },
 
-  render: function() {
+  handleEndDateClick() {
+    this.refs.endDatePicker.handleFocus();
+  },
+
+  render() {
     return (
-      <div className="date-picker date-range-picker left">
-        <If condition={this.props.withIcon === true}>
-          <i className="date-range-picker__icon icon-calendar left" />
-        </If>
-        <DatePicker type="range" selectedDate={this.props.startDate} maxDate={this.props.endDate} dateFormat={this.props.dateFormat} onChange={this.props.handleStartDateChange} />
+      <div className="date-range-picker left">
+        <i className="date-range-picker__icon icon-calendar left" />
+        <div className="date-input-wrap left" onClick={this.handleStartDateClick}>
+          <span className="left date-range-picker__date-span">{this.props.startDate}</span>
+          <DatePicker
+            ref="startDatePicker"
+            key="start-date"
+            dateFormat={this.props.displayFormat}
+            selected={Moment(this.props.startDate, 'L')}
+            maxDate={Moment(this.props.endDate, 'L')}
+            onChange={this.props.handleStartDateChange}
+          />
+        </div>
         <i className="date-range-picker__separator left">-</i>
-        <DatePicker type="range" selectedDate={this.props.endDate} minDate={this.props.startDate} dateFormat={this.props.dateFormat} onChange={this.props.handleEndDateChange} />
+        <div className="date-input-wrap left" onClick={this.handleEndDateClick}>
+          <span className="left date-range-picker__date-span">{this.props.endDate}</span>
+          <DatePicker
+            ref="endDatePicker"
+            key="end-date"
+            dateFormat={this.props.displayFormat}
+            selected={Moment(this.props.endDate, 'L')}
+            minDate={Moment(this.props.startDate, 'L')}
+            maxDate={Moment()}
+            onChange={this.props.handleEndDateChange}
+          />
+        </div>
       </div>
     );
   }

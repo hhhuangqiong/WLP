@@ -11,6 +11,7 @@ import TopUpStore from './modules/top-up/stores/TopUpStore';
 import ImStore from './stores/ImStore';
 import SystemMessageStore from './stores/SystemMessageStore';
 import LoadingSpinnerStore from './stores/LoadingSpinnerStore';
+import VSFTransactionStore from './modules/virtual-store-front/stores/VSFTransactionStore';
 
 // seems not passing anything is okay
 var app = new Fluxible();
@@ -31,7 +32,7 @@ app.registerStore(CallsStore);
 app.registerStore(SMSStore);
 app.registerStore(SystemMessageStore);
 app.registerStore(LoadingSpinnerStore);
-app.registerStore(TopUpStore);
 app.registerStore(ImStore);
+app.registerStore(VSFTransactionStore);
 
 export default app;

@@ -23,6 +23,11 @@ let navSections = [
     'routeName': 'sms-overview'
   },
   {
+    name: 'VSF',
+    icon: 'icon-credit',
+    routeName: 'vsf-transaction-details'
+  },
+  {
     name: 'Top Up',
     icon: 'icon-menutopup',
     routeName: 'top-up-details'

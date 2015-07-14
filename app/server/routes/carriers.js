@@ -11,6 +11,7 @@ var walletRequest  = fetchDep(nconf.get('containerName'), 'WalletRequest');
 var callsRequest   = fetchDep(nconf.get('containerName'), 'CallsRequest');
 var topUpRequest   = fetchDep(nconf.get('containerName'), 'TopUpRequest');
 var imRequest   = fetchDep(nconf.get('containerName'), 'ImRequest');
+var vsfRequest   = fetchDep(nconf.get('containerName'), 'VSFTransactionRequest');
 
 import SmsRequest from '../../lib/requests/SMS';
 
@@ -186,7 +187,7 @@ api.get('/carriers/:carrierId/topup', function(req, res) {
   });
 });
 
-api.get('/carriers/:carrierId/widgets/:type(calls|im|overview|store|sms)', function(req, res) {
+api.get('/carriers/:carrierId/widgets/:type(calls|im|overview|store|sms|vsf)', function(req, res) {
   req.checkParams('carrierId').notEmpty();
   req.checkParams('type').notEmpty();
   req.checkQuery('userId').notEmpty();
@@ -292,7 +293,29 @@ api.get('/carriers/:carrierId/im', function(req, res) {
 
     return res.json(result);
   });
+});
 
+api.get('/carriers/:carrierId/vsf', function(req, res) {
+  req.checkParams('carrierId').notEmpty();
+  req.checkQuery('fromTime').notEmpty();
+  req.checkQuery('toTime').notEmpty();
+  req.checkQuery('pageSize').notEmpty();
+
+  var err = req.validationErrors();
+  if (err) return res.status(400).json(err);
+
+  let params = {
+    fromTime: req.query.fromTime,
+    toTime: req.query.toTime,
+    pageIndex: req.query.pageIndex,
+    pageSize: req.query.pageSize,
+    category: req.query.category,
+    userNumber: req.query.userNumber
+  };
+
+  vsfRequest.getTransactions(req.params.carrierId, params, (dumb, records) => {
+    return res.json(records);
+  });
 });
 
 module.exports = api;

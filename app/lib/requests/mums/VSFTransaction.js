@@ -6,16 +6,16 @@ var util    = require('util');
 
 import BaseRequest from '../Base';
 
+const LONG_DATE_FORMAT = 'YYYY-MM-DDTHH:MM:ss[Z]';
+
 export default class VSFTransactionRequest extends BaseRequest {
-
   constructor(baseUrl, timeout) {
-
     let opts = {
       baseUrl: baseUrl,
       timeout: timeout,
       methods: {
         LIST: {
-          URL: '/transactions/carriers/%s',
+          URL: '/1.0/transactions/carriers/%s',
           METHOD: 'GET'
         }
       }
@@ -25,15 +25,13 @@ export default class VSFTransactionRequest extends BaseRequest {
   }
 
   formatQueryData(params, cb) {
-
-    params.fromTime = moment(params.fromTime, 'L').startOf('day').format();
-    params.toTime   = moment(params.toTime, 'L').endOf('day').format();
+    params.fromTime = moment(params.fromTime, 'L').startOf('day').format(LONG_DATE_FORMAT);
+    params.toTime   = moment(params.toTime, 'L').endOf('day').format(LONG_DATE_FORMAT);
 
     return cb(null, params);
   }
 
   sendRequest(carrierId, params, cb) {
-
     var base = this.opts.baseUrl;
     var url = util.format(this.opts.methods.LIST.URL, carrierId);
 
@@ -50,11 +48,10 @@ export default class VSFTransactionRequest extends BaseRequest {
   }
 
   getTransactions(carrierId, params, cb) {
-    logger.debug('get VSFTransaction from carrier %s', carrierId);
 
     Q.ninvoke(this, 'formatQueryData', params)
       .then((params) => {
-        this.sendRequest(carrierId, params, cb);
+        this.sendRequest('maaiitest.com', params, cb);
       }).catch((err) => {
         return this.handleError(err, 500);
       })

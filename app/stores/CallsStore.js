@@ -11,6 +11,7 @@ var CallsStore = createStore({
     FETCH_CALLS_PAGE_SUCCESS: 'handleCallsFetch',
     FETCH_CALLS_WIDGETS_SUCCESS: 'handleCallsWidgetsChange',
     FETCH_MORE_CALLS_SUCCESS: 'handleLoadMoreCalls',
+
     //@TODO might be better to create a seprate store for CDR export function
     FETCH_EXPORT_SUCCESS: 'handleFetchExport',
     FETCH_EXPORT_PROGRESS_FAILURE: 'handleProgressFailure',

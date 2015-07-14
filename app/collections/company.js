@@ -102,7 +102,8 @@ var schema = new mongoose.Schema({
     stores: [],
     calls: [],
     im: [],
-    sms: []
+    sms: [],
+    vsf: []
   },
   serviceConfig: {
     developerKey: {
