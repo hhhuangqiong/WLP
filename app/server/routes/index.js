@@ -2,10 +2,11 @@ import nconf from 'nconf';
 import { Router } from 'express';
 import { fetchDep } from '../utils/bottle';
 import db from '../db';
+var sessionDebug = require('debug')('app:sessionFlow');
 
 function validateTokenMiddleware(req, res, next) {
 
-  console.log('Auth Header ', req.header('Authorization'));
+  sessionDebug('Auth Header ', req.header('Authorization'));
   var token = req.header('Authorization')
 
   if (token == '__session__') {
