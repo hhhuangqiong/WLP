@@ -33,13 +33,27 @@ class BaseRequest {
    * @method swapDate Swap date string if mistaken
    *
    * @param params {Object}
-   * @param params.from {String} date string in format of MM/DD/YYYY (momnet().format('L'))
-   * @param params.to {String} date string in format of MM/DD/YYYY (momnet().format('L'))
+   *
+   * @param params.from {String} date/datetime string in format of
+   * MM/DD/YYYY (momnet().format('L'))/unix timestamp in millisecond (momnet().format('x')) respectively
+   *
+   * @param params.to {String} date/datetime string in format of
+   * MM/DD/YYYY (momnet().format('L'))/unix timestamp in millisecond (momnet().format('x')) respectively
+   *
    * @param cb {Function} Q callback
+   *
    * @returns {*}
    */
   swapDate(params, cb) {
-    if (moment(params.from, 'L').isAfter(moment(params.to, 'L'))) {
+    if ( moment(params.from, 'L').isValid() &&
+         moment(params.from, 'L').isAfter(moment(params.to, 'L')) ) {
+      let tmp = params.to;
+      params.to = params.from;
+      params.from = tmp;
+    }
+
+    if ( moment(params.from, 'x').isValid() &&
+         moment(params.from, 'x').isAfter(moment(params.to, 'x')) ) {
       let tmp = params.to;
       params.to = params.from;
       params.from = tmp;

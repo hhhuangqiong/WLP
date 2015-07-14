@@ -2,7 +2,7 @@ var superagent = require('superagent');
 var debug = require('debug')('app:Api');
 
 import assign from 'object-assign';
-import {API_HOST, API_PATH_PREFIX} from './config';
+import {API_PATH_PREFIX, EXPORT_PATH_PREFIX} from './config';
 
 function Api(options = {}) {
   var noop = Function.prototype;
@@ -293,7 +293,8 @@ Api.prototype.getCurrentCompanyInfo = function(params, cb) {
 assign(
   Api.prototype,
   require('./server/api/auth')(API_PATH_PREFIX),
-  require('./server/api/session')(API_PATH_PREFIX)
+  require('./server/api/session')(API_PATH_PREFIX),
+  require('./server/api/export')(EXPORT_PATH_PREFIX)
 );
 
 module.exports = Api;

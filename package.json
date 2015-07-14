@@ -33,6 +33,7 @@
     "express": "^4.9.0",
     "express-session": "^1.9.3",
     "express-validator": "^2.7.0",
+    "fast-csv": "^0.6.0",
     "fluxible": "^0.4.6",
     "gridfs-stream": "^1.1.0",
     "gulp-bless": "^3.0.1",

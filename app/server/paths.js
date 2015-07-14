@@ -16,4 +16,3 @@ export function userPath(role, identity, targetPath) {
   let result = path.normalize([role, identity, targetPath].filter(p => { return !!p }).join('/'));
   return path.normalize(`/${result}`);
 }
-

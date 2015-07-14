@@ -73,6 +73,9 @@ export default class CallsRequest extends BaseRequest {
       if (params.callee)
         query.callee = params.callee;
 
+      if (params.caller_country)
+        query.caller_country = params.caller_country;
+
       if (params.type)
         query.type = params.type;
 

@@ -16,7 +16,15 @@ import CallsTable from './CallsTable';
 import CallsStore from '../stores/CallsStore';
 import Searchbox from './Searchbox';
 
-var config = require('../config');
+import fetchExport from '../actions/fetchExport';
+import fetchExportProgress from '../actions/fetchExportProgress';
+import fetchExportFile from '../actions/fetchExportFile';
+import CDRExportModal from './CDRExportModal';
+import CDRProgressBar from './CDRProgressBar';
+
+import config from '../config';
+
+const debug = require('debug')('app:components/Calls');
 
 var Calls = React.createClass({
   contextTypes: {
@@ -46,12 +54,18 @@ var Calls = React.createClass({
     }
   },
 
-  getStateFromStores: function() {
+getStateFromStores: function() {
+    let store = this.getStore(CallsStore);
+
     return {
-      calls: this.getStore(CallsStore).getCalls(),
-      callsCount: this.getStore(CallsStore).getCallsCount(),
-      page: this.getStore(CallsStore).getPageNumber(),
-      totalPages: this.getStore(CallsStore).getTotalPages()
+      calls: store.getCalls(),
+      callsCount: store.getCallsCount(),
+      page: store.getPageNumber(),
+      totalPages: store.getTotalPages(),
+      openExportModal: store.getExportModalState(),
+      isExporting: store.getExportState(),
+      exportProgress: store.getExportProgress(),
+      exportId: store.getExportId()
     };
   },
 
@@ -70,7 +84,8 @@ var Calls = React.createClass({
 
   getInitialState: function () {
     let query = _.merge(this.getDefaultQuery(), this.context.router.getCurrentQuery());
-    return _.merge(this.getStateFromStores(), query);
+    let queryAndStore = _.merge(this.getStateFromStores(), query);
+    return queryAndStore;
   },
 
   onChange: function() {
@@ -173,6 +188,37 @@ var Calls = React.createClass({
     }
   },
 
+  handleExport(data) {
+    debug('handleExport', data)
+
+    let { identity } = this.context.router.getCurrentParams();
+
+    data.startDate = moment(data.startDate).format('x')
+    data.endDate = moment(data.endDate).format('x')
+    data.carrierId = identity;
+    data.type = data.netType;
+    data.destination = (data.destination || '').toLowerCase();
+
+    // For Progress Bar
+    this.setState({ carrierId: data.carrierId });
+
+    this.executeAction(fetchExport, data, ()=>{});
+  },
+
+  handleExportDownload() {
+    const downloadPath = `/export/${this.state.carrierId}/calls/file?exportId=${this.state.exportId}`;
+    window.open(downloadPath, '_blank');
+    this.setState({ exportProgress: 0, isExporting: false });
+  },
+
+  handleCancelExport() {
+    this.setState({ isExporting: false, openExportModal: false });
+  },
+
+  openExportModal() {
+    this.setState({openExportModal: true});
+  },
+
   _handleStartDateClick: function() {
     this.refs.startDatePicker.handleFocus();
   },
@@ -181,10 +227,46 @@ var Calls = React.createClass({
     this.refs.endDatePicker.handleFocus();
   },
 
+  componentDidMount : function () {
+    $(document).foundation('reveal', 'reflow');
+  },
+
   render: function() {
     let params = this.context.router.getCurrentParams();
 
     let searchTypes = [{name:'Caller', value: 'caller'},{name:'Callee', value: 'callee'}];
+
+    let isExporting = this.state.isExporting;
+    let completeExport = parseInt(this.state.exportProgress) === 100;
+
+    let exportElement = (
+      <span className="export-download-button button export-ie-fix">
+        <a onClick={this.openExportModal}><i className="icon-download" /></a>
+      </span>
+    )
+
+    if (isExporting) {
+      exportElement = (
+        <CDRProgressBar
+          className={classNames('export-progress-bar', 'export-ie-fix')}
+          isExporting={this.state.isExporting}
+          exportProgress={this.state.exportProgress}
+          handleCancelExport={this.handleCancelExport}
+          exportId={this.state.exportId}
+          carrierId={this.state.carrierId}
+        />
+      )
+    }
+
+    if (completeExport){
+      exportElement = (
+        <span className="export-download-button button export-ie-fix">
+          <a target="_blank" href={this.state.exportFile} onClick={this.handleExportDownload}>
+            Download&nbsp;&nbsp;<i className="icon-download" />
+          </a>
+        </span>
+      )
+    }
 
     /* Temporarily disabled overview section for Calls
     TODO: put it back into tab-bar
@@ -238,13 +320,23 @@ var Calls = React.createClass({
             <div className="call-type-filter large-3 columns left top-bar-section">
               <ul className="button-group round">
                 <li>
-                  <a className={classNames('button', { active: this.state.type == 'ONNET' })} onClick={this.handleOnnetClick}>Onnet</a>
+                  <a className={classNames('button', { active: this.state.type === 'ONNET' })} onClick={this.handleOnnetClick}>Onnet</a>
                 </li>
                 <li>
-                  <a className={classNames('button', { active: this.state.type == 'OFFNET' })} onClick={this.handleOffnetClick}>Offnet</a>
+                  <a className={classNames('button', { active: this.state.type === 'OFFNET' })} onClick={this.handleOffnetClick}>Offnet</a>
                 </li>
               </ul>
             </div>
+
+            <CDRExportModal
+              startDate={this.state.startDate}
+              endDate={this.state.endDate}
+              netType={this.state.type}
+              isOpen={this.state.openExportModal}
+              handleExport={this.handleExport}
+            />
+
+            <div className="right">{exportElement}</div>
 
             <div className="call-search top-bar-section right">
               <Searchbox
@@ -255,6 +347,7 @@ var Calls = React.createClass({
                 onSelectChangeHandler={this.handleSearchTypeChange}
                 onKeyPressHandler={this.handleSearchSubmit} />
             </div>
+
           </div>
         </nav>
 

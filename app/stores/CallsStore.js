@@ -1,6 +1,8 @@
 import _ from 'lodash';
 import {createStore} from 'fluxible/addons';
 
+const debug = require('debug')('app:components/CallsStore');
+
 var CallsStore = createStore({
   storeName: 'CallsStore',
 
@@ -8,7 +10,11 @@ var CallsStore = createStore({
     FETCH_CALLS_SUCCESS: 'handleCallsFetch',
     FETCH_CALLS_PAGE_SUCCESS: 'handleCallsFetch',
     FETCH_CALLS_WIDGETS_SUCCESS: 'handleCallsWidgetsChange',
-    FETCH_MORE_CALLS_SUCCESS: 'handleLoadMoreCalls'
+    FETCH_MORE_CALLS_SUCCESS: 'handleLoadMoreCalls',
+    //@TODO might be better to create a seprate store for CDR export function
+    FETCH_EXPORT_SUCCESS: 'handleFetchExport',
+    FETCH_EXPORT_PROGRESS_FAILURE: 'handleProgressFailure',
+    FETCH_EXPORT_PROGRESS_SUCCESS: 'handleProgressSuccess'
   },
 
   initialize: function() {
@@ -20,6 +26,37 @@ var CallsStore = createStore({
     this.callsCount = 0;
     this.totalPages = 0;
     this.params = {};
+
+    // TODO refactor using export object: this.cdrExport ={}
+    this.exportId = 0;
+    this.openExportModal = false;
+    this.isExporting = false;
+    this.exportProgress = 0;
+  },
+
+  handleFetchExport: function(payload) {
+    debug('exportId', payload.id);
+
+    this.exportId = payload.id;
+
+    this.isExporting = true;
+    this.openExportModal = false;
+
+    this.emitChange();
+  },
+
+  handleProgressSuccess: function(payload) {
+    debug('handleProgressSuccess', payload)
+
+    this.exportProgress = payload && payload.progress ? parseInt(payload.progress) : -1;
+    this.emitChange();
+  },
+
+  handleProgressFailure: function(payload) {
+    debug('handleProgressFailure', payload)
+
+    this.exportProgress = -1;
+    this.emitChange();
   },
 
   handleLoadMoreCalls: function(payload) {
@@ -32,6 +69,7 @@ var CallsStore = createStore({
     this.size = payload.pageSize;
     this.callsCount = payload.totalElements;
     this.totalPages = payload.totalPages;
+
     this.emitChange();
   },
 
@@ -42,6 +80,7 @@ var CallsStore = createStore({
     this.size = payload.pageSize;
     this.callsCount = payload.totalElements;
     this.totalPages = payload.totalPages;
+
     this.emitChange();
   },
 
@@ -75,6 +114,22 @@ var CallsStore = createStore({
     return this.page;
   },
 
+  getExportModalState: function() {
+    return this.openExportModal;
+  },
+
+  getExportState: function() {
+    return this.isExporting;
+  },
+
+  getExportId: function() {
+    return this.exportId;
+  },
+
+  getExportProgress: function() {
+    return this.exportProgress;
+  },
+
   getState: function() {
     return {
       calls: this.calls,
@@ -84,7 +139,11 @@ var CallsStore = createStore({
       callsCount: this.callsCount,
       totalPages: this.totalPages,
       params: this.params,
-      widgets: this.widgets
+      widgets: this.widgets,
+      exportId: this.exportId,
+      openExportModal: this.openExportModal,
+      isExporting: this.isExporting,
+      exportProgress: this.exportProgress
     };
   },
 
@@ -101,6 +160,10 @@ var CallsStore = createStore({
     this.totalPages = state.totalPages;
     this.params = state.params;
     this.widgets = state.widgets;
+    this.exportId = state.exportId;
+    this.openExportModal = state.openExportModal;
+    this.isExporting = state.isExporting;
+    this.exportProgress = state.exportProgress;
   }
 });
 

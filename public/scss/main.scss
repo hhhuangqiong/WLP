@@ -38,8 +38,10 @@
 @import 'components/field-set';
 @import 'components/flags';
 @import 'components/widget';
-@import 'components/modal';
 @import 'components/data-table';
+@import 'components/cdr-export';
+@import 'components/time-picker';
+@import 'components/react-modal';
 
 //page specific style
 @import 'pages/account';
