@@ -2,7 +2,19 @@ var React = require('react');
 var Router = require('react-router');
 
 var FluxibleComponent = require('fluxible/addons/FluxibleComponent');
+
+var env = require('../utils/env');
 var debug = require('debug');
+// make it disabled in default
+debug.disable();
+// enable it only for development
+if (env.isDev()) {
+  // need to be exposed to window so we can
+  // config on browser console
+  window.debug = debug;
+  debug.enable('*');
+}
+
 var bootstrapDebug = debug('app:client');
 
 // TODO rename the file as 'app'
@@ -12,7 +24,7 @@ var fetchData = require('../utils/fetchData');
 var loadSession = require('../actions/loadSession');
 
 window.React = React; // For chrome dev tool support
-debug.enable('*');
+
 var mountNode = document.getElementById('app');
 var dehydratedState = window.__DATA__;
 
