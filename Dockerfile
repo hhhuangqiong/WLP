@@ -4,7 +4,7 @@ FROM iojs:latest
 # run 'npm install' and 'gulp' to prepare all dependencies and build the project.
 # The built/compiled/installed dependencies with be copied into the docker image 
 # using the COPY command instead.
-COPY / /src/
+COPY . /src/
 
 WORKDIR /src
 
