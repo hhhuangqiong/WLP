@@ -62,6 +62,11 @@ router.post(SIGN_IN, function(req, res, next) {
 router.post(SIGN_OUT, function(req, res) {
   let token = req.header('Authorization');
 
+  if (token == '__session__') {
+    //from client
+    token = req.sessionID;
+  }
+
   if (token) {
     req.logout();
     sessionClient.revokeSession(token);
