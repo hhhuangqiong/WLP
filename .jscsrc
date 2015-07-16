@@ -4,6 +4,8 @@
  "excludeFiles": [
    "app/routes.js",
    "app/components/**",
+   "app/main/components",
+   "app/modules/**/components",
    "node_modules/**",
    "public/javascript/**",
    "public/vendor/**"
