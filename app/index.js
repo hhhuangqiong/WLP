@@ -7,6 +7,7 @@ import EndUserStore from './stores/EndUserStore';
 import SignInStore from './stores/SignInStore';
 import CallsStore from './stores/CallsStore';
 import SMSStore from './modules/sms/stores/SMSStore';
+import TopUpStore from './modules/top-up/stores/TopUpStore';
 import ImStore from './stores/ImStore';
 import SystemMessageStore from './stores/SystemMessageStore';
 import LoadingSpinnerStore from './stores/LoadingSpinnerStore';

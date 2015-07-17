@@ -29,6 +29,8 @@ export default (
 
       <Route name="sms-overview" path="/:role/:identity?/sms" handler={require('./modules/sms/components/Overview')} />
       <Route name="sms-details" path="/:role/:identity?/sms/details" handler={require('./modules/sms/components/SMS')} />
+
+      <Route name="top-up-details" path="/:role/:identity?/top-up/details" handler={require('./modules/top-up/components/TopUp')} />
     </Route>
 
     // shared by both "public" &amp; "protected"
