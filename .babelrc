@@ -1,0 +1,6 @@
+{
+  "stage": 0,
+  "plugins": [
+    "jsx-control-statements/babel"
+  ]
+}
