@@ -26,6 +26,9 @@ export default (
       <Route name="calls-details" path="/:role/:identity?/calls/details" handler={require('./components/Calls')} />
       <Route name="im-overview" path="/:role/:identity?/im" handler={require('./components/ImOverview')} />
       <Route name="im" path="/:role/:identity?/im/details" handler={require('./components/Im')} />
+
+      <Route name="sms-overview" path="/:role/:identity?/sms" handler={require('./modules/sms/components/Overview')} />
+      <Route name="sms-details" path="/:role/:identity?/sms/details" handler={require('./modules/sms/components/SMS')} />
     </Route>
 
     // shared by both "public" &amp; "protected"

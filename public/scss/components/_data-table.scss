@@ -1,0 +1,19 @@
+.data-table {
+
+  .remark {
+    > i {
+      font-size: rem-calc(18);
+      color: $alert-color;
+    }
+  }
+
+  .status-label {
+      width: rem-calc(70);
+      text-transform: capitalize;
+      letter-spacing: 0.04em;
+  }
+
+  .pagination__button--inactive {
+    cursor: initial;
+  }
+}

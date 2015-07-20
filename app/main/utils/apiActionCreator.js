@@ -31,7 +31,7 @@ export default function apiActionCreator(key, apiMethod, opts = { debugPrefix: '
     return o;
   }, {});
 
-  var debug = reqire('debug')(`${opts.debugPrefix}:${key}`);
+  var debug = require('debug')(`${opts.debugPrefix}:${key}`);
 
   return function(context, params, done) {
     debug('Started');

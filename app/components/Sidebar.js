@@ -16,6 +16,11 @@ let navSections = [
     name: 'IM',
     icon: 'icon-menuim',
     routeName: 'im-overview'
+  },
+  {
+    name: 'SMS',
+    icon: 'icon-menu-sms',
+    'routeName': 'sms-overview'
   }
 ];
 
