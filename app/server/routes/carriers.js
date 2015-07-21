@@ -170,7 +170,10 @@ api.get('/carriers/:carrierId/topup', function(req, res) {
     endDate: req.query.endDate,
     number: req.query.number,
     page: req.query.page,
-    pageRec: req.query.pageRec
+    pageRec: req.query.pageRec,
+
+    // always use like search
+    isLikeSearch: true
   };
 
   topUpRequest.getTopUp(params, (err, result) => {

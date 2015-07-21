@@ -31,7 +31,6 @@ export default class TopUpRequest extends BaseRequest {
 
     Q.fcall(swapDate)
       .then(formatDateString)
-      .then(stringifyArray)
       .fail(function(err) {
         return cb(err);
       })
@@ -54,17 +53,6 @@ export default class TopUpRequest extends BaseRequest {
 
       return params;
     }
-
-    // originally for AngularJS multiple selections
-    function stringifyArray() {
-      for (var key in params) {
-        if (params[key] instanceof Array) {
-          params[key] = params[key].join(',');
-        }
-      }
-
-      return params;
-    }
   }
 
   sendRequest(params, cb) {
@@ -82,6 +70,11 @@ export default class TopUpRequest extends BaseRequest {
         // Do we need to distinguish different Errors? Timeout and ENOTFOUND
         if (err) return cb(this.handleError(err, err.status || 400));
         if (res.error) return cb(this.handleError(res.body.error.description, res.error.code));
+
+        // bossApi does not return page number,
+        // in order to keep page state in Top Up Store
+        _.assign(res.body.result, { page: params.page });
+
         return cb(null, res.body.result);
       });
   }

@@ -102,7 +102,8 @@ describe 'TransactionRequest', ->
         .to.be.an 'object'
         .that.has.all.keys [
           'totalRec',
-          'history'
+          'history',
+          'page'
         ];
 
         expect body['history'][0]
