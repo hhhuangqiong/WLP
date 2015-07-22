@@ -45,6 +45,7 @@ var Html = React.createClass({
       <script dangerouslySetInnerHTML={{__html: this.props.state}}></script>
       <script src="/vendor/jquery/dist/jquery.min.js"></script>
       <script src="/vendor/foundation/js/foundation.min.js"></script>
+      <script src="/vendor/foundation/js/foundation/foundation.dropdown.js"></script>
       <script src={bundlePath} defer></script>
       </html>
     );
