@@ -5,8 +5,8 @@ var TopUpStore = createStore({
   storeName: 'TopUpStore',
 
   handlers: {
-    FETCH_TOP_UP_SUCCESS: 'handleReloadTransactions',
-    LOAD_MORE_TOP_UP_SUCCESS: 'handleLoadMoreTransactions'
+    FETCH_TOP_UP_SUCCESS: 'handleLoadTopUp',
+    CLEAR_TOP_UP: 'handleClearTopUp'
   },
 
   initialize: function() {
@@ -15,21 +15,11 @@ var TopUpStore = createStore({
     this.totalRec = 0;
   },
 
-  handleReloadTransactions: function(payload) {
-    if (payload) {
-      this.histories = payload.totalRec > 0 ? payload.history : [];
-      this.totalRec = payload.totalRec;
-      this.page = payload.page;
-    } else {
-      this.histories = [];
-      this.totalRec = 0;
-      this.page = 1;
-    }
-
-    this.emitChange();
+  handleClearTopUp: function() {
+    this.initialize();
   },
 
-  handleLoadMoreTransactions: function(payload) {
+  handleLoadTopUp: function(payload) {
     if (payload) {
       this.histories = this.histories.concat(payload.history);
       this.totalRec = payload.totalRec;

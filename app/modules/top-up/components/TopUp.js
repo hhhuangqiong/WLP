@@ -8,6 +8,7 @@ import AuthMixin from '../../../utils/AuthMixin';
 import FluxibleMixin from 'fluxible/addons/FluxibleMixin';
 
 import loadTransactions from '../actions/loadTransactions';
+import clearTopUp from '../actions/clearTopUp';
 
 import TopUpTable from './TopUpTable';
 import TopUpStore from '../stores/TopUpStore';
@@ -17,17 +18,18 @@ import DateRangePicker from './../../../main/components/DateRangePicker';
 import DatePicker from './../../../main/components/DatePicker';
 import SearchBox from './../../../main/components/Searchbox';
 
-let { displayDateFormat: DATE_FORMAT } = require('./../../../main/config');
+let { inputDateFormat: DATE_FORMAT } = require('./../../../main/config');
 let { pages: { topUp: { pageRec: PAGE_REC } } } = require('./../../../main/config');
 
 // See: https://issuetracking.maaii.com:9443/display/HKBoss/Maaii+Payment#MaaiiPayment-GetTransactionHistory
 // page = 0 shows only total records
 // page = 1 1st page
 const INITIAL_PAGE_NUMBER = 1;
+const MONTHS_BEFORE_TODAY = 1;
 
 const defaultQuery = {
   carrierId: null,
-  startDate: moment().startOf('day').subtract(30, 'day').format(DATE_FORMAT),
+  startDate: moment().startOf('day').subtract(MONTHS_BEFORE_TODAY, 'month').format(DATE_FORMAT),
   endDate: moment().endOf('day').format(DATE_FORMAT),
   number: null,
   page: INITIAL_PAGE_NUMBER,
@@ -57,6 +59,7 @@ var TopUp = React.createClass({
 
     fetchData: function(context, params, query, done) {
       concurrent([
+        context.executeAction.bind(context, clearTopUp, {}),
         context.executeAction.bind(context, loadTransactions, _.merge(_.clone(defaultQuery), getInitialQueryFromURL(params, query), { reload: true }))
       ], done || function() {});
     }
@@ -123,7 +126,9 @@ var TopUp = React.createClass({
     this.setState({
       number: e.target.value
     });
+  },
 
+  handleSearchInputSubmit: function(e) {
     if (e.which == 13) {
       this.handleQueryChange({ number: e.target.value, page: INITIAL_PAGE_NUMBER });
     }
@@ -149,8 +154,10 @@ var TopUp = React.createClass({
           </FilterBar.LeftItems>
           <FilterBar.RightItems>
             <SearchBox
+              value={this.number}
               placeHolder="Username/Mobile"
-              onKeyPressHandler={this.handleSearchInputChange}
+              onInputChangeHandler={this.handleSearchInputChange}
+              onKeyPressHandler={this.handleSearchInputSubmit}
             />
           </FilterBar.RightItems>
         </FilterBar.Wrapper>
