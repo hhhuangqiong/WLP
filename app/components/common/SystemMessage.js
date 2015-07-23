@@ -23,7 +23,7 @@ var SystemMessage = React.createClass({
     let onDismiss = () => {
       setTimeout(() => {
         this.setState({ systemMessage: null });
-      }, message.timeout);
+      }, 0);
     };
 
     this.setState({
@@ -37,7 +37,7 @@ var SystemMessage = React.createClass({
         {
           this.state.systemMessage && this.state.systemMessage.message ?
             (
-              <div className={classNames('system-message', 'label', 'radius', this.state.systemMessage.type)}>
+              <div className={classNames('system-message', this.state.systemMessage.type)}>
                 <Crouton
                   id={this.state.systemMessage.id}
                   type={this.state.systemMessage.type}

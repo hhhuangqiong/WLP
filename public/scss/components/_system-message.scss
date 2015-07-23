@@ -1,4 +1,7 @@
 .system-message {
-  padding: rem-calc(15) rem-calc(25);
-  font-weight: bold;
+  padding: rem-calc(10) $column-gutter;
+  background-color: $gray-dark;
+  border-radius: rem-calc(10);
+  color: $white;
+  font-size: 14px;
 }
