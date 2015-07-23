@@ -1,44 +1,44 @@
-import React from 'react';
+import React, { PropTypes } from 'react';
 import FluxibleMixin from 'fluxible/addons/FluxibleMixin';
 import {Link} from 'react-router';
 import classNames from 'classnames';
 
 import EndUserStore from '../stores/EndUserStore';
-import Pagination from '../components/Pagination';
 
 import moment from 'moment';
 import _ from 'lodash';
 
-var Countries = require('../data/countries.json');
+const { displayDateFormat: DATE_FORMAT } = require('./../../../main/config');
+const Countries = require('../../../data/countries.json');
 
 var EndUserTable = React.createClass({
   contextTypes: {
-    router: React.PropTypes.func.isRequired
+    router: PropTypes.func.isRequired
+  },
+
+  PropTypes: {
+    users: PropTypes.array,
+    hasNext: PropTypes.boolean,
+    onUserClick: PropTypes.func,
+    onPageChange: PropTypes.func.isRequired
   },
 
   getDefaultProps: function() {
     return {
-      users: []
+      users: [],
+      hasNext: false
     };
   },
 
-  getFirstRecord: function() {
-    return (this.props.current - 1) * this.props.per;
-  },
-
-  getLastRecord: function() {
-    return this.props.current * this.props.per;
-  },
-
   render: function() {
-    let rows = this.props.users.slice(this.getFirstRecord(), this.getLastRecord()).map((u) => {
+    let rows = this.props.users.map((u) => {
         let country = _.find(Countries, (c) => {
           return c.alpha2.toLowerCase() == u.countryCode
         });
-        let creationDate = moment(u.creationDate).format('MMMM DD, YYYY h:mm:ss a');
+        let creationDate = moment(u.creationDate).format(DATE_FORMAT);
         let handleOnClick = _.bindKey(this.props, 'onUserClick', u.username.trim());
         return <tr onClick={handleOnClick}>
-          <td className="text-center"><span className={u.verified ? "label status success" : "label status alert"}></span></td>
+          <td className="text-center"><span className={classNames('label', 'status', { success: u.verified }, { alert: !u.verified })}></span></td>
           <td>
             {u.username}
           </td>
@@ -55,7 +55,7 @@ var EndUserTable = React.createClass({
     );
 
     return (
-      <table className="large-24 clickable">
+      <table className="data-table large-24 clickable">
         <thead>
           <tr>
             <th></th>
@@ -71,13 +71,11 @@ var EndUserTable = React.createClass({
         <tfoot>
           <tr>
             <td colSpan="5">
-              <Pagination
-                ref="pagination"
-                total={this.props.total}
-                current={this.props.current}
-                per={this.props.per}
-                onPageChange={this.props.onPageChange}
-              />
+              <If condition={this.props.hasNext}>
+                <div className="text-center">
+                  <span className="pagination__button" onClick={this.props.onPageChange}>Load More</span>
+                </div>
+              </If>
             </td>
           </tr>
         </tfoot>

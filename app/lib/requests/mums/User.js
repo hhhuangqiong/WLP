@@ -1,6 +1,7 @@
+import _ from 'lodash';
+import Q from 'q';
 import moment from 'moment';
 
-var Q       = require('q');
 var logger  = require('winston');
 var request = require('superagent');
 var util    = require('util');
@@ -52,21 +53,59 @@ export default class UsersRequest extends BaseRequest {
     var base = this.opts.baseUrl;
     var url = util.format(this.opts.methods.LIST.URL, carrierId);
 
-    queries.fromTime = moment(queries.fromTime).startOf('day').toISOString();
-    queries.toTime = moment(queries.toTime).endOf('day').toISOString();
+    queries.fromTime = moment(queries.fromTime, 'L').startOf('day').toISOString();
+    queries.toTime = moment(queries.toTime, 'L').endOf('day').toISOString();
 
     logger.debug('get users from %s with %j', carrierId, queries, {});
 
-    request
-      .get(util.format('%s%s', base, url))
-      .query(queries)
-      .buffer()
-      .timeout(this.timeout)
-      .end((err, res) => {
-        if (err) return cb(this.handleError(err, err.status || 400));
-        if (res.status >= 400) return cb(this.handleError(res.body.err));
-        return cb(null, res.body);
+    var currentPageRequest = (queries, cb)=>{
+      request
+        .get(util.format('%s%s', base, url))
+        .query(queries)
+        .buffer()
+        .timeout(this.opts.timeout)
+        .end((err, res) => {
+          if (err) return cb(this.handleError(err, err.status || 400));
+          if (res.status >= 400) return cb(this.handleError(res.body.err));
+          return cb(null, res.body);
+        });
+    };
+
+    var nextPageRequest = (queries, cb)=>{
+      request
+        .get(util.format('%s%s', base, url))
+        .query(_.merge(queries, { pageNumberIndex: +queries.pageNumberIndex + 1 }))
+        .buffer()
+        .timeout(this.opts.timeout)
+        .end((err, res) => {
+          if (err) return cb(this.handleError(err, err.status || 400));
+          if (res.status >= 400) return cb(this.handleError(res.body.err));
+          return cb(null, res.body);
+        });
+    };
+
+    Q.allSettled([
+      Q.nfcall(currentPageRequest, queries),
+      Q.nfcall(nextPageRequest, queries)
+    ]).then((results)=>{
+      _.each(results, (result)=>{
+        if (result.state !== 'fulfilled') {
+          return cb(this.handleError(new Error('Internal server error'), 500));
+        }
       });
+
+      let result = _.first(results).value;
+      let nextPageResult = _.last(results).value;
+
+      _.assign(result, {
+        userCount:  nextPageResult.userCount > 0 ? result.userCount ++ : result.userCount,
+        hasNextPage: nextPageResult.userCount > 0
+      });
+
+      return cb(null, result);
+    }).catch((err)=>{
+      return cb(this.handleError(err));
+    });
   }
 
   /**
@@ -85,7 +124,7 @@ export default class UsersRequest extends BaseRequest {
     request
       .get(util.format('%s%s', base, url))
       .buffer()
-      .timeout(this.timeout)
+      .timeout(this.opts.timeout)
       .end((err, res) => {
         if (err) return cb(err);
         if (res.status >= 400) return cb(this.handleError(res.body.err));
@@ -109,7 +148,7 @@ export default class UsersRequest extends BaseRequest {
     request
       .post(util.format('%s%s', base, url))
       .buffer()
-      .timeout(this.timeout)
+      .timeout(this.opts.timeout)
       .end((err, res) => {
         if (err) return cb(err);
         if (res.status >= 400) return cb(this.handleError(res.body.err));
@@ -133,7 +172,7 @@ export default class UsersRequest extends BaseRequest {
     request
       .del(util.format('%s%s', base, url))
       .buffer()
-      .timeout(this.timeout)
+      .timeout(this.opts.timeout)
       .end((err, res) => {
         if (err) return cb(err);
         if (res.status >= 400) return cb(this.handleError(res.body.err));
@@ -157,7 +196,7 @@ export default class UsersRequest extends BaseRequest {
     request
       .del(util.format('%s%s', base, url))
       .buffer()
-      .timeout(this.timeout)
+      .timeout(this.opts.timeout)
       .end((err, res) => {
         if (err) return cb(err);
         if (res.status >= 400) return cb(this.handleError(res.body.err));

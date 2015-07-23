@@ -27,11 +27,16 @@ api.get('/carriers/:carrierId/users', function(req, res) {
   req.checkQuery('pageNumberIndex').notEmpty().isInt();
 
   let carrierId = req.params.carrierId;
-  let queries = req.query;
+
+  let queries = {
+    fromTime: req.query.startDate,
+    toTime: req.query.endDate,
+    pageNumberIndex: req.query.page
+  };
 
   var DateFormatErrors = function() {
     let dateFormat = nconf.get('display:dateFormat');
-    return !moment(queries.fromTime, dateFormat).isValid() || !moment(queries.toTime, dateFormat).isValid();
+    return !moment(queries.startDate, dateFormat).isValid() || !moment(queries.endDate, dateFormat).isValid();
   };
 
   //if (req.validationErrors() || DateFormatErrors())
@@ -63,9 +68,10 @@ api.get('/carriers/:carrierId/users/:username', function(req, res) {
   }, req.params);
 
   var prepareWalletRequestParams = function(user) {
+    let username = user.userDetails.username;
     return {
       carrier: user.carrierId,
-      number: user.userDetails.username,
+      number:username[0] === '+' ? username.substring(1, username.length) : username,
       sessionUserName: 'Whitelabel-Portal'
     }
   };
@@ -106,6 +112,92 @@ api.get('/carriers/:carrierId/users/:username', function(req, res) {
       res.json(user);
     })
     .catch((err) => {
+      return res.status(err.status).json({
+        error: err
+      });
+    });
+});
+
+api.get('/carriers/:carrierId/users/:username/wallet', function(req, res) {
+  req.checkParams('carrierId').notEmpty();
+  req.checkParams('username').notEmpty();
+
+  var prepareWalletRequestParams = _.bind(function() {
+    return {
+      carrier: this.carrierId.trim(),
+      number: this.username[0] === '+' ? this.username.substring(1, this.username.length) : this.username,
+      sessionUserName: 'Whitelabel-Portal'
+    }
+  }, req.params);
+
+  var sendWalletRequest = _.bind(function(params) {
+    return Q.ninvoke(this, 'getWalletBalance', params);
+  }, walletRequest);
+
+  Q.fcall(prepareWalletRequestParams)
+    .then(sendWalletRequest)
+    .then((wallets) => {
+      if (wallets.length == 0) {
+        return res.status(404).json(new Error('404 not found'));
+      }
+
+      return res.json(wallets);
+    })
+    .catch((err) => {
+      return res.status(err.status).json({
+        err
+      });
+    })
+});
+
+api.post('/carriers/:carrierId/users/:username/suspension', function(req, res) {
+  req.checkParams('carrierId').notEmpty();
+  req.checkParams('username').notEmpty();
+
+  let carrierId = req.params.carrierId;
+  let username = req.params.username;
+
+  Q.ninvoke(endUserRequest, 'suspendUser', carrierId, username)
+    .then((result)=> {
+      return res.json(result);
+    })
+    .catch((err)=> {
+      return res.status(err.status).json({
+        error: err
+      });
+    });
+});
+
+api.delete('/carriers/:carrierId/users/:username/suspension', function(req, res) {
+  req.checkParams('carrierId').notEmpty();
+  req.checkParams('username').notEmpty();
+
+  let carrierId = req.params.carrierId;
+  let username = req.params.username;
+
+  Q.ninvoke(endUserRequest, 'reactivateUser', carrierId, username)
+    .then((result)=> {
+      return res.json(result);
+    })
+    .catch((err)=> {
+      return res.status(err.status).json({
+        error: err
+      });
+    });
+});
+
+api.delete('/carriers/:carrierId/users/:username', function(req, res) {
+  req.checkParams('carrierId').notEmpty();
+  req.checkParams('username').notEmpty();
+
+  let carrierId = req.params.carrierId;
+  let username = req.params.username;
+
+  Q.ninvoke(endUserRequest, 'terminateUser', carrierId, username)
+    .then((result)=> {
+      return res.json(result);
+    })
+    .catch((err)=> {
       return res.status(err.status).json({
         error: err
       });

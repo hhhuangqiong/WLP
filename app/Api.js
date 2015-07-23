@@ -1,4 +1,5 @@
-var superagent = require('superagent');
+import _ from 'lodash';
+import superagent from 'superagent';
 var debug = require('debug')('app:Api');
 
 import assign from 'object-assign';
@@ -137,9 +138,24 @@ Api.prototype.updateCompanyWidget = function(params, cb) {
     });
 };
 
+Api.prototype.getEndUserWallet = function(params, cb) {
+  superagent
+    .get(`${this._getHost()}/api/carriers/${params.carrierId}/users/${params.username}/wallet`)
+    .accept('json')
+    .set('Authorization', this._getToken())
+    .end(function(err, res) {
+      if (err) {
+        debug('error', err);
+      }
+
+      cb(err, res && res.body);
+    });
+};
+
 Api.prototype.getEndUsers = function(params, cb) {
   superagent
     .get(`${this._getHost()}/api/carriers/${params.carrierId}/users`)
+    .query(_.pick(params, ['startDate', 'endDate', 'page']))
     .accept('json')
     .set('Authorization', this._getToken())
     .end(function(err, res) {
@@ -163,6 +179,48 @@ Api.prototype.getEndUser = function(params, cb) {
 
       cb(err, res && res.body);
     });
+};
+
+Api.prototype.deactivateEndUser = function(params, cb) {
+  superagent
+    .post(`${this._getHost()}/api/carriers/${params.carrierId}/users/${params.username}/suspension`)
+    .accept('json')
+    .set('Authorization', this._getToken())
+    .end(function(err, res) {
+      if (err) {
+        debug('error', err);
+      }
+
+      cb(err, res && res.body);
+    })
+};
+
+Api.prototype.reactivateEndUser = function(params, cb) {
+  superagent
+    .del(`${this._getHost()}/api/carriers/${params.carrierId}/users/${params.username}/suspension`)
+    .accept('json')
+    .set('Authorization', this._getToken())
+    .end(function(err, res) {
+      if (err) {
+        debug('error', err);
+      }
+
+      cb(err, res && res.body);
+    })
+};
+
+Api.prototype.deleteEndUser = function(params, cb) {
+  superagent
+    .del(`${this._getHost()}/api/carriers/${params.carrierId}/users/${params.username}`)
+    .accept('json')
+    .set('Authorization', this._getToken())
+    .end(function(err, res) {
+      if (err) {
+        debug('error', err);
+      }
+
+      cb(err, res && res.body);
+    })
 };
 
 Api.prototype.getSMS = function(params, cb) {

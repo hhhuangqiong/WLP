@@ -26,6 +26,9 @@ export default (
       <Route name="vsf-transaction-overview" path="/:role/:identity?/vsf" handler={require('./modules/virtual-store-front/components/VSFTransactionOverview')} />
       <Route name="vsf-transaction-details" path="/:role/:identity?/vsf/details" handler={require('./modules/virtual-store-front/components/VSFTransactionDetails')} />
       <Route name="calls-details" path="/:role/:identity?/calls/details" handler={require('./components/Calls')} />
+
+	    <Route name="end-users" path="/:role/:identity?/endusers" handler={require('./modules/end-user/components/EndUsers')} />
+
       <Route name="im-overview" path="/:role/:identity?/im" handler={require('./components/ImOverview')} />
       <Route name="im" path="/:role/:identity?/im/details" handler={require('./components/Im')} />
 

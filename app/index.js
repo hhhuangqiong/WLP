@@ -3,7 +3,7 @@ import Fluxible from 'fluxible';
 
 import ApplicationStore from './stores/ApplicationStore';
 import CompanyStore from './stores/CompanyStore';
-import EndUserStore from './stores/EndUserStore';
+import EndUserStore from './modules/end-user/stores/EndUserStore';
 import SignInStore from './stores/SignInStore';
 import CallsStore from './stores/CallsStore';
 import SMSStore from './modules/sms/stores/SMSStore';

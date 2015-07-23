@@ -6,11 +6,11 @@ import React from 'react';
 import FluxibleMixin from 'fluxible/addons/FluxibleMixin';
 import classNames from 'classnames';
 
-import AuthMixin from '../utils/AuthMixin';
+import AuthMixin from '../../../utils/AuthMixin';
 
-import AuthStore from '../stores/AuthStore';
 import EndUserStore from '../stores/EndUserStore';
 
+import fetchWallet from '../actions/fetchWallet';
 import deleteEndUser from '../actions/deleteEndUser';
 import deactivateEndUser from '../actions/deactivateEndUser';
 import reactivateEndUser from '../actions/reactivateEndUser';
@@ -20,7 +20,8 @@ import Section from './InfoBlock';
 import WalletInfoItem from './WalletInfoItem';
 import Item from './InfoItem';
 
-var Countries = require('../data/countries.json');
+const { displayDateFormat: DATE_FORMAT } = require('./../../../main/config');
+const Countries = require('../../../data/countries.json');
 
 var EndUserProfile = React.createClass({
   contextTypes: {
@@ -51,10 +52,25 @@ var EndUserProfile = React.createClass({
     });
   },
 
-  render: function() {
+  handleRefreshButtonClick: function() {
+    let { identity: carrierId } = this.context.router.getCurrentParams();
+    let username = this.props.user.userDetails.username;
+
+    this.context.executeAction(fetchWallet, { carrierId, username });
+  },
+
+  renderWalletPanel: function() {
     let wallets = (
       <Section title="Wallet Info">
-        <p>Wallet not found!</p>
+        <div className="error text-center">
+          <div className="error-description full-width">
+            <i className="error-icon icon-error3" />
+            <span className="error-message">404 - not found!</span>
+          </div>
+          <div className="error-button" onClick={this.handleRefreshButtonClick}>
+            <i className="icon-refresh" />
+          </div>
+        </div>
       </Section>
     );
 
@@ -90,31 +106,42 @@ var EndUserProfile = React.createClass({
       );
     }
 
+    return wallets;
+  },
+
+  render: function() {
     let country = _.find(Countries, (c) => {
       return c.alpha2.toLowerCase() == this.props.user.userDetails.countryCode;
     });
-    let creationDate = moment(this.props.user.userDetails.creationDate).format('MMM DD, YYYY h:mm:ss a');
+    let creationDate = moment(this.props.user.userDetails.creationDate).format(DATE_FORMAT);
 
     return (
       <If condition={this.props.user && this.props.user.userDetails}>
         <InfoPanel title={this.props.user.userDetails.displayName}>
-          {wallets}
+          {this.renderWalletPanel()}
           <Section title="Account Info" hasIndicator={true} verified={this.props.user.userDetails.verified}>
             <Item label="Created Time">{creationDate}</Item>
-            <Item label="Verified" class="verified" capitalize={true}>
+            <Item label="Verified" capitalize={true}>
               <If condition={this.props.user.userDetails.verified}>
-                <span className="">verified</span>
+                <span className="verified">verified</span>
               <Else />
-                <span className="">not yet</span>
+                <span className="unverified">unverified</span>
               </If>
             </Item>
-            <Item label="Country">{country.name}</Item>
+            <Item label="Country">
+              <div className="country-label">
+                <div className="flag__container left">
+                  <span className={classNames('flag--' + country.alpha2, 'left')} />
+                </div>
+                {country.name}
+              </div>
+            </Item>
             <Item label="Mobile Number">{this.props.user.userDetails.username}</Item>
             <Item label="Email">{this.props.user.userDetails.email || 'N/A'}</Item>
-            <Item label="Pin">{this.props.user.userDetails.pin}</Item>
+            <Item label="Pin">{this.props.user.userDetails.pin  || 'N/A'}</Item>
             <Item label="Date of Birth">{this.props.user.userDetails.birthDate || 'N/A'}</Item>
             <Item label="Gender" capitalize={true}>
-              <span>
+              <span className="gender-label">
                 <i className={classNames({'icon-male': this.props.user.userDetails.gender === 'male', 'icon-female': this.props.user.userDetails.gender === 'female'})} />
                 {this.props.user.userDetails.gender || 'N/A'}
               </span>
@@ -123,7 +150,7 @@ var EndUserProfile = React.createClass({
           <For each="device" of={this.props.user.userDetails.devices}>
             <Section title="App Info">
               <Item label="Device">
-                <span>
+                <span className="device-label">
                   <i className={classNames({'icon-apple': device.platform.toLowerCase() === 'ios'}, {'icon-android': device.platform.toLowerCase() === 'android'})} />
                   {device.platform}
                 </span>
