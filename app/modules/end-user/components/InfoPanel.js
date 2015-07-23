@@ -1,9 +1,19 @@
-import React from 'react';
+import React, { PropTypes } from 'react';
 
 /**
  * The right side panel used to display details about the selected entity (company, user and so on)
  */
 var InfoPanel = React.createClass({
+  PropTypes: {
+    title: PropTypes.string
+  },
+
+  getDefaultProps: function() {
+    return {
+      title: 'User'
+    }
+  },
+
   render: function() {
     return (
       <div className="panel panel--addon">

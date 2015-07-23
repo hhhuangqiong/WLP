@@ -17,11 +17,15 @@ import reactivateEndUser from '../actions/reactivateEndUser';
 
 import InfoPanel from './InfoPanel';
 import Section from './InfoBlock';
+import * as Accordion from '../../../main/components/Accordion';
+import * as Panel from '../../../main/components/Panel';
 import WalletInfoItem from './WalletInfoItem';
 import Item from './InfoItem';
 
 const { displayDateFormat: DATE_FORMAT } = require('./../../../main/config');
 const Countries = require('../../../data/countries.json');
+
+const EMPTY_STRING = 'N/A';
 
 var EndUserProfile = React.createClass({
   contextTypes: {
@@ -31,32 +35,27 @@ var EndUserProfile = React.createClass({
 
   mixins: [AuthMixin],
 
-  handleDeleteClick: function() {
-    this.context.executeAction(deleteEndUser, {
-      carrierId: this.props.user.carrierId,
-      username: this.props.user.userDetails.username
-    });
-  },
-
-  handleSuspendClick: function() {
-    this.context.executeAction(deactivateEndUser, {
-      carrierId: this.props.user.carrierId,
-      username: this.props.user.userDetails.username
-    });
-  },
-
-  handleReactivateClick: function() {
-    this.context.executeAction(reactivateEndUser, {
-      carrierId: this.props.user.carrierId,
-      username: this.props.user.userDetails.username
-    });
-  },
-
-  handleRefreshButtonClick: function() {
+  getParams: function() {
     let { identity: carrierId } = this.context.router.getCurrentParams();
     let username = this.props.user.userDetails.username;
 
-    this.context.executeAction(fetchWallet, { carrierId, username });
+    return { carrierId, username };
+  },
+
+  handleDeleteClick: function() {
+    this.context.executeAction(deleteEndUser, this.getParams());
+  },
+
+  handleSuspendClick: function() {
+    this.context.executeAction(deactivateEndUser, this.getParams());
+  },
+
+  handleReactivateClick: function() {
+    this.context.executeAction(reactivateEndUser, this.getParams());
+  },
+
+  handleRefreshButtonClick: function() {
+    this.context.executeAction(fetchWallet, this.getParams());
   },
 
   renderWalletPanel: function() {
@@ -95,14 +94,14 @@ var EndUserProfile = React.createClass({
       });
 
       wallets = (
-        <Section title="Wallet Info">
+        <Accordion.Navigation title="Account Info">
           <WalletInfoItem wallet={overviewWallet} />
           {this.props.user.wallets.map((wallet)=>{
             return (
               <WalletInfoItem wallet={wallet} />
             );
           })}
-        </Section>
+        </Accordion.Navigation>
       );
     }
 
@@ -111,81 +110,85 @@ var EndUserProfile = React.createClass({
 
   render: function() {
     let country = _.find(Countries, (c) => {
-      return c.alpha2.toLowerCase() == this.props.user.userDetails.countryCode;
+      return c.alpha2.toLowerCase() === this.props.user.userDetails.countryCode;
     });
     let creationDate = moment(this.props.user.userDetails.creationDate).format(DATE_FORMAT);
 
     return (
       <If condition={this.props.user && this.props.user.userDetails}>
-        <InfoPanel title={this.props.user.userDetails.displayName}>
-          {this.renderWalletPanel()}
-          <Section title="Account Info" hasIndicator={true} verified={this.props.user.userDetails.verified}>
-            <Item label="Created Time">{creationDate}</Item>
-            <Item label="Verified" capitalize={true}>
-              <If condition={this.props.user.userDetails.verified}>
-                <span className="verified">verified</span>
-              <Else />
-                <span className="unverified">unverified</span>
-              </If>
-            </Item>
-            <Item label="Country">
-              <div className="country-label">
-                <div className="flag__container left">
-                  <span className={classNames('flag--' + country.alpha2, 'left')} />
-                </div>
-                {country.name}
-              </div>
-            </Item>
-            <Item label="Mobile Number">{this.props.user.userDetails.username}</Item>
-            <Item label="Email">{this.props.user.userDetails.email || 'N/A'}</Item>
-            <Item label="Pin">{this.props.user.userDetails.pin  || 'N/A'}</Item>
-            <Item label="Date of Birth">{this.props.user.userDetails.birthDate || 'N/A'}</Item>
-            <Item label="Gender" capitalize={true}>
-              <span className="gender-label">
-                <i className={classNames({'icon-male': this.props.user.userDetails.gender === 'male', 'icon-female': this.props.user.userDetails.gender === 'female'})} />
-                {this.props.user.userDetails.gender || 'N/A'}
-              </span>
-            </Item>
-          </Section>
-          <For each="device" of={this.props.user.userDetails.devices}>
-            <Section title="App Info">
-              <Item label="Device">
-                <span className="device-label">
-                  <i className={classNames({'icon-apple': device.platform.toLowerCase() === 'ios'}, {'icon-android': device.platform.toLowerCase() === 'android'})} />
-                  {device.platform}
-                </span>
-              </Item>
-              <Item label="Version">
-                <If condition={device.appVersionNumber}>
-                  <span>v{device.appVersionNumber}</span>
-                <Else />
-                  <span>N/A</span>
-                </If>
-              </Item>
-              <Item label="Language">{device.appLanguage}</Item>
-            </Section>
-          </For>
-          <If condition={this.props.user.userDetails.verified}>
-            <Section>
-              <div className="accordion__item__body--control">
-                <If condition={this.props.user.userDetails.accountStatus.toLowerCase() === 'active'}>
-                  <div className="accordion__item__body--control__row text-center">
-                    <button className="round" onClick={this.handleDeleteClick}>delete</button>
-                    <button className="round" onClick={this.handleSuspendClick}>suspend</button>
+        <Panel.Wrapper addOn={true}>
+          <Panel.Header title={this.props.user.userDetails.displayName}/>
+          <Panel.Body>
+            <Accordion.Wrapper offsetMargin={true}>
+              {this.renderWalletPanel()}
+              <Accordion.Navigation title="Account Info" hasIndicator={true} verified={this.props.user.userDetails.verified}>
+                <Item label="Created Time">{creationDate}</Item>
+                <Item label="Verified" capitalize={true}>
+                  <If condition={this.props.user.userDetails.verified}>
+                    <span className="verified">verified</span>
+                    <Else />
+                    <span className="unverified">unverified</span>
+                  </If>
+                </Item>
+                <Item label="Country">
+                  <div className="country-label">
+                    <div className="flag__container left">
+                      <span className={classNames('flag--' + country.alpha2, 'left')}/>
+                    </div>
+                    {country.name}
                   </div>
-                  <Else />
-                  <div className="accordion__item__body--control__row text-center">
-                    <button className="round" onClick={this.handleDeleteClick}>delete</button>
-                    <button className="round" onClick={this.handleReactivateClick}>reactivate</button>
-                  </div>
-                </If>
-              </div>
-            </Section>
-          </If>
-        </InfoPanel>
+                </Item>
+                <Item label="Mobile Number">{this.props.user.userDetails.username}</Item>
+                <Item label="Email">{this.props.user.userDetails.email || EMPTY_STRING}</Item>
+                <Item label="Pin">{this.props.user.userDetails.pin || EMPTY_STRING}</Item>
+                <Item label="Date of Birth">{this.props.user.userDetails.birthDate || EMPTY_STRING}</Item>
+                <Item label="Gender" capitalize={true}>
+                  <span className="gender-label">
+                    <i
+                      className={classNames({'icon-male': this.props.user.userDetails.gender === 'male', 'icon-female': this.props.user.userDetails.gender === 'female'})}/>
+                    {this.props.user.userDetails.gender || EMPTY_STRING}
+                  </span>
+                </Item>
+              </Accordion.Navigation>
+              <For each="device" of={this.props.user.userDetails.devices}>
+                <Accordion.Navigation title="App Info">
+                  <Item label="Device">
+                    <span className="device-label">
+                      <i className={classNames({'icon-apple': device.platform.toLowerCase() === 'ios'}, {'icon-android': device.platform.toLowerCase() === 'android'})} />
+                      {device.platform}
+                    </span>
+                  </Item>
+                  <Item label="Version">
+                    <If condition={device.appVersionNumber}>
+                      <span>v{device.appVersionNumber}</span>
+                    <Else />
+                      <span>{EMPTY_STRING}</span>
+                    </If>
+                  </Item>
+                  <Item label="Language">{device.appLanguage}</Item>
+                  <If condition={this.props.user.userDetails.verified}>
+                    <div className="accordion__item-body--control">
+                      <If condition={this.props.user.userDetails.accountStatus.toLowerCase() === 'active'}>
+                        <div className="accordion__item-body--control__row text-center">
+                          <button className="round" onClick={this.handleDeleteClick}>delete</button>
+                          <button className="round" onClick={this.handleSuspendClick}>suspend</button>
+                        </div>
+                        <Else />
+                        <div className="accordion__item-body--control__row text-center">
+                          <button className="round" onClick={this.handleDeleteClick}>delete</button>
+                          <button className="round" onClick={this.handleReactivateClick}>reactivate</button>
+                        </div>
+                      </If>
+                    </div>
+                  </If>
+                </Accordion.Navigation>
+              </For>
+            </Accordion.Wrapper>
+          </Panel.Body>
+        </Panel.Wrapper>
       </If>
     );
-}
+  }
 });
 
 export default EndUserProfile;

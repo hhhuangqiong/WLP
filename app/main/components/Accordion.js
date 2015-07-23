@@ -11,7 +11,8 @@ let Accordion = React.createClass({
   displayName: 'AccordionWrapper',
 
   PropTypes: {
-    children: PropTypes.arrayOf(PropTypes.element)
+    children: PropTypes.arrayOf(PropTypes.element),
+    offsetMargin: PropTypes.bool
   },
 
   componentWillMount: function() {
@@ -27,7 +28,7 @@ let Accordion = React.createClass({
 
   render: function() {
     return (
-      <ul className="accordion" data-accordion>
+      <ul className={classNames('accordion', { 'margin-offset': this.props.offsetMargin })} data-accordion>
         {this.props.children}
       </ul>
     );

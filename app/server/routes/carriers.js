@@ -17,6 +17,8 @@ import SmsRequest from '../../lib/requests/SMS';
 import PortalUser from '../../collections/portalUser';
 import Company    from '../../collections/company';
 
+let dateFormat = nconf.get('display:dateFormat');
+
 function prepareWildcard(search) {
   if (!search)
     return '';
@@ -49,8 +51,7 @@ let getUsers = function(req, res) {
     pageNumberIndex: req.query.page
   };
 
-  var DateFormatErrors = function() {
-    let dateFormat = nconf.get('display:dateFormat');
+  var DateFormatErrors = function(dateFormat) {
     return !moment(queries.startDate, dateFormat).isValid() || !moment(queries.endDate, dateFormat).isValid();
   };
 
@@ -80,9 +81,11 @@ let getUsername = function(req, res) {
 
   var prepareWalletRequestParams = function(user) {
     let username = user.userDetails.username;
+    let firstLetter = username && username.charAt(0);
+
     return {
       carrier: user.carrierId,
-      number: username[0] === '+' ? username.substring(1, username.length) : username,
+      number: firstLetter === '+' ? username.substring(1, username.length) : username,
       sessionUserName: 'Whitelabel-Portal'
     }
   };

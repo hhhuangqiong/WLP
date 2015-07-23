@@ -123,7 +123,6 @@ export default class UsersRequest extends BaseRequest {
 
     request
       .get(util.format('%s%s', base, url))
-      .buffer()
       .timeout(this.opts.timeout)
       .end((err, res) => {
         if (err) return cb(this.handleError(err));
@@ -147,7 +146,6 @@ export default class UsersRequest extends BaseRequest {
 
     request
       .post(util.format('%s%s', base, url))
-      .buffer()
       .timeout(this.opts.timeout)
       .end((err, res) => {
         if (err) return cb(err);
@@ -171,7 +169,6 @@ export default class UsersRequest extends BaseRequest {
 
     request
       .del(util.format('%s%s', base, url))
-      .buffer()
       .timeout(this.opts.timeout)
       .end((err, res) => {
         if (err) return cb(err);
@@ -195,7 +192,6 @@ export default class UsersRequest extends BaseRequest {
 
     request
       .del(util.format('%s%s', base, url))
-      .buffer()
       .timeout(this.opts.timeout)
       .end((err, res) => {
         if (err) return cb(err);

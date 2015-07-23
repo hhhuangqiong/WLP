@@ -20,6 +20,25 @@
         color: scale-color($accordion-item-link-color, $lightness: $link-function-factor);
       }
     }
+
+    &__label {
+      color: $gray;
+    }
+
+    &__content {
+      &.capitalize {
+        text-transform: capitalize;
+      }
+
+      .verified {
+        color: $success-color;
+      }
+
+      .unverified {
+        color: $alert-color;
+      }
+    }
+
     &-body {
       // max-height transition won't work with percentage
       // with resolution of 1920 x 1080
@@ -29,26 +48,6 @@
       // with a considerably large value of max height
       // cubic-bezier time function is needed to hide the delay at start
       transition: max-height cubic-bezier(1, 0.3, 1, 0.3) 0.28s, background linear 0.1s;
-
-      &__row {
-        border-bottom: 1px solid $gray-lighter;
-
-        &__label {
-          color: $gray;
-        }
-
-        &__content {
-          &.capitalize {
-            text-transform: capitalize;
-          }
-        }
-
-        &--verified {
-          &__content {
-            color: $status-active;
-          }
-        }
-      }
 
       &--control {
         &__row {
@@ -133,46 +132,44 @@
       }
     }
   }
-  &.margin-offset{
-    .accordion {
-      &__item-head {
-        margin: 0;
+  &.margin-offset {
+    .accordion__item-head {
+      margin: 0;
+    }
+    .accordion__item-body {
+      > * {
+        padding: rem-calc(10) $column-gutter;
+
+        &.padding-offset {
+          padding: 0 $column-gutter;
+        }
       }
-      &__item-body {
-        > * {
-          padding: rem-calc(10) $column-gutter;
 
-          &.padding-offset {
-            padding: 0 $column-gutter;
-          }
+      .device-label {
+        > [class^="icon-"] {
+          font-size: $accordion-item-label-font-size;
+          display: inline-flex;
+          vertical-align: top;
+          margin: 1px 5px 0 0;
         }
+      }
 
-        .device-label {
-          > [class^="icon-"] {
-            font-size: $accordion-item-label-font-size;
-            display: inline-flex;
-            vertical-align: top;
-            margin: 1px 5px 0 0;
-          }
+      .gender-label {
+        > [class^="icon-"] {
+          font-size: $accordion-item-label-font-size;
+          display: inline-flex;
+          vertical-align: top;
+          margin: 2px 5px 0 0;
         }
+      }
 
-        .gender-label {
-          > [class^="icon-"] {
-            font-size: $accordion-item-label-font-size;
-            display: inline-flex;
-            vertical-align: top;
-            margin: 2px 5px 0 0;
-          }
-        }
+      .flag__container {
+        margin-top: 0;
+      }
 
-        .flag__container {
-          margin-top: 0;
-        }
-
-        .error {
-          padding-top: rem-calc(20);
-          padding-bottom: rem-calc(20);
-        }
+      .error {
+        padding-top: rem-calc(20);
+        padding-bottom: rem-calc(20);
       }
     }
   }
