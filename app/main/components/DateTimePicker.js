@@ -4,7 +4,7 @@ import moment from 'moment';
 import DatePicker from 'react-datepicker';
 import TimePicker from './TimePicker';
 
-let DateTimePicker = React.createClass({
+export default React.createClass({
   _handleFocus() {
     this.refs[this.props.dataPickerRef].handleFocus();
   },
@@ -13,7 +13,7 @@ let DateTimePicker = React.createClass({
     let {
       name, date, dataPickerkey, dataPickerRef,
       minDate, maxDate, dateOnClick, dateOnChange,
-      timeOnChange, dateFormat, timeFormat
+      dateFormat, timeFormat
     } = this.props
 
     return (
@@ -45,12 +45,10 @@ let DateTimePicker = React.createClass({
           datetime={date}
           format={timeFormat}
           className="date-input-wrap left"
-          onChange={timeOnChange}
+          onChange={dateOnChange}
         />
 
       </div>
     )
   }
 });
-
-export default DateTimePicker;

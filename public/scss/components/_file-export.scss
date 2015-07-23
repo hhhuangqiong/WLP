@@ -17,7 +17,7 @@ $positioning: -150px;
   margin-left: $positioning !important;
 }
 
-.export-destination {
+.export-countries-dropdown {
   border-radius: rem-calc(14);
   border: 1px solid $gray-light !important;
   width: $control-width !important;
@@ -32,6 +32,11 @@ $positioning: -150px;
 
 .export-submit-buttons {
   margin-bottom: -20px;
+
+  .extra-space {
+    display:inline-block;
+    width: 30px;
+  }
 }
 
 .export-form-row-padding {
@@ -40,7 +45,7 @@ $positioning: -150px;
 
 .export-loading-button {
   background-color: $brand-primary;
-  min-width: 150px !important;
+  min-width: 180px !important;
 }
 
 .export-loading-text {
@@ -55,7 +60,6 @@ $positioning: -150px;
   color: white;
   font-size: 14px;
   cursor: default;
-  margin-left: 20px;
 }
 
 .export-download-button {
@@ -69,12 +73,9 @@ $positioning: -150px;
   color: white;
   cursor: pointer;
 
-  a, i {
+  .icon-download {
     color: inherit !important;
     line-height: inherit !important;
-  }
-
-  i {
     padding: 0 rem-calc(5);
   }
 }
@@ -86,8 +87,8 @@ $positioning: -150px;
       top: 0px !important;
     }
 }
-.export-progress-bar {
 
+.export-panel {
   /* CDR Loading Spinner */
   @keyframes spinner {
     to {transform: rotate(360deg);}

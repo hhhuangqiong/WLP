@@ -18,6 +18,9 @@ import fetchMoreIms from '../actions/fetchMoreIms'
 import ImTable from './ImTable';
 import Searchbox from './Searchbox';
 
+import Export from '../main/file-export/components/Export';
+import ImExportForm from './ImExportForm';
+
 var config = require('../config');
 
 const searchTypes = [
@@ -239,6 +242,15 @@ var Im = React.createClass({
                   return <option key={this.getOptKey(messageType)} value={messageType.value}>{messageType.title}</option>;
                 })}
               </select>
+            </div>
+
+            <div className="right">
+              <Export exportType="Im">
+                <ImExportForm
+                  fromTime={this.state.fromTime}
+                  toTime={this.state.toTime}
+                />
+              </Export>
             </div>
 
             <div className="im-search top-bar-section right">
