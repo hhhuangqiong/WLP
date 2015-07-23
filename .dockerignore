@@ -1,2 +1,5 @@
-.*
+.bowerrc
+.editorconfig
+.js*
+.git*
 test/
