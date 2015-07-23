@@ -30,6 +30,7 @@ app.registerStore(EndUserStore);
 app.registerStore(SignInStore);
 app.registerStore(CallsStore);
 app.registerStore(SMSStore);
+app.registerStore(TopUpStore);
 app.registerStore(SystemMessageStore);
 app.registerStore(LoadingSpinnerStore);
 app.registerStore(ImStore);
