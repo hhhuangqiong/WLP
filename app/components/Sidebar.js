@@ -8,6 +8,11 @@ import AuthStore from '../stores/AuthStore';
 
 let navSections = [
   {
+    name: 'Overview',
+    icon: 'icon-menuoverview',
+    routeName: 'overview'
+  },
+  {
     name: 'Users',
     icon: 'icon-menuenduser',
     routeName: 'end-users'
@@ -30,7 +35,7 @@ let navSections = [
   {
     name: 'VSF',
     icon: 'icon-credit',
-    routeName: 'vsf-transaction-details'
+    routeName: 'vsf-transaction-overview'
   },
   {
     name: 'Top Up',

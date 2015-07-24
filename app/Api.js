@@ -304,6 +304,18 @@ Api.prototype.getImWidgets = function(params, cb) {
     });
 };
 
+Api.prototype.getOverviewWidgets = function(params, cb) {
+  superagent
+    .get(`${this._getHost()}/api/carriers/${params.carrierId}/widgets/overview`)
+    .accept('json')
+    .set('Authorization', this._getToken())
+    .query({ userId: this._getUserId() })
+    .end((err, res) => {
+      if (err) debug('error', err);
+      cb(err, res && res.body);
+    });
+};
+
 Api.prototype.getTopUpHistory = function(params, cb) {
   superagent
     .get(`${this._getHost()}/api/carriers/${params.carrierId}/topup`)

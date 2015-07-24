@@ -8,8 +8,11 @@ import {Link} from 'react-router';
 import FluxibleMixin from 'fluxible/addons/FluxibleMixin';
 import AuthMixin from '../utils/AuthMixin';
 
+import WidgetNotAvailable from './common/WidgetNotAvailable';
 import ImStore from '../stores/ImStore';
 import fetchImWidgets from '../actions/fetchImWidgets';
+
+const errorMessage = '<div className="widget-not-found">Dashboard is not available</div>';
 
 var ImOverview = React.createClass({
   contextTypes: {
@@ -44,6 +47,36 @@ var ImOverview = React.createClass({
     this.setState(this.getStateFromStores());
   },
 
+  renderImWidgets() {
+    let widgets = this.state.widgets;
+
+    if (!widgets || !widgets.length){
+      return (<WidgetNotAvailable />);
+    }
+
+    return (
+      <table className="widget-table" border="0" cellSpacing="0" cellPadding="0">
+        <tr>
+          <td colSpan="3" rowSpan="3">
+            <div className="im-volumn-hack" dangerouslySetInnerHTML={{__html: widgets[0] || errorMessage}}></div>
+          </td>
+          <td dangerouslySetInnerHTML={{__html: widgets[1] || errorMessage}}></td>
+        </tr>
+
+        <tr><td dangerouslySetInnerHTML={{__html: widgets[2] || errorMessage}}></td></tr>
+
+        <tr><td dangerouslySetInnerHTML={{__html: widgets[3] || errorMessage}}></td></tr>
+
+        <tr>
+          <td dangerouslySetInnerHTML={{__html: widgets[4] || errorMessage}}></td>
+          <td dangerouslySetInnerHTML={{__html: widgets[5] || errorMessage}}></td>
+          <td dangerouslySetInnerHTML={{__html: widgets[6] || errorMessage}}></td>
+          <td dangerouslySetInnerHTML={{__html: widgets[7] || errorMessage}}></td>
+        </tr>
+      </table>
+    );
+  },
+
   render: function() {
     let params = this.context.router.getCurrentParams();
 
@@ -62,13 +95,7 @@ var ImOverview = React.createClass({
           </div>
         </nav>
         <div className="large-24 columns">
-          <ul className="widget-list widget-list--calls">
-          { this.state.widgets.map((widget) => {
-            if (widget != '') {
-              return <li className="left" dangerouslySetInnerHTML={{__html: widget}}></li>;
-            }
-          }) }
-          </ul>
+          {this.renderImWidgets()}
         </div>
       </div>
     );

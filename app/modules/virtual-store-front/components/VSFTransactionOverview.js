@@ -2,9 +2,13 @@ import React from 'react';
 import { Link } from 'react-router';
 import FluxibleMixin from 'fluxible/addons/FluxibleMixin';
 import AuthMixin from '../../../utils/AuthMixin';
+import {concurrent} from 'contra';
+
+import WidgetNotAvailable from '../../../components/common/WidgetNotAvailable';
 import VSFTransactionStore from  '../stores/VSFTransactionStore';
 import fetchVSFWidgets from  '../actions/fetchVSFWidgets';
-import {concurrent} from 'contra';
+
+const errorMessage = '<div className="widget-not-found">Dashboard is not available</div>';
 
 let VSFTransactionOverview = React.createClass({
   mixins: [FluxibleMixin, AuthMixin],
@@ -36,6 +40,27 @@ let VSFTransactionOverview = React.createClass({
     this.setState({ widgets: store.widgets });
   },
 
+  renderWidgets() {
+    let widgets = this.state.widgets;
+
+    if (!widgets || !widgets.length){
+      return (<WidgetNotAvailable />);
+    }
+
+    return (
+      <table className="widget-table">
+        <tr>
+          <td rowSpan="2" dangerouslySetInnerHTML={{__html: widgets[0] || errorMessage}}></td>
+          <td dangerouslySetInnerHTML={{__html: widgets[1] || errorMessage}}></td>
+        </tr>
+
+        <tr>
+          <td dangerouslySetInnerHTML={{__html: widgets[2] || errorMessage}}></td>
+        </tr>
+      </table>
+    );
+  },
+
   render() {
     let params = this.context.router.getCurrentParams();
 
@@ -58,13 +83,7 @@ let VSFTransactionOverview = React.createClass({
         </nav>
 
         <div className="large-24 columns">
-          <ul className="widget-list widget-list--calls">
-          {this.state.widgets.map((widget) => {
-            if (widget != '') {
-              return <li className="left" dangerouslySetInnerHTML={{__html: widget}}></li>;
-            }
-          })}
-          </ul>
+          {this.renderWidgets()}
         </div>
 
       </div>

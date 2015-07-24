@@ -8,8 +8,11 @@ import {Link} from 'react-router';
 import FluxibleMixin from 'fluxible/addons/FluxibleMixin';
 import AuthMixin from '../../../utils/AuthMixin';
 
+import WidgetNotAvailable from '../../../components/common/WidgetNotAvailable';
 import SMSStore from '../stores/SMSStore';
 import loadSMSWidgets from '../actions/loadSMSWidgets';
+
+const errorMessage = '<div className="widget-not-found">Dashboard is not available</div>';
 
 var SMSOverview = React.createClass({
   contextTypes: {
@@ -44,6 +47,28 @@ var SMSOverview = React.createClass({
     this.setState(this.getStateFromStores());
   },
 
+  renderWidgets() {
+    let widgets = this.state.widgets;
+
+    if (!widgets || !widgets.length){
+      return (<WidgetNotAvailable />);
+    }
+
+    return (
+      <table className="widget-table">
+        <tr>
+          <td dangerouslySetInnerHTML={{__html: widgets[0] || errorMessage}}></td>
+          <td dangerouslySetInnerHTML={{__html: widgets[1] || errorMessage}}></td>
+        </tr>
+
+        <tr>
+          <td dangerouslySetInnerHTML={{__html: widgets[2] || errorMessage}}></td>
+          <td></td>
+        </tr>
+      </table>
+    );
+  },
+
   render: function() {
     let params = this.context.router.getCurrentParams();
 
@@ -62,13 +87,7 @@ var SMSOverview = React.createClass({
           </div>
         </nav>
         <div className="large-24 columns">
-          <ul className="widget-list widget-list--calls">
-          { this.state.widgets.map((widget) => {
-            if (widget) {
-              return <li className="left" dangerouslySetInnerHTML={{__html: widget}}></li>;
-            }
-          }) }
-          </ul>
+          {this.renderWidgets()}
         </div>
       </div>
     );

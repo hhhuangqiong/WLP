@@ -24,11 +24,14 @@ export default (
 
     <Route handler={require('./components/common/Protected')}>
       <Redirect from="/:role/:identity?/calls" to={redirectForCallsOverview} />
-      /*
-      <Route name="calls-overview" path="/:role/:identity?/calls" handler={require('./components/CallsOverview')} />
-      */
+
       <Route name="vsf-transaction-overview" path="/:role/:identity?/vsf" handler={require('./modules/virtual-store-front/components/VSFTransactionOverview')} />
       <Route name="vsf-transaction-details" path="/:role/:identity?/vsf/details" handler={require('./modules/virtual-store-front/components/VSFTransactionDetails')} />
+
+      <Route name="overview" path="/:role/:identity?/overview" handler={require('./modules/overview/components/Overview')} />
+      /*
+        <Route name="calls-overview" path="/:role/:identity?/calls" handler={require('./components/CallsOverview')} />
+      */
       <Route name="calls-details" path="/:role/:identity?/calls/details" handler={require('./components/Calls')} />
 
 	    <Route name="end-users" path="/:role/:identity?/endusers" handler={require('./modules/end-user/components/EndUsers')} />

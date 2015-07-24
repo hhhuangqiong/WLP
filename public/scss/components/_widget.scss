@@ -1,3 +1,49 @@
-.widget-list {
-  list-style: none;
+.widget-container {
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+.widget-table {
+  tr {
+    border-bottom: 0;
+  }
+
+  td {
+    padding: 10 15;
+  }
+
+  &.overview-table {
+    max-width: 1000px;
+  }
+
+  .im-volumn-hack {
+    max-width: 965px;
+    max-height: 500px;
+
+    position: absolute;
+    top: 30px;
+
+    -ms-zoom: 1.55;
+    -moz-transform: scale(1.55);
+    -moz-transform-origin: 0 0;
+    -o-transform: scale(1.55);
+    -o-transform-origin: 0 0;
+    -webkit-transform: scale(1.55);
+    -webkit-transform-origin: 0 0;
+  }
+}
+
+.widget-not-found {
+  width: 50%;
+  height: 50%;
+  overflow: auto;
+  margin: auto;
+  position: absolute;
+  top: 0; left: 0; bottom: 0; right: 0;
+
+  &__title {
+    padding-left: rem-calc(14);
+  }
 }
