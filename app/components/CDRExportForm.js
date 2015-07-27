@@ -21,10 +21,7 @@ let CDRExportForm = React.createClass({
     this.setState({
       startDate: newProps.startDate,
       endDate: newProps.endDate,
-      netType: newProps.netType,
-      destination: newProps.destination,
-      handleExport: newProps.handleExport,
-      handleModalClose: newProps.handleModalClose
+      netType: newProps.netType
     });
   },
 
