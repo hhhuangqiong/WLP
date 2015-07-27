@@ -240,9 +240,13 @@ getStateFromStores: function() {
     let completeExport = parseInt(this.state.exportProgress) === 100;
 
     let exportElement = (
-      <span className="export-download-button button export-ie-fix">
-        <a onClick={this.openExportModal}><i className="icon-download" /></a>
-      </span>
+      <a
+        role="button"
+        onClick={this.openExportModal}
+        className="export-download-button button export-ie-fix"
+      >
+        <span className="icon-download"></span>
+      </a>
     )
 
     if (isExporting) {

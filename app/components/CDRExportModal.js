@@ -33,7 +33,7 @@ let CDRExportModal = React.createClass({
         <CDRExportForm
           startDate={moment(this.props.startDate, 'L')}
           endDate={moment(this.props.endDate, 'L').endOf('day')}
-          netType={this.props.netType}
+          netType={this.props.type}
           handleModalClose={this.closeModal}
           handleExport={this.props.handleExport}
         />

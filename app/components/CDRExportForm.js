@@ -52,12 +52,14 @@ let CDRExportForm = React.createClass({
     this.setState({ netType: netType });
   },
 
-  toggleNetTypeOnnet() {
-    this.setState({ netType: 'ONNET' });
+  toggleNetTypeOnnet(e) {
+    e.preventDefault();
+    this.setState({ netType: this.state.netType !== 'ONNET' ? 'ONNET' : '' });
   },
 
-  toggleNetTypeOffnet() {
-    this.setState({ netType: 'OFFNET' });
+  toggleNetTypeOffnet(e) {
+    e.preventDefault();
+    this.setState({ netType: this.state.netType !== 'OFFNET' ? 'OFFNET' : '' });
   },
 
   destinationChange(event) {
@@ -124,14 +126,14 @@ let CDRExportForm = React.createClass({
           <div className="large-7 columns">
             <ul className="button-group round even-2 export-type-buttons">
               <li>
-                <a href="#"
-                  className={classNames('button', { active: this.props.netType === 'ONNET' })}
+                <a
+                  className={classNames('button', { active: this.state.netType === 'ONNET' })}
                   onClick={this.toggleNetTypeOnnet}
                 >Onnet</a>
               </li>
               <li>
-                <a href="#"
-                  className={classNames('button', { active: this.props.netType === 'OFFNET' })}
+                <a
+                  className={classNames('button', { active: this.state.netType === 'OFFNET' })}
                   onClick={this.toggleNetTypeOffnet}
                 >Offnet</a>
               </li>

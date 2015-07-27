@@ -64,6 +64,9 @@ $positioning: -150px;
   border-radius: rem-calc(14);
   min-width: 50px;
 
+  /* Prevent incorrect covered by any other elements */
+  z-index: 1;
+
   a {
     color: white;
   }
