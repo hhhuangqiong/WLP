@@ -6,6 +6,9 @@ import makeRedisClient from './redis';
 import ensureAuthenticated from '../middlewares/ensureAuthenticated';
 import {SignUp} from '../../lib/portal/SignUp';
 
+import mongoose from 'mongoose';
+import NodeAcl from 'acl';
+
 /**
  * Initalize the IoC containero
  * The registered factory(s) seems to be lazied loaded.
@@ -71,6 +74,10 @@ export default function init(nconf) {
 
   ioc.service('RedisClient', (container) => {
     return makeRedisClient(nconf.get('redis'));
+  });
+
+  ioc.factory('ACL', (container) => {
+    return new NodeAcl(new NodeAcl.mongodbBackend(mongoose.connection.db));
   });
 
   return ioc;

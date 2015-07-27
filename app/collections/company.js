@@ -3,6 +3,8 @@ var mongoose = require('mongoose');
 var gridfs = require('./../server/utils/gridfs');
 var collectionName = 'Company';
 
+const SDK_DOMAIN = '.m800-api.com';
+
 var schema = new mongoose.Schema({
   parentCompany: {
     type: mongoose.Schema.Types.ObjectId,
@@ -181,9 +183,24 @@ schema.method('isRootCompany', function() {
   return !this.parentCompany;
 });
 
+schema.method('getCompanyType', function() {
+  if (this.isRootCompany()) {
+    return 'm800';
+  } else if (this.reseller) {
+    return 'reseller';
+  } else if (this.isSDK()) {
+    return 'sdk';
+  } else {
+    return 'wl';
+  }
+});
+
+schema.method('isSDK', function() {
+  return this.carrierId.indexOf(SDK_DOMAIN) > -1;
+});
+
 schema.method('getServiceType', function() {
-  // regex pattern or indexOf?
-  return this.carrierId.indexOf('.m800-api.com') > -1 ? 'SDK' : 'WL';
+  return this.isSDK() ? 'SDK' : 'WL';
 });
 
 schema.method('getUrlPrefix', function() {
