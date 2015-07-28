@@ -3,7 +3,7 @@ import Q from 'q';
 import express from 'express';
 import nconf from 'nconf';
 import moment from 'moment';
-import Controller from '../controllers/CDRExport';
+import CDRExportTask from '../tasks/CDRExport';
 import {CDR_EXPORT} from '../../config';
 import kue from 'kue';
 import fs from 'fs';
@@ -12,11 +12,9 @@ import logger from 'winston';
 
 import { fetchDep } from '../utils/bottle';
 
-var controller  = new Controller(fetchDep(nconf.get('containerName'), 'JobQueue'));
+var router = express.Router();
 
-var CDRExport = express.Router();
-
-CDRExport.use(function(req, res, next) {
+router.use(function(req, res, next) {
   if (!req.isAuthenticated()) {
     res.status(401);
   }
@@ -24,7 +22,7 @@ CDRExport.use(function(req, res, next) {
   next();
 });
 
-CDRExport.get('/:carrierId/calls', function(req, res) {
+router.get('/:carrierId/calls', function(req, res) {
   req.checkParams('carrierId').notEmpty();
   req.checkQuery('startDate').notEmpty();
   req.checkQuery('endDate').notEmpty();
@@ -50,55 +48,21 @@ CDRExport.get('/:carrierId/calls', function(req, res) {
     type: req.query.type
   };
 
-  params.request = 'CallsRequest';
-  params.func = 'getCalls';
+  let task = new CDRExportTask(fetchDep(nconf.get('containerName'), 'fileExportQueue'), params);
 
-  let job = controller.init(params, function(err) {
-    if (err) res.status(500).json({error:err});
+  task.ready().then((job) => {
 
-    return res.status(200).json({id:job.id});
-  });
+    res.status(200).json({id:job.id});
 
-  job.on('complete', function(params) {
-    logger.info('Job completed with data ', params);
+    task.start();
 
-  }).on('failed attempt', function(errorMessage, doneAttempts) {
-    logger.error('Job failed. Attempt %s', doneAttempts, errorMessage);
-
-  }).on('failed', function(errorMessage) {
-    logger.error('Job failed', errorMessage);
-
-  }).on('progress', function(progress, data) {
-    logger.info('\r  job #%s %s% complete with %s ', job.id, progress, data);
-
-  });
-
-  controller.process();
+  }, (err) => {
+    res.status(500).json({error:err});
+  }).done();
 
 });
 
-CDRExport.get('/:carrierId/calls/progress', function(req, res) {
-  req.checkQuery('exportId').notEmpty();
-
-  var err = req.validationErrors();
-  if (err) {
-    return res.status(400).json(err);
-  }
-
-  kue.Job.get(req.query.exportId, function(err, job) {
-    if (job.data.caller_carrier === req.params.carrierId) {
-      if (err) return res.status(500).json(err);
-
-      if (job._progress === '100') {
-        return res.status(200).json({file:job.result.file, progress:job._progress});
-      }
-
-      return res.status(200).json({progress: job._progress});
-    }
-  });
-});
-
-CDRExport.get('/:carrierId/calls/file', function(req, res) {
+router.get('/:carrierId/calls/progress', function(req, res) {
   req.checkQuery('exportId').notEmpty();
 
   var err = req.validationErrors();
@@ -108,16 +72,37 @@ CDRExport.get('/:carrierId/calls/file', function(req, res) {
 
   kue.Job.get(req.query.exportId, function(err, job) {
     if (err) return res.status(500).json(err);
-    if (job.data.caller_carrier === req.params.carrierId) {
-      // job._progress is a percentage and is recognized as string
-      if (job._progress === '100') {
-        res.setHeader('Content-disposition', 'attachment; filename=' + CDR_EXPORT.EXPORT_FILENAME);
-        res.setHeader('Content-type', 'text/csv');
-        var filestream = fs.createReadStream(job.result.file);
-        filestream.pipe(res);
-      }
+
+    if (job._progress === '100') {
+      return res.status(200).json({file:job.result.file, progress:job._progress});
     }
+
+    return res.status(200).json({progress: job._progress});
   });
 });
 
-module.exports = CDRExport;
+router.get('/:carrierId/calls/file', function(req, res) {
+  req.checkQuery('exportId').notEmpty();
+
+  var err = req.validationErrors();
+  if (err) {
+    return res.status(400).json(err);
+  }
+
+  kue.Job.get(req.query.exportId, function(err, job) {
+    if (err) return res.status(500).json(err);
+    // job._progress is a percentage and is recognized as string
+    if (job._progress === '100') {
+      res.setHeader('Content-disposition', 'attachment; filename=' + CDR_EXPORT.EXPORT_FILENAME);
+      res.setHeader('Content-type', 'text/csv');
+      var filestream = fs.createReadStream(job.result.file);
+      filestream.pipe(res);
+    }
+    else {
+      return res.status(400).json({ message: 'exporting in progress:' + job._progress});
+    }
+
+  });
+});
+
+module.exports = router;
