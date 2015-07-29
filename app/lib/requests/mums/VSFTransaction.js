@@ -51,7 +51,7 @@ export default class VSFTransactionRequest extends BaseRequest {
 
     Q.ninvoke(this, 'formatQueryData', params)
       .then((params) => {
-        this.sendRequest('maaiitest.com', params, cb);
+        this.sendRequest(carrierId, params, cb);
       }).catch((err) => {
         return this.handleError(err, 500);
       })
