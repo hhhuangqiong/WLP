@@ -27,18 +27,29 @@ export default function(redisConnOpts, opts = {}) {
   if (redisConnOpts.sentinels) {
 
     let endpoints = [].concat(redisConnOpts.sentinels);
+    let masterName = redisConnOpts.name;
+    let redisOpts = {
+      role: redisConnOpts.role,
+      db: redisConnOpts.db
+    };
 
-    logger.info('initalizing Kue with Sentinel endpoints: %j', endpoints, {});
+    logger.info('initalizing Kue with Sentinel endpoints: %j', redisConnOpts, {});
 
-    var sentinel = Sentinel.Sentinel(endpoints);
+    let sentinel = Sentinel.Sentinel(endpoints);
+    let sentinelClient = null;
 
     // use custom redis client
     kueRedisOpt = {
       createClientFactory: function() {
-        logger.info(`will connect to ${redisConnOpts.name}`);
 
-        let roleOpt = {role: redisConnOpts.role || 'master'};
-        return sentinel.createClient(redisConnOpts.name, roleOpt);
+        // avoid double creation
+        if (sentinelClient) return sentinelClient;
+
+        logger.info(`kue custom redis client creation`);
+
+        sentinelClient = sentinel.createClient(masterName, redisOpts);
+
+        return sentinelClient;
       }
     }
   }
@@ -46,20 +57,21 @@ export default function(redisConnOpts, opts = {}) {
     logger.info('initalizing Kue with non-sentinal endpoints: ', kueRedisOpt);
   }
 
-  var uiPort = opts.uiPort;
+  let kueue = kue.createQueue({
+    prefix: opts.prefix,
+    redis: kueRedisOpt
+  });
+
+  let uiPort = opts.uiPort;
 
   if (uiPort) {
+    // kue.createQueue must be called before accessing kue.app
     logger.info(`Kue UI started on port: ${uiPort}`);
 
     kue.app.listen(uiPort);
   }
 
 
-  return function createQueue(opts = {prefix: 'q'}) {
-    return kue.createQueue({
-      prefix: opts.prefix,
-      redis: kueRedisOpt
-    });
-  };
+  return kueue;
 }
 

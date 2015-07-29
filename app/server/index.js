@@ -58,14 +58,15 @@ function initialize(port) {
 
   var ioc = require('./initializers/ioc')(nconf);
 
-  let queueCreator = require('./initializers/kue')(nconf.get('redis'), {
+  //initialize the Kue instance to share through the entire process
+  let kueue = require('./initializers/kue')(nconf.get('redis'), {
     uiPort: nconf.get('queue:uiPort'),
     prefix: nconf.get('queue:prefix')
   });
 
   // a shared Kue instance for file exporting job queue
-  ioc.factory('fileExportQueue', () => {
-    return queueCreator({prefix: 'fileExport'});
+  ioc.factory('Kue', () => {
+    return kueue;
   });
 
   require('./initializers/logging')();

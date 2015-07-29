@@ -48,7 +48,7 @@ router.get('/:carrierId/calls', function(req, res) {
     type: req.query.type
   };
 
-  let task = new CDRExportTask(fetchDep(nconf.get('containerName'), 'fileExportQueue'), params);
+  let task = new CDRExportTask(fetchDep(nconf.get('containerName'), 'Kue'), params);
 
   task.ready().then((job) => {
 
