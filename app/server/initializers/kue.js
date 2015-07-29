@@ -36,20 +36,15 @@ export default function(redisConnOpts, opts = {}) {
     logger.info('initalizing Kue with Sentinel endpoints: %j', redisConnOpts, {});
 
     let sentinel = Sentinel.Sentinel(endpoints);
-    let sentinelClient = null;
 
     // use custom redis client
     kueRedisOpt = {
       createClientFactory: function() {
 
-        // avoid double creation
-        if (sentinelClient) return sentinelClient;
-
+        // will be created twice for listen and fetch purpose
         logger.info(`kue custom redis client creation`);
 
-        sentinelClient = sentinel.createClient(masterName, redisOpts);
-
-        return sentinelClient;
+        return sentinel.createClient(masterName, redisOpts);
       }
     }
   }

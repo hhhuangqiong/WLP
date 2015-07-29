@@ -73,11 +73,13 @@ router.get('/:carrierId/calls/progress', function(req, res) {
   kue.Job.get(req.query.exportId, function(err, job) {
     if (err) return res.status(500).json(err);
 
-    if (job._progress === '100') {
+    let progress = job._progress || '0';
+
+    if (progress === '100') {
       return res.status(200).json({file:job.result.file, progress:job._progress});
     }
 
-    return res.status(200).json({progress: job._progress});
+    return res.status(200).json({progress: progress});
   });
 });
 

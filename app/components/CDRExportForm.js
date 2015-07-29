@@ -169,10 +169,12 @@ let CDRExportForm = React.createClass({
         <div className="row text-center export-submit-buttons">
           <a
             role="button"
-            href="#"
             className="button--secondary large"
             aria-label="Close"
-            onClick={this.props.handleModalClose}
+            onClick={(e) => {
+              e.preventDefault();
+              this.props.handleModalClose();
+            }}
           >Cancel</a>
 
           <span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
@@ -180,9 +182,11 @@ let CDRExportForm = React.createClass({
           <a
             role="button"
             aria-label="submit form"
-            href="#"
             className="button--primary large"
-            onClick={this.proceedExport}
+            onClick={ (e) => {
+              e.preventDefault();
+              this.proceedExport();
+            }}
           >Proceed</a>
         </div>
 
