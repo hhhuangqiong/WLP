@@ -40,7 +40,7 @@ var TopUpTable = React.createClass({
   _getFormattedAmount: function(code, amount) {
     // toString to prevent from code = 0 returned by API
     let currency = converter.getCurrencyById(code.toString());
-    return currency.code + ' ' + currency.sign + amount.toFixed(1);
+    return (!currency.sign ? '' : currency.sign) + amount.toFixed(1) + ' ' + (!currency.code ? '' : currency.code);
   },
 
   render: function() {
