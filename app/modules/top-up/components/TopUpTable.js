@@ -7,13 +7,14 @@ import FluxibleMixin from 'fluxible/addons/FluxibleMixin';
 
 import Tooltip from 'rc-tooltip';
 
+import currencyData from '../../../data/bossCurrencies.json';
 import Converter from '../../../utils/bossCurrencyConverter';
 
 import config from './../../../main/config';
 
 let { displayDateFormat: DATE_FORMAT } = config;
 
-let converter = new Converter({ default: '840' });
+let converter = new Converter(currencyData, { default: '840' });
 
 var TopUpTable = React.createClass({
   PropTypes: {

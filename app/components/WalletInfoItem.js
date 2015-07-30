@@ -1,9 +1,10 @@
 import React from 'react';
 import moment from 'moment';
 import classNames from 'classnames';
+import currencyData from '../config/bossCurrencies.json';
 
 let Converter = require('../utils/bossCurrencyConverter');
-let CurrencyConverter = new Converter();
+let CurrencyConverter = new Converter(currencyData);
 
 var WalletItem = React.createClass({
   render: function() {

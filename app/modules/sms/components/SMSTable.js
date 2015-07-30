@@ -7,13 +7,9 @@ import FluxibleMixin from 'fluxible/addons/FluxibleMixin';
 
 import Tooltip from 'rc-tooltip';
 
-import Converter from '../../../utils/bossCurrencyConverter';
-
 import config from './../../../main/config';
 
 let { displayDateFormat: DATE_FORMAT } = config;
-
-let converter = new Converter({ default: '840' });
 
 var SMSTable = React.createClass({
   PropTypes: {
