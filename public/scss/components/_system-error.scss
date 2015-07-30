@@ -1,0 +1,49 @@
+.system-error {
+  width: 100%;
+  height: rem-calc(135);
+
+  &__icon {
+    line-height: rem-calc(135);
+    font-size: rem-calc(80);
+    color: $alert-color;
+  }
+
+  &__message {
+    > ul {
+      margin: 0;
+      padding: 0;
+      list-style: none;
+
+      > li {
+        display: block;
+
+        &:first-letter {
+          text-transform: uppercase;
+        }
+      }
+    }
+
+    .error-code {
+      color: $alert-color;
+      line-height: rem-calc(60);
+      font-size: rem-calc(70);
+      font-weight: normal;
+    }
+
+    .error-name {
+      line-height: rem-calc(50);
+      font-size: rem-calc(28);
+      font-weight: normal;
+      text-transform: capitalize;
+    }
+
+    .error-message {
+      line-height: rem-calc(19);
+      font-size: rem-calc(14);
+
+      > a {
+        text-decoration: underline;
+      }
+    }
+  }
+}

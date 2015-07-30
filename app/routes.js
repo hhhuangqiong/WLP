@@ -1,13 +1,17 @@
 import React from 'react';
 import { Route, NotFoundRoute, Redirect, DefaultRoute } from 'react-router';
-import {CLIENT} from './utils/env';
+import { CLIENT } from './utils/env';
+import { Error401, Error404, Error500 } from './main/components/Errors';
+
+// path strings
+import { ERROR_401 as pathError401, ERROR500 as pathError500 } from './server/paths';
 
 // convention: separate path by "-" following the component name
 
 // react-router acts differently from CLIENT to SERVER
 // CLIENT side react-router could recognize `to` property as route name while
 // SERVER side react-router takes to as URL
-let redirectForCallsOverview = CLIENT ? 'calls-details' : 'calls/details'
+let redirectForCallsOverview = CLIENT ? 'calls-details' : 'calls/details';
 
 export default (
   <Route handler={require('./components/App')}>
@@ -39,6 +43,9 @@ export default (
     </Route>
 
     // shared by both "public" &amp; "protected"
-    <NotFoundRoute name="not-found" handler={require('./components/common/NotFound')}/>
+    <Route name="access-denied" path={pathError401} handler={Error401} />
+    <Route name="internal-server-error" path={pathError500} handler={Error500} />
+
+    <NotFoundRoute name="not-found" handler={Error404} />
   </Route>
 );

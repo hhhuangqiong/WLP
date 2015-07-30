@@ -1,0 +1,17 @@
+{
+  "401": {
+    "code": 401,
+    "name": "access denided",
+    "message": "you don't have permission to access the resource"
+  },
+  "404": {
+    "code": 404,
+    "name": "page not found",
+    "message": "the page is not available"
+  },
+  "500": {
+    "code": 500,
+    "name": "internal server error",
+    "message": "there is a problem with the resource you are looking for, and it cannot be displayed"
+  }
+}
