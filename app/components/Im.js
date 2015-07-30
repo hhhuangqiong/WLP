@@ -39,7 +39,7 @@ var Im = React.createClass({
       concurrent([
         context.executeAction.bind(context, fetchIm, {
           carrierId: params.identity,
-          fromTime: query.fromTime || moment().subtract(2, 'day').startOf('day').format('L'),
+          fromTime: query.fromTime || moment().subtract(2, 'month').startOf('day').format('L'),
           toTime: query.toTime || moment().endOf('day').format('L'),
           type: query.type,
           searchType: query.searchType,
