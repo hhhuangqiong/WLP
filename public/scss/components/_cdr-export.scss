@@ -59,16 +59,23 @@ $positioning: -150px;
 }
 
 .export-download-button {
-  background-color: $brand-primary;
-  border: 1px solid $gray-light !important;
+  width: auto;
+  height: rem-calc(28);
+  line-height: rem-calc(26);
+  margin: rem-calc(16) 0 0 0;
+  padding: 0 rem-calc(15);
   border-radius: rem-calc(14);
-  min-width: 50px;
+  border: 1px solid #bbb;
+  color: white;
+  cursor: pointer;
 
-  /* Prevent incorrect covered by any other elements */
-  z-index: 1;
+  a, i {
+    color: inherit !important;
+    line-height: inherit !important;
+  }
 
-  a {
-    color: white;
+  i {
+    padding: 0 rem-calc(5);
   }
 }
 
