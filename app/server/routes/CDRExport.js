@@ -67,11 +67,11 @@ router.get('/:carrierId/calls/progress', function(req, res) {
 
   var err = req.validationErrors();
   if (err) {
-    return res.status(400).json(err);
+    return res.status(400).json({ message: 'Invalid export identifier'});
   }
 
   kue.Job.get(req.query.exportId, function(err, job) {
-    if (err) return res.status(500).json(err);
+    if (err) return res.status(400).json({ message: 'Invalid export identifier'});
 
     let progress = job._progress || '0';
 
@@ -92,13 +92,19 @@ router.get('/:carrierId/calls/file', function(req, res) {
   }
 
   kue.Job.get(req.query.exportId, function(err, job) {
-    if (err) return res.status(500).json(err);
+
+    if (err) return res.status(400).json({ message: 'Invalid export identifier'});
     // job._progress is a percentage and is recognized as string
     if (job._progress === '100') {
       res.setHeader('Content-disposition', 'attachment; filename=' + CDR_EXPORT.EXPORT_FILENAME);
       res.setHeader('Content-type', 'text/csv');
-      var filestream = fs.createReadStream(job.result.file);
-      filestream.pipe(res);
+      try {
+        var filestream = fs.createReadStream(job.result.file);
+        filestream.pipe(res);
+      }
+      catch(e) {
+        return res.status(400).json({ message: 'Unable to locate exported file. Please try again.'});
+      }
     }
     else {
       return res.status(400).json({ message: 'exporting in progress:' + job._progress});
