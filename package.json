@@ -15,7 +15,7 @@
     "jscsx": "jscs -x . --esprima=./node_modules/esprima-fb"
   },
   "dependencies": {
-    "acl": "^0.4.7",
+    "acl": "OptimalBits/node_acl",
     "babel": "^5.5.6",
     "bcrypt": "^0.8.0",
     "body-parser": "^1.8.1",
