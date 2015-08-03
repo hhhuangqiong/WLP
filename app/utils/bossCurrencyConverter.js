@@ -1,41 +1,23 @@
 // See: http://issuetracking.maaii.com:8090/display/HKBoss/MaaiiStat.Stat_Credit
-
 import _ from 'lodash';
-
-const currencies = {
-  156: {
-    code: 'CNY',
-    sign: '¥'
-  },
-  840: {
-    code: 'USD',
-    sign: '$'
-  },
-  978: {
-    code: 'EUR',
-    sign: '€'
-  },
-  998: {
-    code: 'Yato Coin'
-  },
-  999: {
-    code: 'MINS'
-
-    //code: "Internal Used For Minutes"
-  }
-};
 
 /**
  * Converter Class
  *
- * @param {Object} options
- * @param {String|Object} options.default
+ * @param currencies {Object} currency data
+ * @param options {Object}
+ * @param options.default {String|Object}
  * @constructor
- * @throws Will throw an error if the argument is not an Object.
+ * @throws Will throw an error if currency data is not given
+ * @throws Will throw an error if the options argument is not an Object
  * @throws Will throw an error if the currency is not found with no default currency is set
  * @throws Will throw an error if options.default is with missing keys
  */
-function Converter(options = {}) {
+function Converter(currencies, options = {}) {
+  if (!currencies) {
+    throw new Error('missing currency data');
+  }
+
   if (typeof options !== 'object') {
     throw new Error('option parameter should be an object');
   }
@@ -57,7 +39,7 @@ function setDefaultCurrency(defaultCurrency) {
   let currency;
 
   if (typeof defaultCurrency === 'string') {
-    currency = currencies[defaultCurrency] || _.find(currencies, function(c) {
+    currency = this._currencies[defaultCurrency] || _.find(this._currencies, function(c) {
       return c.code === defaultCurrency;
     });
 
@@ -87,7 +69,7 @@ Converter.prototype.getCurrencyById = function(bossCode) {
     throw new Error('currency code from BOSS is required');
   }
 
-  let convertedCurrency = currencies[bossCode];
+  let convertedCurrency = this._currencies[bossCode];
 
   if (!convertedCurrency && !this._default) {
     throw new Error('target currency not found');
