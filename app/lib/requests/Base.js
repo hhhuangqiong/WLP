@@ -48,7 +48,7 @@ class BaseRequest {
     let { from, to } = params;
 
     let isValid = (target) => {
-      return moment(from, target).isValid();
+      return moment(from, target, true).isValid();
     };
 
     let fromIsAfterTo = (target) => {
