@@ -62,7 +62,6 @@ getStateFromStores: function() {
       callsCount: store.getCallsCount(),
       page: store.getPageNumber(),
       totalPages: store.getTotalPages(),
-      openExportModal: store.getExportModalState(),
       isExporting: store.getExportState(),
       exportProgress: store.getExportProgress(),
       exportId: store.getExportId()
@@ -212,11 +211,15 @@ getStateFromStores: function() {
   },
 
   handleCancelExport() {
-    this.setState({ isExporting: false, openExportModal: false });
+    this.setState({ isExporting: false });
   },
 
   openExportModal() {
-    this.setState({openExportModal: true});
+    this.setState({exportModalOpened: true});
+  },
+
+  handleExportModalClosed() {
+    this.setState({exportModalOpened: false});
   },
 
   _handleStartDateClick: function() {
@@ -334,7 +337,8 @@ getStateFromStores: function() {
               startDate={this.state.startDate}
               endDate={this.state.endDate}
               netType={this.state.type}
-              isOpen={this.state.openExportModal}
+              isOpen={this.state.exportModalOpened}
+              handleModalClose={this.handleExportModalClosed}
               handleExport={this.handleExport}
             />
 

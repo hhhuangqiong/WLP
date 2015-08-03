@@ -30,7 +30,6 @@ var CallsStore = createStore({
 
     // TODO refactor using export object: this.cdrExport ={}
     this.exportId = 0;
-    this.openExportModal = false;
     this.isExporting = false;
     this.exportProgress = 0;
   },
@@ -41,7 +40,6 @@ var CallsStore = createStore({
     this.exportId = payload.id;
 
     this.isExporting = true;
-    this.openExportModal = false;
 
     this.emitChange();
   },
@@ -115,10 +113,6 @@ var CallsStore = createStore({
     return this.page;
   },
 
-  getExportModalState: function() {
-    return this.openExportModal;
-  },
-
   getExportState: function() {
     return this.isExporting;
   },
@@ -142,7 +136,6 @@ var CallsStore = createStore({
       params: this.params,
       widgets: this.widgets,
       exportId: this.exportId,
-      openExportModal: this.openExportModal,
       isExporting: this.isExporting,
       exportProgress: this.exportProgress
     };
@@ -162,7 +155,6 @@ var CallsStore = createStore({
     this.params = state.params;
     this.widgets = state.widgets;
     this.exportId = state.exportId;
-    this.openExportModal = state.openExportModal;
     this.isExporting = state.isExporting;
     this.exportProgress = state.exportProgress;
   }
