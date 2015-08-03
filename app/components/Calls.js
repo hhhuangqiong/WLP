@@ -240,13 +240,11 @@ getStateFromStores: function() {
     let completeExport = parseInt(this.state.exportProgress) === 100;
 
     let exportElement = (
-      <a
-        role="button"
-        onClick={this.openExportModal}
-        className="export-download-button button export-ie-fix"
-      >
-        <span className="icon-download"></span>
-      </a>
+      <div className="export-download-button export-ie-fix" onClick={this.handleExportDownload}>
+        <a target="_blank" href={this.state.exportFile}>
+          Download<i className="icon-download" />
+        </a>
+      </div>
     )
 
     if (isExporting) {
@@ -264,11 +262,11 @@ getStateFromStores: function() {
 
     if (completeExport){
       exportElement = (
-        <span className="export-download-button button export-ie-fix">
-          <a target="_blank" href={this.state.exportFile} onClick={this.handleExportDownload}>
-            Download&nbsp;&nbsp;<i className="icon-download" />
+        <div className="export-download-button export-ie-fix" onClick={this.handleExportDownload}>
+          <a target="_blank" href={this.state.exportFile}>
+            Download<i className="icon-download" />
           </a>
-        </span>
+        </div>
       )
     }
 
@@ -340,18 +338,22 @@ getStateFromStores: function() {
               handleExport={this.handleExport}
             />
 
-            <div className="right">{exportElement}</div>
-
-            <div className="call-search top-bar-section right">
-              <Searchbox
-                search={this.state.search}
-                searchTypes={searchTypes}
-                placeHolder="Username/Mobile"
-                onInputChangeHandler={this.handleUsernameChange}
-                onSelectChangeHandler={this.handleSearchTypeChange}
-                onKeyPressHandler={this.handleSearchSubmit} />
-            </div>
-
+            <ul className="right top-bar--inner">
+              <li className="top-bar--inner">
+                <div className="call-search">
+                  <Searchbox
+                    search={this.state.search}
+                    searchTypes={searchTypes}
+                    placeHolder="Username/Mobile"
+                    onInputChangeHandler={this.handleUsernameChange}
+                    onSelectChangeHandler={this.handleSearchTypeChange}
+                    onKeyPressHandler={this.handleSearchSubmit} />
+                </div>
+              </li>
+              <li className="top-bar--inner">
+                {exportElement}
+              </li>
+            </ul>
           </div>
         </nav>
 

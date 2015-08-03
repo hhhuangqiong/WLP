@@ -199,6 +199,14 @@
                     button{
                         @extend .button--primary;
                     }
+
+                    li {
+                      margin-right: $column-gutter;
+
+                      &:last-child {
+                        margin-right: 0;
+                      }
+                    }
                 }
             }
         }
