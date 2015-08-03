@@ -74,7 +74,7 @@
     "serve-favicon": "^2.1.7",
     "speakeasy": "^1.0.3",
     "superagent": "^1.1.0",
-    "validator": "^3.30.0",
+    "validator": "^3.42.0",
     "webpack": "^1.9.4",
     "winston": "^1.0.0"
   },

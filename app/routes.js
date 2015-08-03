@@ -1,10 +1,13 @@
 import React from 'react';
 import { Route, NotFoundRoute, Redirect, DefaultRoute } from 'react-router';
 import { CLIENT } from './utils/env';
-import { Error401, Error404, Error500 } from './main/components/Errors';
 
 // path strings
-import { ERROR_401 as pathError401, ERROR500 as pathError500 } from './server/paths';
+import {
+  ERROR_401 as pathToError401,
+  ERROR_404 as pathToError404,
+  ERROR500 as pathToError500
+} from './server/paths';
 
 // convention: separate path by "-" following the component name
 
@@ -45,9 +48,9 @@ export default (
     </Route>
 
     // shared by both "public" &amp; "protected"
-    <Route name="access-denied" path={pathError401} handler={Error401} />
-    <Route name="internal-server-error" path={pathError500} handler={Error500} />
+    <Route name="access-denied" path={pathToError401} handler={require('./main/components/Errors').Error401} />
+    <Route name="internal-server-error" path={pathToError500} handler={require('./main/components/Errors').Error500} />
 
-    <NotFoundRoute name="not-found" handler={Error404} />
+    <NotFoundRoute name="not-found" handler={require('./main/components/Errors').Error404} />
   </Route>
 );

@@ -2,8 +2,9 @@ export const HOME = '/';
 export const SIGN_IN = '/sign-in';
 export const SIGN_OUT = '/sign-out';
 export const SESSION = '/session';
-export const ERROR_401 = '/access-denied';
-export const ERROR_500 = '/internal-server-error';
+export const ERROR_401 = '/error/access-denied';
+export const ERROR_404 = '/error/not-found';
+export const ERROR_500 = '/error/internal-server-error';
 
 import path from 'path';
 

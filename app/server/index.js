@@ -32,6 +32,7 @@ var ERROR_PATHS = require('./paths');
 var debug = require('debug')('app:server');
 
 const PROJ_ROOT = path.join(__dirname, '../..');
+import { ERROR_401, ERROR_404 } from './paths';
 
 //TODO rename the file as 'app'
 import app from '../index';
@@ -153,7 +154,16 @@ function initialize(port) {
 
   var renderApp = require('./render')(app);
 
-  server.use(function(req, res, next) {
+  function handlePermissionError(err, req, res, next) {
+    if (err) {
+      err.status == 404 ? res.redirect(ERROR_404) : res.redirect(ERROR_401);
+      return;
+    }
+
+    next();
+  };
+
+  server.use(require('./middlewares/aclMiddleware'), handlePermissionError, function(req, res, next) {
     if (config.DISABLE_ISOMORPHISM) {
       // Send empty HTML with just the config values
       // all rendering will be done by the client

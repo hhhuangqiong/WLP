@@ -10,7 +10,7 @@ import mongoose from 'mongoose';
 import NodeAcl from 'acl';
 
 /**
- * Initalize the IoC containero
+ * Initialize the IoC container
  * The registered factory(s) seems to be lazied loaded.
  *
  * @param {*} nconf nconf instance
@@ -78,6 +78,13 @@ export default function init(nconf) {
 
   ioc.factory('ACL', (container) => {
     return new NodeAcl(new NodeAcl.mongodbBackend(mongoose.connection.db));
+  });
+
+  ioc.factory('ACLManager', (container) => {
+    var AclManager = require('../../main/acl');
+    var carrierQuerier = require('../../main/acl/carrierQueryService');
+    var nodeAcl = container.ACL;
+    return new AclManager(nodeAcl, carrierQuerier);
   });
 
   return ioc;
