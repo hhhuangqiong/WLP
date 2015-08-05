@@ -8,7 +8,6 @@ export default function(apiPrefix = '') {
 
   return {
     getVSFTransactions(params, cb) {
-      console.info('`${this._getHost()}${carrierBasePath}/${params.carrierId}/vsf`', `${this._getHost()}${carrierBasePath}/${params.carrierId}/vsf`)
       superagent
         .get(`${this._getHost()}${carrierBasePath}/${params.carrierId}/vsf`)
         .query(params)
