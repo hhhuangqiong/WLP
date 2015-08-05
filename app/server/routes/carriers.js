@@ -20,6 +20,23 @@ import Company from '../../collections/company';
 
 var api = express.Router();
 
+function prepareWildcard(search) {
+  if (!search)
+    return '';
+
+  if (search.indexOf('@') > -1)
+    search = search.substring(0, search.indexOf('@'));
+
+  // if `+` exists, cannot apply like searching
+  if (search.charAt(0) === '+') {
+    return search.substring(1, search.length);
+    // should use after tdr API was fixed
+    //return search.trim();
+  }
+
+  return '*' + search.trim() + '*';
+}
+
 api.get('/carriers/:carrierId/users', function(req, res) {
   req.checkParams('carrierId').notEmpty();
   req.checkQuery('fromTime').notEmpty();
@@ -210,13 +227,6 @@ api.get('/carriers/:carrierId/calls', function(req, res) {
   req.checkQuery('endDate').notEmpty();
   req.checkQuery('page').notEmpty();
 
-  function prepareWildcard(search) {
-    if (!search)
-      return '';
-
-    return '*' + search.trim() + '*';
-  }
-
   let params = {
     // jscs:disable requireCamelCaseOrUpperCaseIdentifiers
     caller_carrier: req.params.carrierId,
@@ -368,10 +378,10 @@ api.get('/carriers/:carrierId/im', function(req, res) {
     req.query.searchType = 'sender';
 
   if (req.query.searchType === 'sender')
-    req.query.sender = (!req.query.search) ? '' : '*' + req.query.search + '*';
+    req.query.sender = prepareWildcard(req.query.search);
 
   if (req.query.searchType === 'recipient')
-    req.query.recipient = (!req.query.search) ? '' : '*' + req.query.search + '*';
+    req.query.recipient = prepareWildcard(req.query.search);
 
   req.query.type = 'IncomingMessage';
 
