@@ -3,29 +3,41 @@ import Moment from 'moment';
 import classNames from 'classnames';
 import _ from 'lodash';
 
+const NO_VALUE_LABEL = 'N/A';
+
 let VSFTransactionTable = React.createClass({
   propTypes: {
     transactions: React.PropTypes.array
+  },
+
+  getStyleByStoreType() {
+    return classNames({
+      'icon-apple': store === 'AppStore'
+    },{
+      'icon-apple-hack': store === 'AppStore'
+    },{
+      'icon-android': store === 'Android'
+    },{
+      'icon-android-hack': store === 'Android'
+    });
+  },
+
+  renderPlatform(store) {
+    if(!store) {
+      return NO_VALUE_LABEL;
+    }
+
+    return (<span className={this.getStyleByStoreType()}></span>);
   },
 
   renderRows() {
     const transactions = this.props.transactions;
 
     return (transactions || []).map((transaction, i) => {
-      const platformStyles = classNames({
-        'icon-apple': transaction.store === 'AppStore'
-      },{
-        'icon-apple-hack': transaction.store === 'AppStore'
-      },{
-        'icon-android': transaction.store === 'Android'
-      },{
-        'icon-android-hack': transaction.store === 'Android'
-      });
-
       return (
         <tr className="calls-table--row" key={i}>
           <td className="text-center calls-table--cell">
-            <span className={classNames('label', 'status', (transaction.transactionStatus) ? 'Assigned' : 'Consumed')}></span>
+            <span className={classNames('label', 'status', (transaction.transactionStatus) ? 'success' : 'alert')}></span>
           </td>
 
           <td className="calls-table--cell">
@@ -39,22 +51,23 @@ let VSFTransactionTable = React.createClass({
           </td>
 
           <td className="calls-table--cell text-center">
-            <span><i className={platformStyles}></i></span>
+            <span>{this.renderPlatform(transaction.platform)}</span>
           </td>
 
           <td className="calls-table--cell text-center">
             <If condition={transaction.categories.indexOf('voice_sticker') >= 0}>
-              <span><i className="icon-audio icon-virtual-item"></i></span>
+              <span className="icon-audio icon-virtual-item"></span>
             </If>
             <If condition={transaction.categories.indexOf('animation') >= 0}>
-              <span><i className="icon-animation icon-virtual-item"></i></span>
+              <span className="icon-animation icon-virtual-item"></span>
             </If>
             <If condition={transaction.categories.indexOf('sticker') >= 0}>
-              <span><i className="icon-sticker icon-virtual-item"></i></span>
+              <span className="icon-sticker icon-virtual-item"></span>
             </If>
-            <If condition={transaction.categories.indexOf('featured') >= 0}>
-              <span><i className="icon-credit icon-virtual-item"></i></span>
+            <If condition={transaction.categories.indexOf('credit') >= 0}>
+              <span className="icon-credit icon-virtual-item"></span>
             </If>
+             id: {transaction.virtualItemId}
           </td>
 
           <td className="calls-table--cell">
@@ -67,7 +80,7 @@ let VSFTransactionTable = React.createClass({
           </td>
 
           <td className="calls-table--cell">
-            <span>{transaction.virtualItemId}</span>
+            <span>{transaction.transactionId || NO_VALUE_LABEL}</span>
           </td>
         </tr>
       )

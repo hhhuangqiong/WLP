@@ -126,8 +126,8 @@ let VSFTransactionDetails = React.createClass({
     this.handleChange({ category: this.state.category === 'sticker' ? '' : 'sticker' });
   },
 
-  handleFeaturedFilterToggle(e) {
-    this.handleChange({ category: this.state.category === 'featured' ? '' : 'featured' });
+  handleCreditFilterToggle(e) {
+    this.handleChange({ category: this.state.category === 'credit' ? '' : 'credit' });
   },
 
   render() {
@@ -166,7 +166,7 @@ let VSFTransactionDetails = React.createClass({
                 handleVoiceFilterToggle={this.handleVoiceFilterToggle}
                 handleAnimationFilterToggle={this.handleAnimationFilterToggle}
                 handleStickerFilterToggle={this.handleStickerFilterToggle}
-                handleFeaturedFilterToggle={this.handleFeaturedFilterToggle}
+                handleCreditFilterToggle={this.handleCreditFilterToggle}
               />
             </div>
 

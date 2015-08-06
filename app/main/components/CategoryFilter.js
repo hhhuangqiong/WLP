@@ -7,7 +7,7 @@ let CategoryFilter = React.createClass({
     handleVoiceFilterToggle: React.PropTypes.func,
     handleAnimationFilterToggle: React.PropTypes.func,
     handleStickerFilterToggle: React.PropTypes.func,
-    handleFeaturedFilterToggle: React.PropTypes.func
+    handleCreditFilterToggle: React.PropTypes.func
   },
 
   render() {
@@ -29,8 +29,8 @@ let CategoryFilter = React.createClass({
           </a>
         </li>
         <li>
-          <a className="button" onClick={this.props.handleFeaturedFilterToggle}>
-            <i className={classNames('icon-credit', 'vsf-type-filtering', {'icon-white': this.props.category === 'featured'})}></i>
+          <a className="button" onClick={this.props.handleCreditFilterToggle}>
+            <i className={classNames('icon-credit', 'vsf-type-filtering', {'icon-white': this.props.category === 'credit'})}></i>
           </a>
         </li>
       </ul>
