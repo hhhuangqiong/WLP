@@ -11,6 +11,8 @@ import path from 'path';
 import {CDR_EXPORT} from '../../config';
 import Q from 'q';
 
+const OUTPUT_TIME_FORMAT = 'YYYY-MM-DD h:mm:ss a';
+
 var validateCompletedTime = function(completedTime) {
   let nowTimestamp = moment().format('x');
   let difference = nowTimestamp - completedTime;
@@ -30,6 +32,9 @@ var validateCompletedTime = function(completedTime) {
  * @param  {string}   [param.caller_country] - specify caller's located country, value is referenced in /app/data/countries.json using 'alpha2' code
      in /app/lib
  */
+
+const PLACEHOLDER_FOR_NULL = 'N/A';
+
 export default class CDRExport {
 
   constructor(kueue, param) {
@@ -172,10 +177,10 @@ export default class CDRExport {
           let row = _.pick(result.contents[offset], CDR_EXPORT.DATA_FIELDS);
           // cannot fix code styling since the it's returned from server
           /* jscs: disable */
-          row.callee = "'" + row.callee + "'";
-          row.start_time = moment(row.start_time).format('YYYY-MM-DD h:mm:ss a');
-          row.end_time = moment(row.end_time).format('YYYY-MM-DD h:mm:ss a');
-          row.answer_time = moment(row.answer_time).format('YYYY-MM-DD h:mm:ss a');
+          row.callee = row.callee;
+          row.start_time = moment(row.start_time).format(OUTPUT_TIME_FORMAT);
+          row.end_time = row.end_time ? moment(row.end_time).format(OUTPUT_TIME_FORMAT) : PLACEHOLDER_FOR_NULL;
+          row.answer_time = row.answer_time ? moment(row.answer_time).format(OUTPUT_TIME_FORMAT) : PLACEHOLDER_FOR_NULL;
           row.duration = row.duration + 's';
           /* jscs: enable */
           csvStream.write(row);
