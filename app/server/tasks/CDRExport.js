@@ -172,7 +172,7 @@ export default class CDRExport {
           let row = _.pick(result.contents[offset], CDR_EXPORT.DATA_FIELDS);
           // cannot fix code styling since the it's returned from server
           /* jscs: disable */
-          row.callee = row.callee;
+          row.callee = "'" + row.callee + "'";
           row.start_time = moment(row.start_time).format('YYYY-MM-DD h:mm:ss a');
           row.end_time = moment(row.end_time).format('YYYY-MM-DD h:mm:ss a');
           row.answer_time = moment(row.answer_time).format('YYYY-MM-DD h:mm:ss a');
