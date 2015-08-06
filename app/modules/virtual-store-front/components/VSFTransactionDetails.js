@@ -16,8 +16,9 @@ import initialState from '../data/VSFInitialState';
 import VSFTransactionStore from '../stores/VSFTransactionStore';
 import fetchVSFTransactions from '../actions/fetchVSFTransactions';
 
-const searchTypes = [{name:'Caller', value: 'caller'},{name:'Callee', value: 'callee'}];
 const debug = require('debug')('src:modules/virtual-store-front/components/VSFTransactionDetails');
+
+const SUBMIT_KEY = 13;
 
 let VSFTransactionDetails = React.createClass({
   mixins: [FluxibleMixin, AuthMixin],
@@ -67,13 +68,12 @@ let VSFTransactionDetails = React.createClass({
 
   getQueryFromState: function() {
     return {
-      startDate: this.state.startDate && this.state.startDate.trim(),
       fromTime: this.state.fromTime && this.state.fromTime.trim(),
       toTime: this.state.toTime && this.state.toTime.trim(),
       category: this.state.category && this.state.category.trim(),
       userNumber: this.state.userNumber && this.state.userNumber.trim(),
       pageIndex: this.state.pageIndex && this.state.pageIndex.trim(),
-      pageSize: this.state.pageSize,
+      pageSize: this.state.pageSize
     }
   },
 
@@ -103,15 +103,15 @@ let VSFTransactionDetails = React.createClass({
 
   handleNumberChange(e) {
     let changes = { userNumber: e.target.value };
-    this.handleChange(changes);
+    this.setState(changes);
   },
 
   handleSearchSubmit(e) {
     debug('handleSearchSubmit', e)
 
-    if (e.which !== 13) return;
-    e.preventDefault();
-    this.handleNumberChange(e);
+    if (e.which === SUBMIT_KEY){
+      this.handleChange();
+    }
   },
 
   handleVoiceFilterToggle(e) {
