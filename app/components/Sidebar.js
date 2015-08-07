@@ -34,7 +34,7 @@ let navSections = [
   },
   {
     name: 'VSF',
-    icon: 'icon-credit',
+    icon: 'icon-menustore',
     routeName: 'vsf-transaction-overview'
   },
   {
