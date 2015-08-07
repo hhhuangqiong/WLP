@@ -1,4 +1,4 @@
-.button--primary { 	
+.button--primary {
     @include button(
 		$bg: $brand-primary,
 		$radius: $global-rounded
@@ -19,4 +19,37 @@
     ~ input[type="submit"]{
     	margin-left: rem-calc(20);
     }
+}
+
+&.button--circle {
+  width: rem-calc(35);
+  height: rem-calc(35);
+  border-radius: rem-calc(35);
+  box-shadow: inset 0px 1px 1px rgba(255, 255, 255, 0.2), inset 0px -1px 1px rgba(0, 0, 0, 0.2);
+
+  &--text {
+    padding-left: 0;
+    padding-right: 0;
+    overflow: hidden;
+  }
+
+  > a {
+    display: inline-block;
+    position: absolute;
+    width: inherit;
+    height: inherit;
+    top: 0;
+    left: 0;
+    line-height: rem-calc(35);
+  }
+
+  [class^="icon-"] {
+    display: inline-block;
+    position: absolute;
+    width: inherit;
+    height: inherit;
+    top: 0;
+    left: 0;
+    line-height: rem-calc(35);
+  }
 }
