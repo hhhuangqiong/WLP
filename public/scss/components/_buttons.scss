@@ -21,10 +21,12 @@
     }
 }
 
+$button-circle-diameter: 35;
+
 &.button--circle {
-  width: rem-calc(35);
-  height: rem-calc(35);
-  border-radius: rem-calc(35);
+  width: rem-calc($button-circle-diameter) !important;
+  height: rem-calc($button-circle-diameter) !important;
+  border-radius: rem-calc($button-circle-diameter);
   box-shadow: inset 0px 1px 1px rgba(255, 255, 255, 0.2), inset 0px -1px 1px rgba(0, 0, 0, 0.2);
 
   &--text {
@@ -40,7 +42,7 @@
     height: inherit;
     top: 0;
     left: 0;
-    line-height: rem-calc(35);
+    line-height: rem-calc($button-circle-diameter);
   }
 
   [class^="icon-"] {
@@ -50,6 +52,6 @@
     height: inherit;
     top: 0;
     left: 0;
-    line-height: rem-calc(35);
+    line-height: rem-calc($button-circle-diameter);
   }
 }

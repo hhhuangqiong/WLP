@@ -47,6 +47,20 @@ Api.prototype.getCompanies = function(params, cb) {
     });
 };
 
+Api.prototype.getParentCompanies = function(params, cb) {
+  superagent
+    .get(`${this._getHost()}/api/companies/parent`)
+    .accept('json')
+    .set('Authorization', this._getToken())
+    .end(function(err, res) {
+      if (err) {
+        debug('error', err);
+      }
+
+      cb(err, res && res.body);
+    });
+};
+
 Api.prototype.createCompany = function(params, cb) {
   superagent
     .post(`${this._getHost()}/api/companies`)
@@ -129,6 +143,34 @@ Api.prototype.updateCompanyWidget = function(params, cb) {
     .accept('json')
     .set('Authorization', this._getToken())
     .send(params.data)
+    .end(function(err, res) {
+      if (err) {
+        debug('error', err);
+      }
+
+      cb(err, res && res.body);
+    });
+};
+
+Api.prototype.deactivateCompany = function(params, cb) {
+  superagent
+    .post(`${this._getHost()}/api/companies/${params.carrierId}/suspension`)
+    .accept('json')
+    .set('Authorization', this._getToken())
+    .end(function(err, res) {
+      if (err) {
+        debug('error', err);
+      }
+
+      cb(err, res && res.body);
+    });
+};
+
+Api.prototype.reactivateCompany = function(params, cb) {
+  superagent
+    .put(`${this._getHost()}/api/companies/${params.carrierId}/suspension`)
+    .accept('json')
+    .set('Authorization', this._getToken())
     .end(function(err, res) {
       if (err) {
         debug('error', err);

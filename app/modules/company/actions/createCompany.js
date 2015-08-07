@@ -1,4 +1,4 @@
-var debug = require('debug')('wlp:createCompany');
+var debug = require('debug')('app:createCompany');
 
 export default function(context, params, done) {
   debug('Started');

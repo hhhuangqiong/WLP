@@ -2,7 +2,7 @@
 import Fluxible from 'fluxible';
 
 import ApplicationStore from './stores/ApplicationStore';
-import CompanyStore from './stores/CompanyStore';
+import CompanyStore from './modules/company/stores/CompanyStore';
 import EndUserStore from './modules/end-user/stores/EndUserStore';
 import SignInStore from './stores/SignInStore';
 import OverviewStore from './modules/overview/stores/OverviewStore';

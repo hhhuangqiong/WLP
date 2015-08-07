@@ -18,6 +18,18 @@ api.post('/companies', multipart, function(req, res) {
   return controller.saveProfile(req, res);
 });
 
+api.get('/companies/parent', function(req, res) {
+  return controller.getParentCompanies(req, res);
+});
+
+api.post('/companies/:carrierId/suspension', function(req, res) {
+  return controller.deactivateCompany(req, res);
+});
+
+api.put('/companies/:carrierId/suspension', function(req, res) {
+  return controller.reactivateCompany(req, res);
+});
+
 api.get('/companies/:carrierId/info', function(req, res) {
   return controller.getInfo(req, res);
 });

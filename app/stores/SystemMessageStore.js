@@ -15,13 +15,18 @@ var SystemMessageStore = createStore({
   handlers: {
     SIGN_IN_FAILURE: 'handleSignInFailure',
     UPDATE_COMPANY_PROFILE_SUCCESS: 'handleUpdateCompanySuccess',
+    UPDATE_COMPANY_PROFILE_FAILURE: 'handleUpdateCompanyFailure',
     UPDATE_COMPANY_SERVICE_SUCCESS: 'handleUpdateCompanySuccess',
+    UPDATE_COMPANY_SERVICE_FAILURE: 'handleUpdateCompanyFailure',
     UPDATE_COMPANY_WIDGET_SUCCESS: 'handleUpdateCompanySuccess',
+    REACTIVATE_COMPANY_SUCCESS: 'handleUpdateCompanySuccess',
+    DEACTIVATE_COMPANY_SUCCESS: 'handleUpdateCompanySuccess',
     ERROR_MESSAGE: 'handleErrorMessage',
     REACTIVATE_END_USER_FAILURE: 'handleReactivateEndUserFailure',
     DEACTIVATE_END_USER_FAILURE: 'handleDeactivateEndUserFailure',
     DELETE_END_USER_FAILURE: 'handleDeleteEndUserFailure',
-    DELETE_END_USER_SUCCESS: 'handleDeleteEndUserSuccess'
+    DELETE_END_USER_SUCCESS: 'handleDeleteEndUserSuccess',
+    CREATE_COMPANY_FAILURE: 'handleUpdateCompanyFailure'
   },
 
   // do not change this
@@ -44,7 +49,16 @@ var SystemMessageStore = createStore({
   handleUpdateCompanySuccess: function(data) {
     this.id = Date.now();
     this.type = 'success';
-    this.message = 'Saved.';
+    this.message = 'Saved';
+    this.hidden = false;
+
+    this.emitChange();
+  },
+
+  handleUpdateCompanyFailure: function(err) {
+    this.id = Date.now();
+    this.type = 'error';
+    this.message = err.message;
     this.hidden = false;
 
     this.emitChange();

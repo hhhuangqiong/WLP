@@ -8,6 +8,7 @@ import errorMixin from '../requests/mixins/mumsErrorResponse';
 
 export const CONTENT_TYPE_APISERVICE    = 'APISERVICE';
 export const CONTENT_TYPE_APPLICATIONS  = 'APPLICATIONS';
+export const CONTENT_TYPE_CARRIER = 'CARRIER';
 
 /**
  * @mixes mixins/mumsErrorResponse
@@ -28,6 +29,9 @@ export class ApplicationRequest {
       case CONTENT_TYPE_APPLICATIONS:
         return `${this._baseUrl}/1.0/carriers/${carrierId}/applications`;
         break;
+      case CONTENT_TYPE_CARRIER:
+        return `${this._baseUrl}/1.0/carriers/${carrierId}`;
+        break;
       default:
         throw new Error('Content Type requested is not available');
         break;
@@ -40,17 +44,22 @@ export class ApplicationRequest {
         return response.services;
         break;
       case CONTENT_TYPE_APPLICATIONS:
-
-        //return response.applicationDetails.applications;
         return {
           applicationId: response.applicationDetails.applicationIdentifier,
           applications: response.applicationDetails.applications
         };
         break;
+      case CONTENT_TYPE_CARRIER:
+        return { isValid: !_.has(response.body, 'error') };
+        break;
       default:
         throw new Error('Content Type requested is not available');
         break;
     }
+  }
+
+  validateCarrier(carrierId, cb) {
+    this._get(carrierId, CONTENT_TYPE_CARRIER, cb);
   }
 
   getApiService(carrierId, cb) {
