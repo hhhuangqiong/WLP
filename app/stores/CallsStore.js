@@ -15,7 +15,8 @@ var CallsStore = createStore({
     //@TODO might be better to create a seprate store for CDR export function
     FETCH_EXPORT_SUCCESS: 'handleFetchExport',
     FETCH_EXPORT_PROGRESS_FAILURE: 'handleProgressFailure',
-    FETCH_EXPORT_PROGRESS_SUCCESS: 'handleProgressSuccess'
+    FETCH_EXPORT_PROGRESS_SUCCESS: 'handleProgressSuccess',
+    PERFORM_CLEAR_EXPORT_STATE: 'handleClearExportState'
   },
 
   initialize: function() {
@@ -68,6 +69,14 @@ var CallsStore = createStore({
     this.size = payload.pageSize;
     this.callsCount = payload.totalElements;
     this.totalPages = payload.totalPages;
+
+    this.emitChange();
+  },
+
+  handleClearExportState: function() {
+    this.isExporting = false;
+    this.exportProgress = 0;
+    this.exportId = 0;
 
     this.emitChange();
   },

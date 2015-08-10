@@ -19,6 +19,7 @@ import Searchbox from './Searchbox';
 import fetchExport from '../actions/fetchExport';
 import fetchExportProgress from '../actions/fetchExportProgress';
 import fetchExportFile from '../actions/fetchExportFile';
+import performClearExport from '../actions/performClearExport';
 import CDRExportModal from './CDRExportModal';
 import CDRProgressBar from './CDRProgressBar';
 
@@ -207,7 +208,7 @@ getStateFromStores: function() {
   handleExportDownload() {
     const downloadPath = `/export/${this.state.carrierId}/calls/file?exportId=${this.state.exportId}`;
     window.open(downloadPath, '_blank');
-    this.setState({ exportProgress: 0, isExporting: false });
+    this.executeAction(performClearExport);
   },
 
   handleCancelExport() {
