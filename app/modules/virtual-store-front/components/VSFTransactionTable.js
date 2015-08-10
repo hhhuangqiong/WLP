@@ -4,30 +4,32 @@ import classNames from 'classnames';
 import _ from 'lodash';
 
 const NO_VALUE_LABEL = 'N/A';
+const IOS_PLATFORM = 'com.maaii.platform.ios';
+const ANDROID_PLATFORM = 'com.maaii.platform.android';
 
 let VSFTransactionTable = React.createClass({
   propTypes: {
     transactions: React.PropTypes.array
   },
 
-  getStyleByStoreType() {
+  getStyleByStoreType(platform) {
     return classNames({
-      'icon-apple': store === 'AppStore'
+      'icon-apple': platform === IOS_PLATFORM
     },{
-      'icon-apple-hack': store === 'AppStore'
+      'icon-apple-hack': platform === IOS_PLATFORM
     },{
-      'icon-android': store === 'Android'
+      'icon-android': platform === ANDROID_PLATFORM
     },{
-      'icon-android-hack': store === 'Android'
+      'icon-android-hack': platform === ANDROID_PLATFORM
     });
   },
 
-  renderPlatform(store) {
-    if(!store) {
+  renderPlatform(platform) {
+    if(!platform) {
       return NO_VALUE_LABEL;
     }
 
-    return (<span className={this.getStyleByStoreType()}></span>);
+    return (<span className={this.getStyleByStoreType(platform)}></span>);
   },
 
   renderRows() {
