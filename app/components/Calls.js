@@ -287,6 +287,10 @@ getStateFromStores: function() {
           <div className="top-bar-section">
             <ul className="left top-bar--inner tab--inverted">
               <li className="top-bar--inner tab--inverted__title">
+                <Link to="calls-overview" params={params}>Overview</Link>
+              </li>
+
+              <li className="top-bar--inner tab--inverted__title">
                 <Link to="calls-details" params={params}>Details Report</Link>
               </li>
             </ul>

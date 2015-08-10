@@ -11,7 +11,7 @@ import { ERROR_401 as pathError401, ERROR500 as pathError500 } from './server/pa
 // react-router acts differently from CLIENT to SERVER
 // CLIENT side react-router could recognize `to` property as route name while
 // SERVER side react-router takes to as URL
-let redirectForCallsOverview = CLIENT ? 'calls-details' : 'calls/details';
+let redirectForCallsOverview = CLIENT ? 'calls-overview' : 'calls/overview';
 
 export default (
   <Route handler={require('./components/App')}>
@@ -29,9 +29,8 @@ export default (
       <Route name="vsf-transaction-details" path="/:role/:identity?/vsf/details" handler={require('./modules/virtual-store-front/components/VSFTransactionDetails')} />
 
       <Route name="overview" path="/:role/:identity?/overview" handler={require('./modules/overview/components/Overview')} />
-      /*
-        <Route name="calls-overview" path="/:role/:identity?/calls" handler={require('./components/CallsOverview')} />
-      */
+
+      <Route name="calls-overview" path="/:role/:identity?/calls/overview" handler={require('./components/CallsOverview')} />
       <Route name="calls-details" path="/:role/:identity?/calls/details" handler={require('./components/Calls')} />
 
 	    <Route name="end-users" path="/:role/:identity?/endusers" handler={require('./modules/end-user/components/EndUsers')} />
