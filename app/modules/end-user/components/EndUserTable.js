@@ -10,6 +10,7 @@ import _ from 'lodash';
 
 const { displayDateFormat: DATE_FORMAT } = require('./../../../main/config');
 const Countries = require('../../../data/countries.json');
+const NOT_FOUND_LABEL = 'N/A';
 
 var EndUserTable = React.createClass({
   contextTypes: {
@@ -35,18 +36,28 @@ var EndUserTable = React.createClass({
         let country = _.find(Countries, (c) => {
           return c.alpha2.toLowerCase() == u.countryCode
         });
+
         let creationDate = moment(u.creationDate).format(DATE_FORMAT);
         let handleOnClick = _.bindKey(this.props, 'onUserClick', u.username.trim());
+
         return <tr onClick={handleOnClick}>
           <td className="text-center"><span className={classNames('label', 'status', { success: u.verified }, { alert: !u.verified })}></span></td>
           <td>
             {u.username}
           </td>
           <td>
-            <div className="flag__container left">
-              <span className={classNames('flag--' + country.alpha2, 'left')} />
-            </div>
-            {country.name}
+            <If condition={country}>
+              <div>
+                <div className="flag__container left">
+                  <span className={classNames('flag--' + country.alpha2, 'left')} />
+                </div>
+                {country.name}
+              </div>
+
+              <Else />
+
+              <div>{NOT_FOUND_LABEL}</div>
+            </If>
           </td>
           <td>{u.username}</td>
           <td>{creationDate}</td>
