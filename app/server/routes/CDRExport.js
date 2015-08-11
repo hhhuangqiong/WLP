@@ -98,13 +98,16 @@ router.get('/:carrierId/calls/file', function(req, res) {
     if (job._progress === '100') {
       res.setHeader('Content-disposition', 'attachment; filename=' + CDR_EXPORT.EXPORT_FILENAME);
       res.setHeader('Content-type', 'text/csv');
-      try {
-        var filestream = fs.createReadStream(job.result.file);
+
+      var filestream = fs.createReadStream(job.result.file);
+
+      filestream.on('readable', function() {
         filestream.pipe(res);
-      }
-      catch(e) {
-        return res.status(400).json({ message: 'Unable to locate exported file. Please try again.'});
-      }
+      });
+
+      filestream.on('error', function(err) {
+        return res.status(400).json({ message: err });
+      });
     }
     else {
       return res.status(400).json({ message: 'exporting in progress:' + job._progress});
