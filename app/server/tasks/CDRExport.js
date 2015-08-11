@@ -8,8 +8,9 @@ import kue from 'kue';
 import logger from 'winston';
 import os from 'os';
 import path from 'path';
-import {CDR_EXPORT} from '../../config';
 import Q from 'q';
+import {CDR_EXPORT} from '../../config';
+import COUNTRIES from '../../data/countries.json';
 
 const OUTPUT_TIME_FORMAT = 'YYYY-MM-DD h:mm:ss a';
 
@@ -34,6 +35,16 @@ var validateCompletedTime = function(completedTime) {
  */
 
 const PLACEHOLDER_FOR_NULL = 'N/A';
+
+function getCountryName(countryAlpha2) {
+  if(!countryAlpha2) return PLACEHOLDER_FOR_NULL;
+
+  let countryData = _.find(COUNTRIES, function(country) {
+    return country.alpha2 === countryAlpha2.toUpperCase();
+  });
+
+  return (countryData || PLACEHOLDER_FOR_NULL).name;
+}
 
 export default class CDRExport {
 
@@ -181,8 +192,11 @@ export default class CDRExport {
           row.start_time = moment(row.start_time).format(OUTPUT_TIME_FORMAT);
           row.end_time = row.end_time ? moment(row.end_time).format(OUTPUT_TIME_FORMAT) : PLACEHOLDER_FOR_NULL;
           row.answer_time = row.answer_time ? moment(row.answer_time).format(OUTPUT_TIME_FORMAT) : PLACEHOLDER_FOR_NULL;
+          row.caller_country = getCountryName(row.caller_country);
+          row.callee_country = getCountryName(row.callee_country);
           row.duration = row.duration + 's';
           /* jscs: enable */
+
           csvStream.write(row);
           offset++;
           job.progress(offset, totalElements, {nextRow: offset === totalElements ? 'Job completed.' : offset });
