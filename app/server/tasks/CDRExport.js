@@ -12,6 +12,8 @@ import Q from 'q';
 import {CDR_EXPORT} from '../../config';
 import COUNTRIES from '../../data/countries.json';
 
+import { parseDuration } from '../utils/StringFormatter';
+
 const OUTPUT_TIME_FORMAT = 'YYYY-MM-DD h:mm:ss a';
 
 var validateCompletedTime = function(completedTime) {
@@ -190,7 +192,7 @@ export default class CDRExport {
 
         while (offset < totalElements) {
           let row = _.pick(result.contents[offset], CDR_EXPORT.DATA_FIELDS);
-          // cannot fix code styling since the it's returned from server
+
           /* jscs: disable */
           row.callee = "'" + row.callee + "'";
           row.start_time = moment(row.start_time).format(OUTPUT_TIME_FORMAT);
@@ -198,8 +200,10 @@ export default class CDRExport {
           row.answer_time = row.answer_time ? moment(row.answer_time).format(OUTPUT_TIME_FORMAT) : PLACEHOLDER_FOR_NULL;
           row.caller_country = getCountryName(row.caller_country);
           row.callee_country = getCountryName(row.callee_country);
-          row.duration = row.duration + 's';
           /* jscs: enable */
+
+          row.duration = parseDuration(row.duration);
+
 
           for(var exportField in row) {
             if(typeof(row[exportField]) === undefined || row[exportField] === null) {
