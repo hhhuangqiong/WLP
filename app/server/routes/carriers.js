@@ -94,11 +94,17 @@ api.get('/carriers/:carrierId/users/:username', function(req, res) {
   };
 
   var sendEndUserRequest = _.bind(function(params) {
-    return Q.ninvoke(this, 'getUser', params.carrierId, params.username);
+    return Q.ninvoke(this, 'getUser', params.carrierId, params.username)
+      .catch((err) => {
+        throw err;
+      });
   }, endUserRequest);
 
   var sendWalletRequest = _.bind(function(params) {
-    return Q.ninvoke(this, 'getWalletBalance', params);
+    return Q.ninvoke(this, 'getWalletBalance', params)
+      .catch((err) => {
+        throw err;
+      });
   }, walletRequest);
 
   var appendUserData = _.bind(function(user) {

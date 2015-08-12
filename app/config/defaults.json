@@ -1,27 +1,27 @@
 {
-  "timeout": 5000,
+  "timeout": 3000,
   "containerName": "m800",
   "email": {
     "from": "noreply@m800.com"
   },
   "vsfApi": {
     "baseUrl": "http://192.168.118.13:9125",
-    "timeout": 5000
+    "timeout": 3000
   },
   "mumsApi": {
     "baseUrl": "http://192.168.118.12:8080",
-    "timeout": 30000
+    "timeout": 3000
   },
   "bossApi": {
     "baseUrl": "http://192.168.135.167:10080",
-    "timeout": 5000,
+    "timeout": 3000,
     "format": {
       "timestamp": "YYYYMMDD"
     }
   },
   "dataProviderApi": {
     "baseUrl": "http://192.168.118.26:9998",
-    "timeout": 5000,
+    "timeout": 3000,
     "format": {
       "timestamp": "x"
     }
