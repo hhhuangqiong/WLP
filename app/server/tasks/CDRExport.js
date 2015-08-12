@@ -197,6 +197,12 @@ export default class CDRExport {
           row.duration = row.duration + 's';
           /* jscs: enable */
 
+          for(var exportField in row) {
+            if(typeof(row[exportField]) === undefined || row[exportField] === null) {
+              row[exportField] = PLACEHOLDER_FOR_NULL;
+            }
+          }
+
           csvStream.write(row);
           offset++;
           job.progress(offset, totalElements, {nextRow: offset === totalElements ? 'Job completed.' : offset });
