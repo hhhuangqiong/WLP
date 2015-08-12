@@ -126,7 +126,7 @@ export default class UsersRequest extends BaseRequest {
       .buffer()
       .timeout(this.opts.timeout)
       .end((err, res) => {
-        if (err) return cb(err);
+        if (err) return cb(this.handleError(err));
         if (res.status >= 400) return cb(this.handleError(res.body.err));
         cb(null, res.body);
       });
