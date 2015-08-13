@@ -27,7 +27,6 @@
       { "host": "192.168.119.26", "port": 26379 }
     ],
     "name": "redis-hk-tb-master",
-    "role": "master",
     "db": 11
    },
   "queue": {

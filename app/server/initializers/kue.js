@@ -29,7 +29,7 @@ export default function(redisConnOpts, opts = {}) {
     let endpoints = [].concat(redisConnOpts.sentinels);
     let masterName = redisConnOpts.name;
     let redisOpts = {
-      role: redisConnOpts.role,
+      role: 'sentinel',
       db: redisConnOpts.db
     };
 
