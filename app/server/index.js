@@ -24,6 +24,8 @@ import methodOverride from 'method-override';
 import morgan from 'morgan';
 import session from 'express-session';
 
+var ERROR_PATHS = require('./paths');
+
 // TODO restore csrf protection
 //import csrf from 'csurf';
 
@@ -163,6 +165,19 @@ function initialize(port) {
         res.send(html);
       });
     });
+  });
+
+  server.use(function(err, req, res) {
+    // in case there is a MongoError on testbed or production
+    // crash the node application and let docker restarts it
+    if (err.name === 'MongoError' && process.env.NODE_ENV !== 'development') {
+      process.exit(1);
+    }
+
+    // otherwise redirect to error page
+    if (!err.status || err.status && err.status == 500) {
+      return res.redirect(ERROR_PATHS.ERROR_500);
+    }
   });
 
   return server;

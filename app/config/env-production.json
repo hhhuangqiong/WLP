@@ -10,7 +10,15 @@
       "mongos": false,
       "user": "wlp-testbed-user",
       "pass": "tb-wlp-user",
-      "autoIndex": false
+      "autoIndex": false,
+      "server": {
+        "auto_reconnect": true,
+        "socketOptions": {
+          "keepAlive": 1,
+          "connectTimeoutMS": 3000,
+          "socketTimeoutMS": 3000
+        }
+      }
     }
   },
   "redis": {

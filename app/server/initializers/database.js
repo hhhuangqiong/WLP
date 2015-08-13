@@ -26,6 +26,11 @@ function initialize(mongodbURI, mongodbOpts, cb) {
       logger.info('mongoose connection', evt);
     });
   });
+
+  mongoose.connection.on('error', function(err) {
+    logger.error(err);
+  });
+
   process.on('SIGINT', function() {
     mongoose.connection.close(function() {
       process.exit(0);
