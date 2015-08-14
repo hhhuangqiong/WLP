@@ -133,17 +133,23 @@ export default class CDRExport {
 
   /**
    * Starts job process
+   * @param  {Function} done - pass in by kue, reference https://github.com/Automattic/kue#processing-jobs
    * @returns {Kue.Job} Kue job instance
    */
   start() {
-    this.kueue.process(JOB_TYPE, this.exportCSV);
+    this.kueue.process(JOB_TYPE, (job, done) => {
+      Q.ninvoke(this, 'exportCSV', job)
+        .then(function(file) {
+          return done(null, { file });
+        })
+        .catch(function(err) {
+          return done(err);
+        });
+    });
   }
 
-
-
   //job process function
-  exportCSV(job, done) {
-
+  exportCSV(job, cb) {
     let param = job.data;
 
     let csvStream = csv.createWriteStream({headers: true});
@@ -154,8 +160,8 @@ export default class CDRExport {
       csvStream.end();
       logger.info('Writing file finished.');
     });
-    csvStream.pipe(writableStream);
 
+    csvStream.pipe(writableStream);
 
     /**
      * fetch and write to file a single request as csv format.
@@ -168,15 +174,13 @@ export default class CDRExport {
      * @param  {string}   [param.type] - specify call type, either 'ONNET' or 'OFFNET', other string will cause api to fail
      * @param  {string}   [param.caller_country] - specify caller's located country, value is referenced in /app/data/countries.json using 'alpha2' code
      in /app/lib
-     *
-     * @param  {Function} done - pass in by kue, reference https://github.com/Automattic/kue#processing-jobs
      */
-    function next(param, done) {
+
+    function next(param) {
       let request = fetchDep(nconf.get('containerName'), 'CallsRequest');
 
       request.getCalls(param, (err, result) => {
-        if (err)
-          return done(new Error(err));
+        if (err) return cb(err, null);
 
         let totalElements = result.contents.length;
         let totalPages = result.totalPages;
@@ -213,8 +217,7 @@ export default class CDRExport {
           // caanot fix attributes naming since it's provide by kue
           /* jscs: disable */
           job.data.file = path.join(os.tmpdir(), job.created_at + '-' + job.id + '.csv');
-          done(null, {file:job.data.file});
-          return;
+          return cb(null, job.data.file);
           /* jscs: enable */
         }
 
@@ -222,13 +225,13 @@ export default class CDRExport {
         if (offset < totalElements) {
           param.request = requestName;
           param.page = +pageNumber + 1;
-          next(param, done);
+          next(param);
         }
       });
 
     }
 
-    next(param, done);
+    next(param);
   }
 }
 

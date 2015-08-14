@@ -57,6 +57,10 @@ export default function(redisConnOpts, opts = {}) {
     redis: kueRedisOpt
   });
 
+  // It's a Kue's watchdog to fix stuck inactive jobs when the redis service is unstable
+  // Kue will be refactored to fully atomic job state management from version 1.0 and this will happen by lua scripts and/or BRPOPLPUSH combination
+  kueue.watchStuckJobs();
+
   let uiPort = opts.uiPort;
 
   if (uiPort) {
@@ -69,4 +73,3 @@ export default function(redisConnOpts, opts = {}) {
 
   return kueue;
 }
-
