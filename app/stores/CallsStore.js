@@ -56,6 +56,7 @@ var CallsStore = createStore({
     debug('handleProgressFailure', payload)
 
     this.exportProgress = -1;
+    this.isExporting = false;
     this.emitChange();
   },
 

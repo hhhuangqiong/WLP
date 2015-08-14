@@ -251,7 +251,7 @@ getStateFromStores: function() {
       </div>
     )
 
-    if (isExporting) {
+    if (isExporting || this.state.exportProgress < 0){
       exportElement = (
         <CDRProgressBar
           className={classNames('export-progress-bar', 'export-ie-fix')}

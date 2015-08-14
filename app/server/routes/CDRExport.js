@@ -73,6 +73,8 @@ router.get('/:carrierId/calls/progress', function(req, res) {
   kue.Job.get(req.query.exportId, function(err, job) {
     if (err) return res.status(400).json({ message: 'Invalid export identifier'});
 
+    if (job.failed_at) return res.status(400).json({ message: 'Job failed' });
+
     let progress = job._progress || '0';
 
     if (progress === '100') {
