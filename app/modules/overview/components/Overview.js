@@ -21,7 +21,7 @@ export default React.createClass({
         context.executeAction.bind(context, fetchOverviewWidgets, {
           carrierId: params.identity
         })
-      ], done || () => {});
+      ], done || (() => {}));
     }
   },
 
