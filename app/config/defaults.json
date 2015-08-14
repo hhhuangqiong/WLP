@@ -1,5 +1,6 @@
 {
   "timeout": 3000,
+  "redisFailoverAttempts": 1,
   "containerName": "m800",
   "email": {
     "from": "noreply@m800.com"
