@@ -101,14 +101,39 @@ function initialize(port) {
 
   let redisStore = require('./initializers/redisStore')(session, nconf, env);
 
-  server.use(session({
+  let sessionMiddleware = session({
     resave: false,
     saveUninitialized: true,
 
     //must use same secret as cookie-parser, see https://github.com/expressjs/session#cookie-options
     secret: nconf.get('secret:session'),
     store: redisStore
-  }));
+  })
+
+  server.use(function (req, res, next) {
+    var tries = nconf.get('redisFailoverAttempts');
+
+    function lookupSession(error) {
+      if (error) {
+        return next(error)
+      }
+
+      tries -= 1;
+
+      if (req.session !== undefined) {
+        return next();
+      }
+
+      if (tries < 0) {
+        logger.error(`Tried for ${nconf.get('redisFailoverAttempts')} times. Unable to restore session from redis store!`);
+        return next(new Error('Unable to obtain session from redis...'));
+      }
+
+      sessionMiddleware(req, res, lookupSession);
+    }
+
+    lookupSession();
+  });
 
   server.use(morgan('dev'));
 
