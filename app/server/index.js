@@ -171,7 +171,7 @@ function initialize(port) {
       var html = React.renderToStaticMarkup(React.createElement(Html, {
         config: serializedConfig
       }));
-      res.send(html);
+      res.send(prependDocType(html));
       return;
     }
 
@@ -197,7 +197,7 @@ function initialize(port) {
           return next(err);
         }
 
-        res.send(html);
+        res.send(prependDocType(html));
       });
     });
   });
@@ -216,6 +216,10 @@ function initialize(port) {
   });
 
   return server;
+}
+
+function prependDocType(html) {
+  return '<!DOCTYPE html>' + html;
 }
 
 exports.initialize = initialize;
