@@ -3,16 +3,16 @@
   "version": "1.2.0",
   "private": true,
   "scripts": {
-    "build": "npm run clean && npm run jscsx && npm run transpile && npm run test:report",
+    "build": "npm run clean && npm run transpile && npm run test:report",
     "clean": "gulp clean",
     "dist": "npm run clean && npm run transpile && gulp scss:production",
     "doc": "npm run transpile && jsdoc -r node_modules/app -d build/docs",
+    "lint": "eslint app",
     "server": "node bin/www.js",
     "transpile": "gulp babel webpack",
     "pretest": "npm run transpile",
     "test": "gulp test",
-    "test:report": "mocha --recursive test --reporter xunit > build/reports.xml",
-    "jscsx": "jscs -x . --esprima=./node_modules/esprima-fb"
+    "test:report": "mocha --recursive test --reporter xunit > build/reports.xml"
   },
   "dependencies": {
     "acl": "^0.4.7",
@@ -79,12 +79,15 @@
     "winston": "^1.0.0"
   },
   "devDependencies": {
+    "babel-eslint": "^4.0.10",
     "babel-loader": "^5.0.0",
     "browser-sync": "^2.0.1",
     "chai": "^3.0.0",
     "coffee-script": "^1.8.0",
     "del": "^1.1.1",
-    "esprima-fb": "^15001.1.0-dev-harmony-fb",
+    "eslint": "^1.2.0",
+    "eslint-config-airbnb": "0.0.7",
+    "eslint-plugin-react": "^3.2.3",
     "gulp": "^3.8.10",
     "gulp-autoprefixer": "^2.1.0",
     "gulp-babel": "^5.0.0",
@@ -97,7 +100,6 @@
     "gulp-util": "^3.0.3",
     "gulp.spritesmith": "^3.8.2",
     "jade": "^1.10.0",
-    "jscs": "^1.13.1",
     "jsdoc": "^3.3.0",
     "json-loader": "^0.5.1",
     "merge-stream": "^0.1.7",

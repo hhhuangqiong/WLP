@@ -1,19 +1,4 @@
 {
-  "env": {
-    "es6": true,
-    "browser": true,
-    "mocha": true,
-    "node": true
-  },
-  "ecmaFeatures": {
-    "arrowFunctions": true,
-    "blockBindings": true,
-    "defaultParams": true,
-    "jsx": true,
-    "templateStrings": true
-  },
-  "rules": {
-    "quotes": [2, "single"],
-    "no-multi-spaces": 0
-  }
+  "extends": "eslint-config-airbnb"
 }
+
