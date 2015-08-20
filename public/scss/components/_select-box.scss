@@ -1,0 +1,107 @@
+//select boxes
+$select-box-height: ($input-font-size + ($form-spacing * 1.5) - rem-calc(1)); // from foundation _forms.scss
+
+//country select box
+$country-select-box-flag-height: 24;
+
+// The Snake-case class name of Select-* is
+// defined by react-select module
+
+.country-select-box {
+  height: $select-box-height;
+  line-height: $select-box-height;
+  margin-bottom: rem-calc($fieldset-margin-bottom);
+
+  .Select-control,
+  .Select-value,
+  .Select-option,
+  .Select-clear,
+  .Select-placeholder {
+    padding: 0 ($form-spacing / 2);
+  }
+
+  .Select-arrow {
+    width: 100%;
+    height: $select-box-height;
+    top: 0;
+    right: 0;
+    border: 0 none;
+    color: $gray;
+    font-size: 10px;
+    font-weight: 900;
+    text-align: right;
+
+    &:before {
+      font-family: 'icomoon' !important;
+      content: "\e60e";
+      padding-right: $form-spacing / 2;
+    }
+  }
+
+  .Select-clear {
+    display: none;
+  }
+
+  .Select-control {
+    border-radius: $input-border-radius;
+  }
+
+  .Select-option {
+    height: $select-box-height;
+    line-height: $select-box-height;
+    overflow: hidden;
+    border-bottom: $f-dropdown-border-width $f-dropdown-border-style $smoke;
+
+    &:last-child {
+      border-bottom: 0 none;
+    }
+
+    &:hover {
+      background-color: $brand-primary;
+      color: $white;
+    }
+  }
+
+  .Select-input {
+    height: $select-box-height;
+    line-height: $select-box-height;
+
+    > input {
+      height: inherit;
+      line-height: inherit;
+      margin-bottom: 0 !important;
+    }
+  }
+
+  .Select-placeholder {
+    color: $input-placeholder-font-color;
+  }
+
+  .Select-option,
+  .Select-value {
+    > div {
+      height: $select-box-height;
+      line-height: $select-box-height;
+
+      > * {
+        float: left;
+        height: inherit;
+        line-height: inherit;
+      }
+
+      .flag__container {
+        box-sizing: border-box;
+        margin-top: 0;
+        padding-top: ($select-box-height - rem-calc($country-select-box-flag-height))/2;
+      }
+
+      [class^="flag--"] {
+        transform: scale($country-select-box-flag-height/$flag-original-dimension);
+      }
+
+      > span {
+        display: inline-block;
+      }
+    }
+  }
+}
