@@ -1,6 +1,5 @@
 import _ from 'lodash';
 import moment from 'moment';
-import {concurrent} from 'contra';
 
 import React from 'react';
 import {Link} from 'react-router';
@@ -9,7 +8,10 @@ import FluxibleMixin from 'fluxible/addons/FluxibleMixin';
 import AuthMixin from '../utils/AuthMixin';
 
 import WidgetNotAvailable from './common/WidgetNotAvailable';
+
 import CallsStore from '../stores/CallsStore';
+import AuthStore  from '../stores/AuthStore';
+
 import fetchCallsWidgets from '../actions/fetchCallsWidgets';
 
 const errorMessage = '<div className="widget-not-found">Dashboard is not available</div>';
@@ -25,11 +27,10 @@ var CallsOverview = React.createClass({
     storeListeners: [CallsStore],
 
     fetchData: function(context, params, query, done) {
-      concurrent([
-        context.executeAction.bind(context, fetchCallsWidgets, {
-          carrierId: params.identity
-        })
-      ], done || function() {});
+      context.executeAction(fetchCallsWidgets, {
+        carrierId: params.identity,
+        userId: context.getStore(AuthStore).getUserId()
+      }, done || function() {});
     }
   },
 

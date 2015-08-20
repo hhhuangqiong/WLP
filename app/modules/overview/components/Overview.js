@@ -1,5 +1,4 @@
 import React from 'react';
-import {concurrent} from 'contra';
 import FluxibleMixin from 'fluxible/addons/FluxibleMixin';
 import AuthMixin from '../../../utils/AuthMixin';
 
@@ -17,11 +16,10 @@ export default React.createClass({
     storeListeners: [OverviewStore],
 
     fetchData: (context, params, query, done) => {
-      concurrent([
-        context.executeAction.bind(context, fetchOverviewWidgets, {
-          carrierId: params.identity
-        })
-      ], done || (() => {}));
+      context.executeAction(fetchOverviewWidgets, {
+        carrierId: params.identity,
+        userId: context.getStore(AuthStore).getUserId()
+      }, done || (() => {}));
     }
   },
 

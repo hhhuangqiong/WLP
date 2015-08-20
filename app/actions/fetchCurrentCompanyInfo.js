@@ -1,8 +1,9 @@
-var debug = require('debug')('wlp:fetchCurrentCompanyInfo');
+let debug = require('debug')('app:actions/fetchCurrentCompanyInfo');
 
 export default function(context, params, done) {
   debug('Started');
   context.dispatch('FETCH_COMPANY_INFO_START');
+
   context.api.getCurrentCompanyInfo(params, function(err, result) {
     if (err) {
       debug('Failed');

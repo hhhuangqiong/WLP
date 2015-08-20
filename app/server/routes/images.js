@@ -1,21 +1,18 @@
-import { Router } from 'express';
+let Grid       = require('gridfs-stream');
+let logger     = require('winston');
+let mongoose   = require('mongoose');
+let Q          = require('q');
 
-var Grid      = require('gridfs-stream');
-var _         = require('lodash');
-var logger    = require('winston');
-var mongoose  = require('mongoose');
-var Q         = require('q');
+let db         = mongoose.connection.db;
+let GridStore  = mongoose.mongo.GridStore;
+let mongoDrive = mongoose.mongo;
 
-var db         = mongoose.connection.db;
-var GridStore  = mongoose.mongo.GridStore;
-var mongoDrive = mongoose.mongo;
-
-var router = Router();
-
-router.get('/:imageId', function(req, res, next) {
+let getImage = function(req, res, next) {
   function readImageProperties(imageId, cb) {
     var gfs = new Grid(db, mongoDrive);
-    gfs.findOne({ _id: imageId}, function(err, file) {
+    gfs.findOne({
+      _id: imageId
+    }, function(err, file) {
       if (err) return cb(err);
       return cb(null, file);
     });
@@ -50,6 +47,7 @@ router.get('/:imageId', function(req, res, next) {
       logger.error(err);
       return next(err);
     });
-});
+};
 
-export default router;
+export { getImage };
+

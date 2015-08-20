@@ -1,4 +1,13 @@
+/**
+ * Use this helper object when you:
+ *
+ * - are going to pass the whole payload as the only (besides the action type) parameter to `context.dispatch()`
+ * - do not care about the logic in the callback
+ * - think generic error handling is enough
+ */
 import _ from 'lodash';
+
+import { ERROR_MESSAGE } from '../../main/constants/actionTypes';
 
 const EVENT_KEYS = ['START', 'END', 'SUCCESS', 'FAILURE'];
 
@@ -45,12 +54,17 @@ export default function apiActionCreator(key, apiMethod, opts = { debugPrefix: '
 
       context.api[apiMethod](params, cb);
     } else {
+      // default: return the *whole* result to `dispatch()`
       context.api[apiMethod](params, function(err, result) {
         context.dispatch(lifecycle.END);
 
         if (err) {
           debug('Failed');
           context.dispatch(lifecycle.FAILURE, err);
+
+          // TODO conditionally called
+          context.dispatch(ERROR_MESSAGE, err);
+
           done();
           return;
         }

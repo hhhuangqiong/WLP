@@ -1,29 +1,18 @@
-import _ from 'lodash';
 import Q from 'q';
-import express from 'express';
-import nconf from 'nconf';
-import moment from 'moment';
-import ImExportTask from '../tasks/ImExport';
-import {IM_EXPORT} from '../../config';
-import kue from 'kue';
 import fs from 'fs';
-import passport from 'passport';
-import logger from 'winston';
+import kue from 'kue';
+import nconf from 'nconf';
 
+import ImExportTask from '../tasks/ImExport';
+import { IM_EXPORT } from '../../config';
 import { fetchDep } from '../utils/bottle';
 
 const UNABLE_LOCATE_EXPORT_FILE = 'Unable to locate exported file. Please try again.';
 const PAGE_START_INDEX = 0;
 const PAGE_SIZE = 1000;
 
-let router = express.Router();
-
-router.use((req, res, next) => {
-  if (!req.isAuthenticated()) { res.status(401); }
-  next();
-});
-
-router.get('/:carrierId/im', (req, res) => {
+// '/:carrierId/im'
+let getCarrierIM = function(req, res) {
   req.checkParams('carrierId').notEmpty();
 
   let err = req.validationErrors();
@@ -48,9 +37,10 @@ router.get('/:carrierId/im', (req, res) => {
   }, (err) => {
     res.status(500).json({ error: err });
   }).done();
-});
+}
 
-router.get('/:carrierId/im/progress', (req, res) => {
+// '/:carrierId/im/progress'
+let getCarrierIMFileProgress = function(req, res) {
   req.checkQuery('exportId').notEmpty();
 
   let err = req.validationErrors();
@@ -59,16 +49,16 @@ router.get('/:carrierId/im/progress', (req, res) => {
   kue.Job.get(req.query.exportId, (err, job) => {
     if (err) return res.status(400).json({ message: 'Invalid export identifier'});
 
-    // jscs:disable requireCamelCaseOrUpperCaseIdentifiers
     if (job.failed_at) return res.status(400).json({ message: 'Job failed' });
 
     let progress = job._progress || '0';
 
     return res.status(200).json({ progress: progress });
   });
-});
+};
 
-router.get('/:carrierId/im/file', (req, res) => {
+// '/:carrierId/im/file'
+let getCarrierIMFile = function(req, res) {
   req.checkQuery('exportId').notEmpty();
 
   let err = req.validationErrors();
@@ -96,6 +86,11 @@ router.get('/:carrierId/im/file', (req, res) => {
     }
 
   });
-});
+};
 
-module.exports = router;
+export {
+  getCarrierIM,
+  getCarrierIMFile,
+  getCarrierIMFileProgress
+};
+

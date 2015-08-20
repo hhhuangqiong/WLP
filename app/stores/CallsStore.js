@@ -8,7 +8,6 @@ var CallsStore = createStore({
 
   handlers: {
     FETCH_CALLS_SUCCESS: 'handleCallsFetch',
-    FETCH_CALLS_PAGE_SUCCESS: 'handleCallsFetch',
     FETCH_CALLS_WIDGETS_SUCCESS: 'handleCallsWidgetsChange',
     FETCH_MORE_CALLS_SUCCESS: 'handleLoadMoreCalls'
   },

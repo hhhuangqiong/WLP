@@ -1,9 +1,9 @@
-import {Router} from 'express';
 import logger from 'winston';
 import passport from 'passport';
 
 import sessionClient from '../initializers/sessionClient';
-import {SIGN_IN, SIGN_OUT} from '../paths.js';
+
+let sessionDebug = require('debug')('app:sessionFlow');
 
 function getAuthUser(user) {
   var { _id, username, displayName } = user;
@@ -12,14 +12,11 @@ function getAuthUser(user) {
   return { _id, username, displayName, carrierId, role };
 }
 
-var router = Router();
-
-router.post(SIGN_IN, function(req, res, next) {
+let signIn = function(req, res, next) {
   passport.authenticate('local', function(err, user, info) {
     let signInError = function() {
       return res.status(401).json({
         error: {
-          name: 'BadCredentials',
           message: 'Wrong username or password'
         }
       });
@@ -58,14 +55,14 @@ router.post(SIGN_IN, function(req, res, next) {
         }
       });
 
-      logger.info('session saved', req.session);
+      logger.info('session saved for %s', req.session.username);
 
       return res.json({ token: '__session__', user: authUser });
     });
   })(req, res, next);
-});
+}
 
-router.post(SIGN_OUT, function(req, res) {
+let signOut = function(req, res) {
   let token = req.header('Authorization');
 
   if (token == '__session__') {
@@ -82,7 +79,55 @@ router.post(SIGN_OUT, function(req, res) {
       error: 'signout failed'
     });
   }
-});
+}
 
-export default router;
+// because the app doesn't redirect the user after log in
+// NB: cannot use `req.isAuthenticated` (passport)
+// so there's no 'user' in `req` object
+let ensureAuthenticated = function(req, res) {
+  return res.sendStatus(200);
+}
+
+let validateToken = function(req, res, next) {
+
+  sessionDebug('Auth Header ', req.header('Authorization'));
+  let token = req.header('Authorization');
+
+  if (token == '__session__') {
+    //from client
+    token = req.sessionID;
+  }
+
+  sessionClient.getSession(token)
+    .then((user) => {
+      if (!user || ((user && user.token) != token)) {
+        return res.status(401).json({
+          error: {
+            message: 'Must provide valid auth token in Authorization header'
+          }
+        });
+      } else {
+
+        // prepare the user object just like what
+        // Passport.js does to req.user
+        res.locals.user = user;
+        return next();
+
+      }
+    })
+    .catch((err) => {
+      logger.error(err);
+      return res.status(500).json({
+        error: err
+      })
+    })
+    .done();
+}
+
+export {
+  signIn,
+  signOut,
+  ensureAuthenticated,
+  validateToken
+};
 

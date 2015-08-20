@@ -1,61 +1,69 @@
 import Q from 'q';
 import _ from 'lodash';
-import {Router} from 'express';
 
 import Controller from '../controllers/company';
 import Company    from '../../collections/company';
 import PortalUser from '../../collections/portalUser';
 
-var api = Router();
-var multipart = require('connect-multiparty')();
-var controller = new Controller();
+let controller = new Controller();
 
-api.get('/companies', function(req, res) {
+// '/companies'
+let list = function(req, res) {
   return controller.getCompanies(req, res);
-});
+};
 
-api.post('/companies', multipart, function(req, res) {
+// '/companies'
+let createProfile = function(req, res) {
   return controller.saveProfile(req, res);
-});
+};
 
-api.get('/companies/parent', function(req, res) {
+// '/companies/parent'
+let getParents = function(req, res) {
   return controller.getParentCompanies(req, res);
-});
+};
 
-api.post('/companies/:carrierId/suspension', function(req, res) {
+// '/companies/:carrierId/suspension'
+let deactivateCompany = function(req, res) {
   return controller.deactivateCompany(req, res);
-});
+};
 
-api.put('/companies/:carrierId/suspension', function(req, res) {
+// .put('/companies/:carrierId/suspension',
+let reactivateCompany = function(req, res) {
   return controller.reactivateCompany(req, res);
-});
+};
 
-api.get('/companies/:carrierId/info', function(req, res) {
+// '/companies/:carrierId/info'
+let getInfo = function(req, res) {
   return controller.getInfo(req, res);
-});
+};
 
-api.get('/companies/:carrierId/service', function(req, res) {
+// '/companies/:carrierId/service'
+let getService = function(req, res) {
   return controller.getApplications(req, res);
-});
+};
 
-api.get('/companies/:carrierId/applications', function(req, res) {
+// '/companies/:carrierId/applications'
+let getApplications = function(req, res) {
   return controller.getApplications(req, res);
-});
+};
 
-api.put('/companies/:carrierId/profile', multipart, function(req, res) {
+// '/companies/:carrierId/profile'
+let updateProfile = function (req, res) {
   return controller.saveProfile(req, res);
-});
+};
 
-api.put('/companies/:carrierId/service', multipart, function(req, res) {
+// '/companies/:carrierId/service'
+let saveService = function(req, res) {
   return controller.saveService(req, res);
-});
+};
 
-api.put('/companies/:carrierId/widget', multipart, function(req, res) {
+// '/companies/:carrierId/widget'
+let saveWidget = function(req, res) {
   return controller.saveWidget(req, res);
-});
+};
 
-//TODO maybe create another file for this
-api.get('/application/companies', function(req, res) {
+// '/application/companies'
+let getApplicationCompanies = function(req, res) {
   let { user } = res.locals.user;
 
   if (!user) {
@@ -91,6 +99,19 @@ api.get('/application/companies', function(req, res) {
         });
     })
     .done();
-});
+};
 
-export default api;
+export {
+  getApplicationCompanies,
+  getApplications,
+  getInfo,
+  getService,
+  list,
+  updateProfile,
+  saveService,
+  saveWidget,
+  createProfile,
+  getParents,
+  deactivateCompany,
+  reactivateCompany
+};

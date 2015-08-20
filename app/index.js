@@ -16,7 +16,7 @@ import VSFTransactionStore from './modules/virtual-store-front/stores/VSFTransac
 import ExportStore from './main/file-export/stores/ExportStore';
 
 // seems not passing anything is okay
-var app = new Fluxible();
+let app = new Fluxible();
 
 app.plug(require('./utils/apiPlugin'));
 app.plug(require('./utils/cookiePlugin'));

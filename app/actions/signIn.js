@@ -1,18 +1,21 @@
-var debug = require('debug')('wlp:signIn');
-
-import {userPath} from '../server/paths';
+let debug = require('debug')('app:actions/signIn');
 
 import config from '../config';
+import {ERROR_MESSAGE} from '../main/constants/actionTypes';
+import {userPath} from '../server/paths';
 
 module.exports = function(context, payload, done) {
   debug('Started');
-  let username = payload.username;
-  let password = payload.password;
+  let {username, password} = payload;
+
   context.dispatch('SIGN_IN_START');
   context.api.signIn(username, password, function(err, auth) {
     if (err) {
       debug('Failed');
+
       context.dispatch('SIGN_IN_FAILURE', err);
+      context.dispatch(ERROR_MESSAGE, err);
+
       done();
       return;
     }

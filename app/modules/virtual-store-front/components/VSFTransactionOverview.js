@@ -2,11 +2,12 @@ import React from 'react';
 import { Link } from 'react-router';
 import FluxibleMixin from 'fluxible/addons/FluxibleMixin';
 import AuthMixin from '../../../utils/AuthMixin';
-import {concurrent} from 'contra';
 
 import WidgetNotAvailable from '../../../components/common/WidgetNotAvailable';
 import VSFTransactionStore from  '../stores/VSFTransactionStore';
 import fetchVSFWidgets from  '../actions/fetchVSFWidgets';
+
+import AuthStore    from '../../../../app/stores/AuthStore';
 
 const errorMessage = '<div className="widget-not-found">Dashboard is not available</div>';
 
@@ -21,12 +22,11 @@ let VSFTransactionOverview = React.createClass({
   statics: {
     storeListeners: [VSFTransactionStore],
 
-    fetchData: function(context, params, query, done) {
-      concurrent([
-        context.executeAction.bind(context, fetchVSFWidgets, {
-          carrierId: params.identity
-        })
-      ], done || function() {});
+    fetchData: function(context, params, query, done = Function.prototype) {
+      context.executeAction(fetchVSFWidgets, {
+        carrierId: params.identity,
+        userId: context.getStore(AuthStore).getUserId()
+      }, done);
     }
   },
 

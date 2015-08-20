@@ -1,28 +1,17 @@
-import _ from 'lodash';
-import Q from 'q';
-import express from 'express';
-import nconf from 'nconf';
-import moment from 'moment';
-import CDRExportTask from '../tasks/CDRExport';
-import {CDR_EXPORT} from '../../config';
-import kue from 'kue';
-import fs from 'fs';
-import passport from 'passport';
-import logger from 'winston';
+// TODO rename this file with "-Handlers" suffix to denoting it's not exporting the `router` object
 
+import Q from 'q';
+import _ from 'lodash';
+import fs from 'fs';
+import kue from 'kue';
+import logger from 'winston';
+import nconf from 'nconf';
+
+import CDRExportTask from '../tasks/CDRExport';
+import { CDR_EXPORT } from '../../config';
 import { fetchDep } from '../utils/bottle';
 
-var router = express.Router();
-
-router.use(function(req, res, next) {
-  if (!req.isAuthenticated()) {
-    res.status(401);
-  }
-
-  next();
-});
-
-router.get('/:carrierId/calls', function(req, res) {
+let getCarrierCalls = function(req, res) {
   req.checkParams('carrierId').notEmpty();
   req.checkQuery('startDate').notEmpty();
   req.checkQuery('endDate').notEmpty();
@@ -59,10 +48,9 @@ router.get('/:carrierId/calls', function(req, res) {
   }, (err) => {
     res.status(500).json({error:err});
   }).done();
+}
 
-});
-
-router.get('/:carrierId/calls/progress', function(req, res) {
+let getCarrierCallsProgress = function(req, res) {
   req.checkQuery('exportId').notEmpty();
 
   var err = req.validationErrors();
@@ -80,9 +68,9 @@ router.get('/:carrierId/calls/progress', function(req, res) {
 
     return res.status(200).json({ progress });
   });
-});
+}
 
-router.get('/:carrierId/calls/file', function(req, res) {
+let getCarrierCallsFile = function(req, res) {
   req.checkQuery('exportId').notEmpty();
 
   var err = req.validationErrors();
@@ -113,6 +101,10 @@ router.get('/:carrierId/calls/file', function(req, res) {
     }
 
   });
-});
+}
 
-module.exports = router;
+export {
+  getCarrierCalls,
+  getCarrierCallsFile,
+  getCarrierCallsProgress
+};

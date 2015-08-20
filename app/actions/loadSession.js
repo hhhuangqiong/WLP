@@ -1,6 +1,5 @@
-'use strict';
-var debug = require('debug')('app:loadSession');
-var sessionDebug = require('debug')('app:sessionFlow');
+let debug = require('debug')('app:actions/loadSession');
+let sessionDebug = require('debug')('app:sessionFlow');
 
 module.exports = function(context, payload, done) {
   debug('Started');

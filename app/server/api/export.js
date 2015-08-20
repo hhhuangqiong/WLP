@@ -1,5 +1,10 @@
-var superagent = require('superagent');
-var debug = require('debug')('app:server/api/export');
+import _ from 'lodash';
+import superagent from 'superagent';
+
+import * as saUtil from '../../utils/superagent';
+
+let debug = require('debug')('app:server/api/export');
+let genericHandler = _.partial(saUtil.genericHandler, debug);
 
 /**
  * List of routes regarding file export
@@ -14,13 +19,7 @@ export default function(exportPrefix='') {
         .query(params)
         .accept('json')
         .set('Authorization', this._getToken())
-        .end(function(err, res) {
-          if (err) {
-            debug('error', err);
-          }
-
-          cb(err, res && res.body);
-        });
+        .end(genericHandler(cb));
     },
 
     getCallsExportProgress: function(params, cb) {
@@ -59,13 +58,7 @@ export default function(exportPrefix='') {
         .query(params)
         .accept('json')
         .set('Authorization', this._getToken())
-        .end(function(err, res) {
-          if (err) {
-            debug('error', err);
-          }
-
-          cb(err, res && res.body);
-        });
+        .end(genericHandler(cb));
     }
 
 

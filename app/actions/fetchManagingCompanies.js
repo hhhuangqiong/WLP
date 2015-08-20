@@ -1,8 +1,9 @@
-var debug = require('debug')('wlp:fetchManagingCompanies');
+let debug = require('debug')('app:actions/fetchManagingCompanies');
 
 export default function(context, params, done) {
   debug('Started');
   context.dispatch('FETCH_MANAGING_COMPANIES_START');
+
   context.api.getManagingCompanies(params, function(err, result) {
     if (err) {
       debug('Failed');

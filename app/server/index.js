@@ -1,7 +1,5 @@
 'use strict';
 
-import Q from 'q';
-import _ from 'lodash';
 import logger from 'winston';
 import path from 'path';
 
@@ -15,7 +13,6 @@ import express from 'express';
 
 // the following 2 are sure to be included in this isomorphic setup
 import bodyParser from 'body-parser';
-
 import compression from 'compression';
 import expressValidator from 'express-validator';
 import favicon from 'serve-favicon';
@@ -24,12 +21,8 @@ import methodOverride from 'method-override';
 import morgan from 'morgan';
 import session from 'express-session';
 
-var ERROR_PATHS = require('./paths');
-
 // TODO restore csrf protection
 //import csrf from 'csurf';
-
-var debug = require('debug')('app:server');
 
 const PROJ_ROOT = path.join(__dirname, '../..');
 import { ERROR_401, ERROR_404 } from './paths';
@@ -38,9 +31,9 @@ import { ERROR_401, ERROR_404 } from './paths';
 import app from '../index';
 
 // access via `context`
-var config = require('../config');
-var fetchData = require('../utils/fetchData');
-var loadSession = require('../actions/loadSession');
+let config = require('../config');
+let fetchData = require('../utils/fetchData');
+let loadSession = require('../actions/loadSession');
 
 function initialize(port) {
   if (!port) throw new Error('Please specify port');
@@ -102,39 +95,8 @@ function initialize(port) {
 
   let redisStore = require('./initializers/redisStore')(session, nconf, env);
 
-  let sessionMiddleware = session({
-    resave: false,
-    saveUninitialized: true,
-
-    //must use same secret as cookie-parser, see https://github.com/expressjs/session#cookie-options
-    secret: nconf.get('secret:session'),
-    store: redisStore
-  })
-
-  server.use(function (req, res, next) {
-    var tries = nconf.get('redisFailoverAttempts');
-
-    function lookupSession(error) {
-      if (error) {
-        return next(error)
-      }
-
-      tries -= 1;
-
-      if (req.session !== undefined) {
-        return next();
-      }
-
-      if (tries < 0) {
-        logger.error(`Tried for ${nconf.get('redisFailoverAttempts')} times. Unable to restore session from redis store!`);
-        return next(new Error('Unable to obtain session from redis...'));
-      }
-
-      sessionMiddleware(req, res, lookupSession);
-    }
-
-    lookupSession();
-  });
+  server.use(require('./middlewares/redisConnection')(
+    redisStore, session, nconf.get('secret:session'), nconf.get('redisFailoverAttempts'), env));
 
   server.use(morgan('dev'));
 
@@ -144,14 +106,13 @@ function initialize(port) {
   // ensure express.session() is before passport.session()
   server.use(passport.session());
 
-  // use cases for using flash message for result?
+  // TODO remove it after sign-up/forgot-password features finished?
   server.use(flash());
 
-  // Routes
-  server.use(config.EXPORT_PATH_PREFIX, require('./routes/CDRExport'));
-  server.use(config.EXPORT_PATH_PREFIX, require('./routes/ImExport'));
-  server.use(config.API_PATH_PREFIX, require('./routes'));
-  server.use(config.FILE_UPLOAD_PATH_PREFIX, require('./routes/data'));
+  // as API server
+  server.use(config.EXPORT_PATH_PREFIX, require('./routers/export'));
+  server.use(config.FILE_UPLOAD_PATH_PREFIX, require('./routers/data'));
+  server.use(config.API_PATH_PREFIX, require('./routers/api'));
 
   var renderApp = require('./render')(app);
 
@@ -203,18 +164,7 @@ function initialize(port) {
     });
   });
 
-  server.use(function(err, req, res) {
-    // in case there is a MongoError on testbed or production
-    // crash the node application and let docker restarts it
-    if (err.name === 'MongoError' && process.env.NODE_ENV !== 'development') {
-      process.exit(1);
-    }
-
-    // otherwise redirect to error page
-    if (!err.status || err.status && err.status == 500) {
-      return res.redirect(ERROR_PATHS.ERROR_500);
-    }
-  });
+  server.use(require('./middlewares/errorHandler'));
 
   return server;
 }

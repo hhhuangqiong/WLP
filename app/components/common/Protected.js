@@ -1,19 +1,21 @@
-import React                  from 'react';
-import classnames             from 'classnames';
-import {concurrent}           from 'contra';
-import Sidebar                from '../Sidebar';
-import CanvasWrapper          from './CanvasWrapper';
-import Navigation             from './NavigationBar';
-import Title                  from './NavigationTitle';
-import Menu                   from './NavigationMenu';
-import Content                from './MainContent';
-import SystemMessage          from './SystemMessage';
-import LoadingSpinner         from './LoadingSpinner';
+import React                   from 'react';
+import classnames              from 'classnames';
+import {concurrent}            from 'contra';
+import Sidebar                 from '../Sidebar';
+import CanvasWrapper           from './CanvasWrapper';
+import Navigation              from './NavigationBar';
+import Title                   from './NavigationTitle';
+import Menu                    from './NavigationMenu';
+import Content                 from './MainContent';
+import SystemMessage           from './SystemMessage';
+import LoadingSpinner          from './LoadingSpinner';
 import fetchCurrentCompanyInfo from '../../actions/fetchCurrentCompanyInfo';
-import fetchManagingCompanies from '../../actions/fetchManagingCompanies';
+import fetchManagingCompanies  from '../../actions/fetchManagingCompanies';
 
 var Protected = React.createClass({
+
   statics: {
+    // `context` is prepared by server's `renderApp()`
     fetchData: function(context, params, query, done) {
       concurrent([
         context.executeAction.bind(context, fetchCurrentCompanyInfo, { carrierId: params.identity }),
@@ -25,7 +27,7 @@ var Protected = React.createClass({
   getInitialState: function() {
     return {
       isOffCanvas: true
-    };
+    }
   },
 
   _setOffCanvas: function(isOffCanvas) {

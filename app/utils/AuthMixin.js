@@ -7,8 +7,8 @@ import {SIGN_IN} from '../server/paths';
 module.exports = {
   statics: {
     willTransitionTo: function(transition) {
-      var context = transition.context.getActionContext()
-      var isAuthenticated = context.getStore(AuthStore).isAuthenticated();
+      let context = transition.context.getActionContext();
+      let isAuthenticated = context.getStore(AuthStore).isAuthenticated();
 
       if (isAuthenticated) {
         if (CLIENT) {

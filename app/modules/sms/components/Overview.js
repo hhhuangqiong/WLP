@@ -1,6 +1,5 @@
 import _ from 'lodash';
 import moment from 'moment';
-import {concurrent} from 'contra';
 
 import React from 'react';
 import {Link} from 'react-router';
@@ -9,8 +8,10 @@ import FluxibleMixin from 'fluxible/addons/FluxibleMixin';
 import AuthMixin from '../../../utils/AuthMixin';
 
 import WidgetNotAvailable from '../../../components/common/WidgetNotAvailable';
-import SMSStore from '../stores/SMSStore';
 import loadSMSWidgets from '../actions/loadSMSWidgets';
+
+import SMSStore  from '../stores/SMSStore';
+import AuthStore from '../../../stores/AuthStore';
 
 const errorMessage = '<div className="widget-not-found">Dashboard is not available</div>';
 
@@ -25,11 +26,10 @@ var SMSOverview = React.createClass({
     storeListeners: [SMSStore],
 
     fetchData: function(context, params, query, done) {
-      concurrent([
-        context.executeAction.bind(context, loadSMSWidgets, {
-          carrierId: params.identity
-        })
-      ], done || function() {});
+      context.executeAction(loadSMSWidgets, {
+        carrierId: params.identity,
+        userId:    context.getStore(AuthStore).getUserId()
+      }, done || function() {});
     }
   },
 

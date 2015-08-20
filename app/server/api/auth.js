@@ -1,11 +1,14 @@
+import _ from 'lodash';
 import superagent from 'superagent';
 
 import { SIGN_IN, SIGN_OUT } from '../paths';
+import * as saUtil from '../../utils/superagent';
 
-var debug = require('debug')('wlp:AuthApi');
+let debug = require('debug')('app:server/api/auth');
+let genericHandler = _.partial(saUtil.genericHandler, debug);
 
 /**
- * @param {String} [host='']
+ *
  * @param {String} [apiPrefix='']
  * @return {Object} function(s) to be mixed
  */
@@ -17,39 +20,16 @@ export default function(apiPrefix = '') {
       superagent
         .post(`${this._getHost()}${apiPrefix}${SIGN_IN}`)
         .accept('json')
-        .send({
-          username: username,
-          password: password
-        })
-        .end(function(err, res) {
-          if (err) {
-            debug('error', err);
-          }
-
-          if (!res.ok) {
-            err = (res.body && res.body.error) || {
-              status: res.status
-            };
-          }
-
-          cb(err, res && res.body);
-        });
+        .send({ username: username, password: password })
+        .end(genericHandler(cb));
     },
 
     signOut: function(cb) {
       superagent
-        .post(`${this._getHost()}${apiPrefix}${SIGN_OUT}`)
-        .accept('json')
-
-        //TODO explict declare this dep
-        .set('Authorization', this._getToken())
-        .end(function(err, res) {
-          if (err) {
-            debug('error', err);
-          }
-
-          cb(err, res && res.body);
-        });
+      .post(`${this._getHost()}${apiPrefix}${SIGN_OUT}`)
+      .accept('json')
+      .set('Authorization', this._getToken())
+      .end(genericHandler(cb));
     }
   }
 }

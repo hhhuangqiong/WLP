@@ -1,8 +1,11 @@
+import _ from 'lodash';
 import superagent from 'superagent';
 
+import * as saUtil from '../../utils/superagent';
 import { SESSION } from '../paths';
 
-var debug = require('debug')('wlp:SessionApi');
+let debug = require('debug')('app:server/api/session');
+let genericHandler = _.partial(saUtil.genericHandler, debug);
 
 export default function(apiPrefix = '') {
   return {
@@ -11,14 +14,7 @@ export default function(apiPrefix = '') {
         .get(`${this._getHost()}${apiPrefix}${SESSION}`)
         .accept('json')
         .set('Authorization', token)
-        .end(function(err, res) {
-          if (err) {
-            debug('error', err);
-          }
-
-          token = res && res.ok ? token : null;
-          cb(err, token);
-        });
+        .end(genericHandler(cb));
     }
   }
 }
