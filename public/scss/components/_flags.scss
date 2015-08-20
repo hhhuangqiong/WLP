@@ -1,6 +1,3 @@
-$flag-original-dimension: 256;
-$flag-resized-dimension: 28;
-
 [class^="flag--"], [class*=" flag--"] {
   display: block;
   transform: scale($flag-resized-dimension/$flag-original-dimension);
@@ -8,8 +5,8 @@ $flag-resized-dimension: 28;
 }
 
 .flag {
-
   &__container {
+    display: inline-block;
     width: rem-calc($flag-resized-dimension);
     height: rem-calc($flag-resized-dimension);
     margin-right: 0.5rem;
