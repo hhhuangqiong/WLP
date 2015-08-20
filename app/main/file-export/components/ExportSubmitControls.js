@@ -8,7 +8,7 @@ export default React.createClass({
 
   render() {
     return (
-      <div className="row text-center export-submit-buttons">
+      <div className="row text-center modal-controls">
         <a
           role="button"
           className="button--secondary large"

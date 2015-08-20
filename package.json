@@ -12,7 +12,19 @@
     "transpile": "gulp babel webpack",
     "pretest": "npm run transpile",
     "test": "gulp test",
-    "test:report": "NODE_PATH=app mocha --compilers js:babel/register --recursive test --reporter xunit > build/reports.xml"
+    "test:report": "NODE_PATH=app mocha --compilers js:babel/register --recursive test --reporter xunit > build/reports.xml",
+    "jest": "jest"
+  },
+  "jest": {
+    "scriptPreprocessor": "<rootDir>/node_modules/babel-jest",
+    "testPathDirs": [
+      "app/components",
+      "app/main",
+      "app/modules/"
+    ],
+    "unmockedModulePathPatterns": [
+      "react"
+    ]
   },
   "dependencies": {
     "acl": "OptimalBits/node_acl",
@@ -21,8 +33,8 @@
     "body-parser": "^1.8.1",
     "bottlejs": "^1.0.0",
     "classnames": "^1.2.0",
+    "common-errors": "^0.5.3",
     "compression": "^1.2.1",
-    "connect-flash": "^0.1.1",
     "connect-multiparty": "^1.2.5",
     "connect-redis": "^2.1.0",
     "contra": "^1.8.1",
@@ -45,6 +57,7 @@
     "jsx-control-statements": "^1.1.0",
     "kue": "^0.9.0",
     "lodash": "^3.1.0",
+    "m800-mail-service-client": "^1.0.0",
     "method-override": "^2.3.1",
     "mime": "^1.3.4",
     "moment": "^2.10.2",
@@ -66,6 +79,7 @@
     "react-crouton": "^0.2.5",
     "react-datepicker": "^0.8.0",
     "react-loader": "^1.2.0",
+    "react-mixin": "^3.0.1",
     "react-modal": "^0.2.0",
     "react-router": "bobpace/react-router#a805f919c6deaa50e2a1f4a5a69a18f8de77f8b1",
     "react-select": "^0.6.3",
@@ -87,6 +101,7 @@
   "devDependencies": {
     "babel-eslint": "^4.0.10",
     "babel-loader": "^5.0.0",
+    "babel-jest": "^5.3.0",
     "browser-sync": "^2.0.1",
     "chai": "^3.0.0",
     "coffee-script": "^1.8.0",
@@ -106,6 +121,7 @@
     "gulp-util": "^3.0.3",
     "gulp.spritesmith": "^4.0.0",
     "jade": "^1.10.0",
+    "jest-cli": "^0.5.0",
     "jsdoc": "^3.3.0",
     "json-loader": "^0.5.1",
     "merge-stream": "^1.0.0",
@@ -114,6 +130,7 @@
     "node-sass": "^3.2.0",
     "react-hot-loader": "^1.2.7",
     "sassaby": "^2.1.0",
+    "react-tools": "^0.13.3",
     "sinon": "^1.12.2",
     "supertest": "^1.0.1",
     "vinyl-buffer": "^1.0.0",

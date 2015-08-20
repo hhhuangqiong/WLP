@@ -51,14 +51,6 @@ var portalUserSchema = new mongoose.Schema({
       trim: true
     }
   },
-  changedPassword: [{
-    password: {
-      type: String
-    },
-    changeAt: {
-      type: Date
-    }
-  }],
   affiliatedCompany: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Company'
@@ -70,12 +62,6 @@ var portalUserSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Company'
   }],
-  status: {
-    type: String,
-
-    // TODO introduce enum-like statuses
-    default: 'inactive'
-  },
 
   // Goolge Authenticator
   googleAuth: {
@@ -90,7 +76,9 @@ var portalUserSchema = new mongoose.Schema({
   tokens: [{
     _id: false,
     event: String,
-    value: mongoose.Schema.Types.Mixed,
+    value: {
+      type: mongoose.Schema.Types.Mixed
+    },
     createdAt: {
       type: Date,
       default: Date.now
@@ -121,18 +109,28 @@ portalUserSchema.virtual('password').get(function() {
   this._password = password;
 });
 
+portalUserSchema.virtual('email').get(function() {
+  return this.username;
+}).set(function(email) {
+  this._email = email;
+});
+
 portalUserSchema.virtual('displayName').get(function() {
   return this.name.first + ' ' + this.name.last;
 });
 
 portalUserSchema.pre('save', function(next) {
-  if (this.hashedPassword && !this.password)
-    return next();
+  if (this.hashedPassword && !this.password) return next();
 
   if (this.password) {
-    this.constructor.hashInfo(this.password, (err, hash) => {
-      _.merge(this, hash);
-    });
+    let hashPasswordCb = (err, hashResult) => {
+      this.salt = hashResult.salt;
+      this.hashedPassword = hashResult.hashedPassword;
+      next();
+    };
+
+    this.constructor.hashInfo(this.password, hashPasswordCb);
+    return;
   }
 
   next();
@@ -163,6 +161,17 @@ portalUserSchema.method('removeToken', function(event) {
   });
 
   this.tokens = tokens;
+  return this;
+});
+
+/**
+ * Add password for user when does not have password
+ *
+ * @param {string} password
+ * @returns {PortalUser}
+ */
+portalUserSchema.method('addPassword', function(password) {
+  this.password = password;
   return this;
 });
 
@@ -285,9 +294,6 @@ portalUserSchema.static('newPortalUser', function(data, cb) {
 
   data.tokens = data.tokens || [];
   data.tokens.push(token);
-
-  // always true?
-  data.affiliatedCompany = 'M800-SUPER';
 
   this.create(data, (err, user) => {
     if (err) return cb(err);

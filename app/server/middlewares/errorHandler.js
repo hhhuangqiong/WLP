@@ -1,15 +1,27 @@
-import { ERROR_500 } from '../paths';
+import logger from 'winston';
 
-/**
- * Default error handler
- */
-export default function(err, req, res) {
-  // in case there is a MongoError on testbed or production
-  // crash the node application and let docker restarts it
-  if (err.name === 'MongoError' && process.env.NODE_ENV !== 'development') {
-    process.exit(1);
+const ERROR_LABEL = 'error';
+const INNER_ERROR_FIELDS = ['message', 'arguments', 'type', 'name'];
+
+function filteredMessage(err) {
+  switch (err.name) {
+    case 'ArgumentNullError':
+    case 'NotFoundError':
+    case 'AlreadyInUseError':
+      return err.message;
   }
 
-  return res.redirect(ERROR_500);
+  /* Show only manually typed message instead of the generated one to reduce redundant message */
+  return err.args['0'];
 }
 
+export default function errorHandler(err, req, res, next) {
+  logger.error(err);
+
+  res.json({[ERROR_LABEL]: {
+    name: err.name,
+    message: filteredMessage(err),
+    moduleId: err.moduleId,
+    context: JSON.stringify(err.inner_error, INNER_ERROR_FIELDS)
+  }});
+}

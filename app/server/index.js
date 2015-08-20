@@ -7,7 +7,7 @@ import path from 'path';
 import React from 'react';
 import serialize from 'serialize-javascript';
 import Html from '../main/components/common/Html';
-
+import errorHandler from './middlewares/errorHandler';
 // express-related
 import express from 'express';
 
@@ -16,7 +16,6 @@ import bodyParser from 'body-parser';
 import compression from 'compression';
 import expressValidator from 'express-validator';
 import favicon from 'serve-favicon';
-import flash from 'connect-flash';
 import methodOverride from 'method-override';
 import morgan from 'morgan';
 import session from 'express-session';
@@ -109,13 +108,12 @@ function initialize(port) {
   // ensure express.session() is before passport.session()
   server.use(passport.session());
 
-  // TODO remove it after sign-up/forgot-password features finished?
-  server.use(flash());
-
   // as API server
   server.use(config.EXPORT_PATH_PREFIX, require('./routers/export'));
   server.use(config.FILE_UPLOAD_PATH_PREFIX, require('./routers/data'));
   server.use(config.API_PATH_PREFIX, require('./routers/api'));
+
+  server.use(config.API_PATH_PREFIX, errorHandler);
 
   var renderApp = require('./render')(app);
 
@@ -176,8 +174,6 @@ function initialize(port) {
       }
     });
   });
-
-  server.use(require('./middlewares/errorHandler'));
 
   return server;
 }

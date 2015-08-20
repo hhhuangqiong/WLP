@@ -17,6 +17,8 @@
 @import 'layouts/company-sidebar';
 
 //import all components
+@import 'components/user-account';
+@import 'components/circle-icon';
 @import 'components/system-error';
 @import 'components/confirmation-dialog';
 @import 'components/top-bar';
@@ -30,6 +32,7 @@
 @import 'components/pagination';
 @import 'components/panels';
 @import 'components/tables';
+@import 'components/modal';
 @import 'components/company-sidebar-list';
 @import 'components/company-sidebar-search';
 @import 'components/accordion';
@@ -58,8 +61,6 @@
 @import 'components/search-button';
 
 //page specific style
-@import 'pages/account';
-@import 'pages/enduser';
 @import 'pages/company';
 @import 'pages/signin';
 @import 'pages/calls';
@@ -75,3 +76,4 @@
 // @import 'elements/button-switcher';
 // @import 'elements/input-block';
 // @import 'elements/loading-bar';
+@import 'elements/input';

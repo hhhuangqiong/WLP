@@ -7,6 +7,12 @@ let navSection = [
     path: 'overview'
   },
   {
+    name: 'Account',
+    icon: 'icon-menuaccount',
+    page: 'account',
+    routeName: 'account'
+  },
+  {
     name: 'Users',
     icon: 'icon-menuenduser',
     page: 'end-user',

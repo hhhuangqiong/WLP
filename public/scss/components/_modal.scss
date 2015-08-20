@@ -1,0 +1,22 @@
+.modal {
+  background-color: white;
+  width: 580px;
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: 150px;
+  padding: 15px;
+}
+
+.modal-header {
+  font-weight: bolder;
+  margin-bottom: rem-calc(30);
+}
+
+.modal-controls {
+  margin-top: rem-calc(40);
+
+  button {
+    display: inline-block;
+    margin: 0 rem-calc(20);
+  }
+}

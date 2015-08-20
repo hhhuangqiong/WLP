@@ -106,6 +106,8 @@ Post-login
     /details
       /query
 
+  /account        # account management page
+
   /vsf            # virtual store front
     /
     /details
@@ -122,4 +124,3 @@ Post-login
     /widget       # widget config
 
 ```
-

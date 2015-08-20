@@ -23,6 +23,8 @@ export default (
     // public pages,
     <Route handler={require('./main/components/common/Public')}>
       <Route name="sign-in" handler={require('./main/components/SignIn')}/>
+      <Route name="forgot-password" handler={require('./modules/account/components/ForgotPassword')} />
+      <Route name="create-password" path="verify/sign-up" handler={require('./modules/account/components/CreatePassword')} />
     </Route>
 
     <Route handler={require('./main/components/common/Protected')}>
@@ -31,6 +33,11 @@ export default (
         <Route name="company-profile" path=":carrierId/profile" handler={require('./modules/company/components/Profile').EditProfile} />
         <Route name="company-service" path=":carrierId/service" handler={require('./modules/company/components/Service')} />
         <Route name="company-widget" path=":carrierId/widget" handler={require('./modules/company/components/Widgets')} />
+      </Route>
+
+      <Route name="account" path="/:role/:identity?/account" handler={require('./modules/account/components/Account')}>
+        <Route name="account-create" path="create" handler={require('./modules/account/components/AccountProfile')} />
+        <Route name="account-profile" path=":accountId" handler={require('./modules/account/components/AccountProfile')} />
       </Route>
 
       <Route path="/:role/:identity?/verification" handler={require('./modules/verification/components/Verification')}>

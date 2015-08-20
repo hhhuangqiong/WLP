@@ -6,6 +6,8 @@ import * as auth      from '../routes/auth';
 import * as carriers  from '../routes/carriers';
 import * as companies from '../routes/companies';
 import * as authority from '../routes/authority';
+import * as accounts from '../routes/accounts';
+import Authority from '../../main/authority';
 
 let multipart = require('connect-multiparty')();
 
@@ -14,6 +16,9 @@ let router = Router();
 router
   .post(SIGN_IN, auth.signIn)
   .post(SIGN_OUT, auth.signOut)
+  .get('/accounts/verify/:token', accounts.verifyToken)
+  .put('/accounts/verify/:token', accounts.createPassword)
+  .put('/accounts/reverify/:username', accounts.reverifyAccount)
   .use(auth.validateToken)
   .get('/session', auth.ensureAuthenticated)
   .get('/carriers/:carrierId/authority', authority.getCapabilityList)
@@ -31,6 +36,11 @@ router
   .get('/carriers/:carrierId/verificationStats', carriers.getVerificationStatistics)
   .get('/carriers/:carrierId/widgets/:type(calls|im|overview|store|sms|vsf)', carriers.getWidgets)
   .get('/companies', companies.list)
+  .get('/accounts', accounts.getAccounts)
+  .post('/accounts', accounts.createAccount)
+  .put('/accounts/:userId', accounts.updateAccount)
+  .post('/accounts/change-password', accounts.changePassword)
+  .delete('/accounts/:userId', accounts.deleteAccount)
   .post('/companies', multipart, companies.createProfile)
   .get('/companies/:carrierId/info', companies.getInfo)
   .get('/companies/:carrierId/service', companies.getService)

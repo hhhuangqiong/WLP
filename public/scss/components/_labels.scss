@@ -12,3 +12,10 @@
         }
     }
 }
+
+label {
+  &.secondary {
+    color: $gray;
+    line-height: normal;
+  }
+}

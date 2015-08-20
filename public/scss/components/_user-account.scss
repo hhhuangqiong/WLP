@@ -1,0 +1,175 @@
+// hack to achieve the same effect of height 100%
+$account-page-height: 93vh;
+
+$account-page-color: white;
+$account-table-width: rem-calc(320);
+
+.account-table {
+  min-height: $account-page-height;
+  min-width: $account-table-width;
+
+  // allow content of account profile to get the rest of width automatically
+  float: left;
+
+  background-color: $account-page-color;
+  box-shadow: 2px 0 2px #888888;
+
+  .active {
+    background-color: #FDF5E6;
+  }
+
+  &__list {
+    padding: 0;
+    margin: 0;
+    list-style: none;
+  }
+
+  &__item {
+    cursor: pointer;
+    padding: rem-calc(15);
+    border-bottom: #DCDCDC 1px solid;
+
+    &__username {
+      font-weight: 680;
+    }
+
+    &__role {
+      text-transform: capitalize;
+      color: #C0C0C0;
+      font-size: rem-calc(14);
+    }
+  }
+
+  &__item-catagory {
+    text-transform: capitalize;
+    background-color: #C0C0C0;
+    font-size: rem-calc(14);
+    font-weight: 750;
+    padding: 5px 15px;
+  }
+}
+
+.account-icon {
+  margin-right: rem-calc(15);
+}
+
+.account-top-bar {
+  &__button-primary {
+    &:hover {
+      background-color: scale-color($brand-secondary, $lightness: -3%);
+    }
+  }
+
+  &__button-secondary {
+    background-color: scale-color($brand-secondary, $lightness: -3%);
+    padding: rem-calc(30);
+  }
+}
+
+.account-reverify-email {
+  color: $brand-primary;
+  font-weight: bolder;
+
+  line-height: 0;
+  z-index: 100;
+  cursor: pointer;
+
+  float: right;
+  position: relative;
+  top: rem-calc(16);
+  right: rem-calc(10);
+
+  &:hover {
+    color: $brand-secondary !important;
+  }
+}
+
+.account-form {
+  width: 90%;
+
+  margin-left: auto;
+  margin-right: auto;
+
+  padding-bottom: rem-calc(20);
+  margin-bottom: rem-calc(1);
+
+  &__user-group {
+    text-transform: capitalize;
+  }
+
+  &__user-group_label {
+    margin-left: rem-calc(8);
+    text-transform: capitalize;
+  }
+
+  &__company-selected {
+    margin-top: rem-calc(5);
+    float: right;
+    font-size: rem-calc(12);
+    color: #C0C0C0;
+    cursor: default;
+  }
+
+  &__company-management {
+    width: 100%;
+  }
+}
+
+.account-profile {
+  overflow: hidden;
+  min-height: $account-page-height;
+
+  &__container {
+    background-color: $account-page-color;
+    border-radius: 10px;
+    box-shadow: 1px 1px 1px #888888;
+
+    width: 85%;
+
+    margin-top: rem-calc(20);
+
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  &__header {
+    margin-bottom: rem-calc(-20);
+    padding: rem-calc(15) rem-calc(20);
+  }
+
+  .profile-info {
+    padding: rem-calc(30);
+    text-align: center;
+
+    &__status {
+      margin-right: rem-calc(15);
+
+      .success {
+        color: green;
+      }
+
+      .alert {
+        color: red;
+      }
+
+      &__message {
+        margin-left: rem-calc(5);
+        font-size: rem-calc(14);
+      }
+    }
+
+    &__icon {
+      margin-left: 40.5%;
+      margin-bottom: rem-calc(20);
+    }
+
+    &__time {
+      font-size: rem-calc(12);
+    }
+
+    &__created_on {
+      margin-right: rem-calc(5);
+      color: #C0C0C0;
+    }
+  }
+}

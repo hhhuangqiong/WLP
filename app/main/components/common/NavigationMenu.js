@@ -3,16 +3,17 @@ import React   from 'react';
 import {Link}  from 'react-router';
 import FluxibleMixin from 'fluxible/addons/FluxibleMixin';
 
-import ChangePass from './ChangePass';
 import CompanySwitcher from './CompanySwitcher';
 
 import showModal from '../../actions/showModal';
 import signOut from '../../actions/signOut';
+import Modal from '../../../main/components/Modal';
+import ChangePasswordForm from '../../../modules/account/components/ChangePasswordForm';
 
 import AuthStore from '../../stores/AuthStore';
 
 const companyPages = ['companies', 'company-create', 'company-profile', 'company-widget', 'company-service'];
-const accountPages = ['accounts', 'account-create'];
+const accountPages = ['account', 'account-create', 'account-profile'];
 
 var Navigation = React.createClass({
   context: {
@@ -28,6 +29,7 @@ var Navigation = React.createClass({
   getInitialState: function(){
     return {
       modal: "close",
+      isChangePasswordOpened: false,
       displayName: this.context.getStore(AuthStore).getDisplayName()
     }
   },
@@ -38,19 +40,29 @@ var Navigation = React.createClass({
     });
   },
 
-  modalControl: function () {
-    this.context.executeAction(showModal, {title: "Change Password", content: <ChangePass />})},
-  onFormSubmit: function(data, callback) {
-    console.log(data); // for form submit action
-    this.modalControl();
-  },
-
   handleSignOut: function(e) {
     e.preventDefault();
     this.context.executeAction(signOut, {});
   },
 
-  _renderCreateButton: function() {
+  renderCreateUser() {
+    let currentRoute = _.last(this.context.router.getCurrentRoutes());
+    let { role, identity } = this.context.router.getCurrentParams();
+
+    if (_.includes(accountPages, currentRoute.name)) {
+      return (
+        <li className="navigation-bar__item no-border">
+          <Link to="account-create" params={{ role: role, identity: identity }}>
+            create user
+          </Link>
+        </li>
+      )
+    }
+
+    return null;
+  },
+
+  renderCreateCompany() {
     let currentRoute = _.last(this.context.router.getCurrentRoutes());
     let { role, identity } = this.context.router.getCurrentParams();
 
@@ -62,24 +74,35 @@ var Navigation = React.createClass({
           </Link>
         </li>
       )
-    } else if (_.includes(accountPages, currentRoute.name)) {
-      return (
-        <li className="navigation-bar__item no-border">
-          <Link to="account-create" params={{ role: role, identity: identity }}>
-            create new account
-          </Link>
-        </li>
-      )
-    };
+    }
 
     return null;
+  },
+
+  handleOpenChangePasswordDialog() {
+    this.setState({ isChangePasswordOpened: true });
+  },
+
+  handleCloseChangePasswordDialog(e) {
+    e.preventDefault();
+    this.setState({ isChangePasswordOpened: false });
   },
 
   render: function() {
     return (
       <section className="top-bar-section navigation-bar">
+        <Modal
+          title="Change Password"
+          isOpen={this.state.isChangePasswordOpened}
+        >
+          <ChangePasswordForm
+            handleClose={this.handleCloseChangePasswordDialog}
+          />
+        </Modal>
+
         <ul className="right">
-          {this._renderCreateButton()}
+          {this.renderCreateUser()}
+          {this.renderCreateCompany()}
           <li className="navigation-bar__item">
             <a href="https://support.maaii.com" target="_new">report issue</a>
           </li>
@@ -91,6 +114,10 @@ var Navigation = React.createClass({
             </a>
             <ul className="dropdown">
               <li className="navigation-bar__item">
+                <a onClick={this.handleOpenChangePasswordDialog}>
+                  <i className="icon-change-password"></i>
+                  Change Password
+                </a>
                 <a href="" onClick={this.handleSignOut}>
                   <i className="icon-logout"></i>
                   logout

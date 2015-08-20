@@ -4,7 +4,6 @@ import _ from 'lodash';
 
 import makeRedisClient from './redis';
 import ensureAuthenticated from '../middlewares/ensureAuthenticated';
-import {SignUp} from '../../lib/portal/SignUp';
 
 import mongoose from 'mongoose';
 import NodeAcl from 'acl';
@@ -36,21 +35,19 @@ export default function init(nconf) {
     return transport(nconf.get('smtp:transport'));
   });
 
-  // seems too verbose to load a template like this:
-  ioc.factory('SignUpTemplate', container => {
-    var SignUpTemplate = require('../../lib/mailer/emailTemplates/SignUpTemplate');
-    return new SignUpTemplate(nconf.get('signUp:email:templateFolderName'), {
-      from:    nconf.get('signUp:email:from'),
-      subject: nconf.get('signUp:email:subject')
-    }, {
-      expiryDays: nconf.get('signUp:token:expiry:value')
-    });
-  });
-
-  ioc.service('SignUp', SignUp, 'Mailer', 'SignUpTemplate');
-
   ioc.service('Mailer', require('../../lib/mailer/mailer'), 'SmtpTransport');
   ioc.service('TemplateMailer', require('../../lib/mailer/templateMailer'), 'Mailer', 'MAIL_TMPL_CONFIG');
+
+  const DEFAULT_MAIL_SERVICE_URL = 'http://deploy.dev.maaii.com:4011';
+
+  // M800 Mail Service
+  ioc.constant('M800_MAIL_SERVICE_URL', process.env.M800_MAIL_SERVICE_URL || DEFAULT_MAIL_SERVICE_URL);
+
+  ioc.constant('M800_MAIL_SERVICE_CLIENT_CONFIG', {
+    baseUrl: ioc.container.M800_MAIL_SERVICE_URL,
+    basePath: '/emails'
+  });
+  ioc.service('EmailClient', require('m800-mail-service-client'), 'M800_MAIL_SERVICE_CLIENT_CONFIG');
 
   ioc.service('PortalUserManager', require('../../lib/portal/UserManager'));
 

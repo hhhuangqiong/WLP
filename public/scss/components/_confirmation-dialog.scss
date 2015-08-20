@@ -10,7 +10,10 @@
 
   @include border-radius(4px);
   background-color: #fff;
-  margin: auto;
+
+  margin-left: auto;
+  margin-right: auto;
+
   position: relative;
   width: $dialog-width;
   top: 20%;
@@ -29,6 +32,10 @@
   }
 
   &__body {
+    cursor: default;
+    text-align: center;
+    font-size: rem-calc(18);
+
     padding: rem-calc(15) rem-calc(20) rem-calc(10);
 
     &__line {
@@ -38,14 +45,14 @@
   }
 
   &__footer {
-    padding: rem-calc(20) 0;
+    text-align: center;
+    padding: rem-calc(20) 0 0 0;
 
     &__button {
-      // 2 buttons with 2 sides each
-      $margin: ($dialog-width - 2 * $button-width) / 4;
+      display: inline-block;
 
-      margin: 0 $margin;
-      width: $button-width;
+      // Override default margin of button class
+      margin: rem-calc(20) !important;
     }
   }
 }

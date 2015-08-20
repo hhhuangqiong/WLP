@@ -89,10 +89,13 @@
     &__title {
       padding: $column-gutter*2 $column-gutter*2 $column-gutter $column-gutter*2;
     }
-  }
-  &--extra {
+
     &__body {
-      padding: $column-gutter $column-gutter*2 $column-gutter*2 $column-gutter*2;
+      padding: $column-gutter $column-gutter*2 $column-gutter $column-gutter*2;
+    }
+
+    &__footer {
+      padding: 0 $column-gutter*2 $column-gutter $column-gutter*2;
     }
   }
 

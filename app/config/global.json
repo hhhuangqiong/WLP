@@ -9,19 +9,6 @@
     "minLength": 8,
     "minOptionalTestsToPass": 4
   },
-  "signUp": {
-    "email": {
-      "from": "noreply@m800.com",
-      "subject": "Sign up instruction",
-      "templateFolderName": "signup"
-    },
-    "token": {
-      "expiry": {
-        "value": 1,
-        "unit": "day"
-      }
-    }
-  },
   "currencyCode": {
     "156": "CNY",
     "840": "USD",

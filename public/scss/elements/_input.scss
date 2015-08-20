@@ -1,0 +1,17 @@
+input {
+  &.error, &.error:focus {
+    border: 1px solid red;
+    margin-bottom: 0 !important;
+  }
+
+  &.error + label {
+    margin-bottom: rem-calc(10);
+    color: red;
+    font-size: smaller;
+  }
+}
+
+.inline {
+  display: inline-block;
+  text-transform: none !important;
+}

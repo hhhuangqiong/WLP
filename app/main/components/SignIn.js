@@ -1,8 +1,8 @@
 import _ from 'lodash';
 import debug from 'debug';
-import React from 'react';
+import React, { findDOMNode } from 'react';
 import FluxibleMixin from 'fluxible/addons/FluxibleMixin';
-import {Link} from 'react-router'
+import { Link } from 'react-router'
 import ValidationMixin from 'react-validation-mixin';
 import Joi from 'joi';
 import classNames from 'classnames';
@@ -138,11 +138,17 @@ let SignIn = React.createClass({
                 </div>
               </div>
             </div>
+            <div className="row"><br /></div>
             <div className="row">
               <div className="large-16 columns">
+                <label className="secondary">
+                  <Link to="forgot-password">
+                    Forgot password?
+                  </Link>
+                </label>
               </div>
               <div className="large-8 columns">
-                <button className="button--primary right" onClick={this.handleSignIn}>sign in</button>
+                <button className="button--primary right" onClick={this.handleSignIn}>Sign In</button>
               </div>
             </div>
           </div>

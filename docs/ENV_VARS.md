@@ -20,6 +20,12 @@ Description:
 
 - port listened by node application
 
+### APP_URL (DEFAULT: http://localhost:3000)
+
+Description:
+
+- pass to third party service api such as mail server
+
 ### DISABLE_ISOMORPHISM (DEFAULT: '')
 
 Description:

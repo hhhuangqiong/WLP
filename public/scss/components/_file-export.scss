@@ -4,15 +4,6 @@ $export-row-spacing: rem-calc(5);
 $control-width: 250px;
 $positioning: -150px;
 
-.export-modal {
-  background-color: white;
-  width: 580px;
-  margin-left: auto;
-  margin-right: auto;
-  margin-top: 150px;
-  padding: 15px;
-}
-
 .export-datetime-picker {
   color: white;
   background-color: $brand-primary;
@@ -32,15 +23,6 @@ $positioning: -150px;
   margin-left: $positioning;
   margin-bottom: -10px;
   width: $control-width !important;
-}
-
-.export-submit-buttons {
-  margin-bottom: -20px;
-
-  .extra-space {
-    display:inline-block;
-    width: 30px;
-  }
 }
 
 .export-form-row-padding {
