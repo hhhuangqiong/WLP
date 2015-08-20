@@ -14,8 +14,7 @@
         "auto_reconnect": true,
         "socketOptions": {
           "keepAlive": 1,
-          "connectTimeoutMS": 3000,
-          "socketTimeoutMS": 3000
+          "connectTimeoutMS": 3000
         }
       }
     }
