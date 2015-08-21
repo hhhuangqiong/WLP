@@ -6,6 +6,7 @@
 @import 'vendors/foundation-settings';
 @import 'vendors/foundation';
 @import 'vendors/foundation-icons';
+@import 'vendors/react-select';
 
 //layouts
 @import 'layouts/common';
@@ -48,6 +49,7 @@
 @import 'components/device-label';
 @import 'components/gender-label';
 @import 'components/overview';
+@import 'components/select-box';
 
 //page specific style
 @import 'pages/account';
