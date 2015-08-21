@@ -17,10 +17,10 @@
         border-right: $tab-inverted-border;
         &__title {
             &:first-child {
-                padding-left: rem-calc(30);
+                margin-left: $column-gutter;
             }
             &:last-child {
-                padding-right: rem-calc(30);
+                margin-right: $column-gutter;
             }
             a {
                 color: $topbar-inner-link-color;
