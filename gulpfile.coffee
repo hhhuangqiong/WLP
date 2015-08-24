@@ -145,6 +145,8 @@ gulp.task 'webpack', (cb)->
     .pipe gulp.dest('public/javascript/')
 
 gulp.task "webpack-dev-server", ['scss', 'webpack'], (callback) ->
+  return callback() if env != 'development'
+
   hotLoadPort = webpackConfig.custom.hotLoadPort
   devServer = new WebpackDevServer(webpack(webpackConfig),
     # 'redirect loop' occurs if using 'http://<host>:<hotLoadPort>'
