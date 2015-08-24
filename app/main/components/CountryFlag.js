@@ -26,7 +26,7 @@ let CountryFlag = React.createClass({
   render: function() {
     return (
       <div className="flag__container">
-        <span className={`flag--${this.props.code}`} />
+        <span className={`flag--${this.props.code.toLowerCase()}`} />
       </div>
     );
   }
