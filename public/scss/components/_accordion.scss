@@ -21,9 +21,14 @@
       }
     }
     &-body {
-      max-height: 100%;
+      // max-height transition won't work with percentage
+      // with resolution of 1920 x 1080
+      // assuming no accordion will not be longer than the page height
+      max-height: 1080px;
       overflow: hidden;
-      transition: max-height ease-in-out 0.28s, background linear 0.1s;
+      // with a considerably large value of max height
+      // cubic-bezier time function is needed to hide the delay at start
+      transition: max-height cubic-bezier(1, 0.3, 1, 0.3) 0.28s, background linear 0.1s;
 
       &__row {
         border-bottom: 1px solid $gray-lighter;
@@ -93,9 +98,14 @@
         }
       }
     }
+
     &.collapsed {
-      .accordion__item__body {
+      .accordion__item-body {
         max-height: 0;
+        // with the same reason above
+        // an inverted time function is need to ease
+        // the delay at the end
+        transition: max-height cubic-bezier(0.3, 1, 0.3, 1) 0.28s, background linear 0.1s;
       }
     }
 
