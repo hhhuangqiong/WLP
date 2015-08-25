@@ -81,9 +81,16 @@ let CountrySelectBox = React.createClass({
     );
   },
 
+  _handleOnBlur: function(e) {
+    if (this.props.searchable && !_.isEmpty(e.target.value)) {
+      this.refs.countrySelectBox.resetValue();
+    }
+  },
+
   render: function() {
     return (
       <Select
+          ref="countrySelectBox"
           className="country-select-box"
           name={this.props.name}
           value={this.props.value}
@@ -100,6 +107,7 @@ let CountrySelectBox = React.createClass({
           optionRenderer={this._renderOption}
           valueRenderer={this._renderValue}
           onChange={this.props.onChange}
+          onBlur={this._handleOnBlur}
         />
     );
   }
