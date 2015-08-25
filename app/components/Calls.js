@@ -16,12 +16,8 @@ import CallsTable from './CallsTable';
 import CallsStore from '../stores/CallsStore';
 import Searchbox from './Searchbox';
 
-import fetchExport from '../actions/fetchExport';
-import fetchExportProgress from '../actions/fetchExportProgress';
-import fetchExportFile from '../actions/fetchExportFile';
-import performClearExport from '../actions/performClearExport';
-import CDRExportModal from './CDRExportModal';
-import CDRProgressBar from './CDRProgressBar';
+import Export from '../main/file-export/components/Export';
+import CallsExportForm from './CallsExportForm';
 
 import config from '../config';
 
@@ -62,10 +58,7 @@ getStateFromStores: function() {
       calls: store.getCalls(),
       callsCount: store.getCallsCount(),
       page: store.getPageNumber(),
-      totalPages: store.getTotalPages(),
-      isExporting: store.getExportState(),
-      exportProgress: store.getExportProgress(),
-      exportId: store.getExportId()
+      totalPages: store.getTotalPages()
     };
   },
 
@@ -188,41 +181,6 @@ getStateFromStores: function() {
     }
   },
 
-  handleExport(data) {
-    debug('handleExport', data)
-
-    let { identity } = this.context.router.getCurrentParams();
-
-    data.startDate = moment(data.startDate).format('x')
-    data.endDate = moment(data.endDate).format('x')
-    data.carrierId = identity;
-    data.type = data.netType;
-    data.destination = (data.destination || '').toLowerCase();
-
-    // For Progress Bar
-    this.setState({ carrierId: data.carrierId });
-
-    this.executeAction(fetchExport, data, ()=>{});
-  },
-
-  handleExportDownload() {
-    const downloadPath = `/export/${this.state.carrierId}/calls/file?exportId=${this.state.exportId}`;
-    window.open(downloadPath, '_blank');
-    this.executeAction(performClearExport);
-  },
-
-  handleCancelExport() {
-    this.setState({ isExporting: false });
-  },
-
-  openExportModal() {
-    this.setState({exportModalOpened: true});
-  },
-
-  handleExportModalClosed() {
-    this.setState({exportModalOpened: false});
-  },
-
   _handleStartDateClick: function() {
     this.refs.startDatePicker.handleFocus();
   },
@@ -237,42 +195,7 @@ getStateFromStores: function() {
 
   render: function() {
     let params = this.context.router.getCurrentParams();
-
     let searchTypes = [{name:'Caller', value: 'caller'},{name:'Callee', value: 'callee'}];
-
-    let isExporting = this.state.isExporting;
-    let completeExport = parseInt(this.state.exportProgress) === 100;
-
-    let exportElement = (
-      <div className="export-download-button export-ie-fix" onClick={this.openExportModal}>
-        <a target="_blank" href={this.state.exportFile}>
-          <i className="icon-download" />
-        </a>
-      </div>
-    )
-
-    if (isExporting || this.state.exportProgress < 0){
-      exportElement = (
-        <CDRProgressBar
-          className={classNames('export-progress-bar', 'export-ie-fix')}
-          isExporting={this.state.isExporting}
-          exportProgress={this.state.exportProgress}
-          handleCancelExport={this.handleCancelExport}
-          exportId={this.state.exportId}
-          carrierId={this.state.carrierId}
-        />
-      )
-    }
-
-    if (completeExport){
-      exportElement = (
-        <div className="export-download-button export-ie-fix" onClick={this.handleExportDownload}>
-          <a target="_blank" href={this.state.exportFile}>
-            Download<i className="icon-download" />
-          </a>
-        </div>
-      )
-    }
 
     /* Temporarily disabled overview section for Calls
     TODO: put it back into tab-bar
@@ -338,15 +261,6 @@ getStateFromStores: function() {
               </ul>
             </div>
 
-            <CDRExportModal
-              startDate={this.state.startDate}
-              endDate={this.state.endDate}
-              netType={this.state.type}
-              isOpen={this.state.exportModalOpened}
-              handleModalClose={this.handleExportModalClosed}
-              handleExport={this.handleExport}
-            />
-
             <ul className="right top-bar--inner">
               <li className="top-bar--inner">
                 <div className="call-search">
@@ -359,8 +273,15 @@ getStateFromStores: function() {
                     onKeyPressHandler={this.handleSearchSubmit} />
                 </div>
               </li>
+
               <li className="top-bar--inner">
-                {exportElement}
+                <Export exportType="Calls">
+                  <CallsExportForm
+                    startDate={this.state.startDate}
+                    endDate={this.state.endDate}
+                    netType={this.state.type}
+                  />
+                </Export>
               </li>
             </ul>
           </div>

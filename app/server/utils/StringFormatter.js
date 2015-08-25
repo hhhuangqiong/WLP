@@ -1,6 +1,8 @@
 import _ from 'lodash';
 import moment from 'moment';
 
+import CountryData from 'country-data';
+
 const OUTPUT_TIME_FORMAT = 'YYYY-MM-DD h:mm:ss a';
 const PLACEHOLDER_FOR_NULL = 'N/A';
 
@@ -29,9 +31,36 @@ export default {
     let seconds = momentDuration.seconds();
 
     let durationString = `${getDuration(hours, HOUR_LABEL)}${getDuration(minutes, MINUTE_LABEL)}${getDuration(seconds, SECOND_LABEL)}`.trim();
-
     if(!durationString.length) return defaultLabel;
-
     return durationString;
+  },
+
+  getCountryName(countryAlpha2) {
+    if(!countryAlpha2) return PLACEHOLDER_FOR_NULL;
+
+    let countryName = CountryData.countries[countryAlpha2.toUpperCase()].name;
+
+    return countryName || PLACEHOLDER_FOR_NULL;
+  },
+
+
+  beautifyTime(timestamp, timeformat=OUTPUT_TIME_FORMAT) {
+    return moment(timestamp).format(timeformat);
+  },
+
+
+  stringifyNumbers(number) {
+    return `'${number}'`;
+  },
+
+
+  sanitizeNull(row, label=PLACEHOLDER_FOR_NULL) {
+    for(var exportField in row) {
+      if(typeof(row[exportField]) === undefined || row[exportField] === null) {
+        row[exportField] = label;
+      }
+    }
+
+   return row;
   }
 }

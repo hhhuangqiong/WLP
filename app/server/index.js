@@ -149,6 +149,7 @@ function initialize(port) {
 
   // Routes
   server.use(config.EXPORT_PATH_PREFIX, require('./routes/CDRExport'));
+  server.use(config.EXPORT_PATH_PREFIX, require('./routes/ImExport'));
   server.use(config.API_PATH_PREFIX, require('./routes'));
   server.use(config.FILE_UPLOAD_PATH_PREFIX, require('./routes/data'));
 

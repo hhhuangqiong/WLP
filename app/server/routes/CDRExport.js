@@ -73,15 +73,12 @@ router.get('/:carrierId/calls/progress', function(req, res) {
   kue.Job.get(req.query.exportId, function(err, job) {
     if (err) return res.status(400).json({ message: 'Invalid export identifier'});
 
+    // jscs:disable requireCamelCaseOrUpperCaseIdentifiers
     if (job.failed_at) return res.status(400).json({ message: 'Job failed' });
 
     let progress = job._progress || '0';
 
-    if (progress === '100') {
-      return res.status(200).json({file:job.result.file, progress:job._progress});
-    }
-
-    return res.status(200).json({progress: progress});
+    return res.status(200).json({ progress });
   });
 });
 
