@@ -15,7 +15,7 @@
     "test:report": "NODE_PATH=app mocha --compilers js:babel/register --recursive test --reporter xunit > build/reports.xml"
   },
   "dependencies": {
-    "acl": "^0.4.7",
+    "acl": "OptimalBits/node_acl",
     "babel": "^5.5.6",
     "bcrypt": "^0.8.0",
     "body-parser": "^1.8.1",
