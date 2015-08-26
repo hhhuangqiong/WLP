@@ -39,8 +39,7 @@ router.post(SIGN_IN, function(req, res, next) {
       // from 'express-session'
       let token = req.sessionID;
       let authUser = getAuthUser(user);
-
-      req.session.data = {
+      let data = {
         token: token,
         user: authUser._id,
         username: authUser.username,
@@ -49,11 +48,18 @@ router.post(SIGN_IN, function(req, res, next) {
         role: authUser.role
       };
 
+      req.session.data = data;
       req.session.save();
+
+      sessionClient.createSession(data, function(err) {
+        if (err) {
+          logger.error(err);
+          return next(err);
+        }
+      });
 
       logger.info('session saved', req.session);
 
-      sessionClient.createSession(token);
       return res.json({ token: '__session__', user: authUser });
     });
   })(req, res, next);

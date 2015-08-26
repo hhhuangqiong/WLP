@@ -21,12 +21,19 @@ let SessionHandler = function(redisClient) {
  *
  * create a session with token as the key in redis
  *
- * @param token {String}
- * @returns token {String}
+ * @param data {Object}
+ * @param data.token {String} token equals to req.sessionId
+ * @param data.user {String} PortalUser Mongoose ObjectId
+ * @param data.username {String} PortalUser username field
+ * @param data.displayName {String} display user name
+ * @param data.carrierId {String} PortalUser affiliated company carrierId
+ * @param data.role {String} PortalUser role
+ * @param cb {Function} callback
+ * @param cb.err {Error} error returned by Redis client
+ * @param cb.res {Object} response object returned by Redis client
  */
-SessionHandler.prototype.createSession = function(token) {
-  this._client.set(`${SESSION_KEY}:${token}`, token);
-  return token;
+SessionHandler.prototype.createSession = function(data, cb) {
+  this._client.set(`${SESSION_KEY}:${data.token}`, JSON.stringify(data), cb);
 };
 
 /**
@@ -38,13 +45,13 @@ SessionHandler.prototype.createSession = function(token) {
  * @returns {*|promise}
  */
 SessionHandler.prototype.getSession = function(token) {
-  var deferred = Q.defer();
+  let deferred = Q.defer();
 
   this._client.get(`${SESSION_KEY}:${token}`, (err, result) => {
     if (err)
       return deferred.reject(err);
 
-    return deferred.resolve(result);
+    return deferred.resolve(result ? JSON.parse(result) : null);
   });
 
   return deferred.promise;

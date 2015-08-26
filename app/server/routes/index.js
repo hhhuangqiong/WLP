@@ -1,12 +1,13 @@
 import nconf from 'nconf';
 import { Router } from 'express';
+import logger from 'winston';
 import sessionClient from '../initializers/sessionClient';
 var sessionDebug = require('debug')('app:sessionFlow');
 
 function validateTokenMiddleware(req, res, next) {
 
   sessionDebug('Auth Header ', req.header('Authorization'));
-  var token = req.header('Authorization')
+  let token = req.header('Authorization');
 
   if (token == '__session__') {
     //from client
@@ -14,16 +15,20 @@ function validateTokenMiddleware(req, res, next) {
   }
 
   sessionClient.getSession(token)
-    .then((dbToken) => {
-      if (dbToken != token) {
+    .then((user) => {
+      if ((user && user.token) != token) {
         return res.status(401).json({
           error: {
-            name: 'InvalidToken',
             message: 'Must provide valid auth token in Authorization header'
           }
         });
       } else {
-        next()
+
+        // prepare the user object just like what
+        // Passport.js does to req.user
+        res.locals.user = user;
+        return next();
+
       }
     })
     .catch((err) => {
