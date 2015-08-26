@@ -7,6 +7,7 @@ var ApplicationStore = createStore({
 
   handlers: {
     FETCH_MANGAING_COMPANIES_SUCCESS:  'loadedCompanies',
+    SIGN_OUT_SUCCESS: 'resetCompanies',
     FETCH_COMPANY_INFO_SUCCESS: 'loadedCurrentCompany'
   },
 
@@ -17,6 +18,11 @@ var ApplicationStore = createStore({
 
   loadedCompanies: function(companies) {
     this.managingCompanies = companies;
+    this.emitChange();
+  },
+
+  resetCompanies: function() {
+    this.managingCompanies = [];
     this.emitChange();
   },
 

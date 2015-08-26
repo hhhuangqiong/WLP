@@ -1,8 +1,10 @@
 'use strict';
+var Q = require('q');
 var mongoose = require('mongoose');
 var gridfs = require('./../server/utils/gridfs');
 var collectionName = 'Company';
 
+const ROOT_COMPANY_CARRIER_ID = 'm800';
 const SDK_DOMAIN = '.m800-api.com';
 
 var schema = new mongoose.Schema({
@@ -185,7 +187,7 @@ schema.method('isRootCompany', function() {
 
 schema.method('getCompanyType', function() {
   if (this.isRootCompany()) {
-    return 'm800';
+    return ROOT_COMPANY_CARRIER_ID;
   } else if (this.reseller) {
     return 'reseller';
   } else if (this.isSDK()) {
@@ -193,6 +195,37 @@ schema.method('getCompanyType', function() {
   } else {
     return 'wl';
   }
+});
+
+schema.static('getManagingCompany', function(parentCarrierId, cb) {
+  return Q.ninvoke(this, 'findOne', { _id: parentCarrierId })
+    .then((company) => {
+      if (!company)
+        throw new Error({
+          name: 'NotFound',
+          message: 'parent company does not exist'
+        });
+
+      // By default, finding only children companies
+      let criteria = { parentCompany: company._id };
+
+      // if the parent company is either m800 or maaii
+      // finding all existing companies except m800
+      if (company.isRootCompany() || company.carrierId === 'maaii.com') {
+        criteria = { carrierId: { $ne: ROOT_COMPANY_CARRIER_ID } };
+      }
+
+      return Q.ninvoke(this, 'find', criteria)
+        .catch((err) => {
+          throw err;
+        });
+    })
+    .then((companies) => {
+      return cb(null, companies);
+    })
+    .catch((err) => {
+      return cb(err);
+    });
 });
 
 schema.method('isSDK', function() {

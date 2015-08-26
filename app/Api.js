@@ -15,7 +15,7 @@ function Api(options = {}) {
 
 Api.prototype.getManagingCompanies = function(params, cb) {
   superagent
-    .get(`${this._getHost()}/api/switcher/companies`)
+    .get(`${this._getHost()}/api/application/companies`)
     .accept('json')
     .set('Authorization', this._getToken())
     .query({

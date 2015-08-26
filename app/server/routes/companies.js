@@ -43,38 +43,42 @@ api.put('/companies/:carrierId/widget', multipart, function(req, res) {
 });
 
 //TODO maybe create another file for this
-api.get('/switcher/companies', function(req, res) {
-  req.checkQuery('userId').notEmpty();
+api.get('/application/companies', function(req, res) {
+  let { user } = res.locals.user;
 
-  let userId = req.query.userId;
+  if (!user) {
+    return res.status(401).json({
+      error: 'missing parameter'
+    });
+  }
 
-  Q.ninvoke(PortalUser, 'findOne', { _id: userId })
+  Q.ninvoke(PortalUser, 'findOne', { _id: user })
     .then((user) => {
       if (!user) {
-        return res.status(401).json({ error: '' });
+        return res.status(401).json({
+          error: 'invalid identity'
+        });
       }
 
-      return Q.ninvoke(Company, 'find', {}, 'name carrierId logo status');
-    }).
-    then((companies)=> {
-      let _companies = [];
-
-      for (let key in companies) {
-        _companies[key] = _.merge(companies[key].toObject(), { role: companies[key].role, identity: companies[key].identity });
-
-        if (key == companies.length - 1) {
+      return Q.ninvoke(Company, 'getManagingCompany', user.affiliatedCompany)
+        .then((companies) => {
           return res.json({
-            companies: _companies
-          })
-        }
-      }
-    }).
-    catch(function(err) {
+            companies: _.reduce(companies, (result, company) => {
+              // to turn a mongoose document to object,
+              // and append the `virtual` field of `role` and `identity`
+              result.push(_.merge(company.toObject(), { role: company.role, identity: company.identity }));
+              return result;
+            }, [])
+          });
+        });
+    })
+    .catch(function(err) {
       if (err)
-        return res.status(err.status).json({
+        return res.status(err.status || 500).json({
           error: err
         });
-    });
+    })
+    .done();
 });
 
 export default api;
