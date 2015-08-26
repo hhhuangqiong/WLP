@@ -22,7 +22,7 @@ var schema = new mongoose.Schema({
     unique: true
   },
 
-  // reflecting company type, either "Default" or "Reseller"
+  // reflecting Company Type, either "Default" or "Reseller"
   reseller: {
     type: Boolean
   },
@@ -55,10 +55,7 @@ var schema = new mongoose.Schema({
   expectedServiceDate: {
     type: Date
   },
-  customerType: {
-    type: String
-  },
-  contactNumber: {
+  contractNumber: {
     type: String
   },
   referenceNumber: {
@@ -178,6 +175,44 @@ schema.method('addLogo', function(filePath, options, cb) {
     if (err) return new Error(err);
     this.logo = fileDoc._id;
     return this.save(cb);
+  });
+});
+
+/**
+ * @method activate
+ *
+ * @callback cb {Function}
+ * @param err {Object} error
+ * @param doc {Object} company payload
+ * @param doc.carrierId {String} company carrier id
+ * @param doc.status {String} company status
+ */
+schema.method('activate', function(cb) {
+  this.status = 'active';
+  return this.save(function(err, company) {
+    if (err)
+      throw err;
+
+    return cb(null, { carrierId: company.carrierId, status: company.status });
+  });
+});
+
+/**
+ * @method deactivate
+ *
+ * @callback cb {Function}
+ * @param err {Object} error
+ * @param doc {Object} company payload
+ * @param doc.carrierId {String} company carrier id
+ * @param doc.status {String} company status
+ */
+schema.method('deactivate', function(cb) {
+  this.status = 'inactive';
+  return this.save(function(err, company) {
+    if (err)
+      throw err;
+
+    return cb(null, { carrierId: company.carrierId, status: company.status });
   });
 });
 

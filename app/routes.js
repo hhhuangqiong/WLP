@@ -26,6 +26,13 @@ export default (
     </Route>
 
     <Route handler={require('./components/common/Protected')}>
+      <Route name="companies" path="/:role/:identity?/companies" handler={require('./modules/company/components/Companies')}>
+        <Route name="company-create" path="create" handler={require('./modules/company/components/Profile').NewProfile} />
+        <Route name="company-profile" path=":carrierId/profile" handler={require('./modules/company/components/Profile').EditProfile} />
+        <Route name="company-service" path=":carrierId/service" handler={require('./modules/company/components/Service')} />
+        <Route name="company-widget" path=":carrierId/widget" handler={require('./modules/company/components/Widgets')} />
+      </Route>
+
       <Redirect from="/:role/:identity?/calls" to={redirectForCallsOverview} />
 
       <Route name="vsf-transaction-overview" path="/:role/:identity?/vsf" handler={require('./modules/virtual-store-front/components/VSFTransactionOverview')} />

@@ -50,7 +50,7 @@ var Navigation = React.createClass({
     this.context.executeAction(signOut, {});
   },
 
-  renderCreateButton: function() {
+  _renderCreateButton: function() {
     let currentRoute = _.last(this.context.router.getCurrentRoutes());
     let { role, identity } = this.context.router.getCurrentParams();
 
@@ -79,6 +79,7 @@ var Navigation = React.createClass({
     return (
       <section className="top-bar-section navigation-bar">
         <ul className="right">
+          {this._renderCreateButton()}
           <li className="navigation-bar__item">
             <a href="http://support.maaii.com" target="_new">report issue</a>
           </li>

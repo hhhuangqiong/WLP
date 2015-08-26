@@ -19,6 +19,11 @@ let navSections = [
   //   routeName: 'end-users'
   // },
   {
+    name: 'company',
+    icon: 'icon-menucompany',
+    routeName: 'companies'
+  },
+  {
     name: 'Calls',
     icon: 'icon-menucalls',
     routeName: 'calls-overview'
@@ -63,7 +68,7 @@ class Sidebar extends React.Component{
 
     return (
       <div
-        className={classnames('mainmenu-bar','vertical', {offcanvas: this.props.isOffCanvas})}
+        className={classnames('mainmenu-bar', 'vertical', {offcanvas: this.props.isOffCanvas})}
         onMouseLeave={this.props.handleOffCavnas.bind(null, true)}
         onMouseEnter={this.props.handleOffCavnas.bind(null, false)}
       >

@@ -1,11 +1,16 @@
 .company-sidebar {
-    &__search {
-        background: $gray-dark;
-        padding: 0 rem-calc(20);
-        height: $company-sidebar-height;
-        > input {
-            @include inputBoxReset;
-            @include inputBoxWithIcon;
-        }
+  &__search {
+    background: $gray-dark;
+    padding: 0 $fieldset-padding;
+    height: $company-sidebar-height;
+
+    > input {
+      @include inputBoxReset;
+      @include inputBoxWithIcon;
+
+      &.round {
+        border-radius: $company-sidebar-height;
+      }
     }
+  }
 }
