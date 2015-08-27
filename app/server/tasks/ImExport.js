@@ -23,7 +23,7 @@ let validateCompletedTime = (completedTime) => {
 }
 
 /***
- * @constructor IMExport
+ * @constructor ImExport
  * @param {Kue} kueue instance of job queue
  * @param  {object}   param - may contain following
  * @param  {string}   param.carrierId - specific identity from a client account
