@@ -52,7 +52,7 @@ export default function(redisConnOpts, opts = {}) {
   }
 
   let kueue = kue.createQueue({
-    prefix: opts.prefix,
+    prefix: `${process.env.NODE_ENV}_${opts.prefix}`,
     redis: kueRedisOpt
   });
 
