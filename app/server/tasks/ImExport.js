@@ -139,39 +139,42 @@ export default class ImExportTask {
     let next = (param) => {
       let request = fetchDep(nconf.get('containerName'), 'ImRequest');
 
-      request.getImStat(param, (err, result) => {
-        if (err) return cb(err, null);
+      Q.ninvoke(request, 'getImStat', param)
+        .then((result) => {
+          let totalElements = result.contents.length;
+          let totalPages = result.totalPages;
+          let pageSize = result.pageSize;
+          let pageNumber = result.pageNumber;
+          let offset = result.offset;
 
-        let totalElements = result.contents.length;
-        let totalPages = result.totalPages;
-        let pageSize = result.pageSize;
-        let pageNumber = result.pageNumber;
-        let offset = result.offset;
+          while (offset < totalElements) {
+            let row = _.pick(result.contents[offset], IM_EXPORT.DATA_FIELDS);
 
-        while (offset < totalElements) {
-          let row = _.pick(result.contents[offset], IM_EXPORT.DATA_FIELDS);
+            row = humanizeFields(row);
 
-          row = humanizeFields(row);
+            csvStream.write(row);
+            offset++;
+            job.progress(offset, totalElements, {nextRow: offset === totalElements ? 'Job completed.' : offset });
+          }
 
-          csvStream.write(row);
-          offset++;
-          job.progress(offset, totalElements, {nextRow: offset === totalElements ? 'Job completed.' : offset });
-        }
+          if (offset === totalElements) {
+            // jscs:disable requireCamelCaseOrUpperCaseIdentifiers
+            job.data.file = path.join(os.tmpdir(), job.created_at + '-' + job.id + '.csv');
+            return cb(null, job.data.file);
+            /* jscs: enable */
+          }
 
-        if (offset === totalElements) {
-          // jscs:disable requireCamelCaseOrUpperCaseIdentifiers
-          job.data.file = path.join(os.tmpdir(), job.created_at + '-' + job.id + '.csv');
-          return cb(null, job.data.file);
-          /* jscs: enable */
-        }
-
-        // for next page to export
-        if (offset < totalElements) {
-          param.request = requestName;
-          param.page = +pageNumber + 1;
-          next(param);
-        }
-      });
+          // for next page to export
+          if (offset < totalElements) {
+            param.request = requestName;
+            param.page = +pageNumber + 1;
+            next(param);
+          }
+        })
+        .catch(function(err) {
+          return cb(err);
+        })
+        .done();
     }
 
     next(param);

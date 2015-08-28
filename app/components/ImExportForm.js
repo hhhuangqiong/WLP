@@ -17,8 +17,8 @@ export default React.createClass({
 
   defaultState() {
     return {
-      fromTime: moment(this.props.fromTime, 'L'),
-      toTime: moment(this.props.toTime, 'L').endOf('day'),
+      fromTime: moment(this.props.fromTime),
+      toTime: moment(this.props.toTime).endOf('day'),
       origin: '',
       destination: ''
     };
@@ -33,11 +33,11 @@ export default React.createClass({
   },
 
   handleStartDateChange(newDate) {
-    this.setState({ fromTime: newDate });
+    this.setState({ fromTime: moment.isMoment(newDate) ? newDate : moment(newDate) });
   },
 
   handleEndDateChange(newDate) {
-    this.setState({ toTime: newDate });
+    this.setState({ toTime: moment.isMoment(newDate) ? newDate : moment(newDate) });
   },
 
   handleOriginChange(event) {
