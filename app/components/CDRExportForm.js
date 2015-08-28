@@ -143,7 +143,7 @@ let CDRExportForm = React.createClass({
 
         <div className="row export-form-row-padding">
           <div className="large-5 columns">
-            <label className="left bold">Destination</label>
+            <label className="left bold">Country</label>
           </div>
 
 
@@ -153,7 +153,7 @@ let CDRExportForm = React.createClass({
               onChange={this.destinationChange}
               value={this.state.destination}
             >
-              <option>Choose a destination</option>
+              <option>Choose a Country</option>
               {Countries.map((country) => {
                 return <option
                   key={country.countryCode}
