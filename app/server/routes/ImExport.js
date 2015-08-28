@@ -1,23 +1,28 @@
-import Q from 'q';
 import fs from 'fs';
 import kue from 'kue';
 import nconf from 'nconf';
 
-import ImExportTask from '../tasks/ImExport';
-import { IM_EXPORT } from '../../config';
 import { fetchDep } from '../utils/bottle';
+import { IM_EXPORT } from '../../config';
+import ImExportTask from '../tasks/ImExport';
 
-const UNABLE_LOCATE_EXPORT_FILE = 'Unable to locate exported file. Please try again.';
 const PAGE_START_INDEX = 0;
 const PAGE_SIZE = 1000;
 
+import responseError from '../utils/responseError';
+
+import {
+  JOB_FAILED_ERROR, GET_JOB_ERROR, REQUEST_VALIDATION_ERROR,
+  FILE_STREAM_ERROR, INCOMPELETE_JOB_ERROR
+} from '../utils/exportErrorTypes';
+
 // '/:carrierId/im'
-let getCarrierIM = function(req, res) {
+let getCarrierIM = (req, res) => {
   req.checkParams('carrierId').notEmpty();
 
   let err = req.validationErrors();
 
-  if (err) return res.status(400).json(err);
+  if (err) return responseError(REQUEST_VALIDATION_ERROR, res, err);
 
   let params = {
     carrier: req.params.carrierId,
@@ -35,21 +40,23 @@ let getCarrierIM = function(req, res) {
     res.status(200).json({ id: job.id });
     task.start();
   }, (err) => {
-    res.status(500).json({ error: err });
+    return responseError(GET_JOB_ERROR, res, err);
   }).done();
-}
+};
 
 // '/:carrierId/im/progress'
-let getCarrierIMFileProgress = function(req, res) {
+let getCarrierIMFileProgress = (req, res) => {
   req.checkQuery('exportId').notEmpty();
 
   let err = req.validationErrors();
-  if (err) return res.status(400).json({ message: 'Invalid export identifier'});
+
+  if (err) return responseError(REQUEST_VALIDATION_ERROR, res, err);
 
   kue.Job.get(req.query.exportId, (err, job) => {
-    if (err) return res.status(400).json({ message: 'Invalid export identifier'});
+    if (err) return responseError(GET_JOB_ERROR, res, err);
 
-    if (job.failed_at) return res.status(400).json({ message: 'Job failed' });
+    // jscs:disable requireCamelCaseOrUpperCaseIdentifiers
+    if (job.failed_at) return responseError(JOB_FAILED_ERROR, res, job.failed_at);
 
     let progress = job._progress || '0';
 
@@ -58,14 +65,14 @@ let getCarrierIMFileProgress = function(req, res) {
 };
 
 // '/:carrierId/im/file'
-let getCarrierIMFile = function(req, res) {
+let getCarrierIMFile = (req, res) => {
   req.checkQuery('exportId').notEmpty();
 
   let err = req.validationErrors();
-  if (err) return res.status(400).json(err);
+  if (err) return responseError(REQUEST_VALIDATION_ERROR, res, err);
 
   kue.Job.get(req.query.exportId, (err, job) => {
-    if (err) return res.status(400).json({ message: 'Invalid export identifier'});
+    if (err) return responseError(GET_JOB_ERROR, res, err);
 
     if (job._progress === '100') {
       res.setHeader('Content-disposition', 'attachment; filename=' + IM_EXPORT.EXPORT_FILENAME);
@@ -78,11 +85,11 @@ let getCarrierIMFile = function(req, res) {
       });
 
       filestream.on('error', function(err) {
-        return res.status(400).json({ message: err });
+        return responseError(FILE_STREAM_ERROR, res, err);
       });
 
     } else {
-      return res.status(400).json({ message: 'exporting in progress:' + job._progress});
+      return responseError(INCOMPELETE_JOB_ERROR, res, job._progress);
     }
 
   });
@@ -93,4 +100,3 @@ export {
   getCarrierIMFile,
   getCarrierIMFileProgress
 };
-

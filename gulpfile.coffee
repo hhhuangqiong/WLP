@@ -2,6 +2,9 @@
 
 console.time 'Loading plugins'
 
+# allow using gulp to run mocha test using es6's way
+require 'babel/register'
+
 autoprefixer     = require 'gulp-autoprefixer'
 babel            = require 'gulp-babel'
 del              = require 'del'

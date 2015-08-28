@@ -3,7 +3,7 @@ import superagent from 'superagent';
 import {expect} from 'chai';
 
 // test target
-import * as saUtil from 'utils/superagent';
+import * as saUtil from 'app/utils/superagent';
 
 describe('Superagent helper function', function() {
   let url = 'http://example.com/api/somewhere';

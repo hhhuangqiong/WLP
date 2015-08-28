@@ -1,4 +1,5 @@
 import Q from 'q';
+import logger from 'winston';
 
 const SESSION_KEY = 'app:sessions';
 
@@ -84,4 +85,3 @@ SessionHandler.prototype.revokeSession = function(token) {
 };
 
 export default SessionHandler;
-
