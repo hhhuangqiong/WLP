@@ -51,7 +51,21 @@ SessionHandler.prototype.getSession = function(token) {
     if (err)
       return deferred.reject(err);
 
-    return deferred.resolve(result ? JSON.parse(result) : null);
+    let sessionData;
+
+    try {
+      sessionData = JSON.parse(result);
+    } catch(e) {
+      // it successfully grab the data from Redis
+      // but the format is just invalid
+      // so it does not reject with error
+      // but resolve with null
+      logger.error('invalid session format and regard as unauthorized');
+      logger.info('token:', token);
+      logger.info('session object: %j', result, {});
+    }
+
+    return deferred.resolve(sessionData);
   });
 
   return deferred.promise;

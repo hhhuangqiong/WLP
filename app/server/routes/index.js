@@ -16,7 +16,7 @@ function validateTokenMiddleware(req, res, next) {
 
   sessionClient.getSession(token)
     .then((user) => {
-      if ((user && user.token) != token) {
+      if (!user || ((user && user.token) != token)) {
         return res.status(401).json({
           error: {
             message: 'Must provide valid auth token in Authorization header'

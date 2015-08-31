@@ -217,7 +217,7 @@ schema.method('deactivate', function(cb) {
 });
 
 schema.method('isRootCompany', function() {
-  return !this.parentCompany;
+  return this.carrierId === ROOT_COMPANY_CARRIER_ID;
 });
 
 schema.method('getCompanyType', function() {

@@ -4,7 +4,7 @@ var Company = require('app/collections/company');
 
 const rootConfig = {
   name: 'rootCompany',
-  carrierId: 'root',
+  carrierId: 'm800',
   parentCompany: null,
   country: 'HK',
   timezone: 'UTC+8'
