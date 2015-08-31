@@ -7,6 +7,8 @@ var _       = require('lodash');
 
 import BaseRequest from '../Base';
 
+const LABEL_FOR_NULL = 'N/A';
+
 export default class ImRequest extends BaseRequest {
 
   constructor(baseUrl, timeout) {
@@ -107,9 +109,15 @@ export default class ImRequest extends BaseRequest {
    */
   filterData(data, cb) {
     if (data && data.content) {
-      data.content = _.filter(data.content, (im) => {
+      /**
+        To assign a nice looking label instead of showing 'undefined' or null
+       */
+      _.forEach(data.content, (im) => {
+        im.destination = im.destination || LABEL_FOR_NULL;
+        im.sender = im.sender || LABEL_FOR_NULL;
+
         // jscs:disable requireCamelCaseOrUpperCaseIdentifiers
-        return (im.sender !== null && im.message_type !== 'undefined')
+        im.message_type = !im.message_type || im.message_type === 'undefined' ? LABEL_FOR_NULL : im.message_type;
       });
     }
 

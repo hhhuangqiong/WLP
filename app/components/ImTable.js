@@ -11,6 +11,7 @@ var Countries = require('../data/countries.json');
 var Tooltip = require('rc-tooltip');
 
 const IM_DATETIME_FORMAT = 'MMMM DD YYYY, hh:mm:ss a';
+const LABEL_FOR_NULL = 'N/A';
 
 const MESSAGE_TYPES = {
   text: {
@@ -96,7 +97,7 @@ var ImTable = React.createClass({
 
       let imDate = moment(u.timestamp).format(IM_DATETIME_FORMAT);
 
-      let imType = MESSAGE_TYPES[u.message_type];
+      let imType = MESSAGE_TYPES[u.message_type] || LABEL_FOR_NULL;
 
       let typeSize = this.getTypeSize(u, imType.title);
 
@@ -117,7 +118,7 @@ var ImTable = React.createClass({
           <td className="im-table--cell">
             <span className={classNames('im-message-type-icon', imType.className, u.message_type)}></span>
             <div className="im-message-type-info">
-              <span className={"im-message-type-text dark"}>{imType.title || 'others'}</span>
+              <span className={"im-message-type-text dark"}>{imType.title || LABEL_FOR_NULL}</span>
               <br/>
               <span className={"im-message-type-size"}>{typeSize}</span>
             </div>
