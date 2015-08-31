@@ -67,7 +67,7 @@ mongoose.connection.on('connected', function() {
   // seeding portal user carrier access privilege
   Company.find({}, function(err, companies) {
     if (err)
-      return handleError(new Error('error when querying existing companies'));
+      return handleError(err);
 
     Q.allSettled(
       companies.map(function(company) {
@@ -89,20 +89,66 @@ mongoose.connection.on('connected', function() {
             users.map(function(user) {
               return Q.ninvoke(aclManager, 'addUserCarrier', user.username, user.affiliatedCompany.carrierId)
                 .then(function() {
-                  console.log('seeded carrier', '`' + user.affiliatedCompany.carrierId + '`', 'privilege to user', user.username);
-                }).catch(handleError);
+                  console.log('[Seeding for normal user] seeded carrier', '`' + user.affiliatedCompany.carrierId + '`', 'privilege to user', user.username);
+                });
             })
           ).then(function(promises) {
             if (!_.filter(promises, { state: 'rejected' }))
               throw new Error('error when adding user carrier privilege');
 
-            console.log('Seeding succeeded, Exiting ...');
-            process.exit(0);
+            console.log('Seeding succeeded, Press Ctrl + C to Exit ...');
 
           }).catch(handleError);
         });
     }).catch(handleError);
   });
+
+  // seeding all companies except m800(root company) for
+  // all maaii users
+  Q.ninvoke(Company, 'find', { carrierId: { $ne: 'm800' }}, 'carrierId')
+    .then(function(companies) {
+      PortalUser
+        .find({
+          isRoot: false,
+          affiliatedCompany: { $ne: null }
+        })
+        .populate({
+          path: 'affiliatedCompany',
+          match: { carrierId: { $in: ['maaii.com', 'maaiii.org'] } },
+          select: 'carrierId'
+        })
+        .exec(function(err, users) {
+          if (err)
+            return handleError(err);
+
+          Q.allSettled(
+            users.map(function(user) {
+              // !user.affiliatedCompany means carrierId
+              // is neither `maaii.com` nor `maaiii.org`
+              // so the user does not belong to Maaii company
+              if (user.affiliatedCompany) {
+                return Q.allSettled(
+                  companies.map(function(company) {
+                    return Q.ninvoke(aclManager, 'addUserCarrier', user.username, company.carrierId)
+                      .then(function() {
+                        console.log('[Seeding for Maaii users] seeded carrier', '`' + company.carrierId + '`', 'privilege to user', user.username);
+                      })
+                  })
+                )
+              }
+            })
+          )
+          .then(function(promises) {
+            if (!_.filter(promises, { state: 'rejected' }))
+              throw new Error('error when adding user carrier privilege');
+
+              console.log('Seeding for Maaii user succeeded, Press Ctrl + C to Exit ...');
+          })
+          .catch(handleError)
+          .done();
+        });
+    })
+    .catch(handleError);
 });
 
 function handleError(err) {
