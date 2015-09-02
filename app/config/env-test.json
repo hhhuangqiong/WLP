@@ -66,6 +66,12 @@
   },
   "logging": {
     "winston": {
+      "meta": {
+        "app": "white-label-portal",
+        "type": "logs",
+        "env": "test",
+        "instance": "server-instance-name"
+      },
       "transports": [{
         "type": "winston.transports.Console",
         "options": {

@@ -1,6 +1,5 @@
 'use strict';
 
-import logger from 'winston';
 import path from 'path';
 
 // react & flux -related
@@ -47,6 +46,9 @@ function initialize(port) {
   // let 'nconf' be the first initializer so configuration is accessed thru it
   var nconf = require('./initializers/nconf')(env, path.resolve(__dirname, '../config'));
 
+  // NB: intentionally put 'logging' initializers before the others
+  require('./initializers/logging')(nconf.get('logging:winston'));
+
   // database initialization + data seeding
   var postDBInit = require('./initializers/dataseed')(path.resolve(__dirname, `../data/users.${env}.json`));
 
@@ -65,7 +67,6 @@ function initialize(port) {
     return kueue;
   });
 
-  require('./initializers/logging')();
   require('./initializers/viewHelpers')(server);
 
   if (nconf.get('trustProxy'))

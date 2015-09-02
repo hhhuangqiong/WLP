@@ -79,7 +79,8 @@
     "validator": "^3.42.0",
     "verror": "^1.6.0",
     "webpack": "^1.9.4",
-    "winston": "^1.0.0"
+    "winston": "^1.0.0",
+    "winston-logstash": "^0.2.11"
   },
   "devDependencies": {
     "babel-eslint": "^4.0.10",
