@@ -4,7 +4,6 @@ import classNames from 'classnames';
 import _ from 'lodash';
 
 import DateTimePicker from '../main/components/DateTimePicker';
-import ExportCountriesDropdown from '../main/file-export/components/ExportCountriesDropdown';
 import ExportSubmitControls from '../main/file-export/components/ExportSubmitControls';
 
 export default React.createClass({
@@ -68,6 +67,7 @@ export default React.createClass({
   },
 
   render() {
+    // ExportCountryDropdown is removed for WLP-285
     return (
       <form onSubmit={this.handleExport} noValidate>
         <h4 id="modalTitle">DOWNLOAD REPORT</h4>
@@ -133,13 +133,6 @@ export default React.createClass({
             </ul>
           </div>
         </div>
-
-        <ExportCountriesDropdown
-          displayName="Destination"
-          defaultOption="All destinations"
-          value={this.state.destination}
-          onChange={this.handleDestinationChange}
-        />
 
         <hr />
 
