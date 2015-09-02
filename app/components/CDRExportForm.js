@@ -67,10 +67,7 @@ let CDRExportForm = React.createClass({
   },
 
   render() {
-    let countryNames = _.map(Countries, (country) => {
-      return country.name;
-    });
-
+    // Country dropdown has been taken out for WLP-285
     return (
       <form>
         <h4 id="modalTitle">DOWNLOAD REPORT</h4>
@@ -138,29 +135,6 @@ let CDRExportForm = React.createClass({
                 >Offnet</a>
               </li>
             </ul>
-          </div>
-        </div>
-
-        <div className="row export-form-row-padding">
-          <div className="large-5 columns">
-            <label className="left bold">Country</label>
-          </div>
-
-
-          <div className="large-7 columns">
-            <select
-              className="large export-destination radius"
-              onChange={this.destinationChange}
-              value={this.state.destination}
-            >
-              <option>Choose a Country</option>
-              {Countries.map((country) => {
-                return <option
-                  key={country.countryCode}
-                  value={country.alpha2}
-                >{country.name}</option>
-              })}
-            </select>
           </div>
         </div>
 
