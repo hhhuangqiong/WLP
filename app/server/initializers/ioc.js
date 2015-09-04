@@ -60,9 +60,9 @@ export default function init(nconf) {
   ioc.constant('MUMS_API_TIMEOUT', nconf.get('mumsApi:timeout'));
   ioc.service('EndUserRequest', require('../../lib/requests/mums/User'), 'MUMS_API_BASE_URL', 'MUMS_API_TIMEOUT');
 
-  ioc.constant('VSF_API_BASE_URL', nconf.get('vsfApi:baseUrl'));
-  ioc.constant('VSF_API_TIMEOUT', nconf.get('vsfApi:timeout'));
-  ioc.service('VSFTransactionRequest', require('../../lib/requests/mums/VSFTransaction'), 'VSF_API_BASE_URL', 'VSF_API_TIMEOUT');
+  ioc.constant('MVS_API_BASE_URL', nconf.get('mvsApi:baseUrl'));
+  ioc.constant('MVS_API_TIMEOUT', nconf.get('mvsApi:timeout'));
+  ioc.service('VSFTransactionRequest', require('../../lib/requests/mvs/VSFTransaction'), 'MVS_API_BASE_URL', 'MVS_API_TIMEOUT');
 
   ioc.constant('BOSS_API_BASE_URL', nconf.get('bossApi:baseUrl'));
   ioc.constant('BOSS_API_TIMEOUT', nconf.get('bossApi:timeout'));

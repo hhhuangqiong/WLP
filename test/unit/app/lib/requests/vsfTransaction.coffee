@@ -6,9 +6,9 @@ util       = require 'util'
 Qs         = require 'qs'
 
 # object under test
-vsfTransacitonRequest = require 'app/lib/requests/mums/VSFTransaction'
+mvsRequest = require 'app/lib/requests/mvs/VSFTransaction'
 
-describe 'vsfTransacitonRequest', ->
+describe 'mvsRequest', ->
   request = null
   params  = {}
   carrierId = 'yato.maaii.com'
@@ -21,7 +21,7 @@ describe 'vsfTransacitonRequest', ->
 
     beforeEach ->
       timeout = 100
-      request = new vsfTransacitonRequest(baseUrl, timeout)
+      request = new mvsRequest(baseUrl, timeout)
       params  = {
         fromTime: '12/30/2014',
         toTime: '6/29/2015',
@@ -93,10 +93,13 @@ describe 'vsfTransacitonRequest', ->
 
     it 'should convert date query strings into ISO 8601 format', ->
       request.formatQueryData params, (err, val) ->
+        fromTime = moment(params.fromTime).startOf('day').toISOString()
+        toTime = moment(params.toTime).endOf('day').toISOString()
+
         expect val.fromTime
-        .to.equal moment(params.fromTime).startOf('day').format('YYYY-MM-DDTHH:MM:ss[Z]')
+        .to.equal moment.utc(fromTime).format('YYYY-MM-DDTHH:MM:ss[Z]')
         expect val.toTime
-        .to.equal moment(params.toTime).subtract(1, 'days').endOf('day').format('YYYY-MM-DDTHH:MM:ss[Z]')
+        .to.equal moment.utc(toTime).format('YYYY-MM-DDTHH:MM:ss[Z]')
 
     it.skip 'should return a transaction record array in successful request', (done) ->
       request.getTransactions carrierId, params, (err, body) ->
@@ -124,7 +127,7 @@ describe 'vsfTransacitonRequest', ->
 
     it.skip 'should not return error if timeout', (done) ->
       timeout = 10
-      request = new vsfTransacitonRequest(baseUrl, timeout)
+      request = new mvsRequest(baseUrl, timeout)
 
       request.getTransactions carrierId, params, (err, val) ->
         expect err
