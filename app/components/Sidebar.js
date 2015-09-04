@@ -47,6 +47,11 @@ let navSections = [
     name: 'Top Up',
     icon: 'icon-menutopup',
     routeName: 'top-up-details'
+  },
+  {
+    name: 'Verification',
+    icon: 'icon-menuenduser',
+    routeName: 'verification'
   }
 ];
 
