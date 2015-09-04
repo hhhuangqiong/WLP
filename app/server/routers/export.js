@@ -1,6 +1,6 @@
 import { Router } from 'express';
-import * as cdrExport from '../routes/CDRExport';
-import * as imExport from '../routes/IMExport';
+import * as cdrExport from '../routes/cdrExport';
+import * as imExport from '../routes/imExport';
 
 let router = Router();
 
