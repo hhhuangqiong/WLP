@@ -38,9 +38,13 @@ export default {
   getCountryName(countryAlpha2) {
     if(!countryAlpha2) return PLACEHOLDER_FOR_NULL;
 
-    let countryName = CountryData.countries[countryAlpha2.toUpperCase()].name;
+    let country = CountryData.countries[countryAlpha2.toUpperCase()];
 
-    return countryName || PLACEHOLDER_FOR_NULL;
+    if(!country) return PLACEHOLDER_FOR_NULL;
+
+    let countryName = country.name;
+
+    return countryName;
   },
 
 
