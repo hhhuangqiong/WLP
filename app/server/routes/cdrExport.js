@@ -4,6 +4,7 @@ import _ from 'lodash';
 import fs from 'fs';
 import kue from 'kue';
 import nconf from 'nconf';
+import redisRStream from 'redis-rstream';
 
 import { fetchDep } from '../utils/bottle';
 import { CDR_EXPORT } from '../../config';
@@ -15,6 +16,8 @@ import {
   JOB_FAILED_ERROR, GET_JOB_ERROR, REQUEST_VALIDATION_ERROR,
   FILE_STREAM_ERROR, INCOMPELETE_JOB_ERROR
 } from '../utils/exportErrorTypes';
+
+export const JOB_TYPE = 'exportCdr';
 
 let getCarrierCalls = (req, res) => {
   req.checkParams('carrierId').notEmpty();
@@ -86,13 +89,12 @@ let getCarrierCallsFile = (req, res) => {
       res.setHeader('Content-disposition', 'attachment; filename=' + CDR_EXPORT.EXPORT_FILENAME);
       res.setHeader('Content-type', 'text/csv');
 
-      let filestream = fs.createReadStream(job.result.file);
+      let redisClient = fetchDep(nconf.get('containerName'), 'RedisClient');
+      let exportFileStream = redisRStream(redisClient, `${JOB_TYPE}:${job.id}`);
 
-      filestream.on('readable', function() {
-        filestream.pipe(res);
-      });
+      exportFileStream.pipe(res);
 
-      filestream.on('error', function(err) {
+      exportFileStream.on('error', (err) => {
         return responseError(FILE_STREAM_ERROR, res, err);
       });
     }

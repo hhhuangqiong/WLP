@@ -1,25 +1,35 @@
 import _ from 'lodash';
 import csv from 'fast-csv';
-import moment from 'moment';
-import fs from 'fs';
 import nconf from 'nconf';
 import kue from 'kue';
 import logger from 'winston';
-import os from 'os';
 import Q from 'q';
-import path from 'path';
+import redisWStream from 'redis-wstream';
 
 import { fetchDep } from '../utils/bottle';
-import {IM_EXPORT} from '../../config';
-
+import { IM_EXPORT } from '../../config';
 import { getCountryName, beautifyTime, stringifyNumbers, sanitizeNull } from '../utils/StringFormatter';
 
-export const JOB_TYPE = 'exportTDR';
+const JOB_TYPE = 'exportIm';
 
-let validateCompletedTime = (completedTime) => {
-  let nowTimestamp = moment().format('x');
-  let difference = nowTimestamp - completedTime;
-  return (moment.duration(difference).asHours() >= 4);
+/**
+ * make export field to be readable by human in csv format file.
+ * @param  {object}   param - may contain following
+ * @param  {integer}   param.device_id - stringify to avoid incorrect format parsing using Excel
+ * @param  {string}   param.origin - to be country name instead of country code
+ * @param  {string}   param.destination - to be country name instead of country code
+ * @param  {integer}   param.timestamp - to be human readable date time format
+ */
+function humanizeFields(row){
+  /* jscs:disable */
+  row.device_id = stringifyNumbers(row.device_id);
+  /* jscs: enable */
+
+  row.origin = getCountryName(row.origin);
+  row.destination = getCountryName(row.destination);
+  row.timestamp = beautifyTime(row.timestamp);
+
+  return sanitizeNull(row);
 }
 
 /***
@@ -35,19 +45,6 @@ let validateCompletedTime = (completedTime) => {
  * @param  {string}   [param.destination] - specify 2 letter country code for origin, value is referenced in /app/data/countries.json using 'alpha2' code
      in /app/lib
  */
-
-function humanizeFields(row){
-  /* jscs:disable */
-  row.device_id = stringifyNumbers(row.device_id);
-  /* jscs: enable */
-
-  row.origin = getCountryName(row.origin);
-  row.destination = getCountryName(row.destination);
-  row.timestamp = beautifyTime(row.timestamp);
-
-  return sanitizeNull(row);
-}
-
 export default class ImExportTask {
   constructor(kueue, param) {
     let deferred = Q.defer();
@@ -96,10 +93,10 @@ export default class ImExportTask {
   start() {
     this.kueue.process(JOB_TYPE, (job, done) => {
       Q.ninvoke(this, 'exportCSV', job)
-        .then(function(file) {
-          return done(null, { file });
+        .then(() => {
+          return done(null);
         })
-        .catch(function(err) {
+        .catch((err) => {
           /**
            * Gracefully handle errors to prevent from stuck jobs:
            * https://github.com/Automattic/kue#prevent-from-stuck-active-jobs
@@ -112,68 +109,52 @@ export default class ImExportTask {
 
   //job process function
   exportCSV(job, cb) {
+    const EXPORT_KEY = `${JOB_TYPE}:${job.id}`;
+
     let param = job.data;
+    let totalExportElements = 0;
+    let redisClient = fetchDep(nconf.get('containerName'), 'RedisClient');
+    let csvStream = csv.createWriteStream({ headers: true });
 
-    let csvStream = csv.createWriteStream({headers: true});
-    /* jscs: disable */
-    let writableStream = fs.createWriteStream(path.join(os.tmpdir(), job.created_at + '-' + job.id + '.csv'));
-    /* jscs: enable */
-    writableStream.on('finish', function() {
-      csvStream.end();
-      logger.info('Writing file finished.');
-    });
-    csvStream.pipe(writableStream);
+    csvStream
+      .pipe(redisWStream(redisClient, EXPORT_KEY))
+      .on('finish', () => {
+        logger.info(`Job #${job.id} finished writing file, ${totalExportElements} records are being exported`);
+        return cb(null);
+      });
 
-    /**
-     * fetch and write to file a single request as csv format.
-     * @param  {object}   param - may contain following
-     * @param  {string}   param.carrierId - specific identity from a client account
-     * @param  {string}   param.startDate - timestamp in millisecond
-     * @param  {string}   param.endDate - timestamp in millisecond
-     * @param  {number}   param.page - specify starting page, always 0
-     * @param  {number}   param.size - specify no. records on each page, always 1000
-     * @param  {string}   [param.type] - specify call type, either 'ONNET' or 'OFFNET', other string will cause api to fail
-     * @param  {string}   [param.caller_country] - specify caller's located country, value is referenced in /app/data/countries.json using 'alpha2' code
-     in /app/lib
-     */
     let next = (param) => {
       let request = fetchDep(nconf.get('containerName'), 'ImRequest');
 
       Q.ninvoke(request, 'getImStat', param)
         .then((result) => {
-          let totalElements = result.contents.length;
+          let offset = 0;
+          let pageElements = result.contents.length;
           let totalPages = result.totalPages;
-          let pageSize = result.pageSize;
           let pageNumber = result.pageNumber;
-          let offset = result.offset;
 
-          while (offset < totalElements) {
+          totalExportElements += pageElements;
+
+          // end the redis stream if all elements have been exported
+          if (pageElements === 0) {
+            csvStream.end();
+          }
+
+          while (offset < pageElements) {
             let row = _.pick(result.contents[offset], IM_EXPORT.DATA_FIELDS);
-
-            row = humanizeFields(row);
-
-            csvStream.write(row);
+            csvStream.write(humanizeFields(row));
             offset++;
-            job.progress(offset, totalElements, {nextRow: offset === totalElements ? 'Job completed.' : offset });
           }
 
-          if (offset === totalElements) {
-            // jscs:disable requireCamelCaseOrUpperCaseIdentifiers
-            job.data.file = path.join(os.tmpdir(), job.created_at + '-' + job.id + '.csv');
-            return cb(null, job.data.file);
-            /* jscs: enable */
-          }
+          if (pageNumber < totalPages) {
+            param.page++;
 
-          // for next page to export
-          if (offset < totalElements) {
-            param.request = requestName;
-            param.page = +pageNumber + 1;
+            // A hack to prevent progress becomes 100% to avoid job to end before file stream to be ready for download
+            job.progress(pageNumber, totalPages + 1, { nextRow: pageNumber });
             next(param);
           }
         })
-        .catch(function(err) {
-          return cb(err);
-        })
+        .catch((err) => { return cb(err); })
         .done();
     }
 

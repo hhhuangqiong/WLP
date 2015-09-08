@@ -49,7 +49,7 @@ export default {
 
 
   beautifyTime(timestamp, timeformat=OUTPUT_TIME_FORMAT) {
-    return moment(timestamp).format(timeformat);
+    return timestamp ? moment(timestamp).format(timeformat) : PLACEHOLDER_FOR_NULL;
   },
 
 
