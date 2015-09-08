@@ -70,7 +70,7 @@
     "react-router": "bobpace/react-router#a805f919c6deaa50e2a1f4a5a69a18f8de77f8b1",
     "react-select": "^0.6.3",
     "react-validation-mixin": "^4.0.3",
-    "redis": "^0.12.1",
+    "redis": "^1.0.0",
     "redis-sentinel": "^0.3.2",
     "serialize-javascript": "^1.0.0",
     "serve-favicon": "^2.1.7",
