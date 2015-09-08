@@ -19,13 +19,12 @@ export default function(apiPrefix = '') {
         .end(genericHandler(cb));
     },
 
-    getfetchVSFWidgets(params, cb) {
+    getVSFWidgets(params, cb) {
       superagent
         .get(`${this._getHost()}${carrierBasePath}/${params.carrierId}/widgets/vsf`)
         .query(params)
         .accept('json')
         .set('Authorization', this._getToken())
-        .query({ userId: params.userId })
         .end(genericHandler(cb));
     }
   }
