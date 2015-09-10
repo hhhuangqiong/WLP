@@ -5,12 +5,13 @@ import moment from 'moment';
 
 import { fetchDep } from '../utils/bottle';
 
-var endUserRequest = fetchDep(nconf.get('containerName'), 'EndUserRequest');
-var walletRequest  = fetchDep(nconf.get('containerName'), 'WalletRequest');
-var callsRequest   = fetchDep(nconf.get('containerName'), 'CallsRequest');
-var topUpRequest   = fetchDep(nconf.get('containerName'), 'TopUpRequest');
-var imRequest      = fetchDep(nconf.get('containerName'), 'ImRequest');
-var vsfRequest     = fetchDep(nconf.get('containerName'), 'VSFTransactionRequest');
+var endUserRequest      = fetchDep(nconf.get('containerName'), 'EndUserRequest');
+var walletRequest       = fetchDep(nconf.get('containerName'), 'WalletRequest');
+var callsRequest        = fetchDep(nconf.get('containerName'), 'CallsRequest');
+var topUpRequest        = fetchDep(nconf.get('containerName'), 'TopUpRequest');
+var imRequest           = fetchDep(nconf.get('containerName'), 'ImRequest');
+var vsfRequest          = fetchDep(nconf.get('containerName'), 'VSFTransactionRequest');
+var verificationRequest = fetchDep(nconf.get('containerName'), 'VerificationRequest');
 
 import SmsRequest from '../../lib/requests/SMS';
 import PortalUser from '../../collections/portalUser';
@@ -436,6 +437,43 @@ let getVSF = function(req, res) {
   });
 }
 
+// '/carriers/:carrierId/verifications'
+let getVerifications = function (req, res) {
+  req.checkParams('carrierId').notEmpty();
+  req.checkQuery('application').notEmpty();
+  req.checkQuery('from').notEmpty();
+  req.checkQuery('to').notEmpty();
+
+  var err = req.validationErrors();
+  if (err) {
+    return res.status(400).json(err);
+  }
+
+  let params = _.omit({
+    carrier: req.params.carrierId,
+    application: req.query.application,
+    from: req.query.from,
+    to: req.query.to,
+    page: req.query.page,
+    size: req.query.size,
+    method: req.query.method,
+    platform: req.query.platform,
+    phone_number: req.query.phone_number
+  }, (val) => {
+    return !val;
+  });
+
+  verificationRequest.getVerifications(params, (err, result) => {
+    if (err) {
+      return res.status(err.status).json({
+        error: err
+      });
+    }
+
+    return res.json(result);
+  });
+};
+
 export {
   getCalls,
   getIM,
@@ -445,6 +483,7 @@ export {
   getUsername,
   getUsers,
   getVSF,
+  getVerifications,
   getWidgets,
   reactivateUser,
   suspendUser,
