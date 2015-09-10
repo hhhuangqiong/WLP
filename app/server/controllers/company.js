@@ -666,25 +666,157 @@ export default class CompanyController {
   };
 
   /**
+   * Checks if the user having the specified userId can access the application information.
+   *
+   * This function essentially returns true if the user is having company M800 
+   * and is under the group `admin`, `root`, or `dev`.
+   *
+   * @method
+   * @param {String} userId  The user ID
+   * @returns {Promise.<boolean>} True if the user can access, false otherwise
+   * @throws {Promise.<Error>} If anything goes wrong
+   */
+  canAccessApplicationInformation(userId) {
+    let hasPermission = function (companyId) {
+      // besides Root and M800 Admin, M800 Dev is the only role
+      // who has permission to edit, and hence, to fetch the Company applications
+      let isM800AdminOrDev = function () {
+        return Q.ninvoke(PortalUser, 'find', {
+          _id: userId,
+          affiliatedCompany: companyId,
+          assignedGroup: {
+            $in: ['admin', 'root', 'dev']
+          }
+        }).then((user) => {
+          return !!user;
+        });
+      };
+
+      return isM800AdminOrDev();
+    };
+
+    return Q.ninvoke(Company, 'getRootCompanyId')
+      .then(hasPermission);
+  };
+
+  /**
+   * Creates an error object which can be used as a response to the client.
+   * This function is basically a copy of lib/requests/Base#handleError.
+   *
+   * @method
+   * @param {Object} err  The error object from superagent
+   * @returns {Error} The error object for response
+   */
+  createResponseError(err) {
+    let error = new Error(err.message);
+
+    if (err.timeout) {
+      error.status = 504;
+      error.timeout = err.timeout;
+      return error;
+    }
+
+    error.status = err.status || 500;
+    error.code = err.code;
+    return error;
+  }
+
+  /**
+   * Acquire the application ID's with carrierId.
+   * The `carrierId` must be embedded in the request object's params.
+   * The `userId` must be embedded in the request object's query.
+   *
+   * @method
+   * @param {Request} req  The node request object
+   * @param {Response} res  The node response object
+   */
+  getApplicationIds(req, res) {
+    req.checkParams('carrierId').notEmpty();
+    req.checkQuery('userId').notEmpty();
+
+    if (req.validationErrors()) {
+      return res.status(400).json({
+        error: new Error('missing query parameter `userId`')
+      });
+    };
+
+    let userId = req.query.userId;
+    let carrierId = req.params.carrierId;
+
+    let makeApiRequest = _.partial(function (carrierId) {
+      let request = new ApplicationRequest({
+        baseUrl: nconf.get('mumsApi:baseUrl'),
+        timeout: nconf.get('mumsApi:timeout')
+      });
+
+      return Q.ninvoke(request, 'getApplications', carrierId);
+    }, carrierId);
+
+    this.canAccessApplicationInformation(userId)
+      .then((isPermitted) => {
+        if (!isPermitted) {
+          res.status(401).json({
+            error: new Error('unauthorized user')
+          });
+          return;
+        }
+
+        return makeApiRequest()
+          .then((result) => {
+            // result can be an object or array depends on the number of applications
+            // object if 1, array if multiple
+            // therefore we unify the structure here to array
+            if (!_.isArray(result)) {
+              result = [result];
+            }
+
+            let appIds = [];
+            _.forEach(result, (app) => {
+              appIds.push(app.applicationId);
+            });
+
+            res.status(200).json(appIds);
+          })
+          .catch((err) => {
+            let error = this.createResponseError(err.response.body.error);
+
+            res.status(error.status).json({
+              error: error
+            });
+          });
+      })
+      .catch((err) => {
+        logger.error(err);
+
+        res.status(500).json({
+          error: err
+        });
+      })
+      .done();
+  }
+
+  /**
    * Acquire the application service configs with carrierId
    *
-   * @param company {Object} normalized payload
-   * @returns {*|promise} return a payload merged with application configs
+   * @method
+   * @param {Request} req  The node request object
+   * @param {Response} res  The node response object
    */
   getApplications(req, res) {
     req.checkParams('carrierId').notEmpty();
     req.checkQuery('userId').notEmpty();
 
     if (req.validationErrors()) {
-      return res.status(400);
+      return res.status(400).json({
+        error: new Error('missing query parameter `userId`')
+      });
     };
 
     let userId = req.query.userId;
     let carrierId = req.params.carrierId;
 
-    var makeApiRequest = _.bind(function() {
+    let makeApiRequest = _.partial(function(carrierId) {
       let request = new ApplicationRequest({ baseUrl: nconf.get('mumsApi:baseUrl'), timeout: nconf.get('mumsApi:timeout') });
-      let carrierId = this.carrierId;
 
       return Q.allSettled([
           Q.ninvoke(request, 'getApplications', carrierId),
@@ -730,57 +862,28 @@ export default class CompanyController {
           logger.error(error);
           return null;
         });
-    }, { carrierId: carrierId });
+    }, carrierId);
 
-    var hasPermission = function(user, cb) {
-      logger.debug('checking permission for user %j', user, {});
-
-      // Root and M800 Admin has same permission here
-      if (user.isRoot) {
-        return cb(null, true);
-      }
-
-      // besides Root and M800 Admin, M800 Dev is the only role
-      // who has permission to edit, and hence, to fetch the Company applications
-      var isM800AdminOrDev = function() {
-        Q.ninvoke(PortalUser, 'findOne', {
-          _id: user._id,
-          affiliatedCompany: 'M800',
-          assignedGroup: {
-            $or: ['admin', 'dev']
-          }
-        }).then((company)=> {
-          return cb(null, !!company);
-        }).catch((error)=> {
-          throw error;
-        });
-      };
-
-      isM800AdminOrDev();
-    };
-
-    Q.ninvoke(PortalUser, 'findOne', { _id: userId })
-      .then((user)=> {
-        if (!user) {
-          res.status(401);
-        }
-
-        return Q.nfcall(hasPermission, user);
-      })
-      .then((isPermitted)=> {
+    this.canAccessApplicationInformation(userId)
+      .then((isPermitted) => {
         if (!isPermitted) {
-          res.status(401);
+          res.status(401).json({
+            error: new Error('unauthorized user')
+          });
+          return;
         }
+
+        return makeApiRequest()
+          .then((result) => {
+            res.status(200).json({
+              services: result,
+              carrierId: req.params.carrierId
+            });
+          });
       })
-      .then(makeApiRequest)
-      .then((result)=> {
-        res.status(200).json({
-          services: result,
-          carrierId: req.params.carrierId
-        });
-      })
-      .catch((err)=> {
+      .catch((err) => {
         logger.error(err);
+
         res.status(500).json({
           error: err
         });

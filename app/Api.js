@@ -79,6 +79,15 @@ Api.prototype.getApplications = function(params, cb) {
     .end(genericHandler(cb))
 };
 
+Api.prototype.getApplicationIds = function (params, cb) {
+  superagent
+    .get(`${this._getHost()}/api/companies/${params.carrierId}/applicationIds`)
+    .accept('json')
+    .set('Authorization', this._getToken())
+    .query({ userId: params.userId })
+    .end(genericHandler(cb));
+};
+
 Api.prototype.updateCompanyProfile = function(params, cb) {
   superagent
     .put(`${this._getHost()}/api/companies/${params.carrierId}/profile`)

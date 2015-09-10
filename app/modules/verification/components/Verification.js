@@ -6,6 +6,7 @@ import {concurrent} from 'contra';
 import AuthMixin from '../../../utils/AuthMixin';
 
 import ApplicationStore from '../../../stores/ApplicationStore';
+import AuthStore from '../../../stores/AuthStore';
 
 import fetchAppIds from '../actions/fetchAppIds';
 
@@ -23,7 +24,10 @@ var Verification = React.createClass({
     storeListeners: [ApplicationStore],
 
     fetchData: function (context, params, query, done) {
-      context.executeAction(fetchAppIds, {}, done || Function.prototype);
+      context.executeAction(fetchAppIds, {
+        carrierId: params.identity,
+        userId: context.getStore(AuthStore).getUserId()
+      }, done || Function.prototype);
     }
   },
 

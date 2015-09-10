@@ -33,6 +33,7 @@ router
   .get('/companies/:carrierId/info', companies.getInfo)
   .get('/companies/:carrierId/service', companies.getService)
   .get('/companies/:carrierId/applications', companies.getApplications)
+  .get('/companies/:carrierId/applicationIds', companies.getApplicationIds)
   .put('/companies/:carrierId/profile', multipart, companies.updateProfile)
   .put('/companies/:carrierId/service', multipart, companies.saveService)
   .put('/companies/:carrierId/widget', multipart, companies.saveWidget)

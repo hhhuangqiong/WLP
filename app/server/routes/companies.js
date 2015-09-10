@@ -47,6 +47,11 @@ let getApplications = function(req, res) {
   return controller.getApplications(req, res);
 };
 
+// '/companies/:carrierId/applicationIds'
+let getApplicationIds = function (req, res) {
+  return controller.getApplicationIds(req, res);
+};
+
 // '/companies/:carrierId/profile'
 let updateProfile = function (req, res) {
   return controller.saveProfile(req, res);
@@ -104,6 +109,7 @@ let getApplicationCompanies = function(req, res) {
 export {
   getApplicationCompanies,
   getApplications,
+  getApplicationIds,
   getInfo,
   getService,
   list,
