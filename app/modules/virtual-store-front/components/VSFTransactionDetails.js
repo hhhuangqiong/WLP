@@ -52,7 +52,7 @@ let VSFTransactionDetails = React.createClass({
   getInitialState() {
     let state = this.getStore(VSFTransactionStore).getState();
     let query = this.context.router.getCurrentQuery();
-    let data = _.merge(initialState, query, state);
+    let data = _.merge(state, initialState, query);
 
     return data;
   },
