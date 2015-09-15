@@ -103,9 +103,7 @@ router.get('/:carrierId/calls/file', function(req, res) {
 
       var filestream = fs.createReadStream(job.result.file);
 
-      filestream.on('readable', function() {
-        filestream.pipe(res);
-      });
+      filestream.pipe(res);
 
       filestream.on('error', function(err) {
         return res.status(400).json({ message: err });
