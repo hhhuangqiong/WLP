@@ -15,7 +15,7 @@
   },
   "bossApi": {
     "baseUrl": "http://192.168.135.167:10080",
-    "timeout": 3000,
+    "timeout": 7000,
     "format": {
       "timestamp": "YYYYMMDD"
     }

@@ -44,7 +44,8 @@ let VSFTransactionTable = React.createClass({
 
           <td className="calls-table--cell">
             <div className="left timestamp">
-              <span className="call_date">{Moment(transaction.purchaseDate).format('MMMM Do YYYY, h:mm:ss a')}</span>
+              {/* parse purchaseDate as it is in UTC time and display it as local time */}
+              <span className="call_date">{Moment.utc(transaction.purchaseDate).local().format('MMMM Do YYYY, h:mm:ss a')}</span>
             </div>
           </td>
 

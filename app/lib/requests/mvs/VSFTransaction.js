@@ -25,8 +25,13 @@ export default class VSFTransactionRequest extends BaseRequest {
   }
 
   formatQueryData(params, cb) {
-    params.fromTime = moment(params.fromTime, 'L').startOf('day').format(LONG_DATE_FORMAT);
-    params.toTime   = moment(params.toTime, 'L').endOf('day').format(LONG_DATE_FORMAT);
+    // transform local L format date to UTC time with proper date range
+    let fromTime = moment(params.fromTime, 'L').startOf('day').toISOString();
+    let toTime = moment(params.toTime, 'L').endOf('day').toISOString();
+
+    // parse the date object and render it as predefined time string
+    params.fromTime = moment.utc(fromTime).format(LONG_DATE_FORMAT);
+    params.toTime   = moment.utc(toTime).format(LONG_DATE_FORMAT);
 
     return cb(null, params);
   }
@@ -34,6 +39,8 @@ export default class VSFTransactionRequest extends BaseRequest {
   sendRequest(carrierId, params, cb) {
     var base = this.opts.baseUrl;
     var url = util.format(this.opts.methods.LIST.URL, carrierId);
+
+    logger.info(`MVS API Endpoint: ${util.format('%s%s', base, url)}, Params: %j`, params, {});
 
     request
       .get(util.format('%s%s', base, url))

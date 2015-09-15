@@ -20,6 +20,7 @@
 #export NODE_ENV=test
 #export bossApi__baseUrl=192.168.135.167:10080
 #export mumsApi__baseUrl=http://192.168.119.12:8080
+#export mvsApi__baseUrl=http://192.168.119.21:9125
 #export dataProviderApi__baseUrl=http://192.168.119.131:9998
 
 #export mongodb__uri=mongodb://192.168.119.71/m800-whitelabel-portal,mongodb://192.168.119.72/m800-whitelabel-portal,mongodb://192.168.119.73/m800-whitelabel-portal
@@ -35,3 +36,4 @@
 # production
 #export NODE_ENV=production
 #export bossApi__baseUrl=192.168.56.42:8080
+#export mvsApi__baseUrl=192.168.56.12:9125

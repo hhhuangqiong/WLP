@@ -25,11 +25,13 @@ let { pages: { topUp: { pageRec: PAGE_REC } } } = require('./../../../main/confi
 // page = 0 shows only total records
 // page = 1 1st page
 const INITIAL_PAGE_NUMBER = 1;
-const MONTHS_BEFORE_TODAY = 1;
+
+// WLP-323
+const MAX_QUERY_DATE_RANGE = 7;
 
 const defaultQuery = {
   carrierId: null,
-  startDate: moment().startOf('day').subtract(MONTHS_BEFORE_TODAY, 'month').format(DATE_FORMAT),
+  startDate: moment().startOf('day').subtract(MAX_QUERY_DATE_RANGE, 'days').format(DATE_FORMAT),
   endDate: moment().endOf('day').format(DATE_FORMAT),
   number: null,
   page: INITIAL_PAGE_NUMBER,
@@ -112,14 +114,37 @@ var TopUp = React.createClass({
 
   handleStartDateChange: function(momentDate) {
     let date = moment(momentDate).format(DATE_FORMAT);
-    this.setState({ startDate: date });
-    this.handleQueryChange({ startDate: date, page: INITIAL_PAGE_NUMBER });
+
+    let updates = {
+      startDate: date
+    };
+
+    if (moment(this.state.endDate, 'L').diff(momentDate, 'days') > MAX_QUERY_DATE_RANGE) {
+      updates.endDate = moment(momentDate).add(MAX_QUERY_DATE_RANGE,'days').format(DATE_FORMAT);
+    }
+
+    this.setState(updates);
+
+    updates.page = INITIAL_PAGE_NUMBER;
+
+    this.handleQueryChange(updates);
   },
 
   handleEndDateChange: function(momentDate) {
     let date = moment(momentDate).format(DATE_FORMAT);
-    this.setState({ endDate: date });
-    this.handleQueryChange({ endDate: date, page: INITIAL_PAGE_NUMBER });
+
+    let updates = {
+      endDate: date
+    };
+
+    if (moment(momentDate).diff(moment(this.state.startDate,'L'), 'days') > MAX_QUERY_DATE_RANGE) {
+      updates.startDate = moment(momentDate).subtract(MAX_QUERY_DATE_RANGE,'days').format(DATE_FORMAT);
+    }
+
+    this.setState(updates);
+
+    updates.page = INITIAL_PAGE_NUMBER;
+    this.handleQueryChange(updates);
   },
 
   handleSearchInputChange: function(e) {
