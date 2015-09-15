@@ -255,6 +255,15 @@ Api.prototype.getImHistory = function(params, cb) {
     .end(genericHandler(cb));
 };
 
+Api.prototype.getVerifications = function (params, cb) {
+  superagent
+    .get(`${this._getHost()}/api/carriers/${params.carrierId}/verifications`)
+    .accept('json')
+    .set('Authorization', this._getToken())
+    .query(params)
+    .end(genericHandler(cb));
+};
+
 Api.prototype.getCurrentCompanyInfo = function(params, cb) {
   superagent
     .get(`${this._getHost()}/api/companies/${params.carrierId}/info`)

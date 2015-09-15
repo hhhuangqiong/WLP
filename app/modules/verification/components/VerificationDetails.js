@@ -46,6 +46,7 @@ var VerificationDetails = React.createClass({
       }
 
       context.executeAction(fetchVerifications, {
+        carrierId: params.identity,
         appId: query.appId,
         startDate: query.startDate || moment().subtract(2, 'month').startOf('day').format(DATE_FORMAT),
         endDate: query.endDate || moment().endOf('day').format(DATE_FORMAT),
@@ -148,7 +149,10 @@ var VerificationDetails = React.createClass({
   },
 
   loadMore: function () {
+    let { identity } = this.context.router.getCurrentParams();
+
     this.context.executeAction(fetchMoreVerifications, {
+      carrierId: identity,
       appId: this.state.appId,
       page: this.state.page + 1,
       pageSize: this.state.pageSize,

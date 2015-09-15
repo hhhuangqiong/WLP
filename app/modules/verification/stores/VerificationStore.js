@@ -4,8 +4,8 @@ export default createStore({
   storeName: 'VerificationStore',
 
   handlers: {
-    FETCH_VERIFICATION_SUCCESS: 'handleVerificationsFetched',
-    FETCH_MORE_VERIFICATION_SUCCESS: 'handleMoreVerificationsFetched'
+    FETCH_VERIFICATIONS_SUCCESS: 'handleVerificationsFetched',
+    FETCH_MORE_VERIFICATIONS_SUCCESS: 'handleMoreVerificationsFetched'
   },
 
   initialize: function () {

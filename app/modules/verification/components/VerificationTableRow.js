@@ -2,14 +2,21 @@ import React from 'react';
 
 import _ from 'lodash';
 import moment from 'moment';
+import classNames from 'classnames';
 
 import Tooltip from 'rc-tooltip';
 
 import CountryFlag from '../../../main/components/CountryFlag';
 
-var countries = require('../../../data/countries.json');
+let countries = require('../../../data/countries.json');
 
-var VerificationTableRow = React.createClass({
+let lookupCountry = function (alpha2) {
+  return _.find(countries, (c) => {
+    return c.alpha2 === alpha2.toUpperCase();
+  });
+};
+
+let VerificationTableRow = React.createClass({
   contextTypes: {
     router: React.PropTypes.func.isRequired,
     executeAction: React.PropTypes.func.isRequired
@@ -18,19 +25,28 @@ var VerificationTableRow = React.createClass({
   render: function () {
     let verification = this.props.verification;
 
-    let time = moment(verification.time);
+    let time = moment(verification.timestamp);
     let dateString = time.format('D MMM YYYY');
     let timeString = time.format('h:mm:ss a');
 
-    let classes = 'verification-table__result-tag verification-table__' + verification.result.toLowerCase() + '-tag';
-
-    let phoneCountry = _.find(countries, (c) => {
-      return c.countryCode === verification.phoneCountryCode;
+    let success = (verification.success === 'true');
+    let status = (success ? 'success' : 'failure');
+    let statusFlagClasses = classNames('verification-table__result-tag', {
+      'verification-table__success-tag': success,
+      'verification-table__failure-tag': !success
     });
 
-    let ipCountry = _.find(countries, (c) => {
-      return c.countryCode === verification.ipCountryCode;
-    });
+    let phone = verification.phone_number;
+    let phoneCountry = lookupCountry(verification.country) || {};
+
+    let ip = verification.source_ip;
+    // pending for confirmation from the backend team
+    let ipCountry = lookupCountry(verification.country) || {};
+
+    let method = verification.method;
+    let deviceModel = verification.model || '';
+    let operator = verification.operator || '';
+    let remarks = verification.failure_reason;
 
     let os = (os) => {
       switch (os) {
@@ -39,7 +55,7 @@ var VerificationTableRow = React.createClass({
         default:
           return os;
       }
-    }(verification.deviceOs.toLowerCase());
+    }(verification.platform.toLowerCase());
 
     return (
       <tr>
@@ -50,25 +66,25 @@ var VerificationTableRow = React.createClass({
         <td>
           <CountryFlag code={phoneCountry.alpha2} />
           <div className="left">
-            <div className="verification-table__phone">{verification.phone}</div>
+            <div className="verification-table__phone">{phone}</div>
             <div className="verification-table__country">{phoneCountry.name}</div>
           </div>
         </td>
         <td>
           <CountryFlag code={ipCountry.alpha2} />
           <div className="left">
-            <div className="verification-table__ip">{verification.ip}</div>
+            <div className="verification-table__ip">{ip}</div>
             <div className="verification-table__country">{ipCountry.name}</div>
           </div>
         </td>
-        <td>{verification.method}</td>
+        <td>{method}</td>
         <td><span className={'icon-' + os} /></td>
-        <td>{verification.deviceModel}</td>
-        <td>{verification.operator}</td>
-        <td><span className={classes}>{_.capitalize(verification.result)}</span></td>
+        <td>{deviceModel}</td>
+        <td>{operator}</td>
+        <td><span className={statusFlagClasses}>{_.capitalize(status)}</span></td>
         <td className="text-center">
-          <If condition={verification.result === 'failure'}>
-            <Tooltip placement="left" trigger={['hover']} overlay={<span>{verification.remarks}</span>}>
+          <If condition={!success}>
+            <Tooltip placement="left" trigger={['hover']} overlay={<span>{remarks}</span>}>
               <span className="icon-error6" />
             </Tooltip>
           </If>

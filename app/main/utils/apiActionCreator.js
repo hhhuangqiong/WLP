@@ -40,6 +40,11 @@ export default function apiActionCreator(key, apiMethod, opts = { debugPrefix: '
     return o;
   }, {});
 
+  // opts.debugPrefix may lost if the caller explicitly specify the parameter
+  if (!opts.debugPrefix) {
+    opts.debugPrefix = 'app';
+  }
+
   var debug = require('debug')(`${opts.debugPrefix}:${key}`);
 
   return function(context, params, done) {
@@ -52,7 +57,10 @@ export default function apiActionCreator(key, apiMethod, opts = { debugPrefix: '
         throw new Error('`cb` must be a function');
       }
 
-      context.api[apiMethod](params, cb);
+      context.api[apiMethod](params, (...theArgs) => {
+        opts.cb(...theArgs);
+        done();
+      });
     } else {
       // default: return the *whole* result to `dispatch()`
       context.api[apiMethod](params, function(err, result) {
