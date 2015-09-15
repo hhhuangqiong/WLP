@@ -1,0 +1,105 @@
+.verification-details {
+  /*
+  For new design..
+  .app-select {
+    font-size: 0.8125rem;
+    line-height: 1.1em;
+    padding-top: 12px;
+    width: 220px;
+
+    .Select-control {
+      background-color: #DB5858;
+      border-color: rgba(155, 56, 56, 0.5);
+      border-width: 1px 2px 2px 2px;
+
+      .Select-placeholder {
+        color: #FFF;
+      }
+    }
+
+    .is-focused:not(.is-open) > .Select-control {
+      @extend .Select-control;
+    }
+
+    .Select-arrow {
+      border-color: #FFF transparent transparent;
+    }
+  }
+  */
+  &__app-select {
+    font-size: 0.8125rem;
+    line-height: 0.9rem;
+    padding-top: 0.75rem;
+    width: 13rem;
+
+    .Select-control {
+      @include border-radius(20px);
+      background-color: #FAFAFA;
+      border-color: rgba(199, 199, 199, 0.8);
+
+      .Select-placeholder {
+        color: #333;
+      }
+    }
+
+    .is-focused:not(.is-open) > .Select-control {
+      @extend .Select-control;
+    }
+
+    .Select-arrow {
+      border-color: #333 transparent transparent;
+    }
+  }
+}
+
+.verification-table {
+  td {
+    font-size: 0.8rem;
+  }
+
+  &__time {
+    font-size: 0.775rem;
+  }
+
+  &__date {
+    color: #999;
+    font-size: 0.7rem;
+  }
+
+  &__country {
+    color: #999;
+    font-size: 0.7rem;
+  }
+
+  .flag__container {
+    float: left;
+  }
+
+  .icon-android:before,
+  .icon-apple:before {
+    font-size: 1.5rem;
+  }
+
+  &__result-tag {
+    @include border-radius(4px);
+    color: #FFF;
+    display: block;
+    font-size: 0.7rem;
+    padding: 0.2rem 0;
+    text-align: center;
+    width: 5rem;
+  }
+
+  &__success-tag {
+    background-color: #62D464;
+  }
+
+  &__failure-tag {
+    background-color: #FC3940;
+  }
+
+  .icon-error6:before {
+    font-size: 1.1rem;
+    line-height: 1.2rem;
+  }
+}

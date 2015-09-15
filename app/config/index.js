@@ -18,6 +18,9 @@ module.exports = {
     },
     IMS: {
       PAGE_SIZE: 100
+    },
+    VERIFICATIONS: {
+      PAGE_SIZE: 10
     }
   },
   CDR_EXPORT: {

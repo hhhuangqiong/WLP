@@ -33,6 +33,11 @@ export default (
         <Route name="company-widget" path=":carrierId/widget" handler={require('./modules/company/components/Widgets')} />
       </Route>
 
+      <Route path="/:role/:identity?/verification" handler={require('./modules/verification/components/Verification')}>
+        <DefaultRoute name="verification" handler={require('./modules/verification/components/Overview')} />
+        <Route name="verification-details" path="details" handler={require('./modules/verification/components/VerificationDetails')} />
+      </Route>
+
       <Redirect from="/:role/:identity?/calls" to={redirectForCallsOverview} />
 
       <Route name="vsf-transaction-overview" path="/:role/:identity?/vsf" handler={require('./modules/virtual-store-front/components/VSFTransactionOverview')} />

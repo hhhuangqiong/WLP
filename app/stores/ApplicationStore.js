@@ -8,7 +8,8 @@ var ApplicationStore = createStore({
   handlers: {
     FETCH_MANGAING_COMPANIES_SUCCESS:  'loadedCompanies',
     SIGN_OUT_SUCCESS: 'resetCompanies',
-    FETCH_COMPANY_INFO_SUCCESS: 'loadedCurrentCompany'
+    FETCH_COMPANY_INFO_SUCCESS: 'loadedCurrentCompany',
+    FETCH_APP_IDS_SUCCESS: 'handleAppIdsFetched'
   },
 
   loadedCurrentCompany: function(company) {
@@ -34,10 +35,20 @@ var ApplicationStore = createStore({
     return this.managingCompanies;
   },
 
+  handleAppIdsFetched: function (payload) {
+    this.appIds = payload;
+    this.emitChange();
+  },
+
+  getAppIds: function () {
+    return this.appIds;
+  },
+
   getState: function() {
     return {
       currentCompany: this.currentCompany,
-      managingCompanies: this.managingCompanies
+      managingCompanies: this.managingCompanies,
+      appIds: this.appIds
     };
   },
 
@@ -48,6 +59,7 @@ var ApplicationStore = createStore({
   rehydrate: function(state) {
     this.currentCompany = state.currentCompany;
     this.managingCompanies = state.managingCompanies;
+    this.appIds = state.appIds;
   }
 });
 
