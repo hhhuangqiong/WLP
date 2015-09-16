@@ -38,7 +38,7 @@ migrations/*
 # Generated files
 *.js.map
 public/locales/
-
+public/vendor/
 public/javascript/bundle.js
 
 # Assume all css are generated from SCSS
@@ -69,3 +69,5 @@ app/**/*.ts
 # for Docker run --env-file option
 docker/envfile
 
+# OS related
+.DS_Store

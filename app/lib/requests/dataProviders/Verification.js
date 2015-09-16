@@ -48,7 +48,7 @@ export default class VerificationRequest extends BaseRequest {
 
   /**
    * Formats and normalize query parameters for verification request
-   * 
+   *
    * @method
    * @param {Object} params  Query parameters object for the request
    * @param {String} params.carrier  The carrier ID
@@ -113,7 +113,7 @@ export default class VerificationRequest extends BaseRequest {
    *
    * @method
    * @param {Object} params  Raw query parameter object
-   * @param {Function} cb  Node-style callback function 
+   * @param {Function} cb  Node-style callback function
    */
   getVerifications(params, cb) {
     Q.ninvoke(this, 'formatQueryParameters', params)
@@ -154,7 +154,7 @@ export default class VerificationRequest extends BaseRequest {
    * @returns {Number} The number of data points
    */
   computeDataCount(from, to, timescale = 'hour') {
-    // +1 because the server respond with that day/hour if the timestamp 
+    // +1 because the server respond with that day/hour if the timestamp
     // steps on the start of day/hour
     return Math.ceil((to - from + 1) / INTERVAL[timescale]);
   }
@@ -292,7 +292,7 @@ export default class VerificationRequest extends BaseRequest {
       result.successRates.push(total !== 0 ? (success / total * 100) : 0);
     }
 
-    averageSuccessRate = accumulatedAttempts !== 0 ? 
+    averageSuccessRate = accumulatedAttempts !== 0 ?
       (accumulatedSuccess / accumulatedAttempts * 100) : 0;
 
     _.merge(result, {

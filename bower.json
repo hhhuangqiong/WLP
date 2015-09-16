@@ -13,9 +13,10 @@
     "tests"
   ],
   "dependencies": {
-    "jquery": "~2.1.4",
     "foundation": "zurb/bower-foundation#~5.5.0",
-    "react-date-picker": "~0.8.0",
-    "foundation-icon-fonts": "*"
+    "foundation-icon-fonts": "*",
+    "highmaps": "highmaps-release#~1.1.8",
+    "jquery": "~2.1.4",
+    "react-date-picker": "~0.8.0"
   }
 }

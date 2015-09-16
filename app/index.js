@@ -3,6 +3,7 @@ import Fluxible from 'fluxible';
 
 import ApplicationStore from './stores/ApplicationStore';
 import VerificationStore from './modules/verification/stores/VerificationStore';
+import VerificationOverviewStore from './modules/verification/stores/VerificationOverviewStore';
 import CompanyStore from './modules/company/stores/CompanyStore';
 import EndUserStore from './modules/end-user/stores/EndUserStore';
 import SignInStore from './stores/SignInStore';
@@ -31,6 +32,7 @@ app.registerStore(require('./stores/AuthStore'));
 app.registerStore(ApplicationStore);
 app.registerStore(CompanyStore);
 app.registerStore(VerificationStore);
+app.registerStore(VerificationOverviewStore);
 app.registerStore(EndUserStore);
 app.registerStore(SignInStore);
 app.registerStore(OverviewStore);

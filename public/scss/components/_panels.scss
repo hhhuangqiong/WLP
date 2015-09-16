@@ -25,6 +25,9 @@
       margin: 0;
     }
   }
+  .header.narrow {
+    padding: rem-calc(18);
+  }
   .body {
     border-top: 1px solid #eee;
     &__subtitle{

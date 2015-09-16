@@ -34,7 +34,7 @@ export default (
       </Route>
 
       <Route path="/:role/:identity?/verification" handler={require('./modules/verification/components/Verification')}>
-        <DefaultRoute name="verification" handler={require('./modules/verification/components/Overview')} />
+        <DefaultRoute name="verification" handler={require('./modules/verification/components/VerificationOverview')} />
         <Route name="verification-details" path="details" handler={require('./modules/verification/components/VerificationDetails')} />
       </Route>
 

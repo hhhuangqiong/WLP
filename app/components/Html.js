@@ -26,27 +26,30 @@ var Html = React.createClass({
   render: function() {
     return (
       <html lang="en">
-      <head>
-        <meta charSet="utf-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <meta httpEquiv="X-UA-Compatible" content="IE=edge" />
-        <title>{this.props.title}</title>
-        <link href="//fonts.googleapis.com/css?family=Roboto:500,300,700,400" rel="stylesheet" type="text/css" />
-        <link rel="stylesheet" href="/stylesheets/iconic-fonts.css" />
-        <link rel="stylesheet" href="/stylesheets/main.css" />
-        <link rel="stylesheet" href="/vendor/react-date-picker/dist/react-datepicker.min.css" />
-        <link rel="stylesheet" href="/stylesheets/map-sprite.css" />
-        <script src="/vendor/modernizr/modernizr.js"></script>
-      </head>
-      <body>
-        <div id="app" dangerouslySetInnerHTML={{__html: this.props.markup}}></div>
-        <Version />
-      </body>
-      <script dangerouslySetInnerHTML={{__html: this.props.state}}></script>
-      <script src="/vendor/jquery/dist/jquery.min.js"></script>
-      <script src="/vendor/foundation/js/foundation.min.js"></script>
-      <script src="/vendor/foundation/js/foundation/foundation.dropdown.js"></script>
-      <script src={bundlePath} defer></script>
+        <head>
+          <meta charSet="utf-8" />
+          <meta name="viewport" content="width=device-width, initial-scale=1" />
+          <meta httpEquiv="X-UA-Compatible" content="IE=edge" />
+          <title>{this.props.title}</title>
+          <link href="//fonts.googleapis.com/css?family=Roboto:500,300,700,400" rel="stylesheet" type="text/css" />
+          <link rel="stylesheet" href="/stylesheets/iconic-fonts.css" />
+          <link rel="stylesheet" href="/stylesheets/main.css" />
+          <link rel="stylesheet" href="/vendor/react-date-picker/dist/react-datepicker.min.css" />
+          <link rel="stylesheet" href="/stylesheets/map-sprite.css" />
+          <script src="/vendor/modernizr/modernizr.js"></script>
+        </head>
+        <body>
+          <div id="app" dangerouslySetInnerHTML={{__html: this.props.markup}}></div>
+          <Version />
+          <script dangerouslySetInnerHTML={{__html: this.props.state}}></script>
+          <script src="/vendor/jquery/dist/jquery.min.js"></script>
+          <script src="/vendor/highmaps/adapters/standalone-framework.js"></script>
+          <script src="/vendor/highmaps/highcharts.js"></script>
+          <script src="/vendor/highmaps/modules/map.js"></script>
+          <script src="/vendor/foundation/js/foundation.min.js"></script>
+          <script src="/vendor/foundation/js/foundation/foundation.dropdown.js"></script>
+          <script src={bundlePath} defer></script>
+        </body>
       </html>
     );
   }

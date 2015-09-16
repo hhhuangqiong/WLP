@@ -113,6 +113,7 @@
     "nock": "^2.0.1",
     "node-sass": "^3.2.0",
     "react-hot-loader": "^1.2.7",
+    "sassaby": "^2.1.0",
     "sinon": "^1.12.2",
     "supertest": "^1.0.1",
     "vinyl-buffer": "^1.0.0",

@@ -57,6 +57,18 @@ export default {
     return `'${number}'`;
   },
 
+  /**
+   * Substract time and result it with specific format.
+   * @param {Object/string} time - Parsable string time or JS date object.
+   * @param {string} range - A string representing time frame (e.g. '30 days', '24 hours') that will be parsed by moment's manipulation.
+   * @param {string} format - Moment display format.
+   */
+  subtractTime(time, range, format) {
+    let rangeValue = range.split(' ')[0];
+    let rangeFormat = range.split(' ')[1];
+
+    return moment(time).subtract(rangeValue, rangeFormat).format(format);
+  },
 
   sanitizeNull(row, label=PLACEHOLDER_FOR_NULL) {
     for(var exportField in row) {

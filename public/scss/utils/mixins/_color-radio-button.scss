@@ -1,0 +1,17 @@
+@mixin color-radio-button($color: black, $size: 16) {
+  width: rem-calc($size);
+  height: rem-calc($size);
+  border: 1px solid $color;
+
+  display: inline-block;
+  cursor: pointer;
+  background-color: white;
+  border-radius: 50%;
+  vertical-align: middle;
+  box-shadow: inset 0px 2px 3px 0px rgba(0, 0, 0, .3), 0px 1px 0px 0px rgba(255, 255, 255, .8);
+
+  &:hover, &.is-checked {
+    background-color: lighten($color, 20%);
+    transition: background-color 0.1s linear;
+  }
+}

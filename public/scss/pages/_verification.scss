@@ -1,3 +1,143 @@
+.verification-overview {
+  $overviewPadding: rem-calc(15);
+  $changesUpColor: red;
+  $changesDownColor: green;
+  $changesArrowRemSize: 9;
+  $sectionBorder: 1px solid #eee;
+
+  cursor: default;
+  padding: 0 $overviewPadding;
+
+  &__title {
+    font-size: rem-calc(14);
+    color: gray;
+    text-align: center;
+
+    label {
+      cursor: pointer;
+      display: inline-block;
+      margin: 0 rem-calc(5);
+      padding: 0;
+      line-height: 0;
+    }
+  }
+
+  &__value {
+    font-size: rem-calc(25);
+    font-weight: bolder;
+    text-align: center;
+  }
+
+  &__attempt {
+    padding: 0 !important;
+    width: 100%;
+
+    &__information {
+      @include fadeIn;
+
+      padding: $overviewPadding;
+      border-right: $sectionBorder;
+    }
+
+    &__datetime {
+      padding: $overviewPadding;
+      font-size: rem-calc(14);
+    }
+
+    &__toggle {
+      padding-top: rem-calc(15);
+
+      div {
+        text-align: right;
+      }
+    }
+
+    &__chart {
+      margin-top: rem-calc(15);
+      display: block;
+    }
+  }
+
+  &__country {
+    @include fadeIn;
+
+    margin: 0;
+    padding: 0 !important;
+
+    &__table {
+      width: 100%;
+      border: 0;
+      margin: rem-calc(8) 0 0 0;
+      box-shadow: 0 0 0;
+
+      th, td {
+        text-align: center;
+        padding: rem-calc(8);
+      }
+
+      th {
+        font-weight: bolder;
+        border-bottom: $sectionBorder;
+      }
+
+      tr {
+        border: 0;
+      }
+    }
+  }
+
+  &__summary {
+    @include fadeIn;
+
+    padding: 0 !important;
+    width: 100%;
+    display: table;
+
+    section {
+      display: table-cell;
+      padding: $overviewPadding;
+
+      &.left-border {
+        border-left: $sectionBorder;
+      }
+
+      .verification-overview__title {
+        // To make the content of it looks horizontally align
+        min-height: rem-calc(40);
+      }
+    }
+  }
+
+  &__changes {
+    @include fadeIn;
+
+    display: table;
+    margin: 0 auto;
+
+    &.up {
+      color: $changesUpColor;
+
+      .arrow {
+        @include triangle(up, $changesUpColor, $changesArrowRemSize);
+      }
+    }
+
+    &.down {
+      color: $changesDownColor;
+
+      .arrow {
+        @include triangle(down, $changesDownColor, $changesArrowRemSize);
+      }
+    }
+
+    span {
+      display: inline-block;
+      margin: 0 rem-calc(4);
+      font-size: rem-calc(12);
+    }
+  }
+}
+
 .verification-details {
   /*
   For new design..

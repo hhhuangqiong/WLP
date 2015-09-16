@@ -51,7 +51,7 @@ gulp.task 'test', (cb) ->
     .pipe istanbul()
     .pipe istanbul.hookRequire()
     .on 'finish', ->
-      gulp.src ['test/unit/**/*.coffee', 'test/unit/**/*.js']
+      gulp.src ['test/unit/**/*.coffee', 'test/unit/**/*.js', 'test/scss/**/*.js']
         .pipe mocha()
         .pipe istanbul.writeReports({ dir: "#{dest.build}/coverage" })
         .on 'end', cb
