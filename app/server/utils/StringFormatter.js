@@ -70,6 +70,13 @@ export default {
     return moment(time).subtract(rangeValue, rangeFormat).format(format);
   },
 
+  timeFromNow(range) {
+    let rangeValue = range.split(' ')[0];
+    let rangeFormat = range.split(' ')[1];
+
+    return moment().subtract(rangeValue, rangeFormat);
+  },
+
   sanitizeNull(row, label=PLACEHOLDER_FOR_NULL) {
     for(var exportField in row) {
       if(typeof(row[exportField]) === undefined || row[exportField] === null) {

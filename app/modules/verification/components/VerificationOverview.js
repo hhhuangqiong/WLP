@@ -20,6 +20,7 @@ import SummaryCells from './SummaryCells';
 import fetchVerificationOverview from '../actions/fetchVerificationOverview';
 import VerificationOverviewStore from '../stores/VerificationOverviewStore';
 import ApplicationStore from '../../../stores/ApplicationStore';
+import { subtractTime, timeFromNow } from '../../../server/utils/StringFormatter';
 import MAP_DATA from '../constants/mapData.js';
 
 const TIME_FRAMES = ['24 hours', '7 days', '30 days', '60 days', '90 days'];
@@ -28,6 +29,14 @@ const TOTAL_NUMBER_ATTEMPTS = 'totalNumberAttempts';
 const SUCCESS_ATTEMPTS_NUMBER = 'successAttemptsNumber';
 const SUCCESS_ATTEMPTS_RATE = 'successAttemptsRate';
 const EMPTY_CELL_PLACEHOLDER = '-';
+
+function fromTimeslot(collection, fromTime, timeframe) {
+  let maxNumber = _.max(collection);
+  let maxIndex = collection.indexOf(maxNumber);
+
+  let subtractedFromTime = timeFromNow(timeframe);
+  return subtractedFromTime.add(maxIndex, timeframe.includes('hours') ? 'hours' : 'days');
+}
 
 export default React.createClass({
   displayName: 'VerificationOverview',
@@ -97,6 +106,11 @@ export default React.createClass({
       lines: null,
       successRateSeries: null
     });
+
+    // TODO: Trick to solve racing condition problem
+    setTimeout(() => {
+      this.toggleAttemptType(TOTAL_NUMBER_ATTEMPTS);
+    }, 2000);
   },
 
   updateCharts(timeRange) {
@@ -115,9 +129,6 @@ export default React.createClass({
   onVerificationOverviewChange() {
     let overviewData = this.getStore(VerificationOverviewStore).getOverviewData();
     this.setState(overviewData);
-
-    // Select total numebr of attempts as default
-    // this.toggleAttemptType(TOTAL_NUMBER_ATTEMPTS);
 
     // Inject custom world data provided by Highmaps
     Highcharts.maps['custom/world'] = MAP_DATA;
@@ -156,25 +167,19 @@ export default React.createClass({
   },
 
   toggleAttemptType(attemptType) {
-    let totalBusiestAttempts = _.max(this.state.totalAttempts);
-    let totalBusiestAttemptsIndex = this.state.totalAttempts.indexOf(totalBusiestAttempts);
-
-    let successBusiestAttempts = _.max(this.state.successAttempts);
-    let successBusiestAttemptsIndex = this.state.successAttempts.indexOf(successBusiestAttempts);
-
     if (attemptType === TOTAL_NUMBER_ATTEMPTS || attemptType === SUCCESS_ATTEMPTS_NUMBER) {
       if (attemptType === TOTAL_NUMBER_ATTEMPTS) {
         this.setState({
           selectedLineInChartA: TOTAL_NUMBER_ATTEMPTS,
-          busiestAttempts: totalBusiestAttempts,
-          busiestTime: totalBusiestAttemptsIndex
+          busiestAttempts: _.max(this.state.totalAttempts),
+          busiestTime: fromTimeslot(this.state.totalAttempts, moment(), this.state.timeRange)
         });
 
       } else if (attemptType === SUCCESS_ATTEMPTS_NUMBER) {
         this.setState({
           selectedLineInChartA: SUCCESS_ATTEMPTS_NUMBER,
-          busiestAttempts: successBusiestAttempts,
-          busiestTime: successBusiestAttemptsIndex
+          busiestAttempts: _.max(this.state.successAttempts),
+          busiestTime: fromTimeslot(this.state.successAttempts, moment(), this.state.timeRange)
         });
       }
 
@@ -194,8 +199,8 @@ export default React.createClass({
       });
     } else {
       this.setState({
-        busiestAttempts: successBusiestAttempts,
-        busiestTime: successBusiestAttemptsIndex,
+        busiestAttempts: _.max(this.state.successAttempts),
+        busiestTime: fromTimeslot(this.state.successAttempts, moment(), this.state.timeRange),
         successRateSeries: [
           {
             name: SUCCESS_ATTEMPTS_RATE,

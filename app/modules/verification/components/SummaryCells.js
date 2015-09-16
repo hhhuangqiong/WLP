@@ -9,6 +9,8 @@ import VerificationOverviewStore from '../stores/VerificationOverviewStore';
 
 import { subtractTime } from '../../../server/utils/StringFormatter';
 
+const TOTAL_COLUMNS = 24;
+
 export default React.createClass({
   displayName: 'SummaryCells',
 
@@ -102,7 +104,7 @@ export default React.createClass({
 
     return cells.map((cell, index) => {
       return (
-        <section key={index} className={classNames('large-6', 'columns', index !== 0 ? 'left-border' : '' )}>
+        <section key={index} className={classNames(`large-${Math.floor(TOTAL_COLUMNS/cells.length)}`, 'columns', index !== 0 ? 'left-border' : '' )}>
           <div className="verification-overview__title">{cell.title}</div>
           <div className="verification-overview__value">{cell.value}</div>
           <div className={classNames('verification-overview__changes', cell.changes.status, { hide: !cell.changes.status })}>
