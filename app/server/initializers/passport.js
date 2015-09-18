@@ -12,8 +12,9 @@ export default function setup() {
   passport.serializeUser((user, done) => {
     done(null, user.id);
   });
+
   passport.deserializeUser((id, done) => {
-    PortalUser.findById(id, (err, user) => {
+    PortalUser.findById(id).populate('affiliatedCompany', 'carrierId').exec((err, user) => {
       done(err, user);
     });
   });

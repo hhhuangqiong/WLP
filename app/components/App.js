@@ -2,8 +2,14 @@ import React from 'react';
 import {RouteHandler} from 'react-router';
 
 var App = React.createClass({
-  contextTypes: {
-    router: React.PropTypes.func.isRequired
+  childContextTypes: {
+    getAuthority: React.PropTypes.func.isRequired
+  },
+
+  getChildContext: function() {
+    return {
+      getAuthority: this.props.context.getAuthority
+    }
   },
 
   render: function() {
