@@ -14,6 +14,7 @@ import AuthMixin from '../../../utils/AuthMixin';
 
 import * as FilterBar from './../../../main/components/FilterBar';
 import DateRangePicker from './../../../main/components/DateRangePicker';
+import SearchBox from './../../../main/components/Searchbox';
 
 import fetchVerifications from '../actions/fetchVerifications';
 import fetchMoreVerifications from '../actions/fetchMoreVerifications';
@@ -24,10 +25,11 @@ import VerificationTableRow from './VerificationTableRow'
 import config from '../../../config';
 
 const debug = require('debug')('app:verification/components/Verification');
+const ENTER_KEY = 13;
 
 let { inputDateFormat: DATE_FORMAT } = require('./../../../main/config');
 
-var VerificationDetails = React.createClass({
+let VerificationDetails = React.createClass({
   contextTypes: {
     router: React.PropTypes.func.isRequired,
     executeAction: React.PropTypes.func.isRequired
@@ -52,7 +54,7 @@ var VerificationDetails = React.createClass({
         endDate: query.endDate || moment().endOf('day').format(DATE_FORMAT),
         method: query.method,
         os: query.os,
-        search: query.search,
+        number: query.number,
         size: config.PAGES.VERIFICATIONS.PAGE_SIZE,
         page: query.page || 0
       }, done || Function.prototype);
@@ -68,7 +70,7 @@ var VerificationDetails = React.createClass({
    * @property {Number} size  The page size, for remote API
    * @property {String} startDate  The start date the verification report in 'MM/DD/YYYY' format, for remote API
    * @property {String} endDate  The end date of the verification report in 'MM/DD/YYYY' format, for remote API
-   * @property {String} search  The search query for the phone number, for remote API
+   * @property {String} number  The search query for the number number, for remote API
    * @property {String} method  The verification method, for remote API
    * @property {String} os  The OS of the end user's mobile device, for remote API
    */
@@ -85,7 +87,7 @@ var VerificationDetails = React.createClass({
       size: config.PAGES.VERIFICATIONS.PAGE_SIZE,
       startDate: moment().subtract(2, 'month').startOf('day').format(DATE_FORMAT),
       endDate: moment().endOf('day').format(DATE_FORMAT),
-      search: '',
+      number: '',
       method: '',
       os: ''
     };
@@ -96,7 +98,7 @@ var VerificationDetails = React.createClass({
       appId: this.state.appId,
       startDate: this.state.startDate && this.state.startDate.trim(),
       endDate: this.state.endDate && this.state.endDate.trim(),
-      search: this.state.search && this.state.search.trim(),
+      number: this.state.number && this.state.number.trim(),
       page: 0,
       size: config.PAGES.VERIFICATIONS.PAGE_SIZE,
       method: this.state.method && this.state.method.trim(),
@@ -150,15 +152,20 @@ var VerificationDetails = React.createClass({
 
   loadMore: function () {
     let { identity } = this.context.router.getCurrentParams();
+    let nextPage = this.state.page + 1;
+
+    this.setState({
+      page: nextPage
+    });
 
     this.context.executeAction(fetchMoreVerifications, {
       carrierId: identity,
       appId: this.state.appId,
-      page: this.state.page + 1,
+      page: nextPage,
       pageSize: this.state.pageSize,
       startDate: this.state.startDate,
       endDate: this.state.endDate,
-      search: this.state.search,
+      number: this.state.number,
       os: this.state.os,
       method: this.state.method
     });
@@ -196,6 +203,18 @@ var VerificationDetails = React.createClass({
 
   _handleEndDateClick: function() {
     this.refs.endDatePicker.handleFocus();
+  },
+
+  handleSearchInputChange: function (evt) {
+    this.setState({
+      number: evt.target.value
+    });
+  },
+
+  handleSearchInputSubmit: function (evt) {
+    if (evt.which === ENTER_KEY) {
+      this.handleQueryChange({ number: evt.target.value, page: 0 });
+    }
   },
 
   renderTableRows: function () {
@@ -256,6 +275,12 @@ var VerificationDetails = React.createClass({
               endDate={this.state.endDate}
               handleStartDateChange={this.handleStartDateChange}
               handleEndDateChange={this.handleEndDateChange}
+            />
+            <SearchBox
+              value={this.state.number}
+              placeHolder="Mobile number"
+              onInputChangeHandler={this.handleSearchInputChange}
+              onKeyPressHandler={this.handleSearchInputSubmit}
             />
           </FilterBar.RightItems>
         </FilterBar.Wrapper>
