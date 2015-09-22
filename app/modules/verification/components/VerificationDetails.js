@@ -170,6 +170,10 @@ var VerificationDetails = React.createClass({
   },
 
   onAppIdChange: function (val) {
+    this.setState({
+      appId: val
+    });
+
     this.handleQueryChange({
       appId: val,
       page: 0

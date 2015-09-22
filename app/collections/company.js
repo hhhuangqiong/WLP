@@ -263,6 +263,47 @@ schema.static('getManagingCompany', function(parentCarrierId, cb) {
     });
 });
 
+/**
+ * Returns the company which is having the specified carrierId.
+ *
+ * @method getCompanyByCarrierId
+ * @static
+ * @param {String} carrierId  The carrierId of the company
+ * @param {Function} cb  The node-style callback to be called when the process is done
+ */
+schema.static('getCompanyByCarrierId', function (carrierId, cb) {
+  Q.ninvoke(this, 'findOne', { carrierId: carrierId })
+    .then((company) => {
+      if (!company) {
+        throw new Error({
+          name: 'NotFound',
+          message: `Company with carrierId=${carrierId} does not exist`
+        });
+      }
+
+      cb(null, company);
+    })
+    .catch(cb)
+    .done();
+});
+
+/**
+ * Returns the ID of the company of the root user.
+ *
+ * @method getRootCompanyId
+ * @param {Function} cb  The node-style callback to be called when the process is done
+ */
+schema.static('getRootCompanyId', function (cb) {
+  this.getCompanyByCarrierId(ROOT_COMPANY_CARRIER_ID, (err, company) => {
+    if (err) {
+      cb(err);
+      return;
+    }
+
+    cb(null, company.id);
+  });
+});
+
 schema.method('isSDK', function() {
   return this.carrierId.indexOf(SDK_DOMAIN) > -1;
 });
