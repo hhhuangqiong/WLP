@@ -3,6 +3,7 @@ import { Link } from 'react-router';
 import Select from 'react-select';
 import classNames from 'classnames';
 import moment from 'moment';
+import _ from 'lodash';
 
 import FluxibleMixin from 'fluxible/addons/FluxibleMixin';
 import AuthMixin from '../../../utils/AuthMixin';
@@ -45,14 +46,13 @@ export default React.createClass({
       onApplicationConfigChange: ApplicationStore
     }
   },
-  
-  // timeRange: localStorage.verificationSdkFromTime || DEFAULT_TIME_RANGE
+
   getInitialState() {
     return {
       countriesData: [],
       types: [],
       osTypes: [],
-      timeRange: localStorage.verificationSdkFromTime || DEFAULT_TIME_RANGE,
+      timeRange: DEFAULT_TIME_RANGE,
       xAxis: {},
       yAxis: {},
       sXAxis: {},
@@ -66,6 +66,50 @@ export default React.createClass({
       busiestAttempts: 0,
       busiestTime: null
     };
+  },
+
+  parseTimeRange(timeRange) {
+    let splitedTimeRange = timeRange.split(' ');
+    let quantity = splitedTimeRange[0];
+    let timescale = splitedTimeRange[1] === 'days' ? 'day' : 'hour';
+    let from = moment().subtract(quantity - 1, timescale).valueOf();
+
+    return {
+      from,
+      to: moment().valueOf(),
+      quantity,
+      timescale
+    };
+  },
+
+  resetCharts(timeRange) {
+    let { from, quantity, timescale} = this.parseTimeRange(timeRange);
+
+    let xAxis = {
+      start: from,
+      tickCount: parseInt(quantity),
+      tickInterval: (timescale === 'day' ? 24 : 1) * 3600 * 1000
+    };
+
+    this.setState({
+      xAxis,
+      sXAxis: xAxis,
+      lines: null,
+      successRateSeries: null
+    });
+  },
+
+  updateCharts(timeRange) {
+    let { identity } = this.context.router.getCurrentParams();
+    let { from, to, timescale } = this.parseTimeRange(timeRange);
+
+    this.context.executeAction(fetchVerificationOverview, {
+      from,
+      to,
+      timescale,
+      application: this.state.appId,
+      carrierId: identity
+    });
   },
 
   onVerificationOverviewChange() {
@@ -99,19 +143,16 @@ export default React.createClass({
   },
 
   componentDidMount() {
-    let timeRangeParts = this.state.timeRange.split(' ');
-    let timeValue = timeRangeParts[0];
-    let timeFormat = timeRangeParts[1];
-
-    let xAxis = {
-      start: Date.UTC(2015, 7, 22),
-      tickCount: parseInt(timeValue),
-      tickInterval: 24*3600*1000
-    };
-
-    this.setState({ xAxis, sXAxis: xAxis });
-
     this.autoSelectAppId();
+
+    this.resetCharts(this.state.timeRange);
+  },
+
+  componentDidUpdate(prevProps, prevState) {
+    if (this.state.timeRange !== prevState.timeRange || this.state.appId !== prevState.appId) {
+      this.resetCharts(this.state.timeRange);
+      this.updateCharts(this.state.timeRange);
+    }
   },
 
   toggleAttemptType(attemptType) {
@@ -182,9 +223,9 @@ export default React.createClass({
   },
 
   handleTimeFrameChange(time) {
-    localStorage.verificationSdkFromTime = time;
     this.setState({ timeRange: time });
-    this.executeAction(fetchVerificationOverview, { timeRange: time });
+    this.resetCharts(time);
+    this.updateCharts(time);
   },
 
   renderAttemptToggles() {
@@ -266,6 +307,8 @@ export default React.createClass({
   },
 
   render () {
+    let { role, identity } = this.context.router.getCurrentParams();
+
     let options = [];
 
     this.props.appIds.forEach(item => {

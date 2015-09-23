@@ -8,21 +8,12 @@ export default (context, params, done) => {
 
   let apiMaps = new Map();
 
-  // API for Mocking
   let {
-    getVerificationAttempts,
-    getVerificationByCountry,
-    getVerificaitonByMethod,
-    getVerificationByOsType
+    getVerificationStatsByStatus,
+    getVerificationStatsByCountry,
+    getVerificationStatsByType,
+    getVerificationStatsByPlatform
   } = context.api;
-
-  // Real data
-  // let {
-  //   getVerificationStatsByStatus,
-  //   getVerificationStatsByCountry,
-  //   getVerificationStatsByType,
-  //   getVerificationStatsByPlatform
-  // } = context.api;
 
   apiMaps.set('FETCH_VERIFICATION_ATTEMPTS_SUCCESS', Q.nbind(getVerificationStatsByStatus, context.api)(params));
   apiMaps.set('FETCH_VERIFICATION_COUNTRIES_DATA_SUCCESS', Q.nbind(getVerificationStatsByCountry, context.api)(params));
