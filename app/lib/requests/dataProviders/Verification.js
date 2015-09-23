@@ -199,6 +199,29 @@ export default class VerificationRequest extends BaseRequest {
   }
 
   /**
+   * Creates the dummy data items for the missing items.
+   *
+   * @method
+   * @param {String[]} completeList  The complete item list
+   * @param {Verification~SimpleTuple[]} existingItems  The existing data items
+   * @returns {Verification~SimpleTuple[]} The dummy data for the missing item
+   */
+  createDummyForMissingDataItem(completeList, existingItems) {
+    let missingTypes = _.filter(completeList, (type) => {
+      return _.every(existingItems, (item) => {
+        return item.name !== type; 
+      });
+    });
+
+    return _.map(missingTypes, (missingType) => {
+      return {
+        name: missingType,
+        value: 0
+      };
+    });
+  }
+
+  /**
    * @typedef Verification~StatsByStatusResult
    * @property {Number} from  The period start timestamp
    * @property {Number} to  The period end timestamp
@@ -266,11 +289,40 @@ export default class VerificationRequest extends BaseRequest {
       successRates: []
     };
 
-    // assuming only 2 results are in a by-success response
-    // no `===` to match both string form and boolean form of false
-    let successSetIndex = (response.results[0].segment.success == "false" ? 1 : 0);
-    let successSet = response.results[successSetIndex].data;
-    let failureSet = response.results[1 - successSetIndex].data;
+    let successSet, failureSet;
+
+    // it may happens that only 1 result object is in the response
+    response.results.forEach((result, index) => {
+      if (result.segment.success == "false") {
+        failureSet = result.data;
+      } else if (result.segment.success == "true") {
+        successSet = result.data;
+      }
+    });
+
+    // if any of the result is missing, create a dummy for it
+    if (!successSet || !failureSet) {
+      let generateDummyDataArray = function (count) {
+        let array = [];
+
+        for (let i = 0; i < count; i++) {
+          array.push({
+            t: 0,
+            v: 0
+          });
+        }
+
+        return array;
+      };
+
+      let dataCount = this.computeDataCount(params.from, params.to, params.timescale);
+      if (!failureSet) {
+        failureSet = generateDummyDataArray(dataCount);
+      }
+      if (!successSet) {
+        successSet = generateDummyArray(dataCount);
+      }
+    }
 
     let accumulatedAttempts = 0;
     let accumulatedSuccess = 0;
@@ -414,7 +466,8 @@ export default class VerificationRequest extends BaseRequest {
       };
     });
 
-    result.data = dataArray;
+    let missingItems = this.createDummyForMissingDataItem(DEFAULT_TYPES, dataArray);
+    result.data = dataArray.concat(missingItems);
 
     cb(null, result);
   }
@@ -525,7 +578,8 @@ export default class VerificationRequest extends BaseRequest {
       };
     });
 
-    result.data = dataArray;
+    let missingItems = this.createDummyForMissingDataItem(DEFAULT_PLATFORMS, dataArray);
+    result.data = dataArray.concat(missingItems);
 
     cb(null, result);
   }
