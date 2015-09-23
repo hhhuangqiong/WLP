@@ -474,6 +474,66 @@ let getVerifications = function (req, res) {
   });
 };
 
+let validateStatisticsRequest = function (req, cb) {
+  req.checkParams('carrierId').notEmpty();
+  req.checkQuery('application').notEmpty();
+  req.checkQuery('from').notEmpty();
+  req.checkQuery('to').notEmpty();
+
+  cb(req.validationErrors());
+};
+
+let mapVerificationStatsRequestParameters = function (req) {
+  return _.omit({
+    carrier: req.params.carrierId,
+    application_id: req.query.application,
+    from: req.query.from,
+    to: req.query.to,
+    timescale: req.query.timescale
+  }, (val) => {
+    return !val;
+  });
+};
+
+let getVerificationStatistics = function (req, res) {
+  validateStatisticsRequest(req, (err) => {
+    if (err) {
+      return res.status(400).json(err);
+    }
+
+    let params = mapVerificationStatsRequestParameters(req);
+
+    let request;
+    switch (req.query.type) {
+    case 'status':
+      request = verificationRequest.getVerificationStatsByStatus;
+      break;
+    case 'platform':
+      request = verificationRequest.getVerificationStatsByPlatform;
+      break;
+    case 'type':
+      request = verificationRequest.getVerificationStatsByType;
+      break;
+    case 'country':
+      request = verificationRequest.getVerificationStatsByCountry;
+      break;
+    default:
+      res.status(400).json(new Error('Unknown request type'));
+      return;
+    }
+
+    request.call(verificationRequest, params, (err, result) => {
+      if (err) {
+        return res.status(err.status).json({
+          error: err
+        });
+      }
+
+      return res.json(result);
+    });
+  });
+};
+
 export {
   getCalls,
   getIM,
@@ -484,6 +544,7 @@ export {
   getUsers,
   getVSF,
   getVerifications,
+  getVerificationStatistics,
   getWidgets,
   reactivateUser,
   suspendUser,
