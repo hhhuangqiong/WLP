@@ -66,12 +66,10 @@ export default React.createClass({
   },
 
   componentWillReceiveProps: function (nextProps) {
-    // start using real data for legend instead of the dummy
-    if (nextProps.data.length > 0) {
-      this.setState({
-        useDummy: false
-      });
-    }
+    // use dummy legend if no data
+    this.setState({
+      useDummy: !nextProps.data || nextProps.data.length === 0
+    });
   },
 
   renderLegendItems: function (data, colors) {
@@ -97,8 +95,7 @@ export default React.createClass({
           value={value}
           percentage={percentage}
           unit={this.props.unit}
-          color={colors[index]}
-        />
+          color={colors[index]} />
       );
     });
   },
@@ -106,9 +103,6 @@ export default React.createClass({
   render: function () {
     // use default colors if not set
     let colors = this.props.colors || DEFAULT_COLORS;
-
-    // clone and reverse the colors because the donut goes anti-clockwise
-    let reversedColors = colors.slice(0).reverse();
 
     let data = [];
     if (this.state.useDummy) {
@@ -133,8 +127,7 @@ export default React.createClass({
           unit={this.props.unit}
           size={this.props.size}
           borderWidth={this.props.gapSize}
-          colors={reversedColors}
-        />
+          colors={colors} />
 
         <div className='donut-chart-panel__legend'>
           {this.renderLegendItems(data, colors)}

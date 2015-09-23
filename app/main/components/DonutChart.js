@@ -30,7 +30,27 @@ export default React.createClass({
      * Default to 5.
      * @type {Number}
      */
-    borderWidth: PropTypes.number
+    borderWidth: PropTypes.number,
+    /**
+     * The unit to be shown under the numeric title.
+     * @type {String}
+     */
+    unit: PropTypes.string,
+    /**
+     * The colors to use for the slices.
+     * The first color is used for the biggest data.
+     * @type {String[]}
+     */
+    colors: PropTypes.arrayOf(PropTypes.string),
+    /**
+     * The chart data.
+     * The chart is drawn in anti-clockwise, bigger data always goes first.
+     * @type {Object}
+     */
+    data: PropTypes.arrayOf(PropTypes.shape({
+      name: PropTypes.string,
+      value: PropTypes.number
+    }))
   },
 
   getInitialState: function () {
@@ -132,9 +152,14 @@ export default React.createClass({
       return d.value;
     });
 
+    // bigger data goes first
     chartData.sort(function (a, b) {
       return a > b;
     });
+
+    // the chart goes anti-clockwise, but the colors go clockwise
+    // therefore we extract the colors we need then reverse them
+    let colors = this.props.colors.slice(0, chartData.length).reverse();
 
     // if the actual data hasn't been set yet,
     // add a new series to display the data set
@@ -146,7 +171,7 @@ export default React.createClass({
         innerSize: size - width - borderWidth * 2,
         size: size + borderWidth,
         borderWidth: borderWidth,
-        colors: this.props.colors,
+        colors: colors,
         data: chartData
       });
     }
