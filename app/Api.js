@@ -288,6 +288,42 @@ Api.prototype.getVerifications = function (params, cb) {
     .end(genericHandler(cb));
 };
 
+Api.prototype.getVerificationStatsByStatus = function (params, cb) {
+  superagent
+    .get(`${this._getHost()}/api/carriers/${params.carrierId}/verificationStats`)
+    .accept('json')
+    .set('Authorization', this._getToken())
+    .query(_.merge(params, { type: 'status' }))
+    .end(genericHandler(cb));
+};
+
+Api.prototype.getVerificationStatsByPlatform = function (params, cb) {
+  superagent
+    .get(`${this._getHost()}/api/carriers/${params.carrierId}/verificationStats`)
+    .accept('json')
+    .set('Authorization', this._getToken())
+    .query(_.merge(params, { type: 'platform' }))
+    .end(genericHandler(cb));
+};
+
+Api.prototype.getVerificationStatsByType = function (params, cb) {
+  superagent
+    .get(`${this._getHost()}/api/carriers/${params.carrierId}/verificationStats`)
+    .accept('json')
+    .set('Authorization', this._getToken())
+    .query(_.merge(params, { type: 'type' }))
+    .end(genericHandler(cb));
+};
+
+Api.prototype.getVerificationStatsByCountry = function (params, cb) {
+  superagent
+    .get(`${this._getHost()}/api/carriers/${params.carrierId}/verificationStats`)
+    .accept('json')
+    .set('Authorization', this._getToken())
+    .query(_.merge(params, { type: 'country' }))
+    .end(genericHandler(cb));
+};
+
 Api.prototype.getCurrentCompanyInfo = function(params, cb) {
   superagent
     .get(`${this._getHost()}/api/companies/${params.carrierId}/info`)

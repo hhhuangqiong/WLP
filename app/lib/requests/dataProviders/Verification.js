@@ -4,8 +4,26 @@ import Q from 'q';
 import request from 'superagent';
 import util from 'util';
 import _ from 'lodash';
+import CountryData from 'country-data';
 
 import BaseRequest from '../Base';
+
+/**
+ * Number of milliseconds within the interval.
+ */
+const INTERVAL = {
+  day: 24 * 3600 * 1000,
+  hour: 3600 * 1000
+};
+
+/**
+ * Default types to return when no data can be fetched from the server.
+ */
+const DEFAULT_TYPES = ['Call-in', 'Call-out', 'SMS', 'IVR'];
+/**
+ * Default platforms to return when no data can be fetched from the server.
+ */
+const DEFAULT_PLATFORMS = ['Android', 'IOS'];
 
 export default class VerificationRequest extends BaseRequest {
   constructor(baseUrl, timeout) {
@@ -16,6 +34,10 @@ export default class VerificationRequest extends BaseRequest {
       endpoints: {
         SEARCH: {
           PATH: '/api/v1/verification/events/query',
+          METHOD: 'GET'
+        },
+        STATS: {
+          PATH: '/stats/1.0/verification/events/query',
           METHOD: 'GET'
         }
       }
@@ -59,13 +81,14 @@ export default class VerificationRequest extends BaseRequest {
    * Send request with SuperAgent
    *
    * @method
+   * @param {Object} endpoint  The endpoint object
    * @param {Object} params  Formatted query object
    * @param {Function} cb  Callback function
    */
-  sendRequest(params, cb) {
+  sendRequest(endpoint, params, cb) {
     let base = this.opts.baseUrl;
-    let path = this.opts.endpoints.SEARCH.PATH;
-    let method = this.opts.endpoints.SEARCH.METHOD;
+    let path = endpoint.PATH;
+    let method = endpoint.METHOD;
     let url = util.format('%s%s', base, path);
 
     logger.debug(util.format('Send a %s request to `%s` with parameters: ', method, url), params);
@@ -95,7 +118,518 @@ export default class VerificationRequest extends BaseRequest {
   getVerifications(params, cb) {
     Q.ninvoke(this, 'formatQueryParameters', params)
       .then((params) => {
-        this.sendRequest(params, cb);
+        this.sendRequest(this.opts.endpoints.SEARCH, params, cb);
+      })
+      .catch((err) => {
+        cb(this.handleError(err, err.status || 500));
+      })
+      .done();
+  }
+
+  /**
+   * Sends a request to the data provider for the verification statistics.
+   *
+   * @method
+   * @param {Object} params  Raw query parameter object
+   * @param {Function} cb  Node-style callback function
+   */
+  getVerificationStatistics(params, cb) {
+    Q.ninvoke(this, 'formatQueryParameters', params)
+      .then((params) => {
+        this.sendRequest(this.opts.endpoints.STATS, params, cb);
+      })
+      .catch((err) => {
+        cb(this.handleError(err, err.status || 500));
+      })
+      .done();
+  }
+
+  /**
+   * Calculates the number of data item within the specified period of time.
+   *
+   * @method
+   * @param {Number} from  The from timestamp
+   * @param {Number} to  The to timestamp
+   * @param {String} [timescale=hour]  The timescale
+   * @returns {Number} The number of data points
+   */
+  computeDataCount(from, to, timescale = 'hour') {
+    // +1 because the server respond with that day/hour if the timestamp 
+    // steps on the start of day/hour
+    return Math.ceil((to - from + 1) / INTERVAL[timescale]);
+  }
+
+  /**
+   * Generate an array filled with dummy data.
+   *
+   * @method
+   * @param {Number} count  Number of items in the array
+   * @returns {Number[]} The dummy array
+   */
+  generateDummyArray(count) {
+    let array = [];
+
+    for (let i = 0; i < count; i++) {
+      array.push(0);
+    }
+
+    return array;
+  }
+
+  /**
+   * @typedef Verification~SimpleTuple
+   * @property {String} name  The name of the data
+   * @property {Number} value  The data value
+   */
+
+  /**
+   * Generates an array of dummy tuples.
+   *
+   * @method
+   * @param {String[]} fields  The field names
+   * @returns {Verification~SimpleTuple[]} The dummy array
+   */
+  generateDummyTuples(fields) {
+    return fields.map(function (field) {
+      return {
+        name: field,
+        value: 0
+      };
+    });
+  }
+
+  /**
+   * @typedef Verification~StatsByStatusResult
+   * @property {Number} from  The period start timestamp
+   * @property {Number} to  The period end timestamp
+   * @property {Number[]} totalAttempts  The array of total attempts in the intervals
+   * @property {Number[]} successAttempts  The array of success attempts in the intervals
+   * @property {Number[]} successRates  The array of success rates in the intervals
+   * @property {Number} accumulatedAttempts  The total attempts throughout the periods
+   * @property {Number} accumulatedSuccess  The total success attempts throughout the periods
+   * @property {Number} accumulatedFailure  The total failure attempts throughout the periods
+   * @property {Number} averageSuccessRate  The average success rate throughout the periods
+   */
+
+  /**
+   * Creates a dummy result object for the by-status request.
+   *
+   * @method
+   * @param {Object} params  The request parameters object
+   * @returns {Verification~StatsByStatusResult} The dummy result object
+   */
+  createDummyResultForByStatusRequest(params) {
+    let dataCount = this.computeDataCount(params.from, params.to, params.timescale);
+    let dummyData = this.generateDummyArray(dataCount);
+
+    return {
+      from: params.from,
+      to: params.to,
+      totalAttempts: dummyData,
+      successAttempts: dummyData,
+      successRates: dummyData,
+      accumulatedAttempts: 0,
+      accumulatedSuccess: 0,
+      accumulatedFailure: 0,
+      averageSuccessRate: 0
+    };
+  }
+
+  /**
+   * Parses the response of verification statistics by status.
+   *
+   * @method
+   * @param {Object} params  The request parameters
+   * @param {Object} response  The API response
+   * @returns {Verification~StatsByStatusResult} The parsed result
+   */
+  parseVerificationStatsByStatusResponse(params, response, cb) {
+    if (response.error) {
+      let error = new Error(error.message);
+      error.code = response.error;
+      cb(error);
+      return;
+    }
+
+    // Whenever the response is not broken down, it means no records exist in the period.
+    // In such cases, return a dummy result for chart drawing.
+    if (response.results[0].segment.success === 'all') {
+      cb(null, this.createDummyResultForByStatusRequest(params));
+      return;
+    }
+
+    let result = {
+      from: response.from,
+      to: response.to,
+      totalAttempts: [],
+      successAttempts: [],
+      successRates: []
+    };
+
+    // assuming only 2 results are in a by-success response
+    // no `===` to match both string form and boolean form of false
+    let successSetIndex = (response.results[0].segment.success == "false" ? 1 : 0);
+    let successSet = response.results[successSetIndex].data;
+    let failureSet = response.results[1 - successSetIndex].data;
+
+    let accumulatedAttempts = 0;
+    let accumulatedSuccess = 0;
+    let accumulatedFailure = 0;
+    let averageSuccessRate = 0;
+
+    // assume the data come in sequence
+    for (let i = 0, len = successSet.length; i < len; i++) {
+      let success = successSet[i].v;
+      let failure = failureSet[i].v;
+      let total = success + failure;
+
+      accumulatedAttempts += total;
+      accumulatedSuccess += success;
+      accumulatedFailure += failure;
+
+      result.totalAttempts.push(total);
+      result.successAttempts.push(success);
+      result.successRates.push(total !== 0 ? (success / total * 100) : 0);
+    }
+
+    averageSuccessRate = accumulatedAttempts !== 0 ? 
+      (accumulatedSuccess / accumulatedAttempts * 100) : 0;
+
+    _.merge(result, {
+      accumulatedAttempts,
+      accumulatedSuccess,
+      accumulatedFailure,
+      averageSuccessRate
+    });
+
+    cb(null, result);
+  }
+
+  /**
+   * Sends a request to the data provider for the verification statistics.
+   *
+   * @method
+   * @param {Object} params  Raw query parameter object
+   * @param {Function} cb  Node-style callback function
+   */
+  getVerificationStatsByStatus(params, cb) {
+    Q.ninvoke(this, 'formatQueryParameters', _.merge(params, {
+        breakdown: 'success'
+      }))
+      .then((params) => {
+        this.sendRequest(this.opts.endpoints.STATS, params, (err, response) => {
+          this.parseVerificationStatsByStatusResponse(params, response, (err, result) => {
+            if (err) {
+              cb(this.handleError(err, 500));
+              return;
+            }
+
+            cb(null, result);
+          });
+        });
+      })
+      .catch((err) => {
+        cb(this.handleError(err, err.status || 500));
+      })
+      .done();
+  }
+
+  /**
+   * @typedef Verification~StatsByTypeResult
+   * @property {Number} from  The period start timestamp
+   * @property {Number} to  The period end timestamp
+   * @property {Verification~SimpleTuple[]} data  The array of data item in the intervals
+   */
+
+  /**
+   * Creates a dummy result object for the by-type request.
+   *
+   * @method
+   * @param {Object} params  The request parameters object
+   * @returns {Verification~StatsByTypeResult} The dummy result object
+   */
+  createDummyResultForByTypeRequest(params) {
+    let dataCount = this.computeDataCount(params.from, params.to, params.timescale);
+    let dummyData = this.generateDummyArray(dataCount);
+
+    return {
+      from: params.from,
+      to: params.to,
+      data: this.generateDummyTuples(DEFAULT_TYPES)
+    };
+  }
+
+  /**
+   * Parses the response of verification statistics by type.
+   *
+   * @method
+   * @param {Object} params  The request parameters
+   * @param {Object} response  The API response
+   * @param {Function} cb  Node-style callback
+   * @returns {Verification~StatsByTypeResult} The parsed result
+   */
+  parseVerificationStatsByTypeResponse(params, response, cb) {
+    if (response.error) {
+      let error = new Error(error.message);
+      error.code = response.error;
+      cb(error);
+      return;
+    }
+
+    // Whenever the response is not broken down, it means no records exist in the period.
+    // In such cases, return a dummy result for chart drawing.
+    if (response.results[0].segment.type === 'all') {
+      cb(null, this.createDummyResultForByTypeRequest(params));
+      return;
+    }
+
+    let mapMethodName = function (type) {
+      switch (type) {
+      case 'MobileTerminated':
+        return 'Call-in';
+      case 'MobileOriginated':
+        return 'Call-out';
+      default:
+        return type;
+      }
+    };
+
+    let result = {
+      from: response.from,
+      to: response.to
+    };
+
+    let total = 0;
+
+    let dataArray = response.results.map(function (stat) {
+      let sum = stat.data.reduce(function (acc, timeslot) {
+        return acc + timeslot.v;
+      }, 0);
+
+      total += sum;
+
+      return {
+        name: mapMethodName(stat.segment.type),
+        value: sum
+      };
+    });
+
+    result.data = dataArray;
+
+    cb(null, result);
+  }
+
+  /**
+   * Sends a request to the data provider for the verification statistics.
+   *
+   * @method
+   * @param {Object} params  Raw query parameter object
+   * @param {Function} cb  Node-style callback function
+   */
+  getVerificationStatsByType(params, cb) {
+    Q.ninvoke(this, 'formatQueryParameters', _.merge(params, {
+        breakdown: 'type'
+      }))
+      .then((params) => {
+        this.sendRequest(this.opts.endpoints.STATS, params, (err, response) => {
+          this.parseVerificationStatsByTypeResponse(params, response, (err, result) => {
+            if (err) {
+              cb(this.handleError(err, 500));
+              return;
+            }
+
+            cb(null, result);
+          });
+        });
+      })
+      .catch((err) => {
+        cb(this.handleError(err, err.status || 500));
+      })
+      .done();
+  }
+
+  /**
+   * @typedef Verification~StatsByPlatformResult
+   * @property {Number} from  The period start timestamp
+   * @property {Number} to  The period end timestamp
+   * @property {Verification~SimpleTuple[]} data  The array of data item in the intervals
+   */
+
+  /**
+   * Creates a dummy result object for the by-platform request.
+   *
+   * @method
+   * @param {Object} params  The request parameters object
+   * @returns {Verification~StatsByPlatformResult} The dummy result object
+   */
+  createDummyResultForByPlatformRequest(params) {
+    let dataCount = this.computeDataCount(params.from, params.to, params.timescale);
+    let dummyData = this.generateDummyArray(dataCount);
+
+    return {
+      from: params.from,
+      to: params.to,
+      data: this.generateDummyTuples(DEFAULT_PLATFORMS)
+    };
+  }
+
+  /**
+   * Parses the response of verification statistics by platform.
+   *
+   * @method
+   * @param {Object} params  The request parameters
+   * @param {Object} response  The API response
+   * @param {Function} cb  The node callback, will be called with {@link Verification~StatsByPlatformResult}
+   */
+  parseVerificationStatsByPlatformResponse(params, response, cb) {
+    if (response.error) {
+      let error = new Error(error.message);
+      error.code = response.error;
+      cb(error);
+      return;
+    }
+
+    // Whenever the response is not broken down, it means no records exist in the period.
+    // In such cases, return a dummy result for chart drawing.
+    if (response.results[0].segment.platform === 'all') {
+      cb(null, this.createDummyResultForByPlatformRequest(params));
+      return;
+    }
+
+    let mapOsName = function (platform) {
+      switch (platform) {
+      case 'ios':
+        return 'IOS';
+      default:
+        return _.capitalize(platform);
+      }
+    };
+
+    let result = {
+      from: response.from,
+      to: response.to
+    };
+
+    let total = 0;
+
+    let dataArray = response.results.map(function (stat) {
+      let sum = stat.data.reduce(function (acc, timeslot) {
+        return acc + timeslot.v;
+      }, 0);
+
+      total += sum;
+
+      return {
+        name: mapOsName(stat.segment.platform),
+        value: sum
+      };
+    });
+
+    result.data = dataArray;
+
+    cb(null, result);
+  }
+
+  /**
+   * Sends a request to the data provider for the verification statistics.
+   *
+   * @method
+   * @param {Object} params  Raw query parameter object
+   * @param {Function} cb  Node-style callback function
+   */
+  getVerificationStatsByPlatform(params, cb) {
+    Q.ninvoke(this, 'formatQueryParameters', _.merge(params, {
+        breakdown: 'platform'
+      }))
+      .then((params) => {
+        this.sendRequest(this.opts.endpoints.STATS, params, (err, response) => {
+          this.parseVerificationStatsByPlatformResponse(params, response, (err, result) => {
+            if (err) {
+              cb(this.handleError(err, 500));
+              return;
+            }
+
+            cb(null, result);
+          });
+        });
+      })
+      .catch((err) => {
+        cb(this.handleError(err, err.status || 500));
+      })
+      .done();
+  }
+
+  /**
+   * @typedef Verification~StatsByCountryResult
+   * @property {String} code  The country code
+   * @property {String} name  The country name
+   * @property {Number} value  The data value
+   */
+
+  /**
+   * Parses the response of verification statistics by country.
+   *
+   * @method
+   * @param {Object} params  The request params
+   * @param {Object} response  The API response
+   * @param {Function} cb  The node-style callback, will be called with {@link Verification~StatsByCountryResult}
+   */
+  parseVerificationStatsByCountryResponse(params, response, cb) {
+    if (response.error) {
+      let error = new Error(error.message);
+      error.code = response.error;
+      cb(error);
+      return;
+    }
+
+    // Whenever the response is not broken down, it means no records exist in the period.
+    // In such cases, return an empty result.
+    if (response.results[0].segment.country === 'all') {
+      cb(null, []);
+      return;
+    }
+
+    let countries = _.indexBy(response.results, (result) => result.segment.country);
+
+    let countriesWithValues = _.reduce(countries, (result, country, name) => {
+      let accumulatedValues = _.reduce(country.data, (total, data) => {
+        total.v = parseInt(total.v) + parseInt(data.v);
+        return total;
+      });
+
+      result[name] = {};
+      result[name].code = name;
+      result[name].value = accumulatedValues.v;
+      result[name].name = CountryData.countries[name].name;
+
+      return result;
+    }, {});
+
+    cb(null, _.values(countriesWithValues));
+  }
+
+  /**
+   * Sends a request to the data provider for the verification statistics.
+   *
+   * @method
+   * @param {Object} params  Raw query parameter object
+   * @param {Function} cb  Node-style callback function
+   */
+  getVerificationStatsByCountry(params, cb) {
+    Q.ninvoke(this, 'formatQueryParameters', _.merge(params, {
+        breakdown: 'country'
+      }))
+      .then((params) => {
+        this.sendRequest(this.opts.endpoints.STATS, params, (err, response) => {
+          this.parseVerificationStatsByCountryResponse(params, response, (err, result) => {
+            if (err) {
+              cb(this.handleError(err, 500));
+              return;
+            }
+
+            cb(null, result);
+          });
+        });
       })
       .catch((err) => {
         cb(this.handleError(err, err.status || 500));
