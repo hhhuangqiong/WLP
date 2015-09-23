@@ -37,6 +37,11 @@ var ApplicationStore = createStore({
 
   handleAppIdsFetched: function (payload) {
     this.appIds = payload;
+
+    if (this.appIds && this.appIds.length > 0) {
+      this.defaultAppId = this.appIds[0];
+    }
+
     this.emitChange();
   },
 
@@ -44,11 +49,16 @@ var ApplicationStore = createStore({
     return this.appIds;
   },
 
+  getDefaultAppId: function () {
+    return this.defaultAppId;
+  },
+
   getState: function() {
     return {
       currentCompany: this.currentCompany,
       managingCompanies: this.managingCompanies,
-      appIds: this.appIds
+      appIds: this.appIds,
+      defaultAppId: this.defaultAppId
     };
   },
 
@@ -60,6 +70,7 @@ var ApplicationStore = createStore({
     this.currentCompany = state.currentCompany;
     this.managingCompanies = state.managingCompanies;
     this.appIds = state.appIds;
+    this.defaultAppId = state.defaultAppId;
   }
 });
 

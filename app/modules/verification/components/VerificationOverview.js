@@ -18,6 +18,7 @@ import DonutChartPanel from '../../../main/components/DonutChartPanel';
 import SummaryCells from './SummaryCells';
 import fetchVerificationOverview from '../actions/fetchVerificationOverview';
 import VerificationOverviewStore from '../stores/VerificationOverviewStore';
+import ApplicationStore from '../../../stores/ApplicationStore';
 import MAP_DATA from '../constants/mapData.js';
 
 const TIME_FRAMES = ['24 hours', '7 days', '30 days', '60 days', '90 days'];
@@ -39,18 +40,13 @@ export default React.createClass({
   mixins: [FluxibleMixin, AuthMixin],
 
   statics: {
-    storeListeners: [VerificationOverviewStore],
-
-    fetchData: (context, params, done) => {
-      context.executeAction(fetchVerificationOverview, {
-        carrierId: params.identity,
-        from: 1440831600000,
-        to: 1442822400000
-      });
+    storeListeners: {
+      onVerificationOverviewChange: VerificationOverviewStore,
+      onApplicationConfigChange: ApplicationStore
     }
   },
-        // timeRange: localStorage.verificationSdkFromTime || DEFAULT_TIME_RANGE
-
+  
+  // timeRange: localStorage.verificationSdkFromTime || DEFAULT_TIME_RANGE
   getInitialState() {
     return {
       countriesData: [],
@@ -72,7 +68,7 @@ export default React.createClass({
     };
   },
 
-  onChange() {
+  onVerificationOverviewChange() {
     let overviewData = this.getStore(VerificationOverviewStore).getOverviewData();
     this.setState(overviewData);
 
@@ -87,6 +83,21 @@ export default React.createClass({
     new Highcharts.Map(getMapConfig('verificationCountrySection', (overviewData.countriesData || []).slice(0), maxValue));
   },
 
+  autoSelectAppId() {
+    let appId = this.state.appId;
+    if (!appId) {
+      appId = this.context.getStore(ApplicationStore).getDefaultAppId();
+    }
+
+    this.setState({
+      appId: appId
+    });
+  },
+
+  onApplicationConfigChange() {
+    this.autoSelectAppId();
+  },
+
   componentDidMount() {
     let timeRangeParts = this.state.timeRange.split(' ');
     let timeValue = timeRangeParts[0];
@@ -99,6 +110,8 @@ export default React.createClass({
     };
 
     this.setState({ xAxis, sXAxis: xAxis });
+
+    this.autoSelectAppId();
   },
 
   toggleAttemptType(attemptType) {
