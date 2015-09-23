@@ -22,6 +22,21 @@ function Api(options = {}) {
   this._getToken  = options.getToken || noop;
 }
 
+Api.prototype.getAuthorityList = function(params, cb) {
+  superagent
+    .get(`${this._getHost()}/api/authority`)
+    .set('Authorization', this._getToken())
+    .end(function(err, res) {
+      if (err) {
+        cb(err);
+        return;
+      }
+
+      cb(null, res.body);
+      return;
+    });
+};
+
 Api.prototype.getManagingCompanies = function(params, cb) {
   superagent
     .get(`${this._getHost()}/api/application/companies`)

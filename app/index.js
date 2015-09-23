@@ -21,6 +21,7 @@ let app = new Fluxible();
 
 app.plug(require('./utils/apiPlugin'));
 app.plug(require('./utils/cookiePlugin'));
+app.plug(require('./utils/authorityPlugin'));
 app.plug(require('./utils/routerPlugin')());
 
 // authentication support

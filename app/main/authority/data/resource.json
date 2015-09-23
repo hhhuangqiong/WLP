@@ -1,0 +1,13 @@
+{
+  "menus": [
+    "overview",
+    "company",
+    "end-user",
+    "call",
+    "im",
+    "sms",
+    "vsf",
+    "top-up",
+    "verification"
+  ]
+}
