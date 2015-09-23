@@ -82,7 +82,7 @@ function transformParameters(params) {
   let to = moment(params.endDate, DATE_FORMAT).valueOf();
   let method = params.method;
   let platform = params.os;
-  let phone_number = params.search && (`*${params.search}*`);
+  let phone_number = params.number && (`*${params.number}*`);
 
   // only send the query which has been set by the client
   let query = _.omit({

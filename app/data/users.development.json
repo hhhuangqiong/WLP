@@ -18,4 +18,26 @@
     "reseller": false,
     "status": "active"
   }
+}, {
+  "user": {
+    "username": "admin@demo-verify.maaiii-api.org",
+    "password": "whitelabel2014",
+    "name": {
+      "first": "Admin",
+      "last": "Demo Verify"
+    },
+    "assignedGroup": "root",
+    "status": "active"
+  },
+  "company": {
+    "parentCompany": null,
+    "carrierId": "demo_verify.maaiii-api.org",
+    "name": "Demo Verify",
+    "reseller": false,
+    "status": "active",
+    "timezone": "UTC+8",
+    "country": "Hong Kong",
+    "logoFile": "logo-m800.png",
+    "widgets": {}
+  }
 }]
