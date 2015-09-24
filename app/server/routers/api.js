@@ -6,7 +6,6 @@ import * as auth      from '../routes/auth';
 import * as carriers  from '../routes/carriers';
 import * as companies from '../routes/companies';
 import * as authority from '../routes/authority';
-import Authority from '../../main/authority';
 
 let multipart = require('connect-multiparty')();
 
@@ -17,7 +16,7 @@ router
   .post(SIGN_OUT, auth.signOut)
   .use(auth.validateToken)
   .get('/session', auth.ensureAuthenticated)
-  .get('/authority', authority.getCapabilityList)
+  .get('/carriers/:carrierId/authority', authority.getCapabilityList)
   .get('/carriers/:carrierId/users', carriers.getUsers)
   .get('/carriers/:carrierId/users/:username',  carriers.getUsername)
   .get('/carriers/:carrierId/users/:username/wallet', carriers.getUserWallet)

@@ -1,5 +1,6 @@
 'use strict';
 
+import _ from 'lodash';
 import path from 'path';
 
 // react & flux -related
@@ -33,6 +34,7 @@ import app from '../index';
 let config = require('../config');
 let fetchData = require('../utils/fetchData');
 let loadSession = require('../actions/loadSession');
+let getAuthorityList = require('../main/authority/actions/getAuthorityList');
 
 function initialize(port) {
   if (!port) throw new Error('Please specify port');
@@ -144,7 +146,7 @@ function initialize(port) {
       config: config
     });
 
-    context.getActionContext().executeAction(loadSession, {}, function() {
+    function doRenderApp() {
       renderApp(context, req.url, function(err, html) {
         if (err && err.notFound) {
           return res.status(404).send(html);
@@ -162,6 +164,16 @@ function initialize(port) {
 
         res.send(prependDocType(html));
       });
+    }
+
+    context.getActionContext().executeAction(loadSession, {}, function(err, session) {
+      if (!session) {
+        doRenderApp();
+      } else {
+        context.getActionContext().executeAction(getAuthorityList, _.get(session, 'user.carrierId'), function(err) {
+          doRenderApp();
+        })
+      }
     });
   });
 
