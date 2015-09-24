@@ -78,8 +78,8 @@ function transformParameters(params) {
   let page = params.page || 0;
   let carrierId = params.carrierId;
   let application = params.appId;
-  let from = moment(params.startDate, DATE_FORMAT).valueOf();
-  let to = moment(params.endDate, DATE_FORMAT).valueOf();
+  let from = moment(params.startDate, DATE_FORMAT).startOf('day').valueOf();
+  let to = moment(params.endDate, DATE_FORMAT).endOf('day').valueOf();
   let method = params.method;
   let platform = params.os;
   let phone_number = params.number && (`*${params.number}*`);
