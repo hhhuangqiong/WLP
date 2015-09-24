@@ -486,8 +486,7 @@ let validateStatisticsRequest = function (req, cb) {
 let mapVerificationStatsRequestParameters = function (req) {
   return _.omit({
     carrier: req.params.carrierId,
-    // TODO: wait for backend update
-    // application_id: req.query.application,
+    application: req.query.application,
     from: req.query.from,
     to: req.query.to,
     timescale: req.query.timescale
