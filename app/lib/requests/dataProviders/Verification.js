@@ -268,7 +268,7 @@ export default class VerificationRequest extends BaseRequest {
    */
   parseVerificationStatsByStatusResponse(params, response, cb) {
     if (response.error) {
-      let error = new Error(error.message);
+      let error = new Error(response.error.message);
       error.code = response.error;
       cb(error);
       return;
@@ -369,16 +369,13 @@ export default class VerificationRequest extends BaseRequest {
         breakdown: 'success'
       }))
       .then((params) => {
-        this.sendRequest(this.opts.endpoints.STATS, params, (err, response) => {
-          this.parseVerificationStatsByStatusResponse(params, response, (err, result) => {
-            if (err) {
-              cb(this.handleError(err, 500));
-              return;
-            }
-
-            cb(null, result);
+        return Q.ninvoke(this, 'sendRequest', this.opts.endpoints.STATS, params)
+          .then((response) => {
+            return Q.ninvoke(this, 'parseVerificationStatsByStatusResponse', params, response);
           });
-        });
+      })
+      .then((result) => {
+        cb(null, result);
       })
       .catch((err) => {
         cb(this.handleError(err, err.status || 500));
@@ -422,7 +419,7 @@ export default class VerificationRequest extends BaseRequest {
    */
   parseVerificationStatsByTypeResponse(params, response, cb) {
     if (response.error) {
-      let error = new Error(error.message);
+      let error = new Error(response.error.message);
       error.code = response.error;
       cb(error);
       return;
@@ -484,16 +481,13 @@ export default class VerificationRequest extends BaseRequest {
         breakdown: 'type'
       }))
       .then((params) => {
-        this.sendRequest(this.opts.endpoints.STATS, params, (err, response) => {
-          this.parseVerificationStatsByTypeResponse(params, response, (err, result) => {
-            if (err) {
-              cb(this.handleError(err, 500));
-              return;
-            }
-
-            cb(null, result);
+        return Q.ninvoke(this, 'sendRequest', this.opts.endpoints.STATS, params)
+          .then((response) => {
+            return Q.ninvoke(this, 'parseVerificationStatsByTypeResponse', params, response);
           });
-        });
+      })
+      .then((result) => {
+        cb(null, result);
       })
       .catch((err) => {
         cb(this.handleError(err, err.status || 500));
@@ -536,7 +530,7 @@ export default class VerificationRequest extends BaseRequest {
    */
   parseVerificationStatsByPlatformResponse(params, response, cb) {
     if (response.error) {
-      let error = new Error(error.message);
+      let error = new Error(response.error.message);
       error.code = response.error;
       cb(error);
       return;
@@ -596,16 +590,13 @@ export default class VerificationRequest extends BaseRequest {
         breakdown: 'platform'
       }))
       .then((params) => {
-        this.sendRequest(this.opts.endpoints.STATS, params, (err, response) => {
-          this.parseVerificationStatsByPlatformResponse(params, response, (err, result) => {
-            if (err) {
-              cb(this.handleError(err, 500));
-              return;
-            }
-
-            cb(null, result);
+        return Q.ninvoke(this, 'sendRequest', this.opts.endpoints.STATS, params)
+          .then((response) => {
+            return Q.ninvoke(this, 'parseVerificationStatsByPlatformResponse', params, response);
           });
-        });
+      })
+      .then((result) => {
+        cb(null, result);
       })
       .catch((err) => {
         cb(this.handleError(err, err.status || 500));
@@ -630,7 +621,7 @@ export default class VerificationRequest extends BaseRequest {
    */
   parseVerificationStatsByCountryResponse(params, response, cb) {
     if (response.error) {
-      let error = new Error(error.message);
+      let error = new Error(response.error.message);
       error.code = response.error;
       cb(error);
       return;
@@ -674,16 +665,13 @@ export default class VerificationRequest extends BaseRequest {
         breakdown: 'country'
       }))
       .then((params) => {
-        this.sendRequest(this.opts.endpoints.STATS, params, (err, response) => {
-          this.parseVerificationStatsByCountryResponse(params, response, (err, result) => {
-            if (err) {
-              cb(this.handleError(err, 500));
-              return;
-            }
-
-            cb(null, result);
+        return Q.ninvoke(this, 'sendRequest', this.opts.endpoints.STATS, params)
+          .then((response) => {
+            return Q.ninvoke(this, 'parseVerificationStatsByCountryResponse', params, response);
           });
-        });
+      })
+      .then((result) => {
+        cb(null, result);
       })
       .catch((err) => {
         cb(this.handleError(err, err.status || 500));
