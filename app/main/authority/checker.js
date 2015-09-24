@@ -1,5 +1,5 @@
 import _ from 'lodash';
-import { getAclString } from './utils';
+import { getAclString, decodeAclString, getRouteByResource } from './utils';
 
 /**
  * @class Authority Checker
@@ -9,7 +9,13 @@ import { getAclString } from './utils';
  */
 class AuthorityChecker {
   constructor(options) {
-    this._carrierId = (options && options.carrierId) || null;
+
+    this._carrierId = null;
+
+    if (options.req) {
+      this._carrierId = _.get(options, 'req.user.affiliatedCompany.carrierId');
+    }
+
     this._capability = (options && options.capability) || [];
     this._getAclString = getAclString;
   }
@@ -57,6 +63,26 @@ class AuthorityChecker {
   }
 
   /**
+   * @method getDefaultPath
+   * return the first resource in the capability list
+   *
+   * @returns resource name {String}
+   */
+  getDefaultPath() {
+    if (this._isRootCompany() || this._isMaaii()) {
+      return getRouteByResource('overview');
+    }
+
+    let activity = _.first(this._capability);
+
+    if (!activity)
+      return null;
+
+    let { action, resource } = decodeAclString(activity);
+    return getRouteByResource(resource);
+  }
+
+  /**
    * @method reset
    * reset and replace the Authority settings
    *
@@ -86,4 +112,4 @@ class AuthorityChecker {
   }
 }
 
-module.exports = new AuthorityChecker();
+export default AuthorityChecker;

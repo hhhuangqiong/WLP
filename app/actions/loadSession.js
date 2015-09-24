@@ -26,18 +26,6 @@ module.exports = function(context, payload, done) {
       return;
     }
 
-    debug('Success');
-    context.dispatch('LOAD_SESSION', {
-      token: token,
-      user: {
-        _id: user,
-        username: username,
-        displayName: displayName,
-        carrierId: carrierId,
-        role: role
-      }
-    });
-
     // !IMPORTANT
     // blindly followed Nicolas Hery
     //
@@ -50,8 +38,23 @@ module.exports = function(context, payload, done) {
       context.cookie.clear('user');
       context.cookie.clear('carrierId');
       context.cookie.clear('role');
+      done();
+      return;
     }
 
-    done();
+    let session = {
+      token: token,
+      user: {
+        _id: user,
+        username: username,
+        displayName: displayName,
+        carrierId: carrierId,
+        role: role
+      }
+    };
+
+    debug('Success');
+    context.dispatch('LOAD_SESSION', session);
+    done(null, session);
   });
 };

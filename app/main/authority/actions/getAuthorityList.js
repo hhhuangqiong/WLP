@@ -1,6 +1,9 @@
-export default function(context, params, callback) {
-  context.api.getAuthorityList(params, function(err, result) {
-    callback(err, result);
-    return;
+export default function(context, carrierId, callback) {
+  context.api.getAuthorityList(carrierId, function(err, { carrierId, capability }) {
+
+    let authority = context.getAuthority();
+    authority.reset(carrierId, capability);
+
+    callback(err);
   });
 }
