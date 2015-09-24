@@ -209,7 +209,7 @@ export default class VerificationRequest extends BaseRequest {
   createDummyForMissingDataItem(completeList, existingItems) {
     let missingTypes = _.filter(completeList, (type) => {
       return _.every(existingItems, (item) => {
-        return item.name !== type; 
+        return item.name !== type;
       });
     });
 
@@ -637,15 +637,17 @@ export default class VerificationRequest extends BaseRequest {
     let countries = _.indexBy(response.results, (result) => result.segment.country);
 
     let countriesWithValues = _.reduce(countries, (result, country, name) => {
+      let countryCode = name.toUpperCase();
+
       let accumulatedValues = _.reduce(country.data, (total, data) => {
         total.v = parseInt(total.v) + parseInt(data.v);
         return total;
       });
 
-      result[name] = {};
-      result[name].code = name;
-      result[name].value = accumulatedValues.v;
-      result[name].name = CountryData.countries[name].name;
+      result[countryCode] = {};
+      result[countryCode].code = countryCode;
+      result[countryCode].value = accumulatedValues.v;
+      result[countryCode].name = CountryData.countries[countryCode].name;
 
       return result;
     }, {});
