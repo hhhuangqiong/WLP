@@ -26,8 +26,12 @@ let mobileOperators = require('../../../data/mobileOperators.json');
  * @returns {Country} The country object
  */
 let lookupCountry = function (alpha2) {
+  if (!alpha2) {
+    return null;
+  }
+
   return _.find(countries, (c) => {
-    return c.alpha2 === alpha2;
+    return c.alpha2 === alpha2.toUpperCase();
   });
 };
 
@@ -84,8 +88,12 @@ let getVerificationMethod = function (type) {
  * @returns {String} The icon name for the OS
  */
 let getOsIconName = function (platform) {
-  switch (platform) {
-    case 'ios':
+  if (!platform) {
+    return null;
+  }
+
+  switch (platform.toUpperCase()) {
+    case 'IOS':
       return 'apple';
     default:
       return platform;
