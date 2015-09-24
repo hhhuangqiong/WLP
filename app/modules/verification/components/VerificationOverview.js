@@ -43,8 +43,7 @@ export default React.createClass({
 
   contextTypes: {
     router: React.PropTypes.func.isRequired,
-    executeAction: React.PropTypes.func.isRequired,
-    cookie: React.PropTypes.func.isRequired
+    executeAction: React.PropTypes.func.isRequired
   },
 
   mixins: [FluxibleMixin, AuthMixin],
@@ -54,6 +53,12 @@ export default React.createClass({
       onVerificationOverviewChange: VerificationOverviewStore,
       onApplicationConfigChange: ApplicationStore
     }
+  },
+
+  getDefaultProps() {
+    return {
+      appIds: []
+    };
   },
 
   getInitialState() {
