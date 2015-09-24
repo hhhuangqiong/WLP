@@ -36,7 +36,7 @@ var Html = React.createClass({
           <link rel="stylesheet" href="/stylesheets/main.css" />
           <link rel="stylesheet" href="/vendor/react-date-picker/dist/react-datepicker.min.css" />
           <link rel="stylesheet" href="/stylesheets/map-sprite.css" />
-          <script src="/vendor/modernizr/modernizr.js"></script>
+          <script src="/vendor/foundation/js/vendor/modernizr.js"></script>
         </head>
         <body>
           <div id="app" dangerouslySetInnerHTML={{__html: this.props.markup}}></div>
