@@ -229,8 +229,6 @@ export default React.createClass({
 
   handleTimeFrameChange(time) {
     this.setState({ timeRange: time });
-    this.resetCharts(time);
-    this.updateCharts(time);
   },
 
   renderAttemptToggles() {

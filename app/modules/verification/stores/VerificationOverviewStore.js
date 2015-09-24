@@ -5,10 +5,14 @@ export default createStore({
 
   handlers: {
     FETCH_VERIFICATION_COUNTRIES_DATA_SUCCESS: 'handleCountriesDataFetched',
+    FETCH_VERIFICATION_COUNTRIES_DATA_FAILURE: 'handleCountriesDataFetchedFailure',
     FETCH_VERIFICATION_ATTEMPTS_SUCCESS: 'handleAttempsFetched',
+    FETCH_VERIFICATION_ATTEMPTS_FAILURE: 'handleAttempsFetchedFailure',
     FETCH_VERIFICATION_PAST_ATTEMPTS_SUCCESS: 'handlePastAttemptsFetched',
     FETCH_VERIFICATION_TYPE_SUCCESS: 'handleVerificationTypeFetched',
-    FETCH_VERIFICATION_OS_TYPE_SUCCESS: 'handleVerificationOsTypeFetched'
+    FETCH_VERIFICATION_TYPE_FAILURE: 'handleVerificationTypeFetchedFailure',
+    FETCH_VERIFICATION_OS_TYPE_SUCCESS: 'handleVerificationOsTypeFetched',
+    FETCH_VERIFICATION_OS_TYPE_FAILURE: 'handleVerificationOsTypeFetchedFailure'
   },
 
   initialize () {
@@ -37,6 +41,12 @@ export default createStore({
     this.emitChange();
   },
 
+  handleCountriesDataFetchedFailure() {
+    this.countriesData = [];
+
+    this.emitChange();
+  },
+
   handleAttempsFetched(payload) {
     this.accumulatedAttempts = payload.accumulatedAttempts;
     this.accumulatedFailure = payload.accumulatedFailure;
@@ -50,6 +60,19 @@ export default createStore({
     this.emitChange();
   },
 
+  handleAttempsFetchedFailure() {
+    this.accumulatedAttempts = 0;
+    this.accumulatedFailure = 0;
+    this.accumulatedSuccess = 0;
+    this.averageSuccessRate = 0;
+
+    this.successAttempts = null;
+    this.successRates = null;
+    this.totalAttempts = null;
+
+    this.emitChange();
+  },
+
   handlePastAttemptsFetched(payload) {
     this.pastAccumulatedAttempts = payload.pastAccumulatedAttempts;
     this.pastAccumulatedFailure = payload.pastAccumulatedFailure;
@@ -59,13 +82,33 @@ export default createStore({
     this.emitChange();
   },
 
+  handlePastAttemptsFetchedFailure() {
+    // TODO: handle the failure together with the current attempts, or the calculation is incorrect
+    this.pastAccumulatedAttempts = 0;
+    this.pastAccumulatedFailure = 0;
+    this.pastAccumulatedSuccess = 0;
+    this.pastAverageSuccessRate = 0;
+
+    this.emitChange();
+  },
+
   handleVerificationTypeFetched(payload) {
     this.types = payload.data;
     this.emitChange();
   },
 
+  handleVerificationTypeFetchedFailure() {
+    this.types = null;
+    this.emitChange();
+  },
+
   handleVerificationOsTypeFetched(payload) {
     this.osTypes = payload.data;
+    this.emitChange();
+  },
+
+  handleVerificationOsTypeFetchedFailure() {
+    this.osTypes = null;
     this.emitChange();
   },
 
