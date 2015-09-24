@@ -337,7 +337,6 @@ assign(
   require('./server/api/auth')(API_PATH_PREFIX),
   require('./server/api/session')(API_PATH_PREFIX),
   require('./server/api/export')(EXPORT_PATH_PREFIX),
-  require('./server/api/verificationSdk')(API_PATH_PREFIX),
   require('./server/api/vsf')(API_PATH_PREFIX)
 );
 

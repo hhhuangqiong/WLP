@@ -1,45 +1,10 @@
 import React from 'react';
 import classNames from 'classnames';
 
-import FluxibleMixin from 'fluxible/addons/FluxibleMixin';
-import AuthMixin from '../../../utils/AuthMixin';
-
-import fetchVerificationPastAttempts from '../actions/fetchVerificationPastAttempts';
-import VerificationOverviewStore from '../stores/VerificationOverviewStore';
-
-import { subtractTime } from '../../../server/utils/StringFormatter';
-
 const TOTAL_COLUMNS = 24;
 
 export default React.createClass({
   displayName: 'SummaryCells',
-
-  mixins: [FluxibleMixin, AuthMixin],
-
-  statics: {
-    storeListeners: [VerificationOverviewStore]
-  },
-
-  onChange() {
-    let pastSummaryData = this.getStore(VerificationOverviewStore).getPastSummaryData();
-    this.setState(pastSummaryData);
-  },
-
-  getInitialState() {
-    return {
-      pastAccumulatedAttempts: 0,
-      pastAccumulatedSuccess: 0,
-      pastAccumulatedFailure: 0,
-      pastAverageSuccessRate: 0
-    };
-  },
-
-  componentDidMount() {
-    this.executeAction(fetchVerificationPastAttempts, {
-      fromTime: subtractTime(this.props.toTime, this.props.timeRange),
-      toTime: this.props.toTime
-    });
-  },
 
   percentageChanges(numberA, numberB) {
     if (!(numberA && numberB)) return 0;
@@ -62,10 +27,10 @@ export default React.createClass({
     let accumulatedFailure = this.props.accumulatedFailure;
     let averageSuccessRate = this.props.averageSuccessRate;
 
-    let pastAccumulatedAttempts = this.state.pastAccumulatedAttempts;
-    let pastAccumulatedSuccess = this.state.pastAccumulatedSuccess;
-    let pastAccumulatedFailure = this.state.pastAccumulatedFailure;
-    let pastAverageSuccessRate = this.state.pastAverageSuccessRate;
+    let pastAccumulatedAttempts = this.props.pastAccumulatedAttempts;
+    let pastAccumulatedSuccess = this.props.pastAccumulatedSuccess;
+    let pastAccumulatedFailure = this.props.pastAccumulatedFailure;
+    let pastAverageSuccessRate = this.props.pastAverageSuccessRate;
 
     let cells = [
      {

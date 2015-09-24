@@ -177,14 +177,14 @@ export default React.createClass({
         this.setState({
           selectedLineInChartA: TOTAL_NUMBER_ATTEMPTS,
           busiestAttempts: _.max(this.state.totalAttempts),
-          busiestTime: fromTimeslot(this.state.totalAttempts, moment(), this.state.timeRange)
+          busiestTime: this.state.totalAttempts ? fromTimeslot(this.state.totalAttempts, moment(), this.state.timeRange) : null
         });
 
       } else if (attemptType === SUCCESS_ATTEMPTS_NUMBER) {
         this.setState({
           selectedLineInChartA: SUCCESS_ATTEMPTS_NUMBER,
           busiestAttempts: _.max(this.state.successAttempts),
-          busiestTime: fromTimeslot(this.state.successAttempts, moment(), this.state.timeRange)
+          busiestTime: this.state.successAttempts ? fromTimeslot(this.state.successAttempts, moment(), this.state.timeRange) : null
         });
       }
 
@@ -205,7 +205,7 @@ export default React.createClass({
     } else {
       this.setState({
         busiestAttempts: _.max(this.state.successAttempts),
-        busiestTime: fromTimeslot(this.state.successAttempts, moment(), this.state.timeRange),
+        busiestTime: this.state.successAttempts ? fromTimeslot(this.state.successAttempts, moment(), this.state.timeRange) : null,
         successRateSeries: [
           {
             name: SUCCESS_ATTEMPTS_RATE,
@@ -363,8 +363,10 @@ export default React.createClass({
                   accumulatedFailure={this.state.accumulatedFailure}
                   accumulatedSuccess={this.state.accumulatedSuccess}
                   averageSuccessRate={this.state.averageSuccessRate}
-                  timeRange={this.state.timeRange}
-                  toTime={this.state.fromTime}
+                  pastAccumulatedAttempts={this.state.pastAccumulatedAttempts}
+                  pastAccumulatedSuccess={this.state.pastAccumulatedSuccess}
+                  pastAccumulatedFailure={this.state.pastAccumulatedFailure}
+                  pastAverageSuccessRate={this.state.pastAverageSuccessRate}
                 />
               </div>
             </Panel.Wrapper>

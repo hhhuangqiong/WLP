@@ -9,6 +9,7 @@ export default createStore({
     FETCH_VERIFICATION_ATTEMPTS_SUCCESS: 'handleAttempsFetched',
     FETCH_VERIFICATION_ATTEMPTS_FAILURE: 'handleAttempsFetchedFailure',
     FETCH_VERIFICATION_PAST_ATTEMPTS_SUCCESS: 'handlePastAttemptsFetched',
+    FETCH_VERIFICATION_PAST_ATTEMPTS_FAILURE: 'handlePastAttemptsFetchedFailure',
     FETCH_VERIFICATION_TYPE_SUCCESS: 'handleVerificationTypeFetched',
     FETCH_VERIFICATION_TYPE_FAILURE: 'handleVerificationTypeFetchedFailure',
     FETCH_VERIFICATION_OS_TYPE_SUCCESS: 'handleVerificationOsTypeFetched',
@@ -74,10 +75,10 @@ export default createStore({
   },
 
   handlePastAttemptsFetched(payload) {
-    this.pastAccumulatedAttempts = payload.pastAccumulatedAttempts;
-    this.pastAccumulatedFailure = payload.pastAccumulatedFailure;
-    this.pastAccumulatedSuccess = payload.pastAccumulatedSuccess;
-    this.pastAverageSuccessRate = payload.pastAverageSuccessRate;
+    this.pastAccumulatedAttempts = payload.accumulatedAttempts;
+    this.pastAccumulatedFailure = payload.accumulatedFailure;
+    this.pastAccumulatedSuccess = payload.accumulatedSuccess;
+    this.pastAverageSuccessRate = payload.averageSuccessRate;
 
     this.emitChange();
   },
