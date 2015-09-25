@@ -1,7 +1,7 @@
 .verification-overview {
   $overviewPadding: rem-calc(15);
-  $changesUpColor: red;
-  $changesDownColor: green;
+  $changesPositiveColor: green;
+  $changesNegativeColor: red;
   $changesArrowRemSize: 9;
   $sectionBorder: 1px solid #eee;
 
@@ -114,19 +114,35 @@
     display: table;
     margin: 0 auto;
 
-    &.up {
-      color: $changesUpColor;
+    &.up.positive {
+      color: $changesPositiveColor;
 
       .arrow {
-        @include triangle(up, $changesUpColor, $changesArrowRemSize);
+        @include triangle(up, $changesPositiveColor, $changesArrowRemSize);
       }
     }
 
-    &.down {
-      color: $changesDownColor;
+    &.up.negative {
+      color: $changesNegativeColor;
 
       .arrow {
-        @include triangle(down, $changesDownColor, $changesArrowRemSize);
+        @include triangle(up, $changesNegativeColor, $changesArrowRemSize);
+      }
+    }
+
+    &.down.positive {
+      color: $changesPositiveColor;
+
+      .arrow {
+        @include triangle(down, $changesPositiveColor, $changesArrowRemSize);
+      }
+    }
+
+    &.down.negative {
+      color: $changesNegativeColor;
+
+      .arrow {
+        @include triangle(down, $changesNegativeColor, $changesArrowRemSize);
       }
     }
 
