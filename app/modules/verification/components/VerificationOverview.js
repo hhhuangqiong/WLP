@@ -30,9 +30,14 @@ const SUCCESS_ATTEMPTS_NUMBER = 'successAttemptsNumber';
 const SUCCESS_ATTEMPTS_RATE = 'successAttemptsRate';
 const EMPTY_CELL_PLACEHOLDER = '-';
 
+// Maintain time format like this Sep 25, 2015 2:40 PM for tooltip
+const TOOLTIP_TIME_FORMAT = 'lll';
+
 function fromTimeslot(collection, fromTime, timeframe) {
   let maxNumber = _.max(collection);
-  let maxIndex = collection.indexOf(maxNumber);
+
+  // Map the index to real world numbers representing the number of hours/days
+  let maxIndex = collection.indexOf(maxNumber) + 1;
 
   let subtractedFromTime = timeFromNow(timeframe);
   return subtractedFromTime.add(maxIndex, timeframe.includes('hours') ? 'hours' : 'days');
@@ -97,7 +102,7 @@ export default React.createClass({
   },
 
   resetCharts(timeRange) {
-    let { from, quantity, timescale} = this.parseTimeRange(timeRange);
+    let { from, quantity, timescale } = this.parseTimeRange(timeRange);
 
     let xAxis = {
       start: from,
@@ -193,12 +198,28 @@ export default React.createClass({
           {
             name: TOTAL_NUMBER_ATTEMPTS,
             data: this.state.totalAttempts,
-            color: '#FB3940'
+            color: '#FB3940',
+            tooltipFormatter: (x, y) => {
+              return `
+                <div style="text-align: center">
+                  <div>${moment(x).local().format(TOOLTIP_TIME_FORMAT)}</div>
+                  <div>Total Attempts: ${y}</div>
+                </div>
+              `;
+            }
           },
           {
             name: SUCCESS_ATTEMPTS_NUMBER,
             data: this.state.successAttempts,
-            color: '#21C031'
+            color: '#21C031',
+            tooltipFormatter: (x, y) => {
+              return `
+                <div style="text-align: center">
+                  <div>${moment(x).local().format(TOOLTIP_TIME_FORMAT)}</div>
+                  <div>Success Attempts: ${y}</div>
+                </div>
+              `;
+            }
           }
         ]
       });
@@ -215,7 +236,7 @@ export default React.createClass({
             tooltipFormatter: (x, y, xIndex) => {
               return `
                 <div style="text-align: center">
-                  <div>${moment(x).format('D MMM')}</div>
+                  <div>${moment(x).local().format(TOOLTIP_TIME_FORMAT)}</div>
                   <div>${this.state.successAttempts[xIndex]}/${this.state.totalAttempts[xIndex]} success</div>
                   <div>Success Rate: ${y}%</div>
                 </div>
