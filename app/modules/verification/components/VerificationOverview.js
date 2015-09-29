@@ -89,7 +89,7 @@ export default React.createClass({
 
   parseTimeRange(timeRange) {
     let splitedTimeRange = timeRange.split(' ');
-    let quantity = splitedTimeRange[0];
+    let quantity = parseInt(splitedTimeRange[0], 10) || 1;
     let timescale = splitedTimeRange[1] === 'days' ? 'day' : 'hour';
     let from = moment().subtract(quantity - 1, timescale).valueOf();
 
@@ -125,11 +125,10 @@ export default React.createClass({
 
   updateCharts(timeRange) {
     let { identity } = this.context.router.getCurrentParams();
-    let { from, to, timescale } = this.parseTimeRange(timeRange);
+    let { quantity, timescale } = this.parseTimeRange(timeRange);
 
     this.context.executeAction(fetchVerificationOverview, {
-      from,
-      to,
+      quantity,
       timescale,
       application: this.state.appId,
       carrierId: identity
