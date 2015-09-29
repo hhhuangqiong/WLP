@@ -131,4 +131,26 @@
       ]
     }
   }
+}, {
+  "user": {
+    "username": "admin@payeco.m800-api.com",
+    "password": "payEcoWLP2015",
+    "name": {
+      "first": "Admin",
+      "last": "PayEco"
+    },
+    "assignedGroup": "root",
+    "status": "active"
+  },
+  "company": {
+    "parentCompany": null,
+    "carrierId": "payeco.m800-api.com",
+    "name": "PayEco",
+    "reseller": false,
+    "status": "active",
+    "timezone": "UTC+8",
+    "country": "Hong Kong",
+    "logoFile": "logo-m800.png",
+    "widgets": {}
+  }
 }]
