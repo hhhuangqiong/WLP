@@ -381,7 +381,7 @@ export default React.createClass({
           <div className="large-16 columns">
             <Panel.Wrapper>
               <div className="header narrow"><h5 className="title">Summary</h5></div>
-              <div className="body verification-overview__summary">
+              <div className={classNames('body', 'verification-overview__summary', {error: this.state.attemptsError || this.state.pastAttemptsError})}>
                 <SummaryCells
                   accumulatedAttempts={this.state.accumulatedAttempts}
                   accumulatedFailure={this.state.accumulatedFailure}
@@ -390,14 +390,13 @@ export default React.createClass({
                   pastAccumulatedAttempts={this.state.pastAccumulatedAttempts}
                   pastAccumulatedSuccess={this.state.pastAccumulatedSuccess}
                   pastAccumulatedFailure={this.state.pastAccumulatedFailure}
-                  pastAverageSuccessRate={this.state.pastAverageSuccessRate}
-                />
+                  pastAverageSuccessRate={this.state.pastAverageSuccessRate} />
               </div>
             </Panel.Wrapper>
 
             <Panel.Wrapper>
               <div className="header narrow"><h5 className="title">Verification Attempt</h5></div>
-              <div className="body verification-overview__attempt">
+              <div className={classNames('body', 'verification-overview__attempt', {error: this.state.attemptsError})}>
                 {this.renderAttemptInfo()}
                 <div className="large-24 columns verification-overview__attempt__chart">
                   <LineChart
@@ -405,23 +404,21 @@ export default React.createClass({
                     lines={this.state.lines}
                     xAxis={this.state.xAxis}
                     yAxis={this.state.yAxis}
-                    selectedLine={this.state.selectedLineInChartA}
-                  />
+                    selectedLine={this.state.selectedLineInChartA} />
 
                   <LineChart
                     className={classNames('success-line', { hide: !this.state.showSuccessRate })}
                     lines={this.state.successRateSeries}
                     xAxis={this.state.sXAxis}
                     yAxis={this.state.sYAxis}
-                    selectedLine={this.state.selectedLineInChartB}
-                    />
+                    selectedLine={this.state.selectedLineInChartB} />
                 </div>
               </div>
             </Panel.Wrapper>
 
             <Panel.Wrapper>
               <div className="header narrow"><h5 className="title">Top 10 numbers of verification attempts in the world</h5></div>
-              <div className="body verification-overview__country">
+              <div className={classNames('body', 'verification-overview__country', {error: this.state.countriesError})}>
                 <div className="large-10 columns">
                   {this.renderCountryTable()}
                 </div>
@@ -436,28 +433,30 @@ export default React.createClass({
           <div className="large-8 columns">
             <Panel.Wrapper>
               <div className="header narrow"><h5 className="title">Verification by method</h5></div>
-              <Panel.Body>
-                <DonutChartPanel
-                  className="method-donut"
-                  data={this.state.types}
-                  size={150}
-                  bars={4}
-                  unit='attempts'
-                />
-              </Panel.Body>
+              <div className={classNames('verification-overview__method', {error: this.state.typeError})}>
+                <Panel.Body>
+                  <DonutChartPanel
+                    className="method-donut"
+                    data={this.state.types}
+                    size={150}
+                    bars={4}
+                    unit='attempts' />
+                </Panel.Body>
+              </div>
             </Panel.Wrapper>
 
             <Panel.Wrapper>
               <div className="header narrow"><h5 className="title">Verification OS type</h5></div>
-              <Panel.Body>
-                <DonutChartPanel
-                  className="os-donut"
-                  data={this.state.osTypes}
-                  size={150}
-                  bars={2}
-                  unit='attempts'
-                />
-              </Panel.Body>
+              <div className={classNames('verification-overview__os', {error: this.state.osError})}>
+                <Panel.Body>
+                  <DonutChartPanel
+                    className="os-donut"
+                    data={this.state.osTypes}
+                    size={150}
+                    bars={2}
+                    unit='attempts' />
+                </Panel.Body>
+              </div>
             </Panel.Wrapper>
           </div>
         </div>

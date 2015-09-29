@@ -38,12 +38,14 @@ export default createStore({
 
   handleCountriesDataFetched(payload) {
     this.countriesData = payload;
+    this.countriesError = null;
 
     this.emitChange();
   },
 
-  handleCountriesDataFetchedFailure() {
+  handleCountriesDataFetchedFailure(err) {
     this.countriesData = [];
+    this.countriesError = err;
 
     this.emitChange();
   },
@@ -58,10 +60,12 @@ export default createStore({
     this.successRates = payload.successRates;
     this.totalAttempts = payload.totalAttempts;
 
+    this.attemptsError = null;
+
     this.emitChange();
   },
 
-  handleAttempsFetchedFailure() {
+  handleAttempsFetchedFailure(err) {
     this.accumulatedAttempts = 0;
     this.accumulatedFailure = 0;
     this.accumulatedSuccess = 0;
@@ -70,6 +74,8 @@ export default createStore({
     this.successAttempts = null;
     this.successRates = null;
     this.totalAttempts = null;
+
+    this.attemptsError = err;
 
     this.emitChange();
   },
@@ -80,36 +86,47 @@ export default createStore({
     this.pastAccumulatedSuccess = payload.accumulatedSuccess;
     this.pastAverageSuccessRate = payload.averageSuccessRate;
 
+    this.pastAttemptsError = null;
+
     this.emitChange();
   },
 
-  handlePastAttemptsFetchedFailure() {
-    // TODO: handle the failure together with the current attempts, or the calculation is incorrect
+  handlePastAttemptsFetchedFailure(err) {
     this.pastAccumulatedAttempts = 0;
     this.pastAccumulatedFailure = 0;
     this.pastAccumulatedSuccess = 0;
     this.pastAverageSuccessRate = 0;
+
+    this.pastAttemptsError = err;
 
     this.emitChange();
   },
 
   handleVerificationTypeFetched(payload) {
     this.types = payload.data;
+    this.typeError = null;
+
     this.emitChange();
   },
 
-  handleVerificationTypeFetchedFailure() {
+  handleVerificationTypeFetchedFailure(err) {
     this.types = null;
+    this.typeError = err;
+
     this.emitChange();
   },
 
   handleVerificationOsTypeFetched(payload) {
     this.osTypes = payload.data;
+    this.osError = null;
+
     this.emitChange();
   },
 
-  handleVerificationOsTypeFetchedFailure() {
+  handleVerificationOsTypeFetchedFailure(err) {
     this.osTypes = null;
+    this.osError = err;
+
     this.emitChange();
   },
 
@@ -137,27 +154,17 @@ export default createStore({
       pastAccumulatedAttempts: this.pastAccumulatedAttempts,
       pastAccumulatedFailure: this.pastAccumulatedFailure,
       pastAccumulatedSuccess: this.pastAccumulatedSuccess,
-      pastAverageSuccessRate: this.pastAverageSuccessRate
+      pastAverageSuccessRate: this.pastAverageSuccessRate,
+      countriesError: this.countriesError,
+      attemptsError: this.attemptsError,
+      pastAttemptsError: this.pastAttemptsError,
+      typeError: this.typeError,
+      osError: this.osError
     };
   },
 
   dehydrate() {
-    return {
-      countriesData: this.countriesData,
-      types: this.types,
-      osTypes: this.osTypes,
-      accumulatedAttempts: this.accumulatedAttempts,
-      accumulatedFailure: this.accumulatedFailure,
-      accumulatedSuccess: this.accumulatedSuccess,
-      averageSuccessRate: this.averageSuccessRate,
-      pastAccumulatedAttempts: this.pastAccumulatedAttempts,
-      pastAccumulatedFailure: this.pastAccumulatedFailure,
-      pastAccumulatedSuccess: this.pastAccumulatedSuccess,
-      pastAverageSuccessRate: this.pastAverageSuccessRate,
-      successAttempts: this.successAttempts,
-      successRates: this.successRates,
-      totalAttempts: this.totalAttempts
-    };
+    return this.getOverviewData();
   },
 
   rehydrate(state) {
@@ -178,5 +185,11 @@ export default createStore({
     this.successAttempts = state.successAttempts;
     this.successRates = state.successRates;
     this.totalAttempts = state.totalAttempts;
+
+    this.countriesError = countriesError;
+    this.attemptsError = attemptsError;
+    this.pastAttemptsError = pastAttemptsError;
+    this.typeError = typeError;
+    this.osError = osError;
   }
 });

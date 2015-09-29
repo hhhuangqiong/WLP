@@ -87,15 +87,42 @@ export default (context, params, done) => {
       })
       .catch((err) => {
         context.dispatch(action.name + '_FAILURE', err);
+        // we don't want to handle the error here
+        throw err;
       })
-      .then(() => {
+      .finally(() => {
         context.dispatch(action.name + '_END');
       });
   });
 
   Q.allSettled(runningActions)
-    .then(() => {
+    .then((promises) => {
       context.dispatch('FETCH_END');
+
+      let failureStatusList = [];
+
+      promises.forEach((promise) => {
+        // rejected promise and the reason is not in our list
+        if (promise.reason && failureStatusList.indexOf(promise.reason.status) < 0) {
+          failureStatusList.push(promise.reason.status);
+        }
+      });
+
+      let possibleReasons = failureStatusList.map((status) => {
+        switch (status) {
+          case 504:
+            return 'Request timeout';
+          default:
+            return 'Server error';
+        }
+      });
+
+      if (failureStatusList.length > 0) {
+        context.dispatch('ERROR_MESSAGE', {
+          message: 'Sorry. Some data cannot be retrieved. Possible reason(s): ' + _.unique(possibleReasons).join(', ')
+        });
+      }
+
       done();
     })
     .done();
