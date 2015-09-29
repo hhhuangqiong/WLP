@@ -91,11 +91,15 @@ export default React.createClass({
     let splitedTimeRange = timeRange.split(' ');
     let quantity = parseInt(splitedTimeRange[0], 10) || 1;
     let timescale = splitedTimeRange[1] === 'days' ? 'day' : 'hour';
-    let from = moment().subtract(quantity - 1, timescale).valueOf();
+    // +1 to align the time to the corresponding bucket
+    // for the time that is 24 hours before 12:09, we need 13:00
+    // 12:09 + 1 hour = 13:09, startOf(13:09) = 13:00, 13:00 - 24 hour = 13:00
+    let to = moment().add(1, timescale).startOf(timescale).valueOf();
+    let from = moment(to).subtract(quantity, timescale).startOf(timescale).valueOf();
 
     return {
       from,
-      to: moment().valueOf(),
+      to,
       quantity,
       timescale
     };

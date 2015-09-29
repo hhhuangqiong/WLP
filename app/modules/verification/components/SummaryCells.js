@@ -59,7 +59,7 @@ export default React.createClass({
     let pastAverageSuccessRate = this.props.pastAverageSuccessRate;
 
     let constructChangeText = (numberChange, percentageChange) => {
-      let percentageText = Number.isFinite(percentageChange) ? Math.abs(percentageChange) : '-';
+      let percentageText = Number.isFinite(percentageChange) ? Math.abs(percentageChange) : ' - ';
       return `${Math.abs(numberChange)} (${percentageText}%)`;
     }
 
