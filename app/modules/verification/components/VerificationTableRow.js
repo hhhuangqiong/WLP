@@ -44,6 +44,10 @@ let lookupCountry = function (alpha2) {
  * @returns {String} The operator name, or empty string if not found
  */
 let lookupMobileOperator = function (mcc, mnc) {
+  if (!mcc || !mnc) {
+    return '';
+  }
+
   let operatorsInCountry = mobileOperators[mcc];
 
   if (!operatorsInCountry) {
