@@ -19,13 +19,17 @@ body {
 }
 
 .system-message-container {
-  position: fixed;
-  top: rem-calc(80);
-  left: 0;
-  height: auto;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  $width: 70%;
+
+  margin-left: - $width / 2;
+    position: fixed;
+    top: rem-calc(80);
+    left: 50%;
+    width: $width;
+    height: auto;
+    display: block;
+    align-items: center;
+    justify-content: center;
 }
 
 .loading-spinner-container {
