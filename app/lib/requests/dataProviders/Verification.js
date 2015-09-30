@@ -118,12 +118,31 @@ export default class VerificationRequest extends BaseRequest {
       .buffer()
       .timeout(this.opts.timeout)
       .end((err, res) => {
-        if (err) {
-          cb(this.handleError(err, err.status || 400));
+        if (!err) {
+          cb(null, res.body);
           return;
         }
 
-        cb(null, res.body);
+        let error;
+
+        // timeout does not have response
+        if (err.timeout) {
+          error = new Error(err.message);
+          error.status = 504;
+          error.timeout = err.timeout;
+        }
+        // server side error that has response
+        else if (err.response && err.response.body) {
+          error = new Error(err.response.body.message);
+          error.status = err.status;
+          error.code = err.response.body.error;
+        }
+        // other error
+        else {
+          error = this.handleError(err, 400);
+        }
+
+        cb(error);
       });
   }
 
@@ -140,9 +159,7 @@ export default class VerificationRequest extends BaseRequest {
       .then((params) => {
         this.sendRequest(this.opts.endpoints.SEARCH, params, cb);
       })
-      .catch((err) => {
-        cb(this.handleError(err, err.status || 500));
-      })
+      .catch(cb)
       .done();
   }
 
@@ -269,13 +286,6 @@ export default class VerificationRequest extends BaseRequest {
    * @returns {Verification~StatsByStatusResult} The parsed result
    */
   parseVerificationStatsByStatusResponse(params, response, cb) {
-    if (response.error) {
-      let error = new Error(response.error.message);
-      error.code = response.error;
-      cb(error);
-      return;
-    }
-
     // Whenever the response is not broken down, it means no records exist in the period.
     // In such cases, return a dummy result for chart drawing.
     if (response.results[0].segment.success === 'all') {
@@ -378,9 +388,7 @@ export default class VerificationRequest extends BaseRequest {
       .then((result) => {
         cb(null, result);
       })
-      .catch((err) => {
-        cb(this.handleError(err, err.status || 500));
-      })
+      .catch(cb)
       .done();
   }
 
@@ -419,13 +427,6 @@ export default class VerificationRequest extends BaseRequest {
    * @returns {Verification~StatsByTypeResult} The parsed result
    */
   parseVerificationStatsByTypeResponse(params, response, cb) {
-    if (response.error) {
-      let error = new Error(response.error.message);
-      error.code = response.error;
-      cb(error);
-      return;
-    }
-
     // Whenever the response is not broken down, it means no records exist in the period.
     // In such cases, return a dummy result for chart drawing.
     if (response.results[0].segment.type === 'all') {
@@ -489,9 +490,7 @@ export default class VerificationRequest extends BaseRequest {
       .then((result) => {
         cb(null, result);
       })
-      .catch((err) => {
-        cb(this.handleError(err, err.status || 500));
-      })
+      .catch(cb)
       .done();
   }
 
@@ -529,13 +528,6 @@ export default class VerificationRequest extends BaseRequest {
    * @param {Function} cb  The node callback, will be called with {@link Verification~StatsByPlatformResult}
    */
   parseVerificationStatsByPlatformResponse(params, response, cb) {
-    if (response.error) {
-      let error = new Error(response.error.message);
-      error.code = response.error;
-      cb(error);
-      return;
-    }
-
     // Whenever the response is not broken down, it means no records exist in the period.
     // In such cases, return a dummy result for chart drawing.
     if (response.results[0].segment.platform === 'all') {
@@ -597,9 +589,7 @@ export default class VerificationRequest extends BaseRequest {
       .then((result) => {
         cb(null, result);
       })
-      .catch((err) => {
-        cb(this.handleError(err, err.status || 500));
-      })
+      .catch(cb)
       .done();
   }
 
@@ -619,13 +609,6 @@ export default class VerificationRequest extends BaseRequest {
    * @param {Function} cb  The node-style callback, will be called with {@link Verification~StatsByCountryResult}
    */
   parseVerificationStatsByCountryResponse(params, response, cb) {
-    if (response.error) {
-      let error = new Error(response.error.message);
-      error.code = response.error;
-      cb(error);
-      return;
-    }
-
     // Whenever the response is not broken down, it means no records exist in the period.
     // In such cases, return an empty result.
     if (response.results[0].segment.country === 'all') {
@@ -673,9 +656,7 @@ export default class VerificationRequest extends BaseRequest {
       .then((result) => {
         cb(null, result);
       })
-      .catch((err) => {
-        cb(this.handleError(err, err.status || 500));
-      })
+      .catch(cb)
       .done();
   }
 }
