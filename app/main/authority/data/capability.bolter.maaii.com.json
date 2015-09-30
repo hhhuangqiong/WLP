@@ -1,7 +1,7 @@
 {
   "capabilities": [
     {
-      "name": "service_type_sdk"
+      "name": "service_type_white_label"
     },
     {
       "name": "device_os_support_ios"
@@ -10,19 +10,49 @@
       "name": "device_os_support_android"
     },
     {
-      "name": "verification_sdk"
+      "name": "user_management_dashboard"
     },
     {
-      "name": "verification_sdk_mt"
+      "name": "call_onnet_call"
     },
     {
-      "name": "verification_sdk_mo"
+      "name": "call_offnet_call"
     },
     {
-      "name": "verification_sdk_report"
+      "name": "call_report"
     },
     {
-      "name": "verification_sdk_dashboard"
+      "name": "call_dashboard"
+    },
+    {
+      "name": "im_report"
+    },
+    {
+      "name": "im_dashboard"
+    },
+    {
+      "name": "im_im_to_sms"
+    },
+    {
+      "name": "sms_report"
+    },
+    {
+      "name": "sms_dashboard"
+    },
+    {
+      "name": "virtual_store_front_report"
+    },
+    {
+      "name": "virtual_store_front_dashboard"
+    },
+    {
+      "name": "top_up_report"
+    },
+    {
+      "name": "top_up_dashboard"
+    },
+    {
+      "name": "wallet"
     }
   ]
 }
