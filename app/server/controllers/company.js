@@ -778,7 +778,8 @@ export default class CompanyController {
             res.status(200).json(appIds);
           })
           .catch((err) => {
-            let error = this.createResponseError(err);
+            logger.error(err);
+            let error = this.createResponseError(_.get(err, 'response.body.error') || err);
 
             res.status(error.status).json({
               error: error
