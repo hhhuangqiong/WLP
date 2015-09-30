@@ -173,9 +173,17 @@ export default class VerificationRequest extends BaseRequest {
    * @returns {Number} The number of data points
    */
   computeDataCount(from, to, timescale = 'hour') {
-    // +1 because the server respond with that day/hour if the timestamp
-    // steps on the start of day/hour
-    return Math.ceil((to - from + 1) / INTERVAL[timescale]);
+    // For a time range of [12:09, 14:27], we want [12:00, 15:00].
+    // For [12:09, 14:00], we want [12:00, 14:00].
+    // For [13:00, 15:00], we want [13:00, 15:00].
+    let offsetFrom = moment(from).startOf(timescale);
+    let offsetTo = moment(to).startOf(timescale);
+
+    if (!offsetTo.isSame(to)) {
+      offsetTo.add(1, timescale);
+    }
+
+    return (offsetTo - offsetFrom) / INTERVAL[timescale];
   }
 
   /**
@@ -202,22 +210,6 @@ export default class VerificationRequest extends BaseRequest {
    */
 
   /**
-   * Generates an array of dummy tuples.
-   *
-   * @method
-   * @param {String[]} fields  The field names
-   * @returns {Verification~SimpleTuple[]} The dummy array
-   */
-  generateDummyTuples(fields) {
-    return fields.map(function (field) {
-      return {
-        name: field,
-        value: 0
-      };
-    });
-  }
-
-  /**
    * Creates the dummy data items for the missing items.
    *
    * @method
@@ -238,6 +230,113 @@ export default class VerificationRequest extends BaseRequest {
         value: 0
       };
     });
+  }
+
+  /**
+   * Parses the response of verification statistics by group.
+   *
+   * @method
+   * @param {Object} response  The API response
+   * @param {Function} mapDataName  The function used to convert the API group name to the target
+   * @param {String} group  The group key, used to map the string in `response.results[i].segment`
+   * @param {String[]} fullKeyList  The list of keys to compare the missing items
+   * @param {Function} cb  Node-style callback
+   * @returns {Verification~StatsByTypeResult} The parsed result
+   * @see {@link https://issuetracking.maaii.com:9443/display/MAAIIP/Verification+Events+Statistics+API|API and response}
+   */
+  parseVerificationStatsResponseByGroup(response, mapDataName, group, fullKeyList, cb) {
+    let total = 0;
+    let dataArray = [];
+
+    // having 'all' in the first item indicates there are no data in the response
+    // simply use an empty array and we are done in this phase
+    if (response.results[0].segment[group] !== 'all') {
+      // create data object for each group, according to the `group` argument
+      dataArray = response.results.map((stat) => {
+        let aggregatedGroup = this.aggregateResultByGroup(stat, mapDataName, group);
+
+        total += aggregatedGroup.value;
+
+        return aggregatedGroup;
+      });
+    }
+
+    // create an array of dummy group for the missing items
+    let missingItems = this.createDummyForMissingDataItem(fullKeyList, dataArray);
+
+    // finally form the result object
+    let result = {
+      from: response.from,
+      to: response.to,
+      data: dataArray.concat(missingItems),
+      total
+    };
+
+    cb(null, result);
+  }
+
+  /**
+   * The aggregated result in a single group.
+   * @typedef {Object} AggregatedGroup
+   * @property {String} name  The group name
+   * @property {Number} value  The value (sum) of the group
+   */
+
+  /**
+   * The segment property under the results array of the response of the 
+   * Verification Events Statistics API.
+   * @typedef {Object} Response~ResultSegment
+   * @property {String} application  The application ID
+   * @property {String} carrier  The carrier ID
+   * @property {String} country  The country code
+   * @property {String} os_version  The OS version
+   * @property {String} platform  The device platform (ios, Android, etc.)
+   * @property {String} success  The status of the verification in stringified boolean ("true", "false")
+   * @property {String} type  The verification type/method (ivr, sms, etc.)
+   */
+
+  /**
+   * The data tuple under the results array of the response of the 
+   * Verification Events Statistics API.
+   * @typedef {Object} Response~ResultTuple
+   * @property {Number} t  The index
+   * @property {Number} v  The value
+   */
+
+  /**
+   * The item under the results property of the response of the Verification Events Statistics API.
+   * @typedef {Object} Response~Result
+   * @property {Response~ResultSegment} segment  The result breakdown/grouping metadata
+   * @property {Response~ResultTuple} data  The data value
+   */
+
+  /**
+   * Aggregates a result item from the response to a single grouped object.
+   *
+   * @method
+   * @param {Response~Result} result  One item in the results array of the response
+   * @param {Function} mapDataName  The function used to convert the API group name to the target
+   * @param {String} group  The group key, used to map the string in `result.segment`
+   * @returns {AggregatedGroup} The aggregated group
+   */
+  aggregateResultByGroup(result, mapDataName, group) {
+    return {
+      name: mapDataName(result.segment[group]),
+      value: this.sumAllValuesInTuple(result.data)
+    };
+  }
+
+  /**
+   * Aggregates all value in an {@link Response~ResultTuple} array using summation.
+   *
+   * @method
+   * @param {Response~ResultTuple[]} array  The array to aggregate
+   * @returns {Number} The sum of the values in the array
+   */
+  sumAllValuesInTuple(array) {
+    return array.reduce((acc, item) => {
+      return acc + item.v;
+    }, 0);
   }
 
   /**
@@ -283,7 +382,7 @@ export default class VerificationRequest extends BaseRequest {
    * @method
    * @param {Object} params  The request parameters
    * @param {Object} response  The API response
-   * @returns {Verification~StatsByStatusResult} The parsed result
+   * @param {Function} cb  Node-style callback, accepting the parsed {@link Verification~StatsByStatusResult}
    */
   parseVerificationStatsByStatusResponse(params, response, cb) {
     // Whenever the response is not broken down, it means no records exist in the period.
@@ -293,6 +392,8 @@ export default class VerificationRequest extends BaseRequest {
       return;
     }
 
+    let { successSet, failureSet } = this.standardiseStatusDataSet(response.results, params);
+
     let result = {
       from: response.from,
       to: response.to,
@@ -301,45 +402,9 @@ export default class VerificationRequest extends BaseRequest {
       successRates: []
     };
 
-    let successSet, failureSet;
-
-    // it may happens that only 1 result object is in the response
-    response.results.forEach((result, index) => {
-      if (result.segment.success == "false") {
-        failureSet = result.data;
-      } else if (result.segment.success == "true") {
-        successSet = result.data;
-      }
-    });
-
-    // if any of the result is missing, create a dummy for it
-    if (!successSet || !failureSet) {
-      let generateDummyDataArray = function (count) {
-        let array = [];
-
-        for (let i = 0; i < count; i++) {
-          array.push({
-            t: 0,
-            v: 0
-          });
-        }
-
-        return array;
-      };
-
-      let dataCount = this.computeDataCount(params.from, params.to, params.timescale);
-      if (!failureSet) {
-        failureSet = generateDummyDataArray(dataCount);
-      }
-      if (!successSet) {
-        successSet = generateDummyArray(dataCount);
-      }
-    }
-
     let accumulatedAttempts = 0;
     let accumulatedSuccess = 0;
     let accumulatedFailure = 0;
-    let averageSuccessRate = 0;
 
     // assume the data come in sequence
     for (let i = 0, len = successSet.length; i < len; i++) {
@@ -353,10 +418,12 @@ export default class VerificationRequest extends BaseRequest {
 
       result.totalAttempts.push(total);
       result.successAttempts.push(success);
+      // 0 / 0 = infinity, use 0 instead
       result.successRates.push(total !== 0 ? (success / total * 100) : 0);
     }
 
-    averageSuccessRate = accumulatedAttempts !== 0 ?
+    // 0 / 0 = infinity, use 0 instead
+    let averageSuccessRate = accumulatedAttempts !== 0 ?
       (accumulatedSuccess / accumulatedAttempts * 100) : 0;
 
     _.merge(result, {
@@ -367,6 +434,69 @@ export default class VerificationRequest extends BaseRequest {
     });
 
     cb(null, result);
+  }
+
+  /**
+   * Standardises the data set of the by-status response.
+   *
+   * @method
+   * @param {Response~Result[]} results  The response results field
+   * @param {Object} params  The parameter object
+   * @param {Number} params.from  The from parameter
+   * @param {Number} params.to  The to parameter
+   * @param {String} params.timescale  The timescale parameter
+   * @returns {Object} The result set in { successSet: Response~ResultTuple[], failureSet: Response~ResultTuple[]}
+   */
+  standardiseStatusDataSet(results, params) {
+    let successSet, failureSet;
+
+    // it may happens that only 1 result object is in the response
+    results.forEach((result) => {
+      if (result.segment.success == "false") {
+        failureSet = result.data;
+      } else if (result.segment.success == "true") {
+        successSet = result.data;
+      }
+    });
+
+    // if any of the result is missing, create a dummy for it
+    if (!successSet || !failureSet) {
+      // calculate the data count 
+      // so that we know how many data point we should generate for the missing data set
+      let dataCount = this.computeDataCount(params.from, params.to, params.timescale);
+
+      if (!failureSet) {
+        failureSet = this.generateDummyResultTuple(dataCount);
+      }
+      if (!successSet) {
+        successSet = this.generateDummyResultTuple(dataCount);
+      }
+    }
+
+    return {
+      successSet,
+      failureSet
+    };
+  }
+
+  /**
+   * Generates an array of result tuples.
+   *
+   * @method
+   * @param {Number} size  The size of the array
+   * @returns {Response~ResultTuple[]} The generated array
+   */
+  generateDummyResultTuple(size) {
+    let array = [];
+
+    for (let i = 0; i < size; i++) {
+      array.push({
+        t: i,
+        v: 0
+      });
+    }
+
+    return array;
   }
 
   /**
@@ -400,78 +530,6 @@ export default class VerificationRequest extends BaseRequest {
    */
 
   /**
-   * Creates a dummy result object for the by-type request.
-   *
-   * @method
-   * @param {Object} params  The request parameters object
-   * @returns {Verification~StatsByTypeResult} The dummy result object
-   */
-  createDummyResultForByTypeRequest(params) {
-    let dataCount = this.computeDataCount(params.from, params.to, params.timescale);
-    let dummyData = this.generateDummyArray(dataCount);
-
-    return {
-      from: params.from,
-      to: params.to,
-      data: this.generateDummyTuples(DEFAULT_TYPES)
-    };
-  }
-
-  /**
-   * Parses the response of verification statistics by type.
-   *
-   * @method
-   * @param {Object} params  The request parameters
-   * @param {Object} response  The API response
-   * @param {Function} cb  Node-style callback
-   * @returns {Verification~StatsByTypeResult} The parsed result
-   */
-  parseVerificationStatsByTypeResponse(params, response, cb) {
-    // Whenever the response is not broken down, it means no records exist in the period.
-    // In such cases, return a dummy result for chart drawing.
-    if (response.results[0].segment.type === 'all') {
-      cb(null, this.createDummyResultForByTypeRequest(params));
-      return;
-    }
-
-    let mapMethodName = function (type) {
-      switch (type) {
-      case 'MobileTerminated':
-        return 'Call-in';
-      case 'MobileOriginated':
-        return 'Call-out';
-      default:
-        return type;
-      }
-    };
-
-    let result = {
-      from: response.from,
-      to: response.to
-    };
-
-    let total = 0;
-
-    let dataArray = response.results.map(function (stat) {
-      let sum = stat.data.reduce(function (acc, timeslot) {
-        return acc + timeslot.v;
-      }, 0);
-
-      total += sum;
-
-      return {
-        name: mapMethodName(stat.segment.type),
-        value: sum
-      };
-    });
-
-    let missingItems = this.createDummyForMissingDataItem(DEFAULT_TYPES, dataArray);
-    result.data = dataArray.concat(missingItems);
-
-    cb(null, result);
-  }
-
-  /**
    * Sends a request to the data provider for the verification statistics.
    *
    * @method
@@ -485,7 +543,19 @@ export default class VerificationRequest extends BaseRequest {
 
     Q.ninvoke(this, 'sendRequest', this.opts.endpoints.STATS, params)
       .then((response) => {
-        return Q.ninvoke(this, 'parseVerificationStatsByTypeResponse', params, response);
+        let mapDataName = (type) => {
+          switch (type) {
+          case 'MobileTerminated':
+            return 'Call-in';
+          case 'MobileOriginated':
+            return 'Call-out';
+          default:
+            return type;
+          }
+        };
+
+        return Q.ninvoke(this, 'parseVerificationStatsResponseByGroup',
+          response, mapDataName, 'type', DEFAULT_TYPES);
       })
       .then((result) => {
         cb(null, result);
@@ -502,75 +572,6 @@ export default class VerificationRequest extends BaseRequest {
    */
 
   /**
-   * Creates a dummy result object for the by-platform request.
-   *
-   * @method
-   * @param {Object} params  The request parameters object
-   * @returns {Verification~StatsByPlatformResult} The dummy result object
-   */
-  createDummyResultForByPlatformRequest(params) {
-    let dataCount = this.computeDataCount(params.from, params.to, params.timescale);
-    let dummyData = this.generateDummyArray(dataCount);
-
-    return {
-      from: params.from,
-      to: params.to,
-      data: this.generateDummyTuples(DEFAULT_PLATFORMS)
-    };
-  }
-
-  /**
-   * Parses the response of verification statistics by platform.
-   *
-   * @method
-   * @param {Object} params  The request parameters
-   * @param {Object} response  The API response
-   * @param {Function} cb  The node callback, will be called with {@link Verification~StatsByPlatformResult}
-   */
-  parseVerificationStatsByPlatformResponse(params, response, cb) {
-    // Whenever the response is not broken down, it means no records exist in the period.
-    // In such cases, return a dummy result for chart drawing.
-    if (response.results[0].segment.platform === 'all') {
-      cb(null, this.createDummyResultForByPlatformRequest(params));
-      return;
-    }
-
-    let mapOsName = function (platform) {
-      switch (platform) {
-      case 'ios':
-        return 'IOS';
-      default:
-        return _.capitalize(platform);
-      }
-    };
-
-    let result = {
-      from: response.from,
-      to: response.to
-    };
-
-    let total = 0;
-
-    let dataArray = response.results.map(function (stat) {
-      let sum = stat.data.reduce(function (acc, timeslot) {
-        return acc + timeslot.v;
-      }, 0);
-
-      total += sum;
-
-      return {
-        name: mapOsName(stat.segment.platform),
-        value: sum
-      };
-    });
-
-    let missingItems = this.createDummyForMissingDataItem(DEFAULT_PLATFORMS, dataArray);
-    result.data = dataArray.concat(missingItems);
-
-    cb(null, result);
-  }
-
-  /**
    * Sends a request to the data provider for the verification statistics.
    *
    * @method
@@ -584,7 +585,17 @@ export default class VerificationRequest extends BaseRequest {
 
     Q.ninvoke(this, 'sendRequest', this.opts.endpoints.STATS, params)
       .then((response) => {
-        return Q.ninvoke(this, 'parseVerificationStatsByPlatformResponse', params, response);
+        let mapDataName = (platform) => {
+          switch (platform) {
+          case 'ios':
+            return 'IOS';
+          default:
+            return _.capitalize(platform);
+          }
+        };
+
+        return Q.ninvoke(this, 'parseVerificationStatsResponseByGroup',
+          response, mapDataName, 'platform', DEFAULT_PLATFORMS);
       })
       .then((result) => {
         cb(null, result);
@@ -604,11 +615,10 @@ export default class VerificationRequest extends BaseRequest {
    * Parses the response of verification statistics by country.
    *
    * @method
-   * @param {Object} params  The request params
    * @param {Object} response  The API response
    * @param {Function} cb  The node-style callback, will be called with {@link Verification~StatsByCountryResult}
    */
-  parseVerificationStatsByCountryResponse(params, response, cb) {
+  parseVerificationStatsByCountryResponse(response, cb) {
     // Whenever the response is not broken down, it means no records exist in the period.
     // In such cases, return an empty result.
     if (response.results[0].segment.country === 'all') {
@@ -651,7 +661,7 @@ export default class VerificationRequest extends BaseRequest {
 
     Q.ninvoke(this, 'sendRequest', this.opts.endpoints.STATS, params)
       .then((response) => {
-        return Q.ninvoke(this, 'parseVerificationStatsByCountryResponse', params, response);
+        return Q.ninvoke(this, 'parseVerificationStatsByCountryResponse', response);
       })
       .then((result) => {
         cb(null, result);
