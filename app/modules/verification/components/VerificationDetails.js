@@ -1,6 +1,5 @@
 import _ from 'lodash';
 import moment from 'moment';
-import {concurrent} from 'contra';
 import classNames from 'classnames';
 
 import React from 'react';
@@ -21,7 +20,7 @@ import fetchMoreVerifications from '../actions/fetchMoreVerifications';
 
 import VerificationStore from '../stores/VerificationStore';
 
-import VerificationTableRow from './VerificationTableRow'
+import VerificationTable from './VerificationTable';
 import config from '../../../config';
 
 const debug = require('debug')('app:verification/components/Verification');
@@ -217,24 +216,6 @@ let VerificationDetails = React.createClass({
     }
   },
 
-  renderTableRows: function () {
-    let rows = this.state.verifications.map(item => {
-      return (
-        <VerificationTableRow key={item.id} verification={item} />
-      );
-    });
-
-    return rows;
-  },
-
-  renderPaginationFooter: function () {
-    if (this.state.page < this.state.maxPage - 1) {
-      return (<div className="pagination__button text-center" onClick={this.loadMore}>Load More</div>);
-    } else {
-      return (<div className="pagination__button pagination__button--inactive text-center">no more result</div>);
-    }
-  },
-
   render: function () {
     let { role, identity } = this.context.router.getCurrentParams();
 
@@ -246,9 +227,6 @@ let VerificationDetails = React.createClass({
         label: item
       });
     });
-
-    let tableRows = this.renderTableRows(this.state.verifications);
-    let tableFooter = this.renderPaginationFooter();
 
     return (
       <div className="row verification-details">
@@ -265,8 +243,7 @@ let VerificationDetails = React.createClass({
               value={"Application ID: " + (this.state.appId ? this.state.appId : "-")}
               clearable={false}
               searchable={false}
-              onChange={this.onAppIdChange}
-            />
+              onChange={this.onAppIdChange} />
           </FilterBar.LeftItems>
           <FilterBar.RightItems>
             <DateRangePicker
@@ -274,42 +251,19 @@ let VerificationDetails = React.createClass({
               startDate={this.state.startDate}
               endDate={this.state.endDate}
               handleStartDateChange={this.handleStartDateChange}
-              handleEndDateChange={this.handleEndDateChange}
-            />
+              handleEndDateChange={this.handleEndDateChange} />
             <SearchBox
               value={this.state.number}
               placeHolder="Mobile number"
               onInputChangeHandler={this.handleSearchInputChange}
-              onKeyPressHandler={this.handleSearchInputSubmit}
-            />
+              onKeyPressHandler={this.handleSearchInputSubmit} />
           </FilterBar.RightItems>
         </FilterBar.Wrapper>
 
-        <table className="data-table small-24 large-22 large-offset-1">
-          <thead>
-            <tr>
-              <th>DATE &amp; TIME</th>
-              <th>MOBILE</th>
-              <th>SOURCE IP</th>
-              <th>METHOD</th>
-              <th>OS</th>
-              <th>DEVICE MODEL</th>
-              <th>OPERATOR</th>
-              <th>RESULT</th>
-              <th className="text-center">REMARKS</th>
-            </tr>
-          </thead>
-          <tbody className="verification-table">
-            {tableRows}
-          </tbody>
-          <tfoot>
-            <tr>
-              <td colSpan="9" className="pagination">
-                {tableFooter}
-              </td>
-            </tr>
-          </tfoot>
-        </table>
+        <VerificationTable
+          verifications={this.state.verifications}
+          total={this.state.count}
+          onLoadMoreClick={this.loadMore} />
       </div>
     );
   }

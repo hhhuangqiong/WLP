@@ -9,7 +9,7 @@ var SearchBox = React.createClass({
     searchInputName: PropTypes.string,
     searchTypeInputName: PropTypes.string,
     onInputChangeHandler: PropTypes.func,
-    onSelectChangeHandler: PropTypes.func.isRequired,
+    onSelectChangeHandler: PropTypes.func,
     onKeyPressHandler: PropTypes.func.isRequired
   },
 
