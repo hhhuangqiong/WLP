@@ -9,7 +9,10 @@ Publish location:
 - development: 192.168.118.26:9997
 - test & production: 192.168.0.12:9997
 
-To view on Kibana (development): http://192.168.118.26:5601/#/discover
+To view on Kibana:
+
+- development: http://192.168.118.26:5601/#/discover
+- test & production: https://192.168.0.12/#/discover
 
 ## Usage
 
