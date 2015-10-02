@@ -136,7 +136,7 @@ export default class VerificationRequest extends BaseRequest {
    * @param {Function} cb  Node-style callback function
    */
   getVerifications(params, cb) {
-    Q.ninvoke(this, 'formatQueryParameters', params)
+    Q.ninvoke(this, 'formatQueryParameters', this.convertDateInParamsFromIsoToTimestamp(params))
       .then((params) => {
         this.sendRequest(this.opts.endpoints.SEARCH, params, cb);
       })
