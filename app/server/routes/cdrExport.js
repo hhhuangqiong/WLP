@@ -1,6 +1,5 @@
 import _ from 'lodash';
 import Q from 'q';
-import express from 'express';
 import nconf from 'nconf';
 import moment from 'moment';
 import CDRExportTask from '../tasks/CDRExport';
@@ -12,17 +11,7 @@ import logger from 'winston';
 
 import { fetchDep } from '../utils/bottle';
 
-var router = express.Router();
-
-router.use(function(req, res, next) {
-  if (!req.isAuthenticated()) {
-    res.status(401);
-  }
-
-  next();
-});
-
-router.get('/:carrierId/calls', function(req, res) {
+let getCarrierCalls = (req, res) => {
   req.checkParams('carrierId').notEmpty();
   req.checkQuery('startDate').notEmpty();
   req.checkQuery('endDate').notEmpty();
@@ -60,9 +49,9 @@ router.get('/:carrierId/calls', function(req, res) {
     res.status(500).json({error:err});
   }).done();
 
-});
+};
 
-router.get('/:carrierId/calls/progress', function(req, res) {
+let getCarrierCallsProgress = (req, res) => {
   req.checkQuery('exportId').notEmpty();
 
   var err = req.validationErrors();
@@ -83,9 +72,9 @@ router.get('/:carrierId/calls/progress', function(req, res) {
 
     return res.status(200).json({progress: progress});
   });
-});
+};
 
-router.get('/:carrierId/calls/file', function(req, res) {
+let getCarrierCallsFile = (req, res) => {
   req.checkQuery('exportId').notEmpty();
 
   var err = req.validationErrors();
@@ -114,6 +103,10 @@ router.get('/:carrierId/calls/file', function(req, res) {
     }
 
   });
-});
+};
 
-module.exports = router;
+export {
+  getCarrierCalls,
+  getCarrierCallsProgress,
+  getCarrierCallsFile
+};
