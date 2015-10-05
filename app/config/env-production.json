@@ -79,6 +79,12 @@
           "colorize": true,
           "timestamp": true
         }
+      },{
+        "type": "winston.transports.Logstash",
+        "options": {
+          "port": 9997,
+          "host": "192.168.0.12"
+        }
       }]
     }
   },

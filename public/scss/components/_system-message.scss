@@ -1,7 +1,8 @@
 .system-message {
-  padding: rem-calc(10) $column-gutter;
-  background-color: $gray-dark;
-  border-radius: rem-calc(10);
+  @include border-radius(rem-calc(10));
+  background-color: rgba($gray-dark, 0.95);
   color: $white;
-  font-size: 14px;
+  font-size: rem-calc(14);
+  margin-bottom: rem-calc(2);
+  padding: rem-calc(10) $column-gutter;
 }

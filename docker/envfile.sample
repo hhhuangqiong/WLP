@@ -9,3 +9,6 @@ APP_PORT=3000
 redis__host=<your machine ip>
 mongodb__uri=mongodb://<your machine ip>/m800-whitelabel-portal
 queue__enable=false
+
+# logstash
+logging__winston__meta__instance=<deploy server name>

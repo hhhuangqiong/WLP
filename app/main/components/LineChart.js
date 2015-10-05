@@ -134,6 +134,13 @@ export default React.createClass({
       }
     };
 
+    // use local time
+    Highcharts.setOptions({
+      global: {
+        useUTC: false
+      }
+    });
+
     this.chart = new Highcharts.Chart({
       chart: {
         type: 'line',

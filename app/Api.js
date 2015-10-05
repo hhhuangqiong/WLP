@@ -22,9 +22,9 @@ function Api(options = {}) {
   this._getToken  = options.getToken || noop;
 }
 
-Api.prototype.getAuthorityList = function(params, cb) {
+Api.prototype.getAuthorityList = function(carrierId, cb) {
   superagent
-    .get(`${this._getHost()}/api/authority`)
+    .get(`${this._getHost()}/api/carriers/${carrierId}/authority`)
     .set('Authorization', this._getToken())
     .end(function(err, res) {
       if (err) {
@@ -337,7 +337,6 @@ assign(
   require('./server/api/auth')(API_PATH_PREFIX),
   require('./server/api/session')(API_PATH_PREFIX),
   require('./server/api/export')(EXPORT_PATH_PREFIX),
-  require('./server/api/verificationSdk')(API_PATH_PREFIX),
   require('./server/api/vsf')(API_PATH_PREFIX)
 );
 

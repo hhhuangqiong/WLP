@@ -668,7 +668,7 @@ export default class CompanyController {
   /**
    * Checks if the user having the specified userId can access the application information.
    *
-   * This function essentially returns true if the user is having company M800 
+   * This function essentially returns true if the user is having company M800
    * and is under the group `admin`, `root`, or `dev`.
    *
    * @method
@@ -778,7 +778,8 @@ export default class CompanyController {
             res.status(200).json(appIds);
           })
           .catch((err) => {
-            let error = this.createResponseError(err.response.body.error);
+            logger.error(err);
+            let error = this.createResponseError(_.get(err, 'response.body.error') || err);
 
             res.status(error.status).json({
               error: error

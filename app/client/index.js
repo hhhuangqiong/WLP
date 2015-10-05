@@ -105,25 +105,17 @@ if (!dehydratedState) {
       let isAuthenticated = context.getStore(AuthStore).isAuthenticated();
       let authority = context.getComponentContext().getAuthority();
       if (isAuthenticated && _.isNull(authority.getCarrierId())) {
-        context.executeAction(getAuthorityList, {}, function(err, { carrierId, capability }) {
+        context.executeAction(getAuthorityList, context.getStore(AuthStore).getCarrierId(), function(err) {
           if (err) {
             router.transitionTo('/error/internal-server-error');
             return;
           }
 
-          authority.reset(carrierId, capability);
           startApp(firstRender, context, Handler, routerState, function() {
             firstRender = false;
           });
         })
       } else {
-        // this is to reset authority plugin upon logout
-        // ideally it should be done in logout action
-        // but action cannot access component context
-        if (!isAuthenticated && !_.isNull(authority.getCarrierId())) {
-          authority.reset();
-        }
-
         startApp(firstRender, context, Handler, routerState, function() {
           firstRender = false;
         });

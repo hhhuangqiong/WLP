@@ -4,6 +4,7 @@ import Q from 'q';
 import request from 'superagent';
 import util from 'util';
 import _ from 'lodash';
+import moment from 'moment';
 import CountryData from 'country-data';
 
 import BaseRequest from '../Base';
@@ -44,6 +45,25 @@ export default class VerificationRequest extends BaseRequest {
     };
 
     super(opts);
+  }
+
+  /**
+   * Formats the `from` and `to` fields from ISO format to timestamp.
+   * This method will modify the original object.
+   *
+   * @method
+   * @param {Object} params  The parameter object
+   * @returns {Object} The updated object
+   */
+  convertDateInParamsFromIsoToTimestamp(params) {
+    if (moment(params.from).isValid()) {
+      params.from = moment(params.from).valueOf();
+    }
+    if (moment(params.to).isValid()) {
+      params.to = moment(params.to).valueOf();
+    }
+
+    return params;
   }
 
   /**
@@ -127,24 +147,6 @@ export default class VerificationRequest extends BaseRequest {
   }
 
   /**
-   * Sends a request to the data provider for the verification statistics.
-   *
-   * @method
-   * @param {Object} params  Raw query parameter object
-   * @param {Function} cb  Node-style callback function
-   */
-  getVerificationStatistics(params, cb) {
-    Q.ninvoke(this, 'formatQueryParameters', params)
-      .then((params) => {
-        this.sendRequest(this.opts.endpoints.STATS, params, cb);
-      })
-      .catch((err) => {
-        cb(this.handleError(err, err.status || 500));
-      })
-      .done();
-  }
-
-  /**
    * Calculates the number of data item within the specified period of time.
    *
    * @method
@@ -209,7 +211,7 @@ export default class VerificationRequest extends BaseRequest {
   createDummyForMissingDataItem(completeList, existingItems) {
     let missingTypes = _.filter(completeList, (type) => {
       return _.every(existingItems, (item) => {
-        return item.name !== type; 
+        return item.name !== type;
       });
     });
 
@@ -268,7 +270,7 @@ export default class VerificationRequest extends BaseRequest {
    */
   parseVerificationStatsByStatusResponse(params, response, cb) {
     if (response.error) {
-      let error = new Error(error.message);
+      let error = new Error(response.error.message);
       error.code = response.error;
       cb(error);
       return;
@@ -365,20 +367,16 @@ export default class VerificationRequest extends BaseRequest {
    * @param {Function} cb  Node-style callback function
    */
   getVerificationStatsByStatus(params, cb) {
-    Q.ninvoke(this, 'formatQueryParameters', _.merge(params, {
-        breakdown: 'success'
-      }))
-      .then((params) => {
-        this.sendRequest(this.opts.endpoints.STATS, params, (err, response) => {
-          this.parseVerificationStatsByStatusResponse(params, response, (err, result) => {
-            if (err) {
-              cb(this.handleError(err, 500));
-              return;
-            }
+    params = this.convertDateInParamsFromIsoToTimestamp(_.merge(params, {
+      breakdown: 'success'
+    }));
 
-            cb(null, result);
-          });
-        });
+    Q.ninvoke(this, 'sendRequest', this.opts.endpoints.STATS, params)
+      .then((response) => {
+        return Q.ninvoke(this, 'parseVerificationStatsByStatusResponse', params, response);
+      })
+      .then((result) => {
+        cb(null, result);
       })
       .catch((err) => {
         cb(this.handleError(err, err.status || 500));
@@ -422,7 +420,7 @@ export default class VerificationRequest extends BaseRequest {
    */
   parseVerificationStatsByTypeResponse(params, response, cb) {
     if (response.error) {
-      let error = new Error(error.message);
+      let error = new Error(response.error.message);
       error.code = response.error;
       cb(error);
       return;
@@ -480,20 +478,16 @@ export default class VerificationRequest extends BaseRequest {
    * @param {Function} cb  Node-style callback function
    */
   getVerificationStatsByType(params, cb) {
-    Q.ninvoke(this, 'formatQueryParameters', _.merge(params, {
-        breakdown: 'type'
-      }))
-      .then((params) => {
-        this.sendRequest(this.opts.endpoints.STATS, params, (err, response) => {
-          this.parseVerificationStatsByTypeResponse(params, response, (err, result) => {
-            if (err) {
-              cb(this.handleError(err, 500));
-              return;
-            }
+    params = this.convertDateInParamsFromIsoToTimestamp(_.merge(params, {
+      breakdown: 'type'
+    }));
 
-            cb(null, result);
-          });
-        });
+    Q.ninvoke(this, 'sendRequest', this.opts.endpoints.STATS, params)
+      .then((response) => {
+        return Q.ninvoke(this, 'parseVerificationStatsByTypeResponse', params, response);
+      })
+      .then((result) => {
+        cb(null, result);
       })
       .catch((err) => {
         cb(this.handleError(err, err.status || 500));
@@ -536,7 +530,7 @@ export default class VerificationRequest extends BaseRequest {
    */
   parseVerificationStatsByPlatformResponse(params, response, cb) {
     if (response.error) {
-      let error = new Error(error.message);
+      let error = new Error(response.error.message);
       error.code = response.error;
       cb(error);
       return;
@@ -592,20 +586,16 @@ export default class VerificationRequest extends BaseRequest {
    * @param {Function} cb  Node-style callback function
    */
   getVerificationStatsByPlatform(params, cb) {
-    Q.ninvoke(this, 'formatQueryParameters', _.merge(params, {
-        breakdown: 'platform'
-      }))
-      .then((params) => {
-        this.sendRequest(this.opts.endpoints.STATS, params, (err, response) => {
-          this.parseVerificationStatsByPlatformResponse(params, response, (err, result) => {
-            if (err) {
-              cb(this.handleError(err, 500));
-              return;
-            }
+    params = this.convertDateInParamsFromIsoToTimestamp(_.merge(params, {
+      breakdown: 'platform'
+    }));
 
-            cb(null, result);
-          });
-        });
+    Q.ninvoke(this, 'sendRequest', this.opts.endpoints.STATS, params)
+      .then((response) => {
+        return Q.ninvoke(this, 'parseVerificationStatsByPlatformResponse', params, response);
+      })
+      .then((result) => {
+        cb(null, result);
       })
       .catch((err) => {
         cb(this.handleError(err, err.status || 500));
@@ -630,7 +620,7 @@ export default class VerificationRequest extends BaseRequest {
    */
   parseVerificationStatsByCountryResponse(params, response, cb) {
     if (response.error) {
-      let error = new Error(error.message);
+      let error = new Error(response.error.message);
       error.code = response.error;
       cb(error);
       return;
@@ -646,15 +636,17 @@ export default class VerificationRequest extends BaseRequest {
     let countries = _.indexBy(response.results, (result) => result.segment.country);
 
     let countriesWithValues = _.reduce(countries, (result, country, name) => {
+      let countryCode = name.toUpperCase();
+
       let accumulatedValues = _.reduce(country.data, (total, data) => {
         total.v = parseInt(total.v) + parseInt(data.v);
         return total;
       });
 
-      result[name] = {};
-      result[name].code = name;
-      result[name].value = accumulatedValues.v;
-      result[name].name = CountryData.countries[name].name;
+      result[countryCode] = {};
+      result[countryCode].code = countryCode;
+      result[countryCode].value = accumulatedValues.v;
+      result[countryCode].name = CountryData.countries[countryCode].name;
 
       return result;
     }, {});
@@ -670,20 +662,16 @@ export default class VerificationRequest extends BaseRequest {
    * @param {Function} cb  Node-style callback function
    */
   getVerificationStatsByCountry(params, cb) {
-    Q.ninvoke(this, 'formatQueryParameters', _.merge(params, {
-        breakdown: 'country'
-      }))
-      .then((params) => {
-        this.sendRequest(this.opts.endpoints.STATS, params, (err, response) => {
-          this.parseVerificationStatsByCountryResponse(params, response, (err, result) => {
-            if (err) {
-              cb(this.handleError(err, 500));
-              return;
-            }
+    params = this.convertDateInParamsFromIsoToTimestamp(_.merge(params, {
+      breakdown: 'country'
+    }));
 
-            cb(null, result);
-          });
-        });
+    Q.ninvoke(this, 'sendRequest', this.opts.endpoints.STATS, params)
+      .then((response) => {
+        return Q.ninvoke(this, 'parseVerificationStatsByCountryResponse', params, response);
+      })
+      .then((result) => {
+        cb(null, result);
       })
       .catch((err) => {
         cb(this.handleError(err, err.status || 500));

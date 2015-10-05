@@ -12,11 +12,8 @@ module.exports = function(context, payload, done) {
   context.api.signIn(username, password, function(err, auth) {
     if (err) {
       debug('Failed');
-
       context.dispatch('SIGN_IN_FAILURE', err);
       context.dispatch(ERROR_MESSAGE, err);
-
-      done();
       return;
     }
 
@@ -34,7 +31,17 @@ module.exports = function(context, payload, done) {
     // the AuthStore needs to set its state to "authenticated"
     // before the transition
 
-    context.getRouter().transitionTo(userPath(auth.user.role, auth.user.carrierId, config.DEFAULT_POST_LOGIN_PATH));
-    done();
+    context.api.getAuthorityList(auth.user.carrierId, function(err, { carrierId, capability }) {
+      let authority = context.getAuthority();
+      authority.reset(carrierId, capability);
+
+      let defaultPath = authority.getDefaultPath();
+
+      if (defaultPath) {
+        context.getRouter().transitionTo(userPath(auth.user.role, auth.user.carrierId, defaultPath));
+      } else {
+        context.getRouter().transitionTo('/error/not-found');
+      }
+    });
   });
 };

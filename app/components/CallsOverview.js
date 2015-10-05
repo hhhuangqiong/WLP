@@ -14,7 +14,7 @@ import AuthStore  from '../stores/AuthStore';
 
 import fetchCallsWidgets from '../actions/fetchCallsWidgets';
 
-const errorMessage = '<div className="widget-not-found">Dashboard is not available</div>';
+const ERROR_MESSAGE = '<div className="widget-not-found">Dashboard is not available</div>';
 
 var CallsOverview = React.createClass({
   contextTypes: {
@@ -58,22 +58,22 @@ var CallsOverview = React.createClass({
     return (
       <table className="widget-table">
         <tr>
-          <td dangerouslySetInnerHTML={{__html: widgets[0] || errorMessage}}></td>
-          <td dangerouslySetInnerHTML={{__html: widgets[1] || errorMessage}}></td>
-          <td dangerouslySetInnerHTML={{__html: widgets[2] || errorMessage}}></td>
-          <td dangerouslySetInnerHTML={{__html: widgets[3] || errorMessage}}></td>
+          <td dangerouslySetInnerHTML={{__html: widgets[0] || ERROR_MESSAGE}}></td>
+          <td dangerouslySetInnerHTML={{__html: widgets[1] || ERROR_MESSAGE}}></td>
+          <td dangerouslySetInnerHTML={{__html: widgets[2] || ERROR_MESSAGE}}></td>
+          <td dangerouslySetInnerHTML={{__html: widgets[3] || ERROR_MESSAGE}}></td>
         </tr>
 
         <tr>
-          <td dangerouslySetInnerHTML={{__html: widgets[4] || errorMessage}}></td>
-          <td dangerouslySetInnerHTML={{__html: widgets[5] || errorMessage}}></td>
-          <td rowSpan="2" dangerouslySetInnerHTML={{__html: widgets[6] || errorMessage}}></td>
-          <td rowSpan="2" dangerouslySetInnerHTML={{__html: widgets[7] || errorMessage}}></td>
+          <td dangerouslySetInnerHTML={{__html: widgets[4] || ERROR_MESSAGE}}></td>
+          <td dangerouslySetInnerHTML={{__html: widgets[5] || ERROR_MESSAGE}}></td>
+          <td rowSpan="2" dangerouslySetInnerHTML={{__html: widgets[6] || ERROR_MESSAGE}}></td>
+          <td rowSpan="2" dangerouslySetInnerHTML={{__html: widgets[7] || ERROR_MESSAGE}}></td>
         </tr>
 
         <tr>
-          <td dangerouslySetInnerHTML={{__html: widgets[8] || errorMessage}}></td>
-          <td dangerouslySetInnerHTML={{__html: widgets[9] || errorMessage}}></td>
+          <td dangerouslySetInnerHTML={{__html: widgets[8] || ERROR_MESSAGE}}></td>
+          <td dangerouslySetInnerHTML={{__html: widgets[9] || ERROR_MESSAGE}}></td>
         </tr>
       </table>
     );

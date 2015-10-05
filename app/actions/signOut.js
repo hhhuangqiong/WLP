@@ -20,6 +20,9 @@ module.exports = function(context, payload, done) {
     context.cookie.clear('carrierId');
     context.cookie.clear('urlPrefix');
 
+    let authority = context.getAuthority();
+    authority.reset();
+
     // NOTE: possible race condition here
     // the AuthStore needs to set its state to "not authenticated"
     // before the transition

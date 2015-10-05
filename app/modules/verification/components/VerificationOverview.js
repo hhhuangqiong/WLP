@@ -30,9 +30,14 @@ const SUCCESS_ATTEMPTS_NUMBER = 'successAttemptsNumber';
 const SUCCESS_ATTEMPTS_RATE = 'successAttemptsRate';
 const EMPTY_CELL_PLACEHOLDER = '-';
 
+// Maintain time format like this Sep 25, 2015 2:40 PM for tooltip
+const TOOLTIP_TIME_FORMAT = 'lll';
+
 function fromTimeslot(collection, fromTime, timeframe) {
   let maxNumber = _.max(collection);
-  let maxIndex = collection.indexOf(maxNumber);
+
+  // Map the index to real world numbers representing the number of hours/days
+  let maxIndex = collection.indexOf(maxNumber) + 1;
 
   let subtractedFromTime = timeFromNow(timeframe);
   return subtractedFromTime.add(maxIndex, timeframe.includes('hours') ? 'hours' : 'days');
@@ -43,8 +48,7 @@ export default React.createClass({
 
   contextTypes: {
     router: React.PropTypes.func.isRequired,
-    executeAction: React.PropTypes.func.isRequired,
-    cookie: React.PropTypes.func.isRequired
+    executeAction: React.PropTypes.func.isRequired
   },
 
   mixins: [FluxibleMixin, AuthMixin],
@@ -54,6 +58,12 @@ export default React.createClass({
       onVerificationOverviewChange: VerificationOverviewStore,
       onApplicationConfigChange: ApplicationStore
     }
+  },
+
+  getDefaultProps() {
+    return {
+      appIds: []
+    };
   },
 
   getInitialState() {
@@ -79,20 +89,24 @@ export default React.createClass({
 
   parseTimeRange(timeRange) {
     let splitedTimeRange = timeRange.split(' ');
-    let quantity = splitedTimeRange[0];
+    let quantity = parseInt(splitedTimeRange[0], 10) || 1;
     let timescale = splitedTimeRange[1] === 'days' ? 'day' : 'hour';
-    let from = moment().subtract(quantity - 1, timescale).valueOf();
+    // +1 to align the time to the corresponding bucket
+    // for the time that is 24 hours before 12:09, we need 13:00
+    // 12:09 + 1 hour = 13:09, startOf(13:09) = 13:00, 13:00 - 24 hour = 13:00
+    let to = moment().add(1, timescale).startOf(timescale).valueOf();
+    let from = moment(to).subtract(quantity, timescale).startOf(timescale).valueOf();
 
     return {
       from,
-      to: moment().valueOf(),
+      to,
       quantity,
       timescale
     };
   },
 
   resetCharts(timeRange) {
-    let { from, quantity, timescale} = this.parseTimeRange(timeRange);
+    let { from, quantity, timescale } = this.parseTimeRange(timeRange);
 
     let xAxis = {
       start: from,
@@ -115,11 +129,10 @@ export default React.createClass({
 
   updateCharts(timeRange) {
     let { identity } = this.context.router.getCurrentParams();
-    let { from, to, timescale } = this.parseTimeRange(timeRange);
+    let { quantity, timescale } = this.parseTimeRange(timeRange);
 
     this.context.executeAction(fetchVerificationOverview, {
-      from,
-      to,
+      quantity,
       timescale,
       application: this.state.appId,
       carrierId: identity
@@ -172,14 +185,14 @@ export default React.createClass({
         this.setState({
           selectedLineInChartA: TOTAL_NUMBER_ATTEMPTS,
           busiestAttempts: _.max(this.state.totalAttempts),
-          busiestTime: fromTimeslot(this.state.totalAttempts, moment(), this.state.timeRange)
+          busiestTime: this.state.totalAttempts ? fromTimeslot(this.state.totalAttempts, moment(), this.state.timeRange) : null
         });
 
       } else if (attemptType === SUCCESS_ATTEMPTS_NUMBER) {
         this.setState({
           selectedLineInChartA: SUCCESS_ATTEMPTS_NUMBER,
           busiestAttempts: _.max(this.state.successAttempts),
-          busiestTime: fromTimeslot(this.state.successAttempts, moment(), this.state.timeRange)
+          busiestTime: this.state.successAttempts ? fromTimeslot(this.state.successAttempts, moment(), this.state.timeRange) : null
         });
       }
 
@@ -188,19 +201,35 @@ export default React.createClass({
           {
             name: TOTAL_NUMBER_ATTEMPTS,
             data: this.state.totalAttempts,
-            color: '#FB3940'
+            color: '#FB3940',
+            tooltipFormatter: (x, y) => {
+              return `
+                <div style="text-align: center">
+                  <div>${moment(x).local().format(TOOLTIP_TIME_FORMAT)}</div>
+                  <div>Total Attempts: ${y}</div>
+                </div>
+              `;
+            }
           },
           {
             name: SUCCESS_ATTEMPTS_NUMBER,
             data: this.state.successAttempts,
-            color: '#21C031'
+            color: '#21C031',
+            tooltipFormatter: (x, y) => {
+              return `
+                <div style="text-align: center">
+                  <div>${moment(x).local().format(TOOLTIP_TIME_FORMAT)}</div>
+                  <div>Success Attempts: ${y}</div>
+                </div>
+              `;
+            }
           }
         ]
       });
     } else {
       this.setState({
         busiestAttempts: _.max(this.state.successAttempts),
-        busiestTime: fromTimeslot(this.state.successAttempts, moment(), this.state.timeRange),
+        busiestTime: this.state.successAttempts ? fromTimeslot(this.state.successAttempts, moment(), this.state.timeRange) : null,
         successRateSeries: [
           {
             name: SUCCESS_ATTEMPTS_RATE,
@@ -210,7 +239,7 @@ export default React.createClass({
             tooltipFormatter: (x, y, xIndex) => {
               return `
                 <div style="text-align: center">
-                  <div>${moment(x).format('D MMM')}</div>
+                  <div>${moment(x).local().format(TOOLTIP_TIME_FORMAT)}</div>
                   <div>${this.state.successAttempts[xIndex]}/${this.state.totalAttempts[xIndex]} success</div>
                   <div>Success Rate: ${y}%</div>
                 </div>
@@ -229,8 +258,6 @@ export default React.createClass({
 
   handleTimeFrameChange(time) {
     this.setState({ timeRange: time });
-    this.resetCharts(time);
-    this.updateCharts(time);
   },
 
   renderAttemptToggles() {
@@ -354,21 +381,22 @@ export default React.createClass({
           <div className="large-16 columns">
             <Panel.Wrapper>
               <div className="header narrow"><h5 className="title">Summary</h5></div>
-              <div className="body verification-overview__summary">
+              <div className={classNames('body', 'verification-overview__summary', {error: this.state.attemptsError || this.state.pastAttemptsError})}>
                 <SummaryCells
                   accumulatedAttempts={this.state.accumulatedAttempts}
                   accumulatedFailure={this.state.accumulatedFailure}
                   accumulatedSuccess={this.state.accumulatedSuccess}
                   averageSuccessRate={this.state.averageSuccessRate}
-                  timeRange={this.state.timeRange}
-                  toTime={this.state.fromTime}
-                />
+                  pastAccumulatedAttempts={this.state.pastAccumulatedAttempts}
+                  pastAccumulatedSuccess={this.state.pastAccumulatedSuccess}
+                  pastAccumulatedFailure={this.state.pastAccumulatedFailure}
+                  pastAverageSuccessRate={this.state.pastAverageSuccessRate} />
               </div>
             </Panel.Wrapper>
 
             <Panel.Wrapper>
               <div className="header narrow"><h5 className="title">Verification Attempt</h5></div>
-              <div className="body verification-overview__attempt">
+              <div className={classNames('body', 'verification-overview__attempt', {error: this.state.attemptsError})}>
                 {this.renderAttemptInfo()}
                 <div className="large-24 columns verification-overview__attempt__chart">
                   <LineChart
@@ -376,23 +404,21 @@ export default React.createClass({
                     lines={this.state.lines}
                     xAxis={this.state.xAxis}
                     yAxis={this.state.yAxis}
-                    selectedLine={this.state.selectedLineInChartA}
-                  />
+                    selectedLine={this.state.selectedLineInChartA} />
 
                   <LineChart
                     className={classNames('success-line', { hide: !this.state.showSuccessRate })}
                     lines={this.state.successRateSeries}
                     xAxis={this.state.sXAxis}
                     yAxis={this.state.sYAxis}
-                    selectedLine={this.state.selectedLineInChartB}
-                    />
+                    selectedLine={this.state.selectedLineInChartB} />
                 </div>
               </div>
             </Panel.Wrapper>
 
             <Panel.Wrapper>
               <div className="header narrow"><h5 className="title">Top 10 numbers of verification attempts in the world</h5></div>
-              <div className="body verification-overview__country">
+              <div className={classNames('body', 'verification-overview__country', {error: this.state.countriesError})}>
                 <div className="large-10 columns">
                   {this.renderCountryTable()}
                 </div>
@@ -407,28 +433,30 @@ export default React.createClass({
           <div className="large-8 columns">
             <Panel.Wrapper>
               <div className="header narrow"><h5 className="title">Verification by method</h5></div>
-              <Panel.Body>
-                <DonutChartPanel
-                  className="method-donut"
-                  data={this.state.types}
-                  size={150}
-                  bars={4}
-                  unit='attempts'
-                />
-              </Panel.Body>
+              <div className={classNames('verification-overview__method', {error: this.state.typeError})}>
+                <Panel.Body>
+                  <DonutChartPanel
+                    className="method-donut"
+                    data={this.state.types}
+                    size={150}
+                    bars={4}
+                    unit='attempts' />
+                </Panel.Body>
+              </div>
             </Panel.Wrapper>
 
             <Panel.Wrapper>
               <div className="header narrow"><h5 className="title">Verification OS type</h5></div>
-              <Panel.Body>
-                <DonutChartPanel
-                  className="os-donut"
-                  data={this.state.osTypes}
-                  size={150}
-                  bars={2}
-                  unit='attempts'
-                />
-              </Panel.Body>
+              <div className={classNames('verification-overview__os', {error: this.state.osError})}>
+                <Panel.Body>
+                  <DonutChartPanel
+                    className="os-donut"
+                    data={this.state.osTypes}
+                    size={150}
+                    bars={2}
+                    unit='attempts' />
+                </Panel.Body>
+              </div>
             </Panel.Wrapper>
           </div>
         </div>
