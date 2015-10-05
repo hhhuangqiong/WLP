@@ -1,6 +1,6 @@
-var createStore = require('fluxible/addons/createStore');
+let createStore = require('fluxible/addons/createStore');
 
-var AuthStore = createStore({
+let AuthStore = createStore({
   storeName: 'AuthStore',
 
   handlers: {

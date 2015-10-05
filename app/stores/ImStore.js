@@ -20,19 +20,14 @@ var ImStore = createStore({
   },
 
   handleImChange: function(payload) {
-    try {
-      this.ims = payload.contents;
-      this.offset = payload.offset;
-      this.pageNumber = payload.pageNumber;
-      this.pageSize = payload.pageSize;
-      this.imsCount = payload.totalElements;
-      this.totalPages = payload.totalPages;
-      this.loaded = true;
-    } catch (e) {
-      console.log(e);
-    } finally {
-      this.emitChange();
-    }
+    this.ims = payload.contents;
+    this.offset = payload.offset;
+    this.pageNumber = payload.pageNumber;
+    this.pageSize = payload.pageSize;
+    this.imsCount = payload.totalElements;
+    this.totalPages = payload.totalPages;
+    this.loaded = true;
+    this.emitChange();
   },
 
   handleLoadMoreIm: function(payload) {

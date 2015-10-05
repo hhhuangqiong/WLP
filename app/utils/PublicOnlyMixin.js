@@ -11,8 +11,15 @@ module.exports = {
       let role            = authStore.getUserRole();
       let identity        = authStore.getCarrierId();
 
+      let authority = transition.context.getComponentContext().getAuthority();
+      let defaultPath = authority.getDefaultPath();
+
       if (isAuthenticated) {
-        transition.redirect(userPath(role, identity, config.DEFAULT_POST_LOGIN_PATH));
+        if (defaultPath) {
+          transition.redirect(userPath(role, identity, defaultPath));
+        } else {
+          transition.redirect('/error/not-found');
+        }
       }
     }
   }

@@ -1,4 +1,4 @@
-/* eslint no-process-exit: false */
+/* eslint no-process-exit */
 'use strict';
 
 var _        = require('lodash');

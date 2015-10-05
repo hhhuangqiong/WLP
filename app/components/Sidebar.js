@@ -3,47 +3,11 @@ import classnames from 'classnames';
 import {Link} from 'react-router';
 import {connectToStores} from 'fluxible/addons';
 
+import Permit from '../main/components/Permit';
 import ApplicationStore from '../stores/ApplicationStore';
 import AuthStore from '../stores/AuthStore';
 
-let navSections = [
-  {
-    name: 'Overview',
-    icon: 'icon-menuoverview',
-    routeName: 'overview'
-  },
-  /** [WLP-297] temporary hide end user section for bolt 1.1 */
-  // {
-  //   name: 'Users',
-  //   icon: 'icon-menuenduser',
-  //   routeName: 'end-users'
-  // },
-  {
-    name: 'Calls',
-    icon: 'icon-menucalls',
-    routeName: 'calls-overview'
-  },
-  {
-    name: 'IM',
-    icon: 'icon-menuim',
-    routeName: 'im-overview'
-  },
-  {
-    name: 'SMS',
-    icon: 'icon-menu-sms',
-    'routeName': 'sms-overview'
-  },
-  {
-    name: 'VSF',
-    icon: 'icon-menustore',
-    routeName: 'vsf-transaction-overview'
-  },
-  {
-    name: 'Top Up',
-    icon: 'icon-menutopup',
-    routeName: 'top-up-details'
-  }
-];
+import navSections from '../main/constants/navSection';
 
 class Sidebar extends React.Component{
   constructor(props, context) {
@@ -63,7 +27,7 @@ class Sidebar extends React.Component{
 
     return (
       <div
-        className={classnames('mainmenu-bar','vertical', {offcanvas: this.props.isOffCanvas})}
+        className={classnames('mainmenu-bar', 'vertical', {offcanvas: this.props.isOffCanvas})}
         onMouseLeave={this.props.handleOffCavnas.bind(null, true)}
         onMouseEnter={this.props.handleOffCavnas.bind(null, false)}
       >
@@ -78,18 +42,20 @@ class Sidebar extends React.Component{
           </li>
           {navSections.map((section,idx)=>{
             return (
-              <li key={idx}>
-                <Link
-                  className="item mainmenu-bar__item"
-                  to={section.routeName}
-                  params={{ role: role, identity: identity }}
-                >
-                  <label>
-                    <i className={section.icon} />
-                    {section.name}
-                  </label>
-                </Link>
-              </li>
+              <Permit action="view" resource={section.page}>
+                <li key={idx}>
+                  <Link
+                    className="item mainmenu-bar__item"
+                    to={section.routeName}
+                    params={{ role: role, identity: identity }}
+                  >
+                    <label>
+                      <i className={section.icon} />
+                      {section.name}
+                    </label>
+                  </Link>
+                </li>
+              </Permit>
             );
           })}
         </ul>

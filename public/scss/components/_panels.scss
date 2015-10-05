@@ -1,76 +1,125 @@
 .panel {
-    margin-top: rem-calc(20);
-    overflow: hidden;
-    @include panel( $padding: 0);
-    @include border-radius($panels-border-radius);
-    @include box-shadow(0 2px 3px rgba(0, 0, 0, 0.1));
-    h1, h2, h3, h4, h5, h6 {
-        text-transform: uppercase;
-        padding: 0;
-        margin: 0;
+  margin-top: rem-calc(20);
+  overflow: hidden;
+  @include panel( $padding: 0);
+  @include border-radius($panels-border-radius);
+  @include box-shadow(0 2px 3px rgba(0, 0, 0, 0.1));
+  h1 {
+    font-size: $panels-h1-font-size;
+  }
+  h4 {
+    font-size: $panels-h4-font-size;
+  }
+  h5 {
+    font-size: $panels-h5-font-size;
+  }
+  //default panel body & title
+  .header,
+  .body {
+    padding: $column-gutter;
+  }
+  .header {
+    > .title {
+      text-transform: uppercase;
+      padding: 0;
+      margin: 0;
     }
-    h1 {
-        font-size: $panels-h1-font-size;
+  }
+  .header.narrow {
+    padding: rem-calc(18);
+  }
+  .body {
+    border-top: 1px solid #eee;
+    &__subtitle{
+      padding: 0 0 $column-gutter;
     }
-    h4 {
-        font-size: $panels-h4-font-size;
+  }
+  [class^="panel"][class$="header"]{
+    @include border-radius($global-radius $global-radius 0 0);
+  }
+
+  //for addon panels
+  &--addon {
+    .header,
+    .body{
+      padding: rem-calc(20) $column-gutter;
     }
-    h5 {
-        font-size: $panels-h5-font-size;
-    }
-    //default panel body & title
-    &__title,
-    &__body {
-        padding: $column-gutter;
-    }
-    &__body{
-        border-top: 1px solid #eee;
-        &__subtitle{
-          padding: 0 0 $column-gutter;
-        }
-    }
-    [class^="panel"][class$="__title"]{
-        @include border-radius($global-radius $global-radius 0 0);
-    }
-    &__logo{
-      img {
-        max-width: rem-calc(120);
-        border-radius: rem-calc(60);
+    .header {
+      background: $panels-addon-title-bg-color;
+      > .title {
+        color: $panels-addon-title-color;
       }
     }
-    //for prelogin pages
-    &--extra {
-        &__title {
-            padding: $column-gutter*2 $column-gutter*2 $column-gutter $column-gutter*2;
-        }
+    .body{
+      padding-top: 0;
     }
-    &--extra {
-        &__body {
-            padding: $column-gutter $column-gutter*2 $column-gutter*2 $column-gutter*2;
-        }
+    .accordion__item-head{
+      margin: 0 (-$column-gutter);
     }
-    //for addon panels
-    &--addon {
-        &__title {
-            background: $panels-addon-title-bg-color;
-            h1, h2, h3, h4, h5, h6{
-                color: $panels-addon-title-color;
-            }
-        }
-        &__title,
-        &__body{
-            padding: rem-calc(20) $column-gutter;
-        }
-        &__body{
-            padding-top: 0;
-        }
-        .accordion__item__head{
-            margin: 0 (-$column-gutter);
-        }
-        .accordion__item__body{
-            .row:first-child{
-                margin-top: rem-calc(20);
-            }
-        }
+    .accordion__item-body{
+      .row:first-child{
+        margin-top: rem-calc(20);
+      }
     }
+  }
+
+  &__logo{
+    [class^='icon-'] {
+      display: inline-block;
+      width: rem-calc(120);
+      height: rem-calc(120);
+      line-height: rem-calc(120);
+      border-radius: rem-calc(120);
+      font-size: rem-calc(45);
+      color: $white;
+      background-color: $gray-lighter;
+
+      &:hover {
+        background-color: $gray-dark;
+      }
+    }
+
+    img {
+      max-width: rem-calc(120);
+      border-radius: rem-calc(60);
+    }
+  }
+  //for prelogin pages
+  &--extra {
+    &__title {
+      padding: $column-gutter*2 $column-gutter*2 $column-gutter $column-gutter*2;
+    }
+  }
+  &--extra {
+    &__body {
+      padding: $column-gutter $column-gutter*2 $column-gutter*2 $column-gutter*2;
+    }
+  }
+
+  //TODO: remove this after confirmed all using Panel component
+  //old scripts for addon panels
+  //for addon panels
+  &--addon {
+    &__title {
+      background: $panels-addon-title-bg-color;
+      h1, h2, h3, h4, h5, h6{
+        color: $panels-addon-title-color;
+      }
+    }
+    &__title,
+    &__body{
+      padding: rem-calc(20) $column-gutter;
+    }
+    &__body{
+      padding-top: 0;
+    }
+    .accordion__item-head{
+      margin: 0 (-$column-gutter);
+    }
+    .accordion__item-body{
+      .row:first-child{
+        margin-top: rem-calc(20);
+      }
+    }
+  }
 }

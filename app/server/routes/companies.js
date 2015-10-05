@@ -1,80 +1,123 @@
 import Q from 'q';
 import _ from 'lodash';
-import {Router} from 'express';
 
 import Controller from '../controllers/company';
 import Company    from '../../collections/company';
 import PortalUser from '../../collections/portalUser';
 
-var api = Router();
-var multipart = require('connect-multiparty')();
-var controller = new Controller();
+let controller = new Controller();
 
-api.get('/companies', function(req, res) {
+// '/companies'
+let list = function(req, res) {
   return controller.getCompanies(req, res);
-});
+};
 
-api.post('/companies', multipart, function(req, res) {
+// '/companies'
+let createProfile = function(req, res) {
   return controller.saveProfile(req, res);
-});
+};
 
-api.get('/companies/:carrierId/info', function(req, res) {
+// '/companies/parent'
+let getParents = function(req, res) {
+  return controller.getParentCompanies(req, res);
+};
+
+// '/companies/:carrierId/suspension'
+let deactivateCompany = function(req, res) {
+  return controller.deactivateCompany(req, res);
+};
+
+// .put('/companies/:carrierId/suspension',
+let reactivateCompany = function(req, res) {
+  return controller.reactivateCompany(req, res);
+};
+
+// '/companies/:carrierId/info'
+let getInfo = function(req, res) {
   return controller.getInfo(req, res);
-});
+};
 
-api.get('/companies/:carrierId/service', function(req, res) {
+// '/companies/:carrierId/service'
+let getService = function(req, res) {
   return controller.getApplications(req, res);
-});
+};
 
-api.get('/companies/:carrierId/applications', function(req, res) {
+// '/companies/:carrierId/applications'
+let getApplications = function(req, res) {
   return controller.getApplications(req, res);
-});
+};
 
-api.put('/companies/:carrierId/profile', multipart, function(req, res) {
+// '/companies/:carrierId/applicationIds'
+let getApplicationIds = function (req, res) {
+  return controller.getApplicationIds(req, res);
+};
+
+// '/companies/:carrierId/profile'
+let updateProfile = function (req, res) {
   return controller.saveProfile(req, res);
-});
+};
 
-api.put('/companies/:carrierId/service', multipart, function(req, res) {
+// '/companies/:carrierId/service'
+let saveService = function(req, res) {
   return controller.saveService(req, res);
-});
+};
 
-api.put('/companies/:carrierId/widget', multipart, function(req, res) {
+// '/companies/:carrierId/widget'
+let saveWidget = function(req, res) {
   return controller.saveWidget(req, res);
-});
+};
 
-//TODO maybe create another file for this
-api.get('/switcher/companies', function(req, res) {
-  req.checkQuery('userId').notEmpty();
+// '/application/companies'
+let getApplicationCompanies = function(req, res) {
+  let { user } = res.locals.user;
 
-  let userId = req.query.userId;
+  if (!user) {
+    return res.status(401).json({
+      error: 'missing parameter'
+    });
+  }
 
-  Q.ninvoke(PortalUser, 'findOne', { _id: userId })
+  Q.ninvoke(PortalUser, 'findOne', { _id: user })
     .then((user) => {
       if (!user) {
-        return res.status(401).json({ error: '' });
+        return res.status(401).json({
+          error: 'invalid identity'
+        });
       }
 
-      return Q.ninvoke(Company, 'find', {}, 'name carrierId logo status');
-    }).
-    then((companies)=> {
-      let _companies = [];
-
-      for (let key in companies) {
-        _companies[key] = _.merge(companies[key].toObject(), { role: companies[key].role, identity: companies[key].identity });
-
-        if (key == companies.length - 1) {
+      return Q.ninvoke(Company, 'getManagingCompany', user.affiliatedCompany)
+        .then((companies) => {
           return res.json({
-            companies: _companies
-          })
-        }
-      }
-    }).
-    catch(function(err) {
+            companies: _.reduce(companies, (result, company) => {
+              // to turn a mongoose document to object,
+              // and append the `virtual` field of `role` and `identity`
+              result.push(_.merge(company.toObject(), { role: company.role, identity: company.identity }));
+              return result;
+            }, [])
+          });
+        });
+    })
+    .catch(function(err) {
       if (err)
-        return res.status(err.status).json({
+        return res.status(err.status || 500).json({
           error: err
         });
-    });
-});
+    })
+    .done();
+};
 
-export default api;
+export {
+  getApplicationCompanies,
+  getApplications,
+  getApplicationIds,
+  getInfo,
+  getService,
+  list,
+  updateProfile,
+  saveService,
+  saveWidget,
+  createProfile,
+  getParents,
+  deactivateCompany,
+  reactivateCompany
+};

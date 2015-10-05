@@ -1,0 +1,30 @@
+@mixin triangle($direction: down, $color: #fff, $size: rem-calc(5)) {
+  width: 0;
+  height: 0;
+
+  @if $direction == up or $direction == down {
+    border-left: #{$size - 3}px solid transparent;
+    border-right: #{$size - 3}px solid transparent;
+  }
+
+  @if $direction == left or $direction == right {
+    border-top: #{$size - 3}px solid transparent;
+    border-bottom: #{$size - 3}px solid transparent;
+  }
+
+  @if $direction == up {
+    border-bottom: #{$size}px solid $color;
+  }
+
+  @else if $direction == down {
+    border-top: #{$size}px solid $color;
+  }
+
+  @else if $direction == left {
+    border-right: #{$size}px solid $color;
+  }
+
+  @else if $direction == right {
+    border-left: #{$size}px solid $color;
+  }
+}

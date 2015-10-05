@@ -16,6 +16,9 @@
       color: $brand-primary;
     }
   }
+  li {
+    margin: 0 !important;
+  }
   li:first-child{
     .button{
       border-left: 1px solid $gray-light !important;

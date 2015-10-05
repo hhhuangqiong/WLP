@@ -1,7 +1,11 @@
 'use strict';
+var Q = require('q');
 var mongoose = require('mongoose');
 var gridfs = require('./../server/utils/gridfs');
 var collectionName = 'Company';
+
+const ROOT_COMPANY_CARRIER_ID = 'm800';
+const SDK_DOMAIN = '.m800-api.com';
 
 var schema = new mongoose.Schema({
   parentCompany: {
@@ -18,7 +22,7 @@ var schema = new mongoose.Schema({
     unique: true
   },
 
-  // reflecting company type, either "Default" or "Reseller"
+  // reflecting Company Type, either "Default" or "Reseller"
   reseller: {
     type: Boolean
   },
@@ -51,10 +55,7 @@ var schema = new mongoose.Schema({
   expectedServiceDate: {
     type: Date
   },
-  customerType: {
-    type: String
-  },
-  contactNumber: {
+  contractNumber: {
     type: String
   },
   referenceNumber: {
@@ -177,13 +178,138 @@ schema.method('addLogo', function(filePath, options, cb) {
   });
 });
 
+/**
+ * @method activate
+ *
+ * @callback cb {Function}
+ * @param err {Object} error
+ * @param doc {Object} company payload
+ * @param doc.carrierId {String} company carrier id
+ * @param doc.status {String} company status
+ */
+schema.method('activate', function(cb) {
+  this.status = 'active';
+  return this.save(function(err, company) {
+    if (err)
+      throw err;
+
+    return cb(null, { carrierId: company.carrierId, status: company.status });
+  });
+});
+
+/**
+ * @method deactivate
+ *
+ * @callback cb {Function}
+ * @param err {Object} error
+ * @param doc {Object} company payload
+ * @param doc.carrierId {String} company carrier id
+ * @param doc.status {String} company status
+ */
+schema.method('deactivate', function(cb) {
+  this.status = 'inactive';
+  return this.save(function(err, company) {
+    if (err)
+      throw err;
+
+    return cb(null, { carrierId: company.carrierId, status: company.status });
+  });
+});
+
 schema.method('isRootCompany', function() {
-  return !this.parentCompany;
+  return this.carrierId === ROOT_COMPANY_CARRIER_ID;
+});
+
+schema.method('getCompanyType', function() {
+  if (this.isRootCompany()) {
+    return ROOT_COMPANY_CARRIER_ID;
+  } else if (this.reseller) {
+    return 'reseller';
+  } else if (this.isSDK()) {
+    return 'sdk';
+  } else {
+    return 'wl';
+  }
+});
+
+schema.static('getManagingCompany', function(parentCarrierId, cb) {
+  return Q.ninvoke(this, 'findOne', { _id: parentCarrierId })
+    .then((company) => {
+      if (!company)
+        throw new Error({
+          name: 'NotFound',
+          message: 'parent company does not exist'
+        });
+
+      // By default, finding only children companies
+      let criteria = { parentCompany: company._id };
+
+      // if the parent company is either m800 or maaii
+      // finding all existing companies except m800
+      if (company.isRootCompany() || company.carrierId === 'maaii.com' || company.carrierId === 'maaiii.org') {
+        criteria = { carrierId: { $ne: ROOT_COMPANY_CARRIER_ID } };
+      }
+
+      return Q.ninvoke(this, 'find', criteria)
+        .catch((err) => {
+          throw err;
+        });
+    })
+    .then((companies) => {
+      return cb(null, companies);
+    })
+    .catch((err) => {
+      return cb(err);
+    });
+});
+
+/**
+ * Returns the company which is having the specified carrierId.
+ *
+ * @method getCompanyByCarrierId
+ * @static
+ * @param {String} carrierId  The carrierId of the company
+ * @param {Function} cb  The node-style callback to be called when the process is done
+ */
+schema.static('getCompanyByCarrierId', function (carrierId, cb) {
+  Q.ninvoke(this, 'findOne', { carrierId: carrierId })
+    .then((company) => {
+      if (!company) {
+        throw new Error({
+          name: 'NotFound',
+          message: `Company with carrierId=${carrierId} does not exist`
+        });
+      }
+
+      cb(null, company);
+    })
+    .catch(cb)
+    .done();
+});
+
+/**
+ * Returns the ID of the company of the root user.
+ *
+ * @method getRootCompanyId
+ * @param {Function} cb  The node-style callback to be called when the process is done
+ */
+schema.static('getRootCompanyId', function (cb) {
+  this.getCompanyByCarrierId(ROOT_COMPANY_CARRIER_ID, (err, company) => {
+    if (err) {
+      cb(err);
+      return;
+    }
+
+    cb(null, company.id);
+  });
+});
+
+schema.method('isSDK', function() {
+  return this.carrierId.indexOf(SDK_DOMAIN) > -1;
 });
 
 schema.method('getServiceType', function() {
-  // regex pattern or indexOf?
-  return this.carrierId.indexOf('.m800-api.com') > -1 ? 'SDK' : 'WL';
+  return this.isSDK() ? 'SDK' : 'WL';
 });
 
 schema.method('getUrlPrefix', function() {

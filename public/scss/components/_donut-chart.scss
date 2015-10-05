@@ -1,0 +1,65 @@
+.donut-chart-panel {
+  &__donut-chart {
+    height: 160px;
+  }
+
+  &__legend {
+    margin-top: 1.7rem;
+  }
+}
+
+.donut-legend-item {
+  clear: both;
+  margin: auto;
+  margin-bottom: 1rem;
+  position: relative;
+
+  &:after {
+    content: " ";
+    display: block;
+    height: 0;
+    clear: both;
+  }
+
+  &__header {
+    color: #555;
+    float: left;
+    font-size: 0.85rem;
+    line-height: 2rem;
+    width: 75%;
+    min-height: 2rem;
+  }
+
+  &__percentage {
+    float: left;
+    font-size: 1.1rem;
+    width: 35%;
+  }
+
+  &__gauge {
+    float: left;
+    margin-right: 5%;
+    width: 60%;
+    height: 0.4rem;
+  }
+
+  &__value {
+    color: #777;
+    float: left;
+    font-size: 0.7rem;
+    line-height: 0.5rem;
+    width: 25%;
+  }
+}
+
+.horizontal-gauge {
+  @include border-radius(10px);
+  background-color: #D8D8D8;
+
+  &__bar {
+    @include border-radius(10px);
+    @include transition('width 0.5s');
+    background-color: #F00;
+    height: 100%;
+  }
+}

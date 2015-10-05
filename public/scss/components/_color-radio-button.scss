@@ -1,0 +1,13 @@
+.color-radio-button {
+  &.red {
+    @include color-radio-button(red);
+  }
+
+  &.green {
+    @include color-radio-button(green);
+  }
+
+  &.blue {
+    @include color-radio-button(blue);
+  }
+}

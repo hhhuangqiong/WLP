@@ -6,6 +6,7 @@
 @import 'vendors/foundation-settings';
 @import 'vendors/foundation';
 @import 'vendors/foundation-icons';
+@import 'vendors/react-select';
 
 //layouts
 @import 'layouts/common';
@@ -24,6 +25,7 @@
 @import 'components/buttons';
 @import 'components/button-groups';
 @import 'components/switches';
+@import 'components/color-radio-button';
 @import 'components/pagination';
 @import 'components/panels';
 @import 'components/tables';
@@ -34,6 +36,7 @@
 @import 'components/loading-spinner';
 @import 'components/calls-table';
 @import 'components/date-range-picker';
+@import 'components/time-frame-picker';
 @import 'components/react-tooltip';
 @import 'components/tooltips';
 @import 'components/field-set';
@@ -41,13 +44,15 @@
 @import 'components/widget';
 @import 'components/vsf-transaction';
 @import 'components/data-table';
-@import 'components/cdr-export';
+@import 'components/file-export';
 @import 'components/time-picker';
 @import 'components/react-modal';
 @import 'components/wallet-item';
 @import 'components/device-label';
 @import 'components/gender-label';
 @import 'components/overview';
+@import 'components/select-box';
+@import 'components/donut-chart';
 
 //page specific style
 @import 'pages/account';
@@ -55,6 +60,7 @@
 @import 'pages/signin';
 @import 'pages/calls';
 @import 'pages/im';
+@import 'pages/verification';
 
 //need to rework these items
 // @import 'layouts/sidebar';

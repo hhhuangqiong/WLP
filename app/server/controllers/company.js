@@ -1,32 +1,218 @@
-var _         = require('lodash');
-var fs        = require('fs');
-var Grid      = require('gridfs-stream');
-var logger    = require('winston');
-var mongoose  = require('mongoose');
-var Q         = require('q');
-var nconf     = require('nconf');
+import _ from 'lodash';
+import fs from 'fs';
+import Grid from 'gridfs-stream';
+import logger from 'winston';
+import mongoose from 'mongoose';
+import Q from 'q';
+import nconf from 'nconf';
+
+import config from '../../config';
 
 import {ApplicationRequest} from '../../lib/requests/Application';
 
-var Company   = require('../../collections/company');
-var PortalUser = require('../../collections/portalUser');
-
-var featureList = require('../../data/featureList.json');
+let Company   = require('../../collections/company');
+let PortalUser = require('../../collections/portalUser');
 
 export default class CompanyController {
   /**
-   * Deactivate an company with carrierId
+   * @method isRootUser
+   * to check if a given user is Root User
+   *
+   * @param username {String} username of PortalUser
+   * @param cb {Function} callback
+   */
+  isRootUser(username, cb) {
+    return Q.ninvoke(PortalUser, 'findOne', { username })
+      .then((user) => {
+        if (!user) {
+          return cb(new Error('insufficient privilege'));
+        }
+
+        return cb(null, user.isRoot);
+      })
+      .catch((err) => {
+        logger.error(err);
+        return cb(err);
+      });
+  }
+
+  /**
+   * @method isUserManagingCompany
+   * to check if a given user is managing the company
+   *
+   * @param username {String} username of PortalUser
+   * @param carrierId {String} carrier id
+   * @param cb {Function} callback
+   */
+  isUserManagingCompany(username, carrierId, cb) {
+    return Q.ninvoke(Company, 'findOne', { carrierId })
+      .then((company) => {
+        if (!company)
+          throw new Error('company not found');
+
+        return Q.ninvoke(PortalUser, 'findOne', { username, assignedCompanies: mongoose.Types.ObjectId(company._id) })
+          .then((user) => {
+            return cb(null, !!user);
+          })
+          .catch((err) => {
+            logger.error(err);
+          });
+      })
+      .catch((err) => {
+        logger.error(err);
+      });
+  }
+
+  /**
+   * @method isAllowForCarrier
+   * this is just a baseline checking, not comprehensive enough
+   *
+   * check if a given user is allowed to access the carrier
+   * if the user is Root User, then allowed
+   * if the user is managing the carrier, then allowed
+   * otherwise, not allowed
+   *
+   * @param username {String} username of PortalUser
+   * @param carrierId {String} carrier id
+   * @param cb {Function} callback
+   */
+  isAllowForCarrier(username, carrierId, cb) {
+    return Q.ninvoke(this, 'isRootUser', username)
+      .then((isRoot) => {
+        if (isRoot)
+          return cb(null, true);
+
+        return Q.ninvoke(this, 'isUserManagingCompany', username, carrierId)
+          .then((permitted) => {
+            return cb(null, permitted);
+          })
+          .catch((err) => {
+            return cb(err);
+          })
+          .done();
+      })
+      .catch((err) => {
+        logger.error(err);
+        return cb(err);
+      });
+  }
+
+  /**
+   * @method getCompanyByCarrierId
+   * @param carrierId {String} carrier id
+   * @param cb {Function} callback
+   */
+  getCompanyByCarrierId(carrierId, cb) {
+    if (!cb || typeof cb !== 'function')
+      throw new Error('callback is not a function');
+
+    return Q.ninvoke(Company, 'findOne', { carrierId })
+      .then((company) => {
+        if (!company) {
+          throw new Error('company not found');
+        }
+
+        cb(null, company);
+      })
+      .catch((err) => {
+        cb(err);
+      });
+  }
+
+  /**
+   * @method deactivateCompany
+   * Deactivate an company with a given carrierId
    *
    * @param req
    * @param res
    */
   deactivateCompany(req, res) {
-    var criteria = { _id: req.params.id, parentCompany: req.user.affiliatedCompany };
-    Q.ninvoke(Company, 'findOneAndUpdate', criteria, { status: 'inActive' }).then((result)=> {
-      this.fulfilled(res, result);
-    }).fail(function(error) {
-      this.rejected(res, error);
-    }).done();
+    let { username, affiliatedCompany } = req.user;
+    let { carrierId } = req.params;
+
+    let deactivateCompany = function(company) {
+      return Q.ninvoke(company, 'deactivate')
+        .then((result) => {
+          if (!result)
+            return res.status(500);
+
+          return res.status(200).json(result);
+        })
+        .catch((error) => {
+          logger.error(error);
+          return res.status(500);
+        });
+    };
+
+    Q.ninvoke(this, 'isAllowForCarrier', username, carrierId)
+      .then((permitted) => {
+        if (!permitted)
+          throw new Error('unauthorized');
+      })
+      .then(() => {
+        return Q.ninvoke(this, 'getCompanyByCarrierId', carrierId);
+      })
+      .then((company) => {
+        if (!company)
+          throw new Error('company not found');
+
+        return company;
+      })
+      .then(deactivateCompany)
+      .catch((err) => {
+        return res.status(500).json({
+          error: err
+        });
+      })
+      .done();
+  }
+
+  /**
+   * @method reactivateCompany
+   *
+   * @param req
+   * @param res
+   */
+  reactivateCompany(req, res) {
+    let { username, affiliatedCompany } = req.user;
+    let { carrierId } = req.params;
+
+    let reactivateCompany = function(company) {
+      return Q.ninvoke(company, 'activate')
+        .then((result) => {
+          if (!result)
+            return res.status(500);
+
+          return res.status(200).json(result);
+        })
+        .catch((error) => {
+          logger.error(error);
+          return res.status(500);
+        });
+    };
+
+    Q.ninvoke(this, 'isAllowForCarrier', username, carrierId)
+      .then((permitted) => {
+        if (!permitted)
+          throw new Error('unauthorized');
+      })
+      .then(() => {
+        return Q.ninvoke(this, 'getCompanyByCarrierId', carrierId);
+      })
+      .then((company) => {
+        if (!company)
+          throw new Error('company not found');
+
+        return company;
+      })
+      .then(reactivateCompany)
+      .catch((err) => {
+        logger.error(err);
+        return res.status(500).json({
+          error: err
+        });
+      })
+      .done();
   }
 
   /**
@@ -39,109 +225,80 @@ export default class CompanyController {
   getCompanies(req, res) {
     var criteria = this.getCriteria(req.params);
 
-    /**
-     * get applications and services by carrierId
-     *
-     * @param carrierId {String}
-     * @returns {Promise.<T>|*}
-     */
-    var getApplications = function(carrierId) {
-      let request = new ApplicationRequest({ baseUrl: nconf.get('mumsApi:baseUrl') });
-
-      return Q.allSettled([
-          Q.ninvoke(request, 'getApplications', carrierId),
-          Q.ninvoke(request, 'getApiService', carrierId)
-        ])
-        .spread((applications, services)=> {
-          let result = {
-            carrierId: carrierId,
-            applicationId: null,
-            developerKey: null,
-            developerSecret: null,
-            applications: {
-              ios: {},
-              android: {}
-            }
-          };
-
-          if (services.value) {
-            _.filter(services.value, function(service) {
-              if (service.type == 'API') {
-                _.merge(result, {
-                  developerKey: service.key,
-                  developerSecret: service.secret
-                });
-              }
-            });
-          }
-
-          if (applications.value) {
-            result.applicationId = applications.value.applicationId;
-
-            _.filter(applications.value.applications, function(application) {
-              if (application.platform.match(/.ios$/)) {
-                result.applications.ios = application;
-              } else if (application.platform.match(/.android$/)) {
-                result.applications.android = application;
-              }
-            });
-          }
-
-          return result;
-        })
-        .catch((error)=> {
-          logger.error(error);
-          return null;
-        })
-    };
-
     Q.ninvoke(Company, 'find', criteria)
       .then((companies)=> {
-        let actions = [];
 
         let _companies = _(companies).reduce(function(prev, current) {
           prev[current.carrierId] = current.toObject();
           return prev;
         }, {});
 
-        // Changed, we do lazy load now
-
-        //_.forEach(_companies, function(company, key) {
-        //  actions.push(getApplications(_companies[key].carrierId));
-        //});
-
-        return Q.allSettled(actions).then((results)=> {
-
-          //results.forEach(function (result) {
-          //  if (result.state === "fulfilled") {
-          //    _.merge(_companies[result.value.carrierId], {
-          //      serviceConfig: {
-          //        applicationId: result.value.applicationId,
-          //        developerKey: result.value.developerKey,
-          //        developerSecret: result.value.developerSecret,
-          //        applications: result.value.applications
-          //      }
-          //    });
-          //  }
-          //});
-
-          return _companies;
-        })
-        .then((companies)=> {
-          return res.status(200).json({
-            companies: companies
-          })
-        })
-        .catch((error)=> {
-          throw error;
-        });
+        return _companies;
       })
-      .catch((err)=> {
+      .then((companies) => {
+        return res.status(200).json({
+          companies: companies
+        })
+      })
+      .catch((err) => {
         logger.error(err);
         return res.status(err.status).json({
           error: err
         });
       })
+      .done();
+  };
+
+  /**
+   * @method getParentCompanies
+   * get parent companies
+   * allowed only for M800 user
+   */
+  getParentCompanies(req, res) {
+    var hasPermission = function(user, cb) {
+      logger.debug('checking permission for user %j', user, {});
+
+      // Check if is Root
+      if (user.isRoot) {
+        return cb(null, true);
+      }
+
+      // Check if is M800 user
+      return Q.ninvoke(Company, 'findOne', {
+        _id: user.affiliatedCompany,
+        name: 'm800'
+      }).then((company)=> {
+        return cb(null, !!company);
+      }).catch((err) => {
+        return cb(err);
+      });
+    };
+
+    Q.nfcall(hasPermission, req.user)
+      .then((allowed) => {
+        if (!allowed)
+          throw new Error('permission denied');
+
+        return Q.ninvoke(Company, 'find', {
+          $or: [
+            { parentCompany: null },
+            { reseller: true }
+          ]
+        }, '_id name').then((companies) => {
+          return res.status(200).json({
+            companies: companies
+          });
+        });
+      })
+      .catch((err) => {
+        logger.error(err);
+        return res.status(err.status || 500).json({
+          error: {
+            message: err.message
+          }
+        });
+      })
+      .done();
   };
 
   // By Kareem and is not reviewed yet
@@ -166,19 +323,8 @@ export default class CompanyController {
     return criteria;
   };
 
-  // By Kareem and is not reviewed yet
-  fulfilled(res, result) {
-    res.json({ result: result });
-  };
-
-  // By Kareem and is not reviewed yet
-  rejected(res, error) {
-    logger.error('Error while processing Request : %j ', error, {});
-    res.json({ result: {} });
-  };
-
   /**
-   * Check if the to-be-updated Company is assigned to the current PortalUser
+   * Check if the given company is assigned to the current PortalUser
    * if so, the user is with permission to update
    *
    * @param user {Object} User Object from Passport
@@ -199,11 +345,16 @@ export default class CompanyController {
     }
 
     return Q.ninvoke(PortalUser, 'findOne', {
-      _id: user._id,
-      assignedCompanies: {
-        $in: [companyId]
-      }
-    })
+        _id: user._id,
+        assignedCompanies: {
+          $in: [companyId]
+        }
+      })
+      .catch((err) => {
+        logger.error(err);
+        cb(err);
+        return;
+      });
   };
 
   saveProfile(req, res) {
@@ -211,17 +362,21 @@ export default class CompanyController {
     //req.checkBody('carrierId').notEmpty();
 
     /**
+     * @method validateCarrierId
      * Check if the carrierId is valid via Provisioning Api
      *
      * @param params {Object} payload object
      * @returns {*|promise} return provisioning data
      */
     var validateCarrierId = function(params) {
-      var deferred = Q.defer();
-      setTimeout(function() {
-        return deferred.resolve(params);
-      }, 500);
-      return deferred.promise;
+      let request = new ApplicationRequest({ baseUrl: nconf.get('mumsApi:baseUrl'), timeout: nconf.get('mumsApi:timeout') });
+      return Q.ninvoke(request, 'validateCarrier', params.carrierId)
+        .then((isValid) => {
+          if (!isValid)
+            throw new Error('invalid carrier id');
+
+          return params;
+        });
     };
 
     /**
@@ -231,27 +386,41 @@ export default class CompanyController {
      * @returns {*|promise} return a normalized payload object
      */
     var normalizeParams = _.bind(function(provisioningData) {
-      var params = _.assign(this.data, provisioningData);
-      params.businessContact = {
-        name: this.data['bc-name'],
-        email: this.data['bc-email'],
-        phone: this.data['bc-phone']
-      };
-      params.technicalContact = {
-        name: this.data['tc-name'],
-        email: this.data['tc-email'],
-        phone: this.data['tc-phone']
-      };
-      params.supportContact = {
-        name: this.data['sc-name'],
-        email: this.data['sc-email'],
-        phone: this.data['sc-phone']
-      };
-      params.createBy = params.updateBy = req.user._id;
-      params.createAt = params.updateAt = new Date();
+      var params = _.assign({
+        name: this.data.companyName,
+        carrierId: this.data.carrierId,
+        reseller: this.data.reseller,
+        address: this.data.address,
+        categoryID: this.data.categoryId,
+        country: this.data.country,
+        timezone: this.data.timezone,
+        accountManager: this.data.accountManager,
+        billCode: this.data.billCode,
+        expectedServiceDate: this.data.expectedServiceData,
+        businessContact: {
+          name: this.data.bcName,
+          email: this.data.bcEmail,
+          phone: this.data.bcPhone
+        },
+        technicalContact: {
+          name: this.data.tcName,
+          email: this.data.tcEmail,
+          phone: this.data.tcPhone
+        },
+        supportContact: {
+          name: this.data.scName,
+          email: this.data.scEmail,
+          phone: this.data.scPhone
+        },
+        createBy: req.user._id,
+        createAt: new Date(),
+        updateBy: req.user._id,
+        updateAt: new Date()
+      }, provisioningData);
 
-      // should pick what is needed rather than omitting
-      _.omit(params, 'bc-name', 'bc-email', 'bc-phone', 'bc-name', 'tc-email', 'tc-phone', 'tc-name', 'sc-email', 'sc-phone');
+      // if logo is not uploaded, this.data.logo will not exist
+      // do not overwrite logo if logo is not uploaded
+      _.merge(params, { logo: this.data.logo });
 
       //params.parentCompany = req.user.affiliatedCompany;
       return params;
@@ -342,24 +511,26 @@ export default class CompanyController {
     // TODO handle auto provisioning flow in later phrase
     validateCarrierId(req.body)
       .then(normalizeParams)
-      .then((params)=> {
+      .then((params) => {
         return Q.nfcall(uploadImage, params);
       })
-      .then((params)=> {
+      .then((params) => {
         return Q.nfcall(unlinkImage, params);
       })
       .then(saveCompany)
-      .then((company)=> {
+      .then((company) => {
         res.status(200).json({
-          company: company
+          company: company,
+          carrierId: req.params.carrierId
         })
       })
-      .catch((err)=> {
+      .catch((err) => {
         logger.error(err);
         res.status(err.code || 500).json({
           error: err
         })
-      });
+      })
+      .done();
   };
 
   saveService(req, res) {
@@ -370,7 +541,7 @@ export default class CompanyController {
      * @returns {String} Company service type ('WL'||'SDK')
      */
     var getCompanyServiceType = _.bind(function() {
-      return Q.ninvoke(Company, 'findOne', {_id: this._id})
+      return Q.ninvoke(Company, 'findOne', { _id: this._id })
         .then((company)=> {
           if (!company) throw new Error('company does not exist');
           return company.getServiceType().toLowerCase();
@@ -378,7 +549,7 @@ export default class CompanyController {
         .catch((err)=> {
           throw new Error(err);
         });
-    }, {_id: req.body._id});
+    }, { _id: req.body._id });
 
     /**
      * Construct the payload for updating Company Model
@@ -390,41 +561,29 @@ export default class CompanyController {
      */
     var normalizeParams = _.bind(function(serviceType) {
       let params = this.params;
-      let features = {};
-
-      _.forEach(featureList[serviceType], function(feature, key) {
-        if (_.first(Object.keys(feature)).toLowerCase() != 'label') {
-          _.forEach(feature, function(subFeature, subKey) {
-            _.merge(features, {[subKey]: params[subKey] == 'on' ? true : false});
-          });
-        } else {
-          _.merge(features, {[key]: params[key] == 'on' ? true : false});
-        }
-      });
 
       let payload = {
         serviceConfig: {
           applications: {
             ios: {
-              name: params['ios-application-name']
+              name: params.iOSApplicationName
             },
             android: {
-              name: params['android-application-name']
+              name: params.androidApplicationName
             }
           }
         },
-        features: features,
         updateAt: params.updateAt,
         updateBy: params.updateBy
       };
 
       return payload;
-    }, {params: req.body});
+    }, { params: req.body });
 
     var saveCompany = _.bind(function(payload) {
       logger.debug('updating company service with payload %j', payload, {});
-      return Q.ninvoke(Company, 'findOneAndUpdate', {_id: this._id}, {$set: payload}, {new: true});
-    }, {_id: req.body._id});
+      return Q.ninvoke(Company, 'findOneAndUpdate', { _id: this._id }, { $set: payload }, { new: true });
+    }, { _id: req.body._id });
 
     Q.ninvoke(this, 'checkPermission', req.user, req.body._id)
       .then((user)=> {
@@ -437,8 +596,9 @@ export default class CompanyController {
       .then(normalizeParams)
       .then(saveCompany)
       .then((company)=> {
-        res.status(200).json({
-          company: company
+        return res.status(200).json({
+          company: company,
+          carrierId: req.params.carrierId
         });
       })
       .catch((err)=> {
@@ -447,6 +607,7 @@ export default class CompanyController {
           error: err
         });
       })
+      .done();
   };
 
   saveWidget(req, res) {
@@ -462,56 +623,22 @@ export default class CompanyController {
 
       logger.debug('updating company widget with payload %j', params, {});
 
-      params.updateBy = req.user._id;
-      params.updateAt = new Date();
+      let { WIDGETS: sections } = config;
+      let widgetPayload = {};
 
-      // forgive me making this verbose at this moment
+      _.map(sections, ({ NUMBER_OF_WIDGETS: numberOfWidgets }, key) => {
+        let section = key.toLowerCase();
+        widgetPayload[section] = [];
+        for (let i = 0; i < numberOfWidgets; i++) {
+          widgetPayload[section].push(params[`${section}-widget-${i}`]);
+        }
+      });
+
       return Q.ninvoke(Company, 'findOneAndUpdate', {_id: params._id}, {
         $set: {
-          widgets: {
-            overview: [
-              params['overview-widget-1'],
-              params['overview-widget-2'],
-              params['overview-widget-3'],
-              params['overview-widget-4'],
-              params['overview-widget-5'],
-              params['overview-widget-6']
-            ],
-            stores: [
-              params['stores-widget-1'],
-              params['stores-widget-2'],
-              params['stores-widget-3'],
-              params['stores-widget-4'],
-              params['stores-widget-5'],
-              params['stores-widget-6']
-            ],
-            calls: [
-              params['calls-widget-1'],
-              params['calls-widget-2'],
-              params['calls-widget-3'],
-              params['calls-widget-4'],
-              params['calls-widget-5'],
-              params['calls-widget-6']
-            ],
-            im: [
-              params['im-widget-1'],
-              params['im-widget-2'],
-              params['im-widget-3'],
-              params['im-widget-4'],
-              params['im-widget-5'],
-              params['im-widget-6']
-            ],
-            sms: [
-              params['sms-widget-1'],
-              params['sms-widget-2'],
-              params['sms-widget-3'],
-              params['sms-widget-4'],
-              params['sms-widget-5'],
-              params['sms-widget-6']
-            ]
-          },
-          updateAt: params.updateAt,
-          updateBy: params.updateBy
+          widgets: widgetPayload,
+          updateAt: new Date(),
+          updateBy: req.user._id
         }
       }, {new: true});
     }, {params: req.body});
@@ -535,28 +662,162 @@ export default class CompanyController {
           error: err
         });
       })
+      .done();
   };
+
+  /**
+   * Checks if the user having the specified userId can access the application information.
+   *
+   * This function essentially returns true if the user is having company M800
+   * and is under the group `admin`, `root`, or `dev`.
+   *
+   * @method
+   * @param {String} userId  The user ID
+   * @returns {Promise.<boolean>} True if the user can access, false otherwise
+   * @throws {Promise.<Error>} If anything goes wrong
+   */
+  canAccessApplicationInformation(userId) {
+    let hasPermission = function (companyId) {
+      // besides Root and M800 Admin, M800 Dev is the only role
+      // who has permission to edit, and hence, to fetch the Company applications
+      let isM800AdminOrDev = function () {
+        return Q.ninvoke(PortalUser, 'find', {
+          _id: userId,
+          affiliatedCompany: companyId,
+          assignedGroup: {
+            $in: ['admin', 'root', 'dev']
+          }
+        }).then((user) => {
+          return !!user;
+        });
+      };
+
+      return isM800AdminOrDev();
+    };
+
+    return Q.ninvoke(Company, 'getRootCompanyId')
+      .then(hasPermission);
+  };
+
+  /**
+   * Creates an error object which can be used as a response to the client.
+   * This function is basically a copy of lib/requests/Base#handleError.
+   *
+   * @method
+   * @param {Object} err  The error object from superagent
+   * @returns {Error} The error object for response
+   */
+  createResponseError(err) {
+    let error = new Error(err.message);
+
+    if (err.timeout) {
+      error.status = 504;
+      error.timeout = err.timeout;
+      return error;
+    }
+
+    error.status = err.status || 500;
+    error.code = err.code;
+    return error;
+  }
+
+  /**
+   * Acquire the application ID's with carrierId.
+   * The `carrierId` must be embedded in the request object's params.
+   * The `userId` must be embedded in the request object's query.
+   *
+   * @method
+   * @param {Request} req  The node request object
+   * @param {Response} res  The node response object
+   */
+  getApplicationIds(req, res) {
+    req.checkParams('carrierId').notEmpty();
+    req.checkQuery('userId').notEmpty();
+
+    if (req.validationErrors()) {
+      return res.status(400).json({
+        error: new Error('missing query parameter `userId`')
+      });
+    };
+
+    let userId = req.query.userId;
+    let carrierId = req.params.carrierId;
+
+    let makeApiRequest = _.partial(function (carrierId) {
+      let request = new ApplicationRequest({
+        baseUrl: nconf.get('mumsApi:baseUrl'),
+        timeout: nconf.get('mumsApi:timeout')
+      });
+
+      return Q.ninvoke(request, 'getApplications', carrierId);
+    }, carrierId);
+
+    this.canAccessApplicationInformation(userId)
+      .then((isPermitted) => {
+        if (!isPermitted) {
+          res.status(401).json({
+            error: new Error('unauthorized user')
+          });
+          return;
+        }
+
+        return makeApiRequest()
+          .then((result) => {
+            // result can be an object or array depends on the number of applications
+            // object if 1, array if multiple
+            // therefore we unify the structure here to array
+            if (!_.isArray(result)) {
+              result = [result];
+            }
+
+            let appIds = [];
+            _.forEach(result, (app) => {
+              appIds.push(app.applicationId);
+            });
+
+            res.status(200).json(appIds);
+          })
+          .catch((err) => {
+            logger.error(err);
+            let error = this.createResponseError(_.get(err, 'response.body.error') || err);
+
+            res.status(error.status).json({
+              error: error
+            });
+          });
+      })
+      .catch((err) => {
+        logger.error(err);
+
+        res.status(500).json({
+          error: err
+        });
+      })
+      .done();
+  }
 
   /**
    * Acquire the application service configs with carrierId
    *
-   * @param company {Object} normalized payload
-   * @returns {*|promise} return a payload merged with application configs
+   * @method
+   * @param {Request} req  The node request object
+   * @param {Response} res  The node response object
    */
   getApplications(req, res) {
     req.checkParams('carrierId').notEmpty();
     req.checkQuery('userId').notEmpty();
 
     if (req.validationErrors()) {
-      return res.status(400);
+      return res.status(400).json({
+        error: new Error('missing query parameter `userId`')
+      });
     };
 
     let userId = req.query.userId;
     let carrierId = req.params.carrierId;
 
-    var makeApiRequest = _.bind(function() {
+    let makeApiRequest = _.partial(function(carrierId) {
       let request = new ApplicationRequest({ baseUrl: nconf.get('mumsApi:baseUrl'), timeout: nconf.get('mumsApi:timeout') });
-      let carrierId = this.carrierId;
 
       return Q.allSettled([
           Q.ninvoke(request, 'getApplications', carrierId),
@@ -601,61 +862,34 @@ export default class CompanyController {
         .catch((error)=> {
           logger.error(error);
           return null;
-        })
-    }, { carrierId: carrierId });
-
-    var hasPermission = function(user, cb) {
-      logger.debug('checking permission for user %j', user, {});
-
-      // Root and M800 Admin has same permission here
-      if (user.isRoot) {
-        return cb(null, true);
-      }
-
-      // besides Root and M800 Admin, M800 Dev is the only role
-      // who has permission to edit, and hence, to fetch the Company applications
-      var isM800AdminOrDev = function() {
-        Q.ninvoke(PortalUser, 'findOne', {
-          _id: user._id,
-          affiliatedCompany: 'M800',
-          assignedGroup: {
-            $or: ['admin', 'dev']
-          }
-        }).then((company)=> {
-          return cb(null, !!company);
-        }).catch((error)=> {
-          throw error;
         });
-      };
+    }, carrierId);
 
-      isM800AdminOrDev();
-    };
-
-    Q.ninvoke(PortalUser, 'findOne', { _id: userId })
-      .then((user)=> {
-        if (!user) {
-          res.status(401);
-        };
-
-        return Q.nfcall(hasPermission, user);
-      })
-      .then((isPermitted)=> {
+    this.canAccessApplicationInformation(userId)
+      .then((isPermitted) => {
         if (!isPermitted) {
-          res.status(401);
+          res.status(401).json({
+            error: new Error('unauthorized user')
+          });
+          return;
         }
+
+        return makeApiRequest()
+          .then((result) => {
+            res.status(200).json({
+              services: result,
+              carrierId: req.params.carrierId
+            });
+          });
       })
-      .then(makeApiRequest)
-      .then((result)=> {
-        res.status(200).json({
-          services: result
-        });
-      })
-      .catch((err)=> {
+      .catch((err) => {
         logger.error(err);
+
         res.status(500).json({
           error: err
         });
-      });
+      })
+      .done();
   }
 
   getInfo(req, res) {
@@ -678,6 +912,7 @@ export default class CompanyController {
         res.status(err.status).json({
           error: err
         });
-      });
+      })
+      .done();
   }
 }

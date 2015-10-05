@@ -1,0 +1,20 @@
+.time-frame-picker {
+  $border-color: #D17273;
+
+  margin-top: rem-calc(15);
+  border-radius: rem-calc(5);
+
+  border: 1px solid $border-color;
+
+  span {
+    cursor: pointer;
+    color: $border-color;
+
+    margin: rem-calc(20);
+    font-size: rem-calc(15);
+
+    &:hover, &.active {
+      color: white;
+    }
+  }
+}

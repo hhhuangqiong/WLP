@@ -1,10 +1,10 @@
 'use strict';
 
-var Api = require('../Api');
-var AuthStore = require('../stores/AuthStore');
-var env = require('./env');
-var url = require('./url');
-var sessionDebug = require('debug')('app:sessionFlow');
+let Api = require('../Api');
+let AuthStore = require('../stores/AuthStore');
+let env = require('./env');
+let url = require('./url');
+let sessionDebug = require('debug')('app:sessionFlow');
 
 module.exports = {
   name: 'ApiPlugin',
@@ -29,10 +29,6 @@ module.exports = {
 
           getToken: function() {
             return actionContext.getStore(AuthStore).getToken();
-          },
-
-          getUserId: function() {
-            return actionContext.getStore(AuthStore).getUserId();
           }
         });
       }

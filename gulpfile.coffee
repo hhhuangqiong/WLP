@@ -2,6 +2,9 @@
 
 console.time 'Loading plugins'
 
+# allow using gulp to run mocha test using es6's way
+require 'babel/register'
+
 autoprefixer     = require 'gulp-autoprefixer'
 babel            = require 'gulp-babel'
 del              = require 'del'
@@ -48,7 +51,7 @@ gulp.task 'test', (cb) ->
     .pipe istanbul()
     .pipe istanbul.hookRequire()
     .on 'finish', ->
-      gulp.src ['test/unit/**/*.coffee', 'test/unit/**/*.js']
+      gulp.src ['test/unit/**/*.coffee', 'test/unit/**/*.js', 'test/scss/**/*.js']
         .pipe mocha()
         .pipe istanbul.writeReports({ dir: "#{dest.build}/coverage" })
         .on 'end', cb
@@ -145,6 +148,8 @@ gulp.task 'webpack', (cb)->
     .pipe gulp.dest('public/javascript/')
 
 gulp.task "webpack-dev-server", ['scss', 'webpack'], (callback) ->
+  return callback() if env != 'development'
+
   hotLoadPort = webpackConfig.custom.hotLoadPort
   devServer = new WebpackDevServer(webpack(webpackConfig),
     # 'redirect loop' occurs if using 'http://<host>:<hotLoadPort>'

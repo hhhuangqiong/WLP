@@ -6,8 +6,11 @@ import makeRedisClient from './redis';
 import ensureAuthenticated from '../middlewares/ensureAuthenticated';
 import {SignUp} from '../../lib/portal/SignUp';
 
+import mongoose from 'mongoose';
+import NodeAcl from 'acl';
+
 /**
- * Initalize the IoC containero
+ * Initialize the IoC container
  * The registered factory(s) seems to be lazied loaded.
  *
  * @param {*} nconf nconf instance
@@ -55,6 +58,7 @@ export default function init(nconf) {
   ioc.constant('DATAPROVIDER_API_TIMEOUT', nconf.get('dataProviderApi:timeout'));
   ioc.service('CallsRequest', require('../../lib/requests/dataProviders/Call'), 'DATAPROVIDER_API_BASE_URL', 'DATAPROVIDER_API_TIMEOUT');
   ioc.service('ImRequest', require('../../lib/requests/dataProviders/Im'), 'DATAPROVIDER_API_BASE_URL', 'DATAPROVIDER_API_TIMEOUT');
+  ioc.service('VerificationRequest', require('../../lib/requests/dataProviders/Verification'), 'DATAPROVIDER_API_BASE_URL', 'DATAPROVIDER_API_TIMEOUT');
 
   ioc.constant('MUMS_API_BASE_URL', nconf.get('mumsApi:baseUrl'));
   ioc.constant('MUMS_API_TIMEOUT', nconf.get('mumsApi:timeout'));
@@ -71,6 +75,17 @@ export default function init(nconf) {
 
   ioc.service('RedisClient', (container) => {
     return makeRedisClient(nconf.get('redis'));
+  });
+
+  ioc.factory('ACL', (container) => {
+    return new NodeAcl(new NodeAcl.mongodbBackend(mongoose.connection.db));
+  });
+
+  ioc.factory('ACLManager', (container) => {
+    var AclManager = require('../../main/acl');
+    var carrierQuerier = require('../../main/acl/carrierQueryService');
+    var nodeAcl = container.ACL;
+    return new AclManager(nodeAcl, carrierQuerier);
   });
 
   return ioc;

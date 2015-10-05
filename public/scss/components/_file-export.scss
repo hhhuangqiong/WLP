@@ -1,0 +1,129 @@
+$control-width: 250px;
+$positioning: -150px;
+
+.export-modal {
+  background-color: white;
+  width: 580px;
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: 150px;
+  padding: 15px;
+}
+
+.export-datetime-picker {
+  color: white;
+  background-color: $brand-primary;
+  width: $control-width;
+  margin: 0 !important;
+  margin-left: $positioning !important;
+}
+
+.export-countries-dropdown {
+  border-radius: rem-calc(14);
+  border: 1px solid $gray-light !important;
+  width: $control-width !important;
+  margin-left: $positioning;
+}
+
+.export-type-buttons {
+  margin-left: $positioning;
+  margin-bottom: -10px;
+  width: $control-width !important;
+}
+
+.export-submit-buttons {
+  margin-bottom: -20px;
+
+  .extra-space {
+    display:inline-block;
+    width: 30px;
+  }
+}
+
+.export-form-row-padding {
+  margin-bottom: 15px;
+}
+
+.export-loading-button {
+  background-color: $brand-primary;
+  min-width: 180px !important;
+}
+
+.export-loading-text {
+  color: white;
+  font-size: 14px;
+  cursor: default;
+  margin-left: -20px;
+  margin-right: -10px;
+}
+
+.export-failure-text {
+  color: white;
+  font-size: 14px;
+  cursor: default;
+}
+
+.export-download-button {
+  width: auto;
+  height: rem-calc(28);
+  line-height: rem-calc(26);
+  margin: rem-calc(16) 0 0 0;
+  padding: 0 rem-calc(15);
+  border-radius: rem-calc(14);
+  border: 1px solid #bbb;
+  color: white;
+  cursor: pointer;
+
+  .icon-download {
+    color: inherit !important;
+    line-height: inherit !important;
+    padding: 0 rem-calc(5);
+  }
+}
+
+/* IE9 and IE10 hack for positioning */
+@media screen and (min-width:0\0) {
+    .export-ie-fix {
+      position: relative !important;
+      top: 0px !important;
+    }
+}
+
+.export-panel {
+  /* CDR Loading Spinner */
+  @keyframes spinner {
+    to {transform: rotate(360deg);}
+  }
+
+  @-webkit-keyframes spinner {
+    to {-webkit-transform: rotate(360deg);}
+  }
+
+  .spinner {
+    min-width: 24px;
+    min-height: 24px;
+    cursor: default;
+  }
+
+  .spinner:before {
+    content: 'Loading…';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 20px;
+    height: 20px;
+    margin-top: -10px;
+    margin-left: -10px;
+  }
+
+  .spinner:not(:required):before {
+    content: '';
+    border-radius: 50%;
+    border: 1px solid #f6f;
+    border-top-color: #0e0;
+    border-right-color: #0dd;
+    border-bottom-color: #f90;
+    animation: spinner .6s linear infinite;
+    -webkit-animation: spinner .6s linear infinite;
+  }
+}

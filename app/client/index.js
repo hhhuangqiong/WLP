@@ -1,10 +1,12 @@
-var React = require('react');
-var Router = require('react-router');
+import _ from 'lodash';
+import React from 'react';
+import Router from 'react-router';
 
-var FluxibleComponent = require('fluxible/addons/FluxibleComponent');
+import FluxibleComponent from 'fluxible/addons/FluxibleComponent';
 
-var env = require('../utils/env');
-var debug = require('debug');
+import * as env from '../utils/env';
+
+let debug = require('debug');
 
 // make it disabled in default
 debug.disable();
@@ -17,18 +19,18 @@ if (env.isDev()) {
   debug.enable('*');
 }
 
-var bootstrapDebug = debug('app:client');
+let bootstrapDebug = debug('app:client');
 
 // TODO rename the file as 'app'
-var app = require('../index');
-var routes = require('../routes');
-var fetchData = require('../utils/fetchData');
-var loadSession = require('../actions/loadSession');
+import app from '../index';
+import routes from '../routes';
+import fetchData from '../utils/fetchData';
+import loadSession from '../actions/loadSession';
 
 window.React = React; // For chrome dev tool support
 
-var mountNode = document.getElementById('app');
-var dehydratedState = window.__DATA__;
+let mountNode = document.getElementById('app');
+let dehydratedState = window.__DATA__;
 
 function render(context, Handler) {
   React.render(React.createElement(
@@ -39,7 +41,7 @@ function render(context, Handler) {
 }
 
 function createAppRouter(context) {
-  var router = Router.create({
+  let router = Router.create({
     routes: routes,
     location: Router.HistoryLocation,
     transitionContext: context
@@ -48,16 +50,33 @@ function createAppRouter(context) {
   return router;
 }
 
+function startApp(firstRender, context, Handler, routerState, toggleFirstRender) {
+  // If first render, we already have all the data rehydrated so skip fetch
+  if (firstRender) {
+    bootstrapDebug('First render, skipping data fetch');
+    render(context, Handler);
+    toggleFirstRender();
+    return;
+  }
+
+  // On the client, we render the route change immediately
+  // and fetch data in the background
+  // (stores will update and trigger a re-render with new data)
+  render(context, Handler);
+  fetchData(context, routerState);
+  return;
+}
+
 if (!dehydratedState) {
   bootstrapDebug('Isomorphism disabled, creating new context');
-  var config = window.__CONFIG__;
-  var context = app.createContext({config: config});
+  const config = window.__CONFIG__;
+  let context = app.createContext({config: config});
 
   // For debugging
   window.context = context;
   bootstrapDebug('Loading session');
   context.getActionContext().executeAction(loadSession, {}, function() {
-    var router = createAppRouter(context);
+    let router = createAppRouter(context);
     bootstrapDebug('Starting router');
     router.run(function(Handler, routerState) {
       render(context, Handler);
@@ -74,23 +93,33 @@ if (!dehydratedState) {
     // For debugging
     window.context = context;
 
-    var router = createAppRouter(context);
-    var firstRender = true;
-    bootstrapDebug('Starting router');
-    router.run(function(Handler, routerState) {
-      // If first render, we already have all the data rehydrated so skip fetch
-      if (firstRender) {
-        bootstrapDebug('First render, skipping data fetch');
-        firstRender = false;
-        render(context, Handler);
-        return;
-      }
+    let AuthStore = require('../stores/AuthStore');
+    let getAuthorityList = require('../main/authority/actions/getAuthorityList');
+    let router = createAppRouter(context);
+    let firstRender = true;
 
-      // On the client, we render the route change immediately
-      // and fetch data in the background
-      // (stores will update and trigger a re-render with new data)
-      render(context, Handler);
-      fetchData(context, routerState);
+    bootstrapDebug('Starting router');
+
+    router.run(function(Handler, routerState) {
+      // TODO: prepare the authority plugin on server side
+      let isAuthenticated = context.getStore(AuthStore).isAuthenticated();
+      let authority = context.getComponentContext().getAuthority();
+      if (isAuthenticated && _.isNull(authority.getCarrierId())) {
+        context.executeAction(getAuthorityList, context.getStore(AuthStore).getCarrierId(), function(err) {
+          if (err) {
+            router.transitionTo('/error/internal-server-error');
+            return;
+          }
+
+          startApp(firstRender, context, Handler, routerState, function() {
+            firstRender = false;
+          });
+        })
+      } else {
+        startApp(firstRender, context, Handler, routerState, function() {
+          firstRender = false;
+        });
+      }
     });
   });
 }

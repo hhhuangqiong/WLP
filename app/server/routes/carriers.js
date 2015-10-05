@@ -1,24 +1,21 @@
 import _ from 'lodash';
 import Q from 'q';
-import express from 'express';
 import nconf from 'nconf';
 import moment from 'moment';
 
 import { fetchDep } from '../utils/bottle';
 
-var endUserRequest = fetchDep(nconf.get('containerName'), 'EndUserRequest');
-var walletRequest  = fetchDep(nconf.get('containerName'), 'WalletRequest');
-var callsRequest   = fetchDep(nconf.get('containerName'), 'CallsRequest');
-var topUpRequest   = fetchDep(nconf.get('containerName'), 'TopUpRequest');
-var imRequest   = fetchDep(nconf.get('containerName'), 'ImRequest');
-var vsfRequest   = fetchDep(nconf.get('containerName'), 'VSFTransactionRequest');
+var endUserRequest      = fetchDep(nconf.get('containerName'), 'EndUserRequest');
+var walletRequest       = fetchDep(nconf.get('containerName'), 'WalletRequest');
+var callsRequest        = fetchDep(nconf.get('containerName'), 'CallsRequest');
+var topUpRequest        = fetchDep(nconf.get('containerName'), 'TopUpRequest');
+var imRequest           = fetchDep(nconf.get('containerName'), 'ImRequest');
+var vsfRequest          = fetchDep(nconf.get('containerName'), 'VSFTransactionRequest');
+var verificationRequest = fetchDep(nconf.get('containerName'), 'VerificationRequest');
 
 import SmsRequest from '../../lib/requests/SMS';
-
 import PortalUser from '../../collections/portalUser';
-import Company from '../../collections/company';
-
-var api = express.Router();
+import Company    from '../../collections/company';
 
 function prepareWildcard(search) {
   if (!search)
@@ -37,7 +34,8 @@ function prepareWildcard(search) {
   return '*' + search.trim() + '*';
 }
 
-api.get('/carriers/:carrierId/users', function(req, res) {
+// '/carriers/:carrierId/users'
+let getUsers = function(req, res) {
   req.checkParams('carrierId').notEmpty();
   req.checkQuery('fromTime').notEmpty();
   req.checkQuery('toTime').notEmpty();
@@ -56,11 +54,6 @@ api.get('/carriers/:carrierId/users', function(req, res) {
     return !moment(queries.startDate, dateFormat).isValid() || !moment(queries.endDate, dateFormat).isValid();
   };
 
-  //if (req.validationErrors() || DateFormatErrors())
-  //  return res.status(400).json({
-  //    error: "missing/invalid mandatory field(s)."
-  //  });
-
   endUserRequest.getUsers(carrierId, queries, (err, result) => {
     if (err)
       return res.status(err.status).json({
@@ -69,9 +62,10 @@ api.get('/carriers/:carrierId/users', function(req, res) {
 
     return res.json(result);
   });
-});
+}
 
-api.get('/carriers/:carrierId/users/:username', function(req, res) {
+// '/carriers/:carrierId/users/:username/wallet'
+let getUsername = function(req, res) {
   req.checkParams('carrierId').notEmpty();
   req.checkParams('username').notEmpty();
 
@@ -80,7 +74,7 @@ api.get('/carriers/:carrierId/users/:username', function(req, res) {
   var prepareEndUserRequestParams = _.bind(function() {
     return {
       carrierId: this.carrierId.trim(),
-      username:  this.username.trim()
+      username: this.username.trim()
     }
   }, req.params);
 
@@ -88,7 +82,7 @@ api.get('/carriers/:carrierId/users/:username', function(req, res) {
     let username = user.userDetails.username;
     return {
       carrier: user.carrierId,
-      number:username[0] === '+' ? username.substring(1, username.length) : username,
+      number: username[0] === '+' ? username.substring(1, username.length) : username,
       sessionUserName: 'Whitelabel-Portal'
     }
   };
@@ -139,9 +133,10 @@ api.get('/carriers/:carrierId/users/:username', function(req, res) {
         error: err
       });
     });
-});
+};
 
-api.get('/carriers/:carrierId/users/:username/wallet', function(req, res) {
+// '/carriers/:carrierId/users/:username/wallet'
+let getUserWallet = function(req, res) {
   req.checkParams('carrierId').notEmpty();
   req.checkParams('username').notEmpty();
 
@@ -171,9 +166,10 @@ api.get('/carriers/:carrierId/users/:username/wallet', function(req, res) {
         err
       });
     })
-});
+}
 
-api.post('/carriers/:carrierId/users/:username/suspension', function(req, res) {
+// '/carriers/:carrierId/users/:username/suspension'
+let suspendUser = function(req, res) {
   req.checkParams('carrierId').notEmpty();
   req.checkParams('username').notEmpty();
 
@@ -181,17 +177,18 @@ api.post('/carriers/:carrierId/users/:username/suspension', function(req, res) {
   let username = req.params.username;
 
   Q.ninvoke(endUserRequest, 'suspendUser', carrierId, username)
-    .then((result)=> {
+    .then((result) => {
       return res.json(result);
     })
-    .catch((err)=> {
+    .catch((err) => {
       return res.status(err.status).json({
         error: err
       });
     });
-});
+}
 
-api.delete('/carriers/:carrierId/users/:username/suspension', function(req, res) {
+// '/carriers/:carrierId/users/:username/suspension'
+let reactivateUser = function(req, res) {
   req.checkParams('carrierId').notEmpty();
   req.checkParams('username').notEmpty();
 
@@ -199,17 +196,18 @@ api.delete('/carriers/:carrierId/users/:username/suspension', function(req, res)
   let username = req.params.username;
 
   Q.ninvoke(endUserRequest, 'reactivateUser', carrierId, username)
-    .then((result)=> {
+    .then((result) => {
       return res.json(result);
     })
-    .catch((err)=> {
+    .catch((err) => {
       return res.status(err.status).json({
         error: err
       });
     });
-});
+}
 
-api.delete('/carriers/:carrierId/users/:username', function(req, res) {
+// '/carriers/:carrierId/users/:username'
+let terminateUser = function(req, res) {
   req.checkParams('carrierId').notEmpty();
   req.checkParams('username').notEmpty();
 
@@ -217,17 +215,18 @@ api.delete('/carriers/:carrierId/users/:username', function(req, res) {
   let username = req.params.username;
 
   Q.ninvoke(endUserRequest, 'terminateUser', carrierId, username)
-    .then((result)=> {
+    .then((result) => {
       return res.json(result);
     })
-    .catch((err)=> {
+    .catch((err) => {
       return res.status(err.status).json({
         error: err
       });
     });
-});
+}
 
-api.get('/carriers/:carrierId/calls', function(req, res) {
+// '/carriers/:carrierId/calls'
+let getCalls = function(req, res) {
   req.checkParams('carrierId').notEmpty();
   req.checkQuery('startDate').notEmpty();
   req.checkQuery('endDate').notEmpty();
@@ -264,9 +263,10 @@ api.get('/carriers/:carrierId/calls', function(req, res) {
 
     return res.json(result);
   });
-});
+}
 
-api.get('/carriers/:carrierId/topup', function(req, res) {
+// '/carriers/:carrierId/topup'
+let getTopUp = function(req, res) {
   req.checkParams('carrierId').notEmpty();
   req.checkQuery('startDate').notEmpty();
   req.checkQuery('endDate').notEmpty();
@@ -293,9 +293,10 @@ api.get('/carriers/:carrierId/topup', function(req, res) {
 
     return res.json(result);
   });
-});
+}
 
-api.get('/carriers/:carrierId/widgets/:type(calls|im|overview|store|sms|vsf)', function(req, res) {
+// '/carriers/:carrierId/widgets/:type(calls|im|overview|store|sms|vsf)?userId'
+let getWidgets = function(req, res) {
   req.checkParams('carrierId').notEmpty();
   req.checkParams('type').notEmpty();
   req.checkQuery('userId').notEmpty();
@@ -304,7 +305,9 @@ api.get('/carriers/:carrierId/widgets/:type(calls|im|overview|store|sms|vsf)', f
   let type = req.params.type;
   let userId = req.query.userId;
 
-  Q.ninvoke(PortalUser, 'findOne', { _id: userId })
+  Q.ninvoke(PortalUser, 'findOne', {
+      _id: userId
+    })
     .then((user) => {
       if (!user) {
         return res.status(401).json({
@@ -316,7 +319,9 @@ api.get('/carriers/:carrierId/widgets/:type(calls|im|overview|store|sms|vsf)', f
 
       return Q.ninvoke(Company, 'findOne', {
         carrierId: carrierId
-      }, '', { lean: true });
+      }, '', {
+        lean: true
+      });
     })
     .then((company) => {
       if (!company) {
@@ -338,9 +343,10 @@ api.get('/carriers/:carrierId/widgets/:type(calls|im|overview|store|sms|vsf)', f
           error: err
         });
     });
-});
+}
 
-api.get('/carriers/:carrierId/sms', function(req, res) {
+// '/carriers/:carrierId/sms'
+let getSMS = function(req, res) {
   req.checkParams('carrierId').notEmpty();
   req.checkQuery('page').notEmpty().isInt();
   req.checkQuery('pageRec').notEmpty().isInt();
@@ -355,7 +361,10 @@ api.get('/carriers/:carrierId/sms', function(req, res) {
     size: req.query.pageRec
   };
 
-  let request = new SmsRequest({ baseUrl: nconf.get('dataProviderApi:baseUrl'), timeout: nconf.get('dataProviderApi:timeout') });
+  let request = new SmsRequest({
+    baseUrl: nconf.get('dataProviderApi:baseUrl'),
+    timeout: nconf.get('dataProviderApi:timeout')
+  });
 
   request.get(carrierId, query, (err, result) => {
     if (err)
@@ -365,9 +374,10 @@ api.get('/carriers/:carrierId/sms', function(req, res) {
 
     return res.json(result);
   });
-});
+}
 
-api.get('/carriers/:carrierId/im', function(req, res) {
+// '/carriers/:carrierId/im'
+let getIM = function(req, res) {
   req.checkParams('carrierId').notEmpty();
   req.checkQuery('fromTime').notEmpty();
   req.checkQuery('toTime').notEmpty();
@@ -391,7 +401,7 @@ api.get('/carriers/:carrierId/im', function(req, res) {
 
   req.query.type = 'IncomingMessage';
 
-  let params =  _.pick(req.query, ['carrier', 'message_type', 'from', 'to', 'sender', 'recipient', 'page', 'size']);
+  let params = _.pick(req.query, ['carrier', 'message_type', 'from', 'to', 'sender', 'recipient', 'page', 'size']);
 
   imRequest.getImStat(params, (err, result) => {
     if (err)
@@ -401,9 +411,10 @@ api.get('/carriers/:carrierId/im', function(req, res) {
 
     return res.json(result);
   });
-});
+}
 
-api.get('/carriers/:carrierId/vsf', function(req, res) {
+// '/carriers/:carrierId/vsf'
+let getVSF = function(req, res) {
   req.checkParams('carrierId').notEmpty();
   req.checkQuery('fromTime').notEmpty();
   req.checkQuery('toTime').notEmpty();
@@ -424,6 +435,118 @@ api.get('/carriers/:carrierId/vsf', function(req, res) {
   vsfRequest.getTransactions(req.params.carrierId, params, (dumb, records) => {
     return res.json(records);
   });
-});
+}
 
-module.exports = api;
+// '/carriers/:carrierId/verifications'
+let getVerifications = function (req, res) {
+  req.checkParams('carrierId').notEmpty();
+  req.checkQuery('application').notEmpty();
+  req.checkQuery('from').notEmpty();
+  req.checkQuery('to').notEmpty();
+
+  var err = req.validationErrors();
+  if (err) {
+    return res.status(400).json(err);
+  }
+
+  let params = _.omit({
+    carrier: req.params.carrierId,
+    application: req.query.application,
+    from: req.query.from,
+    to: req.query.to,
+    page: req.query.page,
+    size: req.query.size,
+    method: req.query.method,
+    platform: req.query.platform,
+    phone_number: req.query.phone_number
+  }, (val) => {
+    return !val;
+  });
+
+  verificationRequest.getVerifications(params, (err, result) => {
+    if (err) {
+      return res.status(err.status).json({
+        error: err
+      });
+    }
+
+    return res.json(result);
+  });
+};
+
+let validateStatisticsRequest = function (req, cb) {
+  req.checkParams('carrierId').notEmpty();
+  req.checkQuery('application').notEmpty();
+  req.checkQuery('from').notEmpty();
+  req.checkQuery('to').notEmpty();
+
+  cb(req.validationErrors());
+};
+
+let mapVerificationStatsRequestParameters = function (req) {
+  return _.omit({
+    carrier: req.params.carrierId,
+    application: req.query.application,
+    from: req.query.from,
+    to: req.query.to,
+    timescale: req.query.timescale
+  }, (val) => {
+    return !val;
+  });
+};
+
+let getVerificationStatistics = function (req, res) {
+  validateStatisticsRequest(req, (err) => {
+    if (err) {
+      return res.status(400).json(err);
+    }
+
+    let params = mapVerificationStatsRequestParameters(req);
+
+    let request;
+    switch (req.query.type) {
+    case 'status':
+      request = verificationRequest.getVerificationStatsByStatus;
+      break;
+    case 'platform':
+      request = verificationRequest.getVerificationStatsByPlatform;
+      break;
+    case 'type':
+      request = verificationRequest.getVerificationStatsByType;
+      break;
+    case 'country':
+      request = verificationRequest.getVerificationStatsByCountry;
+      break;
+    default:
+      res.status(400).json(new Error('Unknown request type'));
+      return;
+    }
+
+    request.call(verificationRequest, params, (err, result) => {
+      if (err) {
+        return res.status(err.status).json({
+          error: err
+        });
+      }
+
+      return res.json(result);
+    });
+  });
+};
+
+export {
+  getCalls,
+  getIM,
+  getSMS,
+  getTopUp,
+  getUserWallet,
+  getUsername,
+  getUsers,
+  getVSF,
+  getVerifications,
+  getVerificationStatistics,
+  getWidgets,
+  reactivateUser,
+  suspendUser,
+  terminateUser,
+};

@@ -1,0 +1,313 @@
+.verification-overview {
+  $overviewPadding: rem-calc(15);
+  $changesPositiveColor: green;
+  $changesNegativeColor: red;
+  $changesArrowRemSize: 9;
+  $sectionBorder: 1px solid #eee;
+
+  @mixin disabled-overlay() {
+    background-color: rgba(255, 255, 255, 0.6);
+    content: " ";
+    display: block;
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    z-index: 10;
+  }
+
+  cursor: default;
+  padding: 0 $overviewPadding;
+
+  &__title {
+    font-size: rem-calc(14);
+    color: gray;
+    text-align: center;
+
+    label {
+      cursor: pointer;
+      display: inline-block;
+      margin: 0 rem-calc(5);
+      padding: 0;
+      line-height: 0;
+    }
+  }
+
+  &__value {
+    font-size: rem-calc(25);
+    font-weight: bolder;
+    text-align: center;
+  }
+
+  &__attempt {
+    float: left;
+    padding: 0 !important;
+    position: relative;
+    width: 100%;
+
+    &__information {
+      @include fadeIn;
+
+      padding: $overviewPadding;
+      border-right: $sectionBorder;
+    }
+
+    &__datetime {
+      padding: $overviewPadding;
+      font-size: rem-calc(14);
+    }
+
+    &__toggle {
+      padding-top: rem-calc(15);
+
+      div {
+        text-align: right;
+      }
+    }
+
+    &__chart {
+      margin-top: rem-calc(15);
+      display: block;
+    }
+
+    &:after {
+      clear: both;
+      context: " ";
+      display: block;
+    }
+
+    &.error:after {
+      @include disabled-overlay();
+    }
+  }
+
+  &__method {
+    position: relative;
+
+    &.error:after {
+      @include disabled-overlay();
+    }
+  }
+
+  &__os {
+    position: relative;
+
+    &.error:after {
+      @include disabled-overlay();
+    }
+  }
+
+  &__country {
+    @include fadeIn;
+
+    float: left;
+    margin: 0;
+    padding: 0 !important;
+    position: relative;
+    width: 100%;
+
+    &__table {
+      width: 100%;
+      border: 0;
+      margin: rem-calc(8) 0 0 0;
+      box-shadow: 0 0 0;
+
+      th, td {
+        text-align: center;
+        padding: rem-calc(8);
+      }
+
+      th {
+        font-weight: bolder;
+        border-bottom: $sectionBorder;
+      }
+
+      tr {
+        border: 0;
+      }
+    }
+
+    &.error:after {
+      @include disabled-overlay();
+    }
+  }
+
+  &__summary {
+    @include fadeIn;
+
+    padding: 0 !important;
+    position: relative;
+    width: 100%;
+    display: table;
+
+    section {
+      display: table-cell;
+      padding: $overviewPadding;
+
+      &.left-border {
+        border-left: $sectionBorder;
+      }
+
+      .verification-overview__title {
+        // To make the content of it looks horizontally align
+        min-height: rem-calc(40);
+      }
+    }
+
+    &.error:after {
+      @include disabled-overlay();
+    }
+  }
+
+  &__changes {
+    @include fadeIn;
+
+    display: table;
+    margin: 0 auto;
+
+    &.up.positive {
+      color: $changesPositiveColor;
+
+      .arrow {
+        @include triangle(up, $changesPositiveColor, $changesArrowRemSize);
+      }
+    }
+
+    &.up.negative {
+      color: $changesNegativeColor;
+
+      .arrow {
+        @include triangle(up, $changesNegativeColor, $changesArrowRemSize);
+      }
+    }
+
+    &.down.positive {
+      color: $changesPositiveColor;
+
+      .arrow {
+        @include triangle(down, $changesPositiveColor, $changesArrowRemSize);
+      }
+    }
+
+    &.down.negative {
+      color: $changesNegativeColor;
+
+      .arrow {
+        @include triangle(down, $changesNegativeColor, $changesArrowRemSize);
+      }
+    }
+
+    span {
+      display: inline-block;
+      margin: 0 rem-calc(4);
+      font-size: rem-calc(12);
+    }
+  }
+}
+
+.verification-details {
+  /*
+  For new design..
+  .app-select {
+    font-size: 0.8125rem;
+    line-height: 1.1em;
+    padding-top: 12px;
+    width: 220px;
+
+    .Select-control {
+      background-color: #DB5858;
+      border-color: rgba(155, 56, 56, 0.5);
+      border-width: 1px 2px 2px 2px;
+
+      .Select-placeholder {
+        color: #FFF;
+      }
+    }
+
+    .is-focused:not(.is-open) > .Select-control {
+      @extend .Select-control;
+    }
+
+    .Select-arrow {
+      border-color: #FFF transparent transparent;
+    }
+  }
+  */
+  &__app-select {
+    font-size: 0.8125rem;
+    line-height: 0.9rem;
+    padding-top: 0.75rem;
+    width: 13rem;
+
+    .Select-control {
+      @include border-radius(20px);
+      background-color: #FAFAFA;
+      border-color: rgba(199, 199, 199, 0.8);
+
+      .Select-placeholder {
+        color: #333;
+      }
+    }
+
+    .is-focused:not(.is-open) > .Select-control {
+      @extend .Select-control;
+    }
+
+    .Select-arrow {
+      border-color: #333 transparent transparent;
+    }
+  }
+}
+
+.verification-table {
+  td {
+    font-size: 0.8rem;
+  }
+
+  &__time {
+    font-size: 0.775rem;
+  }
+
+  &__date {
+    color: #999;
+    font-size: 0.7rem;
+  }
+
+  &__country {
+    color: #999;
+    font-size: 0.7rem;
+  }
+
+  .flag__container {
+    float: left;
+  }
+
+  .icon-android:before,
+  .icon-apple:before {
+    font-size: 1.5rem;
+  }
+
+  &__result-tag {
+    @include border-radius(4px);
+    color: #FFF;
+    display: block;
+    font-size: 0.7rem;
+    padding: 0.2rem 0;
+    text-align: center;
+    width: 5rem;
+  }
+
+  &__success-tag {
+    background-color: #62D464;
+  }
+
+  &__failure-tag {
+    background-color: #FC3940;
+  }
+
+  .icon-error6:before {
+    font-size: 1.1rem;
+    line-height: 1.2rem;
+  }
+}

@@ -8,6 +8,6 @@ form {
     	@extend .button--primary;
     }
     textarea,input,select{
-    	margin-bottom: rem-calc(20) !important;
+    	margin-bottom: rem-calc($fieldset-margin-bottom) !important;
     }
 }

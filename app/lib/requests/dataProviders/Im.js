@@ -58,11 +58,14 @@ export default class ImRequest extends BaseRequest {
     function normalizeData(params) {
       var query = {};
 
-      query.carrier = params.carrier;
-      query.from    = params.from;
-      query.to      = params.to;
-      query.page    = params.page || 0;
-      query.size    = params.size || 20;
+      query.carrier     = params.carrier;
+      query.from        = params.from;
+      query.to          = params.to;
+      query.page        = params.page || 0;
+      query.size        = params.size || 20;
+
+      query.origin      = params.origin;
+      query.destination = params.destination;
 
       // jscs:disable requireCamelCaseOrUpperCaseIdentifiers
       if (params.message_type)

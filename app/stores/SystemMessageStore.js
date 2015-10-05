@@ -1,27 +1,30 @@
-import _ from 'lodash';
+import {ERROR_MESSAGE} from '../main/constants/actionTypes';
 import {createStore} from 'fluxible/addons';
-
-var debug = require('debug')('wlp:systemMessageStore');
 
 /**
  * Store for states of System Message Component
  *
- * See: https://github.com/xeodou/react-crouton
+ * @see: {@link: https://github.com/xeodou/react-crouton}
  */
-
-var SystemMessageStore = createStore({
+let SystemMessageStore = createStore({
   storeName: 'SystemMessageStore',
 
   handlers: {
-    SIGN_IN_FAILURE: 'handleSignInFailure',
+    ERROR_MESSAGE:                  'handleErrorMessage',
+    INFO_MESSAGE:                   'handleInfoMessage',
+    // types below are going to be obsoleted or moved to the corresponding store
+    CREATE_COMPANY_FAILURE:         'handleUpdateCompanyFailure',
+    DEACTIVATE_COMPANY_SUCCESS:     'handleUpdateCompanySuccess',
+    DEACTIVATE_END_USER_FAILURE:    'handleDeactivateEndUserFailure',
+    DELETE_END_USER_FAILURE:        'handleDeleteEndUserFailure',
+    DELETE_END_USER_SUCCESS:        'handleDeleteEndUserSuccess',
+    REACTIVATE_COMPANY_SUCCESS:     'handleUpdateCompanySuccess',
+    REACTIVATE_END_USER_FAILURE:    'handleReactivateEndUserFailure',
+    UPDATE_COMPANY_PROFILE_FAILURE: 'handleUpdateCompanyFailure',
     UPDATE_COMPANY_PROFILE_SUCCESS: 'handleUpdateCompanySuccess',
+    UPDATE_COMPANY_SERVICE_FAILURE: 'handleUpdateCompanyFailure',
     UPDATE_COMPANY_SERVICE_SUCCESS: 'handleUpdateCompanySuccess',
-    UPDATE_COMPANY_WIDGET_SUCCESS: 'handleUpdateCompanySuccess',
-    ERROR_MESSAGE: 'handleErrorMessage',
-    REACTIVATE_END_USER_FAILURE: 'handleReactivateEndUserFailure',
-    DEACTIVATE_END_USER_FAILURE: 'handleDeactivateEndUserFailure',
-    DELETE_END_USER_FAILURE: 'handleDeleteEndUserFailure',
-    DELETE_END_USER_SUCCESS: 'handleDeleteEndUserSuccess'
+    UPDATE_COMPANY_WIDGET_SUCCESS:  'handleUpdateCompanySuccess',
   },
 
   // do not change this
@@ -44,7 +47,16 @@ var SystemMessageStore = createStore({
   handleUpdateCompanySuccess: function(data) {
     this.id = Date.now();
     this.type = 'success';
-    this.message = 'Saved.';
+    this.message = 'Saved';
+    this.hidden = false;
+
+    this.emitChange();
+  },
+
+  handleUpdateCompanyFailure: function(err) {
+    this.id = Date.now();
+    this.type = 'error';
+    this.message = err.message;
     this.hidden = false;
 
     this.emitChange();
@@ -62,18 +74,6 @@ var SystemMessageStore = createStore({
    * @param err
    * @param err.message {String}
    */
-
-  // seems that all failures are with the same pattern
-  // so this could be served as a common function with
-  // a better name like `handleErrorMessage`
-  handleSignInFailure: function(err) {
-    this.id = Date.now();
-    this.type = 'secondary';
-    this.message = err.message;
-    this.hidden = false;
-
-    this.emitChange();
-  },
 
   handleReactivateEndUserFailure: function(err) {
     this.id = Date.now();
@@ -111,6 +111,15 @@ var SystemMessageStore = createStore({
     this.emitChange();
   },
 
+  handleInfoMessage: function(payload) {
+    this.id = Date.now();
+    this.type = 'success';
+    this.message = payload.message;
+    this.hidden = false;
+
+    this.emitChange();
+  },
+
   handleErrorMessage: function(err) {
     this.id = Date.now();
     this.type = 'secondary';
@@ -137,6 +146,7 @@ var SystemMessageStore = createStore({
     return this.getState();
   },
 
+  // follow the design of "react-crouton"
   rehydrate: function(state) {
     this.id = state.id;
     this.type = state.type;

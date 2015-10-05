@@ -1,7 +1,10 @@
+import _ from 'lodash';
 import superagent from 'superagent';
 import { SESSION } from '../paths';
+import * as saUtil from '../../utils/superagent';
 
-const debug = require('debug')('src:server/api/vsfApi');
+let debug = require('debug')('app:server/api/vsf');
+let genericHandler = _.partial(saUtil.genericHandler, debug);
 
 export default function(apiPrefix = '') {
   const carrierBasePath = `${apiPrefix}/carriers`;
@@ -13,29 +16,16 @@ export default function(apiPrefix = '') {
         .query(params)
         .accept('json')
         .set('Authorization', this._getToken())
-        .end(function(err, res) {
-          if (err) {
-            debug('error', err);
-          }
-
-          cb(err, res && res.body);
-        });
+        .end(genericHandler(cb));
     },
 
-    getfetchVSFWidgets(params, cb) {
+    getVSFWidgets(params, cb) {
       superagent
         .get(`${this._getHost()}${carrierBasePath}/${params.carrierId}/widgets/vsf`)
         .query(params)
         .accept('json')
         .set('Authorization', this._getToken())
-        .query({ userId: this._getUserId() })
-        .end(function(err, res) {
-          if (err) {
-            debug('error', err);
-          }
-
-          cb(err, res && res.body);
-        });
+        .end(genericHandler(cb));
     }
   }
 }

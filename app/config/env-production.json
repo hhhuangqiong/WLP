@@ -66,12 +66,24 @@
   },
   "logging": {
     "winston": {
+      "meta": {
+        "app": "white-label-portal",
+        "type": "logs",
+        "env": "prod",
+        "instance": "server-instance-name"
+      },
       "transports": [{
         "type": "winston.transports.Console",
         "options": {
           "level": "debug",
           "colorize": true,
           "timestamp": true
+        }
+      },{
+        "type": "winston.transports.Logstash",
+        "options": {
+          "port": 9997,
+          "host": "192.168.0.12"
         }
       }]
     }
