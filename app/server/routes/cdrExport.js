@@ -1,15 +1,23 @@
+// TODO rename this file with "-Handlers" suffix to denoting it's not exporting the `router` object
+
 import _ from 'lodash';
-import Q from 'q';
-import nconf from 'nconf';
-import moment from 'moment';
-import CDRExportTask from '../tasks/CDRExport';
-import {CDR_EXPORT} from '../../config';
-import kue from 'kue';
 import fs from 'fs';
-import passport from 'passport';
-import logger from 'winston';
+import kue from 'kue';
+import nconf from 'nconf';
+import redisRStream from 'redis-rstream';
 
 import { fetchDep } from '../utils/bottle';
+import { CDR_EXPORT } from '../../config';
+import CDRExportTask from '../tasks/CDRExport';
+
+import responseError from '../utils/responseError';
+
+import {
+  JOB_FAILED_ERROR, GET_JOB_ERROR, REQUEST_VALIDATION_ERROR,
+  FILE_STREAM_ERROR, INCOMPELETE_JOB_ERROR
+} from '../utils/exportErrorTypes';
+
+export const JOB_TYPE = 'exportCdr';
 
 let getCarrierCalls = (req, res) => {
   req.checkParams('carrierId').notEmpty();
@@ -17,12 +25,10 @@ let getCarrierCalls = (req, res) => {
   req.checkQuery('endDate').notEmpty();
 
   var err = req.validationErrors();
-  if (err) {
-    return res.status(400).json(err);
-  }
+
+  if (err) return responseError(REQUEST_VALIDATION_ERROR, res, err);
 
   let params = {
-
     // jscs:disable requireCamelCaseOrUpperCaseIdentifiers
     caller_carrier: req.params.carrierId,
     from: req.query.startDate,
@@ -40,66 +46,60 @@ let getCarrierCalls = (req, res) => {
   let task = new CDRExportTask(fetchDep(nconf.get('containerName'), 'Kue'), params);
 
   task.ready().then((job) => {
-
     res.status(200).json({id:job.id});
-
     task.start();
-
   }, (err) => {
-    res.status(500).json({error:err});
+    return responseError(GET_JOB_ERROR, res, err);
   }).done();
-
 };
 
 let getCarrierCallsProgress = (req, res) => {
+  req.checkParams('carrierId').notEmpty();
   req.checkQuery('exportId').notEmpty();
 
-  var err = req.validationErrors();
-  if (err) {
-    return res.status(400).json({ message: 'Invalid export identifier'});
-  }
+  let err = req.validationErrors();
+
+  if (err) return responseError(REQUEST_VALIDATION_ERROR, res, err);
 
   kue.Job.get(req.query.exportId, function(err, job) {
-    if (err) return res.status(400).json({ message: 'Invalid export identifier'});
+    if (err) return responseError(GET_JOB_ERROR, res, err);
 
-    if (job.failed_at) return res.status(400).json({ message: 'Job failed' });
+    // jscs:disable requireCamelCaseOrUpperCaseIdentifiers
+    if (job.failed_at) return responseError(JOB_FAILED_ERROR, res, job.failed_at);
 
     let progress = job._progress || '0';
 
-    if (progress === '100') {
-      return res.status(200).json({file:job.result.file, progress:job._progress});
-    }
-
-    return res.status(200).json({progress: progress});
+    return res.status(200).json({ progress });
   });
 };
 
 let getCarrierCallsFile = (req, res) => {
+  req.checkParams('carrierId').notEmpty();
   req.checkQuery('exportId').notEmpty();
 
-  var err = req.validationErrors();
-  if (err) {
-    return res.status(400).json(err);
-  }
+  let err = req.validationErrors();
+
+  if (err) return responseError(REQUEST_VALIDATION_ERROR, res, err);
 
   kue.Job.get(req.query.exportId, function(err, job) {
+    if (err) return responseError(GET_JOB_ERROR, res, err);
 
-    if (err) return res.status(400).json({ message: 'Invalid export identifier'});
     // job._progress is a percentage and is recognized as string
     if (job._progress === '100') {
       res.setHeader('Content-disposition', 'attachment; filename=' + CDR_EXPORT.EXPORT_FILENAME);
       res.setHeader('Content-type', 'text/csv');
 
-      var filestream = fs.createReadStream(job.result.file);
+      let redisClient = fetchDep(nconf.get('containerName'), 'RedisClient');
+      let exportFileStream = redisRStream(redisClient, `${JOB_TYPE}:${job.id}`);
 
-      filestream.pipe(res);
+      exportFileStream.pipe(res);
 
-      filestream.on('error', function(err) {
-        return res.status(400).json({ message: err });
+      exportFileStream.on('error', (err) => {
+        return responseError(FILE_STREAM_ERROR, res, err);
       });
     }
     else {
-      return res.status(400).json({ message: 'exporting in progress:' + job._progress});
+      return responseError(INCOMPELETE_JOB_ERROR, res, job._progress);
     }
 
   });
@@ -107,6 +107,6 @@ let getCarrierCallsFile = (req, res) => {
 
 export {
   getCarrierCalls,
-  getCarrierCallsProgress,
-  getCarrierCallsFile
+  getCarrierCallsFile,
+  getCarrierCallsProgress
 };
