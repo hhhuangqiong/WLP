@@ -19,6 +19,7 @@ import fetchVerifications from '../actions/fetchVerifications';
 import fetchMoreVerifications from '../actions/fetchMoreVerifications';
 
 import VerificationStore from '../stores/VerificationStore';
+import ApplicationStore from '../../../stores/ApplicationStore';
 
 import VerificationTable from './VerificationTable';
 import config from '../../../config';
@@ -37,7 +38,10 @@ let VerificationDetails = React.createClass({
   mixins: [FluxibleMixin, AuthMixin],
 
   statics: {
-    storeListeners: [VerificationStore],
+    storeListeners: {
+      onChange: VerificationStore,
+      onApplicationStoreChange: ApplicationStore
+    },
 
     fetchData: function (context, params, query, done) {
       // when no appId was provided, don't have to pre-render
@@ -128,28 +132,59 @@ let VerificationDetails = React.createClass({
   },
 
   componentDidMount: function () {
-    // auto select the first appId from the list
+    // auto select the default appId from the list
     // TODO: optimize this UX with server side rendering
 
-    // appId has selected, no need to auto select
+    // appId has been selected, no need to auto select
     if (this.state.appId) {
       return;
     }
 
-    this.autoSelectAppId();
-  },
+    let appId = this.getStore(ApplicationStore).getDefaultAppId();
 
-  autoSelectAppId: function () {
-    // no appIds for some reasons
-    if (!this.props.appIds || !this.props.appIds.length) {
+    // no default, cannot select and fetch
+    // proper fetch will be done after onApplicationStoreChange
+    if (!appId) {
       return;
     }
 
-    // select the first item as default
-    this.onAppIdChange(this.props.appIds[0]);
+    // auto select without modifying the query string
+    this.setState({
+      appId
+    });
+
+    let { identity } = this.context.router.getCurrentParams();
+
+    // fetch using the local appId because setState is async
+    this.context.executeAction(fetchVerifications, {
+      carrierId: identity,
+      appId: appId,
+      page: this.state.page,
+      pageSize: this.state.pageSize,
+      startDate: this.state.startDate,
+      endDate: this.state.endDate,
+      number: this.state.number,
+      os: this.state.os,
+      method: this.state.method
+    });
   },
 
-  loadMore: function () {
+  /**
+   * Selects the default application ID according to the ApplicationStore.
+   * This will change the state `appId`.
+   *
+   * @method
+   */
+  autoSelectAppId: function () {
+    this.onAppIdChange(this.context.getStore(ApplicationStore).getDefaultAppId());
+  },
+
+  /**
+   * Fetch the verification events by advancing the page number.
+   *
+   * @method
+   */
+  fetchMore: function () {
     let { identity } = this.context.router.getCurrentParams();
     let nextPage = this.state.page + 1;
 
@@ -173,6 +208,21 @@ let VerificationDetails = React.createClass({
   onChange: function () {
     let query = _.merge(this.getDefaultQuery(), this.context.router.getCurrentQuery());
     this.setState(_.merge(query, this.getStateFromStores()));
+  },
+
+  /**
+   * Auto select the default appId when the ApplicationStore updates.
+   * Selection will happen only if no appId is currently selected.
+   *
+   * @method
+   */
+  onApplicationStoreChange: function () {
+    // do nothing if there is a selected appId, otherwise select the default
+    if (this.state.appId) {
+      return;
+    }
+
+    this.autoSelectAppId();
   },
 
   onAppIdChange: function (val) {
@@ -263,7 +313,7 @@ let VerificationDetails = React.createClass({
         <VerificationTable
           verifications={this.state.verifications}
           total={this.state.count}
-          onLoadMoreClick={this.loadMore} />
+          onLoadMoreClick={this.fetchMore} />
       </div>
     );
   }
