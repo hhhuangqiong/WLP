@@ -102,7 +102,7 @@ class BaseRequest {
    * http://issuetracking.maaii.com:8090/display/MAAIIP/MUMS+User+Management+by+Carrier+HTTP+API#MUMSUserManagementbyCarrierHTTPAPI-HTTPErrorCodes
    *
    * @param err {Object} Error Object
-   * @param status {Int} Error status
+   * @param status {Number} Error status
    * @returns {Error}
    */
   handleError(err, status) {
