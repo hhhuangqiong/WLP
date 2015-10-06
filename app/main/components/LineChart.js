@@ -52,6 +52,15 @@ const AXIS_COLOR = '#808080';
 /**
  * A configurable line chart component.
  *
+ * There is a limitation on the Highcharts, which the length and position of
+ * the axis are drawn based on the data set. If there is no data (series) in the
+ * chart, the axis won't be drawn (i.e. the area will be completely blank).
+ * To get around of it, we add a dummy series to the chart when we first draw
+ * the chart, so that we can see an empty grid system in the UI.
+ * Because of this, we should not remove all series from the chart even if
+ * we want to clear all lines. Instead, we remove all series but the dummy series
+ * one-by-one.
+ *
  * @class LineChart
  * @see {LineChart~XAxisOpts}
  * @see {LineChart~YAxisOpts}
@@ -254,6 +263,17 @@ export default React.createClass({
   },
 
   /**
+   * Remove a line from the chart.
+   *
+   * @method
+   * @param {Series} series  The Highcharts series object to remove
+   * @see {@link http://api.highcharts.com/highcharts#Series.remove}
+   */
+  removeLine: function (series) {
+    series.remove();
+  },
+
+  /**
    * Adds a new point to the chart if it doesn't exist.
    * Now we assume the same point only exist once, no duplicate points are considered.
    *
@@ -376,7 +396,6 @@ export default React.createClass({
     }
 
     // the lines are ready
-    // TODO: add the line removal logic
     if (nextProps.lines) {
       nextProps.lines.forEach((lineOpts) => {
         let selected = nextProps.selectedLine && lineOpts.name === nextProps.selectedLine;
@@ -395,6 +414,11 @@ export default React.createClass({
         lineOpts.selected = lineOpts.selected || selected;
         this.addLine(lineOpts);
       });
+    }
+    // TODO: add the individual line removal logic
+    else {
+      // remove all lines except the dummy (series[0])
+      _.rest(this.chart.series).forEach(this.removeLine);
     }
 
     // the points are ready

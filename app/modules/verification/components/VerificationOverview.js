@@ -162,6 +162,12 @@ export default React.createClass({
     });
   },
 
+  onAppIdChange(appId) {
+    this.setState({
+      appId
+    });
+  },
+
   onApplicationConfigChange() {
     this.autoSelectAppId();
   },
