@@ -5,13 +5,12 @@ let navSection = [
     page: 'overview',
     routeName: 'overview'
   },
-/** [WLP-297] temporary hide end user section for bolt 1.1 */
-  // {
-  //   name: 'Users',
-  //   icon: 'icon-menuenduser',
-  //   page: 'end-user',
-  //   routeName: 'end-users'
-  // },
+  {
+    name: 'Users',
+    icon: 'icon-menuenduser',
+    page: 'end-user',
+    routeName: 'end-users'
+  },
   {
     name: 'company',
     icon: 'icon-menucompany',
