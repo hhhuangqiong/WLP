@@ -60,7 +60,7 @@ var EndUserProfile = React.createClass({
 
   renderWalletPanel: function() {
     let wallets = (
-      <Section title="Wallet Info">
+      <Accordion.Navigation title="Wallet Info">
         <div className="error text-center">
           <div className="error-description full-width">
             <i className="error-icon icon-error3" />
@@ -70,7 +70,7 @@ var EndUserProfile = React.createClass({
             <i className="icon-refresh" />
           </div>
         </div>
-      </Section>
+      </Accordion.Navigation>
     );
 
     if (this.props.user.wallets && this.props.user.wallets.length > 0) {
