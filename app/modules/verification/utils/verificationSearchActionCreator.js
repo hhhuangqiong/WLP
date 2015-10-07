@@ -7,7 +7,7 @@ import config from '../../../config';
 
 let { inputDateFormat: DATE_FORMAT } = require('./../../../main/config');
 
-const EVENT_KEYS = ['END', 'SUCCESS', 'FAILURE'];
+const EVENT_KEYS = ['SUCCESS', 'FAILURE'];
 
 /**
  * Concatenates 2 input strings with a `_`, making the first input as the prefix of the second.
@@ -43,8 +43,6 @@ function createVerificationSearchApiCallback(actionName, context) {
   let debug = require('debug')(`app:${actionName}`);
 
   return function (err, response) {
-    context.dispatch(lifecycle.END);
-
     if (err) {
       debug('Failed');
       context.dispatch(lifecycle.FAILURE, err);

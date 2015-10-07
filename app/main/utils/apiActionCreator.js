@@ -58,7 +58,8 @@ export default function apiActionCreator(key, apiMethod, opts = { debugPrefix: '
       }
 
       context.api[apiMethod](params, (...theArgs) => {
-        opts.cb(...theArgs);
+        context.dispatch(lifecycle.END);
+        opts.cb(...theArgs, context);
         done();
       });
     } else {

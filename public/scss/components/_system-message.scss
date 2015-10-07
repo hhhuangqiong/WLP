@@ -5,4 +5,9 @@
   font-size: rem-calc(14);
   margin-bottom: rem-calc(2);
   padding: rem-calc(10) $column-gutter;
+
+  &.success {
+    // green background
+    background-color: rgba(67, 172, 106, 0.95);
+  }
 }
