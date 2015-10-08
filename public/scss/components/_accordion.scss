@@ -5,13 +5,14 @@
   &__item {
     &-head {
       font-size: $accordion-head-font-size;
+      border-bottom: 1px solid #fff;
       color: $accordion-item-link-color;
       cursor: pointer;
       background-color: $gray-lighter;
       padding: rem-calc(6) rem-calc(30);
       display: block;
       &:before {
-        content: '-';
+        content: '－';
         display: inline-block;
         width: auto;
         padding-right: rem-calc(20);
@@ -49,25 +50,6 @@
       // cubic-bezier time function is needed to hide the delay at start
       transition: max-height cubic-bezier(1, 0.3, 1, 0.3) 0.28s, background linear 0.1s;
 
-      &--control {
-        &__row {
-          button {
-            width: rem-calc(90);
-            background-color: $gray;
-            text-transform: capitalize;
-            margin: 0;
-
-            &:first-child {
-              margin-right: rem-calc(10);
-            }
-
-            &:last-child {
-              margin: 0;
-            }
-          }
-        }
-      }
-
       .error {
         > * {
           display: inline-block;
@@ -99,6 +81,11 @@
     }
 
     &.collapsed {
+      .accordion__item-head {
+        &:before {
+          content: '＋';
+        }
+      }
       .accordion__item-body {
         max-height: 0;
         // with the same reason above
