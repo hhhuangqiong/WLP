@@ -527,8 +527,14 @@ let getVerificationStatistics = function (req, res) {
 
     request.call(verificationRequest, params, (err, result) => {
       if (err) {
-        return res.status(err.status).json({
-          error: err
+        let { code, message, timeout, status } = err;
+
+        return res.status(status || 500).json({
+          error: {
+            code,
+            message,
+            timeout
+          }
         });
       }
 

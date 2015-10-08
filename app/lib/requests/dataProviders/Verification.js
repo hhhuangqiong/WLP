@@ -123,24 +123,29 @@ export default class VerificationRequest extends BaseRequest {
           return;
         }
 
-        let error;
+        // TODO: generalize the network error handling (maybe extending Error class?)
+        let error = new Error();
+        error.status = err.status;
+        error.message = err.message;
 
-        // timeout does not have response
-        if (err.timeout) {
-          error = new Error(err.message);
+        if (err.code === 'ETIMEDOUT' || err.code === 'ECONNABORTED') {
           error.status = 504;
-          error.timeout = err.timeout;
-        }
-        // server side error that has response
-        else if (err.response && err.response.body) {
-          error = new Error(err.response.body.message);
+          error.timeout = this.opts.timeout;
+        } else if (err.code === 'ENOTFOUND') {
+          error.status = 404;
+        } else if (err.code === 'ECONNREFUSED') {
+          error.status = 500;
+        } else if (err.response) {
+          // SuperAgent error object structure
+          // https://visionmedia.github.io/superagent/#error-handling
+          let response = err.response.body;
           error.status = err.status;
-          error.code = err.response.body.error;
+          error.code = response.error;
+          error.message = response.message;
         }
-        // other error
-        else {
-          error = this.handleError(err, 400);
-        }
+
+        logger.debug(util.format('Received a %s response from %s url: %s',
+          error.status, url, error.message));
 
         cb(error);
       });
