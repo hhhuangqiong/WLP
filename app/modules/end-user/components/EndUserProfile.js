@@ -94,7 +94,7 @@ var EndUserProfile = React.createClass({
       });
 
       wallets = (
-        <Accordion.Navigation title="Account Info">
+        <Accordion.Navigation title="Wallet Info">
           <WalletInfoItem wallet={overviewWallet} />
           {this.props.user.wallets.map((wallet)=>{
             return (
@@ -166,24 +166,21 @@ var EndUserProfile = React.createClass({
                     </If>
                   </Item>
                   <Item label="Language">{device.appLanguage}</Item>
-                  <If condition={this.props.user.userDetails.verified}>
-                    <div className="accordion__item-body--control">
-                      <If condition={this.props.user.userDetails.accountStatus.toLowerCase() === 'active'}>
-                        <div className="accordion__item-body--control__row text-center">
-                          <button className="round" onClick={this.handleDeleteClick}>delete</button>
-                          <button className="round" onClick={this.handleSuspendClick}>suspend</button>
-                        </div>
-                        <Else />
-                        <div className="accordion__item-body--control__row text-center">
-                          <button className="round" onClick={this.handleDeleteClick}>delete</button>
-                          <button className="round" onClick={this.handleReactivateClick}>reactivate</button>
-                        </div>
-                      </If>
-                    </div>
-                  </If>
                 </Accordion.Navigation>
               </For>
             </Accordion.Wrapper>
+            <If condition={this.props.user.userDetails.verified}>
+              <div className="enduser-profile__control text-center">
+                <div className="enduser-profile__control__row">
+                  <button className="round" onClick={this.handleDeleteClick}>delete</button>
+                  <If condition={this.props.user.userDetails.accountStatus.toLowerCase() === 'active'}>
+                    <button className="round" onClick={this.handleSuspendClick}>suspend</button>
+                  <Else />
+                    <button className="round" onClick={this.handleReactivateClick}>reactivate</button>
+                  </If>
+                </div>
+              </div>
+            </If>
           </Panel.Body>
         </Panel.Wrapper>
       </If>

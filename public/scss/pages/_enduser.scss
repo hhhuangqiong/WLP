@@ -1,0 +1,20 @@
+.enduser-profile__control {
+  margin-top: $column-gutter;
+
+  &__row {
+    button {
+      width: rem-calc(90);
+      background-color: $gray;
+      text-transform: capitalize;
+      margin: 0;
+
+      &:first-child {
+        margin-right: rem-calc(10);
+      }
+
+      &:last-child {
+        margin: 0;
+      }
+    }
+  }
+}
