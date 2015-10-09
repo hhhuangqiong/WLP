@@ -36,6 +36,19 @@ function prepareWildcard(search) {
   return '*' + search.trim() + '*';
 }
 
+/**
+ * Prepare the error message for the express validationErros.
+ *
+ * @method
+ * @param {ValidationError[]} validationErrors  The errors from the validationErrors()
+ * @returns {String} The message
+ */
+function prepareValidationMessage(validationErrors) {
+  return validationErrors.map((issue) => {
+    return `${issue.msg}: ${issue.param}`;
+  }).join(', ');
+}
+
 // '/carriers/:carrierId/users'
 let getUsers = function(req, res) {
   req.checkParams('carrierId').notEmpty();
@@ -449,7 +462,11 @@ let getVerifications = function (req, res) {
 
   var err = req.validationErrors();
   if (err) {
-    return res.status(400).json(err);
+    return res.status(400).json({
+      error: {
+        message: prepareValidationMessage(err)
+      }
+    });
   }
 
   let params = _.omit({
@@ -469,7 +486,9 @@ let getVerifications = function (req, res) {
   verificationRequest.getVerifications(params, (err, result) => {
     if (err) {
       return res.status(err.status).json({
-        error: err
+        error: {
+          message: err.message
+        }
       });
     }
 
@@ -501,7 +520,11 @@ let mapVerificationStatsRequestParameters = function (req) {
 let getVerificationStatistics = function (req, res) {
   validateStatisticsRequest(req, (err) => {
     if (err) {
-      return res.status(400).json(err);
+      return res.status(400).json({
+        error: {
+          message: prepareValidationMessage(err)
+        }
+      });
     }
 
     let params = mapVerificationStatsRequestParameters(req);
