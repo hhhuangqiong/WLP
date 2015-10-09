@@ -46,7 +46,7 @@ function createVerificationSearchApiCallback(actionName, context) {
     context.dispatch(lifecycle.END);
 
     if (err) {
-      debug('Failed');
+      debug(`Failed: ${err.message}`);
       context.dispatch(lifecycle.FAILURE, err);
       context.dispatch(ERROR_MESSAGE, err);
       return;
