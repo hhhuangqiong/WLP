@@ -1,0 +1,51 @@
+.ReactModal__Overlay {
+  width: 100%;
+  height: 100%;
+  z-index: 101;
+}
+
+.confirmation {
+  $dialog-width: rem-calc(500);
+  $button-width: rem-calc(120);
+
+  @include border-radius(4px);
+  background-color: #fff;
+  margin: auto;
+  position: relative;
+  width: $dialog-width;
+  top: 20%;
+
+  &__header {
+    // the border-radious mixin does not support multiple values
+    border-radius: 4px 4px 0 0;
+    background-color: $dialog-header-background-color;
+    padding: rem-calc(2) rem-calc(8);
+
+    &__title {
+      color: $dialog-header-color;
+      font-size: rem-calc(16);
+      margin: rem-calc(3);
+    }
+  }
+
+  &__body {
+    padding: rem-calc(15) rem-calc(20) rem-calc(10);
+
+    &__line {
+      font-size: rem-calc(14);
+      margin-bottom: rem-calc(5);
+    }
+  }
+
+  &__footer {
+    padding: rem-calc(20) 0;
+
+    &__button {
+      // 2 buttons with 2 sides each
+      $margin: ($dialog-width - 2 * $button-width) / 4;
+
+      margin: 0 $margin;
+      width: $button-width;
+    }
+  }
+}
