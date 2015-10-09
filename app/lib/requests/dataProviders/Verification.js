@@ -8,6 +8,7 @@ import moment from 'moment';
 import CountryData from 'country-data';
 
 import BaseRequest from '../Base';
+import jsonSchema from '../../../utils/getSimplifiedJsonSchema.js';
 
 /**
  * Number of milliseconds within the interval.
@@ -119,6 +120,7 @@ export default class VerificationRequest extends BaseRequest {
       .timeout(this.opts.timeout)
       .end((err, res) => {
         if (!err) {
+          logger.debug(util.format('Received a response from %s: ', url), jsonSchema(res.body));
           cb(null, res.body);
           return;
         }
@@ -144,7 +146,7 @@ export default class VerificationRequest extends BaseRequest {
           error.message = response.message;
         }
 
-        logger.debug(util.format('Received a %s response from %s url: %s',
+        logger.debug(util.format('Received a %s response from %s: %s',
           error.status, url, error.message));
 
         cb(error);
