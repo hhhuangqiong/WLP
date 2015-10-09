@@ -47,6 +47,12 @@
                     text-transform: capitalize;
                 }
             }
+
+            .icon-menuverification {
+                background: url(../images/user-verify-solid_white.svg) no-repeat;
+                background-position: center;
+                height: $menu-sidebar-item-height;
+            }
         }
         &:hover {
             i, label {

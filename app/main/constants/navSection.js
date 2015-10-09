@@ -49,7 +49,7 @@ let navSection = [
   },
   {
     name: 'Verification',
-    icon: 'icon-menuenduser',
+    icon: 'icon-menuverification',
     page: 'verification',
     routeName: 'verification'
   }
