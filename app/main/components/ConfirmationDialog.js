@@ -27,7 +27,7 @@ let ConfirmationDialog = React.createClass({
      * Control the visibility of the dialog.
      * @type {Boolean}
      */
-    isOpen: PropTypes.boolean,
+    isOpen: PropTypes.bool,
     /**
      * The dialog title, optional. If specified, a dialog header will be shown.
      * @type {String}
