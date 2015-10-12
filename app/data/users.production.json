@@ -175,4 +175,26 @@
     "logoFile": "logo-m800.png",
     "widgets": {}
   }
+}, {
+  "user": {
+    "username": "admin@testing.maaii.com",
+    "password": "whitelabel2014",
+    "name": {
+      "first": "Admin",
+      "last": "Testing"
+    },
+    "assignedGroup": "root",
+    "status": "active"
+  },
+  "company": {
+    "parentCompany": null,
+    "carrierId": "testing.maaii.com",
+    "name": "Testing",
+    "reseller": false,
+    "status": "active",
+    "timezone": "UTC+8",
+    "country": "Hong Kong",
+    "logoFile": "logo-m800.png",
+    "widgets": {}
+  }
 }]
