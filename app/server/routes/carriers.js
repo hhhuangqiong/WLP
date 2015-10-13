@@ -104,17 +104,11 @@ let getUsername = function(req, res) {
   };
 
   var sendEndUserRequest = _.bind(function(params) {
-    return Q.ninvoke(this, 'getUser', params.carrierId, params.username)
-      .catch((err) => {
-        throw err;
-      });
+    return Q.ninvoke(this, 'getUser', params.carrierId, params.username);
   }, endUserRequest);
 
   var sendWalletRequest = _.bind(function(params) {
-    return Q.ninvoke(this, 'getWalletBalance', params)
-      .catch((err) => {
-        throw err;
-      });
+    return Q.ninvoke(this, 'getWalletBalance', params);
   }, walletRequest);
 
   var appendUserData = _.bind(function(user) {
@@ -138,9 +132,17 @@ let getUsername = function(req, res) {
   Q.fcall(prepareEndUserRequestParams)
     .then(sendEndUserRequest)
     .then(appendUserData)
-    .then(prepareWalletRequestParams)
-    .then(sendWalletRequest)
-    .then(appendWalletData)
+    .then((user) => {
+      // Fetch the user wallet, which is depending on the user detail call.
+      // However, the wallet is not a must for the complete user detail.
+      // Therefore, we group and ignore the error for these functions.
+      return Q.fcall(prepareWalletRequestParams, user)
+        .then(sendWalletRequest)
+        .then(appendWalletData)
+        .catch(() => {
+          return user;
+        });
+    })
     .then((user) => {
       res.json(user);
     })
@@ -171,15 +173,17 @@ let getUserWallet = function(req, res) {
   Q.fcall(prepareWalletRequestParams)
     .then(sendWalletRequest)
     .then((wallets) => {
-      if (wallets.length == 0) {
-        return res.status(404).json(new Error('404 not found'));
-      }
-
       return res.json(wallets);
     })
     .catch((err) => {
-      return res.status(err.status).json({
-        err
+      let { code, message, timeout, status } = err;
+
+      return res.status(status || 500).json({
+        error: {
+          code,
+          message,
+          timeout
+        }
       });
     })
 }
