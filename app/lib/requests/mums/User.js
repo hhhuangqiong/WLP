@@ -102,6 +102,12 @@ export default class UsersRequest extends BaseRequest {
         hasNextPage: nextPageResult.userCount > 0
       });
 
+      // assign jid to each user
+      let carrierId = result.carrierId;
+      result.userList.forEach((user) => {
+          user.jid = `${user.username}@${carrierId}`;
+      });
+
       return cb(null, result);
     }).catch((err)=>{
       return cb(this.handleError(err));
@@ -127,6 +133,9 @@ export default class UsersRequest extends BaseRequest {
       .end((err, res) => {
         if (err) return cb(this.handleError(err));
         if (res.status >= 400) return cb(this.handleError(res.body.err));
+
+        // assign jid to the user
+        res.body.userDetails.jid = `${res.body.userDetails.username}@${res.body.carrierId}`;
         cb(null, res.body);
       });
   }

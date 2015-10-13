@@ -35,7 +35,10 @@ var EndUserTable = React.createClass({
     let rows = this.props.users.map((u) => {
         let country = _.find(Countries, (c) => {
           return c.alpha2.toLowerCase() == u.countryCode
-        });
+        }) || {
+          name: NOT_FOUND_LABEL,
+          alpha2: NOT_FOUND_LABEL
+        };
 
         let creationDate = moment(u.creationDate).format(DATE_FORMAT);
         let handleOnClick = _.bindKey(this.props, 'onUserClick', u.username.trim());
@@ -43,13 +46,13 @@ var EndUserTable = React.createClass({
         return <tr onClick={handleOnClick}>
           <td className="text-center"><span className={classNames('label', 'status', { success: u.verified }, { alert: !u.verified })}></span></td>
           <td>
-            {u.username}
+            {u.jid}
           </td>
           <td>
             <If condition={country}>
               <div>
                 <div className="flag__container left">
-                  <span className={classNames('flag--' + country.alpha2, 'left')} />
+                  <span className={classNames('flag--' + country.alpha2.toLowerCase(), 'left')} />
                 </div>
                 {country.name}
               </div>
@@ -59,7 +62,6 @@ var EndUserTable = React.createClass({
               <div>{NOT_FOUND_LABEL}</div>
             </If>
           </td>
-          <td>{u.username}</td>
           <td>{creationDate}</td>
         </tr>
       }
@@ -72,7 +74,6 @@ var EndUserTable = React.createClass({
             <th></th>
             <th>Username</th>
             <th>Country</th>
-            <th>Mobile</th>
             <th>Date &amp; Time</th>
           </tr>
         </thead>

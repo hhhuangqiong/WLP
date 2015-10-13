@@ -130,9 +130,17 @@ var EndUserProfile = React.createClass({
   },
 
   renderAccountPanel: function() {
-    let country = _.find(Countries, (c) => {
-      return c.alpha2.toLowerCase() === this.props.user.userDetails.countryCode;
-    });
+    let country = {
+      name: EMPTY_STRING,
+      alpha2: EMPTY_STRING
+    };
+
+    if (this.props.user.userDetails.countryCode) {
+      let countryCode = this.props.user.userDetails.countryCode.toLowerCase();
+      country = _.find(Countries, (c) => {
+        return c.alpha2.toLowerCase() === countryCode;
+      }) || country;
+    }
 
     let creationDate = moment(this.props.user.userDetails.creationDate).format(DATE_FORMAT);
 
@@ -149,12 +157,12 @@ var EndUserProfile = React.createClass({
         <Item label="Country">
           <div className="country-label">
             <div className="flag__container left">
-              <span className={classNames('flag--' + country.alpha2, 'left')}/>
+              <span className={classNames('flag--' + country.alpha2.toLowerCase(), 'left')}/>
             </div>
             {country.name}
           </div>
         </Item>
-        <Item label="Mobile Number">{this.props.user.userDetails.username}</Item>
+        <Item label="Username">{this.props.user.userDetails.jid}</Item>
         <Item label="Email">{this.props.user.userDetails.email || EMPTY_STRING}</Item>
         <Item label="Pin">{this.props.user.userDetails.pin || EMPTY_STRING}</Item>
         <Item label="Date of Birth">{this.props.user.userDetails.birthDate || EMPTY_STRING}</Item>
