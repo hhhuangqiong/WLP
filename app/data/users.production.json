@@ -219,4 +219,26 @@
     "logoFile": "logo-m800.png",
     "widgets": {}
   }
+}, {
+  "user": {
+    "username": "admin@tfn.maaii.com",
+    "password": "tfnWLP2015",
+    "name": {
+      "first": "Admin",
+      "last": "TFN"
+    },
+    "assignedGroup": "root",
+    "status": "active"
+  },
+  "company": {
+    "parentCompany": null,
+    "carrierId": "tfn.maaii.com",
+    "name": "TFN",
+    "reseller": false,
+    "status": "active",
+    "timezone": "UTC+8",
+    "country": "Hong Kong",
+    "logoFile": "logo-m800.png",
+    "widgets": {}
+  }
 }]
