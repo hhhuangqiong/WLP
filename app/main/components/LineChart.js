@@ -5,6 +5,7 @@ const ID_MAX = 100000;
 const DEFAULT_LINE_WIDTH = 1;
 const SELECTED_LINE_WIDTH = 2;
 const AXIS_COLOR = '#808080';
+const MIN_Y_RANGE = 50;
 
 /**
  * This callback is used when a tooltip is being displayed on the UI.
@@ -130,7 +131,9 @@ export default React.createClass({
     // create a dummy series, so that the x-axis can be drawn while the data is loading
     let dummy = [];
     for (let i = 0; i < xAxis.tickCount; i++) {
-      dummy.push(0);
+      // If all data are zero, the y-axis will not be drawn normally.
+      // Pushing mnon-zero values to avoid x-axis being placed in the middle of the chart.
+      dummy.push(10);
     }
 
     // append the unit to the axis label when available
@@ -153,6 +156,10 @@ export default React.createClass({
     this.chart = new Highcharts.Chart({
       chart: {
         type: 'line',
+        // Give enough space to the horizontal dimension, so that the y-axis
+        // will not move when the number of digits in the y-axis labels change
+        marginLeft: 50,
+        marginRight: 50,
         renderTo: this.state.containerId
       },
       exporting: {
@@ -195,12 +202,13 @@ export default React.createClass({
         labels: {
           formatter: yAxisLabelFormatter
         },
-        // setting floor and min to 0, avoiding the x axis being drawn in the middle of the chart
-        floor: 0,
+        // do not allow decimal labels (e.g. 12.5)
+        allowDecimals: false,
+        // set min to 0, avoiding the labels for smaller values being skipped when all data are big
         min: 0,
         max: yAxis.max,
-        // minRange controls the scale of the y axis while the chart is empty
-        minRange: 80,
+        // minRange controls the minimum range of the y axis
+        minRange: MIN_Y_RANGE,
         lineWidth: 1,
         lineColor: AXIS_COLOR,
         // control the alignment of the y-axis, default to left
