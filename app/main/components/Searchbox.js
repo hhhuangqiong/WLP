@@ -5,11 +5,9 @@ var SearchBox = React.createClass({
   propTypes: {
     value: PropTypes.string,
     placeHolder: PropTypes.string,
-    searchTypes: PropTypes.object,
     searchInputName: PropTypes.string,
     searchTypeInputName: PropTypes.string,
     onInputChangeHandler: PropTypes.func,
-    onSelectChangeHandler: PropTypes.func,
     onKeyPressHandler: PropTypes.func.isRequired
   },
 

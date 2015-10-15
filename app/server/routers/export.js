@@ -1,16 +1,10 @@
 import { Router } from 'express';
-import * as cdrExport from '../routes/cdrExport';
-import * as imExport from '../routes/imExport';
+import * as exportRoutes from '../routes/export';
 
 let router = Router();
 
-// calls
-router.get('/:carrierId/calls',          cdrExport.getCarrierCalls);
-router.get('/:carrierId/calls/progress', cdrExport.getCarrierCallsProgress);
-router.get('/:carrierId/calls/file',     cdrExport.getCarrierCallsFile);
-// im
-router.get('/:carrierId/im',             imExport.getCarrierIM);
-router.get('/:carrierId/im/progress',    imExport.getCarrierIMFileProgress);
-router.get('/:carrierId/im/file',        imExport.getCarrierIMFile);
+router.get('/:carrierId',             exportRoutes.getCarrierExport);
+router.get('/:carrierId/progress',    exportRoutes.getCarrierExportFileProgress);
+router.get('/:carrierId/file',        exportRoutes.getCarrierExportFile);
 
 export default router;

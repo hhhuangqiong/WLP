@@ -7,6 +7,7 @@ var request = require('superagent');
 var util    = require('util');
 
 import BaseRequest from '../Base';
+import qs from 'qs';
 
 export default class CallsRequest extends BaseRequest {
 
@@ -92,6 +93,8 @@ export default class CallsRequest extends BaseRequest {
   sendRequest(params, cb) {
     var base = this.opts.baseUrl;
     var url = this.opts.methods.CALLS.URL;
+
+    logger.info(`Calls API Endpoint: ${util.format('%s%s', base, url)}?${qs.stringify(params)}`);
 
     request
       .get(util.format('%s%s', base, url))

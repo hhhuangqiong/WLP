@@ -68,6 +68,22 @@ export default class VerificationRequest extends BaseRequest {
   }
 
   /**
+   * Formats the verication type that will send to the server endpoint for query.
+   * This method will modify the original object.
+   *
+   * @method
+   * @param {Object} type The verification type
+   * @returns {Object} The updated object
+   */
+  convertVerificationTypes(type) {
+    switch (type) {
+      case 'call-in': return 'MobileTerminated';
+      case 'call-out': return 'MobileOriginated';
+      default: return type;
+    }
+  }
+
+  /**
    * Formats and normalize query parameters for verification request
    *
    * @method
@@ -87,6 +103,10 @@ export default class VerificationRequest extends BaseRequest {
     Q.ninvoke(this, 'swapDate', params)
       .then((params) => {
         let format = nconf.get(util.format('%s:format:timestamp', this.opts.type)) || 'x';
+
+        params.type = this.convertVerificationTypes(params.method);
+        delete params.method;
+
         return this.formatDateString(params, format)
       })
       .then((params) => {
@@ -468,7 +488,7 @@ export default class VerificationRequest extends BaseRequest {
 
     // if any of the result is missing, create a dummy for it
     if (!successSet || !failureSet) {
-      // calculate the data count 
+      // calculate the data count
       // so that we know how many data point we should generate for the missing data set
       let dataCount = this.computeDataCount(params.from, params.to, params.timescale);
 

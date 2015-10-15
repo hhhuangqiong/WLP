@@ -20,7 +20,7 @@ import SummaryCells from './SummaryCells';
 import fetchVerificationOverview from '../actions/fetchVerificationOverview';
 import VerificationOverviewStore from '../stores/VerificationOverviewStore';
 import ApplicationStore from '../../../stores/ApplicationStore';
-import { subtractTime, timeFromNow } from '../../../server/utils/StringFormatter';
+import { subtractTime, timeFromNow } from '../../../utils/StringFormatter';
 import MAP_DATA from '../constants/mapData.js';
 
 const TIME_FRAMES = ['24 hours', '7 days', '30 days', '60 days', '90 days'];
