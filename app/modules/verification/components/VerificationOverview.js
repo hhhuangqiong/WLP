@@ -175,10 +175,14 @@ export default React.createClass({
   componentDidMount() {
     this.autoSelectAppId();
 
+    if (!this.state.appId) return;
+
     this.resetCharts(this.state.timeRange);
   },
 
   componentDidUpdate(prevProps, prevState) {
+    if (!this.state.appId) return;
+
     if (this.state.timeRange !== prevState.timeRange || this.state.appId !== prevState.appId) {
       this.resetCharts(this.state.timeRange);
       this.updateCharts(this.state.timeRange);
