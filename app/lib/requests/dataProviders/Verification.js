@@ -6,6 +6,7 @@ import util from 'util';
 import _ from 'lodash';
 import moment from 'moment';
 import CountryData from 'country-data';
+import qs from 'qs';
 
 import BaseRequest from '../Base';
 
@@ -111,7 +112,7 @@ export default class VerificationRequest extends BaseRequest {
     let method = endpoint.METHOD;
     let url = util.format('%s%s', base, path);
 
-    logger.debug(util.format('Send a %s request to `%s` with parameters: ', method, url), params);
+    logger.debug(`Verification API Endpoint: ${url}?${qs.stringify(params)}`);
 
     request(method, url)
       .query(params)
@@ -633,10 +634,14 @@ export default class VerificationRequest extends BaseRequest {
       return;
     }
 
-    let countries = _.indexBy(response.results, (result) => result.segment.country);
+    let countries = _.indexBy(response.results, result => result.segment.country.toUpperCase());
+    let countryNames = _.uniq(Object.keys(countries));
+
+    // Avoid server endpoint to return country code that confronts the ISO standard
+    countries = countryNames.filter(country => CountryData.countries[country]).map(country => countries[country]);
 
     let countriesWithValues = _.reduce(countries, (result, country, name) => {
-      let countryCode = name.toUpperCase();
+      let countryCode = country.segment.country.toUpperCase();
 
       let accumulatedValues = _.reduce(country.data, (total, data) => {
         total.v = parseInt(total.v) + parseInt(data.v);
@@ -644,9 +649,9 @@ export default class VerificationRequest extends BaseRequest {
       });
 
       result[countryCode] = {};
+      result[countryCode].name = CountryData.countries[countryCode].name;
       result[countryCode].code = countryCode;
       result[countryCode].value = accumulatedValues.v;
-      result[countryCode].name = CountryData.countries[countryCode].name;
 
       return result;
     }, {});
