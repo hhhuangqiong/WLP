@@ -1,11 +1,7 @@
 .calls-table {
   &--row {
 
-    .duration {
-      font-size: 24px;
-      margin-right: rem-calc(20);
-      line-height: 2.3rem;
-    }
+    .duration {}
 
     .timestamp {
       .call_date {
@@ -26,6 +22,14 @@
     }
   }
 }
+.call_status {
+  &.success {
+    color: $success-color;
+  }
+  &.alert {
+    color: $alert-color;
+  }
+}
 .call_type {
   color: $white;
   font-size: rem-calc(14);
@@ -36,4 +40,9 @@
   &.offnet {
     background-color: $status-disable;
   }
+}
+.bye_reason {
+  width: rem-calc(150);
+  display: inline-block;
+  word-wrap: break-word;
 }
