@@ -42,6 +42,37 @@ export default class UsersRequest extends BaseRequest {
     super(opts);
   }
 
+
+  getExportUsers(params, cb) {
+    const {carrier, from, to, pageNumberIndex} = params;
+    const query = {fromTime: from, toTime: to};
+    if (params.page) {
+      query.pageNumberIndex = params.page;
+    } else {
+      query.pageNumberIndex = pageNumberIndex;
+    }
+    this.getUsers(carrier, query, (err, res)=> {
+      if (err) return cb(err);
+      return cb(null, this._morphExportUsers(res, query));
+    });
+  }
+
+  _morphExportUsers(data, query) {
+    let usersData = {};
+    usersData.contents = _.map(data.userList, (value)=>{
+      let result = _.merge(value, value.devices[0]);
+      return _.omit(result, 'devices');
+    });
+    usersData.pageNumber = query.page || data.dateRange.pageNumberIndex;
+    if (data.dateRange.pageNumberIndex === 0) {
+      usersData.totalPages = (usersData.hasNextPage) ? data.dateRange.pageNumberIndex + 2 : data.dateRange.pageNumberIndex + 1;
+    }
+    if (data.dateRange.pageNumberIndex > 0) {
+      usersData.totalPages = (usersData.hasNextPage) ? data.dateRange.pageNumberIndex + 1 : data.dateRange.pageNumberIndex;
+    }
+    return usersData;
+  }
+
   /**
    * get registered users from MUMS
    *

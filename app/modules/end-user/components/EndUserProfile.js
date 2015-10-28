@@ -80,6 +80,10 @@ var EndUserProfile = React.createClass({
     this.context.executeAction(fetchWallet, this.getParams());
   },
 
+  checkPlatformOS: function(platform, matchOS) {
+    return (platform) ? platform.toLowerCase() === matchOS : false;
+  },
+
   renderWalletPanel: function() {
     let wallets = (
       <Accordion.Navigation title="Wallet Info">
@@ -186,7 +190,7 @@ var EndUserProfile = React.createClass({
                 <Accordion.Navigation title="App Info">
                   <Item label="Device">
                     <span className="device-label">
-                      <i className={classNames({'icon-apple': device.platform.toLowerCase() === 'ios'}, {'icon-android': device.platform.toLowerCase() === 'android'})} />
+                      <i className={classNames({'icon-apple': this.checkPlatformOS(device.platform, 'ios') }, {'icon-android': this.checkPlatformOS(device.platform, 'android') })} />
                       {device.platform}
                     </span>
                   </Item>

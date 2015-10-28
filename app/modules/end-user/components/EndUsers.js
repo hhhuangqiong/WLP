@@ -11,6 +11,7 @@ import EndUserStore from '../stores/EndUserStore';
 
 import fetchEndUser from '../actions/fetchEndUser';
 import fetchEndUsers from '../actions/fetchEndUsers';
+import fetchEndUserAsEndUsers from '../actions/fetchEndUserAsEndUsers';
 import clearEndUsers from '../actions/clearEndUsers';
 import showNextPage from '../actions/showNextPage';
 
@@ -18,11 +19,14 @@ import * as FilterBar from './../../../main/components/FilterBar';
 import DateRangePicker from './../../../main/components/DateRangePicker';
 import DatePicker from './../../../main/components/DatePicker';
 import SearchBox from './../../../main/components/Searchbox';
+import Export from './../../../main/file-export/components/Export';
 
 import EndUserTable from './EndUserTable';
 import EndUserProfile from './EndUserProfile';
+import EndUserExportForm from './EndUserExportForm';
 
 import config from './../../../main/config';
+import { accountStatus } from '../../../main/constants/accountStatus';
 
 let { inputDateFormat: DATE_FORMAT } = config;
 let { pages: { endUser: { pageRec: PAGE_REC } } } = config;
@@ -44,6 +48,9 @@ function getInitialQueryFromURL(params, query = {}) {
     carrierId: params.identity,
     startDate: query.startDate,
     endDate: query.endDate,
+    bundleId: query.bundleId,
+    status: query.status,
+    username: query.search,
     page: query.page
   };
 }
@@ -60,10 +67,17 @@ var EndUsers = React.createClass({
     storeListeners: [EndUserStore],
 
     fetchData: function(context, params, query, done) {
-      concurrent([
-        context.executeAction.bind(context, clearEndUsers),
-        context.executeAction.bind(context, fetchEndUsers, _.merge(_.clone(defaultQuery), getInitialQueryFromURL(params, query)))
-      ], done || function() {});
+      if (query.search) {
+        concurrent([
+          context.executeAction.bind(context, clearEndUsers),
+          context.executeAction.bind(context, fetchEndUserAsEndUsers, _.merge(_.clone(defaultQuery), getInitialQueryFromURL(params, query)))
+        ], done || function() {});
+      } else {
+        concurrent([
+          context.executeAction.bind(context, clearEndUsers),
+          context.executeAction.bind(context, fetchEndUsers, _.merge(_.clone(defaultQuery), getInitialQueryFromURL(params, query)))
+        ], done || function() {});
+      }
     }
   },
 
@@ -72,14 +86,14 @@ var EndUsers = React.createClass({
   },
 
   getRequestBodyFromQuery: function(query) {
-    let { startDate, endDate, page } = query || this.context.router.getCurrentQuery();
-    return { startDate, endDate, page };
+    let { startDate, endDate, search, page } = query || this.context.router.getCurrentQuery();
+    return { startDate, endDate, search, page };
   },
 
   getRequestBodyFromState: function() {
     let { identity } = this.context.router.getCurrentParams();
-    let { startDate, endDate, page } = this.state;
-    return { carrierId: identity, startDate, endDate, page };
+    let { startDate, endDate, search, page } = this.state;
+    return { carrierId: identity, startDate, endDate, search, page };
   },
 
   getStateFromStores: function() {
@@ -146,6 +160,46 @@ var EndUsers = React.createClass({
     });
   },
 
+  handleBundleIdChange: function(e) {
+    let query = { bundleId: e.target.value };
+    this.setState(query);
+  },
+
+  handleStatusChange: function(e) {
+    let query = { status: e.target.value };
+    this.setState(query);
+  },
+
+  handleSearchChange: function(e) {
+    this.setState({
+      search: e.target.value
+    });
+  },
+
+  handleSearchSubmit: function(e) {
+    // on enter pressed
+    if (e.which == 13) {
+      e.preventDefault();
+      this.setState({ bundleId: '', status: '' });
+      this.handleQueryChange({ bundleId: '', status: '' });
+    }
+  },
+
+  applyFilters: function(users) {
+    if (this.state.bundleId) {
+      users = _.filter(users, (user)=> {
+        let device = _.get(u, 'devices.0') || {};
+        return device.appBundleId === this.state.bundleId;
+      });
+    }
+    if (this.state.status) {
+      users = _.filter(users, (user)=> {
+        return user.accountStatus === this.state.status;
+      });
+    }
+    return users;
+  },
+
   _checkHasNext: function() {
     return this.state.hasNextPage || this.getStore(EndUserStore).getTotalDisplayUsers() < this.getStore(EndUserStore).getTotalUsers();
   },
@@ -162,13 +216,50 @@ var EndUsers = React.createClass({
               handleStartDateChange={this.handleStartDateChange}
               handleEndDateChange={this.handleEndDateChange}
               />
+
+            <div>
+              <select className="bundle-select top-bar-section__query-input" name="bundleIdSelect" onChange={this.handleBundleIdChange}>
+                <option key={'bundleId'} value="">Choose Bundle ID</option>
+                {this.getStore(EndUserStore).getBundleIds().map((bundleId)=>{
+                  return <option key={bundleId} value={bundleId}>{bundleId}</option>;
+                })}
+              </select>
+            </div>
+
+            <div>
+              <select className="status-select top-bar-section__query-input" name="statusSelect" onChange={this.handleStatusChange}>
+                <option key={'status'} value="">Choose Account Status</option>
+                {accountStatus.map((status)=>{
+                  return <option key={status} value={status.toUpperCase()}>{status}</option>;
+                })}
+              </select>
+            </div>
+
           </FilterBar.LeftItems>
+          <FilterBar.RightItems>
+            <SearchBox
+                placeHolder="Mobile number"
+                onInputChangeHandler={this.handleSearchChange}
+                onKeyPressHandler={this.handleSearchSubmit}
+              />
+
+            <li className="top-bar--inner">
+              <Export exportType="End_User">
+                <EndUserExportForm
+                  carrierId={this.context.router.getCurrentParams().identity}
+                  startDate={this.state.startDate}
+                  endDate={this.state.endDate}
+                />
+              </Export>
+            </li>
+
+          </FilterBar.RightItems>
         </FilterBar.Wrapper>
         <div className="large-24 columns">
           <div className="large-16 columns">
             <EndUserTable
               ref="endUserTable"
-              users={this.getStore(EndUserStore).getDisplayUsers()}
+              users={this.applyFilters(this.getStore(EndUserStore).getDisplayUsers())}
               hasNext={this._checkHasNext()}
               onUserClick={this.handleUserClick}
               onPageChange={this.handleShowNextPage}

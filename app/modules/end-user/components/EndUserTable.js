@@ -33,6 +33,8 @@ var EndUserTable = React.createClass({
 
   render: function() {
     let rows = this.props.users.map((u) => {
+      let device = _.get(u, 'devices.0') || {};
+
         let country = _.find(Countries, (c) => {
           return c.alpha2.toLowerCase() == u.countryCode
         });
@@ -40,27 +42,25 @@ var EndUserTable = React.createClass({
         let creationDate = moment(u.creationDate).format(DATE_FORMAT);
         let handleOnClick = _.bindKey(this.props, 'onUserClick', u.username.trim());
 
+        let platform = device.platform || NOT_FOUND_LABEL;
+
         return <tr onClick={handleOnClick}>
-          <td className="text-center"><span className={classNames('label', 'status', { success: u.verified }, { alert: !u.verified })}></span></td>
           <td>
             {u.username}
           </td>
-          <td>
-            <If condition={country}>
-              <div>
-                <div className="flag__container left">
-                  <span className={classNames('flag--' + country.alpha2, 'left')} />
-                </div>
-                {country.name}
-              </div>
-
-              <Else />
-
-              <div>{NOT_FOUND_LABEL}</div>
-            </If>
-          </td>
-          <td>{u.username}</td>
           <td>{creationDate}</td>
+          <td className="account-status">
+            <span>
+              <span className={classNames('label', 'status', (u.accountStatus === 'ACTIVE')?'success':'alert')}></span>
+              {_.capitalize(u.accountStatus.toLowerCase())}
+            </span>
+          </td>
+          <td className="device-modal">
+            <i className={classNames({'icon-apple': (platform) ? platform.toLowerCase() === 'ios' : false }, {'icon-android': (platform) ? platform.toLowerCase() === 'android' : false })} />
+            {device.deviceModel || NOT_FOUND_LABEL}
+          </td>
+          <td>{device.appBundleId || NOT_FOUND_LABEL}</td>
+          <td>{device.appVersionNumber || NOT_FOUND_LABEL}</td>
         </tr>
       }
     );
@@ -69,11 +69,12 @@ var EndUserTable = React.createClass({
       <table className="data-table large-24 clickable">
         <thead>
           <tr>
-            <th></th>
-            <th>Username</th>
-            <th>Country</th>
-            <th>Mobile</th>
-            <th>Date &amp; Time</th>
+            <th>Mobile no.</th>
+            <th>Registration Date</th>
+            <th>Account Status</th>
+            <th>Device Model</th>
+            <th>Bundle ID</th>
+            <th>App Version no.</th>
           </tr>
         </thead>
         <tbody>
@@ -81,7 +82,7 @@ var EndUserTable = React.createClass({
         </tbody>
         <tfoot>
           <tr>
-            <td colSpan="5">
+            <td colSpan="7">
               <If condition={this.props.hasNext}>
                 <div className="text-center">
                   <span className="pagination__button" onClick={this.props.onPageChange}>Load More</span>
