@@ -1,5 +1,5 @@
 import _ from 'lodash';
-import { getAclString, decodeAclString, getRouteByResource } from './utils';
+import { getAclString, decodeAclString, getPathByResource } from './utils';
 
 /**
  * @class Authority Checker
@@ -70,7 +70,7 @@ class AuthorityChecker {
    */
   getDefaultPath() {
     if (this._isRootCompany() || this._isMaaii()) {
-      return getRouteByResource('overview');
+      return getPathByResource('overview');
     }
 
     let activity = _.first(this._capability);
@@ -79,7 +79,7 @@ class AuthorityChecker {
       return null;
 
     let { action, resource } = decodeAclString(activity);
-    return getRouteByResource(resource);
+    return getPathByResource(resource);
   }
 
   /**
