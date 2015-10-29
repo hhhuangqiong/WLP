@@ -29,9 +29,15 @@ merge            = require 'merge-stream'
 
 console.timeEnd 'Loading plugins'
 
-env = process.env.NODE_ENV || 'development'
+defaultTasks = ['clean', 'nodemon', 'watch']
+webpackConfig = require './webpack.production.config'
 
-if env == "development" then webpackConfig = require './webpack.config' else webpackConfig = require './webpack.production.config'
+# webpack hotloader settings
+enableWebpackHotloader = process.env.ENABLE_WEBPACK_HOTLOADER
+
+if enableWebpackHotloader
+  webpackConfig = require './webpack.config'
+  defaultTasks.push 'webpack-dev-server'
 
 # reduce startup loading time
 browserSync = null
@@ -57,7 +63,7 @@ gulp.task 'test', (cb) ->
         .on 'end', cb
   return
 
-gulp.task 'default', ['clean', 'webpack-dev-server', 'nodemon', 'watch'], ->
+gulp.task 'default', defaultTasks, ->
   gutil.log '[default] done \uD83D\uDE80'
   return
 
@@ -148,8 +154,6 @@ gulp.task 'webpack', (cb)->
     .pipe gulp.dest('public/javascript/')
 
 gulp.task "webpack-dev-server", ['scss', 'webpack'], (callback) ->
-  return callback() if env != 'development'
-
   hotLoadPort = webpackConfig.custom.hotLoadPort
   devServer = new WebpackDevServer(webpack(webpackConfig),
     # 'redirect loop' occurs if using 'http://<host>:<hotLoadPort>'
