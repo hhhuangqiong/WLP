@@ -5,6 +5,7 @@ import classNames from 'classnames';
 
 import Remark from './Remark';
 import CallsStore from '../stores/CallsStore';
+import {parseDuration} from '../server/utils/StringFormatter';
 
 import moment from 'moment';
 import _ from 'lodash';
@@ -37,58 +38,19 @@ var CallsTable = React.createClass({
 
         return (
           <tr className="calls-table--row" key={u.record_id}>
-            <td className="text-center calls-table--cell"><span className={classNames('label','status',(u.success)?'success':'alert')}></span></td>
+            <td className="calls-table--cell">{u.caller.split('@')[0]}</td>
+            <td className="calls-table--cell">{u.callee.split('@')[0]}</td>
+            <td className="calls-table--cell"><span className="call_time">{callStart}</span></td>
+            <td className="calls-table--cell"><span className="call_time">{callEnd}</span></td>
             <td className="calls-table--cell">
-              <span className="left duration">{Math.round(u.duration/1000)}s</span>
-              <div className="left timestamp">
-                <span className="call_time">{callStart} - {callEnd}</span>
-                <br/>
-                <span className="call_date">{callDate}</span>
-              </div>
+              <span className="left duration">{parseDuration(u.duration)}</span>
             </td>
             <td className="calls-table--cell">
-              <span className={"call_type radius label " + callType}>{callType}</span>
+              <span className={classNames('call_status',(u.success)?'success':'alert')}>{(u.success)?'Success':'Failure'}</span>
             </td>
-            <td className="calls-table--cell">
-              <div className="large-24 columns">
-                <div className="row">
-                  <div className="large-11 columns">
-                    <div className="caller_info">
-                      <div className="flag__container left">
-                        <span className={u.caller_country ? 'flag--'+u.caller_country : ''}></span>
-                      </div>
-                      <div className="left">
-                        <span className="caller">{u.caller}</span>
-                        <br/>
-                        <span>{(callerCountry) ? callerCountry.name : ''}</span>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="large-1 columns">
-                    <div className="calls-table__arrow">
-                      <i className="icon-arrow" />
-                    </div>
-                  </div>
-                  <div className="large-11 columns">
-                    <div className="callee_info">
-                      <div className="flag__container left">
-                        <span className={u.callee_country ? 'flag--'+u.callee_country : ''}></span>
-                      </div>
-                      <div className="left">
-                        <span className="callee">{u.callee}</span>
-                        <br/>
-                        <span>{(calleeCountry) ? calleeCountry.name : ''}</span>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </td>
-            <td className="calls-table--cell">
-              {!u.success && u.bye_reason && u.bye_reason != 'null' ? (
-                <Remark tip={u.bye_reason} />
-              ) : null}
-            </td>
+            <td className="calls-table--cell"><span className="bye_reason">{u.bye_reason}</span></td>
+            <td className="calls-table--cell"></td>
+            <td className="calls-table--cell"></td>
           </tr>
         )
       });
@@ -123,7 +85,7 @@ var CallsTable = React.createClass({
       footer = (
         <tfoot>
           <tr>
-            <td colSpan="5">
+            <td colSpan="9">
               {pagination}
             </td>
           </tr>
@@ -135,11 +97,15 @@ var CallsTable = React.createClass({
       <table className="large-24 clickable calls-table" key="calls-table">
         <thead className="calls-table--head">
           <tr className="calls-table--row">
-            <th className="calls-table--cell"></th>
-            <th className="calls-table--cell">Duration</th>
-            <th className="calls-table--cell">Type</th>
-            <th className="calls-table--cell">Mobile &amp; Destination</th>
-            <th className="calls-table--cell">Remark</th>
+            <th className="calls-table--cell">Calling Number</th>
+            <th className="calls-table--cell">Called Number</th>
+            <th className="calls-table--cell">Start Time</th>
+            <th className="calls-table--cell">End Time</th>
+            <th className="calls-table--cell">Call Duration</th>
+            <th className="calls-table--cell">Call Status</th>
+            <th className="calls-table--cell">Service Reason</th>
+            <th className="calls-table--cell">Bundle ID</th>
+            <th className="calls-table--cell">SIP Trunk</th>
           </tr>
         </thead>
         <tbody className="calls-table--body" key="calls-table--body">
