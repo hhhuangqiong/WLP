@@ -17,8 +17,7 @@ export default {
       'end_time', 'answer_time', 'duration', 'last_response_code',
       'caller_os_version', 'callee_os_version', 'bye_reason',
       'caller_platform', 'callee_platform', 'caller_hardware_identifier',
-      'callee_hardware_identifier', 'caller_country', 'callee_country',
-      'caller_bundle_id', 'sip_trunk'
+      'callee_hardware_identifier', 'caller_country', 'callee_country'
     ],
     EXPORT_REQUEST: 'CallsRequest',
     EXPORT_REQUEST_EXECUTION: 'getCalls',

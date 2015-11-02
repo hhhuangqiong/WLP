@@ -11,7 +11,6 @@ import moment from 'moment';
 import _ from 'lodash';
 
 var Countries = require('../data/countries.json');
-const EMPTY_STRING = 'N/A';
 
 var CallsTable = React.createClass({
   contextTypes: {
@@ -49,22 +48,15 @@ var CallsTable = React.createClass({
             <td className="calls-table--cell">
               <span className={classNames('call_status',(u.success)?'success':'alert')}>{(u.success)?'Success':'Failure'}</span>
             </td>
-            <td className="calls-table--cell">
-              {!u.success && u.bye_reason && u.bye_reason !== 'null' ? (
-                <Remark tip={u.bye_reason} />
-              ) : null}
-            </td>
-            <td className="calls-table--cell"><span className="caller_bundle_id">{u.caller_bundle_id || EMPTY_STRING}</span></td>
-            <td className="calls-table--cell"><span className="sip_trunk">{u.sip_trunk || EMPTY_STRING}</span></td>
+            <td className="calls-table--cell"><span className="bye_reason">{u.bye_reason}</span></td>
+            <td className="calls-table--cell"></td>
+            <td className="calls-table--cell"></td>
           </tr>
         )
       });
     } else {
       rows = <tr className="calls-table--row">
           <td className="text-center calls-table--cell"></td>
-          <td className="calls-table--cell"></td>
-          <td className="calls-table--cell"></td>
-          <td className="calls-table--cell"></td>
           <td className="calls-table--cell"></td>
           <td className="calls-table--cell"></td>
           <td className="calls-table--cell"></td>
@@ -111,7 +103,7 @@ var CallsTable = React.createClass({
             <th className="calls-table--cell">End Time</th>
             <th className="calls-table--cell">Call Duration</th>
             <th className="calls-table--cell">Call Status</th>
-            <th className="calls-table--cell">Failure Reason</th>
+            <th className="calls-table--cell">Service Reason</th>
             <th className="calls-table--cell">Bundle ID</th>
             <th className="calls-table--cell">SIP Trunk</th>
           </tr>
