@@ -8,7 +8,7 @@ import redisWStream from 'redis-wstream';
 
 import { fetchDep } from '../utils/bottle';
 import EXPORTS from '../../config/export';
-import { CALLS, IM, VERIFICATION, END_USER } from '../../main/file-export/constants/ExportType';
+import { CALLS, IM, VERIFICATION } from '../../main/file-export/constants/ExportType';
 
 import { getCountryName, beautifyTime, stringifyNumbers, parseDuration, sanitizeNull } from '../../utils/StringFormatter';
 
@@ -35,7 +35,7 @@ export default class ExportTask {
     let deferred = Q.defer();
 
     this.kueue = kueue;
-    this.jobType = param.jobType || query.exportType;
+    this.jobType = param.jobType;
     this.exportType = query.exportType;
     this.job = deferred.promise;
     this.job.getExportConfig = this.getExportConfig;
@@ -115,17 +115,6 @@ export default class ExportTask {
       };
     };
 
-    job[END_USER] = () => {
-      return {
-        carrier: params.carrierId,
-        from: query.startDate,
-        to: query.endDate,
-        pageNumberIndex: query.pageNumberIndex,
-        page: PAGE_START_INDEX,
-        size: PAGE_SIZE,
-      };
-    };
-
     return job[this.exportType]();
   }
 
@@ -189,16 +178,6 @@ export default class ExportTask {
         }
 
         break;
-
-      case (END_USER):
-        row.username = row.username;
-        row.creationDate = beautifyTime(row.creationDate);
-        row.accountStatus = row.accountStatus;
-        row.platform = row.platform;
-        row.deviceModel = row.deviceModel;
-        row.appBundleId = row.appBundleId;
-        row.appVersionNumber = row.appVersionNumber;
-        break;
     }
 
     return sanitizeNull(row);
@@ -216,8 +195,6 @@ export default class ExportTask {
         return EXPORTS.CALLS;
       case VERIFICATION:
         return EXPORTS.VERIFICATION;
-      case END_USER:
-        return EXPORTS.END_USER;
       default:
         return {};
     }

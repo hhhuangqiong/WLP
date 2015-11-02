@@ -34,14 +34,5 @@ export default {
     EXPORT_REQUEST: 'VerificationRequest',
     EXPORT_REQUEST_EXECUTION: 'getVerifications',
     EXPORT_FILENAME: 'export_verification.csv'
-  },
-  END_USER: {
-    DATA_FIELDS: [
-      'username', 'creationDate', 'accountStatus', 'platform', 'deviceModel',
-      'appBundleId', 'appVersionNumber'
-    ],
-    EXPORT_REQUEST: 'EndUserRequest',
-    EXPORT_REQUEST_EXECUTION: 'getExportUsers',
-    EXPORT_FILENAME: 'export_users.csv'
-  },
+  }
 }
