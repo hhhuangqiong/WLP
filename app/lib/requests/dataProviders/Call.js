@@ -97,8 +97,6 @@ export default class CallsRequest extends BaseRequest {
 
     logger.debug(`Calls: ${this.opts.methods.CALLS.METHOD} ${url}?${qs.stringify(params)}`, params);
 
-    logger.info(`Calls API Endpoint: ${util.format('%s%s', base, url)}?${qs.stringify(params)}`);
-
     request
       .get(url)
       .query(params)
