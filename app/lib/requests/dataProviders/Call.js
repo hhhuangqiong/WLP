@@ -6,8 +6,6 @@ var Q       = require('q');
 var request = require('superagent');
 var util    = require('util');
 
-import qs from 'qs';
-
 import BaseRequest from '../Base';
 import qs from 'qs';
 
