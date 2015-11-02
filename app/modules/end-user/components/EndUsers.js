@@ -67,17 +67,10 @@ var EndUsers = React.createClass({
     storeListeners: [EndUserStore],
 
     fetchData: function(context, params, query, done) {
-      if (query.search) {
-        concurrent([
-          context.executeAction.bind(context, clearEndUsers),
-          context.executeAction.bind(context, fetchEndUserAsEndUsers, _.merge(_.clone(defaultQuery), getInitialQueryFromURL(params, query)))
-        ], done || function() {});
-      } else {
         concurrent([
           context.executeAction.bind(context, clearEndUsers),
           context.executeAction.bind(context, fetchEndUsers, _.merge(_.clone(defaultQuery), getInitialQueryFromURL(params, query)))
         ], done || function() {});
-      }
     }
   },
 

@@ -59,20 +59,10 @@ var EndUserStore = createStore({
   },
 
   handleEndUsersChange: function(payload) {
-    if (payload.userCount) {
-      this.users = this.users.concat(payload.userList);
-      this.displayUsers = this.displayUsers.concat(this._getDisplayUsers());
-      this.currentUser = (this.users[0].userDetails) ? this.users[0] : {userDetails: this.users[0]};
-      this.hasNextPage = payload.hasNextPage;
-      this.page = payload.dateRange.pageNumberIndex;
-    } else {
-      this.users = [payload.userDetails];
-      this.displayUsers = this._getDisplayUsers();
-      this.currentUser = payload;
-      this.hasNextPage = false;
-      this.page = 0;
-    }
-
+    this.users = this.users.concat(payload.userList);
+    this.displayUsers = this.displayUsers.concat(this._getDisplayUsers());
+    this.hasNextPage = payload.hasNextPage;
+    this.page = payload.dateRange.pageNumberIndex;
     this.emitChange();
   },
 
