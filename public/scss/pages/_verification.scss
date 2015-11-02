@@ -1,3 +1,23 @@
+.verification-dropdown {
+  width: rem-calc(300);
+
+  select {
+    top: 0 !important;
+  }
+}
+
+.verification-filter-button {
+  @include sidebar-button;
+
+  &__text {
+    margin-right: rem-calc(10);
+  }
+
+  > .icon-dropdown {
+    font-size: x-small;
+  }
+}
+
 .verification-overview {
   $overviewPadding: rem-calc(15);
   $changesPositiveColor: green;
@@ -235,17 +255,23 @@
   }
   */
   &__app-select {
-    font-size: 0.8125rem;
-    line-height: 0.9rem;
-    padding-top: 0.75rem;
-    width: 13rem;
+    margin-top: rem-calc(15);
+
+    height: rem-calc(30);
+    line-height: rem-calc(28);
+
+    min-width: rem-calc(200);
 
     .Select-control {
       @include border-radius(20px);
+
       background-color: #FAFAFA;
       border-color: rgba(199, 199, 199, 0.8);
 
+      padding: 0 rem-calc(15);
+
       .Select-placeholder {
+        padding: 0 rem-calc(15);
         color: #333;
       }
     }

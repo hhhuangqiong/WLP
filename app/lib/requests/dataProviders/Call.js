@@ -9,6 +9,7 @@ var util    = require('util');
 import qs from 'qs';
 
 import BaseRequest from '../Base';
+import qs from 'qs';
 
 export default class CallsRequest extends BaseRequest {
 
@@ -97,6 +98,8 @@ export default class CallsRequest extends BaseRequest {
     var url = this.opts.baseUrl + this.opts.methods.CALLS.URL;
 
     logger.debug(`Calls: ${this.opts.methods.CALLS.METHOD} ${url}?${qs.stringify(params)}`, params);
+
+    logger.info(`Calls API Endpoint: ${util.format('%s%s', base, url)}?${qs.stringify(params)}`);
 
     request
       .get(url)

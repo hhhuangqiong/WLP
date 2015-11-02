@@ -241,4 +241,26 @@
     "logoFile": "logo-m800.png",
     "widgets": {}
   }
+}, {
+  "user": {
+    "username": "admin@sino.maaiii-api.org",
+    "password": "sinoWLP2015",
+    "name": {
+      "first": "Admin",
+      "last": "Sino"
+    },
+    "assignedGroup": "root",
+    "status": "active"
+  },
+  "company": {
+    "parentCompany": null,
+    "carrierId": "sino.maaiii-api.org",
+    "name": "Sino",
+    "reseller": false,
+    "status": "active",
+    "timezone": "UTC+8",
+    "country": "Hong Kong",
+    "logoFile": "logo-m800.png",
+    "widgets": {}
+  }
 }]

@@ -81,7 +81,7 @@ var Navigation = React.createClass({
         <ul className="right">
           {this._renderCreateButton()}
           <li className="navigation-bar__item">
-            <a href="http://support.maaii.com" target="_new">report issue</a>
+            <a href="https://support.maaii.com" target="_new">report issue</a>
           </li>
           <CompanySwitcher />
           <li className="has-dropdown not-click navigation-bar__item">

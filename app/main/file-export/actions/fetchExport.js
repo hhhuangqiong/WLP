@@ -1,4 +1,4 @@
-import { CALLS, IM } from '../constants/ExportType';
+import { CALLS, IM, VERIFICATION } from '../constants/ExportType';
 
 let debug = require('debug')('app:modules/file-export/actions/fetchExport');
 
@@ -27,17 +27,5 @@ export default function(context, params, done) {
     done();
   };
 
-  switch (exportType) {
-    case CALLS:
-      context.api.getCallsExport(params, exportCallback);
-      break;
-
-    case IM:
-      context.api.getImExport(params, exportCallback);
-      break;
-
-    default:
-      context.dispatch('FETCH_EXPORT_FAILURE', { message: WITHOUT_EXPORT_TYPE_LABEL });
-  }
-
+  context.api.getExport(params, exportCallback);
 };

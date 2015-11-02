@@ -31,6 +31,17 @@ Values:
 - true
 - false
 
+### ENABLE_WEBPACK_HOTLOADER (DEFAULT: false)
+
+Description:
+
+- change to activate hotloader to update file without reload
+
+Values:
+
+- true
+- false
+
 ### HOT_LOAD_PORT (DEFAULT: 8888)
 
 Description:

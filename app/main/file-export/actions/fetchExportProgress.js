@@ -29,17 +29,5 @@ export default function(context, params, done) {
     done();
   };
 
-  switch (exportType) {
-    case CALLS:
-      context.api.getCallsExportProgress(params, exportProgressCallback);
-      break;
-
-    case IM:
-      context.api.getImExportProgress(params, exportProgressCallback);
-      break;
-
-    default:
-      context.dispatch('FETCH_EXPORT_PROGRESS_FAILURE', { message: WITHOUT_EXPORT_TYPE_LABEL });
-  }
-
+  context.api.getExportProgress(params, exportProgressCallback);
 };

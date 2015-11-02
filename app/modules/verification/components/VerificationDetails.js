@@ -24,8 +24,26 @@ import ApplicationStore from '../../../stores/ApplicationStore';
 import VerificationTable from './VerificationTable';
 import config from '../../../config';
 
+import Export from '../../../main/file-export/components/Export';
+import VerificationExportForm from './VerificationExportForm';
+import VerificationFilter from './VerificationFilter';
+
+import SearchButton from '../../../main/search-button/SearchButton';
+
 const debug = require('debug')('app:verification/components/Verification');
 const ENTER_KEY = 13;
+
+const LABEL_OF_ALL = 'All';
+
+const VERIFICATION_TYPES = [
+  'call-in',
+  'call-out'
+];
+
+const OS_TYPES = [
+  'ios',
+  'android'
+];
 
 let { inputDateFormat: DATE_FORMAT } = require('./../../../main/config');
 
@@ -254,6 +272,14 @@ let VerificationDetails = React.createClass({
     this.refs.endDatePicker.handleFocus();
   },
 
+  transformVerificationTypes(type) {
+    switch (type) {
+      case 'MobileTerminated': return 'call-in';
+      case 'MobileOriginated': return 'call-out';
+      default: return type;
+    }
+  },
+
   handleSearchInputChange: function (evt) {
     this.setState({
       number: evt.target.value
@@ -264,6 +290,16 @@ let VerificationDetails = React.createClass({
     if (evt.which === ENTER_KEY) {
       this.handleQueryChange({ number: evt.target.value, page: 0 });
     }
+  },
+
+  handleVerificationMethodChange(event) {
+    let value = event.target.value;
+    this.handleQueryChange({ method: value === LABEL_OF_ALL ? '' : event.target.value });
+  },
+
+  handleOsTypeChange(event) {
+    let value = event.target.value;
+    this.handleQueryChange({ os: value === LABEL_OF_ALL ? '' : event.target.value });
   },
 
   render: function () {
@@ -286,27 +322,49 @@ let VerificationDetails = React.createClass({
             <Link to="verification-details" params={{role, identity}}>Details Report</Link>
           </FilterBar.NavigationItems>
           <FilterBar.LeftItems>
-            <Select
-              name="appid"
-              className="verification-details__app-select"
-              options={options}
-              value={"Application ID: " + (this.state.appId ? this.state.appId : "-")}
-              clearable={false}
-              searchable={false}
-              onChange={this.onAppIdChange} />
-          </FilterBar.LeftItems>
-          <FilterBar.RightItems>
+            <VerificationFilter
+              appId={this.state.appId}
+              appIdOptions={options}
+              appIdChange={this.onAppIdChange}
+              os={this.state.os}
+              osTypes={OS_TYPES}
+              osChange={this.handleOsTypeChange}
+              method={this.state.method}
+              methods={VERIFICATION_TYPES}
+              methodChange={this.handleVerificationMethodChange}
+              transformVerificationTypes={this.transformVerificationTypes}
+              defaultOption={LABEL_OF_ALL}
+            />
+
             <DateRangePicker
               withIcon={true}
               startDate={this.state.startDate}
               endDate={this.state.endDate}
               handleStartDateChange={this.handleStartDateChange}
-              handleEndDateChange={this.handleEndDateChange} />
-            <SearchBox
-              value={this.state.number}
-              placeHolder="Mobile number"
+              handleEndDateChange={this.handleEndDateChange}
+            />
+          </FilterBar.LeftItems>
+          <FilterBar.RightItems>
+            <SearchButton
+              placeHolder="Mobile"
+              search={this.state.number}
               onInputChangeHandler={this.handleSearchInputChange}
-              onKeyPressHandler={this.handleSearchInputSubmit} />
+              onKeyPressHandler={this.handleSearchInputSubmit}
+            />
+            <Export exportType="Verification">
+              <VerificationExportForm
+                fromTime={this.state.startDate}
+                toTime={this.state.endDate}
+                verificationType={this.state.method}
+                verificationTypes={VERIFICATION_TYPES}
+                osType={this.state.os}
+                osTypes={OS_TYPES}
+                handleVerificationMethodChange={this.handleVerificationMethodChange}
+                handleOsTypeChange={this.handleOsTypeChange}
+                transformVerificationTypes={this.transformVerificationTypes}
+                defaultOption={LABEL_OF_ALL}
+              />
+            </Export>
           </FilterBar.RightItems>
         </FilterBar.Wrapper>
 

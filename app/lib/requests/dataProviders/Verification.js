@@ -6,6 +6,7 @@ import util from 'util';
 import _ from 'lodash';
 import moment from 'moment';
 import CountryData from 'country-data';
+import qs from 'qs';
 
 import BaseRequest from '../Base';
 import jsonSchema from '../../../utils/getSimplifiedJsonSchema.js';
@@ -68,6 +69,22 @@ export default class VerificationRequest extends BaseRequest {
   }
 
   /**
+   * Formats the verication type that will send to the server endpoint for query.
+   * This method will modify the original object.
+   *
+   * @method
+   * @param {Object} type The verification type
+   * @returns {Object} The updated object
+   */
+  convertVerificationTypes(type) {
+    switch (type) {
+      case 'call-in': return 'MobileTerminated';
+      case 'call-out': return 'MobileOriginated';
+      default: return type;
+    }
+  }
+
+  /**
    * Formats and normalize query parameters for verification request
    *
    * @method
@@ -87,6 +104,10 @@ export default class VerificationRequest extends BaseRequest {
     Q.ninvoke(this, 'swapDate', params)
       .then((params) => {
         let format = nconf.get(util.format('%s:format:timestamp', this.opts.type)) || 'x';
+
+        params.type = this.convertVerificationTypes(params.method);
+        delete params.method;
+
         return this.formatDateString(params, format)
       })
       .then((params) => {
@@ -112,7 +133,7 @@ export default class VerificationRequest extends BaseRequest {
     let method = endpoint.METHOD;
     let url = util.format('%s%s', base, path);
 
-    logger.debug(util.format('Send a %s request to `%s` with parameters: ', method, url), params);
+    logger.debug(`Verification API Endpoint: ${url}?${qs.stringify(params)}`);
 
     request(method, url)
       .query(params)
@@ -468,7 +489,7 @@ export default class VerificationRequest extends BaseRequest {
 
     // if any of the result is missing, create a dummy for it
     if (!successSet || !failureSet) {
-      // calculate the data count 
+      // calculate the data count
       // so that we know how many data point we should generate for the missing data set
       let dataCount = this.computeDataCount(params.from, params.to, params.timescale);
 
@@ -633,10 +654,14 @@ export default class VerificationRequest extends BaseRequest {
       return;
     }
 
-    let countries = _.indexBy(response.results, (result) => result.segment.country);
+    let countries = _.indexBy(response.results, result => result.segment.country.toUpperCase());
+    let countryNames = _.uniq(Object.keys(countries));
+
+    // Avoid server endpoint to return country code that confronts the ISO standard
+    countries = countryNames.filter(country => CountryData.countries[country]).map(country => countries[country]);
 
     let countriesWithValues = _.reduce(countries, (result, country, name) => {
-      let countryCode = name.toUpperCase();
+      let countryCode = country.segment.country.toUpperCase();
 
       let accumulatedValues = _.reduce(country.data, (total, data) => {
         total.v = parseInt(total.v) + parseInt(data.v);
@@ -644,9 +669,9 @@ export default class VerificationRequest extends BaseRequest {
       });
 
       result[countryCode] = {};
+      result[countryCode].name = CountryData.countries[countryCode].name;
       result[countryCode].code = countryCode;
       result[countryCode].value = accumulatedValues.v;
-      result[countryCode].name = CountryData.countries[countryCode].name;
 
       return result;
     }, {});
