@@ -1,4 +1,4 @@
-import { CALLS, IM, VERIFICATION, END_USER } from '../constants/ExportType';
+import { CALLS, IM, VERIFICATION } from '../constants/ExportType';
 
 let debug = require('debug')('app:modules/file-export/actions/fetchExport');
 
