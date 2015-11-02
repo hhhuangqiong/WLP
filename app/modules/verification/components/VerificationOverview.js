@@ -40,7 +40,7 @@ function fromTimeslot(collection, fromTime, timeframe) {
   let maxIndex = collection.indexOf(maxNumber) + 1;
 
   let subtractedFromTime = timeFromNow(timeframe);
-  return subtractedFromTime.add(maxIndex, timeframe.includes('hours') ? 'hours' : 'days');
+  return subtractedFromTime.add(maxIndex, timeframe.indexOf('hours') > -1 ? 'hours' : 'days');
 }
 
 export default React.createClass({

@@ -37,8 +37,30 @@ export function getResources() {
   }, { menus: [] });
 }
 
+/**
+ * Returns the route name of the specific resource.
+ * The route name is essentially the name of the react-router route.
+ *
+ * @method
+ * @param {String} resource  The resource name
+ * @returns {String} The route name
+ */
 export function getRouteByResource(resource) {
   return _.result(_.find(navResources, function(nav) {
     return nav.page === resource;
   }), 'routeName');
 }
+
+/**
+ * Returns the route path of the specific resource.
+ * The path name is essentially path of the URI.
+ *
+ * @method
+ * @param {String} resource  The resource name
+ * @returns {String} The route path
+ */
+export function getPathByResource(resource) {
+  return _.result(_.find(navResources, function(nav) {
+    return nav.page === resource;
+  }), 'path');
+};

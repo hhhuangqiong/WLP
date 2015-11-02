@@ -5,7 +5,7 @@ import classNames from 'classnames';
 
 import Remark from './Remark';
 import CallsStore from '../stores/CallsStore';
-import {parseDuration} from '../server/utils/StringFormatter';
+import {parseDuration} from '../utils/StringFormatter';
 
 import moment from 'moment';
 import _ from 'lodash';
