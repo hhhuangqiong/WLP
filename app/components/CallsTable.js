@@ -51,12 +51,8 @@ var CallsTable = React.createClass({
             <td className="calls-table--cell">{u.callee.split('@')[0]}</td>
             <td className="calls-table--cell"><span className={"call_type radius label " + callType}>{callType}</span></td>
             <td className="calls-table--cell">
-              <span className="call_time">{callStartTime}</span>
-              <label>{callStartDate}</label>
-            </td>
-            <td className="calls-table--cell">
-              <span className="call_time">{callEndTime}</span>
-                <label>{callEndDate}</label>
+              <span className="call_time">{callStartTime} - {callEndTime}</span>
+              <label>{callEndDate}</label>
             </td>
             <td className="calls-table--cell">
               <span className="left duration">{parseDuration(u.duration)}</span>
@@ -108,7 +104,7 @@ var CallsTable = React.createClass({
       footer = (
         <tfoot>
           <tr>
-            <td colSpan="10">
+            <td colSpan="9">
               {pagination}
             </td>
           </tr>
@@ -123,10 +119,9 @@ var CallsTable = React.createClass({
             <th className="calls-table--cell">Calling Number</th>
             <th className="calls-table--cell">Called Number</th>
             <th className="calls-table--cell">Type</th>
-            <th className="calls-table--cell">Start Time</th>
-            <th className="calls-table--cell">End Time</th>
-            <th className="calls-table--cell">Call Duration</th>
-            <th className="calls-table--cell">Call Status</th>
+            <th className="calls-table--cell">Date</th>
+            <th className="calls-table--cell">Duration</th>
+            <th className="calls-table--cell">Status</th>
             <th className="calls-table--cell">Failure Reason</th>
             <th className="calls-table--cell">Bundle ID</th>
             <th className="calls-table--cell">SIP Trunk</th>
