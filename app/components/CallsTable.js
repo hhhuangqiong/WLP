@@ -21,20 +21,35 @@ var CallsTable = React.createClass({
     router: React.PropTypes.func.isRequired
   },
 
+  renderCountryField(number, countryName) {
+    // Prevent display carrier
+    number = number.split('@')[0];
+
+    // Get the actual country name
+    let countryData = _.find(Countries, country => country.alpha2.toLowerCase() == countryName.toLowerCase());
+
+    if (!countryData) return number;
+
+    return (
+      <div className="caller_info">
+        <div className="flag__container left">
+          <span className={'flag--' + countryData.name}></span>
+        </div>
+        <div className="left">
+          <span className="caller">{number}</span>
+          <br/>
+          <span>{countryData.name}</span>
+        </div>
+      </div>
+    );
+  },
+
   render: function() {
     let params = this.context.router.getCurrentParams();
 
     let rows;
     if (!_.isEmpty(this.props.calls)) {
       rows = this.props.calls.map((u) => {
-        let callerCountry = _.find(Countries, (c) => {
-          return c.alpha2.toLowerCase() == u.caller_country
-        });
-
-        let calleeCountry = _.find(Countries, (c) => {
-          return c.alpha2.toLowerCase() == u.callee_country
-        });
-
         let callStartDate = moment(u.start_time).format(DATE_FORMAT);
         let callEndDate = (u.end_time > 0) ? moment(u.end_time).format(DATE_FORMAT) : callStartDate;
         let callStart = moment(u.start_time).format(TIME_FORMAT);
@@ -47,8 +62,14 @@ var CallsTable = React.createClass({
 
         return (
           <tr className="calls-table--row" key={u.record_id}>
-            <td className="calls-table--cell">{u.caller.split('@')[0]}</td>
-            <td className="calls-table--cell">{u.callee.split('@')[0]}</td>
+            <td className="calls-table--cell">
+              {this.renderCountryField(u.caller, u.caller_country)}
+            </td>
+
+            <td className="calls-table--cell">
+              {this.renderCountryField(u.callee, u.callee_country)}
+            </td>
+
             <td className="calls-table--cell"><span className={"call_type radius label " + callType}>{callType}</span></td>
             <td className="calls-table--cell">
               <span className="call_time">{callStartTime} - {callEndTime}</span>
