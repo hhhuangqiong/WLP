@@ -255,7 +255,6 @@ let getCalls = function(req, res) {
   let params = {
     // jscs:disable requireCamelCaseOrUpperCaseIdentifiers
     caller_carrier: req.params.carrierId,
-    callee_carrier: req.params.carrierId,
     from: req.query.startDate,
     to: req.query.endDate,
     caller: prepareWildcard(req.query.search),
@@ -266,12 +265,10 @@ let getCalls = function(req, res) {
   };
 
   if (req.query.searchType === 'caller') {
-    delete params.callee_carrier;
     delete params.callee;
   }
 
   if (req.query.searchType === 'callee') {
-    delete params.caller_carrier;
     delete params.caller;
   }
 

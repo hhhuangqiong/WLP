@@ -65,11 +65,6 @@ export default class CallsRequest extends BaseRequest {
       if (params.caller_carrier)
         query.caller_carrier = params.caller_carrier;
 
-      // set callee_carrier even if offnet is set
-      // in theory offnet call can be called from land line
-      if (params.callee_carrier)
-        query.callee_carrier = params.callee_carrier;
-
       if (params.caller)
         query.caller = params.caller;
 
