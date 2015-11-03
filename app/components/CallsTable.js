@@ -137,8 +137,8 @@ var CallsTable = React.createClass({
       <table className="large-24 clickable calls-table" key="calls-table">
         <thead className="calls-table--head">
           <tr className="calls-table--row">
-            <th className="calls-table--cell">Calling Number</th>
-            <th className="calls-table--cell">Called Number</th>
+            <th className="calls-table--cell">Caller</th>
+            <th className="calls-table--cell">Callee</th>
             <th className="calls-table--cell">Type</th>
             <th className="calls-table--cell">Date</th>
             <th className="calls-table--cell">Duration</th>
