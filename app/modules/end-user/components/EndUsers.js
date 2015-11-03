@@ -18,7 +18,6 @@ import showNextPage from '../actions/showNextPage';
 import * as FilterBar from './../../../main/components/FilterBar';
 import DateRangePicker from './../../../main/components/DateRangePicker';
 import DatePicker from './../../../main/components/DatePicker';
-import SearchBox from './../../../main/components/Searchbox';
 import Export from './../../../main/file-export/components/Export';
 
 import EndUserTable from './EndUserTable';
@@ -50,7 +49,6 @@ function getInitialQueryFromURL(params, query = {}) {
     endDate: query.endDate,
     bundleId: query.bundleId,
     status: query.status,
-    username: query.search,
     page: query.page
   };
 }
@@ -91,14 +89,14 @@ var EndUsers = React.createClass({
   },
 
   getRequestBodyFromQuery: function(query) {
-    let { startDate, endDate, search, page } = query || this.context.router.getCurrentQuery();
-    return { startDate, endDate, search, page };
+    let { startDate, endDate, page } = query || this.context.router.getCurrentQuery();
+    return { startDate, endDate, page };
   },
 
   getRequestBodyFromState: function() {
     let { identity } = this.context.router.getCurrentParams();
-    let { startDate, endDate, search, page } = this.state;
-    return { carrierId: identity, startDate, endDate, search, page };
+    let { startDate, endDate, page } = this.state;
+    return { carrierId: identity, startDate, endDate, page };
   },
 
   getStateFromStores: function() {
@@ -176,21 +174,6 @@ var EndUsers = React.createClass({
     this.setState(query);
   },
 
-  handleSearchChange: function(e) {
-    this.setState({
-      search: e.target.value
-    });
-  },
-
-  handleSearchSubmit: function(e) {
-    // on enter pressed
-    if (e.which == 13) {
-      e.preventDefault();
-      this.setState({ bundleId: '', status: '' });
-      this.handleQueryChange({ bundleId: '', status: '' });
-    }
-  },
-
   applyFilters: function(users) {
     if (this.state.bundleId) {
       users = _.filter(users, (user)=> {
@@ -243,12 +226,6 @@ var EndUsers = React.createClass({
 
           </FilterBar.LeftItems>
           <FilterBar.RightItems>
-            <SearchBox
-                placeHolder="Mobile number"
-                onInputChangeHandler={this.handleSearchChange}
-                onKeyPressHandler={this.handleSearchSubmit}
-              />
-
             <li className="top-bar--inner">
               <Export exportType="End_User">
                 <EndUserExportForm
