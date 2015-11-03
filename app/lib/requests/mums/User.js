@@ -216,26 +216,4 @@ export default class UsersRequest extends BaseRequest {
       });
   }
 
-  /**
-   * terminate a registered user from MUMS
-   *
-   * @param carrierId
-   * @param username
-   * @param cb
-   */
-  terminateUser(carrierId, username, cb) {
-    var base = this.opts.baseUrl;
-    var url = util.format(this.opts.methods.TERMINATE.URL, carrierId, username);
-
-    logger.debug('terminate user from %s with username %s', carrierId, username);
-
-    request
-      .del(util.format('%s%s', base, url))
-      .timeout(this.opts.timeout)
-      .end((err, res) => {
-        if (err) return cb(err);
-        if (res.status >= 400) return cb(this.handleError(res.body.err));
-        cb(null, res.body);
-      })
-  }
 }
