@@ -79,12 +79,27 @@ var EndUsers = React.createClass({
     this.executeAction(fetchEndUsers, _.merge(_.clone(defaultQuery), this.getRequestBodyFromState(), this.getStateFromStores()));
   },
 
+  componentDidUpdate: function(prevProps, prevState) {
+    // @TODO should not update userList here, need to change it later or perhaps call within `fetchData`?
+    this.loadUserList(prevState);
+  },
+
   loadFirstUserDetail: function() {
     let users = this.getStore(EndUserStore).getDisplayUsers();
     let currentUser = this.getStore(EndUserStore).getCurrentUser();
     if (!_.isEmpty(users) && _.isEmpty(currentUser)) {
       let {username} = users[0];
       this.handleUserClick(username);
+    }
+  },
+
+  loadUserList: function(prevState) {
+    let prevStartDate = prevState.startDate;
+    let prevEndDate = prevState.endDate;
+    let nextStartDate = this.getRequestBodyFromQuery().startDate;
+    let nextEndDate = this.getRequestBodyFromQuery().endDate;
+    if ( nextStartDate && nextEndDate && (prevStartDate !== nextStartDate || prevEndDate !== nextEndDate) ) {
+      this.executeAction(fetchEndUsers, _.merge(_.clone(defaultQuery), this.getRequestBodyFromState(), this.getRequestBodyFromQuery()))
     }
   },
 
