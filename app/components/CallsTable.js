@@ -13,6 +13,9 @@ import _ from 'lodash';
 var Countries = require('../data/countries.json');
 const EMPTY_STRING = 'N/A';
 
+const DATE_FORMAT = 'MMM DD YYYY';
+const TIME_FORMAT = 'h:mm:ss a';
+
 var CallsTable = React.createClass({
   contextTypes: {
     router: React.PropTypes.func.isRequired
@@ -32,17 +35,24 @@ var CallsTable = React.createClass({
           return c.alpha2.toLowerCase() == u.callee_country
         });
 
-        let callStart = moment(u.start_time).format('h:mm:ss a');
-        let callEnd = (u.end_time > 0) ? moment(u.end_time).format('h:mm:ss a') : callStart;
-        let callDate = moment(u.start_time).format('MMMM DD YYYY');
-        let callType = u.type.toLowerCase();
+        let callStartDate = moment(u.start_time).format(DATE_FORMAT);
+        let callEndDate = (u.end_time > 0) ? moment(u.end_time).format(DATE_FORMAT) : callStartDate;
+
+        let callStartTime = moment(u.start_time).format(TIME_FORMAT);
+        let callEndTime = (u.end_time > 0) ? moment(u.end_time).format(TIME_FORMAT) : callStartTime;
 
         return (
           <tr className="calls-table--row" key={u.record_id}>
             <td className="calls-table--cell">{u.caller.split('@')[0]}</td>
             <td className="calls-table--cell">{u.callee.split('@')[0]}</td>
-            <td className="calls-table--cell"><span className="call_time">{callStart}</span></td>
-            <td className="calls-table--cell"><span className="call_time">{callEnd}</span></td>
+            <td className="calls-table--cell">
+              <span className="call_time">{callStartTime}</span>
+              <label>{callStartDate}</label>
+            </td>
+            <td className="calls-table--cell">
+              <span className="call_time">{callEndTime}</span>
+                <label>{callEndDate}</label>
+            </td>
             <td className="calls-table--cell">
               <span className="left duration">{parseDuration(u.duration)}</span>
             </td>
@@ -107,8 +117,8 @@ var CallsTable = React.createClass({
           <tr className="calls-table--row">
             <th className="calls-table--cell">Calling Number</th>
             <th className="calls-table--cell">Called Number</th>
-            <th className="calls-table--cell">Start Time</th>
-            <th className="calls-table--cell">End Time</th>
+            <th className="calls-table--cell">Start Date</th>
+            <th className="calls-table--cell">End Date</th>
             <th className="calls-table--cell">Call Duration</th>
             <th className="calls-table--cell">Call Status</th>
             <th className="calls-table--cell">Failure Reason</th>
