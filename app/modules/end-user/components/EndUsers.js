@@ -194,7 +194,7 @@ var EndUsers = React.createClass({
   applyFilters: function(users) {
     if (this.state.bundleId) {
       users = _.filter(users, (user)=> {
-        let device = _.get(u, 'devices.0') || {};
+        let device = _.get(user, 'devices.0') || {};
         return device.appBundleId === this.state.bundleId;
       });
     }
@@ -227,7 +227,9 @@ var EndUsers = React.createClass({
               <select className="bundle-select top-bar-section__query-input" name="bundleIdSelect" onChange={this.handleBundleIdChange}>
                 <option key={'bundleId'} value="">Choose Bundle ID</option>
                 {this.getStore(EndUserStore).getBundleIds().map((bundleId)=>{
-                  return <option key={bundleId} value={bundleId}>{bundleId}</option>;
+                  if (bundleId) {
+                    return <option key={bundleId} value={bundleId}>{bundleId}</option>;
+                  }
                 })}
               </select>
             </div>
