@@ -43,11 +43,10 @@ export default class UsersRequest extends BaseRequest {
   }
 
 
-  getExportUsers(params, cb) {
-    const {carrier, from, to, pageNumberIndex} = params;
+  getExportUsers({carrier, from, to, pageNumberIndex, page}, cb) {
     const query = {fromTime: from, toTime: to};
-    if (params.page) {
-      query.pageNumberIndex = params.page;
+    if (page) {
+      query.pageNumberIndex = page;
     } else {
       query.pageNumberIndex = pageNumberIndex;
     }
@@ -57,18 +56,18 @@ export default class UsersRequest extends BaseRequest {
     });
   }
 
-  _morphExportUsers(data, query) {
+  _morphExportUsers({ dateRange:{ pageNumberIndex }, userList, hasNextPage }, { page }) {
     let usersData = {};
-    usersData.contents = _.map(data.userList, (value)=>{
+    usersData.contents = _.map(userList, (value)=>{
       let result = _.merge(value, value.devices[0]);
       return _.omit(result, 'devices');
     });
-    usersData.pageNumber = query.page || data.dateRange.pageNumberIndex;
-    if (data.dateRange.pageNumberIndex === 0) {
-      usersData.totalPages = (usersData.hasNextPage) ? data.dateRange.pageNumberIndex + 2 : data.dateRange.pageNumberIndex + 1;
+    usersData.pageNumber = page || pageNumberIndex;
+    if (pageNumberIndex === 0) {
+      usersData.totalPages = (hasNextPage) ? pageNumberIndex + 2 : pageNumberIndex + 1;
     }
-    if (data.dateRange.pageNumberIndex > 0) {
-      usersData.totalPages = (usersData.hasNextPage) ? data.dateRange.pageNumberIndex + 1 : data.dateRange.pageNumberIndex;
+    if (pageNumberIndex > 0) {
+      usersData.totalPages = (hasNextPage) ? pageNumberIndex + 1 : pageNumberIndex;
     }
     return usersData;
   }
