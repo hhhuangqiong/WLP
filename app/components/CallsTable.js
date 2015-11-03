@@ -24,6 +24,7 @@ var CallsTable = React.createClass({
   renderCountryField(number, countryName) {
     // Prevent display carrier
     number = number.split('@')[0];
+    countryName = countryName || '';
 
     // Get the actual country name
     let countryData = _.find(Countries, country => country.alpha2.toLowerCase() == countryName.toLowerCase());
