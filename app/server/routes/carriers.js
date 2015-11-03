@@ -226,25 +226,6 @@ let reactivateUser = function(req, res) {
     });
 }
 
-// '/carriers/:carrierId/users/:username'
-let terminateUser = function(req, res) {
-  req.checkParams('carrierId').notEmpty();
-  req.checkParams('username').notEmpty();
-
-  let carrierId = req.params.carrierId;
-  let username = req.params.username;
-
-  Q.ninvoke(endUserRequest, 'terminateUser', carrierId, username)
-    .then((result) => {
-      return res.json(result);
-    })
-    .catch((err) => {
-      return res.status(err.status).json({
-        error: err
-      });
-    });
-}
-
 // '/carriers/:carrierId/calls'
 let getCalls = function(req, res) {
   req.checkParams('carrierId').notEmpty();
@@ -580,6 +561,5 @@ export {
   getVerificationStatistics,
   getWidgets,
   reactivateUser,
-  suspendUser,
-  terminateUser,
+  suspendUser
 };

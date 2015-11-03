@@ -11,11 +11,9 @@ import AuthMixin from '../../../utils/AuthMixin';
 import EndUserStore from '../stores/EndUserStore';
 
 import fetchWallet from '../actions/fetchWallet';
-import deleteEndUser from '../actions/deleteEndUser';
 import deactivateEndUser from '../actions/deactivateEndUser';
 import reactivateEndUser from '../actions/reactivateEndUser';
 
-import ConfirmationDialog from '../../../main/components/ConfirmationDialog';
 import InfoPanel from './InfoPanel';
 import Section from './InfoBlock';
 import * as Accordion from '../../../main/components/Accordion';
@@ -36,36 +34,11 @@ var EndUserProfile = React.createClass({
 
   mixins: [AuthMixin],
 
-  getInitialState: function() {
-    return {
-      askingDelete: false
-    };
-  },
-
   getParams: function() {
     let { identity: carrierId } = this.context.router.getCurrentParams();
     let username = this.props.user.userDetails.username;
 
     return { carrierId, username };
-  },
-
-  handleDeleteClick: function() {
-    this.setState({
-      askingDelete: true
-    });
-  },
-
-  handleDeleteConfirm: function() {
-    this.context.executeAction(deleteEndUser, this.getParams());
-    this.setState({
-      askingDelete: false
-    });
-  },
-
-  handleDeleteCancel: function() {
-    this.setState({
-      askingDelete: false
-    });
   },
 
   handleSuspendClick: function() {
@@ -210,17 +183,6 @@ var EndUserProfile = React.createClass({
         <Panel.Wrapper addOn={true}>
           <Panel.Header title={this.props.user.userDetails.displayName}/>
           <Panel.Body>
-            <ConfirmationDialog
-              isOpen={this.state.askingDelete}
-              onConfirm={this.handleDeleteConfirm}
-              onCancel={this.handleDeleteCancel}
-              confirmLabel="Delete"
-            >
-              <p>You are about to delete the following user:</p>
-              <p>{this.props.user.userDetails.displayName} ({this.props.user.userDetails.username})</p>
-              <p>This operation cannot be undone. Delete anyway?</p>
-            </ConfirmationDialog>
-
             <Accordion.Wrapper offsetMargin={true}>
               {this.renderWalletPanel()}
               {this.renderAccountPanel()}
@@ -230,7 +192,6 @@ var EndUserProfile = React.createClass({
             <If condition={this.props.user.userDetails.verified}>
               <div className="enduser-profile__control text-center">
                 <div className="enduser-profile__control__row">
-                  <button className="round" onClick={this.handleDeleteClick}>delete</button>
                   <If condition={this.props.user.userDetails.accountStatus.toLowerCase() === 'active'}>
                     <button className="round" onClick={this.handleSuspendClick}>suspend</button>
                   <Else />
