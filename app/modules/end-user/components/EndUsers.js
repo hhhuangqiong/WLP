@@ -68,14 +68,26 @@ var EndUsers = React.createClass({
 
     fetchData: function(context, params, query, done) {
         concurrent([
-          context.executeAction.bind(context, clearEndUsers),
-          context.executeAction.bind(context, fetchEndUsers, _.merge(_.clone(defaultQuery), getInitialQueryFromURL(params, query)))
+          context.executeAction.bind(context, clearEndUsers)
         ], done || function() {});
     }
   },
 
   getInitialState: function() {
     return _.merge(_.clone(defaultQuery), this.getRequestBodyFromQuery(), this.getStateFromStores());
+  },
+
+  componentDidMount: function() {
+    this.executeAction(fetchEndUsers, _.merge(_.clone(defaultQuery), this.getRequestBodyFromState(), this.getStateFromStores()));
+  },
+
+  loadFirstUserDetail: function() {
+    let users = this.getStore(EndUserStore).getDisplayUsers();
+    let currentUser = this.getStore(EndUserStore).getCurrentUser();
+    if (!_.isEmpty(users) && _.isEmpty(currentUser)) {
+      let {username} = users[0];
+      this.handleUserClick(username);
+    }
   },
 
   getRequestBodyFromQuery: function(query) {
@@ -99,6 +111,7 @@ var EndUsers = React.createClass({
 
   onChange: function() {
     this.setState(this.getStateFromStores());
+    this.loadFirstUserDetail();
   },
 
   /**
