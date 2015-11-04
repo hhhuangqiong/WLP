@@ -34,7 +34,7 @@ var CallsTable = React.createClass({
     return (
       <div className="caller_info">
         <div className="flag__container left">
-          <span className={'flag--' + countryData.name}></span>
+          <span className={'flag--' + countryName}></span>
         </div>
         <div className="left">
           <span className="caller">{number}</span>
