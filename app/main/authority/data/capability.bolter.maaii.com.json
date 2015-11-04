@@ -10,6 +10,9 @@
       "name": "device_os_support_android"
     },
     {
+      "name": "user_management_report"
+    },
+    {
       "name": "user_management_dashboard"
     },
     {
