@@ -259,6 +259,7 @@ var EndUsers = React.createClass({
           <div className="large-16 columns">
             <EndUserTable
               ref="endUserTable"
+              currentUser={this.getStore(EndUserStore).getCurrentUser()}
               users={this.applyFilters(this.getStore(EndUserStore).getDisplayUsers())}
               hasNext={this._checkHasNext()}
               onUserClick={this.handleUserClick}

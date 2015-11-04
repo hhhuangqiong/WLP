@@ -46,8 +46,9 @@ var EndUserTable = React.createClass({
         let handleOnClick = _.bindKey(this.props, 'onUserClick', u.username.trim());
 
         let platform = device.platform || NOT_FOUND_LABEL;
+        let currentUser = this.props.currentUser;
 
-        return <tr onClick={handleOnClick}>
+        return <tr className={classNames({ selected: currentUser && currentUser.userDetails.username === u.username })} onClick={handleOnClick}>
           <td>
             {u.jid}
           </td>
