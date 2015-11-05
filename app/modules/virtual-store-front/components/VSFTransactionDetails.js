@@ -9,8 +9,7 @@ import {concurrent} from 'contra';
 import VSFTransactionTable from './VSFTransactionTable';
 import CategoryFilter from '../../../main/components/CategoryFilter';
 import DateRangePicker from '../../../main/components/DateRangePicker';
-import Searchbox from '../../../components/Searchbox';
-import config from '../../../config';
+import Searchbox from '../../../main/components/Searchbox';
 
 import initialState from '../data/VSFInitialState';
 import VSFTransactionStore from '../stores/VSFTransactionStore';

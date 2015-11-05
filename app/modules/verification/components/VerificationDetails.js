@@ -19,7 +19,7 @@ import fetchVerifications from '../actions/fetchVerifications';
 import fetchMoreVerifications from '../actions/fetchMoreVerifications';
 
 import VerificationStore from '../stores/VerificationStore';
-import ApplicationStore from '../../../stores/ApplicationStore';
+import ApplicationStore from '../../../main/stores/ApplicationStore';
 
 import VerificationTable from './VerificationTable';
 import config from '../../../config';

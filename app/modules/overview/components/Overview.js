@@ -2,10 +2,10 @@ import React from 'react';
 import FluxibleMixin from 'fluxible/addons/FluxibleMixin';
 import AuthMixin from '../../../utils/AuthMixin';
 
-import WidgetNotAvailable from '../../../components/common/WidgetNotAvailable';
+import WidgetNotAvailable from '../../../main/components/common/WidgetNotAvailable';
 import fetchOverviewWidgets from '../actions/fetchOverviewWidgets';
 import OverviewStore from '../stores/OverviewStore';
-import AuthStore from '../../../stores/AuthStore';
+import AuthStore from '../../../main/stores/AuthStore';
 
 const errorMessage = '<div className="widget-not-found">Dashboard is not available</div>';
 

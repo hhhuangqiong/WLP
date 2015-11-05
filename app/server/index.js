@@ -6,7 +6,7 @@ import path from 'path';
 // react & flux -related
 import React from 'react';
 import serialize from 'serialize-javascript';
-import Html from '../components/Html';
+import Html from '../main/components/common/Html';
 
 // express-related
 import express from 'express';
@@ -33,7 +33,7 @@ import app from '../index';
 // access via `context`
 let config = require('../config');
 let fetchData = require('../utils/fetchData');
-let loadSession = require('../actions/loadSession');
+let loadSession = require('../main/actions/loadSession');
 let getAuthorityList = require('../main/authority/actions/getAuthorityList');
 
 function initialize(port) {

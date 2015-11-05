@@ -25,7 +25,7 @@ let bootstrapDebug = debug('app:client');
 import app from '../index';
 import routes from '../routes';
 import fetchData from '../utils/fetchData';
-import loadSession from '../actions/loadSession';
+import loadSession from '../main/actions/loadSession';
 
 window.React = React; // For chrome dev tool support
 
@@ -93,7 +93,7 @@ if (!dehydratedState) {
     // For debugging
     window.context = context;
 
-    let AuthStore = require('../stores/AuthStore');
+    let AuthStore = require('../main/stores/AuthStore');
     let getAuthorityList = require('../main/authority/actions/getAuthorityList');
     let router = createAppRouter(context);
     let firstRender = true;
@@ -123,4 +123,3 @@ if (!dehydratedState) {
     });
   });
 }
-

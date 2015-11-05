@@ -1,7 +1,7 @@
 'use strict';
 
 let Api = require('../Api');
-let AuthStore = require('../stores/AuthStore');
+let AuthStore = require('../main/stores/AuthStore');
 let env = require('./env');
 let url = require('./url');
 let sessionDebug = require('debug')('app:sessionFlow');
@@ -35,4 +35,3 @@ module.exports = {
     };
   }
 };
-

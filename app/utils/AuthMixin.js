@@ -1,6 +1,6 @@
 import cookie from 'cookie';
 
-import AuthStore from '../stores/AuthStore';
+import AuthStore from '../main/stores/AuthStore';
 import {CLIENT} from './env';
 import {SIGN_IN} from '../server/paths';
 

@@ -1,4 +1,4 @@
-import AuthStore from '../stores/AuthStore';
+import AuthStore from '../main/stores/AuthStore';
 import config from '../config';
 import {userPath} from '../server/paths';
 
@@ -24,4 +24,3 @@ module.exports = {
     }
   }
 }
-

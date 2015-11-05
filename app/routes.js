@@ -17,15 +17,15 @@ import {
 let redirectForCallsOverview = CLIENT ? 'calls-overview' : 'calls/overview';
 
 export default (
-  <Route handler={require('./components/App')}>
+  <Route handler={require('./main/components/common/App')}>
     <Redirect from="/" to="sign-in" />
 
     // public pages,
-    <Route handler={require('./components/common/Public')}>
-      <Route name="sign-in" handler={require('./components/SignIn')}/>
+    <Route handler={require('./main/components/common/Public')}>
+      <Route name="sign-in" handler={require('./main/components/SignIn')}/>
     </Route>
 
-    <Route handler={require('./components/common/Protected')}>
+    <Route handler={require('./main/components/common/Protected')}>
       <Route name="companies" path="/:role/:identity?/companies" handler={require('./modules/company/components/Companies')}>
         <Route name="company-create" path="create" handler={require('./modules/company/components/Profile').NewProfile} />
         <Route name="company-profile" path=":carrierId/profile" handler={require('./modules/company/components/Profile').EditProfile} />
@@ -45,13 +45,13 @@ export default (
 
       <Route name="overview" path="/:role/:identity?/overview" handler={require('./modules/overview/components/Overview')} />
 
-      <Route name="calls-overview" path="/:role/:identity?/calls/overview" handler={require('./components/CallsOverview')} />
-      <Route name="calls-details" path="/:role/:identity?/calls/details" handler={require('./components/Calls')} />
+      <Route name="calls-overview" path="/:role/:identity?/calls/overview" handler={require('./modules/calls/components/CallsOverview')} />
+      <Route name="calls-details" path="/:role/:identity?/calls/details" handler={require('./modules/calls/components/Calls')} />
 
       <Route name="end-users" path="/:role/:identity?/endusers" handler={require('./modules/end-user/components/EndUsers')} />
 
-      <Route name="im-overview" path="/:role/:identity?/im" handler={require('./components/ImOverview')} />
-      <Route name="im" path="/:role/:identity?/im/details" handler={require('./components/Im')} />
+      <Route name="im-overview" path="/:role/:identity?/im" handler={require('./modules/im/components/ImOverview')} />
+      <Route name="im" path="/:role/:identity?/im/details" handler={require('./modules/im/components/Im')} />
 
       <Route name="sms-overview" path="/:role/:identity?/sms" handler={require('./modules/sms/components/Overview')} />
       <Route name="sms-details" path="/:role/:identity?/sms/details" handler={require('./modules/sms/components/SMS')} />

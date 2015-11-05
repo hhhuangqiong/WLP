@@ -5,8 +5,8 @@ import {concurrent} from 'contra';
 
 import AuthMixin from '../../../utils/AuthMixin';
 
-import ApplicationStore from '../../../stores/ApplicationStore';
-import AuthStore from '../../../stores/AuthStore';
+import ApplicationStore from '../../../main/stores/ApplicationStore';
+import AuthStore from '../../../main/stores/AuthStore';
 
 import fetchAppIds from '../actions/fetchAppIds';
 

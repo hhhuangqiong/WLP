@@ -19,7 +19,7 @@ import DonutChartPanel from '../../../main/components/DonutChartPanel';
 import SummaryCells from './SummaryCells';
 import fetchVerificationOverview from '../actions/fetchVerificationOverview';
 import VerificationOverviewStore from '../stores/VerificationOverviewStore';
-import ApplicationStore from '../../../stores/ApplicationStore';
+import ApplicationStore from '../../../main/stores/ApplicationStore';
 import { subtractTime, timeFromNow } from '../../../utils/StringFormatter';
 import MAP_DATA from '../constants/mapData.js';
 

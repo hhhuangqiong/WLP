@@ -3,7 +3,7 @@ import Router from 'react-router';
 import serialize from 'serialize-javascript';
 import FluxibleComponent from 'fluxible/addons/FluxibleComponent';
 
-import Html from '../components/Html';
+import Html from '../main/components/common/Html';
 import fetchData from '../utils/fetchData';
 import routes from '../routes';
 
@@ -65,4 +65,3 @@ export default function(app) {
     });
   }
 }
-

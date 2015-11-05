@@ -129,6 +129,7 @@ export default class ExportTask {
       case (IM):
         /* jscs:disable */
         row.device_id = stringifyNumbers(row.device_id);
+        row.stanza_id = stringifyNumbers(row.stanza_id);
         /* jscs: enable */
 
         row.origin = getCountryName(row.origin);

@@ -3,11 +3,11 @@ import { Link } from 'react-router';
 import FluxibleMixin from 'fluxible/addons/FluxibleMixin';
 import AuthMixin from '../../../utils/AuthMixin';
 
-import WidgetNotAvailable from '../../../components/common/WidgetNotAvailable';
+import WidgetNotAvailable from '../../../main/components/common/WidgetNotAvailable';
 import VSFTransactionStore from  '../stores/VSFTransactionStore';
 import fetchVSFWidgets from  '../actions/fetchVSFWidgets';
 
-import AuthStore    from '../../../../app/stores/AuthStore';
+import AuthStore    from '../../../main/stores/AuthStore';
 
 const errorMessage = '<div className="widget-not-found">Dashboard is not available</div>';
 

@@ -8,14 +8,15 @@ import FluxibleMixin from 'fluxible/addons/FluxibleMixin';
 import AuthMixin from '../../../utils/AuthMixin';
 
 import WidgetNotAvailable from '../../../main/components/common/WidgetNotAvailable';
-import loadSMSWidgets from '../actions/loadSMSWidgets';
 
-import SMSStore  from '../stores/SMSStore';
-import AuthStore from '../../../main/stores/AuthStore';
+import CallsStore from '../stores/CallsStore';
+import AuthStore  from '../../../main/stores/AuthStore';
 
-const errorMessage = '<div className="widget-not-found">Dashboard is not available</div>';
+import fetchCallsWidgets from '../actions/fetchCallsWidgets';
 
-var SMSOverview = React.createClass({
+const ERROR_MESSAGE = '<div className="widget-not-found">Dashboard is not available</div>';
+
+var CallsOverview = React.createClass({
   contextTypes: {
     router: React.PropTypes.func.isRequired
   },
@@ -23,19 +24,19 @@ var SMSOverview = React.createClass({
   mixins: [FluxibleMixin, AuthMixin],
 
   statics: {
-    storeListeners: [SMSStore],
+    storeListeners: [CallsStore],
 
     fetchData: function(context, params, query, done) {
-      context.executeAction(loadSMSWidgets, {
+      context.executeAction(fetchCallsWidgets, {
         carrierId: params.identity,
-        userId:    context.getStore(AuthStore).getUserId()
+        userId: context.getStore(AuthStore).getUserId()
       }, done || function() {});
     }
   },
 
   getStateFromStores: function() {
     return {
-      widgets: this.getStore(SMSStore).getWidgets()
+      widgets: this.getStore(CallsStore).getWidgets()
     };
   },
 
@@ -57,13 +58,22 @@ var SMSOverview = React.createClass({
     return (
       <table className="widget-table">
         <tr>
-          <td dangerouslySetInnerHTML={{__html: widgets[0] || errorMessage}}></td>
-          <td dangerouslySetInnerHTML={{__html: widgets[1] || errorMessage}}></td>
+          <td dangerouslySetInnerHTML={{__html: widgets[0] || ERROR_MESSAGE}}></td>
+          <td dangerouslySetInnerHTML={{__html: widgets[1] || ERROR_MESSAGE}}></td>
+          <td dangerouslySetInnerHTML={{__html: widgets[2] || ERROR_MESSAGE}}></td>
+          <td dangerouslySetInnerHTML={{__html: widgets[3] || ERROR_MESSAGE}}></td>
         </tr>
 
         <tr>
-          <td dangerouslySetInnerHTML={{__html: widgets[2] || errorMessage}}></td>
-          <td></td>
+          <td dangerouslySetInnerHTML={{__html: widgets[4] || ERROR_MESSAGE}}></td>
+          <td dangerouslySetInnerHTML={{__html: widgets[5] || ERROR_MESSAGE}}></td>
+          <td rowSpan="2" dangerouslySetInnerHTML={{__html: widgets[6] || ERROR_MESSAGE}}></td>
+          <td rowSpan="2" dangerouslySetInnerHTML={{__html: widgets[7] || ERROR_MESSAGE}}></td>
+        </tr>
+
+        <tr>
+          <td dangerouslySetInnerHTML={{__html: widgets[8] || ERROR_MESSAGE}}></td>
+          <td dangerouslySetInnerHTML={{__html: widgets[9] || ERROR_MESSAGE}}></td>
         </tr>
       </table>
     );
@@ -78,10 +88,11 @@ var SMSOverview = React.createClass({
           <div className="top-bar-section">
             <ul className="left top-bar--inner tab--inverted">
               <li className="top-bar--inner tab--inverted__title">
-                <Link to="sms-overview" params={params}>Overview</Link>
+                <Link to="calls-overview" params={params}>Overview</Link>
               </li>
+
               <li className="top-bar--inner tab--inverted__title">
-                <Link to="sms-details" params={params}>Details Report</Link>
+                <Link to="calls-details" params={params}>Details Report</Link>
               </li>
             </ul>
           </div>
@@ -94,4 +105,4 @@ var SMSOverview = React.createClass({
   }
 });
 
-export default SMSOverview;
+export default CallsOverview;
