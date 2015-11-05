@@ -152,13 +152,8 @@ export default React.createClass({
   },
 
   autoSelectAppId() {
-    let appId = this.state.appId;
-    if (!appId) {
-      appId = this.context.getStore(ApplicationStore).getDefaultAppId();
-    }
-
     this.setState({
-      appId: appId
+      appId: this.context.getStore(ApplicationStore).getDefaultAppId()
     });
   },
 
