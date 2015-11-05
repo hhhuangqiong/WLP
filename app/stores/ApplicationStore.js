@@ -37,7 +37,11 @@ var ApplicationStore = createStore({
 
   handleAppIdsFetched: function (payload) {
     this.appIds = payload;
-    this.defaultAppId = (this.appIds || [])[0];
+
+    if (this.appIds && this.appIds.length > 0) {
+      this.defaultAppId = this.appIds[0];
+    }
+
     this.emitChange();
   },
 
