@@ -56,7 +56,7 @@ var EndUserTable = React.createClass({
           <td className="account-status">
             <span>
               <span className={classNames('label', 'status', (u.accountStatus === 'ACTIVE')?'success':'alert')}></span>
-              {_.capitalize(u.accountStatus.toLowerCase())}
+              {_.capitalize((u.accountStatus || '').toLowerCase())}
             </span>
           </td>
           <td className="device-modal">

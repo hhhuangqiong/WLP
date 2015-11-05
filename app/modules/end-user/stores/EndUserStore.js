@@ -141,9 +141,9 @@ var EndUserStore = createStore({
     return this.displayUsers.length;
   },
 
-  getBundleIds: function() {
-    let bundleIds = _.uniq(_.map(this.users, (u)=> { return u.devices[0].appBundleId; }));
-    return bundleIds;
+  getBundleIds() {
+  let usersWithBundleId = this.users.filter(u => _.get(u, 'devices[0].appBundleId'));
+  return usersWithBundleId.map(u => u.appBundleId);
   },
 
   getNeedMoreData: function() {
