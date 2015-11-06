@@ -7,12 +7,9 @@
     "app/config/",
     "app/lib/",
     "app/server/",
-    "app/*.js"
-  ],
-  "ignore": [
-    ".git",
-    ".sass-cache",
-    "*.map"
+    "app/utils/",
+    "app/*.js",
+    "locales/"
   ],
   "ext": "js, json",
   "verbose": true

@@ -180,7 +180,6 @@ gulp.task 'nodemon', ->
   .on 'restart', ->
     gutil.log 'nodemon restarted! \uD83D\uDE80'
     return
-  isNodemonRunning = true
 
 # not trigger 'browser-sync'; `gulp browser-sync` separately if needed
 gulp.task 'browser-sync', ->
