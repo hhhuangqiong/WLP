@@ -1,19 +1,45 @@
+import _ from 'lodash';
 import {createStore} from 'fluxible/addons';
 
 export default createStore({
   storeName: 'VerificationOverviewStore',
 
   handlers: {
-    FETCH_VERIFICATION_COUNTRIES_DATA_SUCCESS: 'handleCountriesDataFetched',
-    FETCH_VERIFICATION_COUNTRIES_DATA_FAILURE: 'handleCountriesDataFetchedFailure',
-    FETCH_VERIFICATION_ATTEMPTS_SUCCESS: 'handleAttempsFetched',
+    FETCH_VERIFICATION_OVERVIEW_SUCCESS: 'handleOverviewDataFetched',
+    FETCH_VERIFICATION_OVERVIEW_FAILURE: 'handleOverviewDataFetchedFailure',
     FETCH_VERIFICATION_ATTEMPTS_FAILURE: 'handleAttempsFetchedFailure',
-    FETCH_VERIFICATION_PAST_ATTEMPTS_SUCCESS: 'handlePastAttemptsFetched',
-    FETCH_VERIFICATION_PAST_ATTEMPTS_FAILURE: 'handlePastAttemptsFetchedFailure',
-    FETCH_VERIFICATION_TYPE_SUCCESS: 'handleVerificationTypeFetched',
     FETCH_VERIFICATION_TYPE_FAILURE: 'handleVerificationTypeFetchedFailure',
-    FETCH_VERIFICATION_OS_TYPE_SUCCESS: 'handleVerificationOsTypeFetched',
-    FETCH_VERIFICATION_OS_TYPE_FAILURE: 'handleVerificationOsTypeFetchedFailure'
+    FETCH_VERIFICATION_OS_TYPE_FAILURE: 'handleVerificationOsTypeFetchedFailure',
+    FETCH_VERIFICATION_COUNTRIES_DATA_FAILURE: 'handleCountriesDataFetchedFailure',
+    FETCH_VERIFICATION_PAST_ATTEMPTS_FAILURE: 'handlePastAttemptsFetchedFailure'
+  },
+
+  handleOverviewDataFetched(payload) {
+    this.countriesData = payload.countriesData;
+    this.countriesError = null;
+
+    this.types = payload.typeData;
+    this.typeError = null;
+
+    this.osTypes = payload.osData;
+    this.osError = null;
+
+    this.accumulatedAttempts = payload.currentAttemptData.accumulatedAttempts;
+    this.accumulatedFailure = payload.currentAttemptData.accumulatedFailure;
+    this.accumulatedSuccess = payload.currentAttemptData.accumulatedSuccess;
+    this.averageSuccessRate = payload.currentAttemptData.averageSuccessRate;
+    this.successAttempts = payload.currentAttemptData.successAttempts;
+    this.successRates = payload.currentAttemptData.successRates;
+    this.totalAttempts = payload.currentAttemptData.totalAttempts;
+    this.attemptsError = null;
+
+    this.pastAccumulatedAttempts = payload.pastAttemptData.accumulatedAttempts;
+    this.pastAccumulatedFailure = payload.pastAttemptData.accumulatedFailure;
+    this.pastAccumulatedSuccess = payload.pastAttemptData.accumulatedSuccess;
+    this.pastAverageSuccessRate = payload.pastAttemptData.averageSuccessRate;
+    this.pastAttemptsError = null;
+
+    this.emitChange();
   },
 
   initialize () {
@@ -36,31 +62,9 @@ export default createStore({
     this.totalAttempts = [];
   },
 
-  handleCountriesDataFetched(payload) {
-    this.countriesData = payload;
-    this.countriesError = null;
-
-    this.emitChange();
-  },
-
   handleCountriesDataFetchedFailure(err) {
     this.countriesData = [];
     this.countriesError = err;
-
-    this.emitChange();
-  },
-
-  handleAttempsFetched(payload) {
-    this.accumulatedAttempts = payload.accumulatedAttempts;
-    this.accumulatedFailure = payload.accumulatedFailure;
-    this.accumulatedSuccess = payload.accumulatedSuccess;
-    this.averageSuccessRate = payload.averageSuccessRate;
-
-    this.successAttempts = payload.successAttempts;
-    this.successRates = payload.successRates;
-    this.totalAttempts = payload.totalAttempts;
-
-    this.attemptsError = null;
 
     this.emitChange();
   },
@@ -80,17 +84,6 @@ export default createStore({
     this.emitChange();
   },
 
-  handlePastAttemptsFetched(payload) {
-    this.pastAccumulatedAttempts = payload.accumulatedAttempts;
-    this.pastAccumulatedFailure = payload.accumulatedFailure;
-    this.pastAccumulatedSuccess = payload.accumulatedSuccess;
-    this.pastAverageSuccessRate = payload.averageSuccessRate;
-
-    this.pastAttemptsError = null;
-
-    this.emitChange();
-  },
-
   handlePastAttemptsFetchedFailure(err) {
     this.pastAccumulatedAttempts = 0;
     this.pastAccumulatedFailure = 0;
@@ -102,23 +95,9 @@ export default createStore({
     this.emitChange();
   },
 
-  handleVerificationTypeFetched(payload) {
-    this.types = payload.data;
-    this.typeError = null;
-
-    this.emitChange();
-  },
-
   handleVerificationTypeFetchedFailure(err) {
     this.types = null;
     this.typeError = err;
-
-    this.emitChange();
-  },
-
-  handleVerificationOsTypeFetched(payload) {
-    this.osTypes = payload.data;
-    this.osError = null;
 
     this.emitChange();
   },
@@ -130,23 +109,19 @@ export default createStore({
     this.emitChange();
   },
 
-  getPastSummaryData() {
-    return {
-      pastAccumulatedAttempts: this.pastAccumulatedAttempts,
-      pastAccumulatedFailure: this.pastAccumulatedFailure,
-      pastAccumulatedSuccess: this.pastAccumulatedSuccess,
-      pastAverageSuccessRate: this.pastAverageSuccessRate
-    };
+  getOverviewData() {
+    return _.merge(
+      this.getSummaryAttempts(),
+      this.getCountryAttempts(),
+      this.getSuccessFailAttempts(),
+      this.getOsAttempts(),
+      this.getMethodAttempts()
+    );
   },
 
-  getOverviewData() {
+  getSummaryAttempts() {
     return {
-      countriesData: this.countriesData,
-      types: this.types,
-      osTypes: this.osTypes,
-      successAttempts: this.successAttempts,
-      successRates: this.successRates,
-      totalAttempts: this.totalAttempts,
+      attemptsError: this.attemptsError,
       accumulatedAttempts: this.accumulatedAttempts,
       accumulatedFailure: this.accumulatedFailure,
       accumulatedSuccess: this.accumulatedSuccess,
@@ -155,11 +130,37 @@ export default createStore({
       pastAccumulatedFailure: this.pastAccumulatedFailure,
       pastAccumulatedSuccess: this.pastAccumulatedSuccess,
       pastAverageSuccessRate: this.pastAverageSuccessRate,
+      pastAttemptsError: this.pastAttemptsError
+    };
+  },
+
+  getCountryAttempts() {
+    return {
       countriesError: this.countriesError,
+      countriesData: this.countriesData
+    };
+  },
+
+  getSuccessFailAttempts() {
+    return {
       attemptsError: this.attemptsError,
-      pastAttemptsError: this.pastAttemptsError,
+      successAttempts: this.successAttempts,
+      successRates: this.successRates,
+      totalAttempts: this.totalAttempts
+    };
+  },
+
+  getOsAttempts() {
+    return {
+      osError: this.osError,
+      osTypes: this.osTypes
+    };
+  },
+
+  getMethodAttempts() {
+    return {
       typeError: this.typeError,
-      osError: this.osError
+      types: this.types
     };
   },
 

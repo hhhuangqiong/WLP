@@ -3,6 +3,8 @@
 import _ from 'lodash'
 import assign from 'object-assign';
 import request from 'superagent';
+import qs from 'qs';
+import logger from 'winston';
 
 import errorMixin from '../requests/mixins/mumsErrorResponse';
 
@@ -75,6 +77,9 @@ export class ApplicationRequest {
     if (!cb || !_.isFunction(cb)) throw new Error('`cb` is required and must be a function');
 
     let path  = this._processPath(contentType, carrierId);
+
+    logger.debug(`Application API Endpoint: ${path}`);
+
     let scope = request.get(path).timeout(this._timeout);
 
     scope.end((err, res) => {
@@ -87,4 +92,3 @@ export class ApplicationRequest {
 }
 
 assign(ApplicationRequest.prototype, errorMixin);
-

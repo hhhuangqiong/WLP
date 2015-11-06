@@ -110,7 +110,7 @@ export default React.createClass({
       y: PropTypes.number.isRequired
     })),
     /**
-     * The name of the selected line. 
+     * The name of the selected line.
      * A selected line will be thicker than normal lines.
      * Only the selected line can interact with the mouse events.
      * @type {String}
@@ -185,7 +185,7 @@ export default React.createClass({
         },
         // show grid line
         gridLineWidth: 1,
-        // create buffer at the beginning and the end of the x axis, 
+        // create buffer at the beginning and the end of the x axis,
         // so that the first and the last points do not lie on the y axis
         startOnTick: false,
         endOnTick: false,
@@ -368,7 +368,7 @@ export default React.createClass({
       // if the lines are ready at the didMount time, draw them directly
       if (this.props.lines) {
         this.props.lines.forEach((lineOpts) => {
-          this.drawLine(lineOpts);
+          this.addLine(lineOpts);
         });
       }
 
@@ -381,32 +381,40 @@ export default React.createClass({
     }
   },
 
-  componentWillReceiveProps: function (nextProps) {
-    // this function will be called when the user interacts with the sidebar
-    // unnecessary redraw will be invoked
-    // avoid unnecessary redraw
-    if (_.eq(nextProps, this.props)) {
-      return;
-    }
+  shouldComponentUpdate: function (nextProps) {
+    return !_.eq(nextProps, this.props);
+  },
 
+  componentWillUpdate: function (nextProps) {
     // We have to wait for the x-axis from props from parent.
     // However, child component is mounted before the parent.
-    // Therefore, if the parent set the props in its componentDidMount, 
+    // Therefore, if the parent set the props in its componentDidMount,
     // we cannot use componentDidMount to draw the chart.
     // Instead, we draw it inside componentWillReceiveProps, as the props must go through this.
     if ((nextProps.xAxis && !this.chart) || !_.eq(nextProps.xAxis, this.props.xAxis)) {
       this.drawChart(nextProps);
     }
+  },
 
-    // if the chart is not drawn, do nothing
+  componentDidUpdate: function () {
+    if (this.chart) {
+      // The container may have been resized,
+      // or the chart was draw in invisible node and then change to visible.
+      // In either case, the chart must be reflow to fit the container size.
+      this.chart.reflow();
+    }
+  },
+
+  updateChart: function () {
     if (!this.chart) {
       return;
     }
 
     // the lines are ready
-    if (nextProps.lines) {
-      nextProps.lines.forEach((lineOpts) => {
-        let selected = nextProps.selectedLine && lineOpts.name === nextProps.selectedLine;
+    // TODO: add the line removal logic
+    if (this.props.lines) {
+      this.props.lines.forEach((lineOpts) => {
+        let selected = this.props.selectedLine && lineOpts.name === this.props.selectedLine;
 
         let existingLine = _.find(this.chart.series, function (series) {
           return series.name === lineOpts.name;
@@ -432,25 +440,18 @@ export default React.createClass({
     // the points are ready
     // do not support point update
     // TODO: add the point removal logic
-    if (nextProps.points) {
-      nextProps.points.forEach((pointOpts) => {
+    if (this.props.points) {
+      this.props.points.forEach((pointOpts) => {
         this.addPoint(_.extend({ name }, pointOpts));
       });
     }
   },
 
-  componentDidUpdate: function () {
-    if (this.chart) {
-      // The container may have been resized,
-      // or the chart was draw in invisible node and then change to visible.
-      // In either case, the chart must be reflow to fit the container size.
-      this.chart.reflow();
-    }
-  },
-
   render: function () {
+    this.updateChart();
+
     return (
       <div id={this.state.containerId} className={this.props.className}></div>
     );
-  }  
+  }
 });
