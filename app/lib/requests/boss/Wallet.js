@@ -69,36 +69,38 @@ export default class WalletRequest extends BaseRequest {
 
         let response = res.body;
 
-        // no response
-        if (!response) {
-          logger.debug('No response returned form BOSS for user %s', params.number);
-          err = new Error();
-          err.message = 'No response returned';
-          err.status = 500;
-          return cb(err);
-        }
+        try {
+          // no response
+          if (!response) {
+            logger.debug('No response returned form BOSS for user %s', params.number);
+            err = new Error();
+            err.message = 'No response returned';
+            err.status = 500;
+            return cb(err);
+          }
 
-        // failure response
-        if (!response.success) {
-          logger.debug('Failure response from BOSS for user %s', params.number, response);
-          let responseError = response.error;
-          err = new Error();
-          err.message = responseError.description;
-          err.code = responseError.code;
-          err.status = 400;
-          return cb(err);
-        }
+          // failure response
+          if (!response.success) {
+            logger.debug('Failure response from BOSS for user %s', params.number, response);
+            let responseError = response.error;
+            err = new Error();
+            err.message = responseError.description;
+            err.code = responseError.code;
+            err.status = 400;
+            return cb(err);
+          }
 
-        // unexpected response
-        if (!response.result || !_.isArray(response.result.wallets)) {
+          return cb(null, response.result.wallets);
+        }
+        catch(e) {
+          // unexpected response
           logger.debug('Unexpected response from BOSS for user %s', params.number, response);
+          logger.debug('Error stack:', e.stack);
           err = new Error();
-          err.message = 'Unexpected response: `wallets` is not an array';
+          err.message = 'Unexpected response';
           err.status = 500;
           return cb(err);
         }
-
-        return cb(null, response.result.wallets);
       });
   }
 
