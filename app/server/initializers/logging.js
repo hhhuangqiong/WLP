@@ -1,7 +1,6 @@
 let winston = require('winston');
 
 import _ from 'lodash';
-import moment from 'moment';
 
 // included anyways even it's not specified in the configuration
 require('winston-logstash');
@@ -25,8 +24,6 @@ function initialize(opts = {}) {
     winston.remove(winston.transports.Console);
 
     transports.forEach(function(t) {
-      // timestamp option takes either Boolean value or Function that returns value as string
-      if (t.options.timestamp) t.options.timestamp = function() { return moment().format('YYYY-MM-DD HH:mm:ss'); }
       winston.add(eval(t.type), t.options);
     });
   }
