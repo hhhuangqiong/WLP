@@ -1,7 +1,8 @@
-var logger  = require('winston');
-var Q       = require('q');
-var request = require('superagent');
-var util    = require('util');
+import logger from 'winston';
+import Q from 'q';
+import request from 'superagent';
+import util from 'util';
+import _ from 'lodash';
 
 import BaseRequest from '../Base';
 
@@ -48,13 +49,58 @@ export default class WalletRequest extends BaseRequest {
         // Do not throw error if Wallet info is missing
         if (err) {
           logger.debug('failed to get user %s\'s wallet info from BOSS', params.number);
-          return cb(null, null);
+
+          // TODO: generalize the network error handling (maybe extending Error class?)
+          let error = new Error();
+          error.status = err.status;
+          error.message = err.message;
+
+          if (err.code === 'ETIMEDOUT' || err.code === 'ECONNABORTED') {
+            error.status = 504;
+            error.timeout = this.opts.timeout;
+          } else if (err.code === 'ENOTFOUND') {
+            error.status = 404;
+          } else if (err.code === 'ECONNREFUSED') {
+            error.status = 500;
+          }
+
+          return cb(error);
         }
 
-        var result = res.body || undefined;
-        if (!result) logger.debug('failed to get response form BOSS');
+        let response = res.body;
 
-        return cb(null, result.result.wallets);
+        try {
+          // no response
+          if (!response) {
+            logger.debug('No response returned form BOSS for user %s', params.number);
+            err = new Error();
+            err.message = 'No response returned';
+            err.status = 500;
+            return cb(err);
+          }
+
+          // failure response
+          if (!response.success) {
+            logger.debug('Failure response from BOSS for user %s', params.number, response);
+            let responseError = response.error;
+            err = new Error();
+            err.message = responseError.description;
+            err.code = responseError.code;
+            err.status = 400;
+            return cb(err);
+          }
+
+          return cb(null, response.result.wallets);
+        }
+        catch(e) {
+          // unexpected response
+          logger.debug('Unexpected response from BOSS for user %s', params.number, response);
+          logger.debug('Error stack:', e.stack);
+          err = new Error();
+          err.message = 'Unexpected response';
+          err.status = 500;
+          return cb(err);
+        }
       });
   }
 
@@ -71,12 +117,8 @@ export default class WalletRequest extends BaseRequest {
 
     Q.ninvoke(this, 'validateQuery', params)
       .then(this.appendRequestId)
-      .then((params)=> {
-        this.sendRequest(params, cb);
-      })
-      .catch((err)=> {
-        logger.error(err);
-        this.rejectRequest(err, cb);
+      .then((params) => {
+        return this.sendRequest(params, cb);
       });
   }
 }

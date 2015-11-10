@@ -11,18 +11,21 @@ import EndUserStore from '../stores/EndUserStore';
 
 import fetchEndUser from '../actions/fetchEndUser';
 import fetchEndUsers from '../actions/fetchEndUsers';
+import fetchEndUserAsEndUsers from '../actions/fetchEndUserAsEndUsers';
 import clearEndUsers from '../actions/clearEndUsers';
 import showNextPage from '../actions/showNextPage';
 
 import * as FilterBar from './../../../main/components/FilterBar';
 import DateRangePicker from './../../../main/components/DateRangePicker';
 import DatePicker from './../../../main/components/DatePicker';
-import SearchBox from './../../../main/components/Searchbox';
+import Export from './../../../main/file-export/components/Export';
 
 import EndUserTable from './EndUserTable';
 import EndUserProfile from './EndUserProfile';
+import EndUserExportForm from './EndUserExportForm';
 
 import config from './../../../main/config';
+import { accountStatus } from '../../../main/constants/accountStatus';
 
 let { inputDateFormat: DATE_FORMAT } = config;
 let { pages: { endUser: { pageRec: PAGE_REC } } } = config;
@@ -44,6 +47,8 @@ function getInitialQueryFromURL(params, query = {}) {
     carrierId: params.identity,
     startDate: query.startDate,
     endDate: query.endDate,
+    bundleId: query.bundleId,
+    status: query.status,
     page: query.page
   };
 }
@@ -60,15 +65,42 @@ var EndUsers = React.createClass({
     storeListeners: [EndUserStore],
 
     fetchData: function(context, params, query, done) {
-      concurrent([
-        context.executeAction.bind(context, clearEndUsers),
-        context.executeAction.bind(context, fetchEndUsers, _.merge(_.clone(defaultQuery), getInitialQueryFromURL(params, query)))
-      ], done || function() {});
+        concurrent([
+          context.executeAction.bind(context, clearEndUsers)
+        ], done || function() {});
     }
   },
 
   getInitialState: function() {
     return _.merge(_.clone(defaultQuery), this.getRequestBodyFromQuery(), this.getStateFromStores());
+  },
+
+  componentDidMount: function() {
+    this.executeAction(fetchEndUsers, _.merge(_.clone(defaultQuery), this.getRequestBodyFromState(), this.getStateFromStores()));
+  },
+
+  componentDidUpdate: function(prevProps, prevState) {
+    // @TODO should not update userList here, need to change it later or perhaps call within `fetchData`?
+    this.loadUserList(prevState);
+  },
+
+  loadFirstUserDetail: function() {
+    let users = this.getStore(EndUserStore).getDisplayUsers();
+    let currentUser = this.getStore(EndUserStore).getCurrentUser();
+    if (!_.isEmpty(users) && _.isEmpty(currentUser)) {
+      let {username} = users[0];
+      this.handleUserClick(username);
+    }
+  },
+
+  loadUserList: function(prevState) {
+    let prevStartDate = prevState.startDate;
+    let prevEndDate = prevState.endDate;
+    let nextStartDate = this.getRequestBodyFromQuery().startDate;
+    let nextEndDate = this.getRequestBodyFromQuery().endDate;
+    if ( nextStartDate && nextEndDate && (prevStartDate !== nextStartDate || prevEndDate !== nextEndDate) ) {
+      this.executeAction(fetchEndUsers, _.merge(_.clone(defaultQuery), this.getRequestBodyFromState(), this.getRequestBodyFromQuery()))
+    }
   },
 
   getRequestBodyFromQuery: function(query) {
@@ -92,6 +124,7 @@ var EndUsers = React.createClass({
 
   onChange: function() {
     this.setState(this.getStateFromStores());
+    this.loadFirstUserDetail();
   },
 
   /**
@@ -146,6 +179,31 @@ var EndUsers = React.createClass({
     });
   },
 
+  handleBundleIdChange: function(e) {
+    let query = { bundleId: e.target.value };
+    this.setState(query);
+  },
+
+  handleStatusChange: function(e) {
+    let query = { status: e.target.value };
+    this.setState(query);
+  },
+
+  applyFilters: function(users) {
+    if (this.state.bundleId) {
+      users = _.filter(users, (user)=> {
+        let device = _.get(user, 'devices.0') || {};
+        return device.appBundleId === this.state.bundleId;
+      });
+    }
+    if (this.state.status) {
+      users = _.filter(users, (user)=> {
+        return user.accountStatus === this.state.status;
+      });
+    }
+    return users;
+  },
+
   _checkHasNext: function() {
     return this.state.hasNextPage || this.getStore(EndUserStore).getTotalDisplayUsers() < this.getStore(EndUserStore).getTotalUsers();
   },
@@ -162,13 +220,47 @@ var EndUsers = React.createClass({
               handleStartDateChange={this.handleStartDateChange}
               handleEndDateChange={this.handleEndDateChange}
               />
+
+            <div>
+              <select className="bundle-select top-bar-section__query-input" name="bundleIdSelect" onChange={this.handleBundleIdChange}>
+                <option key={'bundleId'} value="">Choose Bundle ID</option>
+                {this.getStore(EndUserStore).getBundleIds().map((bundleId)=>{
+                  if (bundleId) {
+                    return <option key={bundleId} value={bundleId}>{bundleId}</option>;
+                  }
+                })}
+              </select>
+            </div>
+
+            <div>
+              <select className="status-select top-bar-section__query-input" name="statusSelect" onChange={this.handleStatusChange}>
+                <option key={'status'} value="">Choose Account Status</option>
+                {accountStatus.map((status)=>{
+                  return <option key={status} value={status.toUpperCase()}>{status}</option>;
+                })}
+              </select>
+            </div>
+
           </FilterBar.LeftItems>
+          <FilterBar.RightItems>
+            <li className="top-bar--inner">
+              <Export exportType="End_User">
+                <EndUserExportForm
+                  carrierId={this.context.router.getCurrentParams().identity}
+                  startDate={this.state.startDate}
+                  endDate={this.state.endDate}
+                />
+              </Export>
+            </li>
+
+          </FilterBar.RightItems>
         </FilterBar.Wrapper>
         <div className="large-24 columns">
           <div className="large-16 columns">
             <EndUserTable
               ref="endUserTable"
-              users={this.getStore(EndUserStore).getDisplayUsers()}
+              currentUser={this.getStore(EndUserStore).getCurrentUser()}
+              users={this.applyFilters(this.getStore(EndUserStore).getDisplayUsers())}
               hasNext={this._checkHasNext()}
               onUserClick={this.handleUserClick}
               onPageChange={this.handleShowNextPage}

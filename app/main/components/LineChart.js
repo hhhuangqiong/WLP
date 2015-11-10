@@ -5,6 +5,7 @@ const ID_MAX = 100000;
 const DEFAULT_LINE_WIDTH = 1;
 const SELECTED_LINE_WIDTH = 2;
 const AXIS_COLOR = '#808080';
+const MIN_Y_RANGE = 50;
 
 /**
  * This callback is used when a tooltip is being displayed on the UI.
@@ -109,7 +110,7 @@ export default React.createClass({
       y: PropTypes.number.isRequired
     })),
     /**
-     * The name of the selected line. 
+     * The name of the selected line.
      * A selected line will be thicker than normal lines.
      * Only the selected line can interact with the mouse events.
      * @type {String}
@@ -130,7 +131,9 @@ export default React.createClass({
     // create a dummy series, so that the x-axis can be drawn while the data is loading
     let dummy = [];
     for (let i = 0; i < xAxis.tickCount; i++) {
-      dummy.push(0);
+      // If all data are zero, the y-axis will not be drawn normally.
+      // Pushing mnon-zero values to avoid x-axis being placed in the middle of the chart.
+      dummy.push(10);
     }
 
     // append the unit to the axis label when available
@@ -153,6 +156,10 @@ export default React.createClass({
     this.chart = new Highcharts.Chart({
       chart: {
         type: 'line',
+        // Give enough space to the horizontal dimension, so that the y-axis
+        // will not move when the number of digits in the y-axis labels change
+        marginLeft: 50,
+        marginRight: 50,
         renderTo: this.state.containerId
       },
       exporting: {
@@ -178,7 +185,7 @@ export default React.createClass({
         },
         // show grid line
         gridLineWidth: 1,
-        // create buffer at the beginning and the end of the x axis, 
+        // create buffer at the beginning and the end of the x axis,
         // so that the first and the last points do not lie on the y axis
         startOnTick: false,
         endOnTick: false,
@@ -195,12 +202,13 @@ export default React.createClass({
         labels: {
           formatter: yAxisLabelFormatter
         },
-        // setting floor and min to 0, avoiding the x axis being drawn in the middle of the chart
-        floor: 0,
+        // do not allow decimal labels (e.g. 12.5)
+        allowDecimals: false,
+        // set min to 0, avoiding the labels for smaller values being skipped when all data are big
         min: 0,
         max: yAxis.max,
-        // minRange controls the scale of the y axis while the chart is empty
-        minRange: 80,
+        // minRange controls the minimum range of the y axis
+        minRange: MIN_Y_RANGE,
         lineWidth: 1,
         lineColor: AXIS_COLOR,
         // control the alignment of the y-axis, default to left
@@ -360,7 +368,7 @@ export default React.createClass({
       // if the lines are ready at the didMount time, draw them directly
       if (this.props.lines) {
         this.props.lines.forEach((lineOpts) => {
-          this.drawLine(lineOpts);
+          this.addLine(lineOpts);
         });
       }
 
@@ -373,32 +381,40 @@ export default React.createClass({
     }
   },
 
-  componentWillReceiveProps: function (nextProps) {
-    // this function will be called when the user interacts with the sidebar
-    // unnecessary redraw will be invoked
-    // avoid unnecessary redraw
-    if (_.eq(nextProps, this.props)) {
-      return;
-    }
+  shouldComponentUpdate: function (nextProps) {
+    return !_.eq(nextProps, this.props);
+  },
 
+  componentWillUpdate: function (nextProps) {
     // We have to wait for the x-axis from props from parent.
     // However, child component is mounted before the parent.
-    // Therefore, if the parent set the props in its componentDidMount, 
+    // Therefore, if the parent set the props in its componentDidMount,
     // we cannot use componentDidMount to draw the chart.
     // Instead, we draw it inside componentWillReceiveProps, as the props must go through this.
     if ((nextProps.xAxis && !this.chart) || !_.eq(nextProps.xAxis, this.props.xAxis)) {
       this.drawChart(nextProps);
     }
+  },
 
-    // if the chart is not drawn, do nothing
+  componentDidUpdate: function () {
+    if (this.chart) {
+      // The container may have been resized,
+      // or the chart was draw in invisible node and then change to visible.
+      // In either case, the chart must be reflow to fit the container size.
+      this.chart.reflow();
+    }
+  },
+
+  updateChart: function () {
     if (!this.chart) {
       return;
     }
 
     // the lines are ready
-    if (nextProps.lines) {
-      nextProps.lines.forEach((lineOpts) => {
-        let selected = nextProps.selectedLine && lineOpts.name === nextProps.selectedLine;
+    // TODO: add the line removal logic
+    if (this.props.lines) {
+      this.props.lines.forEach((lineOpts) => {
+        let selected = this.props.selectedLine && lineOpts.name === this.props.selectedLine;
 
         let existingLine = _.find(this.chart.series, function (series) {
           return series.name === lineOpts.name;
@@ -424,25 +440,18 @@ export default React.createClass({
     // the points are ready
     // do not support point update
     // TODO: add the point removal logic
-    if (nextProps.points) {
-      nextProps.points.forEach((pointOpts) => {
+    if (this.props.points) {
+      this.props.points.forEach((pointOpts) => {
         this.addPoint(_.extend({ name }, pointOpts));
       });
     }
   },
 
-  componentDidUpdate: function () {
-    if (this.chart) {
-      // The container may have been resized,
-      // or the chart was draw in invisible node and then change to visible.
-      // In either case, the chart must be reflow to fit the container size.
-      this.chart.reflow();
-    }
-  },
-
   render: function () {
+    this.updateChart();
+
     return (
       <div id={this.state.containerId} className={this.props.className}></div>
     );
-  }  
+  }
 });

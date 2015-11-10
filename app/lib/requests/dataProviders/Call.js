@@ -65,9 +65,6 @@ export default class CallsRequest extends BaseRequest {
       if (params.caller_carrier)
         query.caller_carrier = params.caller_carrier;
 
-      if (params.callee_carrier && params.type.toLowerCase() !== 'offnet')
-        query.callee_carrier = params.callee_carrier;
-
       if (params.caller)
         query.caller = params.caller;
 
@@ -91,13 +88,12 @@ export default class CallsRequest extends BaseRequest {
    * @param cb {Function} Callback function from @method getCalls
    */
   sendRequest(params, cb) {
-    var base = this.opts.baseUrl;
-    var url = this.opts.methods.CALLS.URL;
+    var url = this.opts.baseUrl + this.opts.methods.CALLS.URL;
 
-    logger.info(`Calls API Endpoint: ${util.format('%s%s', base, url)}?${qs.stringify(params)}`);
+    logger.debug(`Calls: ${this.opts.methods.CALLS.METHOD} ${url}?${qs.stringify(params)}`, params);
 
     request
-      .get(util.format('%s%s', base, url))
+      .get(url)
       .query(params)
       .buffer()
       .timeout(this.opts.timeout)

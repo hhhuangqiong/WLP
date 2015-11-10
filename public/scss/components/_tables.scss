@@ -23,6 +23,10 @@ table {
         background: #fff;
         tr {
             border-bottom: 1px solid $gray-lightest;
+
+            &.selected {
+              background: scale-color($brand-primary, $lightness: 90%);
+            }
         }
     }
     tfoot{

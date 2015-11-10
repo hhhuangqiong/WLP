@@ -27,6 +27,9 @@
     }
 
     &__content {
+      max-width: 100%;
+      word-wrap: break-word;
+
       &.capitalize {
         text-transform: capitalize;
       }

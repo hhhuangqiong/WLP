@@ -16,4 +16,23 @@
   .pagination__button--inactive {
     cursor: initial;
   }
+
+  .device-modal {
+    .icon-apple {
+      font-size: rem-calc(16);
+      margin-right: rem-calc(5);
+      color: $icon-apple-color;
+    }
+    .icon-android {
+      font-size: rem-calc(16);
+      margin-right: rem-calc(5);
+      color: $icon-android-color;
+    }
+  }
+
+  .account-status {
+    .label {
+      margin-right: rem-calc(5);
+    }
+  }
 }

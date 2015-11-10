@@ -60,22 +60,35 @@ export default class TopUpRequest extends BaseRequest {
 
     var base = this.opts.baseUrl;
     var url = this.opts.methods.LIST.URL;
+    var fullUrl = util.format('%s%s', base, url);
 
     request
-      .get(util.format('%s%s', base, url))
+      .get(fullUrl)
       .query(params)
       .buffer()
       .timeout(this.opts.timeout)
       .end((err, res) => {
         // Do we need to distinguish different Errors? Timeout and ENOTFOUND
         if (err) return cb(this.handleError(err, err.status || 400));
-        if (res.error) return cb(this.handleError(res.body.error.description, res.error.code));
 
-        // bossApi does not return page number,
-        // in order to keep page state in Top Up Store
-        _.assign(res.body.result, { page: params.page });
+        try {
+          if (res.error) return cb(this.handleError(res.body.error.description, res.error.code));
 
-        return cb(null, res.body.result);
+          // bossApi does not return page number,
+          // in order to keep page state in Top Up Store
+          _.assign(res.body.result, { page: params.page });
+
+          return cb(null, res.body.result);
+        }
+        catch(e) {
+          // unexpected response
+          logger.debug('Unexpected response from BOSS transactionHistor: ', fullUrl, params);
+          logger.debug('Parsing error stack:', e.stack);
+          err = new Error();
+          err.message = 'Unexpected response';
+          err.status = 500;
+          return cb(err);
+        }
       });
   }
 

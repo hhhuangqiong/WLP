@@ -104,17 +104,11 @@ let getUsername = function(req, res) {
   };
 
   var sendEndUserRequest = _.bind(function(params) {
-    return Q.ninvoke(this, 'getUser', params.carrierId, params.username)
-      .catch((err) => {
-        throw err;
-      });
+    return Q.ninvoke(this, 'getUser', params.carrierId, params.username);
   }, endUserRequest);
 
   var sendWalletRequest = _.bind(function(params) {
-    return Q.ninvoke(this, 'getWalletBalance', params)
-      .catch((err) => {
-        throw err;
-      });
+    return Q.ninvoke(this, 'getWalletBalance', params);
   }, walletRequest);
 
   var appendUserData = _.bind(function(user) {
@@ -138,9 +132,17 @@ let getUsername = function(req, res) {
   Q.fcall(prepareEndUserRequestParams)
     .then(sendEndUserRequest)
     .then(appendUserData)
-    .then(prepareWalletRequestParams)
-    .then(sendWalletRequest)
-    .then(appendWalletData)
+    .then((user) => {
+      // Fetch the user wallet, which is depending on the user detail call.
+      // However, the wallet is not a must for the complete user detail.
+      // Therefore, we group and ignore the error for these functions.
+      return Q.fcall(prepareWalletRequestParams, user)
+        .then(sendWalletRequest)
+        .then(appendWalletData)
+        .catch(() => {
+          return user;
+        });
+    })
     .then((user) => {
       res.json(user);
     })
@@ -171,15 +173,17 @@ let getUserWallet = function(req, res) {
   Q.fcall(prepareWalletRequestParams)
     .then(sendWalletRequest)
     .then((wallets) => {
-      if (wallets.length == 0) {
-        return res.status(404).json(new Error('404 not found'));
-      }
-
       return res.json(wallets);
     })
     .catch((err) => {
-      return res.status(err.status).json({
-        err
+      let { code, message, timeout, status } = err;
+
+      return res.status(status || 500).json({
+        error: {
+          code,
+          message,
+          timeout
+        }
       });
     })
 }
@@ -222,25 +226,6 @@ let reactivateUser = function(req, res) {
     });
 }
 
-// '/carriers/:carrierId/users/:username'
-let terminateUser = function(req, res) {
-  req.checkParams('carrierId').notEmpty();
-  req.checkParams('username').notEmpty();
-
-  let carrierId = req.params.carrierId;
-  let username = req.params.username;
-
-  Q.ninvoke(endUserRequest, 'terminateUser', carrierId, username)
-    .then((result) => {
-      return res.json(result);
-    })
-    .catch((err) => {
-      return res.status(err.status).json({
-        error: err
-      });
-    });
-}
-
 // '/carriers/:carrierId/calls'
 let getCalls = function(req, res) {
   req.checkParams('carrierId').notEmpty();
@@ -251,7 +236,6 @@ let getCalls = function(req, res) {
   let params = {
     // jscs:disable requireCamelCaseOrUpperCaseIdentifiers
     caller_carrier: req.params.carrierId,
-    callee_carrier: req.params.carrierId,
     from: req.query.startDate,
     to: req.query.endDate,
     caller: prepareWildcard(req.query.search),
@@ -262,12 +246,10 @@ let getCalls = function(req, res) {
   };
 
   if (req.query.searchType === 'caller') {
-    delete params.callee_carrier;
     delete params.callee;
   }
 
   if (req.query.searchType === 'callee') {
-    delete params.caller_carrier;
     delete params.caller;
   }
 
@@ -579,6 +561,5 @@ export {
   getVerificationStatistics,
   getWidgets,
   reactivateUser,
-  suspendUser,
-  terminateUser,
+  suspendUser
 };
