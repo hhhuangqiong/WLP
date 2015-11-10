@@ -7,18 +7,18 @@
   }
 
   &--paid {
-    background-color: aliceblue;
+    background-color: $paid-wallet-bg;
 
     .wallet-item__type-label {
-      background-color: #5D95B6;
+      background-color: $paid-wallet-label;
     }
   }
 
   &--free {
-    background-color: honeydew;
+    background-color: $free-wallet-bg;
 
     .wallet-item__type-label {
-      background-color: rgb(73, 207, 73);
+      background-color: $free-wallet-label;
     }
   }
 
@@ -50,7 +50,7 @@
   }
 
   &__balance {
-    color: rgb(29, 228, 29);
+    color: $status-active;
 
     &--sign,
     &--value {

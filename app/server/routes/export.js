@@ -4,11 +4,9 @@ import nconf from 'nconf';
 import redisRStream from 'redis-rstream';
 
 import { fetchDep } from '../utils/bottle';
-import { IM_EXPORT } from '../../config';
-import ImExportTask from '../tasks/ImExport';
-
-const PAGE_START_INDEX = 0;
-const PAGE_SIZE = 1000;
+import EXPORTS from '../../config/export';
+import ExportTask from '../tasks/Export';
+import { CALLS, IM, VERIFICATION } from '../../main/file-export/constants/ExportType';
 
 import responseError from '../utils/responseError';
 
@@ -17,27 +15,19 @@ import {
   FILE_STREAM_ERROR, INCOMPELETE_JOB_ERROR
 } from '../utils/exportErrorTypes';
 
-export const JOB_TYPE = 'exportIm';
+let getExportConfig = (type) => {
+  return EXPORTS[type.toUpperCase()] || {};
+};
 
-// '/:carrierId/im'
-let getCarrierIM = (req, res) => {
+// '/:carrierId/export'
+let getCarrierExport = (req, res) => {
   req.checkParams('carrierId').notEmpty();
 
   let err = req.validationErrors();
 
   if (err) return responseError(REQUEST_VALIDATION_ERROR, res, err);
 
-  let params = {
-    carrier: req.params.carrierId,
-    from: req.query.fromTime,
-    to: req.query.toTime,
-    destination: req.query.destination,
-    origin: req.query.origin,
-    page: PAGE_START_INDEX,
-    size: PAGE_SIZE
-  };
-
-  let task = new ImExportTask(fetchDep(nconf.get('containerName'), 'Kue'), params);
+  let task = new ExportTask(fetchDep(nconf.get('containerName'), 'Kue'), req.params, req.query);
 
   task.ready().then((job) => {
     res.status(200).json({ id: job.id });
@@ -47,8 +37,8 @@ let getCarrierIM = (req, res) => {
   }).done();
 };
 
-// '/:carrierId/im/progress'
-let getCarrierIMFileProgress = (req, res) => {
+// '/:carrierId/export/progress'
+let getCarrierExportFileProgress = (req, res) => {
   req.checkQuery('exportId').notEmpty();
 
   let err = req.validationErrors();
@@ -63,12 +53,12 @@ let getCarrierIMFileProgress = (req, res) => {
 
     let progress = job._progress || '0';
 
-    return res.status(200).json({ progress: progress });
+    return res.status(200).json({ progress });
   });
 };
 
-// '/:carrierId/im/file'
-let getCarrierIMFile = (req, res) => {
+// '/:carrierId/export/file'
+let getCarrierExportFile = (req, res) => {
   req.checkQuery('exportId').notEmpty();
 
   let err = req.validationErrors();
@@ -77,12 +67,14 @@ let getCarrierIMFile = (req, res) => {
   kue.Job.get(req.query.exportId, (err, job) => {
     if (err) return responseError(GET_JOB_ERROR, res, err);
 
+    let jobConfig = getExportConfig(job.type);
+
     if (job._progress === '100') {
-      res.setHeader('Content-disposition', 'attachment; filename=' + IM_EXPORT.EXPORT_FILENAME);
+      res.setHeader('Content-disposition', 'attachment; filename=' + jobConfig.EXPORT_FILENAME);
       res.setHeader('Content-type', 'text/csv');
 
       let redisClient = fetchDep(nconf.get('containerName'), 'RedisClient');
-      let exportFileStream = redisRStream(redisClient, `${JOB_TYPE}:${job.id}`);
+      let exportFileStream = redisRStream(redisClient, `${job.type}:${job.id}`);
 
       exportFileStream.pipe(res);
 
@@ -98,7 +90,7 @@ let getCarrierIMFile = (req, res) => {
 };
 
 export {
-  getCarrierIM,
-  getCarrierIMFile,
-  getCarrierIMFileProgress
+  getCarrierExport,
+  getCarrierExportFile,
+  getCarrierExportFileProgress
 };

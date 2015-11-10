@@ -199,6 +199,50 @@
   }
 }, {
   "user": {
+    "username": "admin@pateo.maaiii-api.org",
+    "password": "pateoWLP2015",
+    "name": {
+      "first": "Admin",
+      "last": "Pateo"
+    },
+    "assignedGroup": "root",
+    "status": "active"
+  },
+  "company": {
+    "parentCompany": null,
+    "carrierId": "pateo.maaiii-api.org",
+    "name": "Pateo",
+    "reseller": false,
+    "status": "active",
+    "timezone": "UTC+8",
+    "country": "Hong Kong",
+    "logoFile": "logo-m800.png",
+    "widgets": {}
+  }
+}, {
+  "user": {
+    "username": "admin@tfn.maaiii.org",
+    "password": "whitelabel2014",
+    "name": {
+      "first": "Admin",
+      "last": "TFN"
+    },
+    "assignedGroup": "root",
+    "status": "active"
+  },
+  "company": {
+    "parentCompany": null,
+    "carrierId": "tfn.maaiii.org",
+    "name": "TFN",
+    "reseller": false,
+    "status": "active",
+    "timezone": "UTC+8",
+    "country": "Hong Kong",
+    "logoFile": "logo-m800.png",
+    "widgets": {}
+  }
+}, {
+  "user": {
     "username": "admin@sino.maaiii-api.org",
     "password": "sinoWLP2015",
     "name": {

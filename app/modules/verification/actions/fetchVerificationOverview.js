@@ -63,6 +63,8 @@ export default (context, params, done) => {
   let timeRangeForPreviousPeriod = getIsoTimeRangeFromNow(quantity, timescale, quantity);
   let paramsForLastPeriod = _.merge({}, paramsForCurrentPeriod, timeRangeForPreviousPeriod);
 
+  let fetchedData = {};
+
   let actions = [{
     name: 'FETCH_VERIFICATION_ATTEMPTS',
     bindedApi: Q.nbind(getVerificationStatsByStatus, context.api, paramsForCurrentPeriod)
@@ -83,16 +85,30 @@ export default (context, params, done) => {
   let runningActions = actions.map((action) => {
     return action.bindedApi()
       .then((result) => {
-        context.dispatch(action.name + '_SUCCESS', result);
+        // Prepare all data from endpoint first and dispatch once afterward to ensure the data update problem of Line Chart
+        if (action.name === 'FETCH_VERIFICATION_COUNTRIES_DATA') {
+          fetchedData['countriesData'] = result;
+
+        } else if (action.name === 'FETCH_VERIFICATION_OS_TYPE') {
+          fetchedData['osData'] = result.data;
+
+        } else if (action.name === 'FETCH_VERIFICATION_PAST_ATTEMPTS') {
+          fetchedData['pastAttemptData'] = result;
+
+        } else if (action.name === 'FETCH_VERIFICATION_ATTEMPTS') {
+          fetchedData['currentAttemptData'] = result;
+
+        } else if (action.name === 'FETCH_VERIFICATION_TYPE') {
+          fetchedData['typeData'] = result.data;
+
+        }
       })
       .catch((err) => {
         context.dispatch(action.name + '_FAILURE', err);
         // we don't want to handle the error here
         throw err;
       })
-      .finally(() => {
-        context.dispatch(action.name + '_END');
-      });
+      .finally(() => {});
   });
 
   Q.allSettled(runningActions)
@@ -121,6 +137,8 @@ export default (context, params, done) => {
         context.dispatch('ERROR_MESSAGE', {
           message: 'Sorry. Some data cannot be retrieved. Possible reason(s): ' + _.unique(possibleReasons).join(', ')
         });
+      } else {
+        context.dispatch('FETCH_VERIFICATION_OVERVIEW_SUCCESS', fetchedData);
       }
 
       done();

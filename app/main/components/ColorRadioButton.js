@@ -2,19 +2,12 @@ import React, { Component, PropTypes } from 'react';
 import classNames from 'classnames';
 
 export default class ColorRadioButton extends Component {
-  getDefaultProps() {
-    return {
-      color: 'black',
-      location: 'left'
-    };
-  }
-
   clickRadio() {
     this.props.onChange(this.props.value);
   }
 
   renderLabel() {
-    return (<label for={this.props.value}>{this.props.label}</label>);
+    return (<label htmlFor={this.props.value}>{this.props.label}</label>);
   }
 
   renderButton() {
@@ -53,4 +46,9 @@ export default class ColorRadioButton extends Component {
 
 ColorRadioButton.propTypes = {
   value: PropTypes.string.isRequired
+};
+
+ColorRadioButton.defaultProps = {
+  color: 'black',
+  location: 'left'
 };

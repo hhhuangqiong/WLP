@@ -13,54 +13,26 @@ let genericHandler = _.partial(saUtil.genericHandler, debug);
  */
 export default function(exportPrefix='') {
   return {
-    getCallsExport: function(params, cb) {
+    getExport(params, cb) {
       superagent
-        .get(`${this._getHost()}${exportPrefix}/${params.carrierId}/calls`)
+        .get(`${this._getHost()}${exportPrefix}/${params.carrierId}`)
         .query(params)
         .accept('json')
         .set('Authorization', this._getToken())
         .end(genericHandler(cb));
     },
 
-    getCallsExportProgress: function(params, cb) {
+    getExportProgress(params, cb) {
       superagent
-        .get(`${this._getHost()}${exportPrefix}/${params.carrierId}/calls/progress`)
+        .get(`${this._getHost()}${exportPrefix}/${params.carrierId}/progress`)
         .query(params)
         .accept('json')
         .set('Authorization', this._getToken())
-        .end(function(err, res) {
-          if (err) {
-            debug('error', err);
-          }
+        .end((err, res) => {
+          if (err) debug('error', err);
 
           cb(err, res && res.body);
         });
-    },
-
-    getImExport: function(params, cb) {
-      superagent
-        .get(`${this._getHost()}${exportPrefix}/${params.carrierId}/im`)
-        .query(params)
-        .accept('json')
-        .set('Authorization', this._getToken())
-        .end(function(err, res) {
-          if (err) {
-            debug('error', err);
-          }
-
-          cb(err, res && res.body);
-        });
-    },
-
-    getImExportProgress: function(params, cb) {
-      superagent
-        .get(`${this._getHost()}${exportPrefix}/${params.carrierId}/im/progress`)
-        .query(params)
-        .accept('json')
-        .set('Authorization', this._getToken())
-        .end(genericHandler(cb));
     }
-
-
   }
 }

@@ -1,6 +1,5 @@
 import _ from 'lodash';
 import moment from 'moment';
-import {concurrent} from 'contra';
 import classNames from 'classnames';
 
 import React from 'react';
@@ -20,12 +19,31 @@ import fetchVerifications from '../actions/fetchVerifications';
 import fetchMoreVerifications from '../actions/fetchMoreVerifications';
 
 import VerificationStore from '../stores/VerificationStore';
+import ApplicationStore from '../../../stores/ApplicationStore';
 
-import VerificationTableRow from './VerificationTableRow'
+import VerificationTable from './VerificationTable';
 import config from '../../../config';
+
+import Export from '../../../main/file-export/components/Export';
+import VerificationExportForm from './VerificationExportForm';
+import VerificationFilter from './VerificationFilter';
+
+import SearchButton from '../../../main/search-button/SearchButton';
 
 const debug = require('debug')('app:verification/components/Verification');
 const ENTER_KEY = 13;
+
+const LABEL_OF_ALL = 'All';
+
+const VERIFICATION_TYPES = [
+  'call-in',
+  'call-out'
+];
+
+const OS_TYPES = [
+  'ios',
+  'android'
+];
 
 let { inputDateFormat: DATE_FORMAT } = require('./../../../main/config');
 
@@ -38,7 +56,10 @@ let VerificationDetails = React.createClass({
   mixins: [FluxibleMixin, AuthMixin],
 
   statics: {
-    storeListeners: [VerificationStore],
+    storeListeners: {
+      onChange: VerificationStore,
+      onApplicationStoreChange: ApplicationStore
+    },
 
     fetchData: function (context, params, query, done) {
       // when no appId was provided, don't have to pre-render
@@ -129,28 +150,59 @@ let VerificationDetails = React.createClass({
   },
 
   componentDidMount: function () {
-    // auto select the first appId from the list
+    // auto select the default appId from the list
     // TODO: optimize this UX with server side rendering
 
-    // appId has selected, no need to auto select
+    // appId has been selected, no need to auto select
     if (this.state.appId) {
       return;
     }
 
-    this.autoSelectAppId();
-  },
+    let appId = this.getStore(ApplicationStore).getDefaultAppId();
 
-  autoSelectAppId: function () {
-    // no appIds for some reasons
-    if (!this.props.appIds || !this.props.appIds.length) {
+    // no default, cannot select and fetch
+    // proper fetch will be done after onApplicationStoreChange
+    if (!appId) {
       return;
     }
 
-    // select the first item as default
-    this.onAppIdChange(this.props.appIds[0]);
+    // auto select without modifying the query string
+    this.setState({
+      appId
+    });
+
+    let { identity } = this.context.router.getCurrentParams();
+
+    // fetch using the local appId because setState is async
+    this.context.executeAction(fetchVerifications, {
+      carrierId: identity,
+      appId: appId,
+      page: this.state.page,
+      pageSize: this.state.pageSize,
+      startDate: this.state.startDate,
+      endDate: this.state.endDate,
+      number: this.state.number,
+      os: this.state.os,
+      method: this.state.method
+    });
   },
 
-  loadMore: function () {
+  /**
+   * Selects the default application ID according to the ApplicationStore.
+   * This will change the state `appId`.
+   *
+   * @method
+   */
+  autoSelectAppId: function () {
+    this.onAppIdChange(this.context.getStore(ApplicationStore).getDefaultAppId());
+  },
+
+  /**
+   * Fetch the verification events by advancing the page number.
+   *
+   * @method
+   */
+  fetchMore: function () {
     let { identity } = this.context.router.getCurrentParams();
     let nextPage = this.state.page + 1;
 
@@ -174,6 +226,21 @@ let VerificationDetails = React.createClass({
   onChange: function () {
     let query = _.merge(this.getDefaultQuery(), this.context.router.getCurrentQuery());
     this.setState(_.merge(query, this.getStateFromStores()));
+  },
+
+  /**
+   * Auto select the default appId when the ApplicationStore updates.
+   * Selection will happen only if no appId is currently selected.
+   *
+   * @method
+   */
+  onApplicationStoreChange: function () {
+    // do nothing if there is a selected appId, otherwise select the default
+    if (this.state.appId) {
+      return;
+    }
+
+    this.autoSelectAppId();
   },
 
   onAppIdChange: function (val) {
@@ -205,6 +272,14 @@ let VerificationDetails = React.createClass({
     this.refs.endDatePicker.handleFocus();
   },
 
+  transformVerificationTypes(type) {
+    switch (type) {
+      case 'MobileTerminated': return 'call-in';
+      case 'MobileOriginated': return 'call-out';
+      default: return type;
+    }
+  },
+
   handleSearchInputChange: function (evt) {
     this.setState({
       number: evt.target.value
@@ -217,22 +292,14 @@ let VerificationDetails = React.createClass({
     }
   },
 
-  renderTableRows: function () {
-    let rows = this.state.verifications.map(item => {
-      return (
-        <VerificationTableRow key={item.id} verification={item} />
-      );
-    });
-
-    return rows;
+  handleVerificationMethodChange(event) {
+    let value = event.target.value;
+    this.handleQueryChange({ method: value === LABEL_OF_ALL ? '' : event.target.value });
   },
 
-  renderPaginationFooter: function () {
-    if (this.state.page < this.state.maxPage - 1) {
-      return (<div className="pagination__button text-center" onClick={this.loadMore}>Load More</div>);
-    } else {
-      return (<div className="pagination__button pagination__button--inactive text-center">no more result</div>);
-    }
+  handleOsTypeChange(event) {
+    let value = event.target.value;
+    this.handleQueryChange({ os: value === LABEL_OF_ALL ? '' : event.target.value });
   },
 
   render: function () {
@@ -247,9 +314,6 @@ let VerificationDetails = React.createClass({
       });
     });
 
-    let tableRows = this.renderTableRows(this.state.verifications);
-    let tableFooter = this.renderPaginationFooter();
-
     return (
       <div className="row verification-details">
         <FilterBar.Wrapper>
@@ -258,17 +322,20 @@ let VerificationDetails = React.createClass({
             <Link to="verification-details" params={{role, identity}}>Details Report</Link>
           </FilterBar.NavigationItems>
           <FilterBar.LeftItems>
-            <Select
-              name="appid"
-              className="verification-details__app-select"
-              options={options}
-              value={"Application ID: " + (this.state.appId ? this.state.appId : "-")}
-              clearable={false}
-              searchable={false}
-              onChange={this.onAppIdChange}
+            <VerificationFilter
+              appId={this.state.appId}
+              appIdOptions={options}
+              appIdChange={this.onAppIdChange}
+              os={this.state.os}
+              osTypes={OS_TYPES}
+              osChange={this.handleOsTypeChange}
+              method={this.state.method}
+              methods={VERIFICATION_TYPES}
+              methodChange={this.handleVerificationMethodChange}
+              transformVerificationTypes={this.transformVerificationTypes}
+              defaultOption={LABEL_OF_ALL}
             />
-          </FilterBar.LeftItems>
-          <FilterBar.RightItems>
+
             <DateRangePicker
               withIcon={true}
               startDate={this.state.startDate}
@@ -276,40 +343,35 @@ let VerificationDetails = React.createClass({
               handleStartDateChange={this.handleStartDateChange}
               handleEndDateChange={this.handleEndDateChange}
             />
-            <SearchBox
-              value={this.state.number}
-              placeHolder="Mobile number"
+          </FilterBar.LeftItems>
+          <FilterBar.RightItems>
+            <SearchButton
+              placeHolder="Mobile"
+              search={this.state.number}
               onInputChangeHandler={this.handleSearchInputChange}
               onKeyPressHandler={this.handleSearchInputSubmit}
             />
+            <Export exportType="Verification">
+              <VerificationExportForm
+                fromTime={this.state.startDate}
+                toTime={this.state.endDate}
+                verificationType={this.state.method}
+                verificationTypes={VERIFICATION_TYPES}
+                osType={this.state.os}
+                osTypes={OS_TYPES}
+                handleVerificationMethodChange={this.handleVerificationMethodChange}
+                handleOsTypeChange={this.handleOsTypeChange}
+                transformVerificationTypes={this.transformVerificationTypes}
+                defaultOption={LABEL_OF_ALL}
+              />
+            </Export>
           </FilterBar.RightItems>
         </FilterBar.Wrapper>
 
-        <table className="data-table small-24 large-22 large-offset-1">
-          <thead>
-            <tr>
-              <th>DATE &amp; TIME</th>
-              <th>MOBILE</th>
-              <th>SOURCE IP</th>
-              <th>METHOD</th>
-              <th>OS</th>
-              <th>DEVICE MODEL</th>
-              <th>OPERATOR</th>
-              <th>RESULT</th>
-              <th className="text-center">REMARKS</th>
-            </tr>
-          </thead>
-          <tbody className="verification-table">
-            {tableRows}
-          </tbody>
-          <tfoot>
-            <tr>
-              <td colSpan="9" className="pagination">
-                {tableFooter}
-              </td>
-            </tr>
-          </tfoot>
-        </table>
+        <VerificationTable
+          verifications={this.state.verifications}
+          total={this.state.count}
+          onLoadMoreClick={this.fetchMore} />
       </div>
     );
   }

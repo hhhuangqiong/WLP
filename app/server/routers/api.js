@@ -21,7 +21,6 @@ router
   .get('/carriers/:carrierId/users/:username',  carriers.getUsername)
   .get('/carriers/:carrierId/users/:username/wallet', carriers.getUserWallet)
   .post('/carriers/:carrierId/users/:username/suspension', carriers.suspendUser)
-  .delete('/carriers/:carrierId/users/:username', carriers.terminateUser)
   .delete('/carriers/:carrierId/users/:username/suspension', carriers.reactivateUser)
   .get('/carriers/:carrierId/calls', carriers.getCalls)
   .get('/carriers/:carrierId/im', carriers.getIM)

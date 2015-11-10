@@ -17,6 +17,8 @@ import SmsRequest from '../../lib/requests/SMS';
 import PortalUser from '../../collections/portalUser';
 import Company    from '../../collections/company';
 
+let dateFormat = nconf.get('display:dateFormat');
+
 function prepareWildcard(search) {
   if (!search)
     return '';
@@ -34,6 +36,19 @@ function prepareWildcard(search) {
   return '*' + search.trim() + '*';
 }
 
+/**
+ * Prepare the error message for the express validationErros.
+ *
+ * @method
+ * @param {ValidationError[]} validationErrors  The errors from the validationErrors()
+ * @returns {String} The message
+ */
+function prepareValidationMessage(validationErrors) {
+  return validationErrors.map((issue) => {
+    return `${issue.msg}: ${issue.param}`;
+  }).join(', ');
+}
+
 // '/carriers/:carrierId/users'
 let getUsers = function(req, res) {
   req.checkParams('carrierId').notEmpty();
@@ -49,8 +64,7 @@ let getUsers = function(req, res) {
     pageNumberIndex: req.query.page
   };
 
-  var DateFormatErrors = function() {
-    let dateFormat = nconf.get('display:dateFormat');
+  var DateFormatErrors = function(dateFormat) {
     return !moment(queries.startDate, dateFormat).isValid() || !moment(queries.endDate, dateFormat).isValid();
   };
 
@@ -80,25 +94,21 @@ let getUsername = function(req, res) {
 
   var prepareWalletRequestParams = function(user) {
     let username = user.userDetails.username;
+    let firstLetter = username && username.charAt(0);
+
     return {
       carrier: user.carrierId,
-      number: username[0] === '+' ? username.substring(1, username.length) : username,
+      number: firstLetter === '+' ? username.substring(1, username.length) : username,
       sessionUserName: 'Whitelabel-Portal'
     }
   };
 
   var sendEndUserRequest = _.bind(function(params) {
-    return Q.ninvoke(this, 'getUser', params.carrierId, params.username)
-      .catch((err) => {
-        throw err;
-      });
+    return Q.ninvoke(this, 'getUser', params.carrierId, params.username);
   }, endUserRequest);
 
   var sendWalletRequest = _.bind(function(params) {
-    return Q.ninvoke(this, 'getWalletBalance', params)
-      .catch((err) => {
-        throw err;
-      });
+    return Q.ninvoke(this, 'getWalletBalance', params);
   }, walletRequest);
 
   var appendUserData = _.bind(function(user) {
@@ -122,9 +132,17 @@ let getUsername = function(req, res) {
   Q.fcall(prepareEndUserRequestParams)
     .then(sendEndUserRequest)
     .then(appendUserData)
-    .then(prepareWalletRequestParams)
-    .then(sendWalletRequest)
-    .then(appendWalletData)
+    .then((user) => {
+      // Fetch the user wallet, which is depending on the user detail call.
+      // However, the wallet is not a must for the complete user detail.
+      // Therefore, we group and ignore the error for these functions.
+      return Q.fcall(prepareWalletRequestParams, user)
+        .then(sendWalletRequest)
+        .then(appendWalletData)
+        .catch(() => {
+          return user;
+        });
+    })
     .then((user) => {
       res.json(user);
     })
@@ -155,15 +173,17 @@ let getUserWallet = function(req, res) {
   Q.fcall(prepareWalletRequestParams)
     .then(sendWalletRequest)
     .then((wallets) => {
-      if (wallets.length == 0) {
-        return res.status(404).json(new Error('404 not found'));
-      }
-
       return res.json(wallets);
     })
     .catch((err) => {
-      return res.status(err.status).json({
-        err
+      let { code, message, timeout, status } = err;
+
+      return res.status(status || 500).json({
+        error: {
+          code,
+          message,
+          timeout
+        }
       });
     })
 }
@@ -206,25 +226,6 @@ let reactivateUser = function(req, res) {
     });
 }
 
-// '/carriers/:carrierId/users/:username'
-let terminateUser = function(req, res) {
-  req.checkParams('carrierId').notEmpty();
-  req.checkParams('username').notEmpty();
-
-  let carrierId = req.params.carrierId;
-  let username = req.params.username;
-
-  Q.ninvoke(endUserRequest, 'terminateUser', carrierId, username)
-    .then((result) => {
-      return res.json(result);
-    })
-    .catch((err) => {
-      return res.status(err.status).json({
-        error: err
-      });
-    });
-}
-
 // '/carriers/:carrierId/calls'
 let getCalls = function(req, res) {
   req.checkParams('carrierId').notEmpty();
@@ -235,7 +236,6 @@ let getCalls = function(req, res) {
   let params = {
     // jscs:disable requireCamelCaseOrUpperCaseIdentifiers
     caller_carrier: req.params.carrierId,
-    callee_carrier: req.params.carrierId,
     from: req.query.startDate,
     to: req.query.endDate,
     caller: prepareWildcard(req.query.search),
@@ -246,12 +246,10 @@ let getCalls = function(req, res) {
   };
 
   if (req.query.searchType === 'caller') {
-    delete params.callee_carrier;
     delete params.callee;
   }
 
   if (req.query.searchType === 'callee') {
-    delete params.caller_carrier;
     delete params.caller;
   }
 
@@ -446,7 +444,11 @@ let getVerifications = function (req, res) {
 
   var err = req.validationErrors();
   if (err) {
-    return res.status(400).json(err);
+    return res.status(400).json({
+      error: {
+        message: prepareValidationMessage(err)
+      }
+    });
   }
 
   let params = _.omit({
@@ -466,7 +468,9 @@ let getVerifications = function (req, res) {
   verificationRequest.getVerifications(params, (err, result) => {
     if (err) {
       return res.status(err.status).json({
-        error: err
+        error: {
+          message: err.message
+        }
       });
     }
 
@@ -498,7 +502,11 @@ let mapVerificationStatsRequestParameters = function (req) {
 let getVerificationStatistics = function (req, res) {
   validateStatisticsRequest(req, (err) => {
     if (err) {
-      return res.status(400).json(err);
+      return res.status(400).json({
+        error: {
+          message: prepareValidationMessage(err)
+        }
+      });
     }
 
     let params = mapVerificationStatsRequestParameters(req);
@@ -524,8 +532,14 @@ let getVerificationStatistics = function (req, res) {
 
     request.call(verificationRequest, params, (err, result) => {
       if (err) {
-        return res.status(err.status).json({
-          error: err
+        let { code, message, timeout, status } = err;
+
+        return res.status(status || 500).json({
+          error: {
+            code,
+            message,
+            timeout
+          }
         });
       }
 
@@ -547,6 +561,5 @@ export {
   getVerificationStatistics,
   getWidgets,
   reactivateUser,
-  suspendUser,
-  terminateUser,
+  suspendUser
 };

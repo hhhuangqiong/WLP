@@ -60,7 +60,7 @@ export default React.createClass({
   },
 
   download() {
-    const downloadPath = `/export/${this.state.carrierId}/${this.props.exportType.toLowerCase()}/file?exportId=${this.state.exportId}`;
+    const downloadPath = `/export/${this.state.carrierId}/file?exportId=${this.state.exportId}`;
     window.open(downloadPath);
 
     this.clearExportState();

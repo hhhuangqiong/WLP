@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { PropTypes } from 'react';
 
 import _ from 'lodash';
 import moment from 'moment';
@@ -105,9 +105,69 @@ let getOsIconName = function (platform) {
 };
 
 let VerificationTableRow = React.createClass({
-  contextTypes: {
-    router: React.PropTypes.func.isRequired,
-    executeAction: React.PropTypes.func.isRequired
+  propTypes: {
+    verification: PropTypes.shape({
+      /**
+       * Timestamp of the event
+       * @type {Number}
+       */
+      timestamp: PropTypes.number.isRequired,
+      /**
+       * Phone number
+       * @type {String}
+       */
+      phone_number: PropTypes.string,
+      /**
+       * Alpha2 country code of where the phone was
+       * @type {String}
+       */
+      country: PropTypes.string,
+      /**
+       * The IP address of the phone when the verification was performed
+       * @type {String}
+       */
+      source_ip: PropTypes.string,
+      /**
+       * Alpha2 country code of where the country was, based on the IP address
+       * @type {String}
+       */
+      source_country: PropTypes.string,
+      /**
+       * Verification type/method
+       * @type {String}
+       */
+      type: PropTypes.string,
+      /**
+       * Phone platform(OS)
+       * @type {String}
+       */
+      platform: PropTypes.string,
+      /**
+       * Mobile country code
+       * @type {String}
+       */
+      home_mcc: PropTypes.string,
+      /**
+       * Mobile network code
+       * @type {String}
+       */
+      home_mnc: PropTypes.string,
+      /**
+       * Phone model
+       * @type {String}
+       */
+      hardware_identifier: PropTypes.string,
+      /**
+       * Verification status
+       * @type {Boolean}
+       */
+      success: PropTypes.boolean,
+      /**
+       * Verification failure reason
+       * @type {String}
+       */
+      reason_message: PropTypes.string
+    })
   },
 
   render: function () {

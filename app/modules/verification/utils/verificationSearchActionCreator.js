@@ -7,7 +7,7 @@ import config from '../../../config';
 
 let { inputDateFormat: DATE_FORMAT } = require('./../../../main/config');
 
-const EVENT_KEYS = ['END', 'SUCCESS', 'FAILURE'];
+const EVENT_KEYS = ['SUCCESS', 'FAILURE'];
 
 /**
  * Concatenates 2 input strings with a `_`, making the first input as the prefix of the second.
@@ -43,10 +43,8 @@ function createVerificationSearchApiCallback(actionName, context) {
   let debug = require('debug')(`app:${actionName}`);
 
   return function (err, response) {
-    context.dispatch(lifecycle.END);
-
     if (err) {
-      debug('Failed');
+      debug(`Failed: ${err.message}`);
       context.dispatch(lifecycle.FAILURE, err);
       context.dispatch(ERROR_MESSAGE, err);
       return;
@@ -78,8 +76,9 @@ function transformParameters(params) {
   let page = params.page || 0;
   let carrierId = params.carrierId;
   let application = params.appId;
-  let from = moment(params.startDate, DATE_FORMAT).startOf('day').valueOf();
-  let to = moment(params.endDate, DATE_FORMAT).endOf('day').valueOf();
+  // "2014-09-08T08:02:17-05:00" (ISO 8601)
+  let from = moment(params.startDate, DATE_FORMAT).startOf('day').format();
+  let to = moment(params.endDate, DATE_FORMAT).endOf('day').format();
   let method = params.method;
   let platform = params.os;
   let phone_number = params.number && (`*${params.number}*`);

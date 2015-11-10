@@ -7,16 +7,13 @@ export default class TimeFramePicker extends Component {
       <div className="time-frame-picker">
         {
           this.props.frames.map((frame) => {
-            let frameValue = frame.split(' ')[0];
-            let frameUnit = frame.split(' ')[1].replace('hours', 'hrs');
-
             return (
               <span
                 key={frame}
-                onClick={this.props.onChange.bind(this, frame)}
+                onClick={this.props.onChange.bind(null, frame)}
                 className={classNames({ 'active': this.props.currentFrame === frame })}
               >
-                {`${frameValue} ${frameUnit}`}
+                {frame.replace('hours', 'hrs')}
               </span>
             );
           })
@@ -27,7 +24,7 @@ export default class TimeFramePicker extends Component {
 }
 
 TimeFramePicker.propTypes = {
-  frames: PropTypes.object.isRequired,
+  frames: PropTypes.arrayOf(PropTypes.string).isRequired,
   currentFrame: PropTypes.string.isRequired,
   onChange: PropTypes.func.isRequired
 };

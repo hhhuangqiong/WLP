@@ -79,7 +79,7 @@ export default {
 
   sanitizeNull(row, label=PLACEHOLDER_FOR_NULL) {
     for(var exportField in row) {
-      if(typeof(row[exportField]) === undefined || row[exportField] === null) {
+      if(!row[exportField]) {
         row[exportField] = label;
       }
     }

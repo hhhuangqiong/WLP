@@ -82,7 +82,7 @@ describe 'CallRequest', ->
     #     done()
 
 
-    # TODO fix test case 
+    # TODO fix test case
     # - { [Error: Nock: No match for request GET http://this.is.dataprovider.com/api/v1/sip/cdr/query?caller_carrier=maaiitest.com&from=1432185335&to=1430185335 ] status: 404, code: undefined }
     # it 'should return an array of history objects in successful request', (done) ->
     #   params = {
@@ -111,7 +111,6 @@ describe 'CallRequest', ->
     #     .that.to.include.keys [
     #       'duration',
     #       'caller_carrier',
-    #       'callee_carrier',
     #       'caller_country',
     #       'callee_country',
     #       'caller',

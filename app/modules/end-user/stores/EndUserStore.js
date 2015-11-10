@@ -141,6 +141,11 @@ var EndUserStore = createStore({
     return this.displayUsers.length;
   },
 
+  getBundleIds() {
+  let usersWithBundleId = this.users.filter(u => _.get(u, 'devices[0].appBundleId'));
+  return usersWithBundleId.map(u => u.appBundleId);
+  },
+
   getNeedMoreData: function() {
     return this.displayUsers.length === this.users.length;
   },

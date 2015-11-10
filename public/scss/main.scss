@@ -18,6 +18,7 @@
 
 //import all components
 @import 'components/system-error';
+@import 'components/confirmation-dialog';
 @import 'components/top-bar';
 @import 'components/tabs';
 @import 'components/forms';
@@ -53,9 +54,12 @@
 @import 'components/overview';
 @import 'components/select-box';
 @import 'components/donut-chart';
+@import 'components/dropdown';
+@import 'components/search-button';
 
 //page specific style
 @import 'pages/account';
+@import 'pages/enduser';
 @import 'pages/company';
 @import 'pages/signin';
 @import 'pages/calls';

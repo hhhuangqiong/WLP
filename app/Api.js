@@ -199,14 +199,6 @@ Api.prototype.reactivateEndUser = function(params, cb) {
     .end(genericHandler(cb))
 };
 
-Api.prototype.deleteEndUser = function(params, cb) {
-  superagent
-    .del(`${this._getHost()}/api/carriers/${params.carrierId}/users/${params.username}`)
-    .accept('json')
-    .set('Authorization', this._getToken())
-    .end(genericHandler(cb))
-};
-
 Api.prototype.getSMS = function(params, cb) {
   superagent
     .get(`${this._getHost()}/api/carriers/${params.carrierId}/sms`)

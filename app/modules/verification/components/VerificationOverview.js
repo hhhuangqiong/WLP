@@ -20,7 +20,7 @@ import SummaryCells from './SummaryCells';
 import fetchVerificationOverview from '../actions/fetchVerificationOverview';
 import VerificationOverviewStore from '../stores/VerificationOverviewStore';
 import ApplicationStore from '../../../stores/ApplicationStore';
-import { subtractTime, timeFromNow } from '../../../server/utils/StringFormatter';
+import { subtractTime, timeFromNow } from '../../../utils/StringFormatter';
 import MAP_DATA from '../constants/mapData.js';
 
 const TIME_FRAMES = ['24 hours', '7 days', '30 days', '60 days', '90 days'];
@@ -120,11 +120,6 @@ export default React.createClass({
       lines: null,
       successRateSeries: null
     });
-
-    // TODO: Trick to solve racing condition problem
-    setTimeout(() => {
-      this.toggleAttemptType(TOTAL_NUMBER_ATTEMPTS);
-    }, 2000);
   },
 
   updateCharts(timeRange) {
@@ -140,25 +135,38 @@ export default React.createClass({
   },
 
   onVerificationOverviewChange() {
-    let overviewData = this.getStore(VerificationOverviewStore).getOverviewData();
+    let summaryAttempts = this.getStore(VerificationOverviewStore).getSummaryAttempts();
+    let countryAttempts = this.getStore(VerificationOverviewStore).getCountryAttempts();
+    let osAttempts = this.getStore(VerificationOverviewStore).getOsAttempts();
+    let methodAttempts = this.getStore(VerificationOverviewStore).getMethodAttempts();
+    let successFailAttempts = this.getStore(VerificationOverviewStore).getSuccessFailAttempts();
+
+    let overviewData = _.merge(summaryAttempts, countryAttempts, osAttempts, methodAttempts);
     this.setState(overviewData);
+
+    // Avoid multiple execution of this function that makes the line chart have dirty preoccupied data
+    if ((successFailAttempts.totalAttempts || []).length) {
+      this.setState(successFailAttempts);
+      this.toggleAttemptType(this.state.attemptToggle || TOTAL_NUMBER_ATTEMPTS);
+    }
 
     // Inject custom world data provided by Highmaps
     Highcharts.maps['custom/world'] = MAP_DATA;
 
     // Copy source data to be a new one for Highmap to avoid the behavior of changing source data
-    let maxValue = _.max(overviewData.countriesData, (country) => country.value).value;
-    new Highcharts.Map(getMapConfig('verificationCountrySection', (overviewData.countriesData || []).slice(0), maxValue));
+    let maxValue = _.max(countryAttempts.countriesData, country => country.value).value;
+    new Highcharts.Map(getMapConfig('verificationCountrySection', (countryAttempts.countriesData || []).slice(0), maxValue));
   },
 
   autoSelectAppId() {
-    let appId = this.state.appId;
-    if (!appId) {
-      appId = this.context.getStore(ApplicationStore).getDefaultAppId();
-    }
-
     this.setState({
-      appId: appId
+      appId: this.context.getStore(ApplicationStore).getDefaultAppId()
+    });
+  },
+
+  onAppIdChange(appId) {
+    this.setState({
+      appId
     });
   },
 
@@ -168,92 +176,109 @@ export default React.createClass({
 
   componentDidMount() {
     this.autoSelectAppId();
-
     this.resetCharts(this.state.timeRange);
   },
 
   componentDidUpdate(prevProps, prevState) {
+    if (!this.state.appId) return;
+
     if (this.state.timeRange !== prevState.timeRange || this.state.appId !== prevState.appId) {
       this.resetCharts(this.state.timeRange);
       this.updateCharts(this.state.timeRange);
     }
   },
 
-  toggleAttemptType(attemptType) {
-    if (attemptType === TOTAL_NUMBER_ATTEMPTS || attemptType === SUCCESS_ATTEMPTS_NUMBER) {
-      if (attemptType === TOTAL_NUMBER_ATTEMPTS) {
-        this.setState({
-          selectedLineInChartA: TOTAL_NUMBER_ATTEMPTS,
-          busiestAttempts: _.max(this.state.totalAttempts),
-          busiestTime: this.state.totalAttempts ? fromTimeslot(this.state.totalAttempts, moment(), this.state.timeRange) : null
-        });
-
-      } else if (attemptType === SUCCESS_ATTEMPTS_NUMBER) {
-        this.setState({
-          selectedLineInChartA: SUCCESS_ATTEMPTS_NUMBER,
-          busiestAttempts: _.max(this.state.successAttempts),
-          busiestTime: this.state.successAttempts ? fromTimeslot(this.state.successAttempts, moment(), this.state.timeRange) : null
-        });
-      }
-
-      this.setState({
-        lines: [
-          {
-            name: TOTAL_NUMBER_ATTEMPTS,
-            data: this.state.totalAttempts,
-            color: '#FB3940',
-            tooltipFormatter: (x, y) => {
-              return `
-                <div style="text-align: center">
-                  <div>${moment(x).local().format(TOOLTIP_TIME_FORMAT)}</div>
-                  <div>Total Attempts: ${y}</div>
-                </div>
-              `;
-            }
-          },
-          {
-            name: SUCCESS_ATTEMPTS_NUMBER,
-            data: this.state.successAttempts,
-            color: '#21C031',
-            tooltipFormatter: (x, y) => {
-              return `
-                <div style="text-align: center">
-                  <div>${moment(x).local().format(TOOLTIP_TIME_FORMAT)}</div>
-                  <div>Success Attempts: ${y}</div>
-                </div>
-              `;
-            }
-          }
-        ]
-      });
-    } else {
-      this.setState({
-        busiestAttempts: _.max(this.state.successAttempts),
-        busiestTime: this.state.successAttempts ? fromTimeslot(this.state.successAttempts, moment(), this.state.timeRange) : null,
-        successRateSeries: [
-          {
-            name: SUCCESS_ATTEMPTS_RATE,
-            data: this.state.successRates,
-            color: '#4E92DF',
-            selected: true,
-            tooltipFormatter: (x, y, xIndex) => {
-              return `
-                <div style="text-align: center">
-                  <div>${moment(x).local().format(TOOLTIP_TIME_FORMAT)}</div>
-                  <div>${this.state.successAttempts[xIndex]}/${this.state.totalAttempts[xIndex]} success</div>
-                  <div>Success Rate: ${y}%</div>
-                </div>
-              `;
-            }
-          }
-        ]
-      });
-    }
-
+  setTotalAttempts() {
     this.setState({
-      attemptToggle: attemptType,
-      showSuccessRate: !(attemptType === TOTAL_NUMBER_ATTEMPTS || attemptType === SUCCESS_ATTEMPTS_NUMBER)
+      attemptToggle: TOTAL_NUMBER_ATTEMPTS,
+      selectedLineInChartA: TOTAL_NUMBER_ATTEMPTS,
+      busiestAttempts: _.max(this.state.totalAttempts),
+      busiestTime: this.state.totalAttempts ? fromTimeslot(this.state.totalAttempts, moment(), this.state.timeRange) : null,
+      showSuccessRate: false
     });
+
+    this.setAttemptsLines();
+  },
+
+  setSuccessAttempts() {
+    this.setState({
+      attemptToggle: SUCCESS_ATTEMPTS_NUMBER,
+      selectedLineInChartA: SUCCESS_ATTEMPTS_NUMBER,
+      busiestAttempts: _.max(this.state.successAttempts),
+      busiestTime: this.state.successAttempts ? fromTimeslot(this.state.successAttempts, moment(), this.state.timeRange) : null,
+      showSuccessRate: false
+    });
+
+    this.setAttemptsLines();
+  },
+
+  setSuccessRates() {
+    this.setState({
+      attemptToggle: SUCCESS_ATTEMPTS_RATE,
+      busiestAttempts: _.max(this.state.successAttempts),
+      busiestTime: this.state.successAttempts ? fromTimeslot(this.state.successAttempts, moment(), this.state.timeRange) : null,
+      successRateSeries: [
+        {
+          name: SUCCESS_ATTEMPTS_RATE,
+          data: this.state.successRates,
+          color: '#4E92DF',
+          selected: true,
+          tooltipFormatter: (x, y, xIndex) => {
+            return `
+              <div style="text-align: center">
+                <div>${moment(x).local().format(TOOLTIP_TIME_FORMAT)}</div>
+                <div>${this.state.successAttempts[xIndex]}/${this.state.totalAttempts[xIndex]} success</div>
+                <div>Success Rate: ${y}%</div>
+              </div>
+            `;
+          }
+        }
+      ],
+      showSuccessRate: true
+    });
+  },
+
+  setAttemptsLines() {
+    this.setState({
+      lines: [
+        {
+          name: TOTAL_NUMBER_ATTEMPTS,
+          data: this.state.totalAttempts,
+          color: '#FB3940',
+          tooltipFormatter: (x, y) => {
+            return `
+              <div style="text-align: center">
+                <div>${moment(x).local().format(TOOLTIP_TIME_FORMAT)}</div>
+                <div>Total Attempts: ${y}</div>
+              </div>
+            `;
+          }
+        },
+        {
+          name: SUCCESS_ATTEMPTS_NUMBER,
+          data: this.state.successAttempts,
+          color: '#21C031',
+          tooltipFormatter: (x, y) => {
+            return `
+              <div style="text-align: center">
+                <div>${moment(x).local().format(TOOLTIP_TIME_FORMAT)}</div>
+                <div>Success Attempts: ${y}</div>
+              </div>
+            `;
+          }
+        }
+      ]
+    });
+  },
+
+  toggleAttemptType(attemptType) {
+    let toggle = {
+      [TOTAL_NUMBER_ATTEMPTS]: this.setTotalAttempts,
+      [SUCCESS_ATTEMPTS_NUMBER]: this.setSuccessAttempts,
+      [SUCCESS_ATTEMPTS_RATE]: this.setSuccessRates
+    };
+
+    return toggle[attemptType]();
   },
 
   handleTimeFrameChange(time) {

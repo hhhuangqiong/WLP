@@ -48,8 +48,7 @@ export default (
       <Route name="calls-overview" path="/:role/:identity?/calls/overview" handler={require('./components/CallsOverview')} />
       <Route name="calls-details" path="/:role/:identity?/calls/details" handler={require('./components/Calls')} />
 
-      /** [WLP-297] temporary hide end user section for bolt 1.1 */
-      {/*<Route name="end-users" path="/:role/:identity?/endusers" handler={require('./modules/end-user/components/EndUsers')} />*/}
+      <Route name="end-users" path="/:role/:identity?/end-users" handler={require('./modules/end-user/components/EndUsers')} />
 
       <Route name="im-overview" path="/:role/:identity?/im" handler={require('./components/ImOverview')} />
       <Route name="im" path="/:role/:identity?/im/details" handler={require('./components/Im')} />

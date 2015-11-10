@@ -42,6 +42,36 @@ export default class UsersRequest extends BaseRequest {
     super(opts);
   }
 
+
+  getExportUsers({carrier, from, to, pageNumberIndex, page}, cb) {
+    const query = {fromTime: from, toTime: to};
+    if (page) {
+      query.pageNumberIndex = page;
+    } else {
+      query.pageNumberIndex = pageNumberIndex;
+    }
+    this.getUsers(carrier, query, (err, res)=> {
+      if (err) return cb(err);
+      return cb(null, this._morphExportUsers(res, query));
+    });
+  }
+
+  _morphExportUsers({ dateRange:{ pageNumberIndex }, userList, hasNextPage }, { page }) {
+    let usersData = {};
+    usersData.contents = _.map(userList, (value)=>{
+      let result = _.merge(value, value.devices[0]);
+      return _.omit(result, 'devices');
+    });
+    usersData.pageNumber = page || pageNumberIndex;
+    if (pageNumberIndex === 0) {
+      usersData.totalPages = (hasNextPage) ? pageNumberIndex + 2 : pageNumberIndex + 1;
+    }
+    if (pageNumberIndex > 0) {
+      usersData.totalPages = (hasNextPage) ? pageNumberIndex + 1 : pageNumberIndex;
+    }
+    return usersData;
+  }
+
   /**
    * get registered users from MUMS
    *
@@ -102,6 +132,12 @@ export default class UsersRequest extends BaseRequest {
         hasNextPage: nextPageResult.userCount > 0
       });
 
+      // assign jid to each user
+      let carrierId = result.carrierId;
+      result.userList.forEach((user) => {
+          user.jid = `${user.username}@${carrierId}`;
+      });
+
       return cb(null, result);
     }).catch((err)=>{
       return cb(this.handleError(err));
@@ -123,11 +159,13 @@ export default class UsersRequest extends BaseRequest {
 
     request
       .get(util.format('%s%s', base, url))
-      .buffer()
       .timeout(this.opts.timeout)
       .end((err, res) => {
         if (err) return cb(this.handleError(err));
         if (res.status >= 400) return cb(this.handleError(res.body.err));
+
+        // assign jid to the user
+        res.body.userDetails.jid = `${res.body.userDetails.username}@${res.body.carrierId}`;
         cb(null, res.body);
       });
   }
@@ -147,7 +185,6 @@ export default class UsersRequest extends BaseRequest {
 
     request
       .post(util.format('%s%s', base, url))
-      .buffer()
       .timeout(this.opts.timeout)
       .end((err, res) => {
         if (err) return cb(err);
@@ -171,7 +208,6 @@ export default class UsersRequest extends BaseRequest {
 
     request
       .del(util.format('%s%s', base, url))
-      .buffer()
       .timeout(this.opts.timeout)
       .end((err, res) => {
         if (err) return cb(err);
@@ -180,27 +216,4 @@ export default class UsersRequest extends BaseRequest {
       });
   }
 
-  /**
-   * terminate a registered user from MUMS
-   *
-   * @param carrierId
-   * @param username
-   * @param cb
-   */
-  terminateUser(carrierId, username, cb) {
-    var base = this.opts.baseUrl;
-    var url = util.format(this.opts.methods.TERMINATE.URL, carrierId, username);
-
-    logger.debug('terminate user from %s with username %s', carrierId, username);
-
-    request
-      .del(util.format('%s%s', base, url))
-      .buffer()
-      .timeout(this.opts.timeout)
-      .end((err, res) => {
-        if (err) return cb(err);
-        if (res.status >= 400) return cb(this.handleError(res.body.err));
-        cb(null, res.body);
-      })
-  }
 }
