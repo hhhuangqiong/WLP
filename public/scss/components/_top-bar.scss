@@ -175,6 +175,7 @@
                     background: $topbar-inner-item-bg-color;
                     margin-right: $column-gutter/2;
                     a{
+                        display: flex;
                         color: $topbar-inner-link-color;
                         background: $topbar-inner-link-bg-color !important;
                         min-height: 1.75rem;
