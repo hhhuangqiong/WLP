@@ -76,6 +76,7 @@
     "redis-wstream": "^0.2.5",
     "serialize-javascript": "^1.0.0",
     "serve-favicon": "^2.1.7",
+    "solr-query-builder": "^1.0.1",
     "speakeasy": "^1.0.3",
     "superagent": "^1.1.0",
     "validator": "^3.42.0",
