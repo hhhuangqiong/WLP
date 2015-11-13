@@ -22,7 +22,7 @@ var ImStore = createStore({
   handleImChange: function(payload) {
     this.ims = payload.contents;
     this.offset = payload.offset;
-    this.pageNumber = payload.pageNumber;
+    this.pageNumber = (payload.offset / payload.pageSize) + 1;
     this.pageSize = payload.pageSize;
     this.imsCount = payload.totalElements;
     this.totalPages = payload.totalPages;
@@ -36,7 +36,7 @@ var ImStore = createStore({
     });
 
     this.offset = payload.offset;
-    this.pageNumber = payload.pageNumber;
+    this.pageNumber = (payload.offset / payload.pageSize) + 1;
     this.size = payload.pageSize;
     this.imsCount = payload.totalElements;
     this.totalPages = payload.totalPages;

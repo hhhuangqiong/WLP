@@ -131,7 +131,7 @@ var Im = React.createClass({
       carrierId: identity,
       fromTime: this.state.fromTime,
       toTime: this.state.toTime,
-      page: +this.state.page + 1,
+      page: this.state.page,
       size: config.PAGES.IMS.PAGE_SIZE,
       type: this.state.type,
       search: this.state.search,

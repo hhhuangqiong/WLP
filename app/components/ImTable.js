@@ -85,7 +85,7 @@ var ImTable = React.createClass({
   render: function() {
     let params = this.context.router.getCurrentParams();
 
-    let rows = this.props.ims.map((u) => {
+    let rows = this.props.ims.map((u, key) => {
 
       let callerCountry = _.find(Countries, (c) => {
         return c.alpha2.toLowerCase() == u.origin
@@ -109,7 +109,7 @@ var ImTable = React.createClass({
       }
 
       return (
-        <tr className="im-table--row" key={u.timestamp}>
+        <tr className="im-table--row" key={key}>
           <td className="im-table--cell">
             <div className="left timestamp">
               <span className="call_date dark">{imDate}</span>

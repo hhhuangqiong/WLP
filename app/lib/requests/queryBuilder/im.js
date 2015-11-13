@@ -1,0 +1,41 @@
+import SolrQueryBuilder from 'solr-query-builder';
+import _ from 'lodash';
+
+const DEFAULT_SORT_ORDER = 'timestamp desc';
+
+export default {
+  /**
+   * Function to generate solr query for ImRequest
+   * For reference on how this function is built see:
+   * @see {@link https://github.com/maxcnunes/solr-query-builder}
+   */
+  buildImSolrQueryString(params, cb) {
+    const qb = new SolrQueryBuilder();
+
+    qb.where('timestamp').between(params.from, params.to);
+    qb.where('type', 'IncomingMessage');
+
+    if ( _.isArray(params.message_type) ) {
+      qb.where('message_type').in(params.message_type);
+    } else if ( _.isString(params.message_type) ) {
+      qb.where('message_type', params.message_type);
+    }
+
+    if (params.sender) {
+      qb.where('sender', params.sender);
+    }
+
+    if ( params.recipient ) {
+      qb.begin()
+        .where('recipient', params.recipient)
+        .or()
+        .where('recipients', params.recipient)
+      .end();
+    }
+
+    const queryResult = { q: qb.build(), sort: DEFAULT_SORT_ORDER, rows: params.size, start: (+params.page * params.size)};
+
+    return cb(null, queryResult);
+  },
+
+};

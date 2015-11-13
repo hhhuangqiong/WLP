@@ -5,6 +5,7 @@ var request = require('superagent');
 var util    = require('util');
 var _       = require('lodash');
 
+import {buildImSolrQueryString} from '../queryBuilder/im';
 import BaseRequest from '../Base';
 
 const LABEL_FOR_NULL = 'N/A';
@@ -19,6 +20,10 @@ export default class ImRequest extends BaseRequest {
       methods: {
         IMS: {
           URL: '/api/v1/im/tdr/query',
+          METHOD: 'GET'
+        },
+        IMSOLR: {
+          URL: '/api/v1/im/tdr/rawQuery',
           METHOD: 'GET'
         }
       }
@@ -89,11 +94,16 @@ export default class ImRequest extends BaseRequest {
    */
   sendRequest(params, cb) {
     var base = this.opts.baseUrl;
-    var url = this.opts.methods.IMS.URL;
+    var url = '';
+    if (params.q) {
+      url = this.opts.methods.IMSOLR.URL;
+    } else {
+      url = this.opts.methods.IMS.URL;
+    }
 
     request
       .get(util.format('%s%s', base, url))
-      .query(_.omit(params, 'carrierId'))
+      .query(params)
       .buffer()
       .timeout(this.opts.timeout)
       .end((err, res) => {
@@ -142,5 +152,21 @@ export default class ImRequest extends BaseRequest {
       .catch((err) => {
         return cb(this.handleError(err, err.status || 500));
       });
+  }
+
+  /**
+   * @method getImSolr
+   * @param params {Object} Raw query data object
+   * @param cb {Function} Callback function from API controller
+   */
+  getImSolr(params, cb) {
+    logger.debug('get IM message history from dataProvider with params', params);
+    Q.nfcall(buildImSolrQueryString, params)
+      .then((params) => {
+        this.sendRequest(params, cb);
+      })
+      .catch((err) => {
+        return cb(this.handleError(err, err.status || 500));
+      }).done();
   }
 }
