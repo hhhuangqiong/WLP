@@ -8,7 +8,7 @@ export default {
       'receive_id'
     ],
     EXPORT_REQUEST: 'ImRequest',
-    EXPORT_REQUEST_EXECUTION: 'getImStat',
+    EXPORT_REQUEST_EXECUTION: 'getImSolr',
     EXPORT_FILENAME: 'export_im.csv'
   },
   CALLS: {

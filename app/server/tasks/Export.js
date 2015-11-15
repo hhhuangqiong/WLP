@@ -4,6 +4,7 @@ import nconf from 'nconf';
 import kue from 'kue';
 import logger from 'winston';
 import Q from 'q';
+import moment from 'moment';
 import redisWStream from 'redis-wstream';
 
 import { fetchDep } from '../utils/bottle';
@@ -79,8 +80,9 @@ export default class ExportTask {
     job[IM] = () => {
       return {
         carrier: params.carrierId,
-        from: query.fromTime,
-        to: query.toTime,
+        from: moment(query.fromTime, 'x').toISOString(),
+        to: moment(query.toTime, 'x').toISOString(),
+        message_type: ['text', 'image', 'audio', 'video', 'remote', 'animation', 'sticker', 'voice_sticker', 'ephemeral_image'],
         destination: query.destination,
         origin: query.origin,
         page: PAGE_START_INDEX,

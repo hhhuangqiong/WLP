@@ -108,7 +108,11 @@ export default class ImRequest extends BaseRequest {
       .timeout(this.opts.timeout)
       .end((err, res) => {
         if (err) return cb(this.handleError(err, err.status || 400));
-        return this.filterData(res.body, cb);
+        try {
+          return this.filterData(res.body, params.rows, cb);
+        } catch (error) {
+          return cb(this.handleError(error, 500));
+        }
       });
   }
 
@@ -120,7 +124,7 @@ export default class ImRequest extends BaseRequest {
    * @param res {Object} result return from API request
    * @param cb {Function} Callback function from @method getImStat
    */
-  filterData(data, cb) {
+  filterData(data, pageSize, cb) {
     if (data && data.content) {
       /**
         To assign a nice looking label instead of showing 'undefined' or null
@@ -134,7 +138,7 @@ export default class ImRequest extends BaseRequest {
       });
     }
 
-    return cb(null, this.composeResponse(data));
+    return cb(null, this.composeSolrResponse(data, pageSize));
   }
 
   /**

@@ -21,6 +21,14 @@ export default {
       qb.where('message_type', params.message_type);
     }
 
+    if (params.origin) {
+      qb.where('origination', params.origin);
+    }
+
+    if (params.destination) {
+      qb.where('destination', params.destination);
+    }
+
     if (params.sender) {
       qb.where('sender', params.sender);
     }
