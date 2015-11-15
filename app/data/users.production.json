@@ -263,4 +263,26 @@
     "logoFile": "logo-m800.png",
     "widgets": {}
   }
+}, {
+  "user": {
+    "username": "admin@bux.m800-api.com",
+    "password": "buxWLP2015",
+    "name": {
+      "first": "Admin",
+      "last": "Bux"
+    },
+    "assignedGroup": "root",
+    "status": "active"
+  },
+  "company": {
+    "parentCompany": null,
+    "carrierId": "bux.m800-api.com",
+    "name": "Bux",
+    "reseller": false,
+    "status": "active",
+    "timezone": "UTC+8",
+    "country": "Hong Kong",
+    "logoFile": "logo-m800.png",
+    "widgets": {}
+  }
 }]
