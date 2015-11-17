@@ -1,11 +1,12 @@
 import React from 'react';
-import moment from 'moment';
+import _ from 'lodash';
 import FluxibleMixin from 'fluxible/addons/FluxibleMixin';
 import Modal from 'react-modal';
 
 import {CLIENT} from '../../../../app/utils/env';
 
 import fetchExport from '../actions/fetchExport';
+import fetchExportCancel from '../actions/fetchExportCancel';
 import fetchExportProgress from '../actions/fetchExportProgress';
 import ExportStore from '../stores/ExportStore';
 import ExportPanel from './ExportPanel';
@@ -46,17 +47,15 @@ export default React.createClass({
     if (CLIENT) Modal.setAppElement(document.getElementById('app'));
   },
 
-  componentWillUnmount() {
-    clearTimeout(this.pollingTimeout);
-  },
-
   onChange() {
-    let exportJobs = this.context.getStore(ExportStore).getExportJobs(this.props.exportType);
-
     // Assume the exportJob to be one due to current UI settings
-    let exportJob = exportJobs[0];
-    debug('onChange', exportJob);
-    this.setState(exportJob);
+    let exportJobs = this.context.getStore(ExportStore).getExportJobs(this.props.exportType);
+    let exportJob = _.first(exportJobs);
+
+    if (exportJob) {
+      debug('onChange', exportJob);
+      this.setState(exportJob);
+    }
   },
 
   download() {
@@ -71,7 +70,10 @@ export default React.createClass({
   },
 
   cancel() {
+    let data = { exportId: this.state.exportId, carrierId: this.state.carrierId };
+    clearTimeout(this.pollingTimeout);
     this.setState(this.defaultState());
+    this.executeAction(fetchExportCancel, data);
   },
 
   openModal() {

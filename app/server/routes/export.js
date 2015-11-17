@@ -37,6 +37,24 @@ let getCarrierExport = (req, res) => {
   }).done();
 };
 
+// '/:carrierId/export/cancel'
+let getCarrierExportCancel = (req, res) => {
+  req.checkParams('carrierId').notEmpty();
+
+  let err = req.validationErrors();
+
+  if (err) return responseError(REQUEST_VALIDATION_ERROR, res, err);
+
+  kue.Job.get(req.query.exportId, (err, job) => {
+    if (err) return responseError(GET_JOB_ERROR, res, err);
+
+    job.remove(function(err){
+      if (err) return responseError(GET_JOB_ERROR, res, err);
+      return res.status(200).json({ id: job.id });
+    });
+  });
+};
+
 // '/:carrierId/export/progress'
 let getCarrierExportFileProgress = (req, res) => {
   req.checkQuery('exportId').notEmpty();
@@ -91,6 +109,7 @@ let getCarrierExportFile = (req, res) => {
 
 export {
   getCarrierExport,
+  getCarrierExportCancel,
   getCarrierExportFile,
   getCarrierExportFileProgress
 };
