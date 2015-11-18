@@ -98,7 +98,7 @@ class ChangePasswordForm extends Component {
     this.setState({ passwordConfirm: e.target.value });
   }
 
-  onEnterSubmit = (e) => {
+  onSubmit = (e) => {
     if (e.which === 13) {
       e.preventDefault();
       this.changePassword(e);
@@ -144,7 +144,7 @@ class ChangePasswordForm extends Component {
             value={this.state.currentPassword}
             onBlur={this.validateCurrentPassword}
             onChange={this.setCurrentPassword}
-            onKeyPress={this.onEnterSubmit}
+            onKeyPress={this.onSubmit}
           />
 
           <label className={classnames({ hide: !currentPasswordIncorrectError && !currentPasswordError })}>
@@ -164,7 +164,7 @@ class ChangePasswordForm extends Component {
             value={this.state.newPassword}
             onBlur={this.validateNewPassword}
             onChange={this.setNewPassword}
-            onKeyPress={this.onEnterSubmit}
+            onKeyPress={this.onSubmit}
           />
 
           <label className={classnames({ hide: !newPasswordError })}>
@@ -182,7 +182,7 @@ class ChangePasswordForm extends Component {
             value={this.state.newPasswordConfirm}
             onBlur={this.validateNewPasswordConfirm}
             onChange={this.setNewPasswordConfirm}
-            onKeyPress={this.onEnterSubmit}
+            onKeyPress={this.onSubmit}
           />
 
           <label className={classnames({ hide: !newPasswordConfirmError })}>

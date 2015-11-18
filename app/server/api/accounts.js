@@ -27,9 +27,9 @@ export default function(apiPrefix = '') {
 
     updateAccount(params, cb) {
       superagent
-        .put(`${this._getHost()}${apiPrefix}/accounts/${params.data.accountId}`)
+        .put(`${this._getHost()}${apiPrefix}/accounts/${params.data.userId}`)
         .accept('json')
-        .send(params.data)
+        .send(params)
         .set('Authorization', this._getToken())
         .end(genericHandler(cb));
     },
@@ -73,6 +73,15 @@ export default function(apiPrefix = '') {
         .put(`${this._getHost()}${apiPrefix}/accounts/reverify/${params.data.username}`)
         .accept('json')
         .set('Authorization', this._getToken())
+        .end(genericHandler(cb));
+    },
+
+    getManagingCompanies(params, cb) {
+      superagent
+        .get(`${this._getHost()}${apiPrefix}/accounts/managingCompanies`)
+        .accept('json')
+        .set('Authorization', this._getToken())
+        .query({ userId: params.userId })
         .end(genericHandler(cb));
     }
   }

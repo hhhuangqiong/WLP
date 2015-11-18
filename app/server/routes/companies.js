@@ -5,6 +5,14 @@ import Controller from '../controllers/company';
 import Company    from '../../collections/company';
 import PortalUser from '../../collections/portalUser';
 
+import {
+  MongoDBError,
+  NotFoundError,
+  ConnectionError,
+  ArgumentNullError
+} from 'common-errors';
+
+
 let controller = new Controller();
 
 // '/companies'
@@ -106,8 +114,47 @@ let getApplicationCompanies = function(req, res) {
     .done();
 };
 
+let getCompanyByCarrierId = (carrierId) => {
+  return new Promise((resolve, reject) => {
+    if (!carrierId) return reject(new ArgumentNullError('carrierId'));
+
+    Company.getCompanyByCarrierId(carrierId, (err, company) => {
+      if (err) return reject(new MongoDBError('Database error when getting company by carrierId', err));
+      if (!company) return reject(new NotFoundError('Cannot find company by carrierId'));
+
+      resolve(company);
+    });
+  });
+};
+
+let getManagingCompany = (companyId) => {
+  return new Promise((resolve, reject) => {
+    if (!companyId) return reject(new ArgumentNullError('companyId'));
+
+    Company.getManagingCompany(companyId, (err, companies) => {
+      if (err) return reject(new MongoDBError('Database error when getting managing company', err));
+      resolve(companies);
+    });
+  });
+};
+
+let carrierCompniesHandler = async (req, res, next) => {
+  let { carrierId } = req.params;
+  let company = await getCompanyByCarrierId(carrierId);
+  let compaines = await getManagingCompany(company._id);
+
+  return compaines;
+};
+
+let getCarrierCompanies = (req, res, next) => {
+  carrierCompniesHandler(req, res, next)
+    .then(companies => res.json({ result: companies ? companies : [] }))
+    .catch(error => next(error));
+}
+
 export {
   getApplicationCompanies,
+  getCarrierCompanies,
   getApplications,
   getApplicationIds,
   getInfo,

@@ -29,18 +29,30 @@ export default createStore({
     FETCH_ACCOUNTS_SUCCESS: 'fetchAccounts',
     CREATE_ACCOUNT_SUCCESS: 'createAccount',
     UPDATE_ACCOUNT_SUCCESS: 'updateAccount',
-    DELETE_ACCOUNT_SUCCESS: 'deleteAccount'
+    DELETE_ACCOUNT_SUCCESS: 'deleteAccount',
+    FETCH_CARRIER_MANAGING_COMPANIES_SUCCESS: 'fetchCarrierManagingCompanies'
   },
 
   initialize() {
     this.accounts = [];
     this.selectedAccount = {};
+    this.carrierManagingCompanies = [];
+  },
+
+  fetchCarrierManagingCompanies(payload) {
+    if (!payload || !payload.result) return;
+
+    this.carrierManagingCompanies = payload.result;
+    this.emitChange();
   },
 
   fetchAccounts(payload) {
     if (!payload) return;
 
-    let result = payload.result;
+    let { result } = payload;
+
+    if (!result) return;
+
     let accounts = Object.keys(result).map(key => result[key]);
 
     this.accounts = accounts;
@@ -57,8 +69,8 @@ export default createStore({
     this.emitChange();
   },
 
-  updateAccount(payload) {
-    this.selectedAccount = payload.result;
+  updateAccount(result) {
+    this.selectedAccount = result;
 
     let accounts = this.accounts.filter(account => account._id !== this.selectedAccount._id);
     accounts.push(this.selectedAccount);
@@ -74,6 +86,10 @@ export default createStore({
     this.accounts = _.clone(this.accounts.filter(account => account._id !== user._id), true);
 
     this.emitChange();
+  },
+
+  getCarrierManagingCompanies() {
+    return this.carrierManagingCompanies || [];
   },
 
   getAccounts() {
@@ -96,6 +112,8 @@ export default createStore({
       email: account.username,
       assignedGroup: account.assignedGroup,
       assignedCompanies: account.assignedCompanies,
+      affiliatedCompany: account.affiliatedCompany,
+      parentCompany: account.parentCompany,
       createdAt: account.createdAt,
       tokens: account.tokens,
       selectedAccount: account,
@@ -110,5 +128,6 @@ export default createStore({
   rehydrate(state) {
     this.accounts = state.accounts;
     this.selectedAccount = state.selectedAccount;
+    this.carrierManagingCompanies = state.carrierManagingCompanies;
   }
 });

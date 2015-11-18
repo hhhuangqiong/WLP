@@ -11,7 +11,7 @@ export default function(context, params, done) {
       return;
     }
 
-    context.executeAction(fetchAccounts, {}, () => {
+    context.executeAction(fetchAccounts, { carrierId: params.carrierId }, () => {
       let router = context.getRouter();
       let routerParams = router.getCurrentParams();
 

@@ -26,7 +26,7 @@ export default React.createClass({
     storeListeners: [AccountStore],
 
     fetchData: (context, params, query, done = Function.prototype) => {
-      context.executeAction(fetchAccounts, {}, done);
+      context.executeAction(fetchAccounts, { carrierId: params.identity }, done);
     }
   },
 

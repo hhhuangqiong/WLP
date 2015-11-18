@@ -1,5 +1,6 @@
 import React, { PropTypes } from 'react';
 import Modal from 'react-modal';
+import { CLIENT } from '../../utils/env';
 
 /**
  * A confirmation dialog that utilizes react-modal.
@@ -53,7 +54,7 @@ let ConfirmationDialog = React.createClass({
   },
 
   componentWillMount: function() {
-    Modal.setAppElement(document.getElementById('app'));
+    if (CLIENT) Modal.setAppElement(document.getElementById('app'));
   },
 
   render: function() {

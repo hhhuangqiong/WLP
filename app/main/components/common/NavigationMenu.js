@@ -84,7 +84,7 @@ var Navigation = React.createClass({
   },
 
   handleCloseChangePasswordDialog(e) {
-    e.preventDefault();
+    if (e) e.preventDefault();
     this.setState({ isChangePasswordOpened: false });
   },
 

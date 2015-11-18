@@ -93,13 +93,14 @@ $account-table-width: rem-calc(320);
   padding-bottom: rem-calc(20);
   margin-bottom: rem-calc(1);
 
-  &__user-group {
+  &__select {
     text-transform: capitalize;
-  }
+    margin-bottom: rem-calc(20);
 
-  &__user-group_label {
-    margin-left: rem-calc(8);
-    text-transform: capitalize;
+    &_label {
+      margin-left: rem-calc(8);
+      text-transform: capitalize;
+    }
   }
 
   &__company-selected {
@@ -111,7 +112,7 @@ $account-table-width: rem-calc(320);
   }
 
   &__company-management {
-    width: 100%;
+    margin-top: rem-calc(15);
   }
 }
 
@@ -159,7 +160,7 @@ $account-table-width: rem-calc(320);
     }
 
     &__icon {
-      margin-left: 40.5%;
+      margin-left: 42.5%;
       margin-bottom: rem-calc(20);
     }
 

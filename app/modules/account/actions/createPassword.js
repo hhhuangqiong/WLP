@@ -7,8 +7,8 @@ export default function(context, params, done) {
   context.dispatch('CREATE_PASSWORD_START');
 
   context.api.setPassword(params, function(err, payload) {
-    if (err) {
-      context.dispatch('CREATE_PASSWORD_FAILURE', err);
+    if (err || payload.error) {
+      context.dispatch('CREATE_PASSWORD_FAILURE', payload);
       done();
       return;
     }

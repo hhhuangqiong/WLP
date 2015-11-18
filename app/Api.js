@@ -37,15 +37,6 @@ Api.prototype.getAuthorityList = function(carrierId, cb) {
     });
 };
 
-Api.prototype.getManagingCompanies = function(params, cb) {
-  superagent
-    .get(`${this._getHost()}/api/application/companies`)
-    .accept('json')
-    .set('Authorization', this._getToken())
-    .query({ userId: params.userId })
-    .end(genericHandler(cb));
-};
-
 Api.prototype.getCompanies = function(params, cb) {
   superagent
     .get(`${this._getHost()}/api/companies`)
@@ -83,6 +74,14 @@ Api.prototype.getCompanyService = function(params, cb) {
     .accept('json')
     .set('Authorization', this._getToken())
     .query({ userId: params.userId })
+    .end(genericHandler(cb))
+};
+
+Api.prototype.getCarrierManagingCompanies = function(params, cb) {
+  superagent
+    .get(`${this._getHost()}/api/companies/${params.carrierId}/managingCompanies`)
+    .accept('json')
+    .set('Authorization', this._getToken())
     .end(genericHandler(cb))
 };
 

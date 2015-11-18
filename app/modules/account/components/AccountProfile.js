@@ -1,13 +1,17 @@
 import _ from 'lodash';
 import React, { PropTypes } from 'react';
 import Joi from 'joi';
+import { concurrent } from 'contra';
 
 import FluxibleMixin from 'fluxible/addons/FluxibleMixin';
 import AuthMixin from '../../../utils/AuthMixin';
 
 import ApplicationStore from '../../../main/stores/ApplicationStore';
 import AccountStore from '../stores/AccountStore';
+import CompanyStore from '../../company/stores/CompanyStore';
 
+import fetchCompanies from '../../company/actions/fetchCompanies';
+import fetchCarrierManagingCompanies from '../actions/fetchCarrierManagingCompanies';
 import fetchAccounts from '../actions/fetchAccounts';
 import createAccount from '../actions/createAccount';
 import updateAccount from '../actions/updateAccount';
@@ -18,15 +22,13 @@ import AccountForm from './AccountForm';
 import AccountActionBar from './AccountActionBar';
 import AccountInfo from './AccountInfo';
 
-import { assertError } from '../../../main/components/ValidateDecorator';
-
 const DELETE_ACCOUNT_MSG = 'Are you sure to delete this account?';
 const NEW_ACCOUNT_ROUTE_NAME = 'account-create';
 const EDIT_ACCOUNT_TITLE = 'ACCOUNT INFORMATION';
 const CREATE_ACCOUNT_TITLE = 'CREATE ACCOUNT';
 const CHANGE_PASSWORD_TOKEN = 'change-password';
-const NAME_VALIDATION = Joi.string().min(1).max(30).required();
-const EMAIL_VALIDATION = Joi.string().email().required();
+const NAME_VALIDATION = Joi.string().min(1).max(30).required().label('Name');
+const EMAIL_VALIDATION = Joi.string().email().required().label('Email');
 
 export default React.createClass({
   displayName: 'AccountProfile',
@@ -39,7 +41,7 @@ export default React.createClass({
   },
 
   statics: {
-    storeListeners: [AccountStore]
+    storeListeners: [ApplicationStore, AccountStore]
   },
 
   getInitialState() {
@@ -50,15 +52,15 @@ export default React.createClass({
     this.setState(this.getStateFromStores());
   },
 
-  defaultState() {
-    return {
-      isError: true
-    }
+  componentDidMount() {
+    let params = this.context.router.getCurrentParams();
+    this.context.executeAction(fetchCarrierManagingCompanies, { carrierId: params.identity });
   },
 
   getStateFromStores() {
-    let { accountId } = this.context.router.getCurrentParams();
     let stateFromStores = {};
+
+    let { accountId } = this.context.router.getCurrentParams();
 
     if (this.isCreate()) {
       stateFromStores = this.getStore(AccountStore).getNewAccount();
@@ -66,7 +68,14 @@ export default React.createClass({
       stateFromStores = this.getStore(AccountStore).getAccountByAccountId(accountId);
     }
 
-    return _.merge(stateFromStores, this.defaultState());
+    let carrierManagingCompanies = this.getStore(AccountStore).getCarrierManagingCompanies();
+    let currentCompany = this.getStore(ApplicationStore).getCurrentCompany();
+
+    if (this.isCreate() && currentCompany) {
+      var affiliatedCompany = currentCompany._id;
+    }
+
+    return _.merge(stateFromStores, { carrierManagingCompanies, currentCompany, affiliatedCompany });
   },
 
   isCreate() {
@@ -74,32 +83,41 @@ export default React.createClass({
     return currentRoute.name === NEW_ACCOUNT_ROUTE_NAME;
   },
 
-  handleFirstNameChange(event) {
-    this.setState({
-      firstName: event.target.value,
-      isError: assertError(event, NAME_VALIDATION)
-    });
+  handleFirstNameChange(e) {
+    e.preventDefault();
+    if (this.state.firstNameError) this.validateFirstName(e);
+    this.setState({ firstName: e.target.value });
   },
 
-  handleLastNameChange(event) {
-    this.setState({
-      lastName: event.target.value,
-      isError: assertError(event, NAME_VALIDATION)
-    });
+  handleLastNameChange(e) {
+    e.preventDefault();
+    if (this.state.lastNameError) this.validateLastName(e);
+    this.setState({ lastName: e.target.value });
   },
 
-  handleEmailChange(event) {
-    this.setState({
-      email: event.target.value,
-      isError: assertError(event, EMAIL_VALIDATION)
-    });
+  handleEmailChange(e) {
+    e.preventDefault();
+    if (this.state.emailError) this.validateEmail(e);
+    this.setState({ email: e.target.value });
   },
 
   handleGroupChange(assignedGroup) {
     this.setState({ assignedGroup });
   },
 
-  handleCompanyChange(data) {
+  handleCompanyChange(companyId) {
+    let { carrierManagingCompanies } = this.state;
+
+    if (_.isEmpty(carrierManagingCompanies)) return;
+
+    let selectedCompany = carrierManagingCompanies.find(company => company._id === companyId);
+
+    if (!selectedCompany) return;
+
+    this.setState({ affiliatedCompany: selectedCompany._id });
+  },
+
+  handleAssignedCompanyChange(data) {
     // it is not a valid array if the length of string is less than 3
     if (data.length < 3) return;
 
@@ -107,18 +125,46 @@ export default React.createClass({
     let companyRemains = !data.length ? [] : data.split(',');
 
     let assignedCompanies = _.map(companyRemains, name => {
-      return _.find(this.state.selectedAccount.assignedCompanies, company => name === company.name);
+      return _.find(this.state.assignedCompanies, company => name === company.name);
     });
 
     this.setState({ assignedCompanies });
   },
 
-  handleErrorState(isError) {
-    this.setState({ isError });
+  containErrors() {
+    let {
+      firstNameError, lastNameError, emailError
+    } = this.state;
+
+    return firstNameError || lastNameError || emailError;
   },
 
-  handleSave() {
-    if (this.state.isError && !this.isValueChanged()) return;
+  validateFirstName(e) {
+    e.preventDefault();
+    let result = NAME_VALIDATION.validate(this.state.firstName);
+    this.setState({ firstNameError: result.error ? result.error.message : null });
+  },
+
+  validateLastName(e) {
+    e.preventDefault();
+    let result = NAME_VALIDATION.validate(this.state.lastName);
+    this.setState({ lastNameError: result.error ? result.error.message : null });
+  },
+
+  validateEmail(e) {
+    e.preventDefault();
+    let result = EMAIL_VALIDATION.validate(this.state.email);
+    this.setState({ emailError: result.error ? result.error.message : null });
+  },
+
+  handleSave(e) {
+    e.preventDefault();
+
+    this.validateFirstName(e);
+    this.validateLastName(e);
+    this.validateEmail(e);
+
+    if (this.containErrors()) return;
 
     let data = {
       name: {
@@ -127,7 +173,8 @@ export default React.createClass({
       },
       username: this.state.email,
       assignedGroup: this.state.assignedGroup,
-      assignedCompanies: this.state.assignedCompanies
+      assignedCompanies: this.state.assignedCompanies,
+      affiliatedCompany: this.state.affiliatedCompany
     };
 
     if (this.isCreate()) {
@@ -154,8 +201,11 @@ export default React.createClass({
   },
 
   handleDelete() {
+    let params = this.context.router.getCurrentParams();
+
     this.context.executeAction(deleteAccount, {
-      accountId: this.state.accountId
+      accountId: this.state.accountId,
+      carrierId: params.identity
     });
 
     this.handleCloseDeleteDialog();
@@ -185,6 +235,20 @@ export default React.createClass({
     this.setState({ reverifyDialogOpened: false });
   },
 
+  handleAssignedCompanyChange(e) {
+    let { id, checked } = e.target;
+    let { assignedCompanies } = this.state;
+
+    assignedCompanies = assignedCompanies.filter(companyId => companyId !== id).slice();
+
+    if (checked) {
+      assignedCompanies.push(id);
+      assignedCompanies = assignedCompanies.slice();
+    }
+
+    this.setState({ assignedCompanies });
+  },
+
   render() {
     if (_.isEmpty(this.state.selectedAccount) && !this.isCreate()) return null;
 
@@ -197,8 +261,10 @@ export default React.createClass({
       createdAt,
       assignedGroup,
       assignedCompanies,
-      isError,
-      isVerified
+      affiliatedCompany,
+      currentCompany,
+      isVerified,
+      carrierManagingCompanies
     } = this.state;
 
     return (
@@ -211,7 +277,7 @@ export default React.createClass({
           deleteDialogOpened={this.state.deleteDialogOpened}
           handleOpenDeleteDialog={this.handleOpenDeleteDialog}
           handleCloseDeleteDialog={this.handleCloseDeleteDialog}
-          isEnabled={this.isValueChanged() && !isError}
+          isEnabled={!this.containErrors()}
           isCreate={this.isCreate()}
           accountId={accountId}
         />
@@ -238,18 +304,27 @@ export default React.createClass({
               ref="AccountForm"
               isVerified={isVerified}
               isCreate={this.isCreate()}
+              carrierManagingCompanies={carrierManagingCompanies}
               accountId={accountId}
               firstName={firstName}
               lastName={lastName}
               email={email}
+              affiliatedCompany={affiliatedCompany}
+              currentCompany={currentCompany}
+              firstNameError={this.state.firstNameError}
+              lastNameError={this.state.lastNameError}
+              emailError={this.state.emailError}
+              validateFirstName={this.validateFirstName}
+              validateLastName={this.validateLastName}
+              validateEmail={this.validateEmail}
               assignedGroup={assignedGroup}
               assignedCompanies={assignedCompanies}
-              handleErrorState={this.handleErrorState}
               handleFirstNameChange={this.handleFirstNameChange}
               handleLastNameChange={this.handleLastNameChange}
               handleEmailChange={this.handleEmailChange}
               handleGroupChange={this.handleGroupChange}
               handleCompanyChange={this.handleCompanyChange}
+              handleAssignedCompanyChange={this.handleAssignedCompanyChange}
               handleSave={this.handleSave}
               reverifyDialogOpened={this.state.reverifyDialogOpened}
               handleReverify={this.handleReverify}

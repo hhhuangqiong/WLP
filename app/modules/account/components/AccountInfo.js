@@ -38,12 +38,14 @@ export default createClass({
         </div>
 
         <div className="profile-info__icon">
-          <CircleIcon
-            size="large"
-            backgroundColor={groupSettings.backgroundColor}
-            iconColor={groupSettings.iconColor}
-            icon={groupSettings.icon}
-          />
+          <div>
+            <CircleIcon
+              size="large"
+              backgroundColor={groupSettings.backgroundColor}
+              iconColor={groupSettings.iconColor}
+              icon={groupSettings.icon}
+            />
+          </div>
         </div>
 
         <h5>{firstName} {lastName}</h5>

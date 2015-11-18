@@ -3,7 +3,7 @@ import moment from 'moment';
 import FluxibleMixin from 'fluxible/addons/FluxibleMixin';
 import Modal from 'react-modal';
 
-import {CLIENT} from '../../../../app/utils/env';
+import {CLIENT} from '../../../utils/env';
 
 import fetchExport from '../actions/fetchExport';
 import fetchExportProgress from '../actions/fetchExportProgress';

@@ -1,36 +1,42 @@
 import _ from 'lodash';
 import React, { PropTypes, Component } from 'react';
+import classnames from 'classnames';
 import Select from 'react-select';
 import Tooltip from 'rc-tooltip'
 import Joi from 'joi';
 
 import FormField from '../../../main/components/FormField';
 import PredefinedGroups from '../constants/PredefinedGroups';
-import validator from '../../../main/components/ValidateDecorator';
 import ConfirmationDialog from '../../../main/components/ConfirmationDialog';
 
 const COMPANY_DROPDOWN_PLACEHOLDER = "Choose companies";
 const COMPANY_NO_RESULT_TEXT = "No records";
 
-@validator({
-  email: Joi.string().email().required(),
-  firstName: Joi.string().min(1).max(30).required(),
-  lastName: Joi.string().min(1).max(30).required()
-})
 export default class AccountForm extends Component {
   static propTypes = {
+    isVerified: PropTypes.bool.isRequired,
+    isCreate: PropTypes.bool.isRequired,
     firstName: PropTypes.string.isRequired,
     lastName: PropTypes.string.isRequired,
     email: PropTypes.string.isRequired,
     assignedGroup: PropTypes.string.isRequired,
-    assignedCompanies: PropTypes.array.isRequired,
+    assignedCompanies: PropTypes.array,
+    carrierManagingCompanies: PropTypes.object,
+    affiliatedCompany: PropTypes.string,
+    currentCompany: PropTypes.string.isRequired,
+    firstNameError: PropTypes.func,
+    lastNameError: PropTypes.func,
+    emailError: PropTypes.func,
+    validateFirstName: PropTypes.func.isRequired,
+    validateLastName: PropTypes.func.isRequired,
+    validateEmail: PropTypes.func.isRequired,
     handleFirstNameChange: PropTypes.func.isRequired,
     handleLastNameChange: PropTypes.func.isRequired,
     handleEmailChange: PropTypes.func.isRequired,
     handleGroupChange: PropTypes.func.isRequired,
-    handleCompanyChange: PropTypes.func.isRequired,
+    handleAssignedCompanyChange: PropTypes.func.isRequired,
     handleSave: PropTypes.func.isRequired,
-    reverifyDialogOpened: PropTypes.bool.isRequired,
+    reverifyDialogOpened: PropTypes.bool,
     handleReverify: PropTypes.func.isRequired,
     handleOpenReverifyDialog: PropTypes.func.isRequired,
     handleCloseReverifyDialog: PropTypes.func.isRequired
@@ -44,45 +50,44 @@ export default class AccountForm extends Component {
     return (
       <div>
         <span className={`icon-${data.label}`}></span>
-        <span className="account-form__user-group_label">{data.value}</span>
+        <span className="account-form__select_label">{data.value}</span>
       </div>
     );
   }
 
   renderCompaniesDisplay(data) {
-    return (<div>{data.label}</div>);
+    return <div>{data.label}</div>;
   }
 
-  renderCompaniesDropdown(data) {
-    return (<div>{data.label}</div>);
+  renderCompanyValueDisplay = ({ label, value }) => {
+    let { carrierManagingCompanies } = this.props;
+
+    if (_.isEmpty(carrierManagingCompanies)) return;
+
+    let selectedCompany = carrierManagingCompanies.find(company => company._id === value);
+
+    if (!selectedCompany) return;
+
+    return <div>{selectedCompany.name}</div>;
   }
 
-  inputOnBlur = (event) => {
-    this.props.validate(event);
-    this.props.handleErrorState(this.props.isError());
+  onSubmit = (e) => {
+    if (e.which === 13) {
+      e.preventDefault();
+      this.props.handleSave(e);
+    }
   }
 
   render() {
-    let firstName = this.props.firstName;
-    let lastName = this.props.lastName;
+    let {
+      firstName, lastName, email, assignedGroup, isCreate,
+      carrierManagingCompanies, currentCompany, affiliatedCompany, assignedCompanies,
+      handleCompanyChange, handleAssignedCompanyChange
+    } = this.props;
+
     let userName = `${firstName} ${lastName}`;
 
-    let email = this.props.email;
-    let assignedGroup = this.props.assignedGroup;
-
-    let assignedCompanies = _.pluck(this.props.assignedCompanies, 'name');
-    let assignedCompaniesBeforeChange = _.pluck(_.clone(this.props.assignedCompanies, true), 'name');
-
-    let nonSelectedCompanies = assignedCompaniesBeforeChange
-      .filter(company => {
-        return !_.find(assignedCompanies, assignedCompany => company === assignedCompany);
-      })
-      .map(company => {
-        return {
-          label: company,
-          value: company
-        }
-      });
+    let companyOptions = _.isEmpty(carrierManagingCompanies) ? [{ label: currentCompany.name, value: currentCompany._id }] : carrierManagingCompanies.map(company => ({ label: company.name, value: company._id }))
 
     return (
       <form className="account-form" onSubmit={this.props.handleSave}>
@@ -101,26 +106,34 @@ export default class AccountForm extends Component {
               <input
                 ref="firstName"
                 name="firstName"
-                className="radius"
+                className={classnames('radius', { error: this.props.firstNameError })}
                 type="text"
                 placeholder="First Name"
                 value={firstName}
-                onBlur={this.inputOnBlur}
+                onBlur={this.props.validateFirstName}
                 onChange={this.props.handleFirstNameChange}
+                onKeyPress={this.onSubmit}
               />
+              <label className={classnames({ hide: !this.props.firstNameError })}>
+                {this.props.firstNameError}
+              </label>
             </div>
 
             <div className="large-12 columns">
               <input
                 ref="lastName"
                 name="lastName"
-                className="radius"
+                className={classnames('radius', { error: this.props.lastNameError })}
                 type="text"
                 placeholder="Last Name"
                 value={lastName}
-                onBlur={this.inputOnBlur}
+                onBlur={this.props.validateLastName}
                 onChange={this.props.handleLastNameChange}
+                onKeyPress={this.onSubmit}
               />
+              <label className={classnames({ hide: !this.props.lastNameError })}>
+                {this.props.lastNameError}
+              </label>
             </div>
           </div>
         </FormField>
@@ -136,18 +149,22 @@ export default class AccountForm extends Component {
             ref="email"
             name="email"
             placeholder="Email"
-            className="radius"
+            className={classnames('radius', { error: this.props.emailError })}
             type="email"
             value={email}
-            onBlur={this.inputOnBlur}
+            onBlur={this.props.validateEmail}
             onChange={this.props.handleEmailChange}
+            onKeyPress={this.onSubmit}
           />
+          <label className={classnames({ hide: !this.props.emailError })}>
+            {this.props.emailError}
+          </label>
         </FormField>
 
-        <FormField label="User Group" leftColumns="7" rightColumns="17">
+        <FormField label="User Group">
           <Select
             ref="assignedGroup"
-            className="account-form__user-group large radius"
+            className="account-form__select large radius"
             searchable={false}
             clearable={false}
             options={Object.keys(PredefinedGroups).map(group => ({ label: group, value: group }))}
@@ -158,24 +175,39 @@ export default class AccountForm extends Component {
           />
         </FormField>
 
-        <If condition={assignedCompanies.length}>
-          <div className="row">
-            <div className="large-24 columns">
-              <label>Company Management</label>
+        <If condition={!_.isEmpty(carrierManagingCompanies)}>
+          <div>
+            <FormField label="Company">
               <Select
-                ref="assignedCompanies"
-                placeholder={COMPANY_DROPDOWN_PLACEHOLDER}
-                noResultsText={COMPANY_NO_RESULT_TEXT}
-                className="account-form__company-management"
-                multi={true}
+                ref="affiliatedCompany"
+                className="account-form__select large radius"
+                searchable={false}
                 clearable={false}
-                value={assignedCompanies}
-                options={nonSelectedCompanies}
-                valueRenderer={this.renderCompaniesDisplay}
-                optionRenderer={this.renderCompaniesDropdown}
-                onChange={this.props.handleCompanyChange}
+                options={companyOptions}
+                value={affiliatedCompany}
+                valueRenderer={this.renderCompanyValueDisplay}
+                optionRenderer={this.renderCompaniesDisplay}
+                onChange={handleCompanyChange}
               />
-              <span className="account-form__company-selected">{assignedCompanies.length} selected</span>
+            </FormField>
+
+            <div className="row">
+              <div className="large-24 columns">
+                <label>Company Management</label>
+
+                <ul className="medium-block-grid-2 large-block-grid-3 account-form__company-management">
+                  {
+                    carrierManagingCompanies.map(company => {
+                      return (
+                        <li key={company._id}>
+                          <input id={company._id} type="checkbox" checked={assignedCompanies.indexOf(company._id) >= 0} onChange={this.props.handleAssignedCompanyChange} />
+                          <label htmlFor={company._id}>{company.name}</label>
+                        </li>
+                      )
+                    })
+                  }
+                </ul>
+              </div>
             </div>
           </div>
         </If>

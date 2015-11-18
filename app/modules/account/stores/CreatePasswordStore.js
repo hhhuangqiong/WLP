@@ -4,7 +4,8 @@ export default createStore({
   storeName: 'CreatePasswordStore',
 
   handlers: {
-    FETCH_VERIFY_ACCOUNT_TOKEN_SUCCESS: 'handleTokenChange'
+    VERIFY_ACCOUNT_TOKEN_SUCCESS: 'handleTokenChange',
+    VERIFY_ACCOUNT_TOKEN_FAILURE: 'handleTokenChangeFailure'
   },
 
   initialize() {
@@ -13,6 +14,11 @@ export default createStore({
 
   handleTokenChange(payload) {
     this.user = payload.result;
+    this.emitChange();
+  },
+
+  handleTokenChangeFailure(payload) {
+    /* By dispatching empty state without user, it will be redirected to the sign in page */
     this.emitChange();
   },
 

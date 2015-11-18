@@ -2,13 +2,11 @@ import React, { Component } from 'react';
 import moment from 'moment';
 import FluxibleMixin from 'fluxible/addons/FluxibleMixin';
 import ReactModal from 'react-modal';
-import {CLIENT} from '../../utils/env';
+import { CLIENT } from '../../utils/env';
 
 export default class Modal extends Component {
   componentWillMount(){
-    if (CLIENT) {
-      ReactModal.setAppElement(document.getElementById('app'));
-    }
+    if (CLIENT) ReactModal.setAppElement(document.getElementById('app'));
   }
 
   getDefaultProps() {

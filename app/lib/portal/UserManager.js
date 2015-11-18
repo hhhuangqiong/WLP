@@ -17,6 +17,7 @@ import {
 
 import { fetchDep } from '../../server/utils/bottle';
 import PortalUser   from '../../collections/portalUser';
+import Company      from '../../collections/company';
 
 const emailClient = fetchDep(nconf.get('containerName'), 'EmailClient');
 const emailUrl = fetchDep(nconf.get('containerName'), 'M800_MAIL_SERVICE_URL');
@@ -52,13 +53,17 @@ export default class PortalUserManager {
     let isVerified = user.tokens.find(token => token.event === CHANGE_PASSWORD_TOKEN) === undefined;
 
     let formattedUser = {
-      _id:            user._id,
-      username:       user.username,
-      name:           user.name,
-      status:         user.status,
-      assignedGroup:  user.assignedGroup,
-      carrierDomain:  user.carrierDomain,
-      createBy:       user.createBy,
+      _id:                user._id,
+      username:           user.username,
+      name:               user.name,
+      status:             user.status,
+      assignedGroup:      user.assignedGroup,
+      affiliatedCompany:  user.affiliatedCompany,
+      assignedCompanies:  user.assignedCompanies,
+      parentCompany:      user.parentCompany,
+      carrierDomain:      user.carrierDomain,
+      carrierId:          user.carrierId,
+      createBy:           user.createBy,
       isVerified,
 
       // date formatting could be left to view layer
@@ -71,17 +76,49 @@ export default class PortalUserManager {
   }
 
   /**
-   * Get all users except Root
+   * Extract company carrier to user field for easily identification
    *
    * @method
-   * @param {PortalUserModel} conditions
-   * @param {Function} cb
+   * @param {String} carrierId
+   * @param {Array of PortalUserModel} users
    */
-  getUsers() {
+  formatUsersByCarrier(carrierId, users) {
+    return users.map(user => {
+      let carrierId = user.affiliatedCompany.carrierId;
+      user.affiliatedCompany = user.affiliatedCompany._id;
+      user.carrierId = carrierId;
+      return user;
+    })
+  }
+
+  /**
+   * Get company document by a given carrierId
+   *
+   * @method
+   * @param {String} carrierId
+   */
+  getCompanyByCarrierId(carrierId) {
+    return new Promise((resolve, reject) => {
+      if (!carrierId) return reject(new ArgumentNullError('carrierId'));
+
+      Company.findOne({ carrierId }, (err, company) => {
+        if (err) return reject(new MongoDBError(`Encounter error when finding company by carrierId`, err));
+        if (!company) return reject(new NotFoundError(`Cannot find company with carrierId: ${carrierId}`));
+
+        resolve(company);
+      });
+    });
+  }
+
+  /**
+   * Get a list of user with formatted fields
+   */
+  getFormattedUsers() {
     return new Promise((resolve, reject) => {
       PortalUser
         .find({ isRoot: false })
         .populate('createBy', 'name')
+        .populate('affiliatedCompany', 'carrierId')
         .populate({
           path: 'carrierDomain',
           match: {domain: {$in: ['m800.maaii.com']}},
@@ -89,11 +126,54 @@ export default class PortalUserManager {
         })
         .exec((err, users) => {
           if (err) return reject(new MongoDBError('Database error during getting users', err));
-
           let formattedUsers = users.map(user => this.formatUserResponse(user));
           resolve(formattedUsers);
         });
     });
+  }
+
+  /**
+   * Get users that can be managed by a given company
+   *
+   * @method
+   * @param {Array} users
+   * @param {String} companyId
+   */
+  getManagingUsers(users, companyId) {
+    return new Promise((resolve, reject) => {
+      if (!companyId) return reject(new ArgumentNullError('companyId'));
+
+      Company.getManagingCompany(companyId, (err, companies) => {
+        if (err) return reject(new MongoDBError('Database error during getting managing companies', err));
+
+        let carrierIds = companies.map(company => company.carrierId);
+        let filteredUsers = users.filter(user => carrierIds.includes(user.carrierId));
+
+        resolve(filteredUsers);
+      });
+    });
+  }
+
+  /**
+   * Get all users except Root
+   *
+   * @method
+   * @param {PortalUserModel} conditions
+   * @param {Function} cb
+   */
+  async getUsers(carrierId) {
+    let users = await this.getFormattedUsers();
+
+    let usersWithCarrierId = this.formatUsersByCarrier(carrierId, users);
+
+    let company = await this.getCompanyByCarrierId(carrierId);
+
+    let companyUsers = usersWithCarrierId.filter(user => user.carrierId === company.carrierId);
+    let managingUsers = await this.getManagingUsers(usersWithCarrierId, company._id);
+
+    if (!_.isEmpty(managingUsers)) return managingUsers;
+
+    return companyUsers;
   }
 
   /**
@@ -105,11 +185,11 @@ export default class PortalUserManager {
    * @param {Function} cb
    */
   async newUser(data, author) {
-    data.affiliatedCompany = mongoose.Types.ObjectId(author.affiliatedCompany._id);
-    data.createBy = data.updateBy = author._id;
+    /* Stop the remaining process if the username is registered */
+    await this.validateDuplicatedUsername(data.username);
 
-    let user = await this.createUserIfNotExist(data.username, data);
-    let token = await this.sendCreatePasswordConfirmation(user);
+    let token = await this.sendCreatePasswordConfirmation(data.username);
+    let user = await this.createUser(data);
 
     return await this.addChangePasswordToken(user, token);
   }
@@ -137,8 +217,12 @@ export default class PortalUserManager {
    * @param {String} username
    */
   async reverifyUser(username) {
-    let user = await PortalUser.findOne({ username }).exec();
-    let token = await this.sendCreatePasswordConfirmation(user);
+    if (!username) return Promise.reject(new ArgumentNullError('username'));
+
+    let user = await PortalUser.findByEmail(username);
+    if (!user) return Promise.reject(new NotFoundError('Cannot find user when reverifying user'));
+
+    let token = await this.sendCreatePasswordConfirmation(username);
 
     return await this.addChangePasswordToken(user, token);
   }
@@ -149,14 +233,13 @@ export default class PortalUserManager {
    * @method
    * @param {String} recipient
    */
-  sendCreatePasswordConfirmation(user) {
+  sendCreatePasswordConfirmation(email) {
     return new Promise((resolve, reject) => {
-      if (!user || !user.username) return reject(new ArgumentNullError('user'));
-      // enable this before deploy, let me know if I wrongly sublmitted this line
-      // let emailConfig = _.merge(CREATE_USER_EMAIL_CONFIG, { to: user.username });
-      let emailConfig = _.merge(CREATE_USER_EMAIL_CONFIG, { to: 'georgejor@maaii.com' });
+      if (!email) return reject(new ArgumentNullError('email'));
 
-      emailClient.send(emailConfig, CREATE_USER_TEMPLATE_DATA, { recipient: user.username }, (err, token) => {
+      let emailConfig = _.merge(CREATE_USER_EMAIL_CONFIG, { to: email });
+
+      emailClient.send(emailConfig, CREATE_USER_TEMPLATE_DATA, { recipient: email }, (err, token) => {
         if (err) return reject(new ConnectionError(EMAIL_SENT_ERROR, err));
         resolve(token);
       });
@@ -175,6 +258,8 @@ export default class PortalUserManager {
       if (!user) return reject(new ArgumentNullError('user'));
       if (!token) return reject(new ArgumentNullError('token'));
 
+      // TODO: detect the token
+
       user.addToken(CHANGE_PASSWORD_TOKEN, token);
       user.save((err, user) => {
         if (err) return reject(err);
@@ -184,26 +269,35 @@ export default class PortalUserManager {
   }
 
   /**
-   * Create new portal user with validating it existance and insert a change-password token
+   * Validate if current user exist by username
    *
    * @method
    * @param {String} recipient
-   * @param {Object} data
-   * @param {String} token
    */
-  createUserIfNotExist(recipient, data) {
+  validateDuplicatedUsername(username) {
     return new Promise((resolve, reject) => {
-      if (!recipient) return reject(new ArgumentNullError('recipient'));
+      if (!username) return reject(new ArgumentNullError('username'));
 
-      PortalUser.findOne({ username: recipient }).exec((err, user) => {
-        if (err) return reject(new MongoDBError(`Encounter error when finding user ${recipient}`, err));
-        if (user) return reject(new AlreadyInUseError(`Target user ${recipient} already exists`, recipient));
+      PortalUser.findOne({ username: username }).exec((err, user) => {
+        if (err) return reject(new MongoDBError(`Encounter error when finding user ${username}`, err));
+        if (user) return reject(new AlreadyInUseError(`Target user ${username} already exists`, username));
 
-        PortalUser.newPortalUser(data, (err, user) => {
-          if (err || !user) return reject(new MongoDBError(`Fail to create user ${recipient}`, err));
+        resolve();
+      });
+    });
+  }
 
-          resolve(user);
-        });
+  /**
+   * Create new portal user and insert a change-password token
+   *
+   * @method
+   * @param {Object} data
+   */
+  createUser(data) {
+    return new Promise((resolve, reject) => {
+      PortalUser.newPortalUser(data, (err, user) => {
+        if (err || !user) return reject(new MongoDBError(`Fail to create user ${data.username}`, err));
+        resolve(user);
       });
     });
   }
@@ -216,13 +310,41 @@ export default class PortalUserManager {
    * @param {Function} cb
    */
    async updateUser(params) {
+     let userBeforeUpdate = await PortalUser.findOne({ _id: params.userId }).exec();
+     if (!userBeforeUpdate) return Promise.reject(new NotFoundError('Cannot find user when updating user'));
+
+     let emailChanged = userBeforeUpdate.username !== params.username;
+
      let toFind = { _id: params.userId };
      let toModify = { $set: params };
      let options = { 'new': true };
      let user = await PortalUser.findOneAndUpdate(toFind, toModify, options).exec();
 
+     if (emailChanged) {
+       let token = await this.sendCreatePasswordConfirmation(params.username);
+       user = await this.addChangePasswordToken(user, token);
+       user = await this.saveUser(user);
+     }
+
      return this.formatUserResponse(user);
    }
+
+   /**
+    * Save existing portal user
+    *
+    * @method
+    * @param {Object} user
+    */
+    saveUser(user) {
+      return new Promise((resolve, reject) => {
+        if (!user) return reject(new NotFoundError('User does not exist when saving user'));
+
+        user.save((err, user) => {
+          if (err) return reject(new MongoDBError('Fail to save user', err));
+          resolve(user);
+        });
+      });
+    }
 
    /**
     * Delete existing portal user
@@ -231,7 +353,7 @@ export default class PortalUserManager {
     * @param {Object} params
     * @param {Function} cb
     */
-    deleteUser(params, cb) {
+    deleteUser(params) {
       let user = { _id: params.userId };
 
       return new Promise((resolve, reject) => {

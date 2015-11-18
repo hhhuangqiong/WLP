@@ -49,7 +49,7 @@ export function genericHandler(debugFn, cb) {
       error = new verror.WError(err, 'Internal system error');
     }
 
-    if (!res.ok) {
+    if (!res.ok || (res.body && res.body.error)) {
       error = res.body.error || {
         // TODO should assign a default 'message' to the error object
         status: res.status

@@ -25,9 +25,6 @@ let SystemMessageStore = createStore({
     UPDATE_COMPANY_SERVICE_FAILURE: 'handleUpdateCompanyFailure',
     UPDATE_COMPANY_SERVICE_SUCCESS: 'handleUpdateCompanySuccess',
     UPDATE_COMPANY_WIDGET_SUCCESS:  'handleUpdateCompanySuccess',
-    RESEND_CREATE_PASSWORD_SUCCESS: 'resendCreatePasswordSuccess',
-    CHANGE_PASSWORD_SUCCESS:        'handleChangePasswordSuccess',
-    CREATE_ACCOUNT_FAILURE:         'handleCreateAccountFailure'
   },
 
   // do not change this
@@ -47,35 +44,6 @@ let SystemMessageStore = createStore({
     this.timeout = 5000;
   },
 
-  resendCreatePasswordSuccess(payload) {
-    let { result } = payload;
-
-    this.id = Date.now();
-    this.hidden = false;
-
-    if (!result) {
-      this.type = 'error';
-      this.message = 'Target user does not exist';
-
-      return this.emitChange();
-    }
-
-    this.type = 'success';
-    this.message = `Successfully resend reverify link to ${result.username}!`;
-
-    this.emitChange();
-  },
-
-  handleChangePasswordSuccess(password) {
-    this.id = Date.now();
-    this.hidden = false;
-
-    this.type = 'success';
-    this.message = `Successfully changing your password!`;
-
-    this.emitChange();
-  },
-
   handleUpdateCompanySuccess: function(data) {
     this.id = Date.now();
     this.type = 'success';
@@ -89,15 +57,6 @@ let SystemMessageStore = createStore({
     this.id = Date.now();
     this.type = 'error';
     this.message = err.message;
-    this.hidden = false;
-
-    this.emitChange();
-  },
-
-  handleCreateAccountFailure(error) {
-    this.id = Date.now();
-    this.type = 'error';
-    this.message = error.message;
     this.hidden = false;
 
     this.emitChange();
@@ -155,7 +114,9 @@ let SystemMessageStore = createStore({
   handleInfoMessage: function(payload) {
     this.id = Date.now();
     this.type = 'success';
+
     this.message = payload.message;
+
     this.hidden = false;
 
     this.emitChange();

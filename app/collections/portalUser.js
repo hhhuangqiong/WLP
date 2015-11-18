@@ -1,11 +1,16 @@
-var _         = require('lodash');
-var bcrypt    = require('bcrypt');
-var moment    = require('moment');
-var mongoose  = require('mongoose');
-var randtoken = require('rand-token');
-var speakeasy = require('speakeasy');
+import _         from 'lodash';
+import bcrypt    from 'bcrypt';
+import moment    from 'moment';
+import mongoose  from 'mongoose';
+import randtoken from 'rand-token';
+import speakeasy from 'speakeasy';
 
-var collectionName = 'PortalUser';
+const COLLECTION_NAME = 'PortalUser';
+
+import {
+  MongoDBError,
+  NotFoundError
+} from 'common-errors';
 
 //TODO common validators to be shared among models
 function lengthValidator(param, min, max) {
@@ -90,17 +95,17 @@ var portalUserSchema = new mongoose.Schema({
   },
   createBy: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: collectionName
+    ref: COLLECTION_NAME
   },
   updateAt: {
     type: Date
   },
   updateBy: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: collectionName
+    ref: COLLECTION_NAME
   }
 }, {
-  collection: collectionName
+  collection: COLLECTION_NAME
 });
 
 portalUserSchema.virtual('password').get(function() {
@@ -301,6 +306,16 @@ portalUserSchema.static('newPortalUser', function(data, cb) {
   });
 });
 
+portalUserSchema.static('findByEmail', function(email) {
+  return new Promise((resolve, reject) => {
+    this.findOne({ username: email }, (err, user) => {
+      if (err) return reject(new MongoDBError(`Encounter error when finding user ${email}`, err));
+      if (!user) return reject(new NotFoundError(`Cannot find user with email: ${email}`));
+      resolve(user);
+    });
+  });
+});
+
 portalUserSchema.static('newForgotPasswordRequest', function(username, cb) {
   var token = this.makeToken('forgotPassword');
 
@@ -315,4 +330,4 @@ portalUserSchema.static('newForgotPasswordRequest', function(username, cb) {
   });
 });
 
-module.exports = mongoose.model(collectionName, portalUserSchema);
+module.exports = mongoose.model(COLLECTION_NAME, portalUserSchema);

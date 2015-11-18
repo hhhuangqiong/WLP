@@ -4,20 +4,27 @@ export default createStore({
   storeName: 'ChangePasswordStore',
 
   handlers: {
+    CHANGE_PASSWORD_SUCCESS: 'handlePasswordChangedSuccess',
     CHANGE_PASSWORD_FAILURE: 'handlePasswordChangedFailure'
   },
 
   initialize() {
-    this.error = '';
+    this.error = null;
   },
 
-  handlePasswordChangedFailure(error) {
+  handlePasswordChangedSuccess() {
+    this.error = null;
+    this.emitChange();
+  },
+
+  handlePasswordChangedFailure({ error }) {
     this.error = error;
     this.emitChange();
   },
 
   getCurrentPasswordIncorrectError() {
-    if (this.error.name !== 'NotPermittedError') return;
+    if (this.error && this.error.name !== 'NotPermittedError') return;
+    if (!this.error) return;
     return this.error.message;
   },
 

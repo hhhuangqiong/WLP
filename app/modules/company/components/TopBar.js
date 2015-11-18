@@ -69,7 +69,6 @@ let CompanyTopBar = React.createClass({
           </FilterBar.LeftItems>
         </If>
         <FilterBar.RightItems>
-          <button>Create new user</button>
           <button className={classNames('company-action-bar__button', {disabled: this.props.hasError})} onClick={!this.props.hasError ? this.props.onSave : null}>save</button>
         </FilterBar.RightItems>
       </FilterBar.Wrapper>

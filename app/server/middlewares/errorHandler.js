@@ -16,7 +16,7 @@ function filteredMessage(err) {
 }
 
 export default function errorHandler(err, req, res, next) {
-  logger.error(err);
+  logger.error(err.stack);
 
   res.json({[ERROR_LABEL]: {
     name: err.name,

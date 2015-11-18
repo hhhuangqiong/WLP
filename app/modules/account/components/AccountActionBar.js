@@ -10,7 +10,7 @@ export default React.createClass({
     handleSave: PropTypes.func.isRequired,
     handleDiscard: PropTypes.func.isRequired,
     handleDelete: PropTypes.func.isRequired,
-    isEnabled:  PropTypes.func.isRequired,
+    isEnabled:  PropTypes.bool.isRequired,
     deleteDialogOpened: PropTypes.bool.isRequired,
     handleOpenDeleteDialog: PropTypes.func.isRequired,
     handleCloseDeleteDialog: PropTypes.func.isRequired,
@@ -40,7 +40,7 @@ export default React.createClass({
               <If condition={!this.props.isCreate && this.props.accountId !== loggedInUserId}>
                 <div
                   role="button"
-                  tabindex="2"
+                  tabIndex="2"
                   className="account-top-bar__button-secondary button round icon-delete"
                   onClick={this.props.handleOpenDeleteDialog}
                 ></div>
@@ -53,7 +53,7 @@ export default React.createClass({
               <If condition={!this.props.isCreate}>
                 <div
                   role="button"
-                  tabindex="1"
+                  tabIndex="1"
                   className={classNames('account-top-bar__button-secondary', 'button', 'round', 'item', { disabled: !this.props.isEnabled })}
                   onClick={this.props.handleDiscard}
                 >Discard</div>
@@ -62,10 +62,10 @@ export default React.createClass({
             <li className="top-bar--inner">
               <div
                 role="button"
-                tabindex="0"
+                tabIndex="0"
                 className={classNames('account-top-bar__button-primary', 'button', 'round', 'large', 'item', { disabled: !this.props.isEnabled })}
                 onClick={this.props.handleSave}
-              >Save{this.props.isEnabled ? ' *' : ''}</div>
+              >Save</div>
             </li>
           </ul>
 
