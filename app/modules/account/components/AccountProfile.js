@@ -1,6 +1,5 @@
 import _ from 'lodash';
 import React, { PropTypes } from 'react';
-import classNames from 'classNames';
 import Joi from 'joi';
 
 import FluxibleMixin from 'fluxible/addons/FluxibleMixin';
