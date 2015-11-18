@@ -1,5 +1,5 @@
 import React, { PropTypes } from 'react';
-import classNames from 'classNames';
+import classNames from 'classnames';
 import FluxibleMixin from 'fluxible/addons/FluxibleMixin';
 
 import AuthStore  from '../../../main/stores/AuthStore';
