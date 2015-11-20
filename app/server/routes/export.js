@@ -19,6 +19,13 @@ let getExportConfig = (type) => {
   return EXPORTS[type.toUpperCase()] || {};
 };
 
+// use no browser cache
+function setCacheControl(res) {
+  res.set('Cache-Control', 'no-cache, no-store, must-revalidate');
+  res.set('Pragma', 'no-cache');
+  res.set('Expires', 0);
+}
+
 // '/:carrierId/export'
 let getCarrierExport = (req, res) => {
   req.checkParams('carrierId').notEmpty();
@@ -26,6 +33,8 @@ let getCarrierExport = (req, res) => {
   let err = req.validationErrors();
 
   if (err) return responseError(REQUEST_VALIDATION_ERROR, res, err);
+
+  setCacheControl(res);
 
   let task = new ExportTask(fetchDep(nconf.get('containerName'), 'Kue'), req.params, req.query);
 
@@ -44,6 +53,8 @@ let getCarrierExportCancel = (req, res) => {
   let err = req.validationErrors();
 
   if (err) return responseError(REQUEST_VALIDATION_ERROR, res, err);
+
+  setCacheControl(res);
 
   kue.Job.get(req.query.exportId, (err, job) => {
     if (err) return responseError(GET_JOB_ERROR, res, err);
@@ -71,6 +82,8 @@ let getCarrierExportFileProgress = (req, res) => {
 
     let progress = job._progress || '0';
 
+    setCacheControl(res);
+
     return res.status(200).json({ progress });
   });
 };
@@ -87,9 +100,12 @@ let getCarrierExportFile = (req, res) => {
 
     let jobConfig = getExportConfig(job.type);
 
+    setCacheControl(res);
+
     if (job._progress === '100') {
-      res.setHeader('Content-disposition', 'attachment; filename=' + jobConfig.EXPORT_FILENAME);
-      res.setHeader('Content-type', 'text/csv');
+      res.set('Content-Disposition', 'attachment; filename=' + jobConfig.EXPORT_FILENAME);
+      res.set('Content-Type', 'text/csv');
+      setCacheControl(res);
 
       let redisClient = fetchDep(nconf.get('containerName'), 'RedisClient');
       let exportFileStream = redisRStream(redisClient, `${job.type}:${job.id}`);
