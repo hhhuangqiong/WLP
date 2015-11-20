@@ -392,7 +392,7 @@ let getIM = function(req, res) {
 
   req.query.carrier = req.params.carrierId;
   req.query.from = moment(req.query.fromTime, 'L').startOf('day').toISOString();
-  req.query.to = moment(req.query.toTime, 'L').startOf('day').toISOString();
+  req.query.to = moment(req.query.toTime, 'L').endOf('day').toISOString();
   req.query.message_type = req.query.type || DEFAULT_MESSAGE_TYPES;
   req.query.sender = '';
   req.query.recipient = '';

@@ -4,6 +4,7 @@ var Q       = require('q');
 var request = require('superagent');
 var util    = require('util');
 var _       = require('lodash');
+var qs      = require('qs');
 
 import {buildImSolrQueryString} from '../queryBuilder/im';
 import BaseRequest from '../Base';
@@ -100,6 +101,8 @@ export default class ImRequest extends BaseRequest {
     } else {
       url = this.opts.methods.IMS.URL;
     }
+
+    logger.debug('IM request: %s?%s', util.format('%s%s', base, url), qs.stringify(params));
 
     request
       .get(util.format('%s%s', base, url))
