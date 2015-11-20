@@ -4,12 +4,13 @@ var Q       = require('q');
 var request = require('superagent');
 var util    = require('util');
 var _       = require('lodash');
+var qs      = require('qs');
 
-import BaseRequest from '../Base';
+import {contructOpts, formatDateString, swapDate, composeResponse, handleError} from '../helper';
 
 const LABEL_FOR_NULL = 'N/A';
 
-export default class ImRequest extends BaseRequest {
+export default class ImRequest {
 
   constructor(baseUrl, timeout) {
     let opts = {
@@ -24,7 +25,7 @@ export default class ImRequest extends BaseRequest {
       }
     };
 
-    super(opts);
+    this.opts = contructOpts(opts);
   }
 
   /**
@@ -42,14 +43,14 @@ export default class ImRequest extends BaseRequest {
    * @param cb {Function} Q callback
    */
   formatQueryData(params, cb) {
-    Q.ninvoke(this, 'swapDate', params)
+    Q.nfcall(swapDate, params)
       .then((params) => {
         var format = nconf.get(util.format('%s:format:timestamp', this.opts.type)) || 'x';
-        return this.formatDateString(params, format)
+        return formatDateString(params, format)
       })
       .then(normalizeData)
       .fail((err) => {
-        return cb(this.handleError(err, 500), null);
+        return cb(handleError(err, 500), null);
       })
       .done((params) => {
         return cb(null, params);
@@ -91,13 +92,15 @@ export default class ImRequest extends BaseRequest {
     var base = this.opts.baseUrl;
     var url = this.opts.methods.IMS.URL;
 
+    logger.debug('IM request: %s?%s', util.format('%s%s', base, url), qs.stringify(params));
+
     request
       .get(util.format('%s%s', base, url))
       .query(_.omit(params, 'carrierId'))
       .buffer()
       .timeout(this.opts.timeout)
       .end((err, res) => {
-        if (err) return cb(this.handleError(err, err.status || 400));
+        if (err) return cb(handleError(err, err.status || 400));
         return this.filterData(res.body, cb);
       });
   }
@@ -124,7 +127,7 @@ export default class ImRequest extends BaseRequest {
       });
     }
 
-    return cb(null, this.composeResponse(data));
+    return cb(null, composeResponse(data));
   }
 
   /**
@@ -140,7 +143,7 @@ export default class ImRequest extends BaseRequest {
         this.sendRequest(params, cb);
       })
       .catch((err) => {
-        return cb(this.handleError(err, err.status || 500));
+        return cb(handleError(err, err.status || 500));
       });
   }
 }

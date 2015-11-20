@@ -6,10 +6,10 @@ var Q       = require('q');
 var request = require('superagent');
 var util    = require('util');
 
-import BaseRequest from '../Base';
+import {contructOpts, formatDateString, swapDate, composeResponse, handleError} from '../helper';
 import qs from 'qs';
 
-export default class CallsRequest extends BaseRequest {
+export default class CallsRequest {
 
   constructor(baseUrl, timeout) {
 
@@ -25,7 +25,7 @@ export default class CallsRequest extends BaseRequest {
       }
     };
 
-    super(opts);
+    this.opts = contructOpts(opts);
   }
 
   /**
@@ -40,14 +40,14 @@ export default class CallsRequest extends BaseRequest {
    * @param cb {Function} Q callback
    */
   formatQueryData(params, cb) {
-    Q.ninvoke(this, 'swapDate', params)
+    Q.nfcall(swapDate, params)
       .then((params) => {
         var format = nconf.get(util.format('%s:format:timestamp', this.opts.type)) || 'x';
-        return this.formatDateString(params, format)
+        return formatDateString(params, format)
       })
       .then(normalizeData)
       .fail((err) => {
-        return cb(this.handleError(err, 500), null);
+        return cb(handleError(err, 500), null);
       })
       .done((params) => {
         return cb(null, params);
@@ -98,7 +98,7 @@ export default class CallsRequest extends BaseRequest {
       .buffer()
       .timeout(this.opts.timeout)
       .end((err, res) => {
-        if (err) return cb(this.handleError(err, err.status || 400));
+        if (err) return cb(handleError(err, err.status || 400));
         this.filterCalls(res.body, cb);
       });
   }
@@ -123,7 +123,7 @@ export default class CallsRequest extends BaseRequest {
       });
     }
 
-    cb(null, this.composeResponse(data));
+    cb(null, composeResponse(data));
   }
 
   /**
@@ -140,7 +140,7 @@ export default class CallsRequest extends BaseRequest {
         this.sendRequest(params, cb);
       })
       .catch((err) => {
-        return cb(this.handleError(err, err.status || 500));
+        return cb(handleError(err, err.status || 500));
       });
   }
 }

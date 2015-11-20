@@ -5,10 +5,11 @@ var nconf   = require('nconf');
 var Q       = require('q');
 var request = require('superagent');
 var util    = require('util');
+var qs      = require('qs');
 
-import BaseRequest from '../Base';
+import {contructOpts, appendRequestId, handleError} from '../helper';
 
-export default class TopUpRequest extends BaseRequest {
+export default class TopUpRequest {
 
   constructor(baseUrl, timeout) {
 
@@ -23,7 +24,7 @@ export default class TopUpRequest extends BaseRequest {
       }
     };
 
-    super(opts);
+    this.opts = contructOpts(opts);
   }
 
   formatQueryData(params, cb) {
@@ -56,11 +57,12 @@ export default class TopUpRequest extends BaseRequest {
   }
 
   sendRequest(params, cb) {
-    logger.debug('sending transaction history request');
 
     var base = this.opts.baseUrl;
     var url = this.opts.methods.LIST.URL;
     var fullUrl = util.format('%s%s', base, url);
+
+    logger.debug('sending transaction history request %s?%s', fullUrl, qs.stringify(params));
 
     request
       .get(fullUrl)
@@ -69,10 +71,10 @@ export default class TopUpRequest extends BaseRequest {
       .timeout(this.opts.timeout)
       .end((err, res) => {
         // Do we need to distinguish different Errors? Timeout and ENOTFOUND
-        if (err) return cb(this.handleError(err, err.status || 400));
+        if (err) return cb(handleError(err, err.status || 400));
 
         try {
-          if (res.error) return cb(this.handleError(res.body.error.description, res.error.code));
+          if (res.error) return cb(handleError(res.body.error.description, res.error.code));
 
           // bossApi does not return page number,
           // in order to keep page state in Top Up Store
@@ -96,12 +98,12 @@ export default class TopUpRequest extends BaseRequest {
     logger.debug('get transaction history from BOSS with params', params);
 
     Q.ninvoke(this, 'formatQueryData', params)
-      .then(this.appendRequestId)
+      .then(appendRequestId)
       .then((params) => {
         this.sendRequest(params, cb);
       })
       .catch((err) => {
-        return cb(this.handleError(err), 500);
+        return cb(handleError(err), 500);
       });
   }
 }

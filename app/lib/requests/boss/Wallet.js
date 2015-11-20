@@ -2,11 +2,11 @@ import logger from 'winston';
 import Q from 'q';
 import request from 'superagent';
 import util from 'util';
-import _ from 'lodash';
+import qs from 'qs';
 
-import BaseRequest from '../Base';
+import {contructOpts, appendRequestId} from '../helper';
 
-export default class WalletRequest extends BaseRequest {
+export default class WalletRequest {
 
   constructor(baseUrl, timeout) {
 
@@ -21,7 +21,7 @@ export default class WalletRequest extends BaseRequest {
       }
     };
 
-    super(opts);
+    this.opts = contructOpts(opts);
   }
 
   validateQuery(params, cb) {
@@ -34,10 +34,11 @@ export default class WalletRequest extends BaseRequest {
   }
 
   sendRequest(params, cb) {
-    logger.debug('sending user wallet request');
 
     var base = this.opts.baseUrl;
     var url = this.opts.methods.LIST.URL;
+
+    logger.debug('sending user wallet request %s?%s', util.format('%s%s', base, url), qs.stringify(params));
 
     request
       .get(util.format('%s%s', base, url))
@@ -116,7 +117,7 @@ export default class WalletRequest extends BaseRequest {
     logger.debug('get user %s\'s wallet info from BOSS', params.number);
 
     Q.ninvoke(this, 'validateQuery', params)
-      .then(this.appendRequestId)
+      .then(appendRequestId)
       .then((params) => {
         return this.sendRequest(params, cb);
       });

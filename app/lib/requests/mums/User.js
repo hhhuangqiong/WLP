@@ -6,9 +6,9 @@ var logger  = require('winston');
 var request = require('superagent');
 var util    = require('util');
 
-import BaseRequest from '../Base';
+import {contructOpts, handleError} from '../helper';
 
-export default class UsersRequest extends BaseRequest {
+export default class UsersRequest {
 
   constructor(baseUrl, timeout) {
 
@@ -39,7 +39,7 @@ export default class UsersRequest extends BaseRequest {
       }
     };
 
-    super(opts);
+    this.opts = contructOpts(opts);
   }
 
 
@@ -95,8 +95,8 @@ export default class UsersRequest extends BaseRequest {
         .buffer()
         .timeout(this.opts.timeout)
         .end((err, res) => {
-          if (err) return cb(this.handleError(err, err.status || 400));
-          if (res.status >= 400) return cb(this.handleError(res.body.err));
+          if (err) return cb(handleError(err, err.status || 400));
+          if (res.status >= 400) return cb(handleError(res.body.err));
           return cb(null, res.body);
         });
     };
@@ -108,8 +108,8 @@ export default class UsersRequest extends BaseRequest {
         .buffer()
         .timeout(this.opts.timeout)
         .end((err, res) => {
-          if (err) return cb(this.handleError(err, err.status || 400));
-          if (res.status >= 400) return cb(this.handleError(res.body.err));
+          if (err) return cb(handleError(err, err.status || 400));
+          if (res.status >= 400) return cb(handleError(res.body.err));
           return cb(null, res.body);
         });
     };
@@ -120,7 +120,7 @@ export default class UsersRequest extends BaseRequest {
     ]).then((results)=>{
       _.each(results, (result)=>{
         if (result.state !== 'fulfilled') {
-          return cb(this.handleError(new Error('Internal server error'), 500));
+          return cb(handleError(new Error('Internal server error'), 500));
         }
       });
 
@@ -140,7 +140,7 @@ export default class UsersRequest extends BaseRequest {
 
       return cb(null, result);
     }).catch((err)=>{
-      return cb(this.handleError(err));
+      return cb(handleError(err));
     });
   }
 
@@ -161,8 +161,8 @@ export default class UsersRequest extends BaseRequest {
       .get(util.format('%s%s', base, url))
       .timeout(this.opts.timeout)
       .end((err, res) => {
-        if (err) return cb(this.handleError(err));
-        if (res.status >= 400) return cb(this.handleError(res.body.err));
+        if (err) return cb(handleError(err));
+        if (res.status >= 400) return cb(handleError(res.body.err));
 
         // assign jid to the user
         res.body.userDetails.jid = `${res.body.userDetails.username}@${res.body.carrierId}`;
@@ -188,7 +188,7 @@ export default class UsersRequest extends BaseRequest {
       .timeout(this.opts.timeout)
       .end((err, res) => {
         if (err) return cb(err);
-        if (res.status >= 400) return cb(this.handleError(res.body.err));
+        if (res.status >= 400) return cb(handleError(res.body.err));
         cb(null, res.body);
       });
   }
@@ -211,7 +211,7 @@ export default class UsersRequest extends BaseRequest {
       .timeout(this.opts.timeout)
       .end((err, res) => {
         if (err) return cb(err);
-        if (res.status >= 400) return cb(this.handleError(res.body.err));
+        if (res.status >= 400) return cb(handleError(res.body.err));
         cb(null, res.body);
       });
   }

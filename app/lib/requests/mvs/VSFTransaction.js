@@ -4,11 +4,11 @@ var Q       = require('q');
 var request = require('superagent');
 var util    = require('util');
 
-import BaseRequest from '../Base';
+import {contructOpts, handleError} from '../helper';
 
 const LONG_DATE_FORMAT = 'YYYY-MM-DDTHH:MM:ss[Z]';
 
-export default class VSFTransactionRequest extends BaseRequest {
+export default class VSFTransactionRequest {
   constructor(baseUrl, timeout) {
     let opts = {
       baseUrl: baseUrl,
@@ -21,7 +21,7 @@ export default class VSFTransactionRequest extends BaseRequest {
       }
     };
 
-    super(opts);
+    this.opts = contructOpts(opts);
   }
 
   formatQueryData(params, cb) {
@@ -48,19 +48,18 @@ export default class VSFTransactionRequest extends BaseRequest {
       .buffer()
       .timeout(this.timeout)
       .end((err, res) => {
-        if (err) return cb(this.handleError(err, err.status || 400));
-        if (res.status >= 400) return cb(this.handleError(res.body.error.message, res.body.error.httpStatus));
+        if (err) return cb(handleError(err, err.status || 400));
+        if (res.status >= 400) return cb(handleError(res.body.error.message, res.body.error.httpStatus));
         cb(null, res.body.transactionRecords);
       });
   }
 
   getTransactions(carrierId, params, cb) {
-
     Q.ninvoke(this, 'formatQueryData', params)
       .then((params) => {
         this.sendRequest(carrierId, params, cb);
       }).catch((err) => {
-        return this.handleError(err, 500);
+        return handleError(err, 500);
       })
   }
 }

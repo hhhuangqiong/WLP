@@ -8,7 +8,7 @@ import moment from 'moment';
 import CountryData from 'country-data';
 import qs from 'qs';
 
-import BaseRequest from '../Base';
+import {contructOpts, formatDateString, swapDate, handleError} from '../helper';
 import jsonSchema from '../../../utils/getSimplifiedJsonSchema.js';
 
 /**
@@ -28,7 +28,7 @@ const DEFAULT_TYPES = ['Call-in', 'Call-out', 'SMS', 'IVR'];
  */
 const DEFAULT_PLATFORMS = ['Android', 'IOS'];
 
-export default class VerificationRequest extends BaseRequest {
+export default class VerificationRequest {
   constructor(baseUrl, timeout) {
     let opts = {
       type: 'dataProviderApi',
@@ -46,7 +46,7 @@ export default class VerificationRequest extends BaseRequest {
       }
     };
 
-    super(opts);
+    this.opts = contructOpts(opts);
   }
 
   /**
@@ -101,20 +101,20 @@ export default class VerificationRequest extends BaseRequest {
    * @param {Function} cb  Node-style callback function
    */
   formatQueryParameters(params, cb) {
-    Q.ninvoke(this, 'swapDate', params)
+    Q.nfcall(swapDate, params)
       .then((params) => {
         let format = nconf.get(util.format('%s:format:timestamp', this.opts.type)) || 'x';
 
         params.type = this.convertVerificationTypes(params.method);
         delete params.method;
 
-        return this.formatDateString(params, format)
+        return formatDateString(params, format)
       })
       .then((params) => {
         cb(null, params);
       })
       .catch((err) => {
-        cb(this.handleError(err, 500), null);
+        cb(handleError(err, 500), null);
       })
       .done();
   }
