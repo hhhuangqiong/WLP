@@ -12,6 +12,7 @@ export default {
   buildImSolrQueryString(params, cb) {
     const qb = new SolrQueryBuilder();
 
+    qb.where('carrier', params.carrier);
     qb.where('timestamp').between(params.from, params.to);
     qb.where('type', 'IncomingMessage');
 
