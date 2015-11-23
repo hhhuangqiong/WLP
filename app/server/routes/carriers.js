@@ -2,7 +2,7 @@ import _ from 'lodash';
 import Q from 'q';
 import nconf from 'nconf';
 import moment from 'moment';
-
+import logger from 'winston';
 import { fetchDep } from '../utils/bottle';
 
 var endUserRequest      = fetchDep(nconf.get('containerName'), 'EndUserRequest');
@@ -16,6 +16,8 @@ var verificationRequest = fetchDep(nconf.get('containerName'), 'VerificationRequ
 import SmsRequest from '../../lib/requests/SMS';
 import PortalUser from '../../collections/portalUser';
 import Company    from '../../collections/company';
+
+import {parseVerificationStatistic} from '../parser/verificationStats';
 
 let dateFormat = nconf.get('display:dateFormat');
 
@@ -493,7 +495,8 @@ let mapVerificationStatsRequestParameters = function (req) {
     application: req.query.application,
     from: req.query.from,
     to: req.query.to,
-    timescale: req.query.timescale
+    timescale: req.query.timescale,
+    breakdown: req.query.type,
   }, (val) => {
     return !val;
   });
@@ -510,28 +513,16 @@ let getVerificationStatistics = function (req, res) {
     }
 
     let params = mapVerificationStatsRequestParameters(req);
+    let breakdownType = req.query.type;
 
-    let request;
-    switch (req.query.type) {
-    case 'status':
-      request = verificationRequest.getVerificationStatsByStatus;
-      break;
-    case 'platform':
-      request = verificationRequest.getVerificationStatsByPlatform;
-      break;
-    case 'type':
-      request = verificationRequest.getVerificationStatsByType;
-      break;
-    case 'country':
-      request = verificationRequest.getVerificationStatsByCountry;
-      break;
-    default:
-      res.status(400).json(new Error('Unknown request type'));
-      return;
-    }
-
-    request.call(verificationRequest, params, (err, result) => {
-      if (err) {
+    Q.ninvoke(verificationRequest,'getVerificationStats', params, breakdownType)
+      .then((response) => {
+        return Q.nfcall(parseVerificationStatistic, response, params);
+      })
+      .then((result) => {
+        return res.json(result);
+      })
+      .catch((err) => {
         let { code, message, timeout, status } = err;
 
         return res.status(status || 500).json({
@@ -541,10 +532,7 @@ let getVerificationStatistics = function (req, res) {
             timeout
           }
         });
-      }
-
-      return res.json(result);
-    });
+      }).done();
   });
 };
 

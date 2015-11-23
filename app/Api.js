@@ -285,7 +285,7 @@ Api.prototype.getVerificationStatsByStatus = function (params, cb) {
     .get(`${this._getHost()}/api/carriers/${params.carrierId}/verificationStats`)
     .accept('json')
     .set('Authorization', this._getToken())
-    .query(_.merge(params, { type: 'status' }))
+    .query(_.merge(params, { type: 'success' }))
     .end(genericHandler(cb));
 };
 
