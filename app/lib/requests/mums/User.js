@@ -1,6 +1,7 @@
 import _ from 'lodash';
 import Q from 'q';
 import moment from 'moment';
+import qs from 'qs';
 
 var logger  = require('winston');
 var request = require('superagent');
@@ -52,15 +53,31 @@ export default class UsersRequest extends BaseRequest {
     }
     this.getUsers(carrier, query, (err, res)=> {
       if (err) return cb(err);
-      return cb(null, this._morphExportUsers(res, query));
+
+      try {
+        return cb(null, this._morphExportUsers(res, query));
+      } catch(e) {
+        logger.error('Unexpected response from MUMS %s', res);
+        logger.error('Error stack:', e.stack);
+
+        err = new Error();
+        err.message = 'Unexpected response';
+        err.status = 500;
+
+        return cb(err);
+      }
+
+
     });
   }
 
   _morphExportUsers({ dateRange:{ pageNumberIndex }, userList, hasNextPage }, { page }) {
     let usersData = {};
     usersData.contents = _.map(userList, (value)=>{
-      let result = _.merge(value, value.devices[0]);
-      return _.omit(result, 'devices');
+      // replace username with formed jid to maintain consistency between UI and export data
+      let result = _.merge(value, (value.devices || [])[0]);
+      result.username = result.jid;
+      return _.omit(result, ['devices','jid']);
     });
     usersData.pageNumber = page || pageNumberIndex;
     if (pageNumberIndex === 0) {
@@ -86,7 +103,7 @@ export default class UsersRequest extends BaseRequest {
     queries.fromTime = moment(queries.fromTime, 'L').startOf('day').toISOString();
     queries.toTime = moment(queries.toTime, 'L').endOf('day').toISOString();
 
-    logger.debug('get users from %s with %j', carrierId, queries, {});
+    logger.debug(`End User Server End Point: ${util.format('%s%s', base, url)}?${qs.stringify(queries)}`);
 
     var currentPageRequest = (queries, cb)=>{
       request
