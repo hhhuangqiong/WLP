@@ -232,7 +232,7 @@ var EndUsers = React.createClass({
               </select>
             </div>
 
-            <div>
+            <div className="hide">
               <select className="status-select top-bar-section__query-input" name="statusSelect" onChange={this.handleStatusChange}>
                 <option key={'status'} value="">Choose Account Status</option>
                 {accountStatus.map((status)=>{
