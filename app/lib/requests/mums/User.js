@@ -1,6 +1,7 @@
 import _ from 'lodash';
 import Q from 'q';
 import moment from 'moment';
+import qs from 'qs';
 
 var logger  = require('winston');
 var request = require('superagent');
@@ -52,14 +53,27 @@ export default class UsersRequest {
     }
     this.getUsers(carrier, query, (err, res)=> {
       if (err) return cb(err);
-      return cb(null, this._morphExportUsers(res, query));
+
+      try {
+        return cb(null, this._morphExportUsers(res, query));
+      } catch(e) {
+        logger.error('Unexpected response from BOSS for user %s', query, res);
+        logger.error('Error stack:', e.stack);
+
+        err = new Error();
+        err.message = 'Unexpected response';
+        err.status = 500;
+
+        return cb(err);
+      }
+
     });
   }
 
   _morphExportUsers({ dateRange:{ pageNumberIndex }, userList, hasNextPage }, { page }) {
     let usersData = {};
     usersData.contents = _.map(userList, (value)=>{
-      let result = _.merge(value, value.devices[0]);
+      let result = _.merge(value, (value.devices || [])[0]);
       return _.omit(result, 'devices');
     });
     usersData.pageNumber = page || pageNumberIndex;
@@ -86,9 +100,9 @@ export default class UsersRequest {
     queries.fromTime = moment(queries.fromTime, 'L').startOf('day').toISOString();
     queries.toTime = moment(queries.toTime, 'L').endOf('day').toISOString();
 
-    logger.debug('get users from %s with %j', carrierId, queries, {});
+    logger.debug(`End User Server End Point: ${util.format('%s%s', base, url)}?${qs.stringify(queries)}`);
 
-    var currentPageRequest = (queries, cb)=>{
+    var currentPageRequest = (queries, cb) => {
       request
         .get(util.format('%s%s', base, url))
         .query(queries)

@@ -279,7 +279,7 @@ export default class ExportTask {
       let request = fetchDep(nconf.get('containerName'), config.EXPORT_REQUEST);
 
       Q.ninvoke(request, config.EXPORT_REQUEST_EXECUTION, param)
-        .then((result) => {
+        .then(result => {
           let contentIndex = 0;
 
           // Compatible with different naming fields from end point response
@@ -315,7 +315,7 @@ export default class ExportTask {
             next(param);
           }
         })
-        .catch((err) => { return cb(err); })
+        .catch(err => cb(err))
         .done();
     }
 
