@@ -28,15 +28,6 @@ let { pages: { topUp: { pageRec: PAGE_REC } } } = config;
 const INITIAL_PAGE_NUMBER = 0;
 const MONTHS_BEFORE_TODAY = 1;
 
-const defaultQuery = {
-  carrierId: null,
-  startDate: moment().startOf('day').subtract(MONTHS_BEFORE_TODAY, 'month').format(DATE_FORMAT),
-  endDate: moment().endOf('day').format(DATE_FORMAT),
-  number: null,
-  page: INITIAL_PAGE_NUMBER,
-  pageRec: PAGE_REC
-};
-
 function getInitialQueryFromURL(params, query = {}) {
   return {
     carrierId: params.identity,
@@ -59,6 +50,15 @@ var SMS = React.createClass({
     storeListeners: [SMSStore],
 
     fetchData: function(context, params, query, done) {
+      let defaultQuery = {
+        carrierId: null,
+        startDate: moment().startOf('day').subtract(MONTHS_BEFORE_TODAY, 'month').format(DATE_FORMAT),
+        endDate: moment().endOf('day').format(DATE_FORMAT),
+        number: null,
+        page: INITIAL_PAGE_NUMBER,
+        pageRec: PAGE_REC
+      };
+
       concurrent([
         context.executeAction.bind(context, clearSMS, {}),
         context.executeAction.bind(context, loadSMS, _.merge(_.clone(defaultQuery), getInitialQueryFromURL(params, query)))
@@ -67,7 +67,18 @@ var SMS = React.createClass({
   },
 
   getInitialState: function() {
-    return _.merge(_.clone(defaultQuery), this.getRequestBodyFromQuery(), this.getStateFromStores());
+    return _.merge(_.clone(this.getDefaultQuery()), this.getRequestBodyFromQuery(), this.getStateFromStores());
+  },
+
+  getDefaultQuery() {
+    return {
+      carrierId: null,
+      startDate: moment().startOf('day').subtract(MONTHS_BEFORE_TODAY, 'month').format(DATE_FORMAT),
+      endDate: moment().endOf('day').format(DATE_FORMAT),
+      number: null,
+      page: INITIAL_PAGE_NUMBER,
+      pageRec: PAGE_REC
+    };
   },
 
   getRequestBodyFromQuery: function(query) {

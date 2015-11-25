@@ -29,15 +29,6 @@ const INITIAL_PAGE_NUMBER = 1;
 // WLP-323
 const MAX_QUERY_DATE_RANGE = 7;
 
-const defaultQuery = {
-  carrierId: null,
-  startDate: moment().startOf('day').subtract(MAX_QUERY_DATE_RANGE, 'days').format(DATE_FORMAT),
-  endDate: moment().endOf('day').format(DATE_FORMAT),
-  number: null,
-  page: INITIAL_PAGE_NUMBER,
-  pageRec: PAGE_REC
-};
-
 function getInitialQueryFromURL(params, query = {}) {
   return {
     carrierId: params.identity,
@@ -60,6 +51,15 @@ var TopUp = React.createClass({
     storeListeners: [TopUpStore],
 
     fetchData: function(context, params, query, done) {
+      let defaultQuery = {
+        carrierId: null,
+        startDate: moment().startOf('day').subtract(MAX_QUERY_DATE_RANGE, 'days').format(DATE_FORMAT),
+        endDate: moment().endOf('day').format(DATE_FORMAT),
+        number: null,
+        page: INITIAL_PAGE_NUMBER,
+        pageRec: PAGE_REC
+      };
+
       concurrent([
         context.executeAction.bind(context, clearTopUp, {}),
         context.executeAction.bind(context, loadTransactions, _.merge(_.clone(defaultQuery), getInitialQueryFromURL(params, query), { reload: true }))
@@ -68,7 +68,18 @@ var TopUp = React.createClass({
   },
 
   getInitialState: function() {
-    return _.merge(_.clone(defaultQuery), this.getRequestBodyFromQuery(), this.getStateFromStores());
+    return _.merge(_.clone(this.getDefaultQuery()), this.getRequestBodyFromQuery(), this.getStateFromStores());
+  },
+
+  getDefaultQuery() {
+    return {
+      carrierId: null,
+      startDate: moment().startOf('day').subtract(MAX_QUERY_DATE_RANGE, 'days').format(DATE_FORMAT),
+      endDate: moment().endOf('day').format(DATE_FORMAT),
+      number: null,
+      page: INITIAL_PAGE_NUMBER,
+      pageRec: PAGE_REC
+    };
   },
 
   getRequestBodyFromQuery: function(query) {

@@ -35,13 +35,6 @@ let { pages: { endUser: { pageRec: PAGE_REC } } } = config;
 const INITIAL_PAGE_NUMBER = 0;
 const MONTHS_BEFORE_TODAY = 1;
 
-const defaultQuery = {
-  carrierId: null,
-  startDate: moment().startOf('day').subtract(MONTHS_BEFORE_TODAY, 'month').format(DATE_FORMAT),
-  endDate: moment().endOf('day').format(DATE_FORMAT),
-  page: INITIAL_PAGE_NUMBER
-};
-
 function getInitialQueryFromURL(params, query = {}) {
   return {
     carrierId: params.identity,
@@ -65,18 +58,27 @@ var EndUsers = React.createClass({
     storeListeners: [EndUserStore],
 
     fetchData: function(context, params, query, done) {
-        concurrent([
-          context.executeAction.bind(context, clearEndUsers)
-        ], done || function() {});
+      concurrent([
+        context.executeAction.bind(context, clearEndUsers)
+      ], done || function() {});
     }
   },
 
   getInitialState: function() {
-    return _.merge(_.clone(defaultQuery), this.getRequestBodyFromQuery(), this.getStateFromStores());
+    return _.merge(_.clone(this.getDefaultQuery()), this.getRequestBodyFromQuery(), this.getStateFromStores());
+  },
+
+  getDefaultQuery() {
+    return {
+      carrierId: null,
+      startDate: moment().startOf('day').subtract(MONTHS_BEFORE_TODAY, 'month').format(DATE_FORMAT),
+      endDate: moment().endOf('day').format(DATE_FORMAT),
+      page: INITIAL_PAGE_NUMBER
+    };
   },
 
   componentDidMount: function() {
-    this.executeAction(fetchEndUsers, _.merge(_.clone(defaultQuery), this.getRequestBodyFromState(), this.getStateFromStores()));
+    this.executeAction(fetchEndUsers, _.merge(_.clone(this.getDefaultQuery()), this.getRequestBodyFromState(), this.getStateFromStores()));
   },
 
   componentDidUpdate: function(prevProps, prevState) {
@@ -99,7 +101,7 @@ var EndUsers = React.createClass({
     let nextStartDate = this.getRequestBodyFromQuery().startDate;
     let nextEndDate = this.getRequestBodyFromQuery().endDate;
     if ( nextStartDate && nextEndDate && (prevStartDate !== nextStartDate || prevEndDate !== nextEndDate) ) {
-      this.executeAction(fetchEndUsers, _.merge(_.clone(defaultQuery), this.getRequestBodyFromState(), this.getRequestBodyFromQuery()))
+      this.executeAction(fetchEndUsers, _.merge(_.clone(this.getDefaultQuery()), this.getRequestBodyFromState(), this.getRequestBodyFromQuery()))
     }
   },
 

@@ -6,6 +6,7 @@ var Q       = require('q');
 var request = require('superagent');
 var util    = require('util');
 
+import qs from 'qs';
 import BaseRequest from '../Base';
 
 export default class TopUpRequest extends BaseRequest {
@@ -61,6 +62,8 @@ export default class TopUpRequest extends BaseRequest {
     var base = this.opts.baseUrl;
     var url = this.opts.methods.LIST.URL;
     var fullUrl = util.format('%s%s', base, url);
+
+    logger.debug(`TopUp API Endpoint: ${util.format('%s%s', base, url)}?${qs.stringify(params)}`);
 
     request
       .get(fullUrl)
