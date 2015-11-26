@@ -17,8 +17,7 @@ export default createClass({
     firstName: PropTypes.string,
     lastName: PropTypes.string,
     createdAt: PropTypes.string,
-    assignedGroup: PropTypes.string,
-    isVerified: PropTypes.string
+    assignedGroup: PropTypes.string
   },
 
   render() {
