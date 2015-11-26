@@ -4,7 +4,7 @@ import request from 'superagent';
 import util from 'util';
 import qs from 'qs';
 
-import {contructOpts, appendRequestId} from '../helper';
+import {constructOpts, appendRequestId} from '../helper';
 
 export default class WalletRequest {
 
@@ -21,7 +21,7 @@ export default class WalletRequest {
       }
     };
 
-    this.opts = contructOpts(opts);
+    this.opts = constructOpts(opts);
   }
 
   validateQuery(params, cb) {

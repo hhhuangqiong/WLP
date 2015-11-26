@@ -23,6 +23,8 @@ router
   .get('/session', auth.ensureAuthenticated)
   .get('/carriers/:carrierId/authority', authority.getCapabilityList)
   .get('/carriers/:carrierId/users', carriers.getUsers)
+  .get('/carriers/:carrierId/userStatsTotal', carriers.getEndUsersStatsTotal)
+  .get('/carriers/:carrierId/userStatsMonthly', carriers.getEndUsersStatsMonthly)
   .get('/carriers/:carrierId/users/:username',  carriers.getUsername)
   .get('/carriers/:carrierId/users/:username/wallet', carriers.getUserWallet)
   .post('/carriers/:carrierId/users/:username/suspension', carriers.suspendUser)

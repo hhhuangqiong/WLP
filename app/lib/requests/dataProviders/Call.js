@@ -6,7 +6,7 @@ var Q       = require('q');
 var request = require('superagent');
 var util    = require('util');
 
-import {contructOpts, formatDateString, swapDate, composeResponse, handleError} from '../helper';
+import {constructOpts, formatDateString, swapDate, composeResponse, handleError} from '../helper';
 import qs from 'qs';
 
 export default class CallsRequest {
@@ -25,7 +25,7 @@ export default class CallsRequest {
       }
     };
 
-    this.opts = contructOpts(opts);
+    this.opts = constructOpts(opts);
   }
 
   /**

@@ -7,7 +7,7 @@ var request = require('superagent');
 var util    = require('util');
 var qs      = require('qs');
 
-import {contructOpts, appendRequestId, handleError} from '../helper';
+import {constructOpts, appendRequestId, handleError} from '../helper';
 
 export default class TopUpRequest {
 
@@ -24,7 +24,7 @@ export default class TopUpRequest {
       }
     };
 
-    this.opts = contructOpts(opts);
+    this.opts = constructOpts(opts);
   }
 
   formatQueryData(params, cb) {

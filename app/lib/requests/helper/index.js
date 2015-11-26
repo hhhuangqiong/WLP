@@ -6,7 +6,7 @@ import validator from 'validator';
  * @param  {[type]} opts = {} [description]
  * @return {[type]}      [description]
  */
-export function contructOpts(opts) {
+export function constructOpts(opts) {
   opts.timeout = opts.timeout || 5000;
 
   if (!opts.baseUrl || !validator.isURL(opts.baseUrl)) {
@@ -112,10 +112,20 @@ export function composeResponse(response) {
 export function handleError(err, status) {
   const error = new Error(err.message);
 
-  if (err.timeout) {
+  if (err.code === 'ETIMEDOUT' || err.code === 'ECONNABORTED') {
     error.status = 504;
-    error.timeout = err.timeout;
-    return error;
+    error.timeout = this.opts.timeout;
+  } else if (err.code === 'ENOTFOUND') {
+    error.status = 404;
+  } else if (err.code === 'ECONNREFUSED') {
+    error.status = 500;
+  } else if (err.response) {
+    // SuperAgent error object structure
+    // https://visionmedia.github.io/superagent/#error-handling
+    const response = err.response.body;
+    error.status = err.status;
+    error.code = response.error;
+    error.message = response.message;
   }
 
   error.status = err.status || status || 500;

@@ -6,7 +6,7 @@ var util    = require('util');
 var _       = require('lodash');
 var qs      = require('qs');
 
-import {contructOpts, formatDateString, swapDate, composeResponse, handleError} from '../helper';
+import {constructOpts, formatDateString, swapDate, composeResponse, handleError} from '../helper';
 
 const LABEL_FOR_NULL = 'N/A';
 
@@ -25,7 +25,7 @@ export default class ImRequest {
       }
     };
 
-    this.opts = contructOpts(opts);
+    this.opts = constructOpts(opts);
   }
 
   /**

@@ -12,12 +12,14 @@ var topUpRequest        = fetchDep(nconf.get('containerName'), 'TopUpRequest');
 var imRequest           = fetchDep(nconf.get('containerName'), 'ImRequest');
 var vsfRequest          = fetchDep(nconf.get('containerName'), 'VSFTransactionRequest');
 var verificationRequest = fetchDep(nconf.get('containerName'), 'VerificationRequest');
+var userStatsRequest    = fetchDep(nconf.get('containerName'), 'UserStatsRequest');
 
 import SmsRequest from '../../lib/requests/SMS';
 import PortalUser from '../../collections/portalUser';
 import Company    from '../../collections/company';
 
 import {parseVerificationStatistic} from '../parser/verificationStats';
+import {parseTotalAtTime, parseMonthlyTotalInTime} from '../parser/userStats';
 
 let dateFormat = nconf.get('display:dateFormat');
 
@@ -536,6 +538,148 @@ let getVerificationStatistics = function (req, res) {
   });
 };
 
+let getEndUsersStatsTotal = function(req, res) {
+  req.checkParams('carrierId').notEmpty();
+  req.checkQuery('fromTime').notEmpty();
+  req.checkQuery('toTime').notEmpty();
+
+  let error = req.validationErrors();
+
+  if (error) {
+    return res.status(400).json({
+      error: {
+        message: prepareValidationMessage(err)
+      }
+    });
+  }
+
+  let params = _.omit({
+    carriers: req.params.carrierId,
+    breakdown: 'carrier',
+    from: req.query.fromTime,
+    to: req.query.toTime,
+    timescale: 'day',
+  }, (val) => {
+    return !val;
+  });
+
+  Q.ninvoke(userStatsRequest, 'getUserStats', params)
+    .then((response) => {
+      return Q.nfcall(parseTotalAtTime, response);
+    })
+    .then((result) => {
+      return res.json({ totalRegisteredUser: result });
+    })
+    .catch((err) => {
+      let { code, message, timeout, status } = err;
+
+      return res.status(status || 500).json({
+        error: {
+          code,
+          message,
+          timeout
+        }
+      });
+    }).done();
+};
+
+let getEndUsersStatsMonthly = function(req, res) {
+  req.checkParams('carrierId').notEmpty();
+  req.checkQuery('fromTime').notEmpty();
+  req.checkQuery('toTime').notEmpty();
+
+  let error = req.validationErrors();
+
+  if (error) {
+    return res.status(400).json({
+      error: {
+        message: prepareValidationMessage(err)
+      }
+    });
+  }
+
+  let thisMonthActiveParams = _.omit({
+    carriers: req.params.carrierId,
+    breakdown: 'carrier',
+    from: req.query.fromTime,
+    to: req.query.toTime,
+    timescale: 'day',
+  }, (val) => {
+    return !val;
+  });
+
+  let lastMonthActiveParams = _.omit({
+    carriers: req.params.carrierId,
+    breakdown: 'carrier',
+    from: moment(req.query.fromTime, 'x').subtract(1, 'months').startOf('month').format('x'),
+    to: moment(req.query.toTime, 'x').subtract(1, 'months').endOf('month').format('x'),
+    timescale: 'day',
+  }, (val) => {
+    return !val;
+  });
+
+  let thisMonthRegisteredParams = _.omit({
+    carriers: req.params.carrierId,
+    breakdown: 'carrier',
+    from: req.query.fromTime,
+    to: req.query.toTime,
+    timescale: 'day',
+  }, (val) => {
+    return !val;
+  });
+
+  let lastMonthRegisteredParams = _.omit({
+    carriers: req.params.carrierId,
+    breakdown: 'carrier',
+    from: moment(req.query.fromTime, 'x').subtract(1, 'months').startOf('month').format('x'),
+    to: moment(req.query.toTime, 'x').subtract(1, 'months').endOf('month').format('x'),
+    timescale: 'day',
+  }, (val) => {
+    return !val;
+  });
+
+  Q.allSettled([
+    Q.ninvoke(userStatsRequest, 'getNewUserStats', thisMonthRegisteredParams),
+    Q.ninvoke(userStatsRequest, 'getNewUserStats', lastMonthRegisteredParams),
+    Q.ninvoke(userStatsRequest, 'getActiveUserStats', thisMonthActiveParams),
+    Q.ninvoke(userStatsRequest, 'getActiveUserStats', lastMonthActiveParams),
+  ]).spread((thisMonthRegisteredStats, lastMonthRegisteredStats, thisMonthActiveStats, lastMonthActiveStats) => {
+    let responses = [thisMonthRegisteredStats, lastMonthRegisteredStats, thisMonthActiveStats, lastMonthActiveStats]
+    let errors = _.reduce(responses, (result, response) => {
+      if (response.state !== 'fulfilled') {
+        result.push(response.reason);
+      }
+
+      return result;
+    }, []);
+
+    if (!_.isEmpty(errors)) {
+      return res.status(500).json({
+        error: errors
+      });
+    }
+
+    try {
+      return res.json({
+        thisMonthActiveUser: parseMonthlyTotalInTime(thisMonthActiveStats.value),
+        lastMonthActiveUser: parseMonthlyTotalInTime(lastMonthActiveStats.value),
+        thisMonthRegisteredUser: parseMonthlyTotalInTime(thisMonthRegisteredStats.value),
+        lastMonthRegisteredUser: parseMonthlyTotalInTime(lastMonthRegisteredStats.value),
+      });
+    } catch (error) {
+      let { code, message, timeout, status } = error;
+      return res.status(status || 500).json({
+        error: {
+          code,
+          message,
+          timeout
+        }
+      });
+    }
+  }).done();
+};
+
+
 export {
   getCalls,
   getIM,
@@ -544,6 +688,8 @@ export {
   getUserWallet,
   getUsername,
   getUsers,
+  getEndUsersStatsTotal,
+  getEndUsersStatsMonthly,
   getVSF,
   getVerifications,
   getVerificationStatistics,

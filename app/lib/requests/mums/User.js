@@ -7,7 +7,7 @@ var logger  = require('winston');
 var request = require('superagent');
 var util    = require('util');
 
-import {contructOpts, handleError} from '../helper';
+import {constructOpts, handleError} from '../helper';
 
 export default class UsersRequest {
 
@@ -40,7 +40,7 @@ export default class UsersRequest {
       }
     };
 
-    this.opts = contructOpts(opts);
+    this.opts = constructOpts(opts);
   }
 
 

@@ -4,7 +4,7 @@ var Q       = require('q');
 var request = require('superagent');
 var util    = require('util');
 
-import {contructOpts, handleError} from '../helper';
+import {constructOpts, handleError} from '../helper';
 
 const LONG_DATE_FORMAT = 'YYYY-MM-DDTHH:MM:ss[Z]';
 
@@ -21,7 +21,7 @@ export default class VSFTransactionRequest {
       }
     };
 
-    this.opts = contructOpts(opts);
+    this.opts = constructOpts(opts);
   }
 
   formatQueryData(params, cb) {

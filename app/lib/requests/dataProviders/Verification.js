@@ -8,7 +8,7 @@ import moment from 'moment';
 import CountryData from 'country-data';
 import qs from 'qs';
 
-import {contructOpts, formatDateString, swapDate, handleError} from '../helper';
+import {constructOpts, formatDateString, swapDate, handleError} from '../helper';
 import jsonSchema from '../../../utils/getSimplifiedJsonSchema.js';
 
 /**
@@ -46,7 +46,7 @@ export default class VerificationRequest {
       }
     };
 
-    this.opts = contructOpts(opts);
+    this.opts = constructOpts(opts);
   }
 
   /**
