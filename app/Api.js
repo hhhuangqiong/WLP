@@ -324,6 +324,24 @@ Api.prototype.getCurrentCompanyInfo = function(params, cb) {
     .end(genericHandler(cb));
 };
 
+Api.prototype.getEndUsersStatsTotal = function(params, cb) {
+  superagent
+    .get(`${this._getHost()}/api/carriers/${params.carrierId}/userStatsTotal`)
+    .accept('json')
+    .set('Authorization', this._getToken())
+    .query(params)
+    .end(genericHandler(cb));
+};
+
+Api.prototype.getEndUsersStatsMonthly = function(params, cb) {
+  superagent
+    .get(`${this._getHost()}/api/carriers/${params.carrierId}/userStatsMonthly`)
+    .accept('json')
+    .set('Authorization', this._getToken())
+    .query(params)
+    .end(genericHandler(cb));
+};
+
 assign(
   Api.prototype,
   require('./server/api/auth')(API_PATH_PREFIX),

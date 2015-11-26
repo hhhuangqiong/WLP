@@ -18,3 +18,154 @@
     }
   }
 }
+
+.end-users-overview {
+  $overviewPadding: rem-calc(15);
+  $sectionBorder: 1px solid #eee;
+  $changesPositiveColor: green;
+  $changesNegativeColor: red;
+  $changesArrowRemSize: 9;
+
+  @mixin disabled-overlay() {
+    background-color: rgba(255, 255, 255, 0.6);
+    content: " ";
+    display: block;
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    z-index: 10;
+  }
+
+  padding-left: $column-gutter;
+
+  .panel {
+    overflow: visible;
+  }
+
+  section {
+    display: table-cell;
+    padding: $overviewPadding;
+
+    &.left-border {
+      border-left: $sectionBorder;
+    }
+
+    .verification-overview__title {
+      // To make the content of it looks horizontally align
+      min-height: rem-calc(40);
+    }
+  }
+
+  &__total {
+    @include fadeIn;
+
+    padding: 0 !important;
+    position: relative;
+    width: 100%;
+    display: table;
+
+    section {
+      padding: rem-calc(27);
+    }
+  }
+
+  &__summary {
+    @include fadeIn;
+
+    padding: 0 !important;
+    position: relative;
+    width: 100%;
+    display: table;
+
+    &.error:after {
+      @include disabled-overlay();
+    }
+  }
+
+  &__title {
+    font-size: rem-calc(14);
+    color: gray;
+    text-align: center;
+
+    label {
+      cursor: pointer;
+      display: inline-block;
+      margin: 0 rem-calc(5);
+      padding: 0;
+      line-height: 0;
+    }
+  }
+
+  &__value {
+    font-size: rem-calc(25);
+    font-weight: bolder;
+    text-align: center;
+  }
+
+  &__changes {
+    @include fadeIn;
+
+    display: table;
+    margin: 0 auto;
+
+    &.up.positive {
+      color: $changesPositiveColor;
+
+      .arrow {
+        @include triangle(up, $changesPositiveColor, $changesArrowRemSize);
+      }
+    }
+
+    &.up.negative {
+      color: $changesNegativeColor;
+
+      .arrow {
+        @include triangle(up, $changesNegativeColor, $changesArrowRemSize);
+      }
+    }
+
+    &.down.positive {
+      color: $changesPositiveColor;
+
+      .arrow {
+        @include triangle(down, $changesPositiveColor, $changesArrowRemSize);
+      }
+    }
+
+    &.down.negative {
+      color: $changesNegativeColor;
+
+      .arrow {
+        @include triangle(down, $changesNegativeColor, $changesArrowRemSize);
+      }
+    }
+
+    span {
+      display: inline-block;
+      margin: 0 rem-calc(4);
+      font-size: rem-calc(12);
+    }
+  }
+
+  &__month-picker, &__year-picker {
+    position: relative;
+    z-index: 1;
+    width: rem-calc(160);
+    line-height: rem-calc(14);
+    font-size: rem-calc(14);
+  }
+}
+
+.end-users-details {
+
+  &__app-select {
+    margin-top: rem-calc(10);
+
+    height: rem-calc(20);
+    line-height: rem-calc(18);
+
+    min-width: rem-calc(280);
+  }
+}

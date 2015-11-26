@@ -8,7 +8,7 @@ import AuthMixin from '../../../utils/AuthMixin';
 import ApplicationStore from '../../../main/stores/ApplicationStore';
 import AuthStore from '../../../main/stores/AuthStore';
 
-import fetchAppIds from '../actions/fetchAppIds';
+import fetchAppIds from '../../../main/actions/fetchAppIds';
 
 const debug = require('debug')('app:verification/components/Verification');
 

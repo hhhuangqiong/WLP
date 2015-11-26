@@ -24,6 +24,12 @@
       padding: 0;
       margin: 0;
     }
+
+    &__input-group {
+      position: relative;
+      margin-top: - rem-calc(18);
+      top: rem-calc(9);
+    }
   }
   .header.narrow {
     padding: rem-calc(18);
