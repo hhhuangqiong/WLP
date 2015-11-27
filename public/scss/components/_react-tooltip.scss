@@ -32,7 +32,8 @@
   transition: opacity 0.3s ease-out , margin-top 0.3s ease-out, margin-left 0.3s ease-out;
   top: rem-calc(-8);
   right: rem-calc(25);
-  width: rem-calc(200);
+  width: auto;
+  min-width: rem-calc(200);
   &:after {
     content: "";
     width: 0;
