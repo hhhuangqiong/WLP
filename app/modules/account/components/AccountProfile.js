@@ -117,20 +117,6 @@ export default React.createClass({
     this.setState({ affiliatedCompany: selectedCompany._id });
   },
 
-  handleAssignedCompanyChange(data) {
-    // it is not a valid array if the length of string is less than 3
-    if (data.length < 3) return;
-
-    // the onChange function provided by react-select return a string with separeted comma representing an array of changes
-    let companyRemains = !data.length ? [] : data.split(',');
-
-    let assignedCompanies = _.map(companyRemains, name => {
-      return _.find(this.state.assignedCompanies, company => name === company.name);
-    });
-
-    this.setState({ assignedCompanies });
-  },
-
   containErrors() {
     let {
       firstNameError, lastNameError, emailError
