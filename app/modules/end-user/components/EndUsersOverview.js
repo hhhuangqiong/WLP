@@ -99,7 +99,7 @@ const EndUsersOverview = React.createClass({
     let monthlyStatsFrom = moment().subtract(1, 'months');
     let monthlyStatsTo = moment().subtract(1, 'months');
 
-    if (month) {
+    if (month || month === 0) {
       monthlyStatsFrom.month(month);
       monthlyStatsTo.month(month);
     }
