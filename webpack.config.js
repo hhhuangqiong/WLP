@@ -1,20 +1,17 @@
 var path        = require('path');
 var webpack     = require('webpack');
+var nodeEnv     = process.env.NODE_ENV;
 var appHostname = process.env.APP_HOSTNAME || 'localhost';
 var hotLoadPort = process.env.HOT_LOAD_PORT || 8888;
+var enableHotloader = process.env.ENABLE_WEBPACK_HOTLOADER==="true" || false;
 
-module.exports = {
-  custom: {
-    hotLoadPort: hotLoadPort
-  },
-  devtool: 'eval',
+// common
+var config =  {
+  custom: {},
   entry: [
-
-    // always serve over 'http'?
-    'webpack-dev-server/client?http://' + appHostname + ':' + hotLoadPort,
-    'webpack/hot/only-dev-server',
     './app/client/index.js'
   ],
+  devtool: 'eval',
   module: {
     loaders: [
       { test: /\.js$/, exclude: /node_modules/, loaders: ['react-hot', 'babel?cacheDirectory']},
@@ -24,16 +21,11 @@ module.exports = {
       { test: /\.json$/, loader: 'json' }
     ]
   },
-  plugins: [
-    new webpack.HotModuleReplacementPlugin(),
-    new webpack.NoErrorsPlugin()
-  ],
+  plugins: [],
   output: {
     path: path.resolve(__dirname, 'public', 'javascript'),
     filename: 'bundle.js',
-
-    // use 'webpack-dev-server' url, otherwise will have unexpected token error
-    publicPath: 'http://' + appHostname + ':' + hotLoadPort + '/'
+    publicPath: '/javascript/'
   },
   node: {
     net: 'empty',
@@ -41,3 +33,22 @@ module.exports = {
     fs: 'empty'
   }
 };
+
+if (nodeEnv==="production") {
+  config.plugins.push(new webpack.DefinePlugin({
+      'process.env': {NODE_ENV: '"production"'}
+    }));
+}
+else {
+  config.plugins.push(new webpack.NoErrorsPlugin());
+}
+
+if (enableHotloader) {
+  console.log("Hotloader enabled!");
+  config.entry.unshift('webpack-dev-server/client?http://' + appHostname + ':' + hotLoadPort);
+  config.entry.unshift('webpack/hot/only-dev-server');
+  config.plugins.push(new webpack.HotModuleReplacementPlugin());
+  config.custom.hotLoadPort = hotLoadPort;
+}
+
+module.exports = config;

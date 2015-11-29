@@ -7,11 +7,11 @@ import webpackConfig from '../../webpack.config.js';
 
 import {baseUrl} from '../utils/url';
 
-import {isDev} from '../utils/env';
+import {isDev, enabledHotloader} from '../utils/env';
 
 var appUrl, bundleFile, bundlePath;
 
-if (isDev()) {
+if (enabledHotloader()) {
   //use empty root path for client side, rely on relative path resolving
   appUrl = baseUrl(webpackConfig.custom.hotLoadPort);
   bundleFile =  'bundle.js';

@@ -8,6 +8,7 @@
     "dist": "npm run clean && npm run transpile && gulp scss:production",
     "doc": "npm run transpile && jsdoc -r node_modules/app -d build/docs",
     "lint": "eslint app",
+    "debug": "npm run build && node-debug bin/www.js",
     "server": "node bin/www.js",
     "transpile": "gulp babel webpack",
     "pretest": "npm run transpile",
