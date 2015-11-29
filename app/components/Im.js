@@ -255,6 +255,7 @@ var Im = React.createClass({
 
             <div className="im-search top-bar-section right">
               <Searchbox
+                search={this.state.search}
                 searchTypes={searchTypes}
                 placeHolder="Username/Mobile"
                 onSelectChangeHandler={this.handleSearchTypeChange}
