@@ -259,6 +259,7 @@ var Im = React.createClass({
                 searchTypes={searchTypes}
                 placeHolder="Username/Mobile"
                 onSelectChangeHandler={this.handleSearchTypeChange}
+                onInputChangeHandler={this.handleSearchChange}
                 onKeyPressHandler={this.handleSearchChange}
                 />
             </div>
