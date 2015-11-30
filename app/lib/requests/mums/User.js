@@ -44,18 +44,14 @@ export default class UsersRequest extends BaseRequest {
   }
 
 
-  getExportUsers({carrier, from, to, pageNumberIndex, page}, cb) {
+  getExportUsers({carrier, from, to, page=0}, cb) {
     const query = {fromTime: from, toTime: to};
-    if (page) {
-      query.pageNumberIndex = page;
-    } else {
-      query.pageNumberIndex = pageNumberIndex;
-    }
+    query.pageNumberIndex = page;
     this.getUsers(carrier, query, (err, res)=> {
       if (err) return cb(err);
 
       try {
-        return cb(null, this._morphExportUsers(res, query));
+        return cb(null, this._morphExportUsers(res));
       } catch(e) {
         logger.error('Unexpected response from MUMS %s', res);
         logger.error('Error stack:', e.stack);
@@ -71,7 +67,7 @@ export default class UsersRequest extends BaseRequest {
     });
   }
 
-  _morphExportUsers({ dateRange:{ pageNumberIndex }, userList, hasNextPage }, { page }) {
+  _morphExportUsers({ userList, hasNextPage, dateRange : { pageNumberIndex }}) {
     let usersData = {};
     usersData.contents = _.map(userList, (value)=>{
       // replace username with formed jid to maintain consistency between UI and export data
@@ -79,12 +75,12 @@ export default class UsersRequest extends BaseRequest {
       result.username = result.jid;
       return _.omit(result, ['devices','jid']);
     });
-    usersData.pageNumber = page || pageNumberIndex;
-    if (pageNumberIndex === 0) {
-      usersData.totalPages = (hasNextPage) ? pageNumberIndex + 2 : pageNumberIndex + 1;
-    }
-    if (pageNumberIndex > 0) {
-      usersData.totalPages = (hasNextPage) ? pageNumberIndex + 1 : pageNumberIndex;
+    usersData.pageNumber = pageNumberIndex;
+    usersData.totalPages = (hasNextPage) ? pageNumberIndex + 2  : pageNumberIndex + 1;
+
+    //override totalPages increment if there's no content, handling end of pagination
+    if (usersData.contents.length <= 0) {
+      usersData.totalPages = pageNumberIndex;
     }
     return usersData;
   }

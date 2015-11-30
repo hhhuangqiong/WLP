@@ -122,7 +122,6 @@ export default class ExportTask {
         carrier: params.carrierId,
         from: query.startDate,
         to: query.endDate,
-        pageNumberIndex: query.pageNumberIndex,
         page: PAGE_START_INDEX,
         size: PAGE_SIZE,
       };
