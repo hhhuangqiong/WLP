@@ -42,7 +42,7 @@ table {
                 font-weight: 500;
 
                 &--inactive {
-                    cursor: none;
+                    cursor: initial;
                 }
 
                 &:first-letter {
