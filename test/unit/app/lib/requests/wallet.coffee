@@ -69,7 +69,7 @@ describe 'WalletRequest', ->
       fn = request.validateQuery params, (err, formatted) ->
         expect(err).to.not.be.undefined
 
-    it 'should not return error if timeout', (done) ->
+    it.skip 'should not return error if timeout', (done) ->
       timeout = 10
       request = new WalletRequest(baseUrl, timeout)
       params  = {

@@ -114,7 +114,7 @@ export function handleError(err, status) {
 
   if (err.code === 'ETIMEDOUT' || err.code === 'ECONNABORTED') {
     error.status = 504;
-    error.timeout = this.opts.timeout;
+    error.timeout = err.timeout;
   } else if (err.code === 'ENOTFOUND') {
     error.status = 404;
   } else if (err.code === 'ECONNREFUSED') {

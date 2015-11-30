@@ -24,7 +24,9 @@ export default {
       return '';
     }
 
-    let momentDuration = moment.duration(duration);
+    // duration in millisecond, divided by 1000 to get seconds, apply ceiling to round up,
+    // times 1000 to transform to milliseconds again for process
+    let momentDuration = moment.duration( Math.ceil(duration / 1000) * 1000 );
 
     let hours = momentDuration.hours();
     let minutes = momentDuration.minutes();

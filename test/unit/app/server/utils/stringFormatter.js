@@ -19,18 +19,18 @@ describe('To test different format parser', function() {
       expect(parseDuration(0)).to.equal('0s');
     });
 
-    it('should return 0s if the millisecond is less than 1000', function() {
-      expect(parseDuration(1)).to.equal('0s');
-      expect(parseDuration(500)).to.equal('0s');
-      expect(parseDuration(999)).to.equal('0s');
+    it('should return 1s if the millisecond is less than 1000', function() {
+      expect(parseDuration(1)).to.equal('1s');
+      expect(parseDuration(500)).to.equal('1s');
+      expect(parseDuration(999)).to.equal('1s');
 
       expect(parseDuration(1000)).to.not.equal('0s');
     });
 
     it('should return 1s', function() {
       expect(parseDuration(1000)).to.equal('1s');
-      expect(parseDuration(1001)).to.equal('1s');
-      expect(parseDuration(1999)).to.equal('1s');
+      expect(parseDuration(1001)).to.equal('2s');
+      expect(parseDuration(1999)).to.equal('2s');
       expect(parseDuration(2000)).to.equal('2s');
     });
 
