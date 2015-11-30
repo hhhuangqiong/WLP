@@ -1,7 +1,7 @@
-import React from 'react';
+import React, { PropTypes } from 'react';
 import classnames from 'classnames';
-import {Link} from 'react-router';
-import {connectToStores} from 'fluxible/addons';
+import { Link } from 'react-router';
+import { connectToStores } from 'fluxible/addons';
 
 import Permit from './Permit';
 import ApplicationStore from '../../stores/ApplicationStore';
@@ -9,19 +9,19 @@ import AuthStore from '../../stores/AuthStore';
 
 import navSections from '../../constants/navSection';
 
-class Sidebar extends React.Component{
+class Sidebar extends React.Component {
   constructor(props, context) {
     super(props, context);
   }
 
   render() {
-    let navParams = this.context.router.getCurrentParams();
-    let role = navParams.role || this.props.role;
-    let identity = navParams.identity || this.props.carrierId;
+    const navParams = this.context.router.getCurrentParams();
+    const role = navParams.role || this.props.role;
+    const identity = navParams.identity || this.props.carrierId;
 
-    let companyName = this.props.currentCompany && this.props.currentCompany.name;
+    const companyName = this.props.currentCompany && this.props.currentCompany.name;
     let logoSrc = '/images/logo-m800.png';
-    if (this.props.currentCompany && this.props.currentCompany.name != 'M800') {
+    if (this.props.currentCompany && this.props.currentCompany.name !== 'M800') {
       logoSrc = `/data/${this.props.currentCompany && this.props.currentCompany.logo}`;
     }
 
@@ -40,7 +40,7 @@ class Sidebar extends React.Component{
               </label>
             </a>
           </li>
-          {navSections.map((section,idx)=>{
+          {navSections.map((section, idx)=>{
             return (
               <Permit action="view" resource={section.page}>
                 <li key={idx}>
@@ -60,23 +60,31 @@ class Sidebar extends React.Component{
           })}
         </ul>
       </div>
-    )
+    );
   }
 }
 
+Sidebar.propTypes = {
+  role: PropTypes.string.isRequired,
+  carrierId: PropTypes.string.isRequired,
+  currentCompany: PropTypes.object.isRequired,
+  isOffCanvas: PropTypes.bool.isRequired,
+  handleOffCavnas: PropTypes.func.isRequired,
+};
+
 Sidebar.contextTypes = {
-  router: React.PropTypes.func.isRequired,
-  getStore: React.PropTypes.func,
-  executeAction: React.PropTypes.func
+  router: PropTypes.func.isRequired,
+  getStore: PropTypes.func,
+  executeAction: PropTypes.func,
 };
 
 // TODO: we can get navSections in NavStore
 // with fetchData method to acquire accessible sections from server
-Sidebar = connectToStores(Sidebar, [AuthStore, ApplicationStore], function (stores, props) {
+Sidebar = connectToStores(Sidebar, [AuthStore, ApplicationStore], stores => {
   return {
     role: stores.AuthStore.getUserRole(),
     carrierId: stores.AuthStore.getCarrierId(),
-    currentCompany: stores.ApplicationStore.getCurrentCompany()
+    currentCompany: stores.ApplicationStore.getCurrentCompany(),
   };
 });
 

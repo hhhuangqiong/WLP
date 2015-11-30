@@ -13,7 +13,9 @@
     "pretest": "npm run transpile",
     "test": "gulp test",
     "test:report": "NODE_PATH=app mocha --compilers js:babel/register --recursive test --reporter xunit > build/reports.xml",
-    "jest": "jest"
+    "jest": "jest",
+    "seed:capabilities": "babel-node bin/capabilities-seeding.js",
+    "seed:permission": "babel bin/permissionSeeding.js"
   },
   "jest": {
     "scriptPreprocessor": "<rootDir>/node_modules/babel-jest",

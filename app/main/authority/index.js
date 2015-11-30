@@ -1,9 +1,19 @@
 import _ from 'lodash';
 import logger from 'winston';
-import fs from 'fs';
-import path from 'path';
+
+import {
+  MongoError, NotFoundError, ArgumentNullError,
+} from 'common-errors';
 
 import { getAclString } from './utils';
+import Company from '../../collections/company';
+
+import {
+  OVERVIEW, ACCOUNT, COMPANY, END_USER, CALL,
+  IM, SMS, VSF, TOP_UP, VERIFICATION_SDK,
+} from '../../data/moduleId';
+
+const ROOT_COMPANY_CARRIER = 'm800';
 
 /**
  * @class Authority
@@ -13,18 +23,18 @@ import { getAclString } from './utils';
  */
 class Authority {
   constructor(resources, options) {
-    if (!resources)
-      throw new Error('missing resources');
+    if (!resources) throw new Error('missing resources');
 
-    this._resources = resources;
+    const { menus: menuItems } = resources;
+
+    // initialize capability list with full resources control
+    this._allowedMenuItems = this._allMenuItems =  menuItems;
 
     // missing carrierId here will not break the application
     // it will just be unable to find corresponding capability config json
     // and make the capability list empty
     this._carrierId = options && options.carrierId;
 
-    // initialize capability list with empty array
-    this._capabilities = [];
     this._getAclString = getAclString;
   }
 
@@ -39,84 +49,117 @@ class Authority {
    * @private
    */
   _hasFeature(config, featureName) {
-    return !_.isEmpty(_.find(config, function(feature) {
-      return feature.name == featureName;
-    }));
+    return config.includes(featureName);
   }
 
   /**
-   * @method _getMenu
+   * @method _getCapabilities
+   * return a promise by extracting the database result of company
+   *
+   * @private
+   */
+  _getCapabilities() {
+    return new Promise((resolve, reject) => {
+      Company.getCompanyByCarrierId(this._carrierId, (err, company) => {
+        if (err) return reject(new MongoError('Encounter error when finding company by carrierId', err));
+        if (!company) return reject(new NotFoundError('company'));
+
+        const { capabilities } = company;
+
+        resolve(capabilities || []);
+      });
+    });
+  }
+
+  /**
+   * @method _isRootCompany
+   * return a boolean to tell if current carrier whether it is a root company
+   *
+   * @private
+   */
+  _isRootCompany() {
+    return this._carrierId === ROOT_COMPANY_CARRIER;
+  }
+
+  /**
+   * @method _removeFeatures
+   * filter out unwanted feature
+   *
+   * @private
+   */
+  _removeFeatures(removeItem) {
+    this._allowedMenuItems = this._allowedMenuItems.filter(menuItem => menuItem !== removeItem);
+  }
+
+  /**
+   * @method _filterMenuItemsByCarrier
    * produce the capability list for resources on menu
    * and put into this._capability
    *
    * @private
    */
-  _getMenu() {
-    try {
-      // use fs.readFile so that the data is not from cache
-      // any run-time modifications could be taken effect
-      // without restart
-      let { capabilities: config } = JSON.parse(fs.readFileSync(path.resolve(__dirname, `./data/capability.${this._carrierId}.json`), 'utf8'));
-      let { menus } = this._resources;
-      let hasFeature = _.bindKey(this, '_hasFeature', config);
+  _filterMenuItemsByCarrier() {
+    return new Promise((resolve, reject) => {
+      this._getCapabilities()
+        .then(accessibleResources => {
+          const hasFeature = _.bindKey(this, '_hasFeature', accessibleResources);
 
-      menus.map((pageName) => {
-        // the follows are logic/conditions that
-        // would disable the accessibility of the resource
-        switch(pageName) {
-          case 'overview':
-            if (!hasFeature('user_management_dashboard')) return;
-            break;
+          /* Stop filtering any permission it is root company */
+          if (this._isRootCompany()) return resolve();
 
-          case 'company':
-            if (this._carrierId !== 'm800') return;
-            break;
+          this._allMenuItems.forEach(menuItem => {
+            const removeFeatures = _.bindKey(this, '_removeFeatures', menuItem);
 
-          case 'end-user':
-            if (!hasFeature('user_management_report') && !hasFeature('user_management_dashboard')) return;
-            break;
+            // the follows are logic/conditions that
+            // would disable the accessibility of the resource
+            switch (menuItem) {
+            case OVERVIEW:
+            case END_USER:
+              if (!hasFeature('end-user')) return removeFeatures();
+              break;
 
-          case 'call':
-            if (!hasFeature('call_report') && !hasFeature('call_dashboard')) return;
-            break;
+            case ACCOUNT:
+            case COMPANY:
+              if (!this._isRootCompany()) return removeFeatures();
+              break;
 
-          case 'im':
-            if (!hasFeature('im_report') && !hasFeature('im_dashboard')) return;
-            break;
+            case CALL:
+              if (!hasFeature('call')) return removeFeatures();
+              break;
 
-          case 'sms':
-            if (!hasFeature('service_type_white_label')) return;
-            if (!hasFeature('im_im_to_sms')) return;
-            if (!hasFeature('sms_report') && !hasFeature('sms_dashboard')) return;
-            break;
+            case IM:
+              if (!hasFeature('im')) return removeFeatures();
+              break;
 
-          case 'vsf':
-            if (!hasFeature('service_type_white_label')) return;
-            if (!hasFeature('virtual_store_front_report') && !hasFeature('virtual_store_front_dashboard')) return;
-            break;
+            case SMS:
+              if (!hasFeature('service.white_label')) return removeFeatures();
+              if (!hasFeature('im.im_to_sms')) return removeFeatures();
+              if (!hasFeature('sms')) return removeFeatures();
+              break;
 
-          case 'top-up':
-            if (!hasFeature('service_type_white_label')) return;
-            if (!hasFeature('wallet')) return;
-            break;
+            case VSF:
+              if (!hasFeature('service.white_label')) return removeFeatures();
+              if (!hasFeature('vsf')) return removeFeatures();
+              break;
 
-          case 'verification':
-            if (!hasFeature('service_type_sdk')) return;
-            if (!hasFeature('verification_sdk')) return;
-            break;
+            case TOP_UP:
+              if (!hasFeature('service.white_label')) return removeFeatures();
+              if (!hasFeature('wallet')) return removeFeatures();
+              break;
 
-          default:
-            break;
-        }
+            case VERIFICATION_SDK:
+              if (!hasFeature('service.sdk')) return removeFeatures();
+              if (!hasFeature('verification-sdk')) return removeFeatures();
+              break;
 
-        this._capabilities.push(this._getAclString('view', pageName));
-      })
-    } catch(err) {
-      // not throwing error here
-      // just not pushing the capabilities into the array
-      logger.error('no config file for carrier %s', this._carrierId);
-      return;
-    }
+            default: break;
+            }
+          });
+
+          resolve();
+        })
+        .catch(err => reject(err));
+    });
   }
 
   /**
@@ -125,9 +168,15 @@ class Authority {
    *
    * @returns {Array}
    */
-  getCapabilities() {
-    this._getMenu();
-    return this._capabilities;
+  getMenuItems() {
+    return new Promise((resolve, reject) => {
+      this._filterMenuItemsByCarrier()
+        .then(() => resolve(this._allowedMenuItems.map(menuItem => this._getAclString('view', menuItem))))
+        .catch(err => {
+          logger.error(err.message, err.stack);
+          reject(err);
+        });
+    });
   }
 }
 

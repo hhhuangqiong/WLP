@@ -5,8 +5,7 @@ import { CLIENT } from './utils/env';
 // path strings
 import {
   ERROR_401 as pathToError401,
-  ERROR_404 as pathToError404,
-  ERROR500 as pathToError500
+  ERROR500 as pathToError500,
 } from './server/paths';
 
 // convention: separate path by "-" following the component name
@@ -14,7 +13,7 @@ import {
 // react-router acts differently from CLIENT to SERVER
 // CLIENT side react-router could recognize `to` property as route name while
 // SERVER side react-router takes to as URL
-let redirectForCallsOverview = CLIENT ? 'calls-overview' : 'calls/overview';
+const redirectForCallsOverview = CLIENT ? 'calls-overview' : 'calls/overview';
 
 export default (
   <Route handler={require('./main/components/common/App')}>

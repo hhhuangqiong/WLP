@@ -1,73 +1,76 @@
-let navSection = [
+import {
+  OVERVIEW, ACCOUNT, COMPANY, END_USER, CALL,
+  IM, SMS, VSF, TOP_UP, VERIFICATION_SDK,
+} from '../../data/moduleId';
+
+export default [
   {
     name: 'Overview',
     icon: 'icon-menuoverview',
-    page: 'overview',
+    page: OVERVIEW,
     routeName: 'overview',
-    path: 'overview'
+    path: 'overview',
   },
   {
     name: 'Account',
     icon: 'icon-menuaccount',
-    page: 'account',
-    routeName: 'account'
+    page: ACCOUNT,
+    routeName: 'account',
   },
   {
     name: 'Users',
     icon: 'icon-menuenduser',
-    page: 'end-user',
+    page: END_USER,
     routeName: 'end-users-overview',
     path: 'end-users'
   },
   {
     name: 'company',
     icon: 'icon-menucompany',
-    page: 'company',
+    page: COMPANY,
     routeName: 'companies',
-    path: 'companies'
+    path: 'companies',
   },
   {
     name: 'Calls',
     icon: 'icon-menucalls',
-    page: 'call',
+    page: CALL,
     routeName: 'calls-overview',
-    path: 'calls'
+    path: 'calls',
   },
   {
     name: 'IM',
     icon: 'icon-menuim',
-    page: 'im',
+    page: IM,
     routeName: 'im-overview',
-    path: 'im'
+    path: 'im',
   },
   {
     name: 'SMS',
     icon: 'icon-menu-sms',
-    page: 'sms',
+    page: SMS,
     routeName: 'sms-overview',
-    path: 'sms'
+    path: 'sms',
   },
   {
     name: 'VSF',
     icon: 'icon-menustore',
-    page: 'vsf',
+    page: VSF,
     routeName: 'vsf-transaction-overview',
-    path: 'vsf'
+    path: 'vsf',
   },
   {
     name: 'Top Up',
     icon: 'icon-menutopup',
-    page: 'top-up',
+    page: TOP_UP,
     routeName: 'top-up-details',
-    path: 'top-up'
+    path: 'top-up',
   },
   {
     name: 'Verification',
     icon: 'icon-menuverification',
-    page: 'verification',
+    page: VERIFICATION_SDK,
     routeName: 'verification',
-    path: 'verification'
-  }
+    path: 'verification',
+  },
 ];
-
-export default navSection;

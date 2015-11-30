@@ -2,32 +2,38 @@ import React, { PropTypes } from 'react';
 import Invariant from 'react/lib/invariant';
 
 export default React.createClass({
-  contextTypes: {
-    getAuthority: PropTypes.func.isRequired
+  propTypes: {
+    children: PropTypes.any.isRequired,
+    action: PropTypes.string.isRequired,
+    resource: PropTypes.string.isRequired,
   },
 
-  componentWillMount: function() {
+  contextTypes: {
+    getAuthority: PropTypes.func.isRequired,
+  },
+
+  componentWillMount() {
     Invariant(
       this.props.children,
       'Authority should have at least 1 child component'
     );
   },
 
-  _checkAuthority: function() {
-    let { action, resource } = this.props;
-
-    let authority = this.context.getAuthority();
-    return authority.scan(action, resource);
-  },
-
-  render: function() {
+  render() {
     return (
-      <If condition={!this._checkAuthority()}>
+      <If condition={!this._hasAuthority()}>
         { null }
       <Else />
         { this.props.children }
       </If>
-    )
-  }
+    );
+  },
+
+  _hasAuthority() {
+    const { action, resource } = this.props;
+
+    const authority = this.context.getAuthority();
+    return authority.scan(action, resource);
+  },
 
 });

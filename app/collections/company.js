@@ -1,102 +1,101 @@
-'use strict';
-var Q = require('q');
-var mongoose = require('mongoose');
-var gridfs = require('./../server/utils/gridfs');
-var collectionName = 'Company';
+import Q from 'q';
+import mongoose from 'mongoose';
+import gridfs from './../server/utils/gridfs';
 
+const collectionName = 'Company';
 const ROOT_COMPANY_CARRIER_ID = 'm800';
 const SDK_DOMAIN = '.m800-api.com';
 
-var schema = new mongoose.Schema({
+const schema = new mongoose.Schema({
   parentCompany: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'Company'
+    ref: 'Company',
   },
   name: {
     type: String,
     required: true,
-    unique: true
+    unique: true,
   },
   carrierId: {
     type: String,
-    unique: true
+    unique: true,
   },
 
   // reflecting Company Type, either "Default" or "Reseller"
   reseller: {
-    type: Boolean
+    type: Boolean,
   },
   logo: {
-    type: mongoose.Schema.Types.ObjectId
+    type: mongoose.Schema.Types.ObjectId,
   },
   themeType: {
-    type: String
+    type: String,
   },
   address: {
-    type: String
+    type: String,
   },
   categoryID: {
-    type: String
+    type: String,
   },
   country: {
     type: String,
-    required: true
+    required: true,
   },
   timezone: {
     type: String,
-    required: true
+    required: true,
   },
   accountManager: {
-    type: String
+    type: String,
   },
   billCode: {
-    type: String
+    type: String,
   },
   expectedServiceDate: {
-    type: Date
+    type: Date,
   },
   contractNumber: {
-    type: String
+    type: String,
   },
   referenceNumber: {
-    type: String
+    type: String,
   },
   features: {
     type: Object,
-    default: []
+    default: [],
   },
   businessContact: {
     name: {
-      type: String
+      type: String,
     },
     phone: {
-      type: String
+      type: String,
     },
     email: {
-      type: String
-    }
+      type: String,
+    },
   },
   technicalContact: {
     name: {
-      type: String
+      type: String,
     },
     phone: {
-      type: String
+      type: String,
     },
     email: {
-      type: String
-    }
+      type: String,
+    },
   },
   supportContact: {
     name: {
-      type: String
+      type: String,
     },
     phone: {
-      type: String
+      type: String,
     },
     email: {
-      type: String
-    }
+      type: String,
+    },
   },
   widgets: {
     overview: [],
@@ -104,54 +103,58 @@ var schema = new mongoose.Schema({
     calls: [],
     im: [],
     sms: [],
-    vsf: []
+    vsf: [],
   },
   serviceConfig: {
     developerKey: {
-      type: String
+      type: String,
     },
     developerSecret: {
-      type: String
+      type: String,
     },
     applicationId: {
-      type: String
+      type: String,
     },
     applications: {
       ios: {
         name: {
           type: String,
-          default: null
-        }
+          default: null,
+        },
       },
       android: {
         name: {
           type: String,
-          default: null
-        }
-      }
-    }
+          default: null,
+        },
+      },
+    },
   },
   status: {
     type: String,
     required: true,
-    default: 'inactive'
+    default: 'inactive',
+  },
+  capabilities: {
+    type: Array,
+    default: [],
   },
   createAt: {
     type: Date,
-    default: Date.now
+    default: Date.now,
   },
   createBy: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'PortalUser'
+    ref: 'PortalUser',
   },
   updateAt: {
     type: Date,
-    default: Date.now
+    default: Date.now,
   },
   updateBy: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'PortalUser'
-  }
+    ref: 'PortalUser',
+  },
 }, { collection: collectionName });
 
 schema.virtual('role').get(function() {
@@ -190,8 +193,7 @@ schema.method('addLogo', function(filePath, options, cb) {
 schema.method('activate', function(cb) {
   this.status = 'active';
   return this.save(function(err, company) {
-    if (err)
-      throw err;
+    if (err) throw err;
 
     return cb(null, { carrierId: company.carrierId, status: company.status });
   });
@@ -209,8 +211,7 @@ schema.method('activate', function(cb) {
 schema.method('deactivate', function(cb) {
   this.status = 'inactive';
   return this.save(function(err, company) {
-    if (err)
-      throw err;
+    if (err) throw err;
 
     return cb(null, { carrierId: company.carrierId, status: company.status });
   });
@@ -227,19 +228,20 @@ schema.method('getCompanyType', function() {
     return 'reseller';
   } else if (this.isSDK()) {
     return 'sdk';
-  } else {
-    return 'wl';
   }
+
+  return 'wl';
 });
 
 schema.static('getManagingCompany', function(parentCarrierId, cb) {
   return Q.ninvoke(this, 'findOne', { _id: parentCarrierId })
     .then((company) => {
-      if (!company)
+      if (!company) {
         throw new Error({
           name: 'NotFound',
-          message: 'parent company does not exist'
+          message: 'parent company does not exist',
         });
+      }
 
       // By default, finding only children companies
       let criteria = { parentCompany: company._id };
@@ -277,7 +279,7 @@ schema.static('getCompanyByCarrierId', function (carrierId, cb) {
       if (!company) {
         throw new Error({
           name: 'NotFound',
-          message: `Company with carrierId=${carrierId} does not exist`
+          message: `Company with carrierId=${carrierId} does not exist`,
         });
       }
 
