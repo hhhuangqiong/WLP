@@ -189,6 +189,7 @@ var Im = React.createClass({
 
   render: function() {
     let params = this.context.router.getCurrentParams();
+    let query = this.context.router.getCurrentQuery();
 
     return (
       <div className="row">
@@ -239,7 +240,7 @@ var Im = React.createClass({
               <select className={classNames('top-bar-section__message-type-select','left')} name="messageTypeDropDown" onChange={this.handleTypeChange}>
                 <option key={'messageType-default'} value="">Choose</option>
                 {this.getDefaultMessageTypes().map((messageType)=>{
-                  return <option key={this.getOptKey(messageType)} value={messageType.value}>{messageType.title}</option>;
+                  return <option key={this.getOptKey(messageType)} value={messageType.value} selected={messageType.value === query.type}>{messageType.title}</option>;
                 })}
               </select>
             </div>
