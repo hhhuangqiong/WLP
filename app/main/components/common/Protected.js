@@ -9,8 +9,11 @@ import Menu                    from './NavigationMenu';
 import Content                 from './MainContent';
 import SystemMessage           from './SystemMessage';
 import LoadingSpinner          from './LoadingSpinner';
+
+import AuthStore               from '../../../main/stores/AuthStore';
 import fetchCurrentCompanyInfo from '../../actions/fetchCurrentCompanyInfo';
 import fetchManagingCompanies  from '../../actions/fetchManagingCompanies';
+import fetchAppIds             from '../../../main/actions/fetchAppIds';
 
 var Protected = React.createClass({
 
@@ -19,7 +22,8 @@ var Protected = React.createClass({
     fetchData: function(context, params, query, done) {
       concurrent([
         context.executeAction.bind(context, fetchCurrentCompanyInfo, { carrierId: params.identity }),
-        context.executeAction.bind(context, fetchManagingCompanies, {})
+        context.executeAction.bind(context, fetchManagingCompanies, {}),
+        context.executeAction.bind(context, fetchAppIds, { carrierId: params.identity, userId: context.getStore(AuthStore).getUserId() })
       ], done || function() {});
     }
   },

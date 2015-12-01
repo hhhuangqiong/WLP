@@ -21,14 +21,7 @@ var EndUsers = React.createClass({
   mixins: [FluxibleMixin, AuthMixin],
 
   statics: {
-    storeListeners: [ApplicationStore],
-
-    fetchData: function (context, params, query, done) {
-      context.executeAction(fetchAppIds, {
-        carrierId: params.identity,
-        userId: context.getStore(AuthStore).getUserId()
-      }, done || Function.prototype);
-    }
+    storeListeners: [ApplicationStore]
   },
 
   getInitialState: function () {

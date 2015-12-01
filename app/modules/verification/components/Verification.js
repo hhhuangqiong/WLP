@@ -6,9 +6,6 @@ import {concurrent} from 'contra';
 import AuthMixin from '../../../utils/AuthMixin';
 
 import ApplicationStore from '../../../main/stores/ApplicationStore';
-import AuthStore from '../../../main/stores/AuthStore';
-
-import fetchAppIds from '../../../main/actions/fetchAppIds';
 
 const debug = require('debug')('app:verification/components/Verification');
 
@@ -21,14 +18,7 @@ var Verification = React.createClass({
   mixins: [FluxibleMixin, AuthMixin],
 
   statics: {
-    storeListeners: [ApplicationStore],
-
-    fetchData: function (context, params, query, done) {
-      context.executeAction(fetchAppIds, {
-        carrierId: params.identity,
-        userId: context.getStore(AuthStore).getUserId()
-      }, done || Function.prototype);
-    }
+    storeListeners: [ApplicationStore]
   },
 
   getInitialState: function () {
