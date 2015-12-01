@@ -17,6 +17,10 @@
   .header,
   .body {
     padding: $column-gutter;
+
+    &.no-padding {
+      padding: 0;
+    }
   }
   .header {
     > .title {
@@ -25,14 +29,16 @@
       margin: 0;
     }
 
-    &__input-group {
-      position: relative;
-      margin-top: - rem-calc(18);
-      top: rem-calc(9);
+    .input-group {
+      margin-top: - rem-calc(24);
     }
   }
   .header.narrow {
     padding: rem-calc(18);
+
+    h4 {
+      font-size: rem-calc(14);
+    }
   }
   .body {
     border-top: 1px solid #eee;

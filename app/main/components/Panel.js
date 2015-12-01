@@ -27,6 +27,10 @@ let Panel = React.createClass({
 
 let PanelHeader = React.createClass({
   PropTypes: {
+    customClass: PropTypes.oneOfType([
+      PropTypes.string,
+      PropTypes.array
+    ]),
     title: PropTypes.string.isRequired
   },
 
@@ -38,7 +42,7 @@ let PanelHeader = React.createClass({
 
   render: function() {
     return (
-      <div className="header">
+      <div className={classNames(`header`, this.props.customClass)}>
         <If condition={!!this.props.title}>
           <h4 className="title">{this.props.title}</h4>
         </If>
@@ -49,9 +53,16 @@ let PanelHeader = React.createClass({
 });
 
 let PanelBody = React.createClass({
+  PropTypes: {
+    customClass: PropTypes.oneOfType([
+      PropTypes.string,
+      PropTypes.array
+    ])
+  },
+
   render: function() {
     return (
-      <div className="body">
+      <div className={classNames(`body`, this.props.customClass)}>
         {this.props.children}
       </div>
     )

@@ -1,0 +1,93 @@
+.data-cell {
+  padding: rem-calc(15);
+  text-align: center;
+
+  &__wrapper {
+    margin: 0;
+
+    > .columns {
+      border-right: 1px solid #eee;
+
+      &:last-child {
+        border-right: 0 none;
+      }
+    }
+  }
+
+  &__title {
+    font-size: rem-calc(14);
+    color: $gray;
+    margin-bottom: rem-calc(10);
+  }
+
+  &__data {
+    font-size: rem-calc(25);
+    font-weight: bolder;
+  }
+
+  &__unit {
+    font-size: rem-calc(14);
+    color: $gray;
+  }
+
+  &__trend {
+    font-size: rem-calc(12);
+    margin-top: rem-calc(10);
+
+    &.up {
+      &.positive {
+        color: $up-trend-font-color;
+
+        .arrow {
+          @include triangle(up, $up-trend-font-color, 9);
+          line-height: rem-calc(8);
+          vertical-align: top;
+        }
+      }
+
+      &.negative {
+        color: $down-trend-font-color;
+
+        .arrow {
+          @include triangle(up, $down-trend-font-color, 9);
+          line-height: rem-calc(8);
+          vertical-align: top;
+        }
+      }
+    }
+
+    &.down {
+      &.positive {
+        color: $up-trend-font-color;
+
+        .arrow {
+          @include triangle(down, $up-trend-font-color, 9);
+          line-height: rem-calc(10);
+          vertical-align: bottom;
+        }
+      }
+
+      &.negative {
+        color: $down-trend-font-color;
+
+        .arrow {
+          @include triangle(down, $down-trend-font-color, 9);
+          line-height: rem-calc(10);
+          vertical-align: bottom;
+        }
+      }
+    }
+
+    .arrow {
+      font-size: 0;
+    }
+
+    > span {
+      margin-right: 10px;
+
+      &:last-child {
+        margin-right: 0;
+      }
+    }
+  }
+}
