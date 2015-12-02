@@ -8,12 +8,14 @@ import * as companies from '../routes/companies';
 import * as authority from '../routes/authority';
 import * as accounts from '../routes/accounts';
 import Authority from '../../main/authority';
+import cacheControl from '../middlewares/cacheControl';
 
 let multipart = require('connect-multiparty')();
 
 let router = Router();
 
 router
+  .use(cacheControl)
   .post(SIGN_IN, auth.signIn)
   .post(SIGN_OUT, auth.signOut)
   .get('/accounts/verify/:token', accounts.verifyToken)
