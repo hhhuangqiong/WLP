@@ -31,13 +31,42 @@
 
     .input-group {
       margin-top: - rem-calc(24);
+
+      > label,
+      > .input {
+        line-height: 32px;
+      }
+
+      > label {
+        padding-right: $column-gutter/2;
+      }
+
+      .time-frame-picker {
+        margin-top: 0;
+        border-radius: rem-calc(4);
+        border-color: #eee;
+
+        span {
+          color: $gray;
+
+          &.active {
+            color: #333;
+            font-weight: 400;
+          }
+        }
+      }
     }
   }
   .header.narrow {
     padding: rem-calc(18);
 
+    > .title {
+      text-transform: capitalize;
+      font-weight: 400;
+    }
+
     h4 {
-      font-size: rem-calc(14);
+      font-size: rem-calc(16);
     }
   }
   .body {
