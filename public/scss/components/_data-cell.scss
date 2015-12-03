@@ -58,20 +58,20 @@
 
     &.down {
       &.positive {
-        color: $up-trend-font-color;
+        color: $down-trend-font-color;
 
         .arrow {
-          @include triangle(down, $up-trend-font-color, 9);
+          @include triangle(down, $down-trend-font-color, 9);
           line-height: rem-calc(10);
           vertical-align: bottom;
         }
       }
 
       &.negative {
-        color: $down-trend-font-color;
+        color: $up-trend-font-color;
 
         .arrow {
-          @include triangle(down, $down-trend-font-color, 9);
+          @include triangle(down, $up-trend-font-color, 9);
           line-height: rem-calc(10);
           vertical-align: bottom;
         }
