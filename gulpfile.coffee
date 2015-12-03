@@ -29,14 +29,11 @@ merge            = require 'merge-stream'
 
 console.timeEnd 'Loading plugins'
 
-defaultTasks = ['clean', 'nodemon', 'watch']
-webpackConfig = require './webpack.production.config'
+defaultTasks = ['clean', 'nodemon', 'watch', 'scss', 'webpack']
+webpackConfig = require './webpack.config'
 
-# webpack hotloader settings
-enableWebpackHotloader = process.env.ENABLE_WEBPACK_HOTLOADER
 
-if enableWebpackHotloader
-  webpackConfig = require './webpack.config'
+if webpackConfig.custom.hotLoadPort
   defaultTasks.push 'webpack-dev-server'
 
 # reduce startup loading time

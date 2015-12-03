@@ -21,14 +21,6 @@
       }
     }
   },
-  "redis": {
-    "sentinels": [
-      { "host": "192.168.119.25", "port": 26379 },
-      { "host": "192.168.119.26", "port": 26379 }
-    ],
-    "name": "redis-hk-tb-master",
-    "db": 11
-   },
   "queue": {
     "enable": true,
     "prefix": "q",

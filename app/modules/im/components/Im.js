@@ -131,7 +131,7 @@ var Im = React.createClass({
       carrierId: identity,
       fromTime: this.state.fromTime,
       toTime: this.state.toTime,
-      page: +this.state.page + 1,
+      page: this.state.page,
       size: config.PAGES.IMS.PAGE_SIZE,
       type: this.state.type,
       search: this.state.search,
@@ -256,9 +256,11 @@ var Im = React.createClass({
 
             <div className="im-search top-bar-section right">
               <Searchbox
+                search={this.state.search}
                 searchTypes={searchTypes}
                 placeHolder="Username/Mobile"
                 onSelectChangeHandler={this.handleSearchTypeChange}
+                onInputChangeHandler={this.handleSearchChange}
                 onKeyPressHandler={this.handleSearchChange}
                 />
             </div>

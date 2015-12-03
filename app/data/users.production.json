@@ -263,4 +263,70 @@
     "logoFile": "logo-m800.png",
     "widgets": {}
   }
+}, {
+  "user": {
+    "username": "admin@bux.m800-api.com",
+    "password": "buxWLP2015",
+    "name": {
+      "first": "Admin",
+      "last": "Bux"
+    },
+    "assignedGroup": "root",
+    "status": "active"
+  },
+  "company": {
+    "parentCompany": null,
+    "carrierId": "bux.m800-api.com",
+    "name": "Bux",
+    "reseller": false,
+    "status": "active",
+    "timezone": "UTC+8",
+    "country": "Hong Kong",
+    "logoFile": "logo-m800.png",
+    "widgets": {}
+  }
+}, {
+  "user": {
+    "username": "admin@yiroaming.m800-api.com",
+    "password": "yiroamingWLP2015",
+    "name": {
+      "first": "Admin",
+      "last": "Yiroaming"
+    },
+    "assignedGroup": "root",
+    "status": "active"
+  },
+  "company": {
+    "parentCompany": null,
+    "carrierId": "yiroaming.m800-api.com",
+    "name": "Yiroaming",
+    "reseller": false,
+    "status": "active",
+    "timezone": "UTC+8",
+    "country": "Hong Kong",
+    "logoFile": "logo-m800.png",
+    "widgets": {}
+  }
+}, {
+  "user": {
+    "username": "admin@hollycall.maaii.com",
+    "password": "hollyWLP2015",
+    "name": {
+      "first": "Admin",
+      "last": "Hollycall"
+    },
+    "assignedGroup": "root",
+    "status": "active"
+  },
+  "company": {
+    "parentCompany": null,
+    "carrierId": "hollycall.maaii.com",
+    "name": "Smart-Link",
+    "reseller": false,
+    "status": "active",
+    "timezone": "UTC+8",
+    "country": "Hong Kong",
+    "logoFile": "logo-m800.png",
+    "widgets": {}
+  }
 }]

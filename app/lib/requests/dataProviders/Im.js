@@ -6,6 +6,7 @@ var util    = require('util');
 var _       = require('lodash');
 var qs      = require('qs');
 
+import {buildImSolrQueryString} from '../queryBuilder/im';
 import {constructOpts, formatDateString, swapDate, composeResponse, handleError} from '../helper';
 
 const LABEL_FOR_NULL = 'N/A';
@@ -20,6 +21,10 @@ export default class ImRequest {
       methods: {
         IMS: {
           URL: '/api/v1/im/tdr/query',
+          METHOD: 'GET'
+        },
+        IMSOLR: {
+          URL: '/api/v1/im/tdr/rawQuery',
           METHOD: 'GET'
         }
       }
@@ -90,18 +95,27 @@ export default class ImRequest {
    */
   sendRequest(params, cb) {
     var base = this.opts.baseUrl;
-    var url = this.opts.methods.IMS.URL;
+    var url = '';
+    if (params.q) {
+      url = this.opts.methods.IMSOLR.URL;
+    } else {
+      url = this.opts.methods.IMS.URL;
+    }
 
     logger.debug('IM request: %s?%s', util.format('%s%s', base, url), qs.stringify(params));
 
     request
       .get(util.format('%s%s', base, url))
-      .query(_.omit(params, 'carrierId'))
+      .query(params)
       .buffer()
       .timeout(this.opts.timeout)
       .end((err, res) => {
         if (err) return cb(handleError(err, err.status || 400));
-        return this.filterData(res.body, cb);
+        try {
+          return this.filterData(res.body, params.rows, cb);
+        } catch (error) {
+          return cb(handleError(error, 500));
+        }
       });
   }
 
@@ -113,7 +127,7 @@ export default class ImRequest {
    * @param res {Object} result return from API request
    * @param cb {Function} Callback function from @method getImStat
    */
-  filterData(data, cb) {
+  filterData(data, pageSize, cb) {
     if (data && data.content) {
       /**
         To assign a nice looking label instead of showing 'undefined' or null
@@ -127,7 +141,7 @@ export default class ImRequest {
       });
     }
 
-    return cb(null, composeResponse(data));
+    return cb(null, composeSolrResponse(data, pageSize));
   }
 
   /**
@@ -145,5 +159,21 @@ export default class ImRequest {
       .catch((err) => {
         return cb(handleError(err, err.status || 500));
       });
+  }
+
+  /**
+   * @method getImSolr
+   * @param params {Object} Raw query data object
+   * @param cb {Function} Callback function from API controller
+   */
+  getImSolr(params, cb) {
+    logger.debug('get IM message history from dataProvider with params', params);
+    Q.nfcall(buildImSolrQueryString, params)
+      .then((params) => {
+        this.sendRequest(params, cb);
+      })
+      .catch((err) => {
+        return cb(handleError(err, err.status || 500));
+      }).done();
   }
 }

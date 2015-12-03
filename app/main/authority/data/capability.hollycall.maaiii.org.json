@@ -1,0 +1,31 @@
+{
+  "capabilities": [{
+    "name": "service_type_white_label"
+  }, {
+    "name": "device_os_support_ios"
+  }, {
+    "name": "device_os_support_android"
+  }, {
+    "name": "user_management_report"
+  }, {
+    "name": "call_onnet_call"
+  }, {
+    "name": "call_offnet_call"
+  }, {
+    "name": "call_report"
+  }, {
+    "name": "call_dashboard"
+  }, {
+    "name": "top_up_report"
+  }, {
+    "name": "top_up_dashboard"
+  }, {
+    "name": "wallet"
+  }, {
+    "name": "wallet_single"
+  }, {
+    "name": "wallet_multiple"
+  }, {
+    "name": "wallet_shared"
+  }]
+}

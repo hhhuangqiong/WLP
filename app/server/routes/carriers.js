@@ -22,6 +22,8 @@ import {parseVerificationStatistic} from '../parser/verificationStats';
 import {parseTotalAtTime, parseMonthlyTotalInTime} from '../parser/userStats';
 
 let dateFormat = nconf.get('display:dateFormat');
+// @NB please suggest where the below array can be moved to as constant
+const DEFAULT_MESSAGE_TYPES = ['text', 'image', 'audio', 'video', 'remote', 'animation', 'sticker', 'voice_sticker', 'ephemeral_image'];
 
 function prepareWildcard(search) {
   if (!search)
@@ -385,10 +387,17 @@ let getIM = function(req, res) {
   req.checkQuery('toTime').notEmpty();
   req.checkQuery('page').notEmpty().isInt();
 
+  let errors = req.validationErrors();
+
+  if (errors) {
+    res.status(400).json({ error: { message: 'Invalid Parameters.', details: errors } });
+    return;
+  }
+
   req.query.carrier = req.params.carrierId;
-  req.query.from = req.query.fromTime;
-  req.query.to = req.query.toTime;
-  req.query.message_type = req.query.type;
+  req.query.from = moment(req.query.fromTime, 'L').startOf('day').toISOString();
+  req.query.to = moment(req.query.toTime, 'L').endOf('day').toISOString();
+  req.query.message_type = req.query.type || DEFAULT_MESSAGE_TYPES;
   req.query.sender = '';
   req.query.recipient = '';
 
@@ -405,7 +414,7 @@ let getIM = function(req, res) {
 
   let params = _.pick(req.query, ['carrier', 'message_type', 'from', 'to', 'sender', 'recipient', 'page', 'size']);
 
-  imRequest.getImStat(params, (err, result) => {
+  imRequest.getImSolr(params, (err, result) => {
     if (err)
       return res.status(err.status).json({
         error: err

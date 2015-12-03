@@ -4,6 +4,7 @@ import nconf from 'nconf';
 import kue from 'kue';
 import logger from 'winston';
 import Q from 'q';
+import moment from 'moment';
 import redisWStream from 'redis-wstream';
 
 import { fetchDep } from '../utils/bottle';
@@ -79,8 +80,9 @@ export default class ExportTask {
     job[IM] = () => {
       return {
         carrier: params.carrierId,
-        from: query.fromTime,
-        to: query.toTime,
+        from: moment(query.fromTime, 'x').toISOString(),
+        to: moment(query.toTime, 'x').toISOString(),
+        message_type: ['text', 'image', 'audio', 'video', 'remote', 'animation', 'sticker', 'voice_sticker', 'ephemeral_image'],
         destination: query.destination,
         origin: query.origin,
         page: PAGE_START_INDEX,
@@ -120,7 +122,6 @@ export default class ExportTask {
         carrier: params.carrierId,
         from: query.startDate,
         to: query.endDate,
-        pageNumberIndex: query.pageNumberIndex,
         page: PAGE_START_INDEX,
         size: PAGE_SIZE,
       };
@@ -275,48 +276,57 @@ export default class ExportTask {
       });
 
     let next = (param) => {
-      let config = this.getExportConfig();
-      let request = fetchDep(nconf.get('containerName'), config.EXPORT_REQUEST);
+      // get the job by id to verify that the job is not removed
+      kue.Job.get(job.id, (err, currentJob) => {
+        // get job failed, sliently stop the process
+        if (err) {
+          logger.error(`Could not find job #${job.id}`, err);
+          return false;
+        }
 
-      Q.ninvoke(request, config.EXPORT_REQUEST_EXECUTION, param)
-        .then(result => {
-          let contentIndex = 0;
+        let config = this.getExportConfig();
+        let request = fetchDep(nconf.get('containerName'), config.EXPORT_REQUEST);
 
-          // Compatible with different naming fields from end point response
-          let contents = result.contents || result.content;
-          let numberOfContent = contents.length;
-          let totalPages = [result.totalPages, result.total_pages].filter(n => n !== undefined)[0];
-          let pageNumber = [result.pageNumber, result.page_number].filter(n => n !== undefined)[0];
+        Q.ninvoke(request, config.EXPORT_REQUEST_EXECUTION, param)
+          .then((result) => {
+            let contentIndex = 0;
 
-          // Record number of elements are being exported
-          totalExportElements += numberOfContent;
+            // Compatible with different naming fields from end point response
+            let contents = result.contents || result.content;
+            let numberOfContent = contents.length;
+            let totalPages = [result.totalPages, result.total_pages].filter(n => n !== undefined)[0];
+            let pageNumber = [result.pageNumber, result.page_number].filter(n => n !== undefined)[0];
 
-          // Raise error if pageNumber and totalPages are not valid
-          if (pageNumber === undefined || totalPages === undefined) {
-            return cb({ message: MISSING_PAGE_DATA_MSG });
-          }
+            // Record number of elements are being exported
+            totalExportElements += numberOfContent;
 
-          // Complete export if no content appear
-          if (!numberOfContent) csvStream.end();
+            // Raise error if pageNumber and totalPages are not valid
+            if (pageNumber === undefined || totalPages === undefined) {
+              return cb({ message: MISSING_PAGE_DATA_MSG });
+            }
 
-          // Extract elements within current page
-          while (contentIndex < numberOfContent) {
-            let row = _.pick(contents[contentIndex], config.DATA_FIELDS);
-            csvStream.write(this.humanizeFields(this.exportType, row));
-            contentIndex++;
-          }
+            // Complete export if no content appear
+            if (!numberOfContent) csvStream.end();
 
-          // Move to next page if there are more pages
-          if (pageNumber < totalPages) {
-            param.page++;
+            // Extract elements within current page
+            while (contentIndex < numberOfContent) {
+              let row = _.pick(contents[contentIndex], config.DATA_FIELDS);
+              csvStream.write(this.humanizeFields(this.exportType, row));
+              contentIndex++;
+            }
 
-            // A hack to prevent progress becomes 100% to avoid job to end before file stream to be ready for download
-            job.progress(pageNumber, totalPages + 1, { nextRow: pageNumber });
-            next(param);
-          }
-        })
-        .catch(err => cb(err))
-        .done();
+            // Move to next page if there are more pages
+            if (pageNumber < totalPages) {
+              param.page++;
+
+              // A hack to prevent progress becomes 100% to avoid job to end before file stream to be ready for download
+              job.progress(pageNumber, totalPages + 1, { nextRow: pageNumber });
+              next(param);
+            }
+          })
+          .catch((err) => { return cb(err); })
+          .done();
+      });
     }
 
     next(param);

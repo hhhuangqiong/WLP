@@ -1,0 +1,19 @@
+{
+  "capabilities": [{
+    "name": "service_type_sdk"
+  }, {
+    "name": "device_os_support_ios"
+  }, {
+    "name": "device_os_support_android"
+  }, {
+    "name": "user_management_report"
+  }, {
+    "name": "call_onnet_call"
+  }, {
+    "name": "call_offnet_call"
+  }, {
+    "name": "call_report"
+  }, {
+    "name": "call_dashboard"
+  }]
+}

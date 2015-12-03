@@ -29,9 +29,33 @@ export default function(exportPrefix='') {
         .accept('json')
         .set('Authorization', this._getToken())
         .end((err, res) => {
-          if (err) debug('error', err);
+          if (err) {
+            cb(err);
+            debug('error', err);
+            return;
+          }
 
-          cb(err, res && res.body);
+          cb(null, res && res.body);
+        });
+    },
+
+    cancelExport(params, cb) {
+      superagent
+        .get(`${this._getHost()}${exportPrefix}/${params.carrierId}/cancel`)
+        .query(params)
+        .accept('json')
+        .set('Authorization', this._getToken())
+        .end((err, res) => {
+          if (err) {
+            cb(err);
+            return;
+          }
+
+          try {
+            cb(null, res.body.id);
+          } catch (error) {
+            cb(error);
+          }
         });
     }
   }

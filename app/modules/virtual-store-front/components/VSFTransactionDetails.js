@@ -11,7 +11,6 @@ import CategoryFilter from '../../../main/components/CategoryFilter';
 import DateRangePicker from '../../../main/components/DateRangePicker';
 import Searchbox from '../../../main/components/Searchbox';
 
-import initialState from '../data/VSFInitialState';
 import VSFTransactionStore from '../stores/VSFTransactionStore';
 import fetchVSFTransactions from '../actions/fetchVSFTransactions';
 
@@ -32,34 +31,42 @@ let VSFTransactionDetails = React.createClass({
     storeListeners: [VSFTransactionStore],
 
     fetchData(context, params, query, done) {
-      debug('fetchData', params, query)
+      context.executeAction(fetchVSFTransactions, {
+        carrierId: params.identity,
+        fromTime: query.fromTime || moment().subtract(2, 'day').startOf('day').format('L'),
+        toTime: query.toTime || moment().endOf('day').format('L'),
+        category: query.category || '',
+        pageIndex: query.page || 0,
+        pageSize: config.PAGES.CALLS.PAGE_SIZE,
+        userNumber: query.userNumber || ''
+      }, done || () => {});
 
-      concurrent([
-        context.executeAction.bind(context, fetchVSFTransactions, {
-          carrierId: params.identity,
-          fromTime: query.fromTime || initialState.fromTime,
-          toTime: query.toTime || initialState.toTime,
-          category: query.category || initialState.category,
-          pageIndex: query.page || initialState.pageIndex,
-          pageSize: initialState.pageSize,
-          userNumber: query.userNumber || initialState.userNumber
-        })
-      ], done || function() {});
     }
   },
 
   getInitialState() {
     let state = this.getStore(VSFTransactionStore).getState();
     let query = this.context.router.getCurrentQuery();
-    let data = _.merge(state, initialState, query);
+    let data = _.merge(state, this.getDefaultQuery(), query);
 
     return data;
+  },
+
+  getDefaultQuery() {
+    return {
+      fromTime: moment().subtract(2, 'day').startOf('day').format('L'),
+      toTime: moment().endOf('day').format('L'),
+      category: '',
+      pageSize: config.PAGES.CALLS.PAGE_SIZE,
+      pageIndex: 0,
+      userNumber: ''
+    };
   },
 
   onChange: function() {
     let state = this.getStore(VSFTransactionStore).getState();
     let query = this.context.router.getCurrentQuery();
-    let data = _.merge({ fromTime: initialState.fromTime , toTime: initialState.toTime }, query, state)
+    let data = _.merge({ fromTime: this.getDefaultQuery().fromTime , toTime: this.getDefaultQuery().toTime }, query, state)
 
     debug('VSFTransactionDetails onChagne', data);
     this.setState(data);

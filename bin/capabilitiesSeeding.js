@@ -1,14 +1,19 @@
 import mongoose from 'mongoose';
 import path from 'path';
 import logger from 'winston';
-import { MongoDBError, NotFoundError } from 'common-errors';
+import { NotFoundError } from 'common-errors';
 
 import nconf from '../app/server/initializers/nconf';
 import Company from '../app/collections/company';
 import capabilityList from '../app/main/authority/data/capabilities';
 
-const DEFAULT_ENV = 'development';
-const CONFIG = nconf(process.env.NODE_ENV || DEFAULT_ENV, path.resolve(__dirname, '../app/config'));
+
+let nodeEnv = process.env.NODE_ENV;
+if (!nodeEnv) {
+  throw new Error('missing NODE_ENV parameter');
+}
+
+const CONFIG = nconf(nodeEnv, path.resolve(__dirname, '../app/config'));
 const MONGODB_URI = CONFIG.get('mongodb:uri');
 const MONGODB_OPTIONS = CONFIG.get('mongodb:options');
 
@@ -31,7 +36,10 @@ function assignCapabilitiesToCompany(company) {
     company.capabilities = capabilityList[company.carrierId] || [];
 
     company.save((companySaveError, doc) => {
-      if (companySaveError) return reject(new MongoDBError('Cannot save company', companySaveError));
+      if (companySaveError) {
+        logger.info(`Cannot updated carrier '${company.carrierId}': `, companySaveError.stack);
+        return resolve();
+      }
       logger.info(`Company ${doc.name} of carrierId ${doc.carrierId} has been updated with capabilities: \n${doc.capabilities}\n`);
       resolve(doc);
     });
@@ -52,6 +60,6 @@ function startSeeding() {
 
 if (!MONGODB_URI || !MONGODB_OPTIONS) onError(new NotFoundError('Missing parameters for mongoose connection'));
 
-logger.log(`Connecting to ${MONGODB_URI} with options\n ${MONGODB_OPTIONS}`);
+logger.info(`Connecting to ${MONGODB_URI} with options\n ${MONGODB_OPTIONS}`);
 mongoose.connect(MONGODB_URI, MONGODB_OPTIONS);
 mongoose.connection.on('connected', startSeeding);

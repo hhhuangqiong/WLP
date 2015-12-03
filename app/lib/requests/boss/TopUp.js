@@ -5,8 +5,8 @@ var nconf   = require('nconf');
 var Q       = require('q');
 var request = require('superagent');
 var util    = require('util');
-var qs      = require('qs');
 
+import qs from 'qs';
 import {constructOpts, appendRequestId, handleError} from '../helper';
 
 export default class TopUpRequest {
@@ -57,12 +57,13 @@ export default class TopUpRequest {
   }
 
   sendRequest(params, cb) {
+    logger.debug('sending transaction history request');
 
     var base = this.opts.baseUrl;
     var url = this.opts.methods.LIST.URL;
     var fullUrl = util.format('%s%s', base, url);
 
-    logger.debug('sending transaction history request %s?%s', fullUrl, qs.stringify(params));
+    logger.debug(`TopUp API Endpoint: ${util.format('%s%s', base, url)}?${qs.stringify(params)}`);
 
     request
       .get(fullUrl)

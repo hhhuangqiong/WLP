@@ -102,6 +102,32 @@ export function composeResponse(response) {
 }
 
 /**
+ * @method composeSolrResponse construct response from dataProvider Solr Api
+ *
+ * @param response {Object} Response body from SuperAgent
+ * @param pageSize {Number} original page size specified for the request
+ * @returns {Object}
+ */
+export function composeSolrResponse(response, pageSize) {
+  // jscs:disable requireCamelCaseOrUpperCaseIdentifiers
+  let pageNumber = response.offset / pageSize;
+  let totalPages = Math.ceil(response.total_elements / pageSize);
+  if ( !Number.isInteger(pageNumber) || !Number.isInteger(totalPages) ) {
+    throw new TypeError('`pageNumber` or `totalPages` must be integer');
+  }
+  return {
+    offset: response.offset,
+    contents: response.content,
+    pageNumber: pageNumber,
+    pageSize: response.page_size,
+    totalPages: totalPages,
+    totalElements: response.total_elements
+  };
+}
+
+
+
+/**
  * @method handleError Unify error data received from different APIs
  * http://issuetracking.maaii.com:8090/display/MAAIIP/MUMS+User+Management+by+Carrier+HTTP+API#MUMSUserManagementbyCarrierHTTPAPI-HTTPErrorCodes
  *

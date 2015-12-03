@@ -9,6 +9,7 @@ export default createStore({
 
   handlers: {
     FETCH_EXPORT_SUCCESS: 'handleFetchExport',
+    FETCH_EXPORT_CANCEL_SUCCESS: 'handleExportCancelled',
     FETCH_EXPORT_PROGRESS_FAILURE: 'handleProgressFailure',
     FETCH_EXPORT_PROGRESS_SUCCESS: 'handleProgressSuccess'
   },
@@ -30,6 +31,11 @@ export default createStore({
       progress: !payload.id ? PROGRESS_FAILED_INDICATOR : 0
     });
 
+    this.emitChange();
+  },
+
+  handleExportCancelled(payload) {
+    this.initialize();
     this.emitChange();
   },
 
