@@ -40,6 +40,9 @@ class DataCell extends Component {
     unit: PropTypes.string,
     changeDir: PropTypes.string,
     changeAmount: PropTypes.string,
+    changeEffect: PropTypes.oneOf([
+      'positive', 'negative'
+    ]),
     changePercentage: PropTypes.string
   };
 
@@ -48,7 +51,7 @@ class DataCell extends Component {
   }
 
   render() {
-    let { title, data, unit, changeDir, changeAmount, changePercentage } = this.props;
+    let { title, data, unit, changeDir, changeEffect, changeAmount, changePercentage } = this.props;
 
     return (
       <div className="data-cell">
@@ -58,7 +61,7 @@ class DataCell extends Component {
           <div className="data-cell__unit">{ unit }</div>
         </If>
         <If condition={!!changeAmount || !!changePercentage}>
-          <div className={classNames(`data-cell__trend`, changeDir)}>
+          <div className={classNames(`data-cell__trend`, changeEffect, changeDir)}>
             <If condition={!!changeDir}>
               <span className="arrow" />
             </If>
