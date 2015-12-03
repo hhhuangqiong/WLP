@@ -16,7 +16,7 @@ let navSection = [
     name: 'Users',
     icon: 'icon-menuenduser',
     page: 'end-user',
-    routeName: 'end-users',
+    routeName: 'end-users-overview',
     path: 'end-users'
   },
   {

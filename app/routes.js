@@ -55,10 +55,8 @@ export default (
       <Route name="calls-overview" path="/:role/:identity?/calls/overview" handler={require('./modules/calls/components/CallsOverview')} />
       <Route name="calls-details" path="/:role/:identity?/calls/details" handler={require('./modules/calls/components/Calls')} />
 
-      <Route name="end-users" path="/:role/:identity?/end-users" handler={require('./modules/end-user/components/EndUsers')}>
-        <DefaultRoute name="end-users-overview" handler={require('./modules/end-user/components/EndUsersOverview')} />
-        <Route name="end-users-details" path="details" handler={require('./modules/end-user/components/EndUsersDetails')} />
-      </Route>
+      <Route name="end-users-overview" path="/:role/:identity?/end-users/overview" handler={require('./modules/end-user/components/EndUsersOverview')} />
+      <Route name="end-users-details" path="/:role/:identity?/end-users/details" handler={require('./modules/end-user/components/EndUsersDetails')} />
 
       <Route name="im-overview" path="/:role/:identity?/im" handler={require('./modules/im/components/ImOverview')} />
       <Route name="im" path="/:role/:identity?/im/details" handler={require('./modules/im/components/Im')} />
