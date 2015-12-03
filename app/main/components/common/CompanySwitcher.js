@@ -1,45 +1,46 @@
 import _ from 'lodash';
 import React from 'react';
 import FluxibleMixin from 'fluxible/addons/FluxibleMixin';
-import {Link} from 'react-router';
+import { Link } from 'react-router';
 
 import ApplicationStore from '../../stores/ApplicationStore';
+import switchCompany from '../../../modules/company/actions/switchCompany';
 
-const DEFAULT_LOGO_SRC = '/images/default-logo.png'
+const DEFAULT_LOGO_SRC = '/images/default-logo.png';
 
-var CompanySwitcher = React.createClass({
+const CompanySwitcher = React.createClass({
   mixins: [FluxibleMixin],
 
   statics: {
-    storeListeners: [ApplicationStore]
+    storeListeners: [ApplicationStore],
   },
 
-  getInitialState: function() {
+  getInitialState() {
     return this.getStateFromStore();
   },
 
-  getStateFromStore: function() {
-    return {
-      companies: this.getStore(ApplicationStore).getManagingCompanies() || []
-    };
-  },
-
-  onChange: function() {
+  onChange() {
     this.setState(this.getStateFromStore());
   },
 
-  render: function() {
-    let buttons = this.state.companies.map(({ name, carrierId, logo, role, identity }) => {
-        let logoSrc = logo ? `/data/${logo}` : DEFAULT_LOGO_SRC;
-        return (
-          <li className="navigation-bar__item" title={name} key={carrierId}>
-            <Link to="overview" params={{ role, identity }}>
-              <img src={logoSrc} />
-            </Link>
-          </li>
-        );
-      }
-    );
+  getStateFromStore() {
+    return {
+      companies: this.getStore(ApplicationStore).getManagingCompanies() || [],
+    };
+  },
+
+  render() {
+    const buttons = this.state.companies.map(({ name, carrierId, logo, role, identity }) => {
+      const logoSrc = logo ? `/data/${logo}` : DEFAULT_LOGO_SRC;
+
+      return (
+        <li className="navigation-bar__item" title={name} key={carrierId}>
+          <a href="#" onClick={this.switchCompany.bind(this, { role, identity })}>
+            <img src={logoSrc} alt={name} />
+          </a>
+        </li>
+      );
+    });
 
     return (
       <If condition={!_.isEmpty(this.state.companies)}>
@@ -55,7 +56,11 @@ var CompanySwitcher = React.createClass({
         { null }
       </If>
     );
-  }
+  },
+
+  switchCompany(params) {
+    this.context.executeAction(switchCompany, params);
+  },
 });
 
 export default CompanySwitcher;

@@ -9,7 +9,6 @@ import { getAclString, decodeAclString, getPathByResource } from './utils';
  */
 class AuthorityChecker {
   constructor(options) {
-
     this._carrierId = null;
 
     if (options.req) {
@@ -69,16 +68,10 @@ class AuthorityChecker {
    * @returns resource name {String}
    */
   getDefaultPath() {
-    if (this._isRootCompany() || this._isMaaii()) {
-      return getPathByResource('overview');
-    }
+    const activity = _.first(this._capability);
+    if (!activity) return null;
 
-    let activity = _.first(this._capability);
-
-    if (!activity)
-      return null;
-
-    let { action, resource } = decodeAclString(activity);
+    const { resource } = decodeAclString(activity);
     return getPathByResource(resource);
   }
 
@@ -104,10 +97,9 @@ class AuthorityChecker {
    * @returns {boolean}
    */
   scan(action, resource) {
-    if (this._isRootCompany() || this._isMaaii())
-      return true;
+    if (this._isRootCompany() || this._isMaaii()) return true;
 
-    let activity = this._getAclString(action, resource);
+    const activity = this._getAclString(action, resource);
     return _.includes(this._capability, activity);
   }
 }
