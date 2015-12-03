@@ -548,7 +548,7 @@ let getEndUsersStatsTotal = function(req, res) {
   if (error) {
     return res.status(400).json({
       error: {
-        message: prepareValidationMessage(err)
+        message: prepareValidationMessage(error)
       }
     });
   }
@@ -593,7 +593,7 @@ let getEndUsersStatsMonthly = function(req, res) {
   if (error) {
     return res.status(400).json({
       error: {
-        message: prepareValidationMessage(err)
+        message: prepareValidationMessage(error)
       }
     });
   }
@@ -639,35 +639,37 @@ let getEndUsersStatsMonthly = function(req, res) {
   });
 
   Q.allSettled([
-    Q.ninvoke(userStatsRequest, 'getNewUserStats', thisMonthRegisteredParams),
-    Q.ninvoke(userStatsRequest, 'getNewUserStats', lastMonthRegisteredParams),
-    Q.ninvoke(userStatsRequest, 'getActiveUserStats', thisMonthActiveParams),
-    Q.ninvoke(userStatsRequest, 'getActiveUserStats', lastMonthActiveParams),
-  ]).spread((thisMonthRegisteredStats, lastMonthRegisteredStats, thisMonthActiveStats, lastMonthActiveStats) => {
-    let responses = [thisMonthRegisteredStats, lastMonthRegisteredStats, thisMonthActiveStats, lastMonthActiveStats]
-    let errors = _.reduce(responses, (result, response) => {
-      if (response.state !== 'fulfilled') {
-        result.push(response.reason);
+      Q.ninvoke(userStatsRequest, 'getNewUserStats', thisMonthRegisteredParams),
+      Q.ninvoke(userStatsRequest, 'getNewUserStats', lastMonthRegisteredParams),
+      Q.ninvoke(userStatsRequest, 'getActiveUserStats', thisMonthActiveParams),
+      Q.ninvoke(userStatsRequest, 'getActiveUserStats', lastMonthActiveParams),
+    ])
+    .spread((thisMonthRegisteredStats, lastMonthRegisteredStats, thisMonthActiveStats, lastMonthActiveStats) => {
+      let responses = [thisMonthRegisteredStats, lastMonthRegisteredStats, thisMonthActiveStats, lastMonthActiveStats]
+      let errors = _.reduce(responses, (result, response) => {
+        if (response.state !== 'fulfilled') {
+          result.push(response.reason);
+        }
+
+        return result;
+      }, []);
+
+      if (!_.isEmpty(errors)) {
+        return res.status(500).json({
+          error: errors
+        });
       }
 
-      return result;
-    }, []);
-
-    if (!_.isEmpty(errors)) {
-      return res.status(500).json({
-        error: errors
-      });
-    }
-
-    try {
       return res.json({
         thisMonthActiveUser: parseMonthlyTotalInTime(thisMonthActiveStats.value),
         lastMonthActiveUser: parseMonthlyTotalInTime(lastMonthActiveStats.value),
         thisMonthRegisteredUser: parseMonthlyTotalInTime(thisMonthRegisteredStats.value),
         lastMonthRegisteredUser: parseMonthlyTotalInTime(lastMonthRegisteredStats.value),
       });
-    } catch (error) {
-      let { code, message, timeout, status } = error;
+    })
+    .catch((err) => {
+      let { code, message, timeout, status } = err;
+
       return res.status(status || 500).json({
         error: {
           code,
@@ -675,10 +677,71 @@ let getEndUsersStatsMonthly = function(req, res) {
           timeout
         }
       });
-    }
-  }).done();
+    })
+    .done();
 };
 
+let getEndUsersStats = function(req, res) {
+  req.checkParams('carrierId').notEmpty();
+  req.checkQuery('fromTime').notEmpty();
+  req.checkQuery('toTime').notEmpty();
+
+  let error = req.validationErrors();
+
+  if (error) {
+    return res.status(400).json({
+      error: {
+        message: prepareValidationMessage(error)
+      }
+    });
+  }
+
+  let params = _.omit({
+    carriers: req.params.carrierId,
+    breakdown: 'carrier',
+    from: req.query.fromTime,
+    to: req.query.toTime,
+    timescale: req.query.timescale || 'day'
+  }, (val) => { return !val; });
+
+  Q.allSettled([
+      Q.ninvoke(userStatsRequest, 'getNewUserStats', params),
+      Q.ninvoke(userStatsRequest, 'getActiveUserStats', params)
+    ])
+    .spread((newUserStats, activeUserStats) => {
+      let responses = [newUserStats, activeUserStats]
+      let errors = _.reduce(responses, (result, response) => {
+        if (response.state !== 'fulfilled') {
+          result.push(response.reason);
+        }
+
+        return result;
+      }, []);
+
+      if (!_.isEmpty(errors)) {
+        return res.status(500).json({
+          error: errors
+        });
+      }
+
+      return res.json({
+        activeUserStats: _.get(activeUserStats, 'value.results.0.data'),
+        newUserStats: _.get(newUserStats, 'value.results.0.data')
+      });
+    })
+    .catch((err) => {
+      let { code, message, timeout, status } = err;
+
+      return res.status(status || 500).json({
+        error: {
+          code,
+          message,
+          timeout
+        }
+      });
+    })
+    .done();
+};
 
 export {
   getCalls,
@@ -690,6 +753,7 @@ export {
   getUsers,
   getEndUsersStatsTotal,
   getEndUsersStatsMonthly,
+  getEndUsersStats,
   getVSF,
   getVerifications,
   getVerificationStatistics,

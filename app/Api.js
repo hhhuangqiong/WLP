@@ -341,6 +341,15 @@ Api.prototype.getEndUsersStatsMonthly = function(params, cb) {
     .end(genericHandler(cb));
 };
 
+Api.prototype.getEndUsersStats = function(params, cb) {
+  superagent
+    .get(`${this._getHost()}/api/carriers/${params.carrierId}/stat/user/query`)
+    .accept('json')
+    .set('Authorization', this._getToken())
+    .query(params)
+    .end(genericHandler(cb));
+};
+
 assign(
   Api.prototype,
   require('./server/api/auth')(API_PATH_PREFIX),
