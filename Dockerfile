@@ -1,8 +1,8 @@
-FROM iojs:latest
+FROM node:4.2
 
 # This dockerfile is designed to run from the jenkins build server, i.e. please
 # run 'npm install' and 'gulp' to prepare all dependencies and build the project.
-# The built/compiled/installed dependencies with be copied into the docker image 
+# The built/compiled/installed dependencies with be copied into the docker image
 # using the COPY command instead.
 COPY . /src/
 
