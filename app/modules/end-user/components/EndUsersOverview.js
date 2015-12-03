@@ -336,12 +336,14 @@ const EndUsersOverview = React.createClass({
                     data={monthlyRegisteredUserStats.total}
                     changeDir={monthlyRegisteredUserStats.direction}
                     changeAmount={monthlyRegisteredUserStats.change}
+                    changeEffect="positive"
                     changePercentage={monthlyRegisteredUserStats.percent} />
                   <DataGrid.Cell
                     title="Active User"
                     data={monthlyActiveUserStats.total}
                     changeDir={monthlyActiveUserStats.direction}
                     changeAmount={monthlyActiveUserStats.change}
+                    changeEffect="positive"
                     changePercentage={monthlyActiveUserStats.percent} />
                 </DataGrid.Wrapper>
               </Panel.Body>
