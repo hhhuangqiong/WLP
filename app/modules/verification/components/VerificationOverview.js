@@ -13,7 +13,7 @@ import * as Panel from './../../../main/components/Panel';
 import getMapConfig from '../constants/mapOfAttempts';
 
 import ColorRadioButton from '../../../main/components/ColorRadioButton';
-import TimeFramePicker from '../../../main/components/TimeFramePicker';
+import TimeFramePicker, { parseTimeRange } from '../../../main/components/TimeFramePicker';
 import LineChart from '../../../main/components/LineChart';
 import DonutChartPanel from '../../../main/components/DonutChartPanel';
 import SummaryCells from './SummaryCells';
@@ -87,26 +87,8 @@ export default React.createClass({
     };
   },
 
-  parseTimeRange(timeRange) {
-    let splitedTimeRange = timeRange.split(' ');
-    let quantity = parseInt(splitedTimeRange[0], 10) || 1;
-    let timescale = splitedTimeRange[1] === 'days' ? 'day' : 'hour';
-    // +1 to align the time to the corresponding bucket
-    // for the time that is 24 hours before 12:09, we need 13:00
-    // 12:09 + 1 hour = 13:09, startOf(13:09) = 13:00, 13:00 - 24 hour = 13:00
-    let to = moment().add(1, timescale).startOf(timescale).valueOf();
-    let from = moment(to).subtract(quantity, timescale).startOf(timescale).valueOf();
-
-    return {
-      from,
-      to,
-      quantity,
-      timescale
-    };
-  },
-
   resetCharts(timeRange) {
-    let { from, quantity, timescale } = this.parseTimeRange(timeRange);
+    let { from, quantity, timescale } = parseTimeRange(timeRange);
 
     let xAxis = {
       start: from,
@@ -124,7 +106,7 @@ export default React.createClass({
 
   updateCharts(timeRange) {
     let { identity } = this.context.router.getCurrentParams();
-    let { quantity, timescale } = this.parseTimeRange(timeRange);
+    let { quantity, timescale } = parseTimeRange(timeRange);
 
     this.context.executeAction(fetchVerificationOverview, {
       quantity,
