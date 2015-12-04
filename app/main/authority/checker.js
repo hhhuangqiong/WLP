@@ -97,7 +97,7 @@ class AuthorityChecker {
    * @returns {boolean}
    */
   scan(action, resource) {
-    if (this._isRootCompany() || this._isMaaii()) return true;
+    if (this._isRootCompany()) return true;
 
     const activity = this._getAclString(action, resource);
     return _.includes(this._capability, activity);

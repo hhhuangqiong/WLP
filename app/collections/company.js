@@ -248,7 +248,7 @@ schema.static('getManagingCompany', function(parentCarrierId, cb) {
 
       // if the parent company is either m800 or maaii
       // finding all existing companies except m800
-      if (company.isRootCompany() || company.carrierId === 'maaii.com' || company.carrierId === 'maaiii.org') {
+      if (company.isRootCompany()) {
         criteria = { carrierId: { $ne: ROOT_COMPANY_CARRIER_ID } };
       }
 
