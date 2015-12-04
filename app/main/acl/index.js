@@ -54,9 +54,9 @@ AclManager.prototype.middleware = function middleware(userId, carrierId, resourc
     // what alternatives to escape from public resources?
     if (_carrierId === null) return next();
 
-    Company.getCompanyByCarrierId(_carrierId)
-      .then(company => {
-        if (!company) throw new HttpError(404, NOT_FOUND_ERROR);
+    Company.isValidCarrier(_carrierId)
+      .then(isValid => {
+        if (!isValid) throw new HttpError(404, NOT_FOUND_ERROR);
         return User.findByEmail(_userId);
       })
       .then(user => {
