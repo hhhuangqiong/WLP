@@ -5,137 +5,81 @@ import mongoose  from 'mongoose';
 import randtoken from 'rand-token';
 import speakeasy from 'speakeasy';
 
+import Company from './company';
+
 const COLLECTION_NAME = 'PortalUser';
 
 import {
   MongoDBError,
-  NotFoundError
+  NotFoundError,
 } from 'common-errors';
-
-//TODO common validators to be shared among models
-function lengthValidator(param, min, max) {
-  return param.length >= min || param.length <= max;
-}
-
-//TODO use this validator or drop it
-function emailValidator(email) {
-  var reg = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
-  return email && reg.test(email);
-}
 
 /**
  * @class PortalUserSchema
  */
-var portalUserSchema = new mongoose.Schema({
-  isRoot: {
-    type: Boolean,
-    default: false
-  },
+const portalUserSchema = new mongoose.Schema({
+  isRoot: { type: Boolean, default: false },
   username: {
     // username is in form of email as discussed; TODO email validator integration
-    type: String,
-    required: true,
-    trim: true,
-    unique: true
+    type: String, required: true, trim: true, unique: true,
   },
-  hashedPassword: {
-    type: String
-  },
-  salt: {
-    type: String
-  },
+  hashedPassword: { type: String },
+  salt: { type: String },
   name: {
-    first: {
-      type: String,
-      required: true,
-      trim: true
-    },
-    last: {
-      type: String,
-      required: true,
-      trim: true
-    }
+    first: { type: String, required: true, trim: true },
+    last: { type: String, required: true, trim: true },
   },
-  affiliatedCompany: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'Company'
-  },
-  assignedGroup: {
-    type: String
-  },
-  assignedCompanies: [{
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'Company'
-  }],
-
+  affiliatedCompany: { type: mongoose.Schema.Types.ObjectId, ref: 'Company' },
+  assignedGroup: { type: String },
+  assignedCompanies: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Company' }],
   // Goolge Authenticator
-  googleAuth: {
-    key: String,
-    encoding: String,
-
-    //TODO enforce valid url
-    qrCodeUrl: String
+  googleAuth: { key: String, encoding: String,
+    // TODO: enforce valid url
+    qrCodeUrl: String,
   },
-
-  // TODO convenince method to fetch token by event, e.g., tokenOf('signup')
+  // TODO: convenince method to fetch token by event, e.g., tokenOf('signup')
   tokens: [{
     _id: false,
     event: String,
-    value: {
-      type: mongoose.Schema.Types.Mixed
-    },
-    createdAt: {
-      type: Date,
-      default: Date.now
-    }
+    value: { type: mongoose.Schema.Types.Mixed },
+    createdAt: { type: Date, default: Date.now },
   }],
-  createdAt: {
-    type: Date,
-    default: Date.now
-  },
-  createBy: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: COLLECTION_NAME
-  },
-  updateAt: {
-    type: Date
-  },
-  updateBy: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: COLLECTION_NAME
-  }
+  createdAt: { type: Date, default: Date.now },
+  createBy: { type: mongoose.Schema.Types.ObjectId, ref: COLLECTION_NAME },
+  updateAt: { type: Date },
+  updateBy: { type: mongoose.Schema.Types.ObjectId, ref: COLLECTION_NAME },
 }, {
-  collection: COLLECTION_NAME
+  collection: COLLECTION_NAME,
 });
 
-portalUserSchema.virtual('password').get(function() {
+portalUserSchema.virtual('password').get(function getPassword() {
   return this._password;
-}).set(function(password) {
+}).set(function setPassword(password) {
   this._password = password;
 });
 
-portalUserSchema.virtual('email').get(function() {
+portalUserSchema.virtual('email').get(function getEmail() {
   return this.username;
-}).set(function(email) {
+}).set(function setEmail(email) {
   this._email = email;
 });
 
-portalUserSchema.virtual('displayName').get(function() {
+portalUserSchema.virtual('displayName').get(function getDisplayName() {
   return this.name.first + ' ' + this.name.last;
 });
 
-portalUserSchema.pre('save', function(next) {
+portalUserSchema.pre('save', function preSave(next) {
   if (this.hashedPassword && !this.password) return next();
 
   if (this.password) {
-    let hashPasswordCb = (err, hashResult) => {
+    const hashPasswordCb = (err, hashResult) => {
       this.salt = hashResult.salt;
       this.hashedPassword = hashResult.hashedPassword;
       next();
     };
 
     this.constructor.hashInfo(this.password, hashPasswordCb);
-    return;
+    return null;
   }
 
   next();
@@ -148,7 +92,7 @@ portalUserSchema.pre('save', function(next) {
  * @param {string|number|object} [val]
  * @returns {PortalUser}
  */
-portalUserSchema.method('addToken', function(event, val) {
+portalUserSchema.method('addToken', function addToken(event, val) {
   this.removeToken(event);
   this.tokens.push(this.constructor.makeToken(event, val));
   return this;
@@ -161,10 +105,7 @@ portalUserSchema.method('addToken', function(event, val) {
  * @returns {PortalUser}
  */
 portalUserSchema.method('removeToken', function(event) {
-  var tokens = _.reject(this.tokens, (t) => {
-    return t.event === event;
-  });
-
+  const tokens = _.reject(this.tokens, t => t.event === event);
   this.tokens = tokens;
   return this;
 });
@@ -178,6 +119,22 @@ portalUserSchema.method('removeToken', function(event) {
 portalUserSchema.method('addPassword', function(password) {
   this.password = password;
   return this;
+});
+
+/**
+ * Get the company instance of current user
+ *
+ * @method makeToken
+ * @return {Model} Company
+ */
+portalUserSchema.method('getCompany', function() {
+  return new Promise((resolve, reject) => {
+    Company.findOne({ _id: this.affiliatedCompany }, (err, doc) => {
+      if (err) return reject(new MongoDBError(`Fail to find company with id ${this.affiliatedCompany}`, err));
+      if (!doc) return reject(new NotFoundError(`Fail to find company ${this.affiliatedCompany}`));
+      resolve(doc);
+    });
+  });
 });
 
 /**
@@ -255,6 +212,27 @@ portalUserSchema.method('hasValidOneTimePassword', function(number) {
 
   var googleAuth = this.get('googleAuth') || {};
   return number === speakeasy.time({ key: googleAuth.key, encoding: googleAuth.encoding });
+});
+
+/**
+ * Validate carrierId with all accessable companies for current user
+ *
+ * @method validateCarrier
+ * @param {String} carrierId
+ */
+portalUserSchema.method('validateCarrier', function validateCarrier(carrierId) {
+  return new Promise((resolve, reject) => {
+    this.getCompany
+      .then(company => {
+        if (!company) return resolve(false);
+        if (company.carrierId === carrierId) return resolve(true);
+
+        Company.getManagingCompany(company.carrierId, (err, companies) => {
+          return resolve(companies.find(managingCompany => managingCompany.carrierId === carrierId));
+        });
+      })
+      .catch(error => reject(error));
+  });
 });
 
 /**

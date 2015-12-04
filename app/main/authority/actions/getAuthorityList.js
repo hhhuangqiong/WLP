@@ -1,8 +1,9 @@
 export default function(context, carrierId, callback) {
-  context.api.getAuthorityList(carrierId, function(err, { carrierId, capability }) {
+  context.api.getAuthorityList(carrierId, (err, payload) => {
+    if (!payload) return callback();
 
-    let authority = context.getAuthority();
-    authority.reset(carrierId, capability);
+    const authority = context.getAuthority();
+    authority.reset(carrierId, payload.capability);
 
     callback(err);
   });
