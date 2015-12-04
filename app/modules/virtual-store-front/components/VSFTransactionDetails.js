@@ -12,18 +12,23 @@ import Searchbox from '../../../main/components/Searchbox';
 
 import VSFTransactionStore from '../stores/VSFTransactionStore';
 import fetchVSFTransactions from '../actions/fetchVSFTransactions';
+import clearVSFTransaction from '../actions/clearVSFTransaction';
 
 const SUBMIT_KEY = 13;
 const PAGE_SIZE = 100;
 
-const VSFTransactionDetails = React.createClass({
+function ensureNumber(value) {
+  return +value;
+}
+
+let VSFTransactionDetails = React.createClass({
+  mixins: [FluxibleMixin, AuthMixin],
+
   contextTypes: {
     router: React.PropTypes.func.isRequired,
     executeAction: React.PropTypes.func.isRequired,
     getStore: React.PropTypes.func.isRequired,
   },
-
-  mixins: [FluxibleMixin, AuthMixin],
 
   statics: {
     storeListeners: [VSFTransactionStore],
@@ -74,9 +79,9 @@ const VSFTransactionDetails = React.createClass({
       toTime: this.state.toTime && this.state.toTime.trim(),
       category: this.state.category && this.state.category.trim(),
       userNumber: this.state.userNumber && this.state.userNumber.trim(),
-      pageIndex: this.state.pageIndex && this.state.pageIndex.trim(),
-      pageSize: this.state.pageSize,
-    };
+      pageIndex: ensureNumber(this.state.pageIndex),
+      pageSize: ensureNumber(this.state.pageSize),
+    }
   },
 
   render() {
@@ -134,6 +139,8 @@ const VSFTransactionDetails = React.createClass({
         <div className="large-24 columns">
           <VSFTransactionTable
             transactions={this.state.transactions}
+            hasNextPage={this.state.hasNextPage}
+            loadPage={this.handlePageChange}
           />
         </div>
       </div>
@@ -149,7 +156,22 @@ const VSFTransactionDetails = React.createClass({
     const state = this.getQueryFromState();
     const toBeSent = _.merge(query, state, newValue);
 
+    this.context.executeAction(clearVSFTransaction);
     this.context.router.transitionTo(routeName, params, _.omit(toBeSent || {}, (value) => { return !value; }));
+  },
+
+  handlePageChange: function(e) {
+    let { identity } = this.context.router.getCurrentParams();
+
+    this.context.executeAction(fetchVSFTransactions, {
+      carrierId: identity,
+      fromTime: this.state.fromTime,
+      toTime: this.state.toTime,
+      pageIndex: +this.state.pageIndex + 1,
+      pageSize: +this.state.pageSize,
+      category: this.state.category,
+      userNumber: this.state.userNumber,
+    });
   },
 
   handleStartDateChange(date) {

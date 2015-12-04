@@ -8,12 +8,29 @@ let VSFTransactionStore = createStore({
 
   handlers: {
     FETCH_VSF_SUCCESS: 'handleTransactionsFetch',
-    FETCH_VSF_WIDGETS_SUCCESS: 'handleWidgetsFetch'
+    FETCH_VSF_WIDGETS_SUCCESS: 'handleWidgetsFetch',
+    CLEAR_VSF: 'handleClearTransaction',
+  },
+
+  initialize() {
+    this.transactions = [];
+    this.hasNextPage = false;
+    this.pageSize = 0;
+    this.pageIndex = 0;
+    this.widgets = [];
+  },
+
+  handleClearTransaction() {
+    this.initialize();
+    this.emitChange();
   },
 
   handleTransactionsFetch(payload) {
     debug('handleTransactionsFetch', payload);
-    this.transactions = payload;
+    this.transactions = this.transactions.concat(payload.transactionRecords);
+    this.hasNextPage = payload.hasNextPage;
+    this.pageSize = payload.pageSize;
+    this.pageIndex = payload.dateRange.pageNumberIndex;
     this.emitChange();
   },
 
@@ -37,6 +54,7 @@ let VSFTransactionStore = createStore({
       userNumber: this.userNumber,
       pageIndex: this.pageIndex,
       pageSize: this.pageSize,
+      hasNextPage: this.hasNextPage,
       widgets: this.widgets,
       transactions: this.transactions
     }
@@ -52,6 +70,7 @@ let VSFTransactionStore = createStore({
     this.category = state.category;
     this.pageIndex = state.pageIndex;
     this.pageSize = state.pageSize;
+    this.hasNextPage = state.hasNextPage;
     this.userNumber = state.userNumber;
     this.widgets = state.widgets;
     this.transactions = state.transactions;

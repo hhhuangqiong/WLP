@@ -9,7 +9,9 @@ const ANDROID_PLATFORM = 'com.maaii.platform.android';
 
 let VSFTransactionTable = React.createClass({
   propTypes: {
-    transactions: React.PropTypes.array
+    transactions: React.PropTypes.array.isRequired,
+    hasNextPage: React.PropTypes.bool.isRequired,
+    loadPage: React.PropTypes.func.isRequired,
   },
 
   getStyleByStoreType(platform) {
@@ -90,9 +92,27 @@ let VSFTransactionTable = React.createClass({
     });
   },
 
+  renderFooter() {
+    return (
+      <If condition={!_.isEmpty(this.props.transactions)}>
+        <tr className="vsf-table--row">
+          <td className="vsf-table--cell" colSpan="7">
+            <div className="text-center">
+              <If condition={this.props.hasNextPage}>
+                <span className="pagination__button" onClick={this.props.loadPage}>Load More</span>
+              <Else />
+                <span className="pagination__button pagination__button--inactive">No more result</span>
+              </If>
+            </div>
+          </td>
+        </tr>
+      </If>
+    );
+  },
+
   render: function() {
     return (
-      <table className="large-24 clickable calls-table" key="vsf-table">
+      <table className="large-24 clickable vsf-table" key="vsf-table">
         <thead className="vsf-table--head">
           <tr className="vsf-table--row">
             <th className="vsf-table--cell"></th>
@@ -105,6 +125,7 @@ let VSFTransactionTable = React.createClass({
           </tr>
         </thead>
         <tbody className="vsf-table--body" key="vsf-table--body">{this.renderRows()}</tbody>
+        <tfoot className="vsf-table--foot" key="vsf-table--foot">{this.renderFooter()}</tfoot>
       </table>
     );
   }

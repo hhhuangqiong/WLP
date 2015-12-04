@@ -50,7 +50,7 @@ export default class VSFTransactionRequest {
       .end((err, res) => {
         if (err) return cb(handleError(err, err.status || 400));
         if (res.status >= 400) return cb(handleError(res.body.error.message, res.body.error.httpStatus));
-        cb(null, res.body.transactionRecords);
+        cb(null, res.body);
       });
   }
 

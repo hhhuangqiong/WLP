@@ -75,10 +75,17 @@ let getUsers = function(req, res) {
   };
 
   endUserRequest.getUsers(carrierId, queries, (err, result) => {
-    if (err)
-      return res.status(err.status).json({
-        error: err
+    if (err) {
+      let { code, message, timeout, status } = err;
+
+      return res.status(status || 500).json({
+        error: {
+          code,
+          message,
+          timeout
+        }
       });
+    }
 
     return res.json(result);
   });
@@ -153,8 +160,14 @@ let getUsername = function(req, res) {
       res.json(user);
     })
     .catch((err) => {
-      return res.status(err.status).json({
-        error: err
+      let { code, message, timeout, status } = err;
+
+      return res.status(status || 500).json({
+        error: {
+          code,
+          message,
+          timeout
+        }
       });
     });
 };
@@ -207,8 +220,14 @@ let suspendUser = function(req, res) {
       return res.json(result);
     })
     .catch((err) => {
-      return res.status(err.status).json({
-        error: err
+      let { code, message, timeout, status } = err;
+
+      return res.status(status || 500).json({
+        error: {
+          code,
+          message,
+          timeout
+        }
       });
     });
 }
@@ -226,8 +245,14 @@ let reactivateUser = function(req, res) {
       return res.json(result);
     })
     .catch((err) => {
-      return res.status(err.status).json({
-        error: err
+      let { code, message, timeout, status } = err;
+
+      return res.status(status || 500).json({
+        error: {
+          code,
+          message,
+          timeout
+        }
       });
     });
 }
@@ -260,10 +285,17 @@ let getCalls = function(req, res) {
   }
 
   callsRequest.getCalls(params, (err, result) => {
-    if (err)
-      return res.status(err.status).json({
-        error: err
+    if (err) {
+      let { code, message, timeout, status } = err;
+
+      return res.status(status || 500).json({
+        error: {
+          code,
+          message,
+          timeout
+        }
       });
+    }
 
     return res.json(result);
   });
@@ -290,10 +322,17 @@ let getTopUp = function(req, res) {
   };
 
   topUpRequest.getTopUp(params, (err, result) => {
-    if (err)
-      return res.status(err.status).json({
-        error: err
+    if (err) {
+      let { code, message, timeout, status } = err;
+
+      return res.status(status || 500).json({
+        error: {
+          code,
+          message,
+          timeout
+        }
       });
+    }
 
     return res.json(result);
   });
@@ -342,10 +381,17 @@ let getWidgets = function(req, res) {
       });
     })
     .catch(function(err) {
-      if (err)
-        return res.status(err.status).json({
-          error: err
+      if (err) {
+        let { code, message, timeout, status } = err;
+
+        return res.status(status || 500).json({
+          error: {
+            code,
+            message,
+            timeout
+          }
         });
+      }
     });
 }
 
@@ -371,10 +417,17 @@ let getSMS = function(req, res) {
   });
 
   request.get(carrierId, query, (err, result) => {
-    if (err)
-      return res.status(err.status).json({
-        error: err
+    if (err) {
+      let { code, message, timeout, status } = err;
+
+      return res.status(status || 500).json({
+        error: {
+          code,
+          message,
+          timeout
+        }
       });
+    }
 
     return res.json(result);
   });
@@ -415,10 +468,17 @@ let getIM = function(req, res) {
   let params = _.pick(req.query, ['carrier', 'message_type', 'from', 'to', 'sender', 'recipient', 'page', 'size']);
 
   imRequest.getImSolr(params, (err, result) => {
-    if (err)
-      return res.status(err.status).json({
-        error: err
+    if (err) {
+      let { code, message, timeout, status } = err;
+
+      return res.status(status || 500).json({
+        error: {
+          code,
+          message,
+          timeout
+        }
       });
+    }
 
     return res.json(result);
   });
@@ -432,18 +492,39 @@ let getVSF = function(req, res) {
   req.checkQuery('pageSize').notEmpty();
 
   var err = req.validationErrors();
-  if (err) return res.status(400).json(err);
+  if (err) {
+    return res.status(400).json({
+      error: {
+        message: prepareValidationMessage(err)
+      }
+    });
+  }
 
   let params = {
     fromTime: req.query.fromTime,
     toTime: req.query.toTime,
-    pageIndex: req.query.pageIndex,
+    pageNumberIndex: req.query.pageIndex,
     pageSize: req.query.pageSize,
     category: req.query.category,
     userNumber: req.query.userNumber
   };
 
-  vsfRequest.getTransactions(req.params.carrierId, params, (dumb, records) => {
+  vsfRequest.getTransactions(req.params.carrierId, params, (err, records) => {
+    if (err) {
+      let { code, message, timeout, status } = err;
+
+      return res.status(status || 500).json({
+        error: {
+          code,
+          message,
+          timeout
+        }
+      });
+    }
+
+    let { pageSize, totalNoOfRecords, dateRange:{ pageNumberIndex } } = records;
+    let numberOfPages = Math.ceil(totalNoOfRecords / pageSize);
+    records.hasNextPage = (numberOfPages - 1) > pageNumberIndex;
     return res.json(records);
   });
 }
