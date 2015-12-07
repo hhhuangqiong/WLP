@@ -15,13 +15,15 @@ import ColorRadioButton from '../../../main/components/ColorRadioButton';
 import LineChart from '../../../main/components/LineChart';
 import TimeFramePicker, { parseTimeRange } from '../../../main/components/TimeFramePicker';
 import * as DataGrid from '../../../main/statistics/components/DataGrid';
+import PercentageChart from '../../../main/components/PercentageChart';
 
 import EndUsersOverviewStore from '../stores/EndUsersOverviewStore';
 import ApplicationStore from '../../../main/stores/ApplicationStore';
 
 import fetchEndUsersStatsMonthly from '../actions/fetchEndUsersStatsMonthly';
 import fetchEndUsersStatsTotal from '../actions/fetchEndUsersStatsTotal';
-import fetchEndUsersStats from '../actions/fetchEndUsersStats';
+import fetchEndUsersRegistrationStats from '../actions/fetchEndUsersRegistrationStats';
+import fetchDeviceStats from '../actions/fetchDeviceStats';
 
 const YEARS_BACKWARD = 5;
 
@@ -30,6 +32,12 @@ const TIME_FRAMES = ['7 days', '30 days', '60 days', '90 days'];
 const debug = require('debug')('app:end-user/components/EndUsersOverview');
 
 const defaultQueryMonth = moment().subtract(1, 'month');
+
+const PLATFORM_NAME = {
+  ios: 'IOS',
+  android: 'Android',
+  phone: 'Windows Phone'
+};
 
 const STATS_TYPE = {
   REGISTERED_USER: 'registereduser',
@@ -82,6 +90,7 @@ const EndUsersOverview = React.createClass({
     this._getStats();
     this._getMonthlyStats();
     this._getLastXDaysStats();
+    this._getDeviceStats();
   },
 
   onEndUsersOverviewChange() {
@@ -137,12 +146,26 @@ const EndUsersOverview = React.createClass({
 
     let { from, to, quantity: selectedLastXDays, timescale } = parseTimeRange(timeRange);
 
-    this.context.executeAction(fetchEndUsersStats, {
+    this.context.executeAction(fetchEndUsersRegistrationStats, {
       fromTime: from,
       toTime: to,
       carrierId: identity,
       timescale
-    })
+    });
+  },
+
+  _getDeviceStats(lastXDays) {
+    let { identity } = this.context.router.getCurrentParams();
+    let timeRange = lastXDays || this.state.selectedLastXDays;
+
+    let { from, to, quantity: selectedLastXDays, timescale } = parseTimeRange(timeRange);
+
+    this.context.executeAction(fetchDeviceStats, {
+      fromTime: from,
+      toTime: to,
+      carrierId: identity,
+      timescale
+    });
   },
 
   getChangeColor(value) {
@@ -265,6 +288,13 @@ const EndUsersOverview = React.createClass({
     return this.state.selectedLine;
   },
 
+  _getDeviceTotal() {
+    return _.reduce(this.state.deviceStats, (total, stat) => {
+      total += stat.total;
+      return total;
+    }, 0);
+  },
+
   render() {
     let { role, identity } = this.context.router.getCurrentParams();
     let totalRegisteredUser = this._getTotalRegisteredUser();
@@ -366,22 +396,20 @@ const EndUsersOverview = React.createClass({
               </Panel.Header>
               <Panel.Body customClass="narrow no-padding">
                 <div className="inner-wrap">
-                  <div className="chart-cell row">
-                    <div className="chart-cell__header inner-wrap">
-                      <div className="large-24 columns">
-                        <div className="large-4 columns">
-                          <div className="chart-cell__header__title">Registration</div>
-                        </div>
-                        { /* // DESIGN IS NOT FINALISED
-                        <div className="large-4 columns end verification-overview__attempt__datetime">
-                          <div className="verification-overview__value">2219</div>
-                          <div className="verification-overview__title">New registered User</div>
-                        </div>
-                        */ }
+                  <div className="chart-cell large-24 columns">
+                    <div className="chart-cell__header row">
+                      <div className="large-4 columns">
+                        <div className="chart-cell__header__title">Registration</div>
                       </div>
+                      { /* // DESIGN IS NOT FINALISED
+                      <div className="large-4 columns end verification-overview__attempt__datetime">
+                        <div className="verification-overview__value">2219</div>
+                        <div className="verification-overview__title">New registered User</div>
+                      </div>
+                      */ }
                     </div>
-                    <div className="large-24 columns">
-                      <div className="chart-cell__line-toggle">
+                    <div className="chart-cell__controls row">
+                      <div className="chart-cell__line-toggle large-24 columns">
                         <ul className="inner-wrap">
                           {
                             LINECHART_TOGGLES.map((toggle) => {
@@ -402,13 +430,40 @@ const EndUsersOverview = React.createClass({
                         </ul>
                       </div>
                     </div>
-                    <div className="large-24 columns chart-cell__chart">
+                    <div className="chart-cell__chart row">
                       <LineChart
                         className="attempt-line"
                         lines={this._getLineChartData()}
                         xAxis={this._getLineChartXAxis()}
                         yAxis={{}}
                         selectedLine={this._getLineChartSelectedLine()} />
+                    </div>
+                  </div>
+                  <div className="chart-cell large-24 columns">
+                    <div className="chart-cell__header row">
+                      <div className="large-4 columns">
+                        <div className="chart-cell__header__title">Device</div>
+                      </div>
+                      <div className="large-3 columns end chart-cell__overview">
+                        <div className="chart-cell__overview__value">{ this._getDeviceTotal() }</div>
+                        <div className="chart-cell__overview__unit">Total User</div>
+                      </div>
+                    </div>
+                    <div className="chart-cell__chart row">
+                      {
+                        this.state.deviceStats && this.state.deviceStats.map((stat) => {
+                          let percentage = Math.round(stat.total/this._getDeviceTotal() * 100);
+                          return (
+                            <div className="large-12 columns left">
+                              <PercentageChart
+                                title={PLATFORM_NAME[stat.platform]}
+                                percentage={percentage}
+                                stat={stat.total}
+                                unit="users" />
+                            </div>
+                          );
+                        })
+                      }
                     </div>
                   </div>
                 </div>
