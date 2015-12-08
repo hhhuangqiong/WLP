@@ -1,7 +1,5 @@
-'use strict';
-
-import _ from 'lodash';
 import path from 'path';
+import { isURL } from 'validator';
 
 // react & flux -related
 import React from 'react';
@@ -165,13 +163,14 @@ function initialize(port) {
     }
 
     context.getActionContext().executeAction(loadSession, {}, function(err, session) {
-      if (!session) {
-        doRenderApp();
-      } else {
-        context.getActionContext().executeAction(getAuthorityList, _.get(session, 'user.carrierId'), function(err) {
-          doRenderApp();
-        })
-      }
+      if (!session) return doRenderApp();
+
+      /* Check if current carrierId is a valid url */
+      const carrierId = req.url.split('/')[2];
+      if (!isURL(carrierId, { allow_underscores: true })) return doRenderApp();
+
+        /* Always check for carrierId by url instead of current user */
+      context.getActionContext().executeAction(getAuthorityList, carrierId, err => doRenderApp());
     });
   });
 

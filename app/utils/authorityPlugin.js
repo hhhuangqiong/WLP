@@ -1,4 +1,3 @@
-import _ from 'lodash';
 import Authority from '../main/authority/checker';
 
 module.exports = {

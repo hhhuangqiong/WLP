@@ -1,5 +1,6 @@
 import Q from 'q';
 import mongoose from 'mongoose';
+
 import gridfs from './../server/utils/gridfs';
 
 const collectionName = 'Company';
@@ -233,6 +234,13 @@ schema.method('getCompanyType', function() {
   return 'wl';
 });
 
+/**
+ * @method getManagingCompany
+ * Get one company by passing parentCarrierId to find the managing one
+ *
+ * @param {String} parentCarrierId
+ * @param {Function} cb
+ */
 schema.static('getManagingCompany', function(parentCarrierId, cb) {
   return Q.ninvoke(this, 'findOne', { _id: parentCarrierId })
     .then((company) => {
@@ -273,14 +281,22 @@ schema.static('getManagingCompany', function(parentCarrierId, cb) {
  * @param {String} carrierId  The carrierId of the company
  * @param {Function} cb  The node-style callback to be called when the process is done
  */
-schema.static('getCompanyByCarrierId', function (carrierId, cb) {
+schema.static('getCompanyByCarrierId', function getCompanyByCarrierId(carrierId, cb) {
+  /* Alternative way beside using callback */
+  if (!cb) {
+    return new Promise((resolve, reject) => {
+      this.findOne({ carrierId }, (err, doc) => {
+        if (err) return reject(new Error(`Encounter error in getCompanyByCarrierId function with carrierId ${carrierId}`));
+        resolve(doc);
+      });
+    });
+  }
+
+  /* Make most of the current usage to be compatible */
   Q.ninvoke(this, 'findOne', { carrierId: carrierId })
     .then((company) => {
       if (!company) {
-        throw new Error({
-          name: 'NotFound',
-          message: `Company with carrierId=${carrierId} does not exist`,
-        });
+        throw new Error({ name: 'NotFound', message: `Company with carrierId=${carrierId} does not exist` });
       }
 
       cb(null, company);

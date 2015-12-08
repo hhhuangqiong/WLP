@@ -1,9 +1,6 @@
 import _ from 'lodash';
 import logger from 'winston';
-
-import {
-  MongoError, NotFoundError, ArgumentNullError,
-} from 'common-errors';
+import { NotFoundError } from 'common-errors';
 
 import { getAclString } from './utils';
 import Company from '../../collections/company';
@@ -61,7 +58,7 @@ class Authority {
   _getCapabilities() {
     return new Promise((resolve, reject) => {
       Company.getCompanyByCarrierId(this._carrierId, (err, company) => {
-        if (err) return reject(new MongoError('Encounter error when finding company by carrierId', err));
+        if (err) return reject(new Error(`Encounter error when finding company by carrierId ${this._carrierId}`, err));
         if (!company) return reject(new NotFoundError('company'));
 
         const { capabilities } = company;

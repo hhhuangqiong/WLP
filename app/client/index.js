@@ -93,19 +93,20 @@ if (!dehydratedState) {
     // For debugging
     window.context = context;
 
-    let AuthStore = require('../main/stores/AuthStore');
-    let getAuthorityList = require('../main/authority/actions/getAuthorityList');
-    let router = createAppRouter(context);
+    const AuthStore = require('../main/stores/AuthStore');
+    const getAuthorityList = require('../main/authority/actions/getAuthorityList');
+    const router = createAppRouter(context);
     let firstRender = true;
 
     bootstrapDebug('Starting router');
 
-    router.run(function(Handler, routerState) {
+    router.run(function routerRun(Handler, routerState) {
       // TODO: prepare the authority plugin on server side
-      let isAuthenticated = context.getStore(AuthStore).isAuthenticated();
-      let authority = context.getComponentContext().getAuthority();
+      const isAuthenticated = context.getStore(AuthStore).isAuthenticated();
+      const authority = context.getComponentContext().getAuthority();
+
       if (isAuthenticated && _.isNull(authority.getCarrierId())) {
-        context.executeAction(getAuthorityList, context.getStore(AuthStore).getCarrierId(), function(err) {
+        context.executeAction(getAuthorityList, routerState.params.identity, function(err) {
           if (err) {
             router.transitionTo('/error/internal-server-error');
             return;

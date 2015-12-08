@@ -76,7 +76,7 @@ export default function init(nconf) {
   });
 
   ioc.factory('ACL', (container) => {
-    return new NodeAcl(new NodeAcl.mongodbBackend(mongoose.connection.db));
+    return new NodeAcl(new NodeAcl.memoryBackend());
   });
 
   ioc.factory('ACLManager', (container) => {
