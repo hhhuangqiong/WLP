@@ -141,7 +141,7 @@ export default class ImRequest {
       });
     }
 
-    return cb(null, composeSolrResponse(data, pageSize));
+    return cb(null, composeResponse(data, pageSize));
   }
 
   /**
