@@ -7,7 +7,7 @@ var _       = require('lodash');
 var qs      = require('qs');
 
 import {buildImSolrQueryString} from '../queryBuilder/im';
-import {constructOpts, formatDateString, swapDate, composeResponse, handleError} from '../helper';
+import {constructOpts, formatDateString, swapDate, composeSolrResponse, handleError} from '../helper';
 
 const LABEL_FOR_NULL = 'N/A';
 
@@ -141,7 +141,7 @@ export default class ImRequest {
       });
     }
 
-    return cb(null, composeResponse(data, pageSize));
+    return cb(null, composeSolrResponse(data, pageSize));
   }
 
   /**
