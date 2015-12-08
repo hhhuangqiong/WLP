@@ -2,6 +2,7 @@ import React, { PropTypes } from 'react';
 import classnames from 'classnames';
 import { Link } from 'react-router';
 import { connectToStores } from 'fluxible/addons';
+import _ from 'lodash';
 
 import Permit from './Permit';
 import ApplicationStore from '../../stores/ApplicationStore';
@@ -25,6 +26,10 @@ class Sidebar extends React.Component {
       logoSrc = `/data/${this.props.currentCompany && this.props.currentCompany.logo}`;
     }
 
+    const currentPath = this.context.router.getCurrentPath();
+    // assumes all paths' structure would be `/:role/:identity/[path]/[sub-page]`
+    const path = currentPath.split('/')[3];
+
     return (
       <div
         className={classnames('mainmenu-bar', 'vertical', {offcanvas: this.props.isOffCanvas})}
@@ -45,7 +50,7 @@ class Sidebar extends React.Component {
               <Permit action="view" resource={section.page}>
                 <li key={idx}>
                   <Link
-                    className="item mainmenu-bar__item"
+                    className={classnames('item', 'mainmenu-bar__item', {active: (path === section.path) })}
                     to={section.routeName}
                     params={{ role: role, identity: identity }}
                   >
