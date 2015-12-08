@@ -222,7 +222,7 @@ portalUserSchema.method('hasValidOneTimePassword', function(number) {
  */
 portalUserSchema.method('validateCarrier', function validateCarrier(carrierId) {
   return new Promise((resolve, reject) => {
-    this.getCompany
+    this.getCompany()
       .then(company => {
         if (!company) return resolve(false);
         if (company.carrierId === carrierId) return resolve(true);
