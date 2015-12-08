@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { PropTypes } from 'react';
 import { Link } from 'react-router';
 import Select from 'react-select';
 import classNames from 'classnames';
@@ -20,8 +20,9 @@ import SummaryCells from './SummaryCells';
 import fetchVerificationOverview from '../actions/fetchVerificationOverview';
 import VerificationOverviewStore from '../stores/VerificationOverviewStore';
 import ApplicationStore from '../../../main/stores/ApplicationStore';
-import { subtractTime, timeFromNow } from '../../../utils/StringFormatter';
+import { timeFromNow } from '../../../utils/StringFormatter';
 import MAP_DATA from '../constants/mapData.js';
+import changeTimeRange from '../actions/changeTimeRange';
 
 const TIME_FRAMES = ['24 hours', '7 days', '30 days', '60 days', '90 days'];
 const DEFAULT_TIME_RANGE = '30 days';
@@ -34,21 +35,25 @@ const EMPTY_CELL_PLACEHOLDER = '-';
 const TOOLTIP_TIME_FORMAT = 'lll';
 
 function fromTimeslot(collection, fromTime, timeframe) {
-  let maxNumber = _.max(collection);
+  const maxNumber = _.max(collection);
 
   // Map the index to real world numbers representing the number of hours/days
-  let maxIndex = collection.indexOf(maxNumber) + 1;
+  const maxIndex = collection.indexOf(maxNumber) + 1;
 
-  let subtractedFromTime = timeFromNow(timeframe);
+  const subtractedFromTime = timeFromNow(timeframe);
   return subtractedFromTime.add(maxIndex, timeframe.indexOf('hours') > -1 ? 'hours' : 'days');
 }
 
 export default React.createClass({
   displayName: 'VerificationOverview',
 
+  propTypes: {
+    appIds: PropTypes.array,
+  },
+
   contextTypes: {
-    router: React.PropTypes.func.isRequired,
-    executeAction: React.PropTypes.func.isRequired
+    router: PropTypes.func.isRequired,
+    executeAction: PropTypes.func.isRequired,
   },
 
   mixins: [FluxibleMixin, AuthMixin],
@@ -56,104 +61,36 @@ export default React.createClass({
   statics: {
     storeListeners: {
       onVerificationOverviewChange: VerificationOverviewStore,
-      onApplicationConfigChange: ApplicationStore
-    }
+      onApplicationConfigChange: ApplicationStore,
+    },
   },
 
   getDefaultProps() {
-    return {
-      appIds: []
-    };
+    return { appIds: [] };
   },
 
   getInitialState() {
+    const { timeRange } = this.context.router.getCurrentQuery();
+    const timeRangeFromStore = this.getStore(VerificationOverviewStore).getTimeRange();
+
     return {
       countriesData: [],
       types: [],
       osTypes: [],
-      timeRange: DEFAULT_TIME_RANGE,
+      timeRange: timeRange || timeRangeFromStore || DEFAULT_TIME_RANGE,
       xAxis: {},
       yAxis: {},
       sXAxis: {},
       sYAxis: {
         unit: '%',
         alignment: 'right',
-        max: 100
+        max: 100,
       },
       lines: null,
       successRateSeries: null,
       busiestAttempts: 0,
-      busiestTime: null
+      busiestTime: null,
     };
-  },
-
-  resetCharts(timeRange) {
-    let { from, quantity, timescale } = parseTimeRange(timeRange);
-
-    let xAxis = {
-      start: from,
-      tickCount: parseInt(quantity),
-      tickInterval: (timescale === 'day' ? 24 : 1) * 3600 * 1000
-    };
-
-    this.setState({
-      xAxis,
-      sXAxis: xAxis,
-      lines: null,
-      successRateSeries: null
-    });
-  },
-
-  updateCharts(timeRange) {
-    let { identity } = this.context.router.getCurrentParams();
-    let { quantity, timescale } = parseTimeRange(timeRange);
-
-    this.context.executeAction(fetchVerificationOverview, {
-      quantity,
-      timescale,
-      application: this.state.appId,
-      carrierId: identity
-    });
-  },
-
-  onVerificationOverviewChange() {
-    let summaryAttempts = this.getStore(VerificationOverviewStore).getSummaryAttempts();
-    let countryAttempts = this.getStore(VerificationOverviewStore).getCountryAttempts();
-    let osAttempts = this.getStore(VerificationOverviewStore).getOsAttempts();
-    let methodAttempts = this.getStore(VerificationOverviewStore).getMethodAttempts();
-    let successFailAttempts = this.getStore(VerificationOverviewStore).getSuccessFailAttempts();
-
-    let overviewData = _.merge(summaryAttempts, countryAttempts, osAttempts, methodAttempts);
-    this.setState(overviewData);
-
-    // Avoid multiple execution of this function that makes the line chart have dirty preoccupied data
-    if ((successFailAttempts.totalAttempts || []).length) {
-      this.setState(successFailAttempts);
-      this.toggleAttemptType(this.state.attemptToggle || TOTAL_NUMBER_ATTEMPTS);
-    }
-
-    // Inject custom world data provided by Highmaps
-    Highcharts.maps['custom/world'] = MAP_DATA;
-
-    // Copy source data to be a new one for Highmap to avoid the behavior of changing source data
-    let maxValue = _.max(countryAttempts.countriesData, country => country.value).value;
-    new Highcharts.Map(getMapConfig('verificationCountrySection', (countryAttempts.countriesData || []).slice(0), maxValue));
-  },
-
-  autoSelectAppId() {
-    this.setState({
-      appId: this.context.getStore(ApplicationStore).getDefaultAppId()
-    });
-  },
-
-  onAppIdChange(appId) {
-    this.setState({
-      appId
-    });
-  },
-
-  onApplicationConfigChange() {
-    this.autoSelectAppId();
   },
 
   componentDidMount() {
@@ -170,101 +107,36 @@ export default React.createClass({
     }
   },
 
-  setTotalAttempts() {
-    this.setState({
-      attemptToggle: TOTAL_NUMBER_ATTEMPTS,
-      selectedLineInChartA: TOTAL_NUMBER_ATTEMPTS,
-      busiestAttempts: _.max(this.state.totalAttempts),
-      busiestTime: this.state.totalAttempts ? fromTimeslot(this.state.totalAttempts, moment(), this.state.timeRange) : null,
-      showSuccessRate: false
-    });
+  onVerificationOverviewChange() {
+    const summaryAttempts = this.getStore(VerificationOverviewStore).getSummaryAttempts();
+    const countryAttempts = this.getStore(VerificationOverviewStore).getCountryAttempts();
+    const osAttempts = this.getStore(VerificationOverviewStore).getOsAttempts();
+    const methodAttempts = this.getStore(VerificationOverviewStore).getMethodAttempts();
+    const successFailAttempts = this.getStore(VerificationOverviewStore).getSuccessFailAttempts();
 
-    this.setAttemptsLines();
+    const overviewData = _.merge(summaryAttempts, countryAttempts, osAttempts, methodAttempts);
+    this.setState(overviewData);
+
+    // Avoid multiple execution of this function that makes the line chart have dirty preoccupied data
+    if ((successFailAttempts.totalAttempts || []).length) {
+      this.setState(successFailAttempts);
+      this.toggleAttemptType(this.state.attemptToggle || TOTAL_NUMBER_ATTEMPTS);
+    }
+
+    // Inject custom world data provided by Highmaps
+    Highcharts.maps['custom/world'] = MAP_DATA;
+
+    // Copy source data to be a new one for Highmap to avoid the behavior of changing source data
+    const maxValue = _.max(countryAttempts.countriesData, country => country.value).value;
+    new Highcharts.Map(getMapConfig('verificationCountrySection', (countryAttempts.countriesData || []).slice(0), maxValue));
   },
 
-  setSuccessAttempts() {
-    this.setState({
-      attemptToggle: SUCCESS_ATTEMPTS_NUMBER,
-      selectedLineInChartA: SUCCESS_ATTEMPTS_NUMBER,
-      busiestAttempts: _.max(this.state.successAttempts),
-      busiestTime: this.state.successAttempts ? fromTimeslot(this.state.successAttempts, moment(), this.state.timeRange) : null,
-      showSuccessRate: false
-    });
-
-    this.setAttemptsLines();
+  onAppIdChange(appId) {
+    this.setState({ appId });
   },
 
-  setSuccessRates() {
-    this.setState({
-      attemptToggle: SUCCESS_ATTEMPTS_RATE,
-      busiestAttempts: _.max(this.state.successAttempts),
-      busiestTime: this.state.successAttempts ? fromTimeslot(this.state.successAttempts, moment(), this.state.timeRange) : null,
-      successRateSeries: [
-        {
-          name: SUCCESS_ATTEMPTS_RATE,
-          data: this.state.successRates,
-          color: '#4E92DF',
-          selected: true,
-          tooltipFormatter: (x, y, xIndex) => {
-            return `
-              <div style="text-align: center">
-                <div>${moment(x).local().format(TOOLTIP_TIME_FORMAT)}</div>
-                <div>${this.state.successAttempts[xIndex]}/${this.state.totalAttempts[xIndex]} success</div>
-                <div>Success Rate: ${y}%</div>
-              </div>
-            `;
-          }
-        }
-      ],
-      showSuccessRate: true
-    });
-  },
-
-  setAttemptsLines() {
-    this.setState({
-      lines: [
-        {
-          name: TOTAL_NUMBER_ATTEMPTS,
-          data: this.state.totalAttempts,
-          color: '#FB3940',
-          tooltipFormatter: (x, y) => {
-            return `
-              <div style="text-align: center">
-                <div>${moment(x).local().format(TOOLTIP_TIME_FORMAT)}</div>
-                <div>Total Attempts: ${y}</div>
-              </div>
-            `;
-          }
-        },
-        {
-          name: SUCCESS_ATTEMPTS_NUMBER,
-          data: this.state.successAttempts,
-          color: '#21C031',
-          tooltipFormatter: (x, y) => {
-            return `
-              <div style="text-align: center">
-                <div>${moment(x).local().format(TOOLTIP_TIME_FORMAT)}</div>
-                <div>Success Attempts: ${y}</div>
-              </div>
-            `;
-          }
-        }
-      ]
-    });
-  },
-
-  toggleAttemptType(attemptType) {
-    let toggle = {
-      [TOTAL_NUMBER_ATTEMPTS]: this.setTotalAttempts,
-      [SUCCESS_ATTEMPTS_NUMBER]: this.setSuccessAttempts,
-      [SUCCESS_ATTEMPTS_RATE]: this.setSuccessRates
-    };
-
-    return toggle[attemptType]();
-  },
-
-  handleTimeFrameChange(time) {
-    this.setState({ timeRange: time });
+  onApplicationConfigChange() {
+    this.autoSelectAppId();
   },
 
   renderAttemptToggles() {
@@ -272,18 +144,18 @@ export default React.createClass({
       {
         id: TOTAL_NUMBER_ATTEMPTS,
         title: 'Totals numbers of verification attempts',
-        color: 'red'
+        color: 'red',
       },
       {
         id: SUCCESS_ATTEMPTS_NUMBER,
         title: 'Success verification attempts',
-        color: 'green'
+        color: 'green',
       },
       {
         id: SUCCESS_ATTEMPTS_RATE,
         title: 'Success verification rate',
-        color: 'blue'
-      }
+        color: 'blue',
+      },
     ];
 
     return ATTEMPT_TOGGLES.map((toggle) => {
@@ -331,7 +203,7 @@ export default React.createClass({
   },
 
   renderCountryTable() {
-    let sortedCountries = _.sortByOrder(this.state.countriesData, ['value'], ['desc'], _.values);
+    const sortedCountries = _.sortByOrder(this.state.countriesData, ['value'], ['desc'], _.values);
 
     return (
       <table className="verification-overview__country__table">
@@ -345,16 +217,12 @@ export default React.createClass({
     );
   },
 
-  render () {
-    let { role, identity } = this.context.router.getCurrentParams();
-
-    let options = [];
+  render() {
+    const { role, identity } = this.context.router.getCurrentParams();
+    const options = [];
 
     this.props.appIds.forEach(item => {
-      options.push({
-        value: item,
-        label: item
-      });
+      options.push({ value: item, label: item });
     });
 
     return (
@@ -369,7 +237,7 @@ export default React.createClass({
               name="appid"
               className="verification-details__app-select"
               options={options}
-              value={"Application ID: " + (this.state.appId ? this.state.appId : "-")}
+              value={`Application ID: ${(this.state.appId ? this.state.appId : '-')}`}
               clearable={false}
               searchable={false}
               onChange={this.onAppIdChange}
@@ -447,7 +315,8 @@ export default React.createClass({
                     data={this.state.types}
                     size={150}
                     bars={4}
-                    unit='attempts' />
+                    unit="attempts"
+                  />
                 </Panel.Body>
               </div>
             </Panel.Wrapper>
@@ -461,7 +330,8 @@ export default React.createClass({
                     data={this.state.osTypes}
                     size={150}
                     bars={2}
-                    unit='attempts' />
+                    unit="attempts"
+                  />
                 </Panel.Body>
               </div>
             </Panel.Wrapper>
@@ -469,5 +339,144 @@ export default React.createClass({
         </div>
       </div>
     );
-  }
+  },
+
+  resetCharts(timeRange) {
+    const { from, quantity, timescale } = parseTimeRange(timeRange);
+
+    const xAxis = {
+      start: from,
+      tickCount: parseInt(quantity),
+      tickInterval: (timescale === 'day' ? 24 : 1) * 3600 * 1000,
+    };
+
+    this.setState({
+      xAxis,
+      sXAxis: xAxis,
+      lines: null,
+      successRateSeries: null,
+    });
+  },
+
+  updateCharts(timeRange) {
+    const { identity } = this.context.router.getCurrentParams();
+    const { quantity, timescale } = parseTimeRange(timeRange);
+
+    this.context.executeAction(fetchVerificationOverview, {
+      quantity,
+      timescale,
+      application: this.state.appId,
+      carrierId: identity,
+    });
+  },
+
+  autoSelectAppId() {
+    this.setState({ appId: this.context.getStore(ApplicationStore).getDefaultAppId() });
+  },
+
+  setTotalAttempts() {
+    this.setState({
+      attemptToggle: TOTAL_NUMBER_ATTEMPTS,
+      selectedLineInChartA: TOTAL_NUMBER_ATTEMPTS,
+      busiestAttempts: _.max(this.state.totalAttempts),
+      busiestTime: this.state.totalAttempts ? fromTimeslot(this.state.totalAttempts, moment(), this.state.timeRange) : null,
+      showSuccessRate: false,
+    });
+
+    this.setAttemptsLines();
+  },
+
+  setSuccessAttempts() {
+    this.setState({
+      attemptToggle: SUCCESS_ATTEMPTS_NUMBER,
+      selectedLineInChartA: SUCCESS_ATTEMPTS_NUMBER,
+      busiestAttempts: _.max(this.state.successAttempts),
+      busiestTime: this.state.successAttempts ? fromTimeslot(this.state.successAttempts, moment(), this.state.timeRange) : null,
+      showSuccessRate: false,
+    });
+
+    this.setAttemptsLines();
+  },
+
+  setSuccessRates() {
+    this.setState({
+      attemptToggle: SUCCESS_ATTEMPTS_RATE,
+      busiestAttempts: _.max(this.state.successAttempts),
+      busiestTime: this.state.successAttempts ? fromTimeslot(this.state.successAttempts, moment(), this.state.timeRange) : null,
+      successRateSeries: [
+        {
+          name: SUCCESS_ATTEMPTS_RATE,
+          data: this.state.successRates,
+          color: '#4E92DF',
+          selected: true,
+          tooltipFormatter: (x, y, xIndex) => {
+            return `
+              <div style="text-align: center">
+                <div>${moment(x).local().format(TOOLTIP_TIME_FORMAT)}</div>
+                <div>${this.state.successAttempts[xIndex]}/${this.state.totalAttempts[xIndex]} success</div>
+                <div>Success Rate: ${y}%</div>
+              </div>
+            `;
+          },
+        },
+      ],
+      showSuccessRate: true,
+    });
+  },
+
+  setAttemptsLines() {
+    this.setState({
+      lines: [
+        {
+          name: TOTAL_NUMBER_ATTEMPTS,
+          data: this.state.totalAttempts,
+          color: '#FB3940',
+          tooltipFormatter: (x, y) => {
+            return `
+              <div style="text-align: center">
+                <div>${moment(x).local().format(TOOLTIP_TIME_FORMAT)}</div>
+                <div>Total Attempts: ${y}</div>
+              </div>
+            `;
+          },
+        },
+        {
+          name: SUCCESS_ATTEMPTS_NUMBER,
+          data: this.state.successAttempts,
+          color: '#21C031',
+          tooltipFormatter: (x, y) => {
+            return `
+              <div style="text-align: center">
+                <div>${moment(x).local().format(TOOLTIP_TIME_FORMAT)}</div>
+                <div>Success Attempts: ${y}</div>
+              </div>
+            `;
+          },
+        },
+      ],
+    });
+  },
+
+  toggleAttemptType(attemptType) {
+    const toggle = {
+      [TOTAL_NUMBER_ATTEMPTS]: this.setTotalAttempts,
+      [SUCCESS_ATTEMPTS_NUMBER]: this.setSuccessAttempts,
+      [SUCCESS_ATTEMPTS_RATE]: this.setSuccessRates,
+    };
+
+    return toggle[attemptType]();
+  },
+
+  handleTimeFrameChange(timeRange) {
+    /* Add timeRange value to query */
+    const routeName = _.last(this.context.router.getCurrentRoutes()).name;
+    const params = this.context.router.getCurrentParams();
+
+    this.context.router.transitionTo(routeName, params, { timeRange });
+
+    /* Store timeRange to store so that we can set it back into query back switch pages */
+    this.executeAction(changeTimeRange, timeRange);
+
+    this.setState({ timeRange });
+  },
 });

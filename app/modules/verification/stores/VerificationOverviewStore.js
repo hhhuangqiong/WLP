@@ -11,7 +11,8 @@ export default createStore({
     FETCH_VERIFICATION_TYPE_FAILURE: 'handleVerificationTypeFetchedFailure',
     FETCH_VERIFICATION_OS_TYPE_FAILURE: 'handleVerificationOsTypeFetchedFailure',
     FETCH_VERIFICATION_COUNTRIES_DATA_FAILURE: 'handleCountriesDataFetchedFailure',
-    FETCH_VERIFICATION_PAST_ATTEMPTS_FAILURE: 'handlePastAttemptsFetchedFailure'
+    FETCH_VERIFICATION_PAST_ATTEMPTS_FAILURE: 'handlePastAttemptsFetchedFailure',
+    CHANGE_TIME_RANGE: 'handleTimeRangeChange',
   },
 
   handleOverviewDataFetched(payload) {
@@ -42,7 +43,7 @@ export default createStore({
     this.emitChange();
   },
 
-  initialize () {
+  initialize() {
     this.countriesData = [];
     this.types = [];
     this.osTypes = [];
@@ -109,6 +110,16 @@ export default createStore({
     this.emitChange();
   },
 
+  handleTimeRangeChange(timeRange) {
+    this.timeRange = timeRange;
+
+    this.emitChange();
+  },
+
+  getTimeRange() {
+    return this.timeRange;
+  },
+
   getOverviewData() {
     return _.merge(
       this.getSummaryAttempts(),
@@ -130,14 +141,14 @@ export default createStore({
       pastAccumulatedFailure: this.pastAccumulatedFailure,
       pastAccumulatedSuccess: this.pastAccumulatedSuccess,
       pastAverageSuccessRate: this.pastAverageSuccessRate,
-      pastAttemptsError: this.pastAttemptsError
+      pastAttemptsError: this.pastAttemptsError,
     };
   },
 
   getCountryAttempts() {
     return {
       countriesError: this.countriesError,
-      countriesData: this.countriesData
+      countriesData: this.countriesData,
     };
   },
 
@@ -146,21 +157,21 @@ export default createStore({
       attemptsError: this.attemptsError,
       successAttempts: this.successAttempts,
       successRates: this.successRates,
-      totalAttempts: this.totalAttempts
+      totalAttempts: this.totalAttempts,
     };
   },
 
   getOsAttempts() {
     return {
       osError: this.osError,
-      osTypes: this.osTypes
+      osTypes: this.osTypes,
     };
   },
 
   getMethodAttempts() {
     return {
       typeError: this.typeError,
-      types: this.types
+      types: this.types,
     };
   },
 
@@ -173,12 +184,12 @@ export default createStore({
     this.types = state.types;
     this.osTypes = state.osTypes;
 
-    this.accumulatedAttempts = state.accumulatedAttempts
+    this.accumulatedAttempts = state.accumulatedAttempts;
     this.accumulatedFailure = state.accumulatedFailure;
     this.accumulatedSuccess = state.accumulatedSuccess;
     this.averageSuccessRate = state.averageSuccessRate;
 
-    this.pastAccumulatedAttempts = state.pastAccumulatedAttempts
+    this.pastAccumulatedAttempts = state.pastAccumulatedAttempts;
     this.pastAccumulatedFailure = state.pastAccumulatedFailure;
     this.pastAccumulatedSuccess = state.pastAccumulatedSuccess;
     this.pastAverageSuccessRate = state.pastAverageSuccessRate;
@@ -192,5 +203,5 @@ export default createStore({
     this.pastAttemptsError = pastAttemptsError;
     this.typeError = typeError;
     this.osError = osError;
-  }
+  },
 });
