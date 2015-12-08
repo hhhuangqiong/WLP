@@ -4,7 +4,6 @@ import moment from 'moment';
 import _ from 'lodash';
 import FluxibleMixin from 'fluxible/addons/FluxibleMixin';
 import AuthMixin from '../../../utils/AuthMixin';
-import {concurrent} from 'contra';
 
 import VSFTransactionTable from './VSFTransactionTable';
 import CategoryFilter from '../../../main/components/CategoryFilter';
@@ -14,18 +13,17 @@ import Searchbox from '../../../main/components/Searchbox';
 import VSFTransactionStore from '../stores/VSFTransactionStore';
 import fetchVSFTransactions from '../actions/fetchVSFTransactions';
 
-const debug = require('debug')('src:modules/virtual-store-front/components/VSFTransactionDetails');
-
 const SUBMIT_KEY = 13;
+const PAGE_SIZE = 100;
 
-let VSFTransactionDetails = React.createClass({
-  mixins: [FluxibleMixin, AuthMixin],
-
+const VSFTransactionDetails = React.createClass({
   contextTypes: {
     router: React.PropTypes.func.isRequired,
     executeAction: React.PropTypes.func.isRequired,
-    getStore: React.PropTypes.func.isRequired
+    getStore: React.PropTypes.func.isRequired,
   },
+
+  mixins: [FluxibleMixin, AuthMixin],
 
   statics: {
     storeListeners: [VSFTransactionStore],
@@ -37,19 +35,26 @@ let VSFTransactionDetails = React.createClass({
         toTime: query.toTime || moment().endOf('day').format('L'),
         category: query.category || '',
         pageIndex: query.page || 0,
-        pageSize: config.PAGES.CALLS.PAGE_SIZE,
-        userNumber: query.userNumber || ''
+        pageSize: PAGE_SIZE,
+        userNumber: query.userNumber || '',
       }, done || () => {});
-
-    }
+    },
   },
 
   getInitialState() {
-    let state = this.getStore(VSFTransactionStore).getState();
-    let query = this.context.router.getCurrentQuery();
-    let data = _.merge(state, this.getDefaultQuery(), query);
+    const state = this.getStore(VSFTransactionStore).getState();
+    const query = this.context.router.getCurrentQuery();
+    const data = _.merge(state, this.getDefaultQuery(), query);
 
     return data;
+  },
+
+  onChange() {
+    const state = this.getStore(VSFTransactionStore).getState();
+    const query = this.context.router.getCurrentQuery();
+    const data = _.merge({ fromTime: this.getDefaultQuery().fromTime, toTime: this.getDefaultQuery().toTime }, query, state);
+
+    this.setState(data);
   },
 
   getDefaultQuery() {
@@ -57,83 +62,21 @@ let VSFTransactionDetails = React.createClass({
       fromTime: moment().subtract(2, 'day').startOf('day').format('L'),
       toTime: moment().endOf('day').format('L'),
       category: '',
-      pageSize: config.PAGES.CALLS.PAGE_SIZE,
+      pageSize: PAGE_SIZE,
       pageIndex: 0,
-      userNumber: ''
+      userNumber: '',
     };
   },
 
-  onChange: function() {
-    let state = this.getStore(VSFTransactionStore).getState();
-    let query = this.context.router.getCurrentQuery();
-    let data = _.merge({ fromTime: this.getDefaultQuery().fromTime , toTime: this.getDefaultQuery().toTime }, query, state)
-
-    debug('VSFTransactionDetails onChagne', data);
-    this.setState(data);
-  },
-
-  getQueryFromState: function() {
+  getQueryFromState() {
     return {
       fromTime: this.state.fromTime && this.state.fromTime.trim(),
       toTime: this.state.toTime && this.state.toTime.trim(),
       category: this.state.category && this.state.category.trim(),
       userNumber: this.state.userNumber && this.state.userNumber.trim(),
       pageIndex: this.state.pageIndex && this.state.pageIndex.trim(),
-      pageSize: this.state.pageSize
-    }
-  },
-
-  handleChange(newValue) {
-    debug('handleChange', newValue);
-    this.setState(newValue);
-
-    let routeName = _.last(this.context.router.getCurrentRoutes()).name;
-    let params = this.context.router.getCurrentParams();
-    let query = this.context.router.getCurrentQuery();
-    let state = this.getQueryFromState();
-    let toBeSent = _.merge(query, state, newValue);
-
-    debug('query to be made', toBeSent)
-    this.context.router.transitionTo(routeName, params, _.omit(toBeSent || {}, (value) => { return !value; }));
-  },
-
-  handleStartDateChange(date) {
-    let changes = { fromTime: moment(date).startOf('day').format('L') };
-    this.handleChange(changes);
-  },
-
-  handleEndDateChange(date) {
-    let changes = { toTime: moment(date).endOf('day').format('L') };
-    this.handleChange(changes);
-  },
-
-  handleNumberChange(e) {
-    let changes = { userNumber: e.target.value };
-    this.setState(changes);
-  },
-
-  handleSearchSubmit(e) {
-    debug('handleSearchSubmit', e)
-
-    if (e.which === SUBMIT_KEY){
-      this.handleChange();
-    }
-  },
-
-  handleVoiceFilterToggle(e) {
-    this.handleChange({ category: this.state.category === 'voice_sticker' ? '' : 'voice_sticker' });
-  },
-
-  handleAnimationFilterToggle(e) {
-    this.handleChange({ category: this.state.category === 'animation' ? '' : 'animation' });
-  },
-
-  handleStickerFilterToggle(e) {
-    this.handleChange({ category: this.state.category === 'sticker' ? '' : 'sticker' });
-  },
-
-  handleCreditFilterToggle(e) {
-    this.handleChange({ category: this.state.category === 'credit' ? '' : 'credit' });
+      pageSize: this.state.pageSize,
+    };
   },
 
   render() {
@@ -195,7 +138,54 @@ let VSFTransactionDetails = React.createClass({
         </div>
       </div>
     );
-  }
+  },
+
+  handleChange(newValue) {
+    this.setState(newValue);
+
+    const routeName = _.last(this.context.router.getCurrentRoutes()).name;
+    const params = this.context.router.getCurrentParams();
+    const query = this.context.router.getCurrentQuery();
+    const state = this.getQueryFromState();
+    const toBeSent = _.merge(query, state, newValue);
+
+    this.context.router.transitionTo(routeName, params, _.omit(toBeSent || {}, (value) => { return !value; }));
+  },
+
+  handleStartDateChange(date) {
+    const changes = { fromTime: moment(date).startOf('day').format('L') };
+    this.handleChange(changes);
+  },
+
+  handleEndDateChange(date) {
+    const changes = { toTime: moment(date).endOf('day').format('L') };
+    this.handleChange(changes);
+  },
+
+  handleNumberChange(e) {
+    const changes = { userNumber: e.target.value };
+    this.setState(changes);
+  },
+
+  handleSearchSubmit(e) {
+    if (e.which === SUBMIT_KEY) this.handleChange();
+  },
+
+  handleVoiceFilterToggle() {
+    this.handleChange({ category: this.state.category === 'voice_sticker' ? '' : 'voice_sticker' });
+  },
+
+  handleAnimationFilterToggle() {
+    this.handleChange({ category: this.state.category === 'animation' ? '' : 'animation' });
+  },
+
+  handleStickerFilterToggle() {
+    this.handleChange({ category: this.state.category === 'sticker' ? '' : 'sticker' });
+  },
+
+  handleCreditFilterToggle() {
+    this.handleChange({ category: this.state.category === 'credit' ? '' : 'credit' });
+  },
 });
 
 export default VSFTransactionDetails;
