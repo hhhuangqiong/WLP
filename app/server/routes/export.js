@@ -90,7 +90,6 @@ let getCarrierExportFile = (req, res) => {
     if (job._progress === '100') {
       res.set('Content-Disposition', 'attachment; filename=' + jobConfig.EXPORT_FILENAME);
       res.set('Content-Type', 'text/csv');
-      setCacheControl(res);
 
       let redisClient = fetchDep(nconf.get('containerName'), 'RedisClient');
       let exportFileStream = redisRStream(redisClient, `${job.type}:${job.id}`);
