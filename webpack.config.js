@@ -23,8 +23,10 @@ var config =  {
   },
   plugins: [],
   output: {
+    // this is the assets path for the project server
     path: path.resolve(__dirname, 'public', 'javascript'),
     filename: 'bundle.js',
+    // this is the assets path for webpack-dev-server
     publicPath: '/javascript/'
   },
   node: {
@@ -49,6 +51,7 @@ if (enableHotloader) {
   config.entry.unshift('webpack/hot/only-dev-server');
   config.plugins.push(new webpack.HotModuleReplacementPlugin());
   config.custom.hotLoadPort = hotLoadPort;
+  config.output.publicPath = 'http://' + appHostname + ':' + hotLoadPort + '/';
 }
 
 module.exports = config;
