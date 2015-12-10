@@ -134,7 +134,7 @@ export default {
     'call',
   ],
   'pateo.maaii.com': [
-    'service.white_label',
+    'service.sdk',
     'device.android',
     'end-user',
     'call.onnet_call',

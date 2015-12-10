@@ -111,6 +111,9 @@ class Authority {
             // would disable the accessibility of the resource
             switch (menuItem) {
             case OVERVIEW:
+              if (hasFeature('service_type_sdk')) return removeFeatures();
+              break;
+
             case END_USER:
               if (!hasFeature('end-user')) return removeFeatures();
               break;
