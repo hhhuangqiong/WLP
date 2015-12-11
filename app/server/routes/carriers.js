@@ -688,12 +688,22 @@ let getEndUsersStatsMonthly = function(req, res) {
     });
   }
 
+  let thisMonthTime = moment(req.query.fromTime, 'x').get('month') != moment().get('month') ?
+    moment(req.query.fromTime, 'x') :
+    moment().subtract(1, 'day');
+
   let thisMonthActiveParams = _.omit({
     carriers: req.params.carrierId,
     breakdown: 'carrier',
-    from: req.query.fromTime,
-    to: req.query.toTime,
+
+    // we only need to get the data for the latest day
+    // with timeWindow (retrospectively) for a month
+    // The active user stats is computed daily
+    // so you will only have the number up to yesterday
+    from: thisMonthTime.startOf('day').format('x'),
+    to: thisMonthTime.endOf('day').format('x'),
     timescale: 'day',
+    timeWindow: req.query.timeWindow
   }, (val) => {
     return !val;
   });
@@ -701,9 +711,13 @@ let getEndUsersStatsMonthly = function(req, res) {
   let lastMonthActiveParams = _.omit({
     carriers: req.params.carrierId,
     breakdown: 'carrier',
-    from: moment(req.query.fromTime, 'x').subtract(1, 'months').startOf('month').format('x'),
+
+    // we only need to get the data for the latest day of last month
+    // with timeWindow (retrospectively) for a month
+    from: moment(req.query.fromTime, 'x').subtract(1, 'months').endOf('month').startOf('day').format('x'),
     to: moment(req.query.toTime, 'x').subtract(1, 'months').endOf('month').format('x'),
     timescale: 'day',
+    timeWindow: req.query.timeWindow
   }, (val) => {
     return !val;
   });
@@ -713,7 +727,7 @@ let getEndUsersStatsMonthly = function(req, res) {
     breakdown: 'carrier',
     from: req.query.fromTime,
     to: req.query.toTime,
-    timescale: 'day',
+    timescale: 'day'
   }, (val) => {
     return !val;
   });
@@ -723,7 +737,7 @@ let getEndUsersStatsMonthly = function(req, res) {
     breakdown: 'carrier',
     from: moment(req.query.fromTime, 'x').subtract(1, 'months').startOf('month').format('x'),
     to: moment(req.query.toTime, 'x').subtract(1, 'months').endOf('month').format('x'),
-    timescale: 'day',
+    timescale: 'day'
   }, (val) => {
     return !val;
   });
