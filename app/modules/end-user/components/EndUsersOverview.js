@@ -125,7 +125,8 @@ const EndUsersOverview = React.createClass({
     this.context.executeAction(fetchEndUsersStatsMonthly, {
       fromTime: queryTime.startOf('month').format('x'),
       toTime: queryTime.endOf('month').format('x'),
-      carrierId: identity
+      carrierId: identity,
+      timeWindow: `Month`
     });
   },
 

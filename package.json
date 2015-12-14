@@ -15,8 +15,7 @@
     "test": "gulp test",
     "test:report": "NODE_PATH=app mocha --compilers js:babel/register --recursive test --reporter xunit > build/reports.xml",
     "jest": "jest",
-    "seed:capabilities": "babel-node bin/capabilitiesSeeding.js",
-    "seed:permission": "babel bin/permissionSeeding.js"
+    "seed:capabilities": "babel-node bin/capabilitiesSeeding.js"
   },
   "jest": {
     "scriptPreprocessor": "<rootDir>/node_modules/babel-jest",

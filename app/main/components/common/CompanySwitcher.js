@@ -1,7 +1,7 @@
 import _ from 'lodash';
 import React from 'react';
 import FluxibleMixin from 'fluxible/addons/FluxibleMixin';
-import { Link } from 'react-router';
+import Tooltip from 'rc-tooltip';
 
 import ApplicationStore from '../../stores/ApplicationStore';
 import switchCompany from '../../../modules/company/actions/switchCompany';
@@ -35,9 +35,11 @@ const CompanySwitcher = React.createClass({
 
       return (
         <li className="navigation-bar__item" title={name} key={carrierId}>
-          <a href="#" onClick={this.switchCompany.bind(this, { role, identity })}>
-            <img src={logoSrc} alt={name} />
-          </a>
+          <Tooltip overlay={name}>
+            <a href="#" onClick={this.switchCompany.bind(this, { role, identity })}>
+              <img src={logoSrc} alt={name} />
+            </a>
+          </Tooltip>
         </li>
       );
     });

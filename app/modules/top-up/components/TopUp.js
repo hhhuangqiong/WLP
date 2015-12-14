@@ -17,6 +17,7 @@ import * as FilterBar from './../../../main/components/FilterBar';
 import DateRangePicker from './../../../main/components/DateRangePicker';
 import DatePicker from './../../../main/components/DatePicker';
 import SearchBox from './../../../main/components/Searchbox';
+import Tooltip from './../../../main/components/Tooltip';
 
 let { inputDateFormat: DATE_FORMAT } = require('./../../../main/config');
 let { pages: { topUp: { pageRec: PAGE_REC } } } = require('./../../../main/config');
@@ -28,6 +29,8 @@ const INITIAL_PAGE_NUMBER = 1;
 
 // WLP-323
 const MAX_QUERY_DATE_RANGE = 7;
+
+const ONLY_NUMBER_MESSAGE = 'Only numbers are allowed.';
 
 function getInitialQueryFromURL(params, query = {}) {
   return {
@@ -159,15 +162,35 @@ var TopUp = React.createClass({
   },
 
   handleSearchInputChange: function(e) {
-    this.setState({
-      number: e.target.value
-    });
+    if (!this.validateSearchInput(e.target.value)) {
+      this.showTooltip();
+      return;
+    } else {
+      this.hideTooltip();
+    }
+    this.setState({ number: e.target.value });
   },
 
   handleSearchInputSubmit: function(e) {
-    if (e.which == 13) {
+    if ( e.which == 13 && this.validateSearchInput(e.target.value) ) {
       this.handleQueryChange({ number: e.target.value, page: INITIAL_PAGE_NUMBER });
     }
+  },
+
+  validateSearchInput(number) {
+    if (!number) {
+      return true;
+    }
+    let regex = /^\d+$/;
+    return regex.test(number);
+  },
+
+  showTooltip: function() {
+    this.setState({tooltipShow: true});
+  },
+
+  hideTooltip: function() {
+    this.setState({tooltipShow: false});
   },
 
   render: function() {
@@ -189,12 +212,19 @@ var TopUp = React.createClass({
             />
           </FilterBar.LeftItems>
           <FilterBar.RightItems>
-            <SearchBox
-              value={this.number}
-              placeHolder="Username/Mobile"
-              onInputChangeHandler={this.handleSearchInputChange}
-              onKeyPressHandler={this.handleSearchInputSubmit}
-            />
+            <Tooltip
+              showTooltip={this.state.tooltipShow}
+              mouseActive={false}
+              cssName="top-up"
+              tip={ONLY_NUMBER_MESSAGE}
+              placement='left'>
+              <SearchBox
+                value={this.number}
+                placeHolder="Mobile"
+                onInputChangeHandler={this.handleSearchInputChange}
+                onKeyPressHandler={this.handleSearchInputSubmit}
+              />
+            </Tooltip>
           </FilterBar.RightItems>
         </FilterBar.Wrapper>
         <div className="large-24 columns">

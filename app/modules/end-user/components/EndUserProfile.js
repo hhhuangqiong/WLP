@@ -192,11 +192,16 @@ var EndUserProfile = React.createClass({
             <If condition={this.props.user.userDetails.verified}>
               <div className="enduser-profile__control text-center">
                 <div className="enduser-profile__control__row">
+                  { /*
+
+                  // Temporarily Revoke for v1.5.x
+                  
                   <If condition={this.props.user.userDetails.accountStatus.toLowerCase() === 'active'}>
                     <button className="round" onClick={this.handleSuspendClick}>suspend</button>
                   <Else />
                     <button className="round" onClick={this.handleReactivateClick}>reactivate</button>
                   </If>
+                  */ }
                 </div>
               </div>
             </If>

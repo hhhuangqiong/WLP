@@ -9,6 +9,12 @@ import qs from 'qs';
 import {constructOpts, formatDateString, swapDate, handleError} from '../helper';
 import jsonSchema from '../../../utils/getSimplifiedJsonSchema.js';
 
+const REQUEST_TYPE = {
+  USER: 'USER',
+  NEW_USERS: 'NEW_USERS',
+  ACTIVE_USERS: 'ACTIVE_USERS'
+};
+
 const TIMESCALE_OPTS = ['day', 'hour'];
 const BREAKDOWN_OPTS = ['country', 'status'];
 const STATUS_OPTS = ['ACTIVE', 'TERMINATED', 'ALL'];
@@ -32,20 +38,35 @@ export default class UserStatsRequest {
         ACTIVE_USERS: {
           PATH: '/stats/1.0/active_users/im-active-users-statistics',
           METHOD: 'GET'
-        },
+        }
       }
     };
 
     this.opts = constructOpts(opts);
   }
 
-  normalizeData(params, cb) {
+  normalizeData(type, params, cb) {
     logger.debug('normalizeData', params);
     Q.nfcall(swapDate, params)
       .then((data) => {
         let query = {};
-        query.from      = params.from;
-        query.to        = params.to;
+
+        // for user query API and new user API,
+        // they return the -1 day stat from the `from` query
+        // e.g. when I passed 12th Nov as `from` query,
+        // the data is actually from 11th Nov but not 12th
+        // that why we have to silently add one day before
+        // sending out the request
+        if (type === REQUEST_TYPE.USER) {
+          query.from = moment(params.from, 'x').add(1, 'day').startOf('day').format('x');
+          query.to = moment(params.to, 'x').add(1, 'day').endOf('day').format('x');
+        } else if (type === REQUEST_TYPE.NEW_USERS) {
+          query.from = moment(params.from, 'x').add(1, 'day').startOf('day').format('x');
+          query.to = params.to;
+        } else {
+          query.from = params.from;
+          query.to = params.to;
+        }
 
         if (data.carriers)    query.carriers = data.carriers;
         if (data.timescale)   query.timescale = data.timescale;
@@ -86,7 +107,7 @@ export default class UserStatsRequest {
   }
 
   getUserStats(params, cb) {
-    Q.ninvoke(this, 'normalizeData', params)
+    Q.ninvoke(this, 'normalizeData', REQUEST_TYPE.USER, params)
       .then((query) => {
         this.sendRequest(this.opts.endpoints.USER, query, cb);
       })
@@ -97,7 +118,7 @@ export default class UserStatsRequest {
   }
 
   getNewUserStats(params, cb) {
-    Q.ninvoke(this, 'normalizeData', params)
+    Q.ninvoke(this, 'normalizeData', REQUEST_TYPE.NEW_USERS, params)
       .then((query) => {
         this.sendRequest(this.opts.endpoints.NEW_USERS, query, cb);
       })
@@ -108,7 +129,7 @@ export default class UserStatsRequest {
   }
 
   getActiveUserStats(params, cb) {
-    Q.ninvoke(this, 'normalizeData', params)
+    Q.ninvoke(this, 'normalizeData', REQUEST_TYPE.USER.ACTIVE_USERS, params)
       .then((query) => {
         this.sendRequest(this.opts.endpoints.ACTIVE_USERS, query, cb);
       })

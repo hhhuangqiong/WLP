@@ -12,7 +12,7 @@ export default function(redisConfig) {
 
   if (!_.has(redisConfig, 'sentinels')) {
     var redis = require('redis');
-    client = redis.createClient(redisConfig);
+    client = redis.createClient(redisConfig.port, redisConfig.host, redisConfig);
   }
   else {
     var Redis = require('ioredis');

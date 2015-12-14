@@ -61,18 +61,6 @@ values come from the `carrierId` field of Company collection in database
 - botler.maaii.com
 - (any kind of carrier id)
 
-
-#### Related Methods:
-
-```
-AclManager.isValidCarrier(carrierId, cb)
-AclManager.addCarrierGroup(carrierId, cb)
-AclManager.removeCarrierGroup(carrierId, cb)
-AclManager.addUserCarrier(userId, carrierId, cb)
-AclManager.removeUserCarrier(userId, carrierId, cb)
-AclManager.isAllowedForCarrier(userId, carrierId, cb)
-```
-
 ### User Role
 
 Role is the basic unit that contains a set of pre-defined permissions. Users with role(s) assigned
@@ -88,11 +76,6 @@ requirement.
 - wl.marketing
 - sdk.marketing
 - {prefix}.{role}
-
-#### Related Methods:
-```
-AclManager.isAllowedForResource(userId, resource, action, cb)
-```
 
 ### Express Middleware
 

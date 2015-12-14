@@ -118,7 +118,7 @@ export default React.createClass({
         <Modal
           isOpen={this.state.modalOpened}
           onRequestClose={this.closeModal}
-          className="ReactModal__Content export-modal"
+          className="ReactModal__Content modal"
         >
           {ExportForm}
         </Modal>

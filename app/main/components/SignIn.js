@@ -1,24 +1,21 @@
 import _ from 'lodash';
 import debug from 'debug';
-import React, { findDOMNode } from 'react';
+import React from 'react';
 import FluxibleMixin from 'fluxible/addons/FluxibleMixin';
-import { Link } from 'react-router'
+import { Link } from 'react-router';
 import ValidationMixin from 'react-validation-mixin';
 import Joi from 'joi';
-import classNames from 'classnames';
 
 import AuthStore from '../stores/AuthStore';
 import SignInStore from '../stores/SignInStore';
 
-import Tooltip from 'rc-tooltip'
+import Tooltip from 'rc-tooltip';
 
 import signInAction from '../actions/signIn';
 
 import PublicOnlyMixin from '../../utils/PublicOnlyMixin';
 
-const bootstrapDebug = debug('app:components:signin');
-
-let SignIn = React.createClass({
+const SignIn = React.createClass({
   mixins: [FluxibleMixin, PublicOnlyMixin, ValidationMixin, React.addons.LinkedStateMixin],
 
   statics: {
