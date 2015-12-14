@@ -64,7 +64,7 @@ export default [
     icon: 'icon-menutopup',
     page: TOP_UP,
     routeName: 'top-up-details',
-    path: 'top-up',
+    path: 'top-up/details',
   },
   {
     name: 'Verification',
