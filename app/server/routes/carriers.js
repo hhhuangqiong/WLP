@@ -700,8 +700,9 @@ let getEndUsersStatsMonthly = function(req, res) {
     // with timeWindow (retrospectively) for a month
     // The active user stats is computed daily
     // so you will only have the number up to yesterday
-    from: thisMonthTime.startOf('day').format('x'),
-    to: thisMonthTime.endOf('day').format('x'),
+    // @NOTE the `from` and `to` params in here needs to be at the end of month
+    from: thisMonthTime.endOf('month').startOf('day').format('x'),
+    to: thisMonthTime.endOf('month').endOf('day').format('x'),
     timescale: 'day',
     timeWindow: req.query.timeWindow
   }, (val) => {
