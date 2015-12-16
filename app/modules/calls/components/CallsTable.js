@@ -64,11 +64,11 @@ var CallsTable = React.createClass({
         return (
           <tr className="calls-table--row" key={u.record_id}>
             <td className="calls-table--cell">
-              {this.renderCountryField(u.caller, u.caller_country)}
+              {this.renderCountryField(u.caller, u.source_country_tel_code)}
             </td>
 
             <td className="calls-table--cell">
-              {this.renderCountryField(u.callee, u.callee_country)}
+              {this.renderCountryField(u.callee, u.target_country_tel_code)}
             </td>
 
             <td className="calls-table--cell"><span className={"call_type radius label " + callType}>{callType}</span></td>
