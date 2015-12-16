@@ -219,7 +219,7 @@ var TopUp = React.createClass({
               tip={ONLY_NUMBER_MESSAGE}
               placement='left'>
               <SearchBox
-                value={this.number}
+                value={this.state.number}
                 placeHolder="Mobile"
                 onInputChangeHandler={this.handleSearchInputChange}
                 onKeyPressHandler={this.handleSearchInputSubmit}

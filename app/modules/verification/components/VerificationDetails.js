@@ -347,7 +347,7 @@ let VerificationDetails = React.createClass({
           <FilterBar.RightItems>
             <SearchButton
               placeHolder="Mobile"
-              search={this.state.number}
+              value={this.state.number}
               onInputChangeHandler={this.handleSearchInputChange}
               onKeyPressHandler={this.handleSearchInputSubmit}
             />

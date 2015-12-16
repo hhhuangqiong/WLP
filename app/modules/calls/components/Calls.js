@@ -265,7 +265,7 @@ getStateFromStores: function() {
               <li className="top-bar--inner">
                 <div className="call-search">
                   <Searchbox
-                    search={this.state.search}
+                    value={this.state.search}
                     searchTypes={searchTypes}
                     placeHolder="Username/Mobile"
                     onInputChangeHandler={this.handleUsernameChange}

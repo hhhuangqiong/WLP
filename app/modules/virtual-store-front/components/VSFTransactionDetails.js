@@ -126,7 +126,7 @@ let VSFTransactionDetails = React.createClass({
 
             <div className="call-search top-bar-section right">
               <Searchbox
-                search={this.state.userNumber}
+                value={this.state.userNumber}
                 placeHolder="Username/Mobile"
                 onInputChangeHandler={this.handleNumberChange}
                 onKeyPressHandler={this.handleSearchSubmit}
