@@ -13,7 +13,6 @@ import AuthMixin from '../../../utils/AuthMixin';
 
 import * as FilterBar from './../../../main/components/FilterBar';
 import DateRangePicker from './../../../main/components/DateRangePicker';
-import SearchBox from './../../../main/components/Searchbox';
 
 import fetchVerifications from '../actions/fetchVerifications';
 import fetchMoreVerifications from '../actions/fetchMoreVerifications';
