@@ -5,45 +5,27 @@ import request from 'superagent';
 import util from 'util';
 import _ from 'lodash';
 import moment from 'moment';
-import CountryData from 'country-data';
 import qs from 'qs';
 
-import {constructOpts, formatDateString, swapDate, handleError} from '../helper';
+import { constructOpts, formatDateString, swapDate, handleError } from '../helper';
 import jsonSchema from '../../../utils/getSimplifiedJsonSchema.js';
-
-/**
- * Number of milliseconds within the interval.
- */
-const INTERVAL = {
-  day: 24 * 3600 * 1000,
-  hour: 3600 * 1000
-};
-
-/**
- * Default types to return when no data can be fetched from the server.
- */
-const DEFAULT_TYPES = ['Call-in', 'Call-out', 'SMS', 'IVR'];
-/**
- * Default platforms to return when no data can be fetched from the server.
- */
-const DEFAULT_PLATFORMS = ['Android', 'IOS'];
 
 export default class VerificationRequest {
   constructor(baseUrl, timeout) {
-    let opts = {
+    const opts = {
       type: 'dataProviderApi',
       baseUrl: baseUrl,
       timeout: timeout,
       endpoints: {
         SEARCH: {
           PATH: '/api/v1/verification/events/query',
-          METHOD: 'GET'
+          METHOD: 'GET',
         },
         STATS: {
           PATH: '/stats/1.0/verification/events/query',
-          METHOD: 'GET'
-        }
-      }
+          METHOD: 'GET',
+        },
+      },
     };
 
     this.opts = constructOpts(opts);
@@ -61,6 +43,7 @@ export default class VerificationRequest {
     if (moment(params.from).isValid()) {
       params.from = moment(params.from).valueOf();
     }
+
     if (moment(params.to).isValid()) {
       params.to = moment(params.to).valueOf();
     }
@@ -78,9 +61,9 @@ export default class VerificationRequest {
    */
   convertVerificationTypes(type) {
     switch (type) {
-      case 'call-in': return 'MobileTerminated';
-      case 'call-out': return 'MobileOriginated';
-      default: return type;
+    case 'call-in': return 'MobileTerminated';
+    case 'call-out': return 'MobileOriginated';
+    default: return type;
     }
   }
 
@@ -102,18 +85,18 @@ export default class VerificationRequest {
    */
   formatQueryParameters(params, cb) {
     Q.nfcall(swapDate, params)
-      .then((params) => {
-        let format = nconf.get(util.format('%s:format:timestamp', this.opts.type)) || 'x';
+      .then(paramsAfterSwappedDate => {
+        const format = nconf.get(util.format('%s:format:timestamp', this.opts.type)) || 'x';
 
-        params.type = this.convertVerificationTypes(params.method);
-        delete params.method;
+        paramsAfterSwappedDate.type = this.convertVerificationTypes(paramsAfterSwappedDate.method);
+        delete paramsAfterSwappedDate.method;
 
-        return formatDateString(params, format)
+        return formatDateString(paramsAfterSwappedDate, format);
       })
-      .then((params) => {
-        cb(null, params);
+      .then(formattedParams => {
+        cb(null, formattedParams);
       })
-      .catch((err) => {
+      .catch(err =>{
         cb(handleError(err, 500), null);
       })
       .done();
@@ -128,10 +111,10 @@ export default class VerificationRequest {
    * @param {Function} cb  Callback function
    */
   sendRequest(endpoint, params, cb) {
-    let base = this.opts.baseUrl;
-    let path = endpoint.PATH;
-    let method = endpoint.METHOD;
-    let url = util.format('%s%s', base, path);
+    const base = this.opts.baseUrl;
+    const path = endpoint.PATH;
+    const method = endpoint.METHOD;
+    const url = util.format('%s%s', base, path);
 
     logger.debug(`Verification API Endpoint: ${url}?${qs.stringify(params)}`);
 
@@ -147,7 +130,7 @@ export default class VerificationRequest {
         }
 
         // TODO: generalize the network error handling (maybe extending Error class?)
-        let error = new Error();
+        const error = new Error();
         error.status = err.status;
         error.message = err.message;
 
@@ -161,7 +144,7 @@ export default class VerificationRequest {
         } else if (err.response) {
           // SuperAgent error object structure
           // https://visionmedia.github.io/superagent/#error-handling
-          let response = err.response.body;
+          const response = err.response.body;
           error.status = err.status;
           error.code = response.error;
           error.message = response.message;
@@ -184,8 +167,8 @@ export default class VerificationRequest {
    */
   getVerifications(params, cb) {
     Q.ninvoke(this, 'formatQueryParameters', this.convertDateInParamsFromIsoToTimestamp(params))
-      .then((params) => {
-        this.sendRequest(this.opts.endpoints.SEARCH, params, cb);
+      .then(paramsAfterFormatQuery => {
+        this.sendRequest(this.opts.endpoints.SEARCH, paramsAfterFormatQuery, cb);
       })
       .catch(cb)
       .done();
@@ -198,12 +181,12 @@ export default class VerificationRequest {
    * @param  {Function} cb      Node-style callback function
    */
   getVerificationStats(params, groupBy, cb) {
-    params = this.convertDateInParamsFromIsoToTimestamp(_.merge(params, {
-      breakdown: groupBy
+    const formattedParams = this.convertDateInParamsFromIsoToTimestamp(_.merge(params, {
+      breakdown: groupBy,
     }));
 
-    Q.ninvoke(this, 'sendRequest', this.opts.endpoints.STATS, params)
-    .then((result) => {
+    Q.ninvoke(this, 'sendRequest', this.opts.endpoints.STATS, formattedParams)
+    .then(result => {
       cb(null, result);
     })
     .catch(cb)

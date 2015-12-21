@@ -1,10 +1,12 @@
 import _ from 'lodash';
 import * as parseHelper from '../utils/statsParseHelper';
+import CountryData from 'country-data';
 
 /**
  * Default types to return when no data can be fetched from the server.
  */
 const DEFAULT_TYPES = ['Call-in', 'Call-out', 'SMS', 'IVR'];
+
 /**
  * Default platforms to return when no data can be fetched from the server.
  */
@@ -49,14 +51,14 @@ function parseStatsByStatus(data, params, cb) {
     return;
   }
 
-  let { successSet, failureSet } = parseHelper.standardiseStatusDataSet(data.results, params);
+  const { successSet, failureSet } = parseHelper.standardiseStatusDataSet(data.results, params);
 
-  let result = {
+  const result = {
     from: data.from,
     to: data.to,
     totalAttempts: [],
     successAttempts: [],
-    successRates: []
+    successRates: [],
   };
 
   let accumulatedAttempts = 0;
@@ -65,9 +67,9 @@ function parseStatsByStatus(data, params, cb) {
 
   // assume the data come in sequence
   for (let i = 0, len = successSet.length; i < len; i++) {
-    let success = successSet[i].v;
-    let failure = failureSet[i].v;
-    let total = success + failure;
+    const success = successSet[i].v;
+    const failure = failureSet[i].v;
+    const total = success + failure;
 
     accumulatedAttempts += total;
     accumulatedSuccess += success;
@@ -80,14 +82,14 @@ function parseStatsByStatus(data, params, cb) {
   }
 
   // 0 / 0 = infinity, use 0 instead
-  let averageSuccessRate = accumulatedAttempts !== 0 ?
+  const averageSuccessRate = accumulatedAttempts !== 0 ?
     (accumulatedSuccess / accumulatedAttempts * 100) : 0;
 
   _.merge(result, {
     accumulatedAttempts,
     accumulatedSuccess,
     accumulatedFailure,
-    averageSuccessRate
+    averageSuccessRate,
   });
 
   cb(null, result);
@@ -102,16 +104,17 @@ function parseStatsByCountry(data, cb) {
   }
 
   let countries = _.indexBy(data.results, result => result.segment.country.toUpperCase());
-  let countryNames = _.uniq(Object.keys(countries));
+  const countryNames = _.uniq(Object.keys(countries));
+
 
   // Avoid server endpoint to return country code that confronts the ISO standard
   countries = countryNames.filter(country => CountryData.countries[country]).map(country => countries[country]);
 
-  let countriesWithValues = _.reduce(countries, (result, country, name) => {
-    let countryCode = country.segment.country.toUpperCase();
+  const countriesWithValues = _.reduce(countries, (result, country) => {
+    const countryCode = country.segment.country.toUpperCase();
 
-    let accumulatedValues = _.reduce(country.data, (total, data) => {
-      total.v = parseInt(total.v) + parseInt(data.v);
+    const accumulatedValues = _.reduce(country.data, (total, eachData) => {
+      total.v = parseInt(total.v, 10) + parseInt(eachData.v, 10);
       return total;
     });
 
@@ -127,7 +130,7 @@ function parseStatsByCountry(data, cb) {
 }
 
 function parseStatsByPlatform(data, cb) {
-  let mapDataName = (platform) => {
+  const mapDataName = (platform) => {
     switch (platform) {
     case 'ios':
       return 'IOS';
@@ -139,7 +142,7 @@ function parseStatsByPlatform(data, cb) {
 }
 
 function parseStatsByType(data, cb) {
-  let mapDataName = (type) => {
+  const mapDataName = (type) => {
     switch (type) {
     case 'MobileTerminated':
       return 'Call-in';

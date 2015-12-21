@@ -51,18 +51,15 @@ export default class UserStatsRequest {
       .then((data) => {
         let query = {};
 
-        // for user query API and new user API,
+        // for active user query API and new user API,
         // they return the -1 day stat from the `from` query
         // e.g. when I passed 12th Nov as `from` query,
         // the data is actually from 11th Nov but not 12th
         // that why we have to silently add one day before
         // sending out the request
-        if (type === REQUEST_TYPE.USER) {
+        if (type === REQUEST_TYPE.NEW_USERS || type === REQUEST_TYPE.ACTIVE_USERS) {
           query.from = moment(params.from, 'x').add(1, 'day').startOf('day').format('x');
-          query.to = moment(params.to, 'x').add(1, 'day').endOf('day').format('x');
-        } else if (type === REQUEST_TYPE.NEW_USERS) {
-          query.from = moment(params.from, 'x').add(1, 'day').startOf('day').format('x');
-          query.to = params.to;
+          query.to = moment(params.to, 'x').add(1, 'day').startOf('day').format('x');
         } else {
           query.from = params.from;
           query.to = params.to;

@@ -73,7 +73,8 @@ const EndUsersOverview = React.createClass({
       appId: this.getStore(ApplicationStore).getDefaultAppId(),
       selectedMonth: defaultQueryMonth.get('month'),
       selectedYear: defaultQueryMonth.get('year'),
-      selectedLastXDays: TIME_FRAMES[1]
+      selectedLastXDays: TIME_FRAMES[1],
+      selectedLine: STATS_TYPE.REGISTERED_USER,
     }
   },
 

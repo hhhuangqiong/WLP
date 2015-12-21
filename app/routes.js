@@ -10,11 +10,6 @@ import {
 
 // convention: separate path by "-" following the component name
 
-// react-router acts differently from CLIENT to SERVER
-// CLIENT side react-router could recognize `to` property as route name while
-// SERVER side react-router takes to as URL
-const redirectForCallsOverview = CLIENT ? 'calls-overview' : 'calls/overview';
-
 export default (
   <Route handler={require('./main/components/common/App')}>
     <Redirect from="/" to="sign-in" />
@@ -44,17 +39,15 @@ export default (
         <Route name="verification-details" path="details" handler={require('./modules/verification/components/VerificationDetails')} />
       </Route>
 
-      <Redirect from="/:role/:identity?/calls" to={redirectForCallsOverview} />
-
       <Route name="vsf-transaction-overview" path="/:role/:identity?/vsf" handler={require('./modules/virtual-store-front/components/VSFTransactionOverview')} />
       <Route name="vsf-transaction-details" path="/:role/:identity?/vsf/details" handler={require('./modules/virtual-store-front/components/VSFTransactionDetails')} />
 
       <Route name="overview" path="/:role/:identity?/overview" handler={require('./modules/overview/components/Overview')} />
 
-      <Route name="calls-overview" path="/:role/:identity?/calls/overview" handler={require('./modules/calls/components/CallsOverview')} />
+      <Route name="calls-overview" path="/:role/:identity?/calls" handler={require('./modules/calls/components/CallsOverview')} />
       <Route name="calls-details" path="/:role/:identity?/calls/details" handler={require('./modules/calls/components/Calls')} />
 
-      <Route name="end-users-overview" path="/:role/:identity?/end-users/overview" handler={require('./modules/end-user/components/EndUsersOverview')} />
+      <Route name="end-users-overview" path="/:role/:identity?/end-users" handler={require('./modules/end-user/components/EndUsersOverview')} />
       <Route name="end-users-details" path="/:role/:identity?/end-users/details" handler={require('./modules/end-user/components/EndUsersDetails')} />
 
       <Route name="im-overview" path="/:role/:identity?/im" handler={require('./modules/im/components/ImOverview')} />
