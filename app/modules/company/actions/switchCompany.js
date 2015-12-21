@@ -1,3 +1,5 @@
+import { userPath } from '../../../server/paths';
+
 export default function(context, params) {
   context.api.getAuthorityList(params.identity, (err, { carrierId, capability }) => {
     const authority = context.getAuthority();
@@ -8,6 +10,6 @@ export default function(context, params) {
 
     if (!defaultPath) return context.getRouter().transitionTo('/error/not-found');
 
-    context.getRouter().transitionTo(defaultPath, { role: params.role, identity: params.identity });
+    context.getRouter().transitionTo(userPath(params.role, params.identity, defaultPath));
   });
 }
