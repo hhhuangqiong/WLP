@@ -790,6 +790,7 @@ let getEndUsersStats = function(req, res) {
   req.checkParams('carrierId').notEmpty();
   req.checkQuery('fromTime').notEmpty();
   req.checkQuery('toTime').notEmpty();
+  req.checkQuery('type').notEmpty();
 
   let error = req.validationErrors();
 
@@ -801,51 +802,93 @@ let getEndUsersStats = function(req, res) {
     });
   }
 
+  let { fromTime, toTime, timescale, type } = req.query;
+
   let params = _.omit({
     carriers: req.params.carrierId,
-    breakdown: 'carrier',
-    from: req.query.fromTime,
-    to: req.query.toTime,
-    timescale: req.query.timescale || 'day'
+    from: fromTime,
+    to: toTime,
+    timescale: timescale || 'day'
   }, (val) => { return !val; });
 
-  Q.allSettled([
-      Q.ninvoke(userStatsRequest, 'getNewUserStats', params),
-      Q.ninvoke(userStatsRequest, 'getActiveUserStats', params)
-    ])
-    .spread((newUserStats, activeUserStats) => {
-      let responses = [newUserStats, activeUserStats]
-      let errors = _.reduce(responses, (result, response) => {
-        if (response.state !== 'fulfilled') {
-          result.push(response.reason);
-        }
+  switch (type) {
+    case 'registration':
+      params.breakdown = 'carrier';
 
-        return result;
-      }, []);
+      Q.allSettled([
+          Q.ninvoke(userStatsRequest, 'getNewUserStats', params),
+          Q.ninvoke(userStatsRequest, 'getActiveUserStats', params)
+        ])
+        .spread((newUserStats, activeUserStats) => {
+          let responses = [newUserStats, activeUserStats]
+          let errors = _.reduce(responses, (result, response) => {
+            if (response.state !== 'fulfilled') {
+              result.push(response.reason);
+            }
 
-      if (!_.isEmpty(errors)) {
-        return res.status(500).json({
-          error: errors
-        });
-      }
+            return result;
+          }, []);
 
-      return res.json({
-        activeUserStats: _.get(activeUserStats, 'value.results.0.data'),
-        newUserStats: _.get(newUserStats, 'value.results.0.data')
-      });
-    })
-    .catch((err) => {
-      let { code, message, timeout, status } = err;
+          if (!_.isEmpty(errors)) {
+            return res.status(500).json({
+              error: errors
+            });
+          }
 
-      return res.status(status || 500).json({
-        error: {
-          code,
-          message,
-          timeout
-        }
-      });
-    })
-    .done();
+          return res.json({
+            activeUserStats: _.get(activeUserStats, 'value.results.0.data'),
+            newUserStats: _.get(newUserStats, 'value.results.0.data')
+          });
+        })
+        .catch((err) => {
+          let { code, message, timeout, status } = err;
+
+          return res.status(status || 500).json({
+            error: {
+              code,
+              message,
+              timeout
+            }
+          });
+        })
+        .done();
+        break;
+
+    case 'device':
+      params.breakdown = 'carrier,platform';
+
+      Q.ninvoke(userStatsRequest, 'getUserStats', params)
+        .then((stats) => {
+          let results = _.get(stats, 'results') || [];
+
+          let deviceStats = _.reduce(results, (data, result) => {
+            data.push({
+              platform: _.get(result, 'segment.platform'),
+              total: _.get(_.last(result.data), 'v')
+            });
+
+            return data;
+          }, []);
+
+          return res.json({ deviceStats });
+        })
+        .catch((err) => {
+          let { code, message, timeout, status } = err;
+
+          return res.status(status || 500).json({
+            error: {
+              code,
+              message,
+              timeout
+            }
+          });
+        })
+        .done();
+      break;
+
+    case 'country':
+      break;
+  }
 };
 
 export {

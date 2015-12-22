@@ -1,7 +1,8 @@
 .chart-cell {
+  padding-bottom: rem-calc(20px);
 
   &__header {
-    margin-bottom: rem-calc(20px);
+    margin-bottom: rem-calc(20px) !important;
 
     &__title {
       font-size: rem-calc(14px);
@@ -11,6 +12,21 @@
       border-right: 1px solid #eee;
       margin-left: - $column-gutter/2;
       margin-right: - $column-gutter/2;
+    }
+  }
+
+  &__overview {
+    text-align: center;
+    padding-top: rem-calc(15px);
+
+    &__value {
+      font-size: rem-calc(16px);
+      font-weight: bolder;
+    }
+
+    &__unit {
+      color: grey;
+      font-size: rem-calc(14px);
     }
   }
 
@@ -33,5 +49,9 @@
   &__chart {
     margin-bottom: rem-calc(20px);
     min-height: rem-calc(400px);
+  }
+
+  &:not(:first-child) {
+    border-top: 1px solid #eee;
   }
 }

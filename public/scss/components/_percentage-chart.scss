@@ -1,0 +1,67 @@
+.percentage-chart {
+  padding-bottom: 1rem;
+
+  &__title {
+    color: #868686;
+    font-size: rem-calc(16px);
+    font-weight: 300;
+    text-indent: 4px;
+    margin-bottom: rem-calc(10px);
+  }
+
+  &__percentage {
+    font-size: rem-calc(20px);
+    font-weight: 400;
+    margin-bottom: 0;
+  }
+
+  .progress {
+    height: 0.5rem;
+    background: #E0DFDF;
+    padding: 0;
+  }
+
+  .secondary {
+    display: block;
+    font-size: rem-calc(12px);
+    font-weight: 300;
+    color: #BBBBBB;
+    margin-bottom: $progress-bar-margin-bottom;
+  }
+}
+
+.chart-cell__chart {
+  .columns {
+    &:first-child {
+      .percentage-chart {
+        .meter {
+          background: #FC3940;
+        }
+      }
+    }
+
+    &:nth-child(2) {
+      .percentage-chart {
+        .meter {
+          background: #F5A336;
+        }
+      }
+    }
+
+    &:nth-child(3) {
+      .percentage-chart {
+        .meter {
+          background: #F47334;
+        }
+      }
+    }
+
+    &:nth-child(4) {
+      .percentage-chart {
+        .meter {
+          background: #FED044;
+        }
+      }
+    }
+  }
+}

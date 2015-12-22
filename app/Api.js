@@ -341,12 +341,21 @@ Api.prototype.getEndUsersStatsMonthly = function(params, cb) {
     .end(genericHandler(cb));
 };
 
-Api.prototype.getEndUsersStats = function(params, cb) {
+Api.prototype.getEndUsersRegistrationStats = function(params, cb) {
   superagent
     .get(`${this._getHost()}/api/carriers/${params.carrierId}/stat/user/query`)
     .accept('json')
     .set('Authorization', this._getToken())
-    .query(params)
+    .query(_.assign(params, { type: 'registration' }))
+    .end(genericHandler(cb));
+};
+
+Api.prototype.getEndUsersDeviceStats = function(params, cb) {
+  superagent
+    .get(`${this._getHost()}/api/carriers/${params.carrierId}/stat/user/query`)
+    .accept('json')
+    .set('Authorization', this._getToken())
+    .query(_.assign(params, { type: 'device' }))
     .end(genericHandler(cb));
 };
 
