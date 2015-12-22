@@ -48,7 +48,12 @@
 
   &__chart {
     margin-bottom: rem-calc(20px);
-    min-height: rem-calc(400px);
+
+    // this is to prevent from a jumpy layout
+    &.line-chart,
+    &.map-chart {
+      min-height: rem-calc(400px);
+    }
   }
 
   &:not(:first-child) {

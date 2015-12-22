@@ -4,6 +4,7 @@ import nconf from 'nconf';
 import moment from 'moment';
 import logger from 'winston';
 import { fetchDep } from '../utils/bottle';
+import { countries } from 'country-data';
 
 var endUserRequest      = fetchDep(nconf.get('containerName'), 'EndUserRequest');
 var walletRequest       = fetchDep(nconf.get('containerName'), 'WalletRequest');
@@ -886,7 +887,43 @@ let getEndUsersStats = function(req, res) {
         .done();
       break;
 
-    case 'country':
+    case 'geographic':
+      params.breakdown = 'country';
+
+      Q.ninvoke(userStatsRequest, 'getNewUserStats', params)
+        .then((stats) => {
+          let results = _.get(stats, 'results') || [];
+
+          let geographicStats = _.reduce(results, (data, result) => {
+            let countryCode = _.get(result, 'segment.country');
+            countryCode = _.isString(countryCode) && countryCode.toUpperCase();
+
+            data.push({
+              code: countryCode,
+              value:  _.reduce(result.data, (total, data) => {
+                total += data.v;
+                return total;
+              }, 0),
+              name: countries[countryCode].name
+            });
+
+            return data;
+          }, []);
+
+          return res.json({ geographicStats });
+        })
+        .catch((err) => {
+          let { code, message, timeout, status } = err;
+
+          return res.status(status || 500).json({
+            error: {
+              code,
+              message,
+              timeout
+            }
+          });
+        })
+        .done();
       break;
   }
 };
