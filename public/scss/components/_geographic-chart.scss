@@ -1,0 +1,27 @@
+.geographic-chart {
+  &__country-table {
+    font-size: 14px;
+    margin: 0 $column-gutter;
+
+    &__header, &__body {
+      padding: 5px 0;
+    }
+
+    &__header {
+      font-weight: 400;
+      border-bottom: 1px solid #eee;
+    }
+
+    &__body {
+      line-height: rem-calc($flag-resized-dimension);
+
+      .country {
+        display: inline-block;
+
+        .flag__container {
+          float: left;
+        }
+      }
+    }
+  }
+}

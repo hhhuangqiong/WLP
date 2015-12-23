@@ -20,6 +20,8 @@ import LoadingSpinnerStore from './main/stores/LoadingSpinnerStore';
 import VSFTransactionStore from './modules/virtual-store-front/stores/VSFTransactionStore';
 import ExportStore from './main/file-export/stores/ExportStore';
 import EndUsersOverviewStore from './modules/end-user/stores/EndUsersOverviewStore';
+import EndUsersRegistrationStatsStore from './modules/end-user/stores/EndUsersRegistrationStatsStore';
+import EndUsersGeographicStatsStore from './modules/end-user/stores/EndUsersGeographicStatsStore';
 
 // seems not passing anything is okay
 let app = new Fluxible();
@@ -52,5 +54,7 @@ app.registerStore(ImStore);
 app.registerStore(VSFTransactionStore);
 app.registerStore(ExportStore);
 app.registerStore(EndUsersOverviewStore);
+app.registerStore(EndUsersRegistrationStatsStore);
+app.registerStore(EndUsersGeographicStatsStore);
 
 export default app;

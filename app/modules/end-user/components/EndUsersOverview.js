@@ -5,6 +5,9 @@ import classNames from 'classnames';
 import moment from 'moment';
 import _ from 'lodash';
 import {concurrent} from 'contra';
+import { countries } from 'country-data';
+import getMapConfig from '../utils/getMapConfig';
+import MAP_DATA from '../constants/mapData';
 
 import FluxibleMixin from 'fluxible/addons/FluxibleMixin';
 import AuthMixin from '../../../utils/AuthMixin';
@@ -16,18 +19,22 @@ import LineChart from '../../../main/components/LineChart';
 import TimeFramePicker, { parseTimeRange } from '../../../main/components/TimeFramePicker';
 import * as DataGrid from '../../../main/statistics/components/DataGrid';
 import PercentageChart from '../../../main/components/PercentageChart';
+import CountryFlag from '../../../main/components/CountryFlag';
 
 import EndUsersOverviewStore from '../stores/EndUsersOverviewStore';
+import EndUsersRegistrationStatsStore from '../stores/EndUsersRegistrationStatsStore';
+import EndUsersGeographicStatsStore from '../stores/EndUsersGeographicStatsStore';
 import ApplicationStore from '../../../main/stores/ApplicationStore';
 
 import fetchEndUsersStatsMonthly from '../actions/fetchEndUsersStatsMonthly';
 import fetchEndUsersStatsTotal from '../actions/fetchEndUsersStatsTotal';
-import fetchEndUsersRegistrationStats from '../actions/fetchEndUsersRegistrationStats';
+import fetchRegistrationStats from '../actions/fetchEndUsersRegistrationStats';
 import fetchDeviceStats from '../actions/fetchDeviceStats';
+import fetchGeographicStats from '../actions/fetchGeographicStats';
 
 const YEARS_BACKWARD = 5;
-
 const TIME_FRAMES = ['7 days', '30 days', '60 days', '90 days'];
+const gChartContainerId = 'registrationByCountry';
 
 const debug = require('debug')('app:end-user/components/EndUsersOverview');
 
@@ -71,7 +78,9 @@ const EndUsersOverview = React.createClass({
 
   statics: {
     storeListeners: {
-      onEndUsersOverviewChange: EndUsersOverviewStore
+      onEndUsersOverviewChange: EndUsersOverviewStore,
+      onEndUsersRegistrationStatsChange: EndUsersRegistrationStatsStore,
+      onEndUsersGeographicStatsChange: EndUsersGeographicStatsStore
     }
   },
 
@@ -91,10 +100,29 @@ const EndUsersOverview = React.createClass({
     this._getMonthlyStats();
     this._getLastXDaysStats();
     this._getDeviceStats();
+    this._getGeographicStats();
   },
 
   onEndUsersOverviewChange() {
-    this.setState(this.context.getStore(EndUsersOverviewStore).getState());
+    let states = this.context.getStore(EndUsersOverviewStore).getState();
+    this.setState(states);
+  },
+
+  onEndUsersGeographicStatsChange() {
+    let states = this.context.getStore(EndUsersGeographicStatsStore).getState();
+    this.setState(_.merge(this.state, states));
+
+    // Inject custom world data provided by Highmaps
+    Highcharts.maps['custom/world'] = MAP_DATA;
+
+    // Copy source data to be a new one for Highmap to avoid the behavior of changing source data
+    const maxValue = _.max(states.geographicStats, country => country.total).total;
+    new Highcharts.Map(getMapConfig(gChartContainerId, _.clone(states.geographicStats), maxValue));
+  },
+
+  onEndUsersRegistrationStatsChange() {
+    let states = this.context.getStore(EndUsersRegistrationStatsStore).getState();
+    this.setState(_.merge(this.state, states));
   },
 
   onAppIdChange(appId) {
@@ -112,6 +140,7 @@ const EndUsersOverview = React.createClass({
     });
 
     this._getLastXDaysStats(time);
+    this._getGeographicStats(time);
   },
 
   _getStats() {
@@ -146,7 +175,21 @@ const EndUsersOverview = React.createClass({
 
     let { from, to, quantity: selectedLastXDays, timescale } = parseTimeRange(timeRange);
 
-    this.context.executeAction(fetchEndUsersRegistrationStats, {
+    this.context.executeAction(fetchRegistrationStats, {
+      fromTime: from,
+      toTime: to,
+      carrierId: identity,
+      timescale
+    });
+  },
+
+  _getGeographicStats(lastXDays) {
+    let { identity } = this.context.router.getCurrentParams();
+    let timeRange = lastXDays || this.state.selectedLastXDays;
+
+    let { from, to, quantity: selectedLastXDays, timescale } = parseTimeRange(timeRange);
+
+    this.context.executeAction(fetchGeographicStats, {
       fromTime: from,
       toTime: to,
       carrierId: identity,
@@ -295,6 +338,65 @@ const EndUsersOverview = React.createClass({
     }, 0);
   },
 
+  _getGeographicTotal() {
+    return _.reduce(this.state.geographicStats, (total, stat) => {
+      total += stat.value;
+      return total;
+    }, 0);
+  },
+
+  _renderCountryTable() {
+    const sortedCountries = _.sortByOrder(this.state.geographicStats, ['value'], ['desc'], _.values);
+
+    return (
+      <div className="geographic-chart__country-table">
+        <div className="geographic-chart__country-table__header row">
+          <div className="large-15 columns">
+            Location
+          </div>
+          <div className="large-9 columns">
+            Registered
+          </div>
+        </div>
+        {(
+        sortedCountries.slice(0, 10) || []).map((country) => {
+            return (
+              <div className="geographic-chart__country-table__body row" key={country.code}>
+                <div className="country large-15 columns">
+                  <CountryFlag code={country.code} />
+                  {country.name || EMPTY_CELL_PLACEHOLDER}
+                </div>
+                <div className="stats large-9 columns">{country.value || EMPTY_CELL_PLACEHOLDER}</div>
+              </div>
+            );
+          }
+        )}
+      </div>
+    )
+
+    return (
+      <table className="geographic-chart__country-table">
+        <tr>
+          <th>Location</th>
+          <th>Attempts</th>
+        </tr>
+        {(
+          sortedCountries.slice(0, 10) || []).map((country) => {
+            return (
+              <tr key={country.code}>
+                <td>
+                  <CountryFlag code={country.code} />
+                  {country.name || EMPTY_CELL_PLACEHOLDER}
+                </td>
+                <td>{country.value || EMPTY_CELL_PLACEHOLDER}</td>
+              </tr>
+            );
+          }
+        )}
+      </table>
+    );
+  },
+
   render() {
     let { role, identity } = this.context.router.getCurrentParams();
     let totalRegisteredUser = this._getTotalRegisteredUser();
@@ -430,13 +532,33 @@ const EndUsersOverview = React.createClass({
                         </ul>
                       </div>
                     </div>
-                    <div className="chart-cell__chart row">
+                    <div className="line-chart chart-cell__chart row">
                       <LineChart
                         className="attempt-line"
                         lines={this._getLineChartData()}
                         xAxis={this._getLineChartXAxis()}
                         yAxis={{}}
                         selectedLine={this._getLineChartSelectedLine()} />
+                    </div>
+                  </div>
+                  <div className="chart-cell large-24 columns">
+                    <div className="chart-cell__header row">
+                      <div className="large-4 columns">
+                        <div className="chart-cell__header__title">Registration by Country</div>
+                      </div>
+                      <div className="large-3 columns end chart-cell__overview">
+                        <div className="chart-cell__overview__value">{ this._getGeographicTotal() }</div>
+                        <div className="chart-cell__overview__unit">Total User</div>
+                      </div>
+                    </div>
+                    <div className="map-chart chart-cell__chart row">
+                      <div className="large-8 columns">
+                        {this._renderCountryTable()}
+                      </div>
+
+                      <div className="large-16 columns">
+                        <div id={gChartContainerId}>Loading maps...</div>
+                      </div>
                     </div>
                   </div>
                   <div className="chart-cell large-24 columns">
