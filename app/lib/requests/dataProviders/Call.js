@@ -85,10 +85,27 @@ export default class CallsRequest {
    * @method sendRequest Send request with SuperAgent
    *
    * @param params {Object} Formatted query object
+   * @param [loadBalanceIndex=0] {Number} the load balancing index which serves
+   * as the index of the api endpoints array
    * @param cb {Function} Callback function from @method getCalls
    */
-  sendRequest(params, cb) {
-    var url = this.opts.baseUrl + this.opts.methods.CALLS.URL;
+  sendRequest(params, loadBalanceIndex=0, cb) {
+    if (!cb && _.isFunction(loadBalanceIndex)) {
+      cb = loadBalanceIndex;
+      loadBalanceIndex = 0;
+    }
+
+    let baseUrl = this.opts.baseUrl;
+    let baseUrlArray = baseUrl.split(',');
+
+    if (baseUrlArray.length > 1) {
+      let index = loadBalanceIndex % baseUrlArray.length;
+      baseUrl = baseUrlArray[index];
+    } else {
+      baseUrl = _.first(baseUrlArray);
+    }
+
+    let url = util.format('%s%s', baseUrl, this.opts.methods.CALLS.URL);
 
     logger.debug(`Calls: ${this.opts.methods.CALLS.METHOD} ${url}?${qs.stringify(params)}`, params);
 
