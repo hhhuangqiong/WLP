@@ -21,7 +21,7 @@ var CallsTable = React.createClass({
     router: React.PropTypes.func.isRequired
   },
 
-  renderCountryField(number, countryName) {
+  renderCountryField(number, countryName, callType = 'caller') {
     // Prevent display carrier
     number = number.split('@')[0];
     countryName = countryName || '';
@@ -29,7 +29,7 @@ var CallsTable = React.createClass({
     // Get the actual country name
     let countryData = _.find(Countries, country => country.alpha2.toLowerCase() == countryName.toLowerCase());
 
-    if (!countryData) return number;
+    if (!countryData) return (<span className={callType}>{number}</span>);
 
     return (
       <div className="caller_info">
@@ -37,7 +37,7 @@ var CallsTable = React.createClass({
           <span className={'flag--' + countryName}></span>
         </div>
         <div className="left">
-          <span className="caller">{number}</span>
+          <span className={callType}>{number}</span>
           <br/>
           <span>{countryData.name}</span>
         </div>
@@ -68,7 +68,7 @@ var CallsTable = React.createClass({
             </td>
 
             <td className="calls-table--cell">
-              {this.renderCountryField(u.callee, u.target_country_tel_code)}
+              {this.renderCountryField(u.callee, u.target_country_tel_code, 'callee')}
             </td>
 
             <td className="calls-table--cell"><span className={"call_type radius label " + callType}>{callType}</span></td>

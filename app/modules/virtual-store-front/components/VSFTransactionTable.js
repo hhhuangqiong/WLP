@@ -39,27 +39,27 @@ let VSFTransactionTable = React.createClass({
 
     return (transactions || []).map((transaction, i) => {
       return (
-        <tr className="calls-table--row" key={i}>
-          <td className="text-center calls-table--cell">
+        <tr className="vsf-table--row" key={i}>
+          <td className="text-center vsf-table--cell">
             <span className={classNames('label', 'status', (transaction.transactionStatus) ? 'success' : 'alert')}></span>
           </td>
 
-          <td className="calls-table--cell">
+          <td className="vsf-table--cell">
             <div className="left timestamp">
               {/* parse purchaseDate as it is in UTC time and display it as local time */}
               <span className="call_date">{Moment.utc(transaction.purchaseDate).local().format('MMMM Do YYYY, h:mm:ss a')}</span>
             </div>
           </td>
 
-          <td className="calls-table--cell">
+          <td className="vsf-table--cell">
             <span>{transaction.userNumber}</span>
           </td>
 
-          <td className="calls-table--cell text-center">
+          <td className="vsf-table--cell text-center">
             <span>{this.renderPlatform(transaction.platform)}</span>
           </td>
 
-          <td className="calls-table--cell text-center">
+          <td className="vsf-table--cell text-center">
             <If condition={transaction.categories.indexOf('voice_sticker') >= 0}>
               <span className="icon-audio icon-virtual-item"></span>
             </If>
@@ -75,7 +75,7 @@ let VSFTransactionTable = React.createClass({
              id: {transaction.virtualItemId}
           </td>
 
-          <td className="calls-table--cell">
+          <td className="vsf-table--cell">
             <If condition={transaction.paymentType === 'Free'}>
               <span>Free</span>
             </If>
@@ -84,7 +84,7 @@ let VSFTransactionTable = React.createClass({
             </If>
           </td>
 
-          <td className="calls-table--cell">
+          <td className="vsf-table--cell">
             <span>{transaction.transactionId || NO_VALUE_LABEL}</span>
           </td>
         </tr>

@@ -13,7 +13,7 @@
     "transpile": "gulp babel webpack",
     "pretest": "npm run transpile",
     "test": "gulp test",
-    "test:report": "NODE_PATH=app mocha --compilers js:babel/register --recursive test --reporter xunit > build/reports.xml",
+    "test:report": "NODE_PATH=app mocha --compilers js:babel/register --recursive test/unit --reporter xunit > build/reports.xml",
     "test:browser": "wdio wdio.conf.js",
     "jest": "jest",
     "wdio": "wdio",

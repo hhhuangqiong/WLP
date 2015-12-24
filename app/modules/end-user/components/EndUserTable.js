@@ -48,11 +48,11 @@ var EndUserTable = React.createClass({
         let platform = device.platform || NOT_FOUND_LABEL;
         let currentUser = this.props.currentUser;
 
-        return <tr className={classNames({ selected: currentUser && currentUser.userDetails.username === u.username })} onClick={handleOnClick}>
+        return <tr className={classNames('end-user-table-row', { selected: currentUser && currentUser.userDetails.username === u.username })} onClick={handleOnClick}>
           <td>
             {u.jid}
           </td>
-          <td>{creationDate}</td>
+          <td className="creation-date">{creationDate}</td>
           <td className="account-status">
             <span>
               <span className={classNames('label', 'status', (u.accountStatus === 'ACTIVE')?'success':'alert')}></span>
