@@ -49,6 +49,7 @@ let DatePicker = React.createClass({
             key="start-date"
             dateFormat={moment.localeData().longDateFormat(this.props.dateFormat)}
             selected={moment(this.props.selectedDate, this.props.dateFormat)}
+            minDate={this.props.minDate}
             maxDate={moment(this.props.maxDate, this.props.dateFormat)}
             onChange={this.props.onChange}
           />
