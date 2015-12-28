@@ -1,9 +1,7 @@
 import React from 'react';
 import moment from 'moment';
-import classNames from 'classnames';
-import _ from 'lodash';
 
-import DatePicker from '../../../main/components/DatePicker';
+import DateRangePicker from '../../../main/components/DateRangePicker';
 import ExportSubmitControls from '../../../main/file-export/components/ExportSubmitControls';
 
 export default React.createClass({
@@ -12,7 +10,7 @@ export default React.createClass({
     startDate: React.PropTypes.string,
     endDate: React.PropTypes.string,
     handleExport: React.PropTypes.func.isRequired,
-    closeModal: React.PropTypes.func.isRequired
+    closeModal: React.PropTypes.func.isRequired,
   },
 
   getInitialState() {
@@ -20,6 +18,40 @@ export default React.createClass({
       startDate: moment(this.props.startDate),
       endDate: moment(this.props.endDate).endOf('day'),
     };
+  },
+
+  render() {
+    return (
+      <form onSubmit={this.handleExport} noValidate>
+        <h4 id="modalTitle">DOWNLOAD REPORT</h4>
+
+        <hr />
+
+        <div className="row export-form-row-padding">
+          <div className="large-5 columns">
+            <label className="left bold">Period</label>
+          </div>
+
+          <div className="large-11 columns">
+            <DateRangePicker
+              withIcon={true}
+              startDate={this.state.startDate.format('L')}
+              endDate={this.state.endDate.format('L')}
+              handleStartDateChange={this.handleStartDateChange}
+              handleEndDateChange={this.handleEndDateChange}
+            />
+          </div>
+        </div>
+
+        <hr />
+
+        <ExportSubmitControls
+          closeModal={this.props.closeModal}
+          handleExport={this.handleExport}
+        />
+
+      </form>
+    );
   },
 
   clearState() {
@@ -35,7 +67,7 @@ export default React.createClass({
   },
 
   handleExport() {
-    let params = {
+    const params = {
       carrierId: this.props.carrierId,
       startDate: this.state.startDate.format('L'),
       endDate: this.state.endDate.format('L'),
@@ -45,57 +77,4 @@ export default React.createClass({
     this.props.handleExport(params);
     this.clearState();
   },
-
-  render() {
-    return (
-      <form onSubmit={this.handleExport} noValidate>
-        <h4 id="modalTitle">DOWNLOAD REPORT</h4>
-
-        <hr />
-
-        <div className="row export-form-row-padding">
-          <div className="large-5 columns">
-            <label className="left bold">Start time</label>
-          </div>
-
-          <div className="large-7 columns">
-            <DatePicker
-              name="startPicker"
-              selectedDate={this.state.startDate}
-              dataPickerkey="startExportDatePicker"
-              dataPickerRef="startExportDatePicker"
-              onChange={this.handleStartDateChange}
-              dateFormat="MM/DD/YYYY"
-            />
-
-          </div>
-        </div>
-
-        <div className="row export-form-row-padding">
-          <div className="large-5 columns">
-            <label className="left bold">End time</label>
-          </div>
-
-          <div className="large-7 columns">
-            <DatePicker
-              name="endPicker"
-              selectedDate={this.state.endDate}
-              dataPickerkey="endExportDatePicker"
-              dataPickerRef="endExportDatePicker"
-              onChange={this.handleEndDateChange}
-              dateFormat="MM/DD/YYYY"
-            />
-          </div>
-        </div>
-
-        <hr />
-
-        <ExportSubmitControls
-          closeModal={this.props.closeModal}
-          handleExport={this.handleExport}
-        />
-
-      </form>
-    )
-  }
 });
