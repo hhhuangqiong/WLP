@@ -407,7 +407,7 @@ let getSMS = function(req, res) {
   let query = {
     from: req.query.startDate,
     to: req.query.endDate,
-    source_address_inbound: req.query.number,
+    destination_address_inbound: req.query.number,
     page: req.query.page,
     size: req.query.pageRec
   };

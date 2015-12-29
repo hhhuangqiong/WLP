@@ -57,7 +57,7 @@ var SMSTable = React.createClass({
                 <div className="large-11 columns">
                   <div className="caller_info">
                     <div className="left">
-                      <span className="caller">{sms.origin_interface === 'PLATFORM' ? 'system message' : sms.source_address_inbound}</span>
+                      <span className="caller">{sms.origin_interface === 'PLATFORM' ? 'system message' : sms.destination_address_inbound}</span>
                     </div>
                   </div>
                 </div>

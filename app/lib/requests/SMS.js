@@ -1,10 +1,9 @@
 /** @module requests/sms */
 
-import _ from 'lodash'
+import _ from 'lodash';
 import assign from 'object-assign';
 import moment from 'moment';
 import request from 'superagent';
-import util from 'util';
 import qs from 'qs';
 import logger from 'winston';
 
@@ -25,15 +24,12 @@ export default class SMSRequest {
     if (!carrierId) throw new Error('`carrierId` is required');
     if (!cb || !_.isFunction(cb)) throw new Error('`cb` is required and must be a function');
 
-    let path  = `${this._baseUrl}/api/v1/sms/master/query`;
-
-    let query = {
-      carrier: carrierId
-    };
+    const path  = `${this._baseUrl}/api/v1/sms/master/query`;
+    const query = { carrier: carrierId };
 
     if (opts.from && opts.to) {
       if (moment(opts.from, 'L').isAfter(moment(opts.to, 'L'))) {
-        let tmp = opts.to;
+        const tmp = opts.to;
         opts.to = opts.from;
         opts.from = tmp;
       }
@@ -48,8 +44,8 @@ export default class SMSRequest {
     }
 
     // jscs:disable requireCamelCaseOrUpperCaseIdentifiers
-    if (opts.source_address_inbound) {
-      query['source_address_inbound'] = '*' + opts.source_address_inbound + '*';
+    if (opts.destination_address_inbound) {
+      query.destination_address_inbound = '*' + opts.destination_address_inbound + '*';
     }
 
     // jscs:enable
