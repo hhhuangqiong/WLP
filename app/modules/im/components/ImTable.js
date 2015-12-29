@@ -1,14 +1,9 @@
-import React from 'react';
-import FluxibleMixin from 'fluxible/addons/FluxibleMixin';
-import {Link} from 'react-router';
-
+import React, { PropTypes } from 'react';
 import moment from 'moment';
 import _ from 'lodash';
 import classNames from 'classnames';
-
-var Countries = require('../../../data/countries.json');
-
-var Tooltip = require('rc-tooltip');
+import Tooltip from 'rc-tooltip';
+import { countries } from 'country-data';
 
 const IM_DATETIME_FORMAT = 'MMMM DD YYYY, hh:mm:ss a';
 const LABEL_FOR_NULL = 'N/A';
@@ -16,90 +11,84 @@ const LABEL_FOR_NULL = 'N/A';
 const MESSAGE_TYPES = {
   text: {
     className: 'icon-text',
-    title: 'text'
+    title: 'text',
   },
   image: {
     className: 'icon-image',
-    title: 'image'
+    title: 'image',
   },
   audio: {
     className: 'icon-audio',
-    title: 'audio'
+    title: 'audio',
   },
   video: {
     className: 'icon-video',
-    title: 'video'
+    title: 'video',
   },
   remote: {
     className: 'icon-ituneyoutube',
-    title: 'sharing'
+    title: 'sharing',
   },
   animation: {
     className: 'icon-video',
-    title: 'animation'
+    title: 'animation',
   },
   sticker: {
     className: 'icon-image',
-    title: 'sticker'
+    title: 'sticker',
   },
   voice_sticker: {
     className: 'icon-audio',
-    title: 'voice sticker'
+    title: 'voice sticker',
   },
   ephemeral_image: {
     className: 'icon-image',
-    title: 'ephemeral image'
-  }
+    title: 'ephemeral image',
+  },
 };
 
-var ImTable = React.createClass({
-  contextTypes: {
-    router: React.PropTypes.func.isRequired
+const ImTable = React.createClass({
+  propTypes: {
+    ims: PropTypes.array.isRequired,
   },
 
-  getTypeSize: function(item,typeText) {
-    let typeSize = '';
-    if (item.message_type !== 'undefined') {
-      if (item.file_size > 1024) {
-        typeSize = (Math.round((item.file_size/1024)))+'kb';
-      } else if (item.file_size > 0 && item.file_size < 1024) {
-        typeSize = item.file_size+'b';
-      } else {
-        if (item.message_size > 1024) {
-          typeSize = (Math.round((item.message_size/1024)))+'kb';
-        } else if (item.message_size > 0 && item.message_size < 1024) {
-          typeSize = item.message_size+'b';
-        }
+  contextTypes: {
+    router: PropTypes.func.isRequired,
+  },
+
+  getTypeSize(item, typeText) {
+    function calculateSize(itemSize) {
+      if (itemSize > 1024) {
+        return (Math.round((itemSize / 1024))) + 'kb';
+      } else if (itemSize > 0 && itemSize < 1024) {
+        return itemSize + 'b';
       }
+
+      return '';
+    }
+
+    let typeSize = '';
+
+    if (item.message_type !== 'undefined') {
+      typeSize = calculateSize(item.file_size > 0 ? item.file_size : item.message_size);
     }
 
     if (typeText === 'Sharing') {
       typeSize = item.resource_id;
-      if (typeSize !== 'itunes')
-        typeSize = _.capitalize(typeSize);
+      if (typeSize !== 'itunes') typeSize = _.capitalize(typeSize);
     }
 
     return typeSize;
   },
 
-  render: function() {
-    let params = this.context.router.getCurrentParams();
+  render() {
+    const rows = this.props.ims.map((u, key) => {
+      const callerCountry = countries[(u.origin || '').toUpperCase()];
+      const calleeCountry = countries[(u.destination || '').toUpperCase()];
 
-    let rows = this.props.ims.map((u, key) => {
-
-      let callerCountry = _.find(Countries, (c) => {
-        return c.alpha2.toLowerCase() == u.origin
-      });
-
-      let calleeCountry = _.find(Countries, (c) => {
-        return c.alpha2.toLowerCase() == u.destination
-      });
-
-      let imDate = moment(u.timestamp).format(IM_DATETIME_FORMAT);
-
-      let imType = MESSAGE_TYPES[u.message_type] || LABEL_FOR_NULL;
-
-      let typeSize = this.getTypeSize(u, imType.title);
+      const imDate = moment(u.timestamp).format(IM_DATETIME_FORMAT);
+      const imType = MESSAGE_TYPES[u.message_type] || LABEL_FOR_NULL;
+      const typeSize = this.getTypeSize(u, imType.title);
 
       let sender = null;
 
@@ -197,7 +186,7 @@ var ImTable = React.createClass({
         </tfoot>
       </table>
     );
-  }
+  },
 });
 
 export default ImTable;
