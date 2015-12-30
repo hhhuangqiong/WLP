@@ -62,6 +62,7 @@ export default class UserStatsRequest {
         if (data.status)      query.status    = data.status;
         if (data.countries)   query.countries = data.countries;
         if (data.stat_type)   query.stat_type = data.stat_type;
+        if (data.type)        query.type      = data.type;
 
         return _.omit(query, (value) => { return !value; });
       })
