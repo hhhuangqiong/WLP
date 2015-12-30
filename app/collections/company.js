@@ -235,6 +235,21 @@ schema.method('getCompanyType', function() {
 });
 
 /**
+ * @method isValidCarrier
+ * Check if the carrierId input match with existing companies
+ *
+ * @param carrierId
+ */
+schema.static('isValidCarrier', function(carrierId) {
+  return new Promise((resolve, reject) => {
+    this.findOne({ carrierId }, (err, doc) => {
+      if (err) return reject(err);
+      resolve(!!doc);
+    });
+  });
+});
+
+/**
  * @method getManagingCompany
  * Get one company by passing parentCarrierId to find the managing one
  *
