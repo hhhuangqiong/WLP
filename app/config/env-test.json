@@ -4,31 +4,6 @@
     "support": "support@M800.com",
     "no_reply": "No-Reply@M800.com"
   },
-  "mongodb": {
-    "uri": "mongodb://192.168.119.71/m800-whitelabel-portal,mongodb://192.168.119.72/m800-whitelabel-portal,mongodb://192.168.119.73/m800-whitelabel-portal",
-    "options": {
-      "mongos": false,
-      "user": "wlp-testbed-user",
-      "pass": "tb-wlp-user",
-      "autoIndex": false,
-      "server": {
-        "auto_reconnect": true,
-        "socketOptions": {
-          "keepAlive": 1,
-          "connectTimeoutMS": 3000,
-          "socketTimeoutMS": 3000
-        }
-      }
-    }
-  },
-  "redis": {
-    "sentinels": [
-      { "host": "192.168.119.25", "port": 26379 },
-      { "host": "192.168.119.26", "port": 26379 }
-    ],
-    "name": "redis-hk-tb-master",
-    "db": 11
-  },
   "queue": {
     "enable": true,
     "prefix": "q",

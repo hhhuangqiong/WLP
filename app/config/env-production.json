@@ -4,21 +4,6 @@
     "support": "support@M800.com",
     "no_reply": "No-Reply@M800.com"
   },
-  "mongodb": {
-    "uri": "mongodb://192.168.119.71/m800-whitelabel-portal,mongodb://192.168.119.72/m800-whitelabel-portal,mongodb://192.168.119.73/m800-whitelabel-portal",
-    "options": {
-      "mongos": false,
-      "user": "wlp-testbed-user",
-      "pass": "tb-wlp-user",
-      "autoIndex": false,
-      "server": {
-        "auto_reconnect": true,
-        "socketOptions": {
-          "keepAlive": 1
-        }
-      }
-    }
-  },
   "queue": {
     "enable": true,
     "prefix": "q",
