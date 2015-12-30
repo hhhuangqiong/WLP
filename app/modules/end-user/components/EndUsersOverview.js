@@ -537,7 +537,7 @@ const EndUsersOverview = React.createClass({
                         className="attempt-line"
                         lines={this._getLineChartData()}
                         xAxis={this._getLineChartXAxis()}
-                        yAxis={{}}
+                        yAxis={[{}]}
                         selectedLine={this._getLineChartSelectedLine()} />
                     </div>
                   </div>
