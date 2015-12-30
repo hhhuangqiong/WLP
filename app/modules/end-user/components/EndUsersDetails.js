@@ -12,13 +12,11 @@ import EndUserStore from '../stores/EndUserStore';
 
 import fetchEndUser from '../actions/fetchEndUser';
 import fetchEndUsers from '../actions/fetchEndUsers';
-import fetchEndUserAsEndUsers from '../actions/fetchEndUserAsEndUsers';
 import clearEndUsers from '../actions/clearEndUsers';
 import showNextPage from '../actions/showNextPage';
 
 import * as FilterBar from './../../../main/components/FilterBar';
 import DateRangePicker from './../../../main/components/DateRangePicker';
-import DatePicker from './../../../main/components/DatePicker';
 import Export from './../../../main/file-export/components/Export';
 
 import EndUserTable from './EndUserTable';
@@ -26,10 +24,9 @@ import EndUserProfile from './EndUserProfile';
 import EndUserExportForm from './EndUserExportForm';
 
 import config from './../../../main/config';
-import { accountStatus } from '../../../main/constants/accountStatus';
 
-let { inputDateFormat: DATE_FORMAT } = config;
-let { pages: { endUser: { pageRec: PAGE_REC } } } = config;
+const { inputDateFormat: DATE_FORMAT } = config;
+const { pages: { endUser: { pageRec: PAGE_REC } } } = config;
 
 // See: https://issuetracking.maaii.com:9443/display/MAAIIP/MUMS+User+Management+by+Carrier+HTTP+API
 // page = 0 1st page
@@ -229,7 +226,7 @@ var EndUsers = React.createClass({
               endDate={this.state.endDate}
               handleStartDateChange={this.handleStartDateChange}
               handleEndDateChange={this.handleEndDateChange}
-              />
+            />
 
             {/*
             <div>

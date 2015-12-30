@@ -3,7 +3,7 @@ import React from 'react';
 export default React.createClass({
   propTypes: {
     closeModal: React.PropTypes.func,
-    handleExport: React.PropTypes.func
+    handleExport: React.PropTypes.func,
   },
 
   render() {
@@ -20,7 +20,7 @@ export default React.createClass({
 
         >Cancel</a>
 
-        <div className="extra-space"></div>
+        <span className="extra-space"></span>
 
         <a
           role="button"
@@ -34,5 +34,5 @@ export default React.createClass({
         >Proceed</a>
       </div>
     );
-  }
+  },
 });
