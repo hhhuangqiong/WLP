@@ -15,13 +15,11 @@ import SMSStore from '../stores/SMSStore';
 
 import * as FilterBar from './../../../main/components/FilterBar';
 import DateRangePicker from './../../../main/components/DateRangePicker';
-import DatePicker from './../../../main/components/DatePicker';
 import SearchBox from './../../../main/components/Searchbox';
 
 import config from './../../../main/config';
-
-let { inputDateFormat: DATE_FORMAT } = config
-let { pages: { topUp: { pageRec: PAGE_REC } } } = config;
+const { inputDateFormat: DATE_FORMAT } = config;
+const { pages: { topUp: { pageRec: PAGE_REC } } } = config;
 
 // See: https://issuetracking.maaii.com:9443/display/MAAIIP/SMS+Search+API
 // page = 0 1st page
@@ -35,13 +33,13 @@ function getInitialQueryFromURL(params, query = {}) {
     endDate: query.endDate,
     number: query.number,
     page: query.page,
-    pageRec: query.pageRec
+    pageRec: query.pageRec,
   };
 }
 
-var SMS = React.createClass({
+const SMS = React.createClass({
   contextTypes: {
-    router: React.PropTypes.func.isRequired
+    router: React.PropTypes.func.isRequired,
   },
 
   mixins: [FluxibleMixin, AuthMixin],
@@ -49,25 +47,29 @@ var SMS = React.createClass({
   statics: {
     storeListeners: [SMSStore],
 
-    fetchData: function(context, params, query, done) {
-      let defaultQuery = {
+    fetchData(context, params, query, done) {
+      const defaultQuery = {
         carrierId: null,
         startDate: moment().startOf('day').subtract(MONTHS_BEFORE_TODAY, 'month').format(DATE_FORMAT),
         endDate: moment().endOf('day').format(DATE_FORMAT),
         number: null,
         page: INITIAL_PAGE_NUMBER,
-        pageRec: PAGE_REC
+        pageRec: PAGE_REC,
       };
 
       concurrent([
         context.executeAction.bind(context, clearSMS, {}),
-        context.executeAction.bind(context, loadSMS, _.merge(_.clone(defaultQuery), getInitialQueryFromURL(params, query)))
-      ], done || function() {});
-    }
+        context.executeAction.bind(context, loadSMS, _.merge(_.clone(defaultQuery), getInitialQueryFromURL(params, query))),
+      ], done || () => {});
+    },
   },
 
-  getInitialState: function() {
+  getInitialState() {
     return _.merge(_.clone(this.getDefaultQuery()), this.getRequestBodyFromQuery(), this.getStateFromStores());
+  },
+
+  onChange() {
+    this.setState(this.getStateFromStores());
   },
 
   getDefaultQuery() {
@@ -77,77 +79,30 @@ var SMS = React.createClass({
       endDate: moment().endOf('day').format(DATE_FORMAT),
       number: null,
       page: INITIAL_PAGE_NUMBER,
-      pageRec: PAGE_REC
+      pageRec: PAGE_REC,
     };
   },
 
-  getRequestBodyFromQuery: function(query) {
-    let { startDate, endDate, number, page, pageRec } = query || this.context.router.getCurrentQuery();
+  getRequestBodyFromQuery(query) {
+    const { startDate, endDate, number, page, pageRec } = query || this.context.router.getCurrentQuery();
     return { startDate, endDate, number, page, pageRec };
   },
 
-  getRequestBodyFromState: function() {
-    let { identity } = this.context.router.getCurrentParams();
-    let { startDate, endDate, number, page, pageRec } = this.state;
+  getRequestBodyFromState() {
+    const { identity } = this.context.router.getCurrentParams();
+    const { startDate, endDate, number, page, pageRec } = this.state;
     return { carrierId: identity, startDate, endDate, number, page, pageRec };
   },
 
-  getStateFromStores: function() {
+  getStateFromStores() {
     return {
       page: this.getStore(SMSStore).getPage(),
-      totalPage: this.getStore(SMSStore).getTotalPage()
-    }
+      totalPage: this.getStore(SMSStore).getTotalPage(),
+    };
   },
 
-  onChange: function() {
-    this.setState(this.getStateFromStores());
-  },
-
-  handleQueryChange: function(newQuery) {
-    let routeName = _.last(this.context.router.getCurrentRoutes()).name;
-    let params = this.context.router.getCurrentParams();
-    let query = _.merge(this.getRequestBodyFromQuery(), this.getRequestBodyFromState(), newQuery);
-
-    this.context.router.transitionTo(routeName, params, _.omit(query, function(value) {
-      return !value;
-    }));
-  },
-
-  // action for client side
-  // so properties in state will domainate
-  handlePageLoad: function() {
-    let targetPage = +this.state.page + 1;
-    this.setState({ page: targetPage });
-
-    this.context.executeAction(loadSMS, _.merge(this.getRequestBodyFromState(), { page: targetPage }));
-  },
-
-  handleStartDateChange: function(momentDate) {
-    let date = moment(momentDate).format(DATE_FORMAT);
-    this.setState({ startDate: date });
-    this.handleQueryChange({ startDate: date, page: INITIAL_PAGE_NUMBER });
-  },
-
-  handleEndDateChange: function(momentDate) {
-    let date = moment(momentDate).format(DATE_FORMAT);
-    this.setState({ endDate: date });
-    this.handleQueryChange({ endDate: date, page: INITIAL_PAGE_NUMBER });
-  },
-
-  handleSearchInputChange: function(e) {
-    this.setState({
-      number: e.target.value
-    });
-  },
-
-  handleSearchInputSubmit: function(e) {
-    if (e.which == 13) {
-      this.handleQueryChange({ number: e.target.value, page: INITIAL_PAGE_NUMBER });
-    }
-  },
-
-  render: function() {
-    let params = this.context.router.getCurrentParams();
+  render() {
+    const params = this.context.router.getCurrentParams();
 
     return (
       <div className="row">
@@ -167,7 +122,7 @@ var SMS = React.createClass({
           </FilterBar.LeftItems>
           <FilterBar.RightItems>
             <SearchBox
-              placeHolder="Username/Mobile"
+              placeHolder="Mobile Destination"
               value={this.state.number}
               onInputChangeHandler={this.handleSearchInputChange}
               onKeyPressHandler={this.handleSearchInputSubmit}
@@ -184,7 +139,46 @@ var SMS = React.createClass({
         </div>
       </div>
     );
-  }
+  },
+
+  handleQueryChange(newQuery) {
+    const routeName = _.last(this.context.router.getCurrentRoutes()).name;
+    const params = this.context.router.getCurrentParams();
+    const query = _.merge(this.getRequestBodyFromQuery(), this.getRequestBodyFromState(), newQuery);
+
+    this.context.router.transitionTo(routeName, params, _.omit(query, value => !value));
+  },
+
+  // action for client side
+  // so properties in state will domainate
+  handlePageLoad() {
+    const targetPage = +this.state.page + 1;
+    this.setState({ page: targetPage });
+
+    this.context.executeAction(loadSMS, _.merge(this.getRequestBodyFromState(), { page: targetPage }));
+  },
+
+  handleStartDateChange(momentDate) {
+    const date = moment(momentDate).format(DATE_FORMAT);
+
+    this.setState({ startDate: date });
+    this.handleQueryChange({ startDate: date, page: INITIAL_PAGE_NUMBER });
+  },
+
+  handleEndDateChange(momentDate) {
+    const date = moment(momentDate).format(DATE_FORMAT);
+
+    this.setState({ endDate: date });
+    this.handleQueryChange({ endDate: date, page: INITIAL_PAGE_NUMBER });
+  },
+
+  handleSearchInputChange(e) {
+    this.setState({ number: e.target.value });
+  },
+
+  handleSearchInputSubmit(e) {
+    if (e.which === 13) this.handleQueryChange({ number: e.target.value, page: INITIAL_PAGE_NUMBER });
+  },
 });
 
 export default SMS;
