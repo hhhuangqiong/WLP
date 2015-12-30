@@ -5,11 +5,11 @@ export default {
       'origin', 'recipient', 'recipients', 'destination', 'platform',
       'stanza_type', 'resource_id', 'theme', 'resource', 'region',
       'file_size', 'thread', 'stanza_id', 'timestamp', 'device_id',
-      'receive_id'
+      'receive_id',
     ],
     EXPORT_REQUEST: 'ImRequest',
     EXPORT_REQUEST_EXECUTION: 'getImSolr',
-    EXPORT_FILENAME: 'export_im.csv'
+    EXPORT_FILENAME: 'export_im.csv',
   },
   CALLS: {
     DATA_FIELDS: [
@@ -18,11 +18,11 @@ export default {
       'caller_os_version', 'callee_os_version', 'bye_reason',
       'caller_platform', 'callee_platform', 'caller_hardware_identifier',
       'callee_hardware_identifier', 'caller_country', 'callee_country',
-      'caller_bundle_id', 'sip_trunk'
+      'caller_bundle_id', 'sip_trunk', 'release_party',
     ],
     EXPORT_REQUEST: 'CallsRequest',
     EXPORT_REQUEST_EXECUTION: 'getCalls',
-    EXPORT_FILENAME: 'export_calls.csv'
+    EXPORT_FILENAME: 'export_calls.csv',
   },
   VERIFICATION: {
     DATA_FIELDS: [
@@ -30,19 +30,19 @@ export default {
       'current_mcc', 'current_mnc', 'custom', 'developer_key', 'device_id',
       'start_time', 'end_time', 'hardware_identifier', 'home_mcc', 'home_mnc',
       'os_version', 'phone_number', 'platform', 'reason_message', 'request_id',
-      'sdk_version', 'source_country', 'source_ip', 'success', 'type'
+      'sdk_version', 'source_country', 'source_ip', 'success', 'type',
     ],
     EXPORT_REQUEST: 'VerificationRequest',
     EXPORT_REQUEST_EXECUTION: 'getVerifications',
-    EXPORT_FILENAME: 'export_verification.csv'
+    EXPORT_FILENAME: 'export_verification.csv',
   },
   END_USER: {
     DATA_FIELDS: [
       'username', 'creationDate', 'accountStatus', 'platform', 'deviceModel',
-      'appBundleId', 'appVersionNumber'
+      'appBundleId', 'appVersionNumber',
     ],
     EXPORT_REQUEST: 'EndUserRequest',
     EXPORT_REQUEST_EXECUTION: 'getExportUsers',
-    EXPORT_FILENAME: 'export_users.csv'
+    EXPORT_FILENAME: 'export_users.csv',
   },
-}
+};
