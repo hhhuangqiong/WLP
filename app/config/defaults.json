@@ -32,5 +32,20 @@
     "format": {
       "timestamp": "x"
     }
+  },
+  "mongodb": {
+    "uri": "mongodb://localhost/m800-whitelabel-portal",
+    "options": {
+      "mongos": false,
+      "user": "",
+      "pass": "",
+      "server": {
+        "auto_reconnect": true,
+        "socketOptions": {
+          "keepAlive": 1,
+          "connectTimeoutMS": 3000
+        }
+      }
+    }
   }
 }
