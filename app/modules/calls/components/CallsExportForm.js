@@ -81,6 +81,7 @@ export default React.createClass({
 
           <div className="large-7 columns">
             <DateTimePicker
+              className="export-datetime-picker export-from-time"
               name="startPicker"
               date={this.state.startDate}
               dataPickerkey="startExportDatePicker"
@@ -100,6 +101,7 @@ export default React.createClass({
 
           <div className="large-7 columns">
             <DateTimePicker
+              className="export-datetime-picker export-to-time"
               name="endPicker"
               date={this.state.endDate}
               dataPickerkey="endExportDatePicker"

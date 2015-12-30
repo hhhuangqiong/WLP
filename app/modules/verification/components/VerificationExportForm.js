@@ -67,6 +67,7 @@ export default class VerificationExportForm extends Component {
           <label className="left bold">Start time</label>
 
           <DateTimePicker
+            className="export-datetime-picker export-from-time"
             name="startPicker"
             date={this.state.fromTime}
             dataPickerkey="startExportDatePicker"
@@ -81,6 +82,7 @@ export default class VerificationExportForm extends Component {
           <label className="left bold">End time</label>
 
           <DateTimePicker
+            className="export-datetime-picker export-to-time"
             name="endPicker"
             date={this.state.toTime}
             dataPickerkey="endExportDatePicker"
