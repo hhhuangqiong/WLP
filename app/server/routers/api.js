@@ -34,6 +34,8 @@ router
   .post('/carriers/:carrierId/users/:username/suspension', carriers.suspendUser)
   .delete('/carriers/:carrierId/users/:username/suspension', carriers.reactivateUser)
   .get('/carriers/:carrierId/calls', carriers.getCalls)
+  .get('/carriers/:carrierId/callUserStatsMonthly', carriers.getCallUserStatsMonthly)
+  .get('/carriers/:carrierId/callUserStatsTotal', carriers.getCallUserStatsTotal)
   .get('/carriers/:carrierId/im', carriers.getIM)
   .get('/carriers/:carrierId/sms', carriers.getSMS)
   .get('/carriers/:carrierId/topup', carriers.getTopUp)

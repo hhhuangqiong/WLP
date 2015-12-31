@@ -1,3 +1,4 @@
+import _ from 'lodash';
 import moment from 'moment';
 import validator from 'validator';
 
@@ -9,7 +10,7 @@ import validator from 'validator';
 export function constructOpts(opts) {
   opts.timeout = opts.timeout || 5000;
 
-  if (!opts.baseUrl || !validator.isURL(opts.baseUrl)) {
+  if (!opts.baseUrl) {
     throw new Error('invalid baseUrl.');
   }
 

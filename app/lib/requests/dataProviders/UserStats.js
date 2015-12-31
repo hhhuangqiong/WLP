@@ -83,8 +83,23 @@ export default class UserStatsRequest {
       .done();
   }
 
-  sendRequest(endpoint, params, cb) {
-    let reqUrl = util.format('%s%s', this.opts.baseUrl, endpoint.PATH);
+  sendRequest(endpoint, params, loadBalanceIndex=0, cb) {
+    if (!cb && _.isFunction(loadBalanceIndex)) {
+      cb = loadBalanceIndex;
+      loadBalanceIndex = 0;
+    }
+
+    let baseUrl = this.opts.baseUrl;
+    let baseUrlArray = baseUrl.split(',');
+
+    if (baseUrlArray.length > 1) {
+      let index = loadBalanceIndex % baseUrlArray.length;
+      baseUrl = baseUrlArray[index];
+    } else {
+      baseUrl = _.first(baseUrlArray);
+    }
+
+    let reqUrl = util.format('%s%s', baseUrl, endpoint.PATH);
 
     logger.debug(`EndUser Statistic API Endpoint: ${reqUrl}?${qs.stringify(params)}`);
 

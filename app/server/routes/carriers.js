@@ -13,6 +13,7 @@ var topUpRequest        = fetchDep(nconf.get('containerName'), 'TopUpRequest');
 var imRequest           = fetchDep(nconf.get('containerName'), 'ImRequest');
 var vsfRequest          = fetchDep(nconf.get('containerName'), 'VSFTransactionRequest');
 var verificationRequest = fetchDep(nconf.get('containerName'), 'VerificationRequest');
+var callStatsRequest    = fetchDep(nconf.get('containerName'), 'CallStatsRequest');
 var userStatsRequest    = fetchDep(nconf.get('containerName'), 'UserStatsRequest');
 
 import SmsRequest from '../../lib/requests/SMS';
@@ -928,8 +929,209 @@ let getEndUsersStats = function(req, res) {
   }
 };
 
+let getCallUserStatsMonthly = function(req, res) {
+  req.checkParams('carrierId').notEmpty();
+  req.checkQuery('fromTime').notEmpty();
+  req.checkQuery('toTime').notEmpty();
+
+  let error = req.validationErrors();
+
+  if (error) {
+    return res.status(400).json({
+      error: {
+        message: prepareValidationMessage(error)
+      }
+    });
+  }
+
+  let { fromTime, toTime, timescale } = req.query;
+  let { carrierId } = req.params;
+
+  let thisMonthTime = moment(fromTime, 'x').get('month') != moment().get('month') ?
+    moment(fromTime, 'x') :
+    moment().subtract(1, 'day');
+
+  let thisMonthParams = _.omit({
+    caller_carrier: carrierId,
+    timescale: 'day',
+    from: thisMonthTime.startOf('month').startOf('day').format('x'),
+    to: thisMonthTime.endOf('month').endOf('day').format('x')
+  }, (val) => {
+    return !val;
+  });
+
+  let lastMonthParams = _.omit({
+    caller_carrier: carrierId,
+    timescale: 'day',
+    from: moment(fromTime, 'x').subtract(1, 'months').startOf('month').format('x'),
+    to: moment(toTime, 'x').subtract(1, 'months').endOf('month').format('x'),
+  }, (val) => {
+    return !val;
+  });
+
+  Q.allSettled([
+    Q.ninvoke(callStatsRequest, 'getCallerStats', thisMonthParams),
+    Q.ninvoke(callStatsRequest, 'getCallerStats', lastMonthParams),
+    Q.ninvoke(callStatsRequest, 'getCalleeStats', thisMonthParams),
+    Q.ninvoke(callStatsRequest, 'getCalleeStats', lastMonthParams)
+  ])
+    .spread((thisMonthCallerStats, lastMonthCallerStats, thisMonthCalleeStats, lastMonthCalleeStats) => {
+      let responses = [thisMonthCallerStats, lastMonthCallerStats, thisMonthCalleeStats, lastMonthCalleeStats]
+      let errors = _.reduce(responses, (result, response) => {
+        if (response.state !== 'fulfilled') {
+          result.push(response.reason);
+        }
+
+        return result;
+      }, []);
+
+      if (!_.isEmpty(errors)) {
+        return res.status(500).json({
+          error: errors
+        });
+      }
+
+      let thisMonthCallers = _.get(thisMonthCallerStats, 'value.0.data');
+      let thisMonthCallees = _.get(thisMonthCalleeStats, 'value.0.data');
+
+      // concat callee with carrierId into caller array
+      // as callee contains OFFNET user
+      // that for callee is already done by parameter of caller_carrier
+      let thisMonthCallUser = _.reduce(thisMonthCallees, (result, callee) => {
+        if (callee.indexOf(carrierId) > 0) {
+          result.push(callee);
+        }
+        return result;
+      }, thisMonthCallers);
+
+      let lastMonthCallers = _.get(lastMonthCallerStats, 'value.0.data');
+      let lastMonthCallees = _.get(lastMonthCalleeStats, 'value.0.data');
+
+      // concat callee with carrierId into caller array
+      // as callee contains OFFNET user
+      // that for callee is already done by parameter of caller_carrier
+      let lastMonthCallUser = _.reduce(lastMonthCallees, (result, callee) => {
+        if (callee.indexOf(carrierId) > 0) {
+          result.push(callee);
+        }
+        return result;
+      }, lastMonthCallers);
+
+      return res.json({
+        thisMonthCallUser: (_.uniq(thisMonthCallUser)).length,
+        lastMonthCallUser: (_.uniq(lastMonthCallUser)).length
+      });
+    })
+    .catch((err) => {
+      let { code, message, timeout, status } = err;
+
+      return res.status(status || 500).json({
+        error: {
+          code,
+          message,
+          timeout
+        }
+      });
+    })
+    .done();
+};
+
+let getCallUserStatsTotal = function(req, res) {
+  req.checkParams('carrierId').notEmpty();
+  req.checkQuery('fromTime').notEmpty();
+  req.checkQuery('toTime').notEmpty();
+
+  let error = req.validationErrors();
+
+  if (error) {
+    return res.status(400).json({
+      error: {
+        message: prepareValidationMessage(error)
+      }
+    });
+  }
+
+  let { carrierId } = req.params;
+  let { fromTime, toTime, timescale } = req.query;
+
+  let callAttemptParams = _.omit({
+    caller_carrier: carrierId,
+    from: fromTime,
+    to: toTime,
+    timescale: timescale || 'day',
+    stat_type: 'count'
+  }, (val) => { return !val; });
+
+  let asrParams = _.omit({
+    caller_carrier: carrierId,
+    from: fromTime,
+    to: toTime,
+    timescale: timescale || 'day',
+    stat_type: 'asr'
+  }, (val) => { return !val; });
+
+  let tcdParams = _.omit({
+    caller_carrier: carrierId,
+    from: fromTime,
+    to: toTime,
+    timescale: timescale || 'day',
+    stat_type: 'duration'
+  }, (val) => { return !val; });
+
+  let acdParams = _.omit({
+    caller_carrier: carrierId,
+    from: fromTime,
+    to: toTime,
+    timescale: timescale || 'day',
+    stat_type: 'acd'
+  }, (val) => { return !val; });
+
+  Q.allSettled([
+      Q.ninvoke(callStatsRequest, 'getCallStats', callAttemptParams),
+      Q.ninvoke(callStatsRequest, 'getCallStats', asrParams),
+      Q.ninvoke(callStatsRequest, 'getCallStats', tcdParams),
+      Q.ninvoke(callStatsRequest, 'getCallStats', acdParams)
+    ])
+    .spread((callAttemptStats, asrStats, tcdStats, acdStats) => {
+      let responses = [callAttemptStats, asrStats, tcdStats, acdStats]
+      let errors = _.reduce(responses, (result, response) => {
+        if (response.state !== 'fulfilled') {
+          result.push(response.reason);
+        }
+
+        return result;
+      }, []);
+
+      if (!_.isEmpty(errors)) {
+        return res.status(500).json({
+          error: errors
+        });
+      }
+
+      return res.json({
+        totalAttemptStats: _.get(callAttemptStats, 'value.0.data'),
+        successRateStats: _.get(asrStats, 'value.0.data'),
+        totalDurationStats: _.get(tcdStats, 'value.0.data'),
+        averageDurationStats: _.get(acdStats, 'value.0.data')
+      });
+    })
+    .catch((err) => {
+      let { code, message, timeout, status } = err;
+
+      return res.status(status || 500).json({
+        error: {
+          code,
+          message,
+          timeout
+        }
+      });
+    });
+};
+
 export {
   getCalls,
+  getCallUserStatsMonthly,
+  getCallUserStatsTotal,
   getIM,
   getSMS,
   getTopUp,

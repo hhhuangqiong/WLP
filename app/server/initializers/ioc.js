@@ -54,6 +54,7 @@ export default function init(nconf) {
   ioc.constant('DATAPROVIDER_API_BASE_URL', nconf.get('dataProviderApi:baseUrl'));
   ioc.constant('DATAPROVIDER_API_TIMEOUT', nconf.get('dataProviderApi:timeout'));
   ioc.service('CallsRequest', require('../../lib/requests/dataProviders/Call'), 'DATAPROVIDER_API_BASE_URL', 'DATAPROVIDER_API_TIMEOUT');
+  ioc.service('CallStatsRequest', require('../../lib/requests/dataProviders/CallStats'), 'DATAPROVIDER_API_BASE_URL', 'DATAPROVIDER_API_TIMEOUT');
   ioc.service('ImRequest', require('../../lib/requests/dataProviders/Im'), 'DATAPROVIDER_API_BASE_URL', 'DATAPROVIDER_API_TIMEOUT');
   ioc.service('VerificationRequest', require('../../lib/requests/dataProviders/Verification'), 'DATAPROVIDER_API_BASE_URL', 'DATAPROVIDER_API_TIMEOUT');
   ioc.service('UserStatsRequest', require('../../lib/requests/dataProviders/UserStats'), 'DATAPROVIDER_API_BASE_URL', 'DATAPROVIDER_API_TIMEOUT');
