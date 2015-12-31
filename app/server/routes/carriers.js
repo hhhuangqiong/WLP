@@ -944,7 +944,7 @@ let getCallUserStatsMonthly = function(req, res) {
     });
   }
 
-  let { fromTime, toTime, timescale } = req.query;
+  let { fromTime, toTime, timescale, type } = req.query;
   let { carrierId } = req.params;
 
   let thisMonthTime = moment(fromTime, 'x').get('month') != moment().get('month') ?
@@ -955,7 +955,8 @@ let getCallUserStatsMonthly = function(req, res) {
     caller_carrier: carrierId,
     timescale: 'day',
     from: thisMonthTime.startOf('month').startOf('day').format('x'),
-    to: thisMonthTime.endOf('month').endOf('day').format('x')
+    to: thisMonthTime.endOf('month').endOf('day').format('x'),
+    type
   }, (val) => {
     return !val;
   });
@@ -965,6 +966,7 @@ let getCallUserStatsMonthly = function(req, res) {
     timescale: 'day',
     from: moment(fromTime, 'x').subtract(1, 'months').startOf('month').format('x'),
     to: moment(toTime, 'x').subtract(1, 'months').endOf('month').format('x'),
+    type
   }, (val) => {
     return !val;
   });
@@ -1052,14 +1054,16 @@ let getCallUserStatsTotal = function(req, res) {
   }
 
   let { carrierId } = req.params;
-  let { fromTime, toTime, timescale } = req.query;
+  let { fromTime, toTime, timescale, type } = req.query;
 
   let callAttemptParams = _.omit({
     caller_carrier: carrierId,
     from: fromTime,
     to: toTime,
     timescale: timescale || 'day',
-    stat_type: 'count'
+    stat_type: 'count',
+    breakdown: 'success',
+    type
   }, (val) => { return !val; });
 
   let asrParams = _.omit({
@@ -1067,7 +1071,8 @@ let getCallUserStatsTotal = function(req, res) {
     from: fromTime,
     to: toTime,
     timescale: timescale || 'day',
-    stat_type: 'asr'
+    stat_type: 'asr',
+    type
   }, (val) => { return !val; });
 
   let tcdParams = _.omit({
@@ -1075,7 +1080,8 @@ let getCallUserStatsTotal = function(req, res) {
     from: fromTime,
     to: toTime,
     timescale: timescale || 'day',
-    stat_type: 'duration'
+    stat_type: 'duration',
+    type
   }, (val) => { return !val; });
 
   let acdParams = _.omit({
@@ -1083,7 +1089,8 @@ let getCallUserStatsTotal = function(req, res) {
     from: fromTime,
     to: toTime,
     timescale: timescale || 'day',
-    stat_type: 'acd'
+    stat_type: 'acd',
+    type
   }, (val) => { return !val; });
 
   Q.allSettled([
@@ -1108,8 +1115,29 @@ let getCallUserStatsTotal = function(req, res) {
         });
       }
 
+      callAttemptStats = _.get(callAttemptStats, 'value');
+
+      let successAttemptStats = _.get(_.find(callAttemptStats, (stat) => {
+        return stat.segment.success === 'true';
+      }), 'data');
+
+      let failureAttemptStats = _.get(_.find(callAttemptStats, (stat) => {
+        return stat.segment.success === 'false';
+      }), 'data');
+
+      let totalAttemptStats = _.reduce(failureAttemptStats, (total, stat) => {
+        total.push({
+          t: stat.t,
+          v: stat.v + _.result(_.find(successAttemptStats, (saStat) => {
+            return saStat.t == stat.t
+          }), 'v')
+        });
+        return total;
+      }, []);
+
       return res.json({
-        totalAttemptStats: _.get(callAttemptStats, 'value.0.data'),
+        totalAttemptStats: totalAttemptStats,
+        successAttemptStats: successAttemptStats,
         successRateStats: _.get(asrStats, 'value.0.data'),
         totalDurationStats: _.get(tcdStats, 'value.0.data'),
         averageDurationStats: _.get(acdStats, 'value.0.data')
