@@ -51,25 +51,27 @@ let Tab = React.createClass({
 
   render: function() {
     return (
-      <div className="large-24 columns">
-        <TabList>
+      <div className="inner-wrap">
+        <div className="large-24 columns">
+          <TabList>
+            {
+              React.Children.map(this.props.children, ({ props }, index) => {
+                return (
+                  <TabButton
+                      title={ props.title }
+                      isActive={ this._isTabActive(index) }
+                      onClick={ _.bindKey(this, '_switchTab', index) }
+                    />
+                );
+              })
+            }
+          </TabList>
           {
-            React.Children.map(this.props.children, ({ props }, index) => {
-              return (
-                <TabButton
-                    title={ props.title }
-                    isActive={ this._isTabActive(index) }
-                    onClick={ _.bindKey(this, '_switchTab', index) }
-                  />
-              );
+            React.Children.map(this.props.children, (child, index) => {
+              return React.addons.cloneWithProps(child, { isActive: this._isTabActive(index) });
             })
           }
-        </TabList>
-        {
-          React.Children.map(this.props.children, (child, index) => {
-            return React.addons.cloneWithProps(child, { isActive: this._isTabActive(index) });
-          })
-        }
+        </div>
       </div>
     );
   }
