@@ -40,6 +40,10 @@
   cursor: default;
   padding: 0 $overviewPadding;
 
+  .panel {
+    overflow: hidden;
+  }
+
   &__title {
     font-size: rem-calc(14);
     color: gray;
