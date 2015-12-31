@@ -79,13 +79,13 @@ export default React.createClass({
       osTypes: [],
       timeRange: timeRange || timeRangeFromStore || DEFAULT_TIME_RANGE,
       xAxis: {},
-      yAxis: {},
+      yAxis: [{}],
       sXAxis: {},
-      sYAxis: {
+      sYAxis: [{
         unit: '%',
         alignment: 'right',
-        max: 100,
-      },
+        max: 100
+      }],
       lines: null,
       successRateSeries: null,
       busiestAttempts: 0,

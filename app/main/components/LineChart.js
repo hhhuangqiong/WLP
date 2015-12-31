@@ -1,3 +1,4 @@
+import _ from 'lodash';
 import React, { PropTypes } from 'react';
 import moment from 'moment';
 
@@ -81,15 +82,15 @@ export default React.createClass({
       tickInterval: PropTypes.number.isRequired
     }).isRequired,
     /**
-     * The option object for drawing the y-axis.
-     * @type {LineChart~YAxisOpts}
+     * The option objects for drawing the y-axis.
+     * @type {LineChart~YAxisOpts[]}
      */
-    yAxis: PropTypes.shape({
+    yAxis: PropTypes.arrayOf(PropTypes.shape({
       title: PropTypes.string,
       unit: PropTypes.string,
       alignment: PropTypes.string,
       max: PropTypes.number
-    }).isRequired,
+    })).isRequired,
     /**
      * The option objects for drawing the lines.
      * @type {LineChart~LineOpts[]}
@@ -137,7 +138,7 @@ export default React.createClass({
     }
 
     // append the unit to the axis label when available
-    let yAxisLabelFormatter = !yAxis.unit ? null : function () { return `${this.value}${yAxis.unit}`; };
+    let yAxisLabelFormatter = function (unit) { return !unit ? `${this.value}` : `${this.value}${unit}`; };
 
     Highcharts.dateFormats = {
       // return the day of month in 1st, 2nd, 23rd, 25th format
@@ -195,25 +196,30 @@ export default React.createClass({
         tickmarkPlacement: 'on',
         lineColor: AXIS_COLOR
       },
-      yAxis: {
-        title: {
-          text: yAxis.title
-        },
-        labels: {
-          formatter: yAxisLabelFormatter
-        },
-        // do not allow decimal labels (e.g. 12.5)
-        allowDecimals: false,
-        // set min to 0, avoiding the labels for smaller values being skipped when all data are big
-        min: 0,
-        max: yAxis.max,
-        // minRange controls the minimum range of the y axis
-        minRange: MIN_Y_RANGE,
-        lineWidth: 1,
-        lineColor: AXIS_COLOR,
-        // control the alignment of the y-axis, default to left
-        opposite: yAxis.alignment === 'right'
-      },
+      yAxis: _.reduce(yAxis, (result, axis) => {
+        result.push(
+          {
+            title: {
+              text: axis.title
+            },
+            labels: {
+              formatter: _.partial(yAxisLabelFormatter, axis.unit)
+            },
+            // do not allow decimal labels (e.g. 12.5)
+            allowDecimals: false,
+            // set min to 0, avoiding the labels for smaller values being skipped when all data are big
+            min: 0,
+            max: axis.max,
+            // minRange controls the minimum range of the y axis
+            minRange: MIN_Y_RANGE,
+            lineWidth: 1,
+            lineColor: AXIS_COLOR,
+            // control the alignment of the y-axis, default to left
+            opposite: axis.alignment === 'right'
+          }
+        );
+        return result;
+      }, []),
       series: [{
         // dummy series to enforce the draw, otherwise the chart will be blank
         data: dummy,
@@ -266,7 +272,9 @@ export default React.createClass({
       color: opts.color,
       lineWidth: lineWidth,
       enableMouseTracking: opts.selected,
-      tooltip: tooltipOptions
+      tooltip: tooltipOptions,
+      // use the first yAxis by default
+      yAxis: opts.yAxis || 0
     });
   },
 
