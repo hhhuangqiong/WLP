@@ -16,7 +16,7 @@ var verificationRequest = fetchDep(nconf.get('containerName'), 'VerificationRequ
 var callStatsRequest    = fetchDep(nconf.get('containerName'), 'CallStatsRequest');
 var userStatsRequest    = fetchDep(nconf.get('containerName'), 'UserStatsRequest');
 
-import SmsRequest from '../../lib/requests/SMS';
+import SmsRequest from '../../lib/requests/dataProviders/SMS';
 import PortalUser from '../../collections/portalUser';
 import Company    from '../../collections/company';
 

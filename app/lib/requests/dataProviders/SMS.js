@@ -7,7 +7,7 @@ import request from 'superagent';
 import qs from 'qs';
 import logger from 'winston';
 
-import errorMixin from '../requests/mixins/mumsErrorResponse';
+import errorMixin from '../mixins/mumsErrorResponse';
 
 /**
  * @mixes mixins/mumsErrorResponse
@@ -16,7 +16,9 @@ export default class SMSRequest {
 
   constructor(opts) {
     if (!opts.baseUrl) throw new Error('`baseUrl is required`');
-    this._baseUrl = opts.baseUrl;
+
+    let baseUrlArray = opts.baseUrl.split(',');
+    this._baseUrl = baseUrlArray.length > 1 ? _.first(baseUrlArray) : opts.baseUrl;
     this._timeout = opts.timeout || 5000;
   }
 
