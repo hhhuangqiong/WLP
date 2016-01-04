@@ -486,7 +486,7 @@ const EndUsersOverview = React.createClass({
 
           <div className="large-24 columns">
             <Panel.Wrapper>
-              <Panel.Header customClass="narrow" title="Statistics">
+              <Panel.Header customClass="narrow" title="Daily Statistics">
                 <div className="input-group right">
                   <label className="left">Past:</label>
                   <TimeFramePicker
@@ -500,15 +500,16 @@ const EndUsersOverview = React.createClass({
                 <div className="inner-wrap">
                   <div className="chart-cell large-24 columns">
                     <div className="chart-cell__header row">
+                    {/*
+                      // DESIGN IS NOT FINALISED
                       <div className="large-4 columns">
                         <div className="chart-cell__header__title">Registration</div>
                       </div>
-                      { /* // DESIGN IS NOT FINALISED
                       <div className="large-4 columns end verification-overview__attempt__datetime">
                         <div className="verification-overview__value">2219</div>
                         <div className="verification-overview__title">New registered User</div>
                       </div>
-                      */ }
+                    */}
                     </div>
                     <div className="chart-cell__controls row">
                       <div className="chart-cell__line-toggle large-24 columns">
