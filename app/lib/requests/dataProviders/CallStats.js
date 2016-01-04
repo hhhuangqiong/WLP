@@ -9,6 +9,7 @@ import qs from 'qs';
 import {constructOpts, formatDateString, swapDate, handleError} from '../helper';
 import jsonSchema from '../../../utils/getSimplifiedJsonSchema.js';
 import * as requestHelper from '../utils/requestHelper';
+import equals from 'shallow-equals';
 
 const REQUEST_TYPE = {
   CALLS: 'CALLS',
@@ -129,9 +130,23 @@ export default class UserStatsRequest {
           throw new Error('error occurred when querying data');
         }
 
-        // get the first result as sample for the segment details
+        // get the max number of results as sample for the segment details
         // as the breakdown could be dynamic
-        let resultSample = _.get(results, '0.value.results');
+
+        // IMPORTANT: when the api returns no data,
+        // it no longer follows the breakdown,
+        // but return all segment keys with value of 'all'
+        // e.g. breakdown success should return two array of results
+        // which has the value of 'false' and 'true' for key of 'success'
+        // when it returns no data, the value of key of 'success' will become 'all'
+
+        // so, you will have to get the max number of segment and
+        // make it as a sample
+        let resultSample = _.max(results, (result) => {
+          return (_.get(result, 'value.results')).length;
+        });
+
+        resultSample = _.get(resultSample, 'value.results');
 
         // init the data array with segment
         // assume that the returned results are always with the
@@ -141,13 +156,31 @@ export default class UserStatsRequest {
           return data;
         }, []);
 
-        // map the data into the data key in output
-        _.map(results, (result) => {
+        _.map(results, (result, resultIndex) => {
           let values = _.get(result, 'value.results');
-          _.map(values, (value, index) => {
-            _.map(value.data, (record) => {
-              output[index].data.push(record);
-            });
+
+          // looping over the sample rather than values
+          // as the value structure varies
+          _.map(resultSample, (sample, segmentIndex) => {
+            let sampleSegment = _.get(sample, 'segment');
+            let value = _.get(values, `${segmentIndex}`);
+            let valueSegment = _.get(value, 'segment');
+
+            // if segments are identical,
+            // populate the data into the segment
+            if (equals(sampleSegment, valueSegment)) {
+              _.map(value.data, (record) => {
+
+                // the manually load balancing invades the correct t value,
+                // so it has to be overwritten here again with the resultIndex
+                output[segmentIndex].data.push( _.merge(record, { t: resultIndex}) );
+              });
+
+            // if segments are different,
+            // populate an empty data set as it is unrecognisable
+            } else {
+              output[segmentIndex].data.push({ t: resultIndex, v: 0 });
+            }
           });
         });
 

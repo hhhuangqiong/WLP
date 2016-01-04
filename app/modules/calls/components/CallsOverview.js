@@ -97,8 +97,8 @@ var CallsOverview = React.createClass({
   },
 
   componentDidMount() {
-    this._getMonthlyStats();
-    this._getLastXDaysStats();
+    this._getMonthlyStats(defaultQueryMonth.get('month'), defaultQueryMonth.get('year'));
+    this._getLastXDaysStats(CALL_TYPE.ALL, TIME_FRAMES[0]);
   },
 
   changeCallType(type) {

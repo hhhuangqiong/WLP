@@ -59,7 +59,7 @@ export default class UserStatsRequest {
         // sending out the request
         if (type === REQUEST_TYPE.NEW_USERS || type === REQUEST_TYPE.ACTIVE_USERS) {
           query.from = moment(params.from, 'x').add(1, 'day').startOf('day').format('x');
-          query.to = moment(params.to, 'x').add(1, 'day').startOf('day').format('x');
+          query.to = moment(params.to, 'x').add(1, 'day').endOf('day').format('x');
         } else {
           query.from = params.from;
           query.to = params.to;
