@@ -121,6 +121,8 @@ exports.config = {
     // Report Related
     browser.addCommand('validateDate', require('./test/browser/commands/report/validateDate'));
     browser.addCommand('changeAndValidateDate', require('./test/browser/commands/report/changeAndValidateDate'));
+    browser.addCommand('clickFirstAvailableDate', require('./test/browser/commands/report/clickFirstAvailableDate'));
+    browser.addCommand('expectToHaveData', require('./test/browser/commands/report/expectToHaveData'));
     browser.addCommand('searchMobile', require('./test/browser/commands/report/searchMobile'));
     browser.addCommand('clearSearch', require('./test/browser/commands/report/clearSearch'));
     browser.addCommand('searchAndValidate', require('./test/browser/commands/report/searchAndValidate'));
