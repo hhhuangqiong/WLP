@@ -215,7 +215,6 @@ var Im = React.createClass({
                       key="start-date"
                       dateFormat="MM/DD/YYYY"
                       selected={moment(this.state.fromTime, 'L')}
-                      minDate={moment().subtract(1, 'years')}
                       maxDate={moment(this.state.toTime, 'L')}
                       onChange={this.handleStartDateChange}
                       />
