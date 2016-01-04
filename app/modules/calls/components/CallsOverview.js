@@ -55,12 +55,12 @@ const ATTEMPT_LINECHART_TOGGLES = [
 const DURATION_LINECHART_TOGGLES = [
   {
     id: STATS_TYPE.TOTAL_DURATION,
-    title: 'Total Call Duration',
+    title: 'Total Call Duration (minute)',
     color: 'red'
   },
   {
     id: STATS_TYPE.AVERAGE_DURATION,
-    title: 'Average Call Duration',
+    title: 'Average Call Duration (second)',
     color: 'green'
   }
 ];
@@ -157,11 +157,15 @@ var CallsOverview = React.createClass({
   },
 
   _getAttemptLineChartData() {
-    let tooltipFormatter = (x, y) => {
+    let totalAttemptData = _.reduce(this.state.totalAttemptStats, (result, stat) => { result.push(Math.round(stat.v)); return result; }, []);
+    let successAttemptData = _.reduce(this.state.successAttemptStats, (result, stat) => { result.push(Math.round(stat.v)); return result; }, []);
+
+    let tooltipFormatter = (x, y, index) => {
       return `
               <div style="text-align: center">
                 <div>${moment(x).local().format(TOOLTIP_TIME_FORMAT)}</div>
-                <div>Success Attempts: ${y}</div>
+                <div>Success Attempts: ${successAttemptData[index]}</div>
+                <div>No. of Calls: ${totalAttemptData[index]}</div>
               </div>
             `;
     };
@@ -169,13 +173,13 @@ var CallsOverview = React.createClass({
     return !_.isEmpty(this.state.totalAttemptStats) && !_.isEmpty(this.state.successRateStats) ? [
       {
         name: STATS_TYPE.TOTAL_ATTEMPT,
-        data: _.reduce(this.state.totalAttemptStats, (result, stat) => { result.push(Math.round(stat.v)); return result; }, []),
+        data: totalAttemptData,
         color: '#FB3940',
         tooltipFormatter: tooltipFormatter
       },
       {
         name: STATS_TYPE.SUCCESSFUL_ATTEMPT,
-        data: _.reduce(this.state.successAttemptStats, (result, stat) => { result.push(Math.round(stat.v)); return result; }, []),
+        data: successAttemptData,
         color: '#21C031',
         tooltipFormatter: tooltipFormatter
       }
@@ -183,11 +187,24 @@ var CallsOverview = React.createClass({
   },
 
   _getDurationLineChartData() {
-    let tooltipFormatter = (x, y) => {
+    let successAttemptData = _.reduce(this.state.successAttemptStats, (result, stat) => { result.push(Math.round(stat.v)); return result; }, []);
+
+    let totalDurationTooltipFormatter = (x, y, index) => {
       return `
               <div style="text-align: center">
                 <div>${moment(x).local().format(TOOLTIP_TIME_FORMAT)}</div>
-                <div>Success Attempts: ${y}</div>
+                <div>Success Attempts: ${successAttemptData[index]}</div>
+                <div>Total Duration ${y} min.</div>
+              </div>
+            `;
+    };
+
+    let averageDurationTooltipFormatter = (x, y, index) => {
+      return `
+              <div style="text-align: center">
+                <div>${moment(x).local().format(TOOLTIP_TIME_FORMAT)}</div>
+                <div>Success Attempts: ${successAttemptData[index]}</div>
+                <div>Average Duration ${y} second</div>
               </div>
             `;
     };
@@ -197,13 +214,13 @@ var CallsOverview = React.createClass({
         name: STATS_TYPE.TOTAL_DURATION,
         data: _.reduce(this.state.totalDurationStats, (result, stat) => { result.push(Math.round(stat.v / 1000 / 60)); return result; }, []),
         color: '#FB3940',
-        tooltipFormatter: tooltipFormatter
+        tooltipFormatter: totalDurationTooltipFormatter
       },
       {
         name: STATS_TYPE.AVERAGE_DURATION,
         data: _.reduce(this.state.averageDurationStats, (result, stat) => { result.push(Math.round(stat.v / 1000)); return result; }, []),
         color: '#21C031',
-        tooltipFormatter: tooltipFormatter,
+        tooltipFormatter: averageDurationTooltipFormatter,
         yAxis: 1
       }
     ] : null;
