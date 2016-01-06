@@ -547,9 +547,9 @@ const EndUsersOverview = React.createClass({
                       <div className="large-4 columns">
                         <div className="chart-cell__header__title">Registration by Country</div>
                       </div>
-                      <div className="large-3 columns end chart-cell__overview">
+                      <div className="large-4 columns end chart-cell__overview">
                         <div className="chart-cell__overview__value">{ this._getGeographicTotal() }</div>
-                        <div className="chart-cell__overview__unit">Total User</div>
+                        <div className="chart-cell__overview__unit">New Registered User</div>
                       </div>
                     </div>
                     <div className="map-chart chart-cell__chart row">
