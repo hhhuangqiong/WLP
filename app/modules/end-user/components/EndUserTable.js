@@ -1,62 +1,60 @@
-import React, { PropTypes } from 'react';
-import FluxibleMixin from 'fluxible/addons/FluxibleMixin';
-import {Link} from 'react-router';
-import classNames from 'classnames';
-
-import EndUserStore from '../stores/EndUserStore';
-
 import moment from 'moment';
 import _ from 'lodash';
+import React, { PropTypes } from 'react';
+import classNames from 'classnames';
 
 const { displayDateFormat: DATE_FORMAT } = require('./../../../main/config');
 const Countries = require('../../../data/countries.json');
 const NOT_FOUND_LABEL = 'N/A';
+const INACTIVE_ACCOUNT_LABEL = 'Inactive';
 
-var EndUserTable = React.createClass({
-  contextTypes: {
-    router: PropTypes.func.isRequired
-  },
-
-  PropTypes: {
+const EndUserTable = React.createClass({
+  propTypes: {
     users: PropTypes.array,
     hasNext: PropTypes.boolean,
     onUserClick: PropTypes.func,
-    onPageChange: PropTypes.func.isRequired
+    onPageChange: PropTypes.func.isRequired,
+    currentUser: PropTypes.object.isRequired,
   },
 
-  getDefaultProps: function() {
+  contextTypes: {
+    router: PropTypes.func.isRequired,
+  },
+
+  getDefaultProps() {
     return {
       users: [],
-      hasNext: false
+      hasNext: false,
     };
   },
 
-  render: function() {
-    let rows = this.props.users.map((u) => {
-      let device = _.get(u, 'devices.0') || {};
+  render() {
+    const rows = this.props.users.map(u => {
+      const device = _.get(u, 'devices.0') || {};
 
-        let country = _.find(Countries, (c) => {
-          return c.alpha2.toLowerCase() == u.countryCode
-        }) || {
-          name: NOT_FOUND_LABEL,
-          alpha2: NOT_FOUND_LABEL
-        };
+      let country = _.find(Countries, c => {
+        return c.alpha2.toLowerCase() === u.countryCode;
+      });
 
-        let creationDate = moment(u.creationDate).format(DATE_FORMAT);
-        let handleOnClick = _.bindKey(this.props, 'onUserClick', u.username.trim());
+      country = country || {
+        name: NOT_FOUND_LABEL,
+        alpha2: NOT_FOUND_LABEL,
+      };
 
-        let platform = device.platform || NOT_FOUND_LABEL;
-        let currentUser = this.props.currentUser;
+      const creationDate = moment(u.creationDate).format(DATE_FORMAT);
+      const handleOnClick = _.bindKey(this.props, 'onUserClick', u.username.trim());
 
-        return <tr className={classNames('end-user-table-row', { selected: currentUser && currentUser.userDetails.username === u.username })} onClick={handleOnClick}>
-          <td>
-            {u.jid}
-          </td>
+      const platform = device.platform || NOT_FOUND_LABEL;
+      const currentUser = this.props.currentUser;
+
+      return (
+        <tr className={classNames('end-user-table-row', { selected: currentUser && currentUser.userDetails.username === u.username })} onClick={handleOnClick}>
+          <td>{u.jid}</td>
           <td className="creation-date">{creationDate}</td>
           <td className="account-status">
             <span>
-              <span className={classNames('label', 'status', (u.accountStatus === 'ACTIVE')?'success':'alert')}></span>
-              {_.capitalize((u.accountStatus || '').toLowerCase())}
+              <span className={classNames('label', 'status', (u.accountStatus === 'ACTIVE') ? 'success' : 'alert')}></span>
+              {_.capitalize((u.accountStatus || INACTIVE_ACCOUNT_LABEL).toLowerCase())}
             </span>
           </td>
           <td className="device-modal">
@@ -66,8 +64,8 @@ var EndUserTable = React.createClass({
           <td>{device.appBundleId || NOT_FOUND_LABEL}</td>
           <td>{device.appVersionNumber || NOT_FOUND_LABEL}</td>
         </tr>
-      }
-    );
+      );
+    });
 
     return (
       <table className="data-table large-24 clickable">
@@ -99,7 +97,7 @@ var EndUserTable = React.createClass({
         </tfoot>
       </table>
     );
-  }
+  },
 });
 
 export default EndUserTable;
