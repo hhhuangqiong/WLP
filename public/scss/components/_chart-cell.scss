@@ -52,6 +52,7 @@
     // this is to prevent from a jumpy layout
     &.line-chart,
     &.map-chart {
+      padding: 0 rem-calc(40);
       min-height: rem-calc(400px);
     }
   }
