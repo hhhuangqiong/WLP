@@ -331,9 +331,10 @@ var CallsOverview = React.createClass({
     return Math.round(totalDurationInMs / 1000 / 60).toLocaleString();
   },
 
-  render: function() {
-    let { role, identity } = this.context.router.getCurrentParams();
-    let monthlyUserStats = this._getMonthlyUser();
+  render() {
+    const { role, identity } = this.context.router.getCurrentParams();
+    const monthlyUserStats = this._getMonthlyUser();
+    const appIds = this._getAppIdSelectOptions();
 
     return (
       <div className="row">
@@ -348,15 +349,18 @@ var CallsOverview = React.createClass({
             <a className={classNames({ active: this.state.type === CALL_TYPE.OFFNET })} onClick={ _.bindKey(this, 'changeCallType', CALL_TYPE.OFFNET) }>Off-net Call</a>
           </FilterBar.LeftItems>
           <FilterBar.RightItems>
-            <Select
-              name="appid"
-              className="end-users-details__app-select"
-              options={this._getAppIdSelectOptions()}
-              value={"Application ID: " + (this.state.appId ? this.state.appId : "-")}
-              clearable={false}
-              searchable={false}
-              onChange={this.onAppIdChange}
+            {/* Need not to provide selection when there is only one single selected options to avoid confusion */}
+            <If condition={appIds.length > 1}>
+              <Select
+                name="appid"
+                className="end-users-details__app-select"
+                options={appIds}
+                value={'Application ID: ' + (this.state.appId ? this.state.appId : '-')}
+                clearable={false}
+                searchable={false}
+                onChange={this.onAppIdChange}
               />
+            </If>
           </FilterBar.RightItems>
         </FilterBar.Wrapper>
 

@@ -398,10 +398,11 @@ const EndUsersOverview = React.createClass({
   },
 
   render() {
-    let { role, identity } = this.context.router.getCurrentParams();
-    let totalRegisteredUser = this._getTotalRegisteredUser();
-    let monthlyRegisteredUserStats = this._getMonthlyRegisteredUserStats();
-    let monthlyActiveUserStats = this._getMonthlyActiveUserStats();
+    const { role, identity } = this.context.router.getCurrentParams();
+    const totalRegisteredUser = this._getTotalRegisteredUser();
+    const monthlyRegisteredUserStats = this._getMonthlyRegisteredUserStats();
+    const monthlyActiveUserStats = this._getMonthlyActiveUserStats();
+    const appIds = this._getAppIdSelectOptions();
 
     return (
       <div className="row">
@@ -414,15 +415,18 @@ const EndUsersOverview = React.createClass({
 
           </FilterBar.LeftItems>
           <FilterBar.RightItems>
-            <Select
-              name="appid"
-              className="end-users-details__app-select"
-              options={this._getAppIdSelectOptions()}
-              value={"Application ID: " + (this.state.appId ? this.state.appId : "-")}
-              clearable={false}
-              searchable={false}
-              onChange={this.onAppIdChange}
-            />
+            {/* Need not to provide selection when there is only one single selected options to avoid confusion */}
+            <If condition={appIds.length > 1}>
+              <Select
+                name="appid"
+                className="end-users-details__app-select"
+                options={appIds}
+                value={'Application ID: ' + (this.state.appId ? this.state.appId : '-')}
+                clearable={false}
+                searchable={false}
+                onChange={this.onAppIdChange}
+              />
+            </If>
           </FilterBar.RightItems>
         </FilterBar.Wrapper>
 
