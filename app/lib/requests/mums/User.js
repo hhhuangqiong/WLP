@@ -165,13 +165,14 @@ export default class UsersRequest {
    * @param cb
    */
   getUser(carrierId, username, cb) {
-    var base = this.opts.baseUrl;
-    var url = util.format(this.opts.methods.DETAILS.URL, carrierId, username);
+    const base = this.opts.baseUrl;
+    const url = util.format(this.opts.methods.DETAILS.URL, carrierId, username);
+    const reqUrl = util.format('%s%s', base, url);
 
-    logger.debug('get user from %s with username %s', carrierId, username);
+    logger.debug(`Get User from: ${reqUrl}`);
 
     request
-      .get(util.format('%s%s', base, url))
+      .get(reqUrl)
       .timeout(this.opts.timeout)
       .end((err, res) => {
         if (err) return cb(handleError(err));
