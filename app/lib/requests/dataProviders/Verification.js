@@ -165,7 +165,7 @@ export default class VerificationRequest {
         }
 
         logger.debug(util.format('Received a %s response from %s: %s',
-          error.status, url, error.message));
+          error.status, reqUrl, error.message));
 
         cb(error);
       });
