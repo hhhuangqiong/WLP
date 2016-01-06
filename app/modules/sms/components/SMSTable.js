@@ -1,53 +1,30 @@
 import _ from 'lodash';
 import moment from 'moment';
 import classNames from 'classnames';
-
 import React, { PropTypes } from 'react';
-import FluxibleMixin from 'fluxible/addons/FluxibleMixin';
-
 import Tooltip from 'rc-tooltip';
 
 import config from './../../../main/config';
 
-let { displayDateFormat: DATE_FORMAT } = config;
+const { displayDateFormat: DATE_FORMAT } = config;
+const SYSTEM_MESSAGE_LABEL = 'System Message';
 
-var SMSTable = React.createClass({
-  PropTypes: {
-    dateFormat: PropTypes.string,
+const SMSTable = React.createClass({
+  propTypes: {
     records: PropTypes.object,
     page: PropTypes.number,
     totalPage: PropTypes.number,
-    onPageLoad: PropTypes.func
+    onPageLoad: PropTypes.func,
   },
 
-  _getDisplayTimestamp: function(timestamp) {
-    return moment(timestamp).format(this.props.dateFormat || DATE_FORMAT);
-  },
-
-  _renderStatusLabel: function(status) {
-    if (status.toLowerCase() === 'submitted') {
-      return <span className="status-label label radius success">submitted</span>;
-    } else {
-      return <span className="status-label label radius alert">rejected</span>
-    }
-  },
-
-  _renderTypeIcon: function(type) {
-    return (
-      <Tooltip placement="right" trigger={['hover']} overlay={<span>{type}</span>}>
-        <i className={'icon-' + type.toLowerCase()}></i>
-      </Tooltip>
-    );
-  },
-
-  render: function() {
-    let rows = this.props.records.map((sms) => {
+  render() {
+    const rows = this.props.records.map(sms => {
       return (
         <tr>
           <td className="text-center">
-            <span className={classNames('label', 'status', { success: sms.status.toLowerCase() == 'submitted' }, { alert: sms.status.toLowerCase() == 'rejected' })} />
+            <span className={classNames('label', 'status', { success: sms.status.toLowerCase() === 'submitted' }, { alert: sms.status.toLowerCase() === 'rejected' })} />
           </td>
-          <td>{this._getDisplayTimestamp(sms.request_date)}</td>
+          <td>{moment(sms.request_date).format(DATE_FORMAT)}</td>
           <td>
             {this._renderTypeIcon(sms.type2)}
           </td>
@@ -57,7 +34,7 @@ var SMSTable = React.createClass({
                 <div className="large-11 columns">
                   <div className="caller_info">
                     <div className="left">
-                      <span className="caller">{sms.origin_interface === 'PLATFORM' ? 'system message' : sms.destination_address_inbound}</span>
+                      <span className="caller">{this._renderCaller(sms)}</span>
                     </div>
                   </div>
                 </div>
@@ -91,7 +68,7 @@ var SMSTable = React.createClass({
             </If>
           </td>
         </tr>
-      )
+      );
     });
 
     return (
@@ -127,7 +104,35 @@ var SMSTable = React.createClass({
         </tfoot>
       </table>
     );
-  }
+  },
+
+  _renderCaller(sms) {
+    if (sms.source_address_inbound) {
+      return sms.source_address_inbound;
+    }
+
+    if (sms.origin_interface === 'PLATFORM') {
+      return SYSTEM_MESSAGE_LABEL;
+    }
+
+    return sms.destination_address_inbound;
+  },
+
+  _renderStatusLabel(status) {
+    if (status.toLowerCase() === 'submitted') {
+      return <span className="status-label label radius success">submitted</span>;
+    }
+
+    return <span className="status-label label radius alert">rejected</span>;
+  },
+
+  _renderTypeIcon(type) {
+    return (
+      <Tooltip placement="right" trigger={['hover']} overlay={<span>{type}</span>}>
+        <i className={'icon-' + type.toLowerCase()}></i>
+      </Tooltip>
+    );
+  },
 });
 
 export default SMSTable;
