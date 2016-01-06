@@ -87,11 +87,13 @@ var EndUserTable = React.createClass({
         <tfoot>
           <tr>
             <td colSpan="7">
-              <If condition={this.props.hasNext}>
-                <div className="text-center">
+              <div className="text-center">
+                <If condition={this.props.hasNext}>
                   <span className="pagination__button" onClick={this.props.onPageChange}>Load More</span>
-                </div>
-              </If>
+                <Else />
+                  <span className="pagination__button pagination__button--inactive">No more</span>
+                </If>
+            </div>
             </td>
           </tr>
         </tfoot>
