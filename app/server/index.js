@@ -166,8 +166,12 @@ function initialize(port) {
       if (!session) return doRenderApp();
 
       /* Check if current carrierId is a valid url */
-      const carrierId = req.url.split('/')[2];
-      if (!isURL(carrierId, { allow_underscores: true })) return doRenderApp();
+      let carrierId = req.url.split('/')[2];
+
+      /* Get user carrierId by session to redirect correctly to default path */
+      if (!isURL(carrierId, { allow_underscores: true })) {
+        carrierId = _.get(session, 'user.carrierId');
+      }
 
         /* Always check for carrierId by url instead of current user */
       context.getActionContext().executeAction(getAuthorityList, carrierId, err => doRenderApp());
