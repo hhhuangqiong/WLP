@@ -260,6 +260,8 @@ const EndUsersOverview = React.createClass({
         label: (i > 0) ? moment().subtract(i, 'years').format('YYYY') : moment().format('YYYY')
       });
     }
+
+    return years;
   },
 
   _getTotalRegisteredUser() {

@@ -97,7 +97,7 @@ var CallsOverview = React.createClass({
   },
 
   componentDidMount() {
-    this._getMonthlyStats(defaultQueryMonth.get('month'), defaultQueryMonth.get('year'));
+    this._getMonthlyStats(CALL_TYPE.ALL, defaultQueryMonth.get('month'), defaultQueryMonth.get('year'));
     this._getLastXDaysStats(CALL_TYPE.ALL, TIME_FRAMES[0]);
   },
 
@@ -268,6 +268,8 @@ var CallsOverview = React.createClass({
         label: (i > 0) ? moment().subtract(i, 'years').format('YYYY') : moment().format('YYYY')
       });
     }
+
+    return years;
   },
 
   _getMonthlyStats(type, month, year) {
