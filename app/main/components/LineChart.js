@@ -159,8 +159,8 @@ export default React.createClass({
         type: 'line',
         // Give enough space to the horizontal dimension, so that the y-axis
         // will not move when the number of digits in the y-axis labels change
-        marginLeft: 50,
-        marginRight: 50,
+        marginLeft: props.marginLeft || 50,
+        marginRight: props.marginRight || 50,
         renderTo: this.state.containerId
       },
       exporting: {

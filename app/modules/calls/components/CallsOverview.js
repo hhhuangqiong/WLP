@@ -500,6 +500,7 @@ var CallsOverview = React.createClass({
                   <div className="line-chart chart-cell__chart row">
                     <LineChart
                       className="attempt-line"
+                      marginLeft="70"
                       lines={this._getDurationLineChartData()}
                       xAxis={this._getLineChartXAxis()}
                       yAxis={[
