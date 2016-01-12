@@ -1,9 +1,6 @@
-import { expect } from 'chai';
-
 import {
   DEFAULT_URL,
   ROOT_LOGIN,
-  WAIT_FOR_FETCHING_TIMEOUT,
 } from '../../lib/constants';
 
 describe('End User', () => {

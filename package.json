@@ -17,8 +17,6 @@
     "test:browser": "wdio wdio.conf.js",
     "jest": "jest",
     "wdio": "wdio",
-    "selenium-standalone": "selenium-standalone",
-    "selenium": "selenium-standalone install && selenium-standalone start",
     "seed:capabilities": "babel-node bin/capabilitiesSeeding.js"
   },
   "jest": {
