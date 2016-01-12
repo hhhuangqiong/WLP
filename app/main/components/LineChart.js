@@ -71,6 +71,8 @@ const MIN_Y_RANGE = 50;
  */
 export default React.createClass({
   propTypes: {
+    className: PropTypes.string,
+
     /**
      * The option object for drawing the x-axis.
      * @type {LineChart~XAxisOpts}
@@ -79,7 +81,7 @@ export default React.createClass({
       title: PropTypes.string,
       start: PropTypes.number.isRequired,
       tickCount: PropTypes.number.isRequired,
-      tickInterval: PropTypes.number.isRequired
+      tickInterval: PropTypes.number.isRequired,
     }).isRequired,
     /**
      * The option objects for drawing the y-axis.
@@ -89,7 +91,7 @@ export default React.createClass({
       title: PropTypes.string,
       unit: PropTypes.string,
       alignment: PropTypes.string,
-      max: PropTypes.number
+      max: PropTypes.number,
     })).isRequired,
     /**
      * The option objects for drawing the lines.
@@ -100,7 +102,7 @@ export default React.createClass({
       data: PropTypes.arrayOf(PropTypes.number).isRequired,
       color: PropTypes.string,
       selected: PropTypes.boolean,
-      tooltipFormatter: PropTypes.func
+      tooltipFormatter: PropTypes.func,
     })),
     /**
      * The option objects for drawing the points.
@@ -108,7 +110,7 @@ export default React.createClass({
      */
     points: PropTypes.arrayOf(PropTypes.shape({
       x: PropTypes.number.isRequired,
-      y: PropTypes.number.isRequired
+      y: PropTypes.number.isRequired,
     })),
     /**
      * The name of the selected line.
@@ -116,258 +118,16 @@ export default React.createClass({
      * Only the selected line can interact with the mouse events.
      * @type {String}
      */
-    selectedLine: PropTypes.string
+    selectedLine: PropTypes.string,
   },
 
-  getInitialState: function () {
+  getInitialState() {
     return {
-      containerId: 'line' + Math.floor(Math.random() * ID_MAX)
+      containerId: 'line' + Math.floor(Math.random() * ID_MAX),
     };
   },
 
-  drawChart: function (props) {
-    let xAxis = props.xAxis;
-    let yAxis = props.yAxis;
-
-    // create a dummy series, so that the x-axis can be drawn while the data is loading
-    let dummy = [];
-    for (let i = 0; i < xAxis.tickCount; i++) {
-      // If all data are zero, the y-axis will not be drawn normally.
-      // Pushing mnon-zero values to avoid x-axis being placed in the middle of the chart.
-      dummy.push(10);
-    }
-
-    // append the unit to the axis label when available
-    let yAxisLabelFormatter = function (unit) { return !unit ? `${this.value}` : `${this.value}${unit}`; };
-
-    Highcharts.dateFormats = {
-      // return the day of month in 1st, 2nd, 23rd, 25th format
-      T: function (timestamp) {
-        return moment(timestamp).format('Do');
-      }
-    };
-
-    // use local time
-    Highcharts.setOptions({
-      global: {
-        useUTC: false
-      }
-    });
-
-    this.chart = new Highcharts.Chart({
-      chart: {
-        type: 'line',
-        // Give enough space to the horizontal dimension, so that the y-axis
-        // will not move when the number of digits in the y-axis labels change
-        marginLeft: props.marginLeft || 50,
-        marginRight: props.marginRight || 50,
-        renderTo: this.state.containerId
-      },
-      exporting: {
-        enabled: false
-      },
-      credits: {
-        enabled: false
-      },
-      title: {
-        text: null
-      },
-      subtitle: {
-        text: null
-      },
-      xAxis: {
-        type: 'datetime',
-        dateTimeLabelFormats: {
-          day: '%T',
-          hour: '%H:%M'
-        },
-        title: {
-          text: xAxis.title
-        },
-        // show grid line
-        gridLineWidth: 1,
-        // create buffer at the beginning and the end of the x axis,
-        // so that the first and the last points do not lie on the y axis
-        startOnTick: false,
-        endOnTick: false,
-        // control the size of the buffer at the beginning
-        min: xAxis.start - xAxis.tickInterval,
-        // the data points should be above the x-axis's ticks, not between 2 ticks
-        tickmarkPlacement: 'on',
-        lineColor: AXIS_COLOR
-      },
-      yAxis: _.reduce(yAxis, (result, axis) => {
-        result.push(
-          {
-            title: {
-              text: axis.title
-            },
-            labels: {
-              formatter: _.partial(yAxisLabelFormatter, axis.unit)
-            },
-            // do not allow decimal labels (e.g. 12.5)
-            allowDecimals: false,
-            // set min to 0, avoiding the labels for smaller values being skipped when all data are big
-            min: 0,
-            max: axis.max,
-            // minRange controls the minimum range of the y axis
-            minRange: MIN_Y_RANGE,
-            lineWidth: 1,
-            lineColor: AXIS_COLOR,
-            // control the alignment of the y-axis, default to left
-            opposite: axis.alignment === 'right'
-          }
-        );
-        return result;
-      }, []),
-      series: [{
-        // dummy series to enforce the draw, otherwise the chart will be blank
-        data: dummy,
-        // this dummy series should not interact with the mouse
-        enableMouseTracking: false,
-        // nor be visible
-        lineWidth: 0
-      }],
-      legend: {
-        enabled: false
-      },
-      plotOptions: {
-        series: {
-          pointStart: xAxis.start,
-          pointInterval: xAxis.tickInterval,
-          marker: {
-            // disable marker so that the data point is not explicitly drawn
-            enabled: false
-          }
-        },
-        line: {
-          states: {
-            hover: {
-              // enforce the selected line width, otherwise the line will be even ticker when hover
-              lineWidth: SELECTED_LINE_WIDTH
-            }
-          }
-        }
-      },
-      tooltip: {
-        // use HTML for more flexible formatting
-        useHTML: true
-      }
-    });
-  },
-
-  /**
-   * Adds a new line to the chart.
-   *
-   * @method
-   * @param {LineChart~LineOpts} opts  The line drawing options
-   */
-  addLine: function (opts) {
-    let tooltipOptions = opts.tooltipFormatter ? this.createCustomTooltipOptions(opts.tooltipFormatter) : {};
-    let lineWidth = opts.selected ? SELECTED_LINE_WIDTH : DEFAULT_LINE_WIDTH;
-
-    this.chart.addSeries({
-      name: opts.name,
-      data: opts.data,
-      color: opts.color,
-      lineWidth: lineWidth,
-      enableMouseTracking: opts.selected,
-      tooltip: tooltipOptions,
-      // use the first yAxis by default
-      yAxis: opts.yAxis || 0
-    });
-  },
-
-  /**
-   * Remove a line from the chart.
-   *
-   * @method
-   * @param {Series} series  The Highcharts series object to remove
-   * @see {@link http://api.highcharts.com/highcharts#Series.remove}
-   */
-  removeLine: function (series) {
-    series.remove();
-  },
-
-  /**
-   * Adds a new point to the chart if it doesn't exist.
-   * Now we assume the same point only exist once, no duplicate points are considered.
-   *
-   * @method
-   * @param {LineChart~PointOpts} opts  The point drawing options
-   */
-  addPoint: function (opts) {
-    let name = `point-${opts.x}-${opts.y}`;
-    let existingPoint = _.find(this.chart.series, function (series) {
-      return series.name === name;
-    });
-
-    // the point already exist, do not duplicate it
-    if (existingPoint) {
-      return;
-    }
-
-    this.chart.addSeries({
-      name: name,
-      data: [[opts.x, opts.y]],
-      marker: {
-        enabled: true
-      },
-      tooltip: {
-        // TODO: support formatter for point
-        pointFormatter: function () {
-          return `<div style="text-align: center">${this.y}</div>`;
-        }
-      }
-    });
-  },
-
-  /**
-   * Selects a line on the chart.
-   *
-   * @method
-   * @param {Series} line  The series object from the chart
-   */
-  selectLine: function (line) {
-    line.update({
-      selected: true,
-      lineWidth: SELECTED_LINE_WIDTH,
-      enableMouseTracking: true
-    });
-  },
-
-  /**
-   * Unselects a line on the chart.
-   *
-   * @method
-   * @param {Series} line  The series object from the chart
-   */
-  unselectLine: function (line) {
-    line.update({
-      selected: false,
-      lineWidth: DEFAULT_LINE_WIDTH,
-      enableMouseTracking: false
-    });
-  },
-
-  /**
-   * Creates a tooltip options object for the custom formatter.
-   *
-   * @method
-   * @param {Function} formatter  The custom formatter from the consumer
-   * @returns {Object} A plain object that can be used as the tooltip options
-   */
-  createCustomTooltipOptions: function (formatter) {
-    return {
-      headerFormat: '',
-      footerFormat: '',
-      pointFormatter: function () {
-        return formatter(this.category, this.y, this.index);
-      }
-    };
-  },
-
-  componentDidMount: function () {
+  componentDidMount() {
     // can only draw the chart when the x-axis is ready
     // if not drawn, it will be drawn when the x-axis data is received at componentWillReceiveProps
     if (this.props.xAxis) {
@@ -389,11 +149,11 @@ export default React.createClass({
     }
   },
 
-  shouldComponentUpdate: function (nextProps) {
+  shouldComponentUpdate(nextProps) {
     return !_.eq(nextProps, this.props);
   },
 
-  componentWillUpdate: function (nextProps) {
+  componentWillUpdate(nextProps) {
     // We have to wait for the x-axis from props from parent.
     // However, child component is mounted before the parent.
     // Therefore, if the parent set the props in its componentDidMount,
@@ -404,16 +164,252 @@ export default React.createClass({
     }
   },
 
-  componentDidUpdate: function () {
-    if (this.chart) {
-      // The container may have been resized,
-      // or the chart was draw in invisible node and then change to visible.
-      // In either case, the chart must be reflow to fit the container size.
-      this.chart.reflow();
-    }
+  componentDidUpdate() {
+    // The container may have been resized,
+    // or the chart was draw in invisible node and then change to visible.
+    // In either case, the chart must be reflow to fit the container size.
+    if (this.chart) this.chart.reflow();
   },
 
-  updateChart: function () {
+  render() {
+    this.updateChart();
+    return <div id={this.state.containerId} className={this.props.className}></div>;
+  },
+
+  drawChart(props) {
+    const xAxis = props.xAxis;
+    const yAxis = props.yAxis;
+
+    // create a dummy series, so that the x-axis can be drawn while the data is loading
+    const dummy = [];
+
+    for (let i = 0; i < xAxis.tickCount; i++) {
+      // If all data are zero, the y-axis will not be drawn normally.
+      // Pushing mnon-zero values to avoid x-axis being placed in the middle of the chart.
+      dummy.push(10);
+    }
+
+    // append the unit to the axis label when available
+    const yAxisLabelFormatter = function yAxisLabelFormatter(unit) { return !unit ? `${this.value}` : `${this.value}${unit}`; };
+
+    Highcharts.dateFormats = {
+      // return the day of month in 1st, 2nd, 23rd, 25th format
+      T: (timestamp) => moment(timestamp).format('Do'),
+    };
+
+    // use local time
+    Highcharts.setOptions({
+      global: { useUTC: false },
+    });
+
+    this.chart = new Highcharts.Chart({
+      chart: {
+        type: 'line',
+        // Give enough space to the horizontal dimension, so that the y-axis
+        // will not move when the number of digits in the y-axis labels change
+        marginLeft: props.marginLeft || 50,
+        marginRight: props.marginRight || 50,
+        renderTo: this.state.containerId,
+      },
+      exporting: {
+        enabled: false,
+      },
+      credits: {
+        enabled: false,
+      },
+      title: {
+        text: null,
+      },
+      subtitle: {
+        text: null,
+      },
+      xAxis: {
+        type: 'datetime',
+        dateTimeLabelFormats: {
+          day: '%T',
+          hour: '%H:%M',
+        },
+        title: {
+          text: xAxis.title,
+        },
+        // show grid line
+        gridLineWidth: 1,
+        // create buffer at the beginning and the end of the x axis,
+        // so that the first and the last points do not lie on the y axis
+        startOnTick: false,
+        endOnTick: false,
+        // the data points should be above the x-axis's ticks, not between 2 ticks
+        tickmarkPlacement: 'on',
+        lineColor: AXIS_COLOR,
+      },
+      yAxis: _.reduce(yAxis, (result, axis) => {
+        result.push(
+          {
+            title: {
+              text: axis.title,
+            },
+            labels: {
+              formatter: _.partial(yAxisLabelFormatter, axis.unit),
+            },
+            // do not allow decimal labels (e.g. 12.5)
+            allowDecimals: false,
+            // set min to 0, avoiding the labels for smaller values being skipped when all data are big
+            min: 0,
+            max: axis.max,
+            // minRange controls the minimum range of the y axis
+            minRange: MIN_Y_RANGE,
+            lineWidth: 1,
+            lineColor: AXIS_COLOR,
+            // control the alignment of the y-axis, default to left
+            opposite: axis.alignment === 'right',
+          }
+        );
+        return result;
+      }, []),
+      series: [{
+        // dummy series to enforce the draw, otherwise the chart will be blank
+        data: dummy,
+        // this dummy series should not interact with the mouse
+        enableMouseTracking: false,
+        // nor be visible
+        lineWidth: 0,
+      }],
+      legend: {
+        enabled: false,
+      },
+      plotOptions: {
+        series: {
+          pointStart: xAxis.start,
+          pointInterval: xAxis.tickInterval,
+          marker: {
+            // disable marker so that the data point is not explicitly drawn
+            enabled: false,
+          },
+        },
+        line: {
+          states: {
+            hover: {
+              // enforce the selected line width, otherwise the line will be even ticker when hover
+              lineWidth: SELECTED_LINE_WIDTH,
+            },
+          },
+        },
+      },
+      tooltip: {
+        // use HTML for more flexible formatting
+        useHTML: true,
+      },
+    });
+  },
+
+  /**
+   * Adds a new line to the chart.
+   *
+   * @method
+   * @param {LineChart~LineOpts} opts  The line drawing options
+   */
+  addLine(opts) {
+    const tooltipOptions = opts.tooltipFormatter ? this.createCustomTooltipOptions(opts.tooltipFormatter) : {};
+    const lineWidth = opts.selected ? SELECTED_LINE_WIDTH : DEFAULT_LINE_WIDTH;
+
+    this.chart.addSeries({
+      name: opts.name,
+      data: opts.data,
+      color: opts.color,
+      lineWidth: lineWidth,
+      enableMouseTracking: opts.selected,
+      tooltip: tooltipOptions,
+      // use the first yAxis by default
+      yAxis: opts.yAxis || 0,
+    });
+  },
+
+  /**
+   * Remove a line from the chart.
+   *
+   * @method
+   * @param {Series} series  The Highcharts series object to remove
+   * @see {@link http://api.highcharts.com/highcharts#Series.remove}
+   */
+  removeLine(series) {
+    series.remove();
+  },
+
+  /**
+   * Adds a new point to the chart if it doesn't exist.
+   * Now we assume the same point only exist once, no duplicate points are considered.
+   *
+   * @method
+   * @param {LineChart~PointOpts} opts  The point drawing options
+   */
+  addPoint(opts) {
+    const name = `point-${opts.x}-${opts.y}`;
+    const existingPoint = _.find(this.chart.series, series => series.name === name);
+
+    // the point already exist, do not duplicate it
+    if (existingPoint) return;
+
+    this.chart.addSeries({
+      name: name,
+      data: [[opts.x, opts.y]],
+      marker: {
+        enabled: true,
+      },
+      tooltip: {
+        // TODO: support formatter for point
+        pointFormatter() {
+          return `<div style="text-align: center">${this.y}</div>`;
+        },
+      },
+    });
+  },
+
+  /**
+   * Selects a line on the chart.
+   *
+   * @method
+   * @param {Series} line  The series object from the chart
+   */
+  selectLine(line) {
+    line.update({
+      selected: true,
+      lineWidth: SELECTED_LINE_WIDTH,
+      enableMouseTracking: true,
+    });
+  },
+
+  /**
+   * Unselects a line on the chart.
+   *
+   * @method
+   * @param {Series} line  The series object from the chart
+   */
+  unselectLine(line) {
+    line.update({
+      selected: false,
+      lineWidth: DEFAULT_LINE_WIDTH,
+      enableMouseTracking: false,
+    });
+  },
+
+  /**
+   * Creates a tooltip options object for the custom formatter.
+   *
+   * @method
+   * @param {Function} formatter  The custom formatter from the consumer
+   * @returns {Object} A plain object that can be used as the tooltip options
+   */
+  createCustomTooltipOptions(formatter) {
+    return {
+      headerFormat: '',
+      footerFormat: '',
+      pointFormatter: function pointFormatter() {
+        return formatter(this.category, this.y, this.index);
+      },
+    };
+  },
+
+  updateChart() {
     if (!this.chart) {
       return;
     }
@@ -422,11 +418,9 @@ export default React.createClass({
     // TODO: add the line removal logic
     if (this.props.lines) {
       this.props.lines.forEach((lineOpts) => {
-        let selected = this.props.selectedLine && lineOpts.name === this.props.selectedLine;
+        const selected = this.props.selectedLine && lineOpts.name === this.props.selectedLine;
 
-        let existingLine = _.find(this.chart.series, function (series) {
-          return series.name === lineOpts.name;
-        });
+        const existingLine = _.find(this.chart.series, series => series.name === lineOpts.name);
 
         // update the line if it exists
         if (existingLine) {
@@ -438,9 +432,8 @@ export default React.createClass({
         lineOpts.selected = lineOpts.selected || selected;
         this.addLine(lineOpts);
       });
-    }
-    // TODO: add the individual line removal logic
-    else {
+    } else {
+      // TODO: add the individual line removal logic
       // remove all lines except the dummy (series[0])
       _.rest(this.chart.series).forEach(this.removeLine);
     }
@@ -454,12 +447,4 @@ export default React.createClass({
       });
     }
   },
-
-  render: function () {
-    this.updateChart();
-
-    return (
-      <div id={this.state.containerId} className={this.props.className}></div>
-    );
-  }
 });
