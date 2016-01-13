@@ -38,7 +38,7 @@ export default {
   },
   END_USER: {
     DATA_FIELDS: [
-      'username', 'creationDate', 'accountStatus', 'platform', 'deviceModel',
+      'displayName', 'username', 'creationDate', 'accountStatus', 'platform', 'deviceModel',
       'appBundleId', 'appVersionNumber',
     ],
     EXPORT_REQUEST: 'EndUserRequest',
