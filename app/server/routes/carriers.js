@@ -905,7 +905,7 @@ let getEndUsersStats = function(req, res) {
                 total += data.v;
                 return total;
               }, 0),
-              name: countries[countryCode].name
+              name: !_.isEmpty(countryCode) ? countries[countryCode].name : 'N/A'
             });
 
             return data;
