@@ -1,24 +1,28 @@
-import React from 'react';
-import FluxibleMixin from 'fluxible/addons/FluxibleMixin';
-import {Link} from 'react-router';
+import React, { PropTypes } from 'react';
 import classNames from 'classnames';
-
-import Remark from '../../../main/components/Remark';
-import CallsStore from '../stores/CallsStore';
-import {parseDuration} from '../../../utils/StringFormatter';
-
 import moment from 'moment';
 import _ from 'lodash';
 
-var Countries = require('../../../data/countries.json');
+import {parseDuration} from '../../../utils/StringFormatter';
+
+// TODO: Replace it with country-data
+const Countries = require('../../../data/countries.json');
+
 const EMPTY_STRING = 'N/A';
 
 const DATE_FORMAT = 'MMM DD YYYY';
 const TIME_FORMAT = 'h:mm:ss a';
 
-var CallsTable = React.createClass({
+const CallsTable = React.createClass({
+  propTypes: {
+    calls: PropTypes.array.isRequired,
+    totalPages: PropTypes.number.isRequired,
+    page: PropTypes.number.isRequired,
+    onDataLoad: PropTypes.func.isRequired,
+  },
+
   contextTypes: {
-    router: React.PropTypes.func.isRequired
+    router: React.PropTypes.func.isRequired,
   },
 
   renderCountryField(number, countryName, callType = 'caller') {
@@ -27,7 +31,7 @@ var CallsTable = React.createClass({
     countryName = countryName || '';
 
     // Get the actual country name
-    let countryData = _.find(Countries, country => country.alpha2.toLowerCase() == countryName.toLowerCase());
+    const countryData = _.find(Countries, country => country.alpha2.toLowerCase() === countryName.toLowerCase());
 
     if (!countryData) return (<span className={callType}>{number}</span>);
 
@@ -45,21 +49,18 @@ var CallsTable = React.createClass({
     );
   },
 
-  render: function() {
-    let params = this.context.router.getCurrentParams();
-
+  render() {
     let rows;
+
     if (!_.isEmpty(this.props.calls)) {
-      rows = this.props.calls.map((u) => {
-        let callStartDate = moment(u.start_time).format(DATE_FORMAT);
-        let callEndDate = (u.end_time > 0) ? moment(u.end_time).format(DATE_FORMAT) : callStartDate;
-        let callStart = moment(u.start_time).format(TIME_FORMAT);
-        let callEnd = (u.end_time > 0) ? moment(u.end_time).format(TIME_FORMAT) : callStart;
+      rows = this.props.calls.map(u => {
+        const callStartDate = moment(u.start_time).format(DATE_FORMAT);
+        const callEndDate = (u.end_time > 0) ? moment(u.end_time).format(DATE_FORMAT) : callStartDate;
 
-        let callType = u.type.toLowerCase();
+        const callType = u.type.toLowerCase();
 
-        let callStartTime = moment(u.start_time).format(TIME_FORMAT);
-        let callEndTime = (u.end_time > 0) ? moment(u.end_time).format(TIME_FORMAT) : callStartTime;
+        const callStartTime = moment(u.start_time).format(TIME_FORMAT);
+        const callEndTime = (u.end_time > 0) ? moment(u.end_time).format(TIME_FORMAT) : callStartTime;
 
         return (
           <tr className="calls-table--row" key={u.record_id}>
@@ -71,7 +72,10 @@ var CallsTable = React.createClass({
               {this.renderCountryField(u.callee, u.target_country_tel_code, 'callee')}
             </td>
 
-            <td className="calls-table--cell"><span className={"call_type radius label " + callType}>{callType}</span></td>
+            <td className="calls-table--cell">
+              <span className={'call_type radius label ' + callType}>{callType}</span>
+            </td>
+
             <td className="calls-table--cell">
               <span className="call_time">{callStartTime} - {callEndTime}</span>
               <label>{callEndDate}</label>
@@ -80,20 +84,23 @@ var CallsTable = React.createClass({
               <span className="left duration">{parseDuration(u.duration)}</span>
             </td>
             <td className="calls-table--cell">
-              <span className={classNames('call_status',(u.success)?'success':'alert')}>{(u.success)?'Success':'Failure'}</span>
+              <span className={classNames('call_status', u.success ? 'success' : 'alert')}>{u.success ? 'Success' : 'Failure'}</span>
             </td>
             <td className="calls-table--cell">
-              {!u.success && u.bye_reason && u.bye_reason !== 'null' ? (
-                <Remark tip={u.bye_reason} />
-              ) : null}
+              <span className="last_response_code">{u.last_response_code || EMPTY_STRING}</span>
             </td>
-            <td className="calls-table--cell"><span className="caller_bundle_id">{u.caller_bundle_id || EMPTY_STRING}</span></td>
-            <td className="calls-table--cell"><span className="sip_trunk">{u.sip_trunk || EMPTY_STRING}</span></td>
+            <td className="calls-table--cell">
+              <span className="bye_reason">{u.bye_reason || EMPTY_STRING}</span>
+            </td>
+            <td className="calls-table--cell">
+              <span className="release_party">{u.release_party || EMPTY_STRING}</span>
+            </td>
           </tr>
-        )
+        );
       });
     } else {
-      rows = <tr className="calls-table--row">
+      rows = (
+        <tr className="calls-table--row">
           <td className="text-center calls-table--cell"></td>
           <td className="calls-table--cell"></td>
           <td className="calls-table--cell"></td>
@@ -103,6 +110,7 @@ var CallsTable = React.createClass({
           <td className="calls-table--cell"></td>
           <td className="calls-table--cell"></td>
         </tr>
+      );
     }
 
     let footer = null;
@@ -113,13 +121,13 @@ var CallsTable = React.createClass({
         <div className="pagination text-center">
           <span className="pagination__button" onClick={this.props.onDataLoad}>Load More</span>
         </div>
-      )
+      );
     } else {
       pagination = (
         <div className="text-center">
           <span className="pagination__button pagination__button--inactive">no more result</span>
         </div>
-      )
+      );
     }
 
     if (!_.isEmpty(this.props.calls)) {
@@ -131,7 +139,7 @@ var CallsTable = React.createClass({
             </td>
           </tr>
         </tfoot>
-      )
+      );
     }
 
     return (
@@ -144,9 +152,9 @@ var CallsTable = React.createClass({
             <th className="calls-table--cell">Date</th>
             <th className="calls-table--cell">Duration</th>
             <th className="calls-table--cell">Status</th>
-            <th className="calls-table--cell">Failure Reason</th>
-            <th className="calls-table--cell">Bundle ID</th>
-            <th className="calls-table--cell">SIP Trunk</th>
+            <th className="calls-table--cell">Last Response Code</th>
+            <th className="calls-table--cell">Bye Reason</th>
+            <th className="calls-table--cell">Release Party</th>
           </tr>
         </thead>
         <tbody className="calls-table--body" key="calls-table--body">
@@ -155,7 +163,7 @@ var CallsTable = React.createClass({
         {footer}
       </table>
     );
-  }
+  },
 });
 
 export default CallsTable;
