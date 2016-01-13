@@ -167,12 +167,14 @@ export default class UserStatsRequest {
             // as the value structure varies
             _.map(resultSample, (sample, segmentIndex) => {
               let sampleSegment = _.get(sample, 'segment');
-              let value = _.get(values, `${segmentIndex}`);
-              let valueSegment = _.get(value, 'segment');
 
-              // if segments are identical,
+              // if an identical segment is found,
               // populate the data into the segment
-              if (equals(sampleSegment, valueSegment)) {
+              let value = _.find(values, (value) => {
+                return equals(sampleSegment, _.get(value, 'segment'));
+              });
+
+              if (!_.isEmpty(value) && !_.isUndefined(value)) {
                 _.map(value.data, (record) => {
 
                   // the manually load balancing invades the correct t value,
@@ -180,8 +182,8 @@ export default class UserStatsRequest {
                   output[segmentIndex].data.push(_.merge(record, {t: resultIndex}));
                 });
 
-                // if segments are different,
-                // populate an empty data set as it is unrecognisable
+              // if no identical segment is found,
+              // populate an empty data set as it is unrecognisable
               } else {
                 output[segmentIndex].data.push({t: resultIndex, v: 0});
               }
