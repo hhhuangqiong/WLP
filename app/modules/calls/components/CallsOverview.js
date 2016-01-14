@@ -368,7 +368,7 @@ var CallsOverview = React.createClass({
 
         <div className="large-24 columns">
           <Panel.Wrapper>
-            <Panel.Header customClass="narrow" title="Monthly User">
+            <Panel.Header customClass="narrow" title="Monthly Voice Call User">
               <div className="input-group picker month right">
                 <Select
                   name="month-picker"
@@ -391,7 +391,7 @@ var CallsOverview = React.createClass({
             <Panel.Body customClass="narrow no-padding">
               <DataGrid.Wrapper>
                 <DataGrid.Cell
-                  title="Monthly User"
+                  title="Monthly Voice Call User"
                   data={monthlyUserStats.total}
                   changeDir={monthlyUserStats.direction}
                   changeAmount={monthlyUserStats.change}
