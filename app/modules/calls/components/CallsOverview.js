@@ -15,6 +15,7 @@ import * as DataGrid from '../../../main/statistics/components/DataGrid';
 import TimeFramePicker, { parseTimeRange } from '../../../main/components/TimeFramePicker';
 import ColorRadioButton from '../../../main/components/ColorRadioButton';
 import LineChart from '../../../main/components/LineChart';
+import CombinationChart from '../../../main/components/CombinationChart';
 
 import CallsOverviewStore from '../stores/CallsOverviewStore';
 import ApplicationStore from '../../../main/stores/ApplicationStore';
@@ -25,8 +26,9 @@ import fetchCallsStatsTotal from '../actions/fetchCallsStatsTotal';
 const defaultQueryMonth = moment().subtract(1, 'month');
 
 const STATS_TYPE = {
-  TOTAL_ATTEMPT: 'totalAttempt',
-  SUCCESSFUL_ATTEMPT: 'successfulAttempt',
+  TOTAL_ATTEMPT: 'Total Calls Attempt',
+  SUCCESSFUL_ATTEMPT: 'Total Success Calls',
+  SUCCESSFUL_RATE: 'Average Success Rate',
   TOTAL_DURATION: 'totalDuration',
   AVERAGE_DURATION: 'averageDuration'
 };
@@ -39,7 +41,10 @@ const CALL_TYPE = {
 
 const YEARS_BACKWARD = 5;
 const TIME_FRAMES = ['24 hours', '7 days'];
-const TOOLTIP_TIME_FORMAT = 'lll';
+const TOOLTIP_TIME_FORMAT = {
+  hour: 'HH:00, DD MMM',
+  day: 'DD MMM'
+};
 const ATTEMPT_LINECHART_TOGGLES = [
   {
     id: STATS_TYPE.TOTAL_ATTEMPT,
@@ -157,39 +162,58 @@ var CallsOverview = React.createClass({
   },
 
   _getAttemptLineChartData() {
+    let { timescale } = parseTimeRange(this.state.selectedLastXDays);
+
     let totalAttemptData = _.reduce(this.state.totalAttemptStats, (result, stat) => { result.push(Math.round(stat.v)); return result; }, []);
     let successAttemptData = _.reduce(this.state.successAttemptStats, (result, stat) => { result.push(Math.round(stat.v)); return result; }, []);
+    let successRateData = _.reduce(this.state.successRateStats, (result, stat) => { result.push(stat.v); return result; }, []);
 
     let totalAttemptTooltipFormatter = (x, y, index) => {
-      return `
-              <div style="text-align: center">
-                <div>${moment(x).local().format(TOOLTIP_TIME_FORMAT)}</div>
-                <div>No. of Calls: ${y}</div>
-              </div>
-            `;
-    };
+      let totalCallAttempt =  totalAttemptData[index];
+      let totalSuccessCall =  successAttemptData[index];
+      let averageSuccessRate =  successRateData[index];
 
-    let successAttemptTooltipFormatter = (x, y, index) => {
       return `
               <div style="text-align: center">
-                <div>${moment(x).local().format(TOOLTIP_TIME_FORMAT)}</div>
-                <div>No. of Successful Calls: ${y}</div>
+                <div>${moment(x).local().format(_.get(TOOLTIP_TIME_FORMAT, `${timescale}`))}</div>
+                <div>Total Call Attempt: ${totalCallAttempt}</div>
+                <div>Total Success Call: ${totalSuccessCall}</div>
+                <div>Average Success Rate: ${Math.round(averageSuccessRate)}%</div>
               </div>
             `;
     };
 
     return !_.isEmpty(this.state.totalAttemptStats) && !_.isEmpty(this.state.successRateStats) ? [
       {
+        name: STATS_TYPE.SUCCESSFUL_RATE,
+        legendName: 'Average Success Rate',
+        legendIndex: 2,
+        type: 'line',
+        data: successRateData,
+        color: '#4C91DE',
+        tooltipFormatter: totalAttemptTooltipFormatter,
+        yAxis: 1,
+        zIndex: 9,
+        symbol: 'circle',
+        lineWidth: 2
+      },
+      {
         name: STATS_TYPE.TOTAL_ATTEMPT,
+        legendName: 'Total Calls Attempt',
+        legendIndex: 0,
+        type: 'column',
         data: totalAttemptData,
-        color: '#FB3940',
-        tooltipFormatter: totalAttemptTooltipFormatter
+        color: '#D8D8D8',
+        yAxis: 0
       },
       {
         name: STATS_TYPE.SUCCESSFUL_ATTEMPT,
+        legendName: 'Total Success Calls',
+        legendIndex: 1,
+        type: 'column',
         data: successAttemptData,
-        color: '#21C031',
-        tooltipFormatter: successAttemptTooltipFormatter
+        color: '#81D135',
+        yAxis: 0
       }
     ] : null;
   },
@@ -426,39 +450,21 @@ var CallsOverview = React.createClass({
                       <div className="chart-cell__overview__unit">Attempts</div>
                     </div>
                   </div>
-                  <div className="chart-cell__controls row">
-                    <div className="chart-cell__line-toggle large-24 columns">
-                      <ul className="inner-wrap">
-                        {
-                          ATTEMPT_LINECHART_TOGGLES.map((toggle) => {
-                            return (
-                              <li key={toggle.id} className="verification-overview__title">
-                                <ColorRadioButton
-                                  group="verificationAttempt"
-                                  label={toggle.title}
-                                  value={toggle.id}
-                                  color={toggle.color}
-                                  checked={this.state.selectedAttemptLine === toggle.id}
-                                  onChange={this.toggleAttemptType}
-                                  location="left" />
-                              </li>
-                            );
-                          })
-                        }
-                      </ul>
-                    </div>
-                  </div>
                   <div className="line-chart chart-cell__chart row">
-                    <LineChart
+                    <CombinationChart
                       className="attempt-line"
                       lines={this._getAttemptLineChartData()}
+                      showLegend={true}
                       xAxis={this._getLineChartXAxis()}
                       yAxis={[
                         {
                           alignment: 'left'
+                        },
+                        {
+                          unit: '%',
+                          alignment: 'right'
                         }
-                      ]}
-                      selectedLine={this._getAttemptLineChartSelectedLine()} />
+                      ]} />
                   </div>
                 </div>
               </div>
