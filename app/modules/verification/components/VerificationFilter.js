@@ -1,21 +1,34 @@
-import React, { Component } from 'react';
-import classNames from 'classnames';
+import React, { Component, PropTypes } from 'react';
 
-import Dropdown from '../../../main/dropdown/Dropdown';
+import Dropdown from '../../../main/dropdown';
 
 export default class VerificationFilter extends Component {
+  static propTypes = {
+    appId: PropTypes.string,
+    options: PropTypes.array,
+    appIdChange: PropTypes.func,
+    os: PropTypes.string,
+    osTypes: PropTypes.array,
+    osChange: PropTypes.func,
+    method: PropTypes.string,
+    methods: PropTypes.array,
+    methodChange: PropTypes.func,
+    defaultOption: PropTypes.string,
+    transformVerificationTypes: PropTypes.func,
+  };
+
   render() {
-    let appId = this.props.appId;
-    let options = this.props.appIdOptions;
-    let appIdChange = this.props.appIdChange;
-
-    let os = this.props.os;
-    let osTypes = this.props.osTypes;
-    let osChange = this.props.osChange;
-
-    let method = this.props.method;
-    let methods = this.props.methods;
-    let methodChange = this.props.methodChange;
+    const {
+      appId,
+      options,
+      appIdChange,
+      os,
+      osTypes,
+      osChange,
+      method,
+      methods,
+      methodChange,
+    } = this.props;
 
     return (
       <Dropdown>
@@ -33,15 +46,15 @@ export default class VerificationFilter extends Component {
             <select
               className="radius"
               name="appid"
-              value={appId ? appId : "-"}
+              value={appId ? appId : '-'}
               onChange={appIdChange}
             >
-              {options.map((appId) => {
+              {options.map(option => {
                 return (
-                  <option key={appId.label} value={appId.value}>
-                    {appId.label}
+                  <option key={option.label} value={option.value}>
+                    {option.label}
                   </option>
-                )
+                );
               })}
             </select>
           </div>
@@ -60,7 +73,7 @@ export default class VerificationFilter extends Component {
                     <option key={type} value={type}>
                       {this.props.transformVerificationTypes(type)}
                     </option>
-                  )
+                  );
                 })}
             </select>
           </div>
@@ -79,7 +92,7 @@ export default class VerificationFilter extends Component {
                   <option key={platform} value={platform}>
                     {platform}
                   </option>
-                )
+                );
               })}
             </select>
           </div>

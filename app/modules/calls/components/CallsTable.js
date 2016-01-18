@@ -13,6 +13,16 @@ const EMPTY_STRING = 'N/A';
 const DATE_FORMAT = 'MMM DD YYYY';
 const TIME_FORMAT = 'H:mm:ss';
 
+const TABLE_TITLES = [
+  'Caller',
+  'Callee',
+  'Call Duration',
+  'Date',
+  'Status',
+  'Last Response Code',
+  'Bye Reason',
+];
+
 const CallsTable = React.createClass({
   propTypes: {
     calls: PropTypes.array.isRequired,
@@ -100,7 +110,7 @@ const CallsTable = React.createClass({
       footer = (
         <tfoot>
           <tr>
-            <td colSpan="7">
+            <td colSpan={TABLE_TITLES.length}>
               {pagination}
             </td>
           </tr>
@@ -112,13 +122,7 @@ const CallsTable = React.createClass({
       <table className="large-24 clickable data-table" key="calls-table">
         <thead>
           <tr>
-            <th>Caller</th>
-            <th>Callee</th>
-            <th>Call Duration</th>
-            <th>Date</th>
-            <th>Status</th>
-            <th>Last Response Code</th>
-            <th>Bye Reason</th>
+            {TABLE_TITLES.map(title => <th>{title}</th>)}
           </tr>
         </thead>
         <tbody key="calls-table--body">{rows}</tbody>

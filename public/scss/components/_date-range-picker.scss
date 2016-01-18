@@ -1,31 +1,6 @@
-// this file will be rename to date-picker.scss
-// TODO: export magic-numbers into variables
-
-.date-picker {
-  &.date-range-picker,
-  &.date-picker-button {
-    width: auto;
-    height: rem-calc(28);
-    line-height: rem-calc(26);
-    margin-bottom: rem-calc($fieldset-margin-bottom);
-    padding: 0 rem-calc(15);
-    border-radius: rem-calc(14);
-    border: 1px solid #bbb;
-    color: $input-font-color;
-  }
-}
-
 .date-range-picker,
 .date-picker-button {
-  width: auto;
-  height: rem-calc(28);
-  line-height: rem-calc(26);
-  margin-bottom: rem-calc($fieldset-margin-bottom);
-  padding: 0 rem-calc(15);
-  border-radius: rem-calc(14);
-  border: 1px solid #bbb;
-  color: $input-font-color;
-  cursor: pointer;
+  @include button-control;
 
   .date-input-wrap {
     position: relative;

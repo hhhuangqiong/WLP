@@ -56,18 +56,18 @@ const Calls = React.createClass({
     }
   },
 
-getStateFromStores: function() {
-    let store = this.getStore(CallsStore);
+  getStateFromStores() {
+    const store = this.getStore(CallsStore);
 
     return {
       calls: store.getCalls(),
       callsCount: store.getCallsCount(),
       page: store.getPageNumber(),
-      totalPages: store.getTotalPages()
+      totalPages: store.getTotalPages(),
     };
   },
 
-  getDefaultQuery: function() {
+  getDefaultQuery() {
     return {
       // The page number, starting from 0, defaults to 0 if not specified.
       page: 0,
@@ -76,22 +76,26 @@ getStateFromStores: function() {
       endDate: moment().endOf('day').format('L'),
       type: CALL_TYPE.ALL,
       search: '',
-      searchType: 'caller'
+      searchType: 'caller',
     };
   },
 
-  getInitialState: function () {
-    let query = _.merge(this.getDefaultQuery(), this.context.router.getCurrentQuery());
-    let queryAndStore = _.merge(this.getStateFromStores(), query);
+  getInitialState() {
+    const query = _.merge(this.getDefaultQuery(), this.context.router.getCurrentQuery());
+    const queryAndStore = _.merge(this.getStateFromStores(), query);
     return queryAndStore;
   },
 
-  onChange: function() {
-    let query = _.merge(this.getDefaultQuery(), this.context.router.getCurrentQuery());
+  componentDidMount() {
+    $(document).foundation('reveal', 'reflow');
+  },
+
+  onChange() {
+    const query = _.merge(this.getDefaultQuery(), this.context.router.getCurrentQuery());
     this.setState(_.merge(query, this.getStateFromStores()));
   },
 
-  getQueryFromState: function() {
+  getQueryFromState() {
     return {
       startDate: this.state.startDate && this.state.startDate.trim(),
       endDate: this.state.endDate && this.state.endDate.trim(),
@@ -124,23 +128,22 @@ getStateFromStores: function() {
       size: config.PAGES.CALLS.PAGE_SIZE,
       type: this.state.type,
       search: this.state.search,
-      searchType: this.state.searchType
+      searchType: this.state.searchType,
     });
   },
 
-  handleStartDateChange: function(momentDate) {
-    let date = moment(momentDate).format('L');
+  handleStartDateChange(momentDate) {
+    const date = moment(momentDate).format('L');
     this.handleQueryChange({ startDate: date, page: 0 });
   },
 
-  handleEndDateChange: function(momentDate) {
-    let date = moment(momentDate).format('L');
+  handleEndDateChange(momentDate) {
+    const date = moment(momentDate).format('L');
     this.handleQueryChange({ endDate: date, page: 0 });
   },
 
   handleAllTypeClick() {
-    const type = null;
-    this.handleQueryChange({ type });
+    this.handleQueryChange({ type: CALL_TYPE.ALL });
   },
 
   handleOnnetClick() {
@@ -160,14 +163,14 @@ getStateFromStores: function() {
   },
 
   handleSearchSubmit(e) {
-    if (e.which === 13) {
+    if (e.which == 13) {
       e.preventDefault();
       this.handleQueryChange();
     }
   },
 
-  handleSearchTypeChange: function(e) {
-    let searchType = e.target.value;
+  handleSearchTypeChange(e) {
+    const searchType = e.target.value;
     this.setState({ searchType });
 
     // only submit change if search input isn't empty
@@ -184,20 +187,9 @@ getStateFromStores: function() {
     this.refs.endDatePicker._handleFocus();
   },
 
-  componentDidMount() {
-    $(document).foundation('reveal', 'reflow');
-  },
-
   render() {
     const params = this.context.router.getCurrentParams();
     const searchTypes = [{name: 'Caller', value: 'caller'}, {name: 'Callee', value: 'callee'}];
-
-    /* Temporarily disabled overview section for Calls
-    TODO: put it back into tab-bar
-     <li className="top-bar--inner tab--inverted__title">
-     <Link to="calls-overview" params={params}>Overview</Link>
-     </li>
-     */
 
     return (
       <div className="row">
@@ -212,12 +204,13 @@ getStateFromStores: function() {
             <a className={classNames({ active: this.state.type === CALL_TYPE.OFFNET })} onClick={this.handleOffnetClick}>Off-net</a>
           </FilterBar.LeftItems>
           <FilterBar.RightItems>
+            {/* TODO: Move filter control items into DropdownFilter according to new design */}
             {/*<DropdownFilter />*/}
 
             <div className="date-range-picker left">
               <i className="date-range-picker__icon icon-calendar left" />
               <div className="date-input-wrap left" onClick={this._handleStartDateClick}>
-                <span className="clickable-button left date-range-picker__date-span">{this.state.startDate}</span>
+                <span className="interactive-button left date-range-picker__date-span">{this.state.startDate}</span>
                 <DatePicker
                   ref="startDatePicker"
                   key="start-date"
@@ -229,7 +222,7 @@ getStateFromStores: function() {
               </div>
               <i className="date-range-picker__separator left">-</i>
               <div className="date-input-wrap left" onClick={this._handleEndDateClick}>
-                <span className="clickable-button left date-range-picker__date-span">{this.state.endDate}</span>
+                <span className="interactive-button left date-range-picker__date-span">{this.state.endDate}</span>
                 <DatePicker
                   ref="endDatePicker"
                   key="end-date"

@@ -209,7 +209,7 @@ var Im = React.createClass({
                 <div className="date-range-picker left">
                   <i className="date-range-picker__icon icon-calendar left" />
                   <div className="date-input-wrap left" onClick={this._handleStartDateClick}>
-                    <span className="left date-range-picker__date-span">{this.state.fromTime}</span>
+                    <span className="interactive-button left date-range-picker__date-span">{this.state.fromTime}</span>
                     <DatePicker
                       ref="startDatePicker"
                       key="start-date"
@@ -222,7 +222,7 @@ var Im = React.createClass({
                   </div>
                   <i className="date-range-picker__separator left">-</i>
                   <div className="date-input-wrap left" onClick={this._handleEndDateClick}>
-                    <span className="left date-range-picker__date-span">{this.state.toTime}</span>
+                    <span className="interactive-button left date-range-picker__date-span">{this.state.toTime}</span>
                     <DatePicker
                       ref="endDatePicker"
                       key="end-date"
