@@ -1,6 +1,8 @@
 import React, { PropTypes, Component } from 'react';
 import classNames from 'classnames';
 
+const EMPTY_DATA = 'N/A';
+
 class DataCellWrapper extends Component {
   static propTypes = {
     totalColumns: PropTypes.number
@@ -38,6 +40,7 @@ class DataCell extends Component {
     title: PropTypes.string.isRequired,
     data: PropTypes.string.isRequired,
     unit: PropTypes.string,
+    decimalPlace: PropTypes.number,
     changeDir: PropTypes.string,
     changeAmount: PropTypes.string,
     changeEffect: PropTypes.oneOf([
@@ -50,14 +53,45 @@ class DataCell extends Component {
     super(props);
   }
 
+  _localiseData(data) {
+    if (data == 'Infinity') {
+      return null;
+    }
+
+    return (data && data.toLocaleString()) || null;
+  }
+
+  _localiseRate(data, decimalPlace) {
+    if (data == 'Infinity') {
+      return null;
+    }
+
+    return (data && data.toFixed(decimalPlace)) || null;
+  }
+
   render() {
-    let { title, data, unit, changeDir, changeEffect, changeAmount, changePercentage } = this.props;
+    let { title, data, unit, changeDir, changeEffect, changeAmount, changePercentage, decimalPlace } = this.props;
+
+    if (!!decimalPlace) {
+      data = this._localiseRate(data, decimalPlace);
+    }
 
     return (
       <div className="data-cell">
         <div className="data-cell__title">{ title }</div>
-        <div className="data-cell__data">{ data }</div>
-        <If condition={!!unit}>
+        <div className="data-cell__data">
+          <If condition={!data}>
+            <span>{EMPTY_DATA}</span>
+          <Else />
+            <span>
+              { this._localiseData(data) }
+              <If condition={!!data && unit === '%'}>
+                {unit}
+              </If>
+            </span>
+          </If>
+        </div>
+        <If condition={!!unit && unit !== '%'}>
           <div className="data-cell__unit">{ unit }</div>
         </If>
         <If condition={!!changeAmount || !!changePercentage}>

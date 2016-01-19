@@ -360,7 +360,23 @@ var CallsOverview = React.createClass({
       return total;
     }, 0);
 
-    return totalCall.toLocaleString();
+    return totalCall;
+  },
+
+  _getSuccessfulAttempt() {
+    let totalSuccess = _.reduce(this.state.successAttemptStats, (success, stat) => {
+      success += stat.v;
+      return success
+    }, 0);
+
+    return totalSuccess;
+  },
+
+  _getAverageSuccessfulRate() {
+    let totalAttempt = this._getTotalCallAttempt();
+    let totalSuccess = this._getSuccessfulAttempt();
+
+    return (totalSuccess / totalAttempt) * 100;
   },
 
   _getTotalCallDuration() {
@@ -369,7 +385,21 @@ var CallsOverview = React.createClass({
       return total;
     }, 0);
 
-    return Math.round(totalDurationInMs / 1000 / 60).toLocaleString();
+    return Math.round(totalDurationInMs / 1000 / 60);
+  },
+
+  /**
+   * @method _getAverageCallDuration
+   * @description to calculate the average call duration. The divisor is
+   * total number of call attempt but not that of successful attempt. The
+   * result will be in seconds
+   *
+   **/
+  _getAverageCallDuration() {
+    let totalAttempt = this._getTotalCallAttempt();
+    let totalDuration = this._getTotalCallDuration();
+
+    return (totalDuration/totalAttempt) * 60;
   },
 
   render() {
@@ -453,6 +483,35 @@ var CallsOverview = React.createClass({
                   onChange={this.timeFrameChange} />
               </div>
             </Panel.Header>
+            <Panel.Body customClass="narrow no-padding">
+              <div className="inner-wrap">
+                <div className="chart-cell large-24 columns">
+                  <div className="chart-cell__header row">
+                  </div>
+                  <div className="chart-cell__chart row">
+                    <DataGrid.Wrapper>
+                      <DataGrid.Cell
+                        title="Total calls attempt"
+                        data={this._getTotalCallAttempt()} />
+                      <DataGrid.Cell
+                        title="Average succesful rate"
+                        data={this._getAverageSuccessfulRate()}
+                        decimalPlace={2}
+                        unit="%" />
+                      <DataGrid.Cell
+                        title="Total call duration"
+                        data={this._getTotalCallDuration()}
+                        unit="mins" />
+                      <DataGrid.Cell
+                        title="Average call duration"
+                        data={this._getAverageCallDuration()}
+                        decimalPlace={2}
+                        unit="seconds" />
+                    </DataGrid.Wrapper>
+                  </div>
+                </div>
+              </div>
+            </Panel.Body>
             <Panel.Body customClass="narrow no-padding">
               <div className="inner-wrap">
                 <div className="chart-cell large-24 columns">
