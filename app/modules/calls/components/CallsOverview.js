@@ -29,8 +29,8 @@ const STATS_TYPE = {
   TOTAL_ATTEMPT: 'Total Calls Attempt',
   SUCCESSFUL_ATTEMPT: 'Total Success Calls',
   SUCCESSFUL_RATE: 'Average Success Rate',
-  TOTAL_DURATION: 'totalDuration',
-  AVERAGE_DURATION: 'averageDuration'
+  TOTAL_DURATION: 'Total Call Duration',
+  AVERAGE_DURATION: 'Average Call Duration'
 };
 
 const CALL_TYPE = {
@@ -174,7 +174,7 @@ var CallsOverview = React.createClass({
       let averageSuccessRate =  successRateData[index];
 
       return `
-              <div style="text-align: center">
+              <div class="text-left">
                 <div>${moment(x).local().format(_.get(TOOLTIP_TIME_FORMAT, `${timescale}`))}</div>
                 <div>Total Call Attempt: ${totalCallAttempt}</div>
                 <div>Total Success Call: ${totalSuccessCall}</div>
@@ -183,7 +183,7 @@ var CallsOverview = React.createClass({
             `;
     };
 
-    return !_.isEmpty(this.state.totalAttemptStats) && !_.isEmpty(this.state.successRateStats) ? [
+    return !_.isEmpty(this.state.totalAttemptStats) && !_.isEmpty(this.state.successAttemptStats) && !_.isEmpty(this.state.successRateStats) ? [
       {
         name: STATS_TYPE.SUCCESSFUL_RATE,
         legendName: 'Average Success Rate',
@@ -219,40 +219,55 @@ var CallsOverview = React.createClass({
   },
 
   _getDurationLineChartData() {
+    let { timescale } = parseTimeRange(this.state.selectedLastXDays);
     let totalDurationData = _.reduce(this.state.totalDurationStats, (result, stat) => { result.push(Math.round(stat.v / 1000 / 60)); return result; }, []);
-    let averageDurationData = _.reduce(this.state.successAttemptStats, (result, stat) => { result.push(Math.round(stat.v)); return result; }, []);
+    let averageDurationData = _.reduce(this.state.averageDurationStats, (result, stat) => { result.push(Math.round(stat.v) / 1000); return result; }, []);
+    let successAttemptData = _.reduce(this.state.successAttemptStats, (result, stat) => { result.push(Math.round(stat.v)); return result; }, []);
 
-    let totalDurationTooltipFormatter = (x, y) => {
+    let averageDurationTooltipFormatter = (x, y, index) => {
+      let totalDuration =  totalDurationData[index];
+      let averageDuration =  averageDurationData[index];
+      let successAttempt =  successAttemptData[index];
+
       return `
-              <div style="text-align: center">
-                <div>${moment(x).local().format(TOOLTIP_TIME_FORMAT)}</div>
-                <div>Total Duration ${y} min.</div>
+              <div class="text-left">
+                <div>${moment(x).local().format(_.get(TOOLTIP_TIME_FORMAT, `${timescale}`))}</div>
+                <div>Total Call Attempt: ${totalDuration}</div>
+                <div>Total Success Call: ${averageDuration}</div>
+                <div>Average Success Rate: ${Math.round(successAttempt)}%</div>
               </div>
             `;
     };
 
-    let averageDurationTooltipFormatter = (x, y) => {
-      return `
-              <div style="text-align: center">
-                <div>${moment(x).local().format(TOOLTIP_TIME_FORMAT)}</div>
-                <div>Average Duration ${y} seconds</div>
-              </div>
-            `;
-    };
-
-    return !_.isEmpty(this.state.totalDurationStats) && !_.isEmpty(this.state.averageDurationStats) ? [
-      {
-        name: STATS_TYPE.TOTAL_DURATION,
-        data: totalDurationData,
-        color: '#FB3940',
-        tooltipFormatter: totalDurationTooltipFormatter
-      },
+    return !_.isEmpty(this.state.totalDurationStats) && !_.isEmpty(this.state.averageDurationStats) && !_.isEmpty(this.state.averageDurationStats) ? [
       {
         name: STATS_TYPE.AVERAGE_DURATION,
+        legendIndex: 2,
+        type: 'line',
         data: averageDurationData,
-        color: '#21C031',
+        color: '#4C91DE',
         tooltipFormatter: averageDurationTooltipFormatter,
+        yAxis: 0,
+        zIndex: 9,
+        symbol: 'circle',
+        lineWidth: 2
+      },
+      {
+        name: STATS_TYPE.TOTAL_DURATION,
+        legendIndex: 0,
+        type: 'column',
+        data: totalDurationData,
+        color: '#D8D8D8',
         yAxis: 1
+      },
+      {
+        name: STATS_TYPE.SUCCESSFUL_ATTEMPT,
+        legendName: 'Total Success Calls',
+        legendIndex: 1,
+        type: 'column',
+        data: successAttemptData,
+        color: '#81D135',
+        yAxis: 2
       }
     ] : null;
   },
@@ -481,45 +496,29 @@ var CallsOverview = React.createClass({
                       <div className="chart-cell__overview__unit">Total Call Duration</div>
                     </div>
                   </div>
-                  <div className="chart-cell__controls row">
-                    <div className="chart-cell__line-toggle large-24 columns">
-                      <ul className="inner-wrap">
-                        {
-                          DURATION_LINECHART_TOGGLES.map((toggle) => {
-                            return (
-                              <li key={toggle.id} className="verification-overview__title">
-                                <ColorRadioButton
-                                  group="verificationAttempt"
-                                  label={toggle.title}
-                                  value={toggle.id}
-                                  color={toggle.color}
-                                  checked={this.state.selectedDurationLine === toggle.id}
-                                  onChange={this.toggleDurationType}
-                                  location="left" />
-                              </li>
-                            );
-                          })
-                        }
-                      </ul>
-                    </div>
-                  </div>
                   <div className="line-chart chart-cell__chart row">
-                    <LineChart
+                    <CombinationChart
                       className="attempt-line"
-                      marginLeft="70"
                       lines={this._getDurationLineChartData()}
+                      alignTicks={false}
+                      showLegend={true}
                       xAxis={this._getLineChartXAxis()}
                       yAxis={[
                         {
-                          unit: 'm',
+                          unit: 's',
                           alignment: 'left'
                         },
                         {
-                          unit: 's',
-                          alignment: 'right'
+                          unit: 'm',
+                          alignment: 'right',
+                          visible: false
+                        },
+                        {
+                          unit: '',
+                          alignment: 'right',
+                          visible: false
                         }
-                      ]}
-                      selectedLine={this._getDurationLineChartSelectedLine()} />
+                      ]} />
                   </div>
                 </div>
               </div>

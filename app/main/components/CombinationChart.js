@@ -204,6 +204,9 @@ export default React.createClass({
 
     this.chart = new Highcharts.Chart({
       chart: {
+        // When using multiple axis, the ticks of two or more opposite axes will
+        // automatically be aligned by adding ticks to the axis or axes with the least ticks.
+        alignTicks: !_.isUndefined(props.alignTicks) ? props.alignTicks : true,
         // tends to keep the default height
         height: props.height || null,
         // Give enough space to the horizontal dimension, so that the y-axis
@@ -266,7 +269,8 @@ export default React.createClass({
             lineColor: AXIS_COLOR,
             // control the alignment of the y-axis, default to left
             opposite: axis.alignment === 'right',
-            ceiling: axis.unit === '%' ? 100 : null
+            ceiling: axis.unit === '%' ? 100 : null,
+            visible: !_.isUndefined(axis.visible) ? axis.visible : true
           }
         );
         return result;
