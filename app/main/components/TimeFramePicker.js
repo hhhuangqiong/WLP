@@ -42,7 +42,11 @@ export function parseTimeRange(timeRange) {
   // for the time that is 24 hours before 12:09, we need 13:00
   // 12:09 + 1 hour = 13:09, startOf(13:09) = 13:00, 13:00 - 24 hour = 13:00
   //let to = moment().add(1, timescale).startOf(timescale).valueOf();
-  let to = timescale === 'hour' ? moment().add(1, timescale).startOf(timescale).valueOf() : moment().endOf(timescale).valueOf();
+  let to = timescale === 'hour' ?
+    moment().add(1, timescale).startOf(timescale).valueOf() :
+    // Issue: WLP-584
+    // from day n-1 to day n-7
+    moment().subtract(1, timescale).endOf(timescale).valueOf();
   let from = timescale === 'hour' ? moment(to).subtract(quantity, timescale).startOf(timescale).valueOf() : moment(to).subtract(quantity - 1, timescale).startOf(timescale).valueOf();
 
   return {
