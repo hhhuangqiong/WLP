@@ -1,11 +1,8 @@
 import React from 'react';
 import { Link } from 'react-router';
 import Select from 'react-select';
-import classNames from 'classnames';
 import moment from 'moment';
-import _ from 'lodash';
-import {concurrent} from 'contra';
-import { countries } from 'country-data';
+import { merge, max, clone, reduce, isEmpty, sortByOrder, values } from 'lodash';
 import getMapConfig from '../utils/getMapConfig';
 import MAP_DATA from '../constants/mapData';
 
@@ -36,32 +33,30 @@ const YEARS_BACKWARD = 5;
 const TIME_FRAMES = ['7 days', '30 days', '60 days', '90 days'];
 const gChartContainerId = 'registrationByCountry';
 
-const debug = require('debug')('app:end-user/components/EndUsersOverview');
-
 const defaultQueryMonth = moment().subtract(1, 'month');
 
 const PLATFORM_NAME = {
   ios: 'IOS',
   android: 'Android',
-  phone: 'Windows Phone'
+  phone: 'Windows Phone',
 };
 
 const STATS_TYPE = {
   REGISTERED_USER: 'registereduser',
-  ACTIVE_USER: 'activeuser'
+  ACTIVE_USER: 'activeuser',
 };
 
 const LINECHART_TOGGLES = [
   {
     id: STATS_TYPE.REGISTERED_USER,
     title: 'new registered user',
-    color: 'red'
+    color: 'red',
   },
   {
     id: STATS_TYPE.ACTIVE_USER,
     title: 'active user',
-    color: 'green'
-  }
+    color: 'green',
+  },
 ];
 
 const TOOLTIP_TIME_FORMAT = 'lll';
@@ -71,7 +66,7 @@ const EndUsersOverview = React.createClass({
 
   contextTypes: {
     router: React.PropTypes.func.isRequired,
-    executeAction: React.PropTypes.func.isRequired
+    executeAction: React.PropTypes.func.isRequired,
   },
 
   mixins: [FluxibleMixin, AuthMixin],
@@ -80,8 +75,8 @@ const EndUsersOverview = React.createClass({
     storeListeners: {
       onEndUsersOverviewChange: EndUsersOverviewStore,
       onEndUsersRegistrationStatsChange: EndUsersRegistrationStatsStore,
-      onEndUsersGeographicStatsChange: EndUsersGeographicStatsStore
-    }
+      onEndUsersGeographicStatsChange: EndUsersGeographicStatsStore,
+    },
   },
 
   getInitialState() {
@@ -92,7 +87,7 @@ const EndUsersOverview = React.createClass({
       selectedYear: defaultQueryMonth.get('year'),
       selectedLastXDays: TIME_FRAMES[1],
       selectedLine: STATS_TYPE.REGISTERED_USER,
-    }
+    };
   },
 
   componentDidMount() {
@@ -104,25 +99,25 @@ const EndUsersOverview = React.createClass({
   },
 
   onEndUsersOverviewChange() {
-    let states = this.context.getStore(EndUsersOverviewStore).getState();
+    const states = this.context.getStore(EndUsersOverviewStore).getState();
     this.setState(states);
   },
 
   onEndUsersGeographicStatsChange() {
-    let states = this.context.getStore(EndUsersGeographicStatsStore).getState();
-    this.setState(_.merge(this.state, states));
+    const states = this.context.getStore(EndUsersGeographicStatsStore).getState();
+    this.setState(merge(this.state, states));
 
     // Inject custom world data provided by Highmaps
     Highcharts.maps['custom/world'] = MAP_DATA;
 
     // Copy source data to be a new one for Highmap to avoid the behavior of changing source data
-    const maxValue = _.max(states.geographicStats, country => country.total).total;
-    new Highcharts.Map(getMapConfig(gChartContainerId, _.clone(states.geographicStats), maxValue));
+    const maxValue = max(states.geographicStats, country => country.total).total;
+    this.geographicMap = new Highcharts.Map(getMapConfig(gChartContainerId, clone(states.geographicStats), maxValue));
   },
 
   onEndUsersRegistrationStatsChange() {
-    let states = this.context.getStore(EndUsersRegistrationStatsStore).getState();
-    this.setState(_.merge(this.state, states));
+    const states = this.context.getStore(EndUsersRegistrationStatsStore).getState();
+    this.setState(merge(this.state, states));
   },
 
   onAppIdChange(appId) {
@@ -132,11 +127,11 @@ const EndUsersOverview = React.createClass({
   onTimeFrameChange(time) {
     this.setState({ selectedLastXDays: time });
 
-    //// THIS IS A HACK FOR LINECHART
-    //// the lines key has to be cleared (e.g. set to null)
-    //// in order to reset the LineChart
+    // THIS IS A HACK FOR LINECHART
+    // the lines key has to be cleared (e.g. set to null)
+    // in order to reset the LineChart
     this.setState({
-      lastXDaysRegisteredUser: null, lastXDaysActiveUser: null
+      lastXDaysRegisteredUser: null, lastXDaysActiveUser: null,
     });
 
     this._getLastXDaysStats(time);
@@ -144,77 +139,75 @@ const EndUsersOverview = React.createClass({
   },
 
   _getStats() {
-    let { identity } = this.context.router.getCurrentParams();
+    const { identity } = this.context.router.getCurrentParams();
 
     this.context.executeAction(fetchEndUsersStatsTotal, {
       fromTime: moment().startOf('day').format('x'),
       toTime: moment().endOf('day').format('x'),
-      carrierId: identity
+      carrierId: identity,
     });
   },
 
   _getMonthlyStats(month, year) {
-    let { identity } = this.context.router.getCurrentParams();
+    const { identity } = this.context.router.getCurrentParams();
 
-    let selectedMonth = (month || month === 0) ? month : this.state.selectedMonth;
-    let selectedYear = year || this.state.selectedYear;
+    const selectedMonth = (month || month === 0) ? month : this.state.selectedMonth;
+    const selectedYear = year || this.state.selectedYear;
 
-    let queryTime = moment().month(selectedMonth).year(selectedYear);
+    const queryTime = moment().month(selectedMonth).year(selectedYear);
 
     this.context.executeAction(fetchEndUsersStatsMonthly, {
       fromTime: queryTime.startOf('month').format('x'),
       toTime: queryTime.endOf('month').format('x'),
       carrierId: identity,
-      timeWindow: `Month`
+      timeWindow: 'Month',
     });
   },
 
   _getLastXDaysStats(lastXDays) {
-    let { identity } = this.context.router.getCurrentParams();
-    let timeRange = lastXDays || this.state.selectedLastXDays;
+    const { identity } = this.context.router.getCurrentParams();
+    const timeRange = lastXDays || this.state.selectedLastXDays;
 
-    let { from, to, quantity: selectedLastXDays, timescale } = parseTimeRange(timeRange);
+    const { from, to, timescale } = parseTimeRange(timeRange);
 
     this.context.executeAction(fetchRegistrationStats, {
       fromTime: from,
       toTime: to,
       carrierId: identity,
-      timescale
+      timescale,
     });
   },
 
   _getGeographicStats(lastXDays) {
-    let { identity } = this.context.router.getCurrentParams();
-    let timeRange = lastXDays || this.state.selectedLastXDays;
+    const { identity } = this.context.router.getCurrentParams();
+    const timeRange = lastXDays || this.state.selectedLastXDays;
 
-    let { from, to, quantity: selectedLastXDays, timescale } = parseTimeRange(timeRange);
+    const { from, to, timescale } = parseTimeRange(timeRange);
 
     this.context.executeAction(fetchGeographicStats, {
       fromTime: from,
       toTime: to,
       carrierId: identity,
-      timescale
+      timescale,
     });
   },
 
   _getDeviceStats(lastXDays) {
-    let { identity } = this.context.router.getCurrentParams();
-    let timeRange = lastXDays || this.state.selectedLastXDays;
+    const { identity } = this.context.router.getCurrentParams();
+    const timeRange = lastXDays || this.state.selectedLastXDays;
 
-    let { from, to, quantity: selectedLastXDays, timescale } = parseTimeRange(timeRange);
+    const { from, to, timescale } = parseTimeRange(timeRange);
 
     this.context.executeAction(fetchDeviceStats, {
       fromTime: from,
       toTime: to,
       carrierId: identity,
-      timescale
+      timescale,
     });
   },
 
   getChangeColor(value) {
-    if (!value) {
-      return '';
-    }
+    if (!value) return '';
 
     return (value > 0) ? 'positive' : 'negative';
   },
@@ -234,30 +227,30 @@ const EndUsersOverview = React.createClass({
   },
 
   _getAppIdSelectOptions() {
-    return _.reduce(this.state.appIds, (result, id) => {
-      var option = { value: id, label: id };
+    return reduce(this.state.appIds, (result, id) => {
+      const option = { value: id, label: id };
       result.push(option);
       return result;
-    }, [])
+    }, []);
   },
 
   _getMonths() {
-    let monthArray = Array.apply(0, Array(12)).map((_, i ) => { return i });
+    const monthArray = Array.apply(0, Array(12)).map((_, i) => i);
 
-    return _.reduce(monthArray, (result, n) => {
-      var option = { value: n, label: moment().month(n).format('MMMM') };
+    return reduce(monthArray, (result, n) => {
+      const option = { value: n, label: moment().month(n).format('MMMM') };
       result.push(option);
       return result;
     }, []);
   },
 
   _getYears() {
-    let years = [];
+    const years = [];
 
     for (let i = 0; i < YEARS_BACKWARD; i++) {
       years.push({
         value: (i > 0) ? moment().subtract(i, 'years').format('YYYY') : moment().format('YYYY'),
-        label: (i > 0) ? moment().subtract(i, 'years').format('YYYY') : moment().format('YYYY')
+        label: (i > 0) ? moment().subtract(i, 'years').format('YYYY') : moment().format('YYYY'),
       });
     }
 
@@ -265,46 +258,46 @@ const EndUsersOverview = React.createClass({
   },
 
   _getTotalRegisteredUser() {
-    let { totalRegisteredUser } = this.state;
+    const { totalRegisteredUser } = this.state;
     return totalRegisteredUser;
   },
 
   _getMonthlyActiveUserStats() {
-    let { thisMonthActive, lastMonthActive } = this.state;
-    let activeUserChange = thisMonthActive - lastMonthActive;
+    const { thisMonthActive, lastMonthActive } = this.state;
+    const activeUserChange = thisMonthActive - lastMonthActive;
 
     return {
       total: thisMonthActive,
       change: thisMonthActive - lastMonthActive,
       percent: activeUserChange && lastMonthActive ? Math.round((activeUserChange / lastMonthActive) * 100) : '-',
-      direction: activeUserChange > 0 ? 'up' : 'down'
+      direction: activeUserChange > 0 ? 'up' : 'down',
     };
   },
 
   _getMonthlyRegisteredUserStats() {
-    let { thisMonthRegistered, lastMonthRegistered  } = this.state;
-    let registeredUserChange = thisMonthRegistered - lastMonthRegistered;
+    const { thisMonthRegistered, lastMonthRegistered  } = this.state;
+    const registeredUserChange = thisMonthRegistered - lastMonthRegistered;
 
     return {
       total: thisMonthRegistered,
       change: registeredUserChange,
       percent: registeredUserChange && lastMonthRegistered ? Math.round((registeredUserChange / lastMonthRegistered) * 100) : '-',
-      direction: (registeredUserChange > 0) ? 'up' : 'down'
+      direction: (registeredUserChange > 0) ? 'up' : 'down',
     };
   },
 
   _getLineChartXAxis() {
-    let { from, quantity, timescale } = parseTimeRange(this.state.selectedLastXDays);
+    const { from, quantity, timescale } = parseTimeRange(this.state.selectedLastXDays);
 
     return {
       start: from,
-        tickCount: parseInt(quantity),
-        tickInterval: (timescale === 'day' ? 24 : 1) * 3600 * 1000
+      tickCount: parseInt(quantity, 10),
+      tickInterval: (timescale === 'day' ? 24 : 1) * 3600 * 1000,
     };
   },
 
   _getLineChartData() {
-    let tooltipFormatter = (x, y) => {
+    const tooltipFormatter = (x, y) => {
       return `
               <div style="text-align: center">
                 <div>${moment(x).local().format(TOOLTIP_TIME_FORMAT)}</div>
@@ -313,19 +306,19 @@ const EndUsersOverview = React.createClass({
             `;
     };
 
-    return !_.isEmpty(this.state.lastXDaysRegisteredUser) && !_.isEmpty(this.state.lastXDaysActiveUser) ? [
+    return !isEmpty(this.state.lastXDaysRegisteredUser) && !isEmpty(this.state.lastXDaysActiveUser) ? [
       {
         name: STATS_TYPE.REGISTERED_USER,
-        data: _.reduce(this.state.lastXDaysRegisteredUser, (result, stat) => { result.push(Math.round(stat.v)); return result; }, []),
+        data: reduce(this.state.lastXDaysRegisteredUser, (result, stat) => { result.push(Math.round(stat.v)); return result; }, []),
         color: '#FB3940',
-        tooltipFormatter: tooltipFormatter
+        tooltipFormatter: tooltipFormatter,
       },
       {
         name: STATS_TYPE.ACTIVE_USER,
-        data: _.reduce(this.state.lastXDaysActiveUser, (result, stat) => { result.push(Math.round(stat.v)); return result; }, []),
+        data: reduce(this.state.lastXDaysActiveUser, (result, stat) => { result.push(Math.round(stat.v)); return result; }, []),
         color: '#21C031',
-        tooltipFormatter: tooltipFormatter
-      }
+        tooltipFormatter: tooltipFormatter,
+      },
     ] : null;
   },
 
@@ -334,70 +327,74 @@ const EndUsersOverview = React.createClass({
   },
 
   _getDeviceTotal() {
-    return _.reduce(this.state.deviceStats, (total, stat) => {
+    return reduce(this.state.deviceStats, (total, stat) => {
       total += stat.total;
       return total;
     }, 0);
   },
 
   _getGeographicTotal() {
-    return _.reduce(this.state.geographicStats, (total, stat) => {
+    return reduce(this.state.geographicStats, (total, stat) => {
       total += stat.value;
       return total;
     }, 0);
   },
 
-  _renderCountryTable() {
-    const sortedCountries = _.sortByOrder(this.state.geographicStats, ['value'], ['desc'], _.values);
-
-    return (
-      <div className="geographic-chart__country-table">
-        <div className="geographic-chart__country-table__header row">
-          <div className="large-15 columns">
-            Location
-          </div>
-          <div className="large-9 columns">
-            Registered
-          </div>
-        </div>
-        {(
-        sortedCountries.slice(0, 10) || []).map((country) => {
-            return (
-              <div className="geographic-chart__country-table__body row" key={country.code}>
-                <div className="country large-15 columns">
-                  <CountryFlag code={country.code} />
-                  {country.name || EMPTY_CELL_PLACEHOLDER}
-                </div>
-                <div className="stats large-9 columns">{country.value || EMPTY_CELL_PLACEHOLDER}</div>
-              </div>
-            );
-          }
-        )}
-      </div>
-    )
-
-    return (
-      <table className="geographic-chart__country-table">
-        <tr>
-          <th>Location</th>
-          <th>Attempts</th>
-        </tr>
-        {(
-          sortedCountries.slice(0, 10) || []).map((country) => {
-            return (
-              <tr key={country.code}>
-                <td>
-                  <CountryFlag code={country.code} />
-                  {country.name || EMPTY_CELL_PLACEHOLDER}
-                </td>
-                <td>{country.value || EMPTY_CELL_PLACEHOLDER}</td>
-              </tr>
-            );
-          }
-        )}
-      </table>
-    );
-  },
+  /*
+    WLP-595
+    Disable Country Table field as SDK does not support country data at this moment
+    and the capability settings for features are pending implementation
+    */
+  // _renderCountryTable() {
+  //   const sortedCountries = sortByOrder(this.state.geographicStats, ['value'], ['desc'], values);
+  //
+  //   return (
+  //     <div className="geographic-chart__country-table">
+  //       <div className="geographic-chart__country-table__header row">
+  //         <div className="large-15 columns">
+  //           Location
+  //         </div>
+  //         <div className="large-9 columns">
+  //           Registered
+  //         </div>
+  //       </div>
+  //       {(
+  //       sortedCountries.slice(0, 10) || []).map((country) => {
+  //         return (
+  //           <div className="geographic-chart__country-table__body row" key={country.code}>
+  //             <div className="country large-15 columns">
+  //               <CountryFlag code={country.code} />
+  //               {country.name || EMPTY_CELL_PLACEHOLDER}
+  //             </div>
+  //             <div className="stats large-9 columns">{country.value || EMPTY_CELL_PLACEHOLDER}</div>
+  //           </div>
+  //         );
+  //       })}
+  //     </div>
+  //   );
+  //
+  //   return (
+  //     <table className="geographic-chart__country-table">
+  //       <tr>
+  //         <th>Location</th>
+  //         <th>Attempts</th>
+  //       </tr>
+  //       {(
+  //         sortedCountries.slice(0, 10) || []).map((country) => {
+  //           return (
+  //             <tr key={country.code}>
+  //               <td>
+  //                 <CountryFlag code={country.code} />
+  //                 {country.name || EMPTY_CELL_PLACEHOLDER}
+  //               </td>
+  //               <td>{country.value || EMPTY_CELL_PLACEHOLDER}</td>
+  //             </tr>
+  //           );
+  //         }
+  //       )}
+  //     </table>
+  //   );
+  // },
 
   render() {
     const { role, identity } = this.context.router.getCurrentParams();
@@ -541,6 +538,12 @@ const EndUsersOverview = React.createClass({
                         selectedLine={this._getLineChartSelectedLine()} />
                     </div>
                   </div>
+                  {/*
+
+                    WLP-595
+                    Disable Country Table field as SDK does not support country data at this moment
+                    and the capability settings for features are pending implementation
+
                   <div className="chart-cell large-24 columns">
                     <div className="chart-cell__header row">
                       <div className="large-4 columns">
@@ -561,6 +564,7 @@ const EndUsersOverview = React.createClass({
                       </div>
                     </div>
                   </div>
+                  */}
                   <div className="chart-cell large-24 columns">
                     <div className="chart-cell__header row">
                       <div className="large-4 columns">
@@ -574,7 +578,8 @@ const EndUsersOverview = React.createClass({
                     <div className="chart-cell__chart row">
                       {
                         this.state.deviceStats && this.state.deviceStats.map((stat) => {
-                          let percentage = Math.round(stat.total/this._getDeviceTotal() * 100);
+                          const percentage = Math.round(stat.total / this._getDeviceTotal() * 100);
+
                           return (
                             <div className="large-12 columns left">
                               <PercentageChart
@@ -595,7 +600,7 @@ const EndUsersOverview = React.createClass({
         </div>
       </div>
     );
-  }
+  },
 });
 
 export default EndUsersOverview;
