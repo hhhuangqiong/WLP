@@ -485,18 +485,17 @@ export default React.createClass({
     // the lines are ready
     // TODO: add the line removal logic
     if (this.props.lines) {
-      this.props.lines.forEach((lineOpts) => {
+      this.props.lines.forEach((lineOpts, lineIndex) => {
         const selected = this.props.selectedLine && lineOpts.name === this.props.selectedLine;
 
         const existingLine = _.find(this.chart.series, series => series.name === lineOpts.name);
 
-        // update the line if it exists
+        // remove the line if it exists
         if (existingLine) {
-          (selected ? this.selectLine : this.unselectLine).call(this, existingLine);
-          return;
+          this.removeSeries(existingLine);
         }
 
-        // or add a new line if it does not
+        // and add the lines with updated options
         lineOpts.selected = lineOpts.selected || selected;
         this.addSeries(lineOpts);
       });
