@@ -1,12 +1,13 @@
 import _ from 'lodash';
 import moment from 'moment';
-import {concurrent} from 'contra';
+import { concurrent } from 'contra';
 import classNames from 'classnames';
-
 import React from 'react';
 import FluxibleMixin from 'fluxible/addons/FluxibleMixin';
-import {Link} from 'react-router';
-import DatePicker from 'react-datepicker';
+import { Link } from 'react-router';
+
+import * as FilterBar from '../../../main/components/FilterBar';
+import DatePicker from '../../../main/components/DatePicker';
 
 import AuthMixin from '../../../utils/AuthMixin';
 import fetchCalls from '../actions/fetchCalls';
@@ -21,12 +22,16 @@ import CallsExportForm from './CallsExportForm';
 
 import config from '../../../config';
 
-const debug = require('debug')('app:components/Calls');
+const CALL_TYPE = {
+  ALL: '',
+  ONNET: 'ONNET',
+  OFFNET: 'OFFNET',
+};
 
-var Calls = React.createClass({
+const Calls = React.createClass({
   contextTypes: {
     router: React.PropTypes.func.isRequired,
-    executeAction: React.PropTypes.func.isRequired
+    executeAction: React.PropTypes.func.isRequired,
   },
 
   mixins: [FluxibleMixin, AuthMixin],
@@ -43,7 +48,7 @@ var Calls = React.createClass({
           size: config.PAGES.CALLS.PAGE_SIZE,
           // The page number, starting from 0, defaults to 0 if not specified.
           page: query.page || 0,
-          type: query.type || '',
+          type: query.type || CALL_TYPE.ALL,
           search: query.search || '',
           searchType: query.searchType || 'caller'
         })
@@ -51,42 +56,46 @@ var Calls = React.createClass({
     }
   },
 
-getStateFromStores: function() {
-    let store = this.getStore(CallsStore);
+  getStateFromStores() {
+    const store = this.getStore(CallsStore);
 
     return {
       calls: store.getCalls(),
       callsCount: store.getCallsCount(),
       page: store.getPageNumber(),
-      totalPages: store.getTotalPages()
+      totalPages: store.getTotalPages(),
     };
   },
 
-  getDefaultQuery: function() {
+  getDefaultQuery() {
     return {
       // The page number, starting from 0, defaults to 0 if not specified.
       page: 0,
       size: config.PAGES.CALLS.PAGE_SIZE,
       startDate: moment().subtract(2, 'day').startOf('day').format('L'),
       endDate: moment().endOf('day').format('L'),
-      type: '',
+      type: CALL_TYPE.ALL,
       search: '',
-      searchType: 'caller'
+      searchType: 'caller',
     };
   },
 
-  getInitialState: function () {
-    let query = _.merge(this.getDefaultQuery(), this.context.router.getCurrentQuery());
-    let queryAndStore = _.merge(this.getStateFromStores(), query);
+  getInitialState() {
+    const query = _.merge(this.getDefaultQuery(), this.context.router.getCurrentQuery());
+    const queryAndStore = _.merge(this.getStateFromStores(), query);
     return queryAndStore;
   },
 
-  onChange: function() {
-    let query = _.merge(this.getDefaultQuery(), this.context.router.getCurrentQuery());
+  componentDidMount() {
+    $(document).foundation('reveal', 'reflow');
+  },
+
+  onChange() {
+    const query = _.merge(this.getDefaultQuery(), this.context.router.getCurrentQuery());
     this.setState(_.merge(query, this.getStateFromStores()));
   },
 
-  getQueryFromState: function() {
+  getQueryFromState() {
     return {
       startDate: this.state.startDate && this.state.startDate.trim(),
       endDate: this.state.endDate && this.state.endDate.trim(),
@@ -119,60 +128,49 @@ getStateFromStores: function() {
       size: config.PAGES.CALLS.PAGE_SIZE,
       type: this.state.type,
       search: this.state.search,
-      searchType: this.state.searchType
+      searchType: this.state.searchType,
     });
   },
 
-  handleStartDateChange: function(momentDate) {
-    let date = moment(momentDate).format('L');
+  handleStartDateChange(momentDate) {
+    const date = moment(momentDate).format('L');
     this.handleQueryChange({ startDate: date, page: 0 });
   },
 
-  handleEndDateChange: function(momentDate) {
-    let date = moment(momentDate).format('L');
+  handleEndDateChange(momentDate) {
+    const date = moment(momentDate).format('L');
     this.handleQueryChange({ endDate: date, page: 0 });
   },
 
-  handleOnnetClick: function(e) {
-    e.preventDefault();
+  handleAllTypeClick() {
+    this.handleQueryChange({ type: CALL_TYPE.ALL });
+  },
 
+  handleOnnetClick() {
     let type = null;
-
-    if (this.state.type !== 'ONNET') {
-      type = 'ONNET'
-    }
-
-    this.handleQueryChange({ type: type });
+    if (this.state.type !== CALL_TYPE.ONNET) type = CALL_TYPE.ONNET;
+    this.handleQueryChange({ type });
   },
 
-  handleOffnetClick: function(e) {
-    e.preventDefault();
-
+  handleOffnetClick() {
     let type = null;
-
-    if (this.state.type !== 'OFFNET') {
-      type = 'OFFNET'
-    }
-
-    this.handleQueryChange({ type: type });
+    if (this.state.type !== CALL_TYPE.OFFNET) type = CALL_TYPE.OFFNET;
+    this.handleQueryChange({ type });
   },
 
-  handleUsernameChange: function(e) {
-    this.setState({
-      search: e.target.value
-    });
+  handleUsernameChange(e) {
+    this.setState({ search: e.target.value });
   },
 
-  handleSearchSubmit: function(e) {
-    // on enter pressed
+  handleSearchSubmit(e) {
     if (e.which == 13) {
       e.preventDefault();
       this.handleQueryChange();
     }
   },
 
-  handleSearchTypeChange: function(e) {
-    let searchType = e.target.value;
+  handleSearchTypeChange(e) {
+    const searchType = e.target.value;
     this.setState({ searchType });
 
     // only submit change if search input isn't empty
@@ -181,111 +179,80 @@ getStateFromStores: function() {
     }
   },
 
-  _handleStartDateClick: function() {
-    this.refs.startDatePicker.handleFocus();
+  _handleStartDateClick() {
+    this.refs.startDatePicker._handleFocus();
   },
 
-  _handleEndDateClick: function() {
-    this.refs.endDatePicker.handleFocus();
+  _handleEndDateClick() {
+    this.refs.endDatePicker._handleFocus();
   },
 
-  componentDidMount : function () {
-    $(document).foundation('reveal', 'reflow');
-  },
-
-  render: function() {
-    let params = this.context.router.getCurrentParams();
-    let searchTypes = [{name:'Caller', value: 'caller'},{name:'Callee', value: 'callee'}];
-
-    /* Temporarily disabled overview section for Calls
-    TODO: put it back into tab-bar
-     <li className="top-bar--inner tab--inverted__title">
-     <Link to="calls-overview" params={params}>Overview</Link>
-     </li>
-     */
+  render() {
+    const params = this.context.router.getCurrentParams();
+    const searchTypes = [{name: 'Caller', value: 'caller'}, {name: 'Callee', value: 'callee'}];
 
     return (
       <div className="row">
-        <nav className="top-bar top-bar--inner">
-          <div className="top-bar-section">
-            <ul className="left top-bar--inner tab--inverted">
-              <li className="top-bar--inner tab--inverted__title">
-                <Link to="calls-overview" params={params}>Overview</Link>
-              </li>
+        <FilterBar.Wrapper>
+          <FilterBar.NavigationItems>
+            <Link to="calls-overview" params={params}>Overview</Link>
+            <Link to="calls-details" params={params}>Details Report</Link>
+          </FilterBar.NavigationItems>
+          <FilterBar.LeftItems>
+            <a className={classNames({ active: this.state.type === CALL_TYPE.ALL })} onClick={this.handleAllTypeClick}>All</a>
+            <a className={classNames({ active: this.state.type === CALL_TYPE.ONNET })} onClick={this.handleOnnetClick}>On-net</a>
+            <a className={classNames({ active: this.state.type === CALL_TYPE.OFFNET })} onClick={this.handleOffnetClick}>Off-net</a>
+          </FilterBar.LeftItems>
+          <FilterBar.RightItems>
+            {/* TODO: Move filter control items into DropdownFilter according to new design */}
+            {/*<DropdownFilter />*/}
 
-              <li className="top-bar--inner tab--inverted__title">
-                <Link to="calls-details" params={params}>Details Report</Link>
-              </li>
-            </ul>
-
-            <ul className="left top-bar--inner">
-              <li className="top-bar--inner">
-                <div className="date-range-picker left">
-                  <i className="date-range-picker__icon icon-calendar left" />
-                  <div className="date-input-wrap left" onClick={this._handleStartDateClick}>
-                    <span className="left date-range-picker__date-span">{this.state.startDate}</span>
-                    <DatePicker
-                      ref="startDatePicker"
-                      key="start-date"
-                      dateFormat="MM/DD/YYYY"
-                      selected={moment(this.state.startDate, 'L')}
-                      maxDate={moment(this.state.endDate, 'L')}
-                      onChange={this.handleStartDateChange}
-                    />
-                  </div>
-                  <i className="date-range-picker__separator left">-</i>
-                  <div className="date-input-wrap left" onClick={this._handleEndDateClick}>
-                    <span className="left date-range-picker__date-span">{this.state.endDate}</span>
-                    <DatePicker
-                      ref="endDatePicker"
-                      key="end-date"
-                      dateFormat="MM/DD/YYYY"
-                      selected={moment(this.state.endDate, 'L')}
-                      minDate={moment(this.state.startDate, 'L')}
-                      maxDate={moment()}
-                      onChange={this.handleEndDateChange}
-                    />
-                  </div>
-                </div>
-              </li>
-            </ul>
-
-            <div className="call-type-filter large-3 columns left top-bar-section">
-              <ul className="button-group round">
-                <li>
-                  <a className={classNames('button', { active: this.state.type === 'ONNET' })} onClick={this.handleOnnetClick}>Onnet</a>
-                </li>
-                <li>
-                  <a className={classNames('button', { active: this.state.type === 'OFFNET' })} onClick={this.handleOffnetClick}>Offnet</a>
-                </li>
-              </ul>
+            <div className="date-range-picker left">
+              <i className="date-range-picker__icon icon-calendar left" />
+              <div className="date-input-wrap left" onClick={this._handleStartDateClick}>
+                <span className="interactive-button left date-range-picker__date-span">{this.state.startDate}</span>
+                <DatePicker
+                  ref="startDatePicker"
+                  key="start-date"
+                  dateFormat="MM/DD/YYYY"
+                  selected={moment(this.state.startDate, 'L')}
+                  maxDate={moment(this.state.endDate, 'L')}
+                  onChange={this.handleStartDateChange}
+                />
+              </div>
+              <i className="date-range-picker__separator left">-</i>
+              <div className="date-input-wrap left" onClick={this._handleEndDateClick}>
+                <span className="interactive-button left date-range-picker__date-span">{this.state.endDate}</span>
+                <DatePicker
+                  ref="endDatePicker"
+                  key="end-date"
+                  dateFormat="MM/DD/YYYY"
+                  selected={moment(this.state.endDate, 'L')}
+                  minDate={moment(this.state.startDate, 'L')}
+                  maxDate={moment()}
+                  onChange={this.handleEndDateChange}
+                />
+              </div>
             </div>
 
-            <ul className="right top-bar--inner">
-              <li className="top-bar--inner">
-                <div className="call-search">
-                  <Searchbox
-                    value={this.state.search}
-                    searchTypes={searchTypes}
-                    placeHolder="Username/Mobile"
-                    onInputChangeHandler={this.handleUsernameChange}
-                    onSelectChangeHandler={this.handleSearchTypeChange}
-                    onKeyPressHandler={this.handleSearchSubmit} />
-                </div>
-              </li>
+            <Export exportType="Calls">
+              <CallsExportForm
+                startDate={this.state.startDate}
+                endDate={this.state.endDate}
+                netType={this.state.type}
+                />
+            </Export>
 
-              <li className="top-bar--inner">
-                <Export exportType="Calls">
-                  <CallsExportForm
-                    startDate={this.state.startDate}
-                    endDate={this.state.endDate}
-                    netType={this.state.type}
-                  />
-                </Export>
-              </li>
-            </ul>
-          </div>
-        </nav>
+            <Searchbox
+              value={this.state.search}
+              searchTypes={searchTypes}
+              placeHolder="Username/Mobile"
+              onInputChangeHandler={this.handleUsernameChange}
+              onSelectChangeHandler={this.handleSearchTypeChange}
+              onKeyPressHandler={this.handleSearchSubmit}
+            />
+          </FilterBar.RightItems>
+        </FilterBar.Wrapper>
 
         <div className="large-24 columns">
           <CallsTable
@@ -299,7 +266,7 @@ getStateFromStores: function() {
         </div>
       </div>
     );
-  }
+  },
 });
 
 export default Calls;

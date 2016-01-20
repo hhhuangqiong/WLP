@@ -1,4 +1,4 @@
-import React, { Component, PropTypes, If } from 'react';
+import React, { Component, PropTypes } from 'react';
 import classNames from 'classnames';
 
 export default class ColorRadioButton extends Component {

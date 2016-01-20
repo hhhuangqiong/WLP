@@ -1,17 +1,19 @@
 import React, { PropTypes } from 'react';
 import classNames from 'classnames';
 
-var SearchBox = React.createClass({
+const SearchBox = React.createClass({
   propTypes: {
     value: PropTypes.string,
     placeHolder: PropTypes.string,
     searchInputName: PropTypes.string,
     searchTypeInputName: PropTypes.string,
+    searchTypes: PropTypes.string,
     onInputChangeHandler: PropTypes.func,
-    onKeyPressHandler: PropTypes.func.isRequired
+    onKeyPressHandler: PropTypes.func.isRequired,
+    onSelectChangeHandler: PropTypes.func,
   },
 
-  getDefaultProps: function() {
+  getDefaultProps() {
     return {
       value: null,
       placeHolder: '',
@@ -20,12 +22,12 @@ var SearchBox = React.createClass({
       searchTypeInputName: 'searchType',
       onInputChangeHandler: null,
       onKeyPressHandler: null,
-      onSelectChangeHandler: null
-    }
+      onSelectChangeHandler: null,
+    };
   },
 
-  render: function() {
-    return(
+  render() {
+    return (
       <div>
         <If condition={this.props.searchTypes}>
           <select className={classNames('top-bar-section__query-select', 'left')} name={this.props.searchTypeInputName} onChange={this.props.onSelectChangeHandler}>
@@ -45,7 +47,7 @@ var SearchBox = React.createClass({
           />
       </div>
     );
-  }
+  },
 });
 
 export default SearchBox;

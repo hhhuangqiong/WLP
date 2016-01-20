@@ -1,4 +1,23 @@
 .data-table {
+  thead {
+    background-color: white;
+    cursor: default;
+
+    th {
+      font-weight: 500;
+      font-size: rem-calc(15);
+    }
+  }
+
+  tbody {
+    tr:nth-child(odd) {
+      background: #f1f1f1;
+    }
+  }
+
+  td {
+    padding: rem-calc(10) rem-calc(15);
+  }
 
   .remark {
     > i {
@@ -8,9 +27,9 @@
   }
 
   .status-label {
-      width: rem-calc(70);
-      text-transform: capitalize;
-      letter-spacing: 0.04em;
+    width: rem-calc(70);
+    text-transform: capitalize;
+    letter-spacing: 0.04em;
   }
 
   .pagination__button--inactive {

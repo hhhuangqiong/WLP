@@ -1,7 +1,7 @@
 import { first } from 'lodash';
 import moment from 'moment';
 import classNames from 'classnames';
-import React, { PropTypes, If } from 'react';
+import React, { PropTypes } from 'react';
 import Tooltip from 'rc-tooltip';
 
 import currencyData from '../../../data/bossCurrencies.json';

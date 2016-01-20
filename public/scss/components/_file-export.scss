@@ -65,20 +65,12 @@ $positioning: -150px;
 }
 
 .export-download-button {
+  @include button-control;
   width: auto;
-  height: rem-calc(28);
-  line-height: rem-calc(26);
-  margin: rem-calc(16) 0 0 0;
-  padding: 0 rem-calc(15);
-  border-radius: rem-calc(14);
-  border: 1px solid #bbb;
-  color: white;
-  cursor: pointer;
 
   .icon-download {
     color: inherit !important;
     line-height: inherit !important;
-    padding: 0 rem-calc(5);
   }
 }
 

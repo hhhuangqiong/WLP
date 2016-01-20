@@ -17,20 +17,21 @@
   	cursor: pointer;
 
     color: white;
-    background-color: transparent;
+    background-color: $brand-primary;
 
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
     text-align: center;
 
-    width: rem-calc(90);
+    width: rem-calc(140);
     height: rem-calc(28);
     line-height: rem-calc(26);
     padding: 0 rem-calc(6);
 
-    border-radius: rem-calc(14);
-    border: 1px solid #bbb;
+    border: none;
+    border-radius: rem-calc(8);
+    box-shadow: 1px 1px 0 darkred;
 
   	transition: all .3s;
   }
@@ -40,11 +41,9 @@
   }
 
   input[type=search]:focus {
-  	border-color: #66CC75;
-
   	box-shadow: 0 0 5px rgba(109,207,246,.5);
 
-    width: rem-calc(180);
+    width: rem-calc(240);
 
     color: #000;
     background-color: #fff;
@@ -65,8 +64,8 @@
   	-moz-osx-font-smoothing: grayscale;
 
     content: "\e632";
-    color: #ccc;
+    color: #fff;
 
-    margin-right: rem-calc(4);
+    margin-right: rem-calc(15);
   }
 }

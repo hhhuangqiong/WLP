@@ -1,14 +1,14 @@
-import _ from 'lodash';
 import React, { PropTypes, Component } from 'react';
 import DropdownContent from './DropdownContent';
 import DropdownTrigger from './DropdownTrigger';
 
 export default class Dropdown extends Component {
-  static Content = DropdownContent;
-  static Trigger = DropdownTrigger;
+  static propTypes = {
+    children: PropTypes.element.isRequired,
+  };
 
   render() {
-    let children = this.props.children;
+    const children = this.props.children;
 
     return (
       <div className="dropdown-wrapper">
@@ -16,4 +16,7 @@ export default class Dropdown extends Component {
       </div>
     );
   }
+
+  static Trigger = DropdownTrigger;
+  static Content = DropdownContent;
 }

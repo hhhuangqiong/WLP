@@ -415,9 +415,9 @@ var CallsOverview = React.createClass({
             <Link to="calls-details" params={{ role, identity }}>Details Report</Link>
           </FilterBar.NavigationItems>
           <FilterBar.LeftItems>
-            <a className={classNames({ active: this.state.type === CALL_TYPE.ALL })} onClick={ _.bindKey(this, 'changeCallType', CALL_TYPE.ALL) }>All Call Type</a>
-            <a className={classNames({ active: this.state.type === CALL_TYPE.ONNET })} onClick={ _.bindKey(this, 'changeCallType', CALL_TYPE.ONNET) }>On-net Call</a>
-            <a className={classNames({ active: this.state.type === CALL_TYPE.OFFNET })} onClick={ _.bindKey(this, 'changeCallType', CALL_TYPE.OFFNET) }>Off-net Call</a>
+            <a className={classNames({ active: this.state.type === CALL_TYPE.ALL })} onClick={ _.bindKey(this, 'changeCallType', CALL_TYPE.ALL) }>All</a>
+            <a className={classNames({ active: this.state.type === CALL_TYPE.ONNET })} onClick={ _.bindKey(this, 'changeCallType', CALL_TYPE.ONNET) }>On-net</a>
+            <a className={classNames({ active: this.state.type === CALL_TYPE.OFFNET })} onClick={ _.bindKey(this, 'changeCallType', CALL_TYPE.OFFNET) }>Off-net</a>
           </FilterBar.LeftItems>
           <FilterBar.RightItems>
             {/* Need not to provide selection when there is only one single selected options to avoid confusion */}

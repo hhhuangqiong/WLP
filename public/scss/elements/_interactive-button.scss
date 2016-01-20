@@ -1,0 +1,14 @@
+.interactive-button {
+  vertical-align: top;
+  cursor: pointer;
+
+  &:hover {
+    padding-top: rem-calc(1);
+    padding-bottom: rem-calc(1);
+  }
+
+  &:active {
+    padding-top: rem-calc(2);
+    padding-bottom: rem-calc(2);
+  }
+}
