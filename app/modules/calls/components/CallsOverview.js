@@ -22,6 +22,7 @@ import ApplicationStore from '../../../main/stores/ApplicationStore';
 
 import fetchCallsStatsMonthly from '../actions/fetchCallsStatsMonthly';
 import fetchCallsStatsTotal from '../actions/fetchCallsStatsTotal';
+import clearCallsStats from '../actions/clearCallsStats';
 
 const defaultQueryMonth = moment().subtract(1, 'month');
 
@@ -104,6 +105,13 @@ var CallsOverview = React.createClass({
   componentDidMount() {
     this._getMonthlyStats(CALL_TYPE.ALL, defaultQueryMonth.get('month'), defaultQueryMonth.get('year'));
     this._getLastXDaysStats(CALL_TYPE.ALL, TIME_FRAMES[0]);
+  },
+
+  componentWillUnmount() {
+    // I am unsure about this in long term
+    // but this is essential for now to make the
+    // highcharts work properly.
+    this.context.executeAction(clearCallsStats);
   },
 
   changeCallType(type) {
