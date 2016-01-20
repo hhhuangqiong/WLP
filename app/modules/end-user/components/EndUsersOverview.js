@@ -506,16 +506,9 @@ const EndUsersOverview = React.createClass({
                 <div className="inner-wrap">
                   <div className="chart-cell large-24 columns">
                     <div className="chart-cell__header row">
-                    {/*
-                      // DESIGN IS NOT FINALISED
                       <div className="large-4 columns">
                         <div className="chart-cell__header__title">Registration</div>
                       </div>
-                      <div className="large-4 columns end verification-overview__attempt__datetime">
-                        <div className="verification-overview__value">2219</div>
-                        <div className="verification-overview__title">New registered User</div>
-                      </div>
-                    */}
                     </div>
                     <div className="chart-cell__controls row">
                       <div className="chart-cell__line-toggle large-24 columns">
@@ -551,7 +544,7 @@ const EndUsersOverview = React.createClass({
                   <div className="chart-cell large-24 columns">
                     <div className="chart-cell__header row">
                       <div className="large-4 columns">
-                        <div className="chart-cell__header__title">Registration by Country</div>
+                        <div className="chart-cell__header__title text-center">Registration by Country</div>
                       </div>
                       <div className="large-4 columns end chart-cell__overview">
                         <div className="chart-cell__overview__value">{ this._getGeographicTotal() }</div>
@@ -571,7 +564,7 @@ const EndUsersOverview = React.createClass({
                   <div className="chart-cell large-24 columns">
                     <div className="chart-cell__header row">
                       <div className="large-4 columns">
-                        <div className="chart-cell__header__title">Device</div>
+                        <div className="chart-cell__header__title text-center">Device</div>
                       </div>
                       <div className="large-3 columns end chart-cell__overview">
                         <div className="chart-cell__overview__value">{ this._getDeviceTotal() }</div>
