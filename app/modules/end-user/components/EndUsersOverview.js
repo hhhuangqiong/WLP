@@ -33,6 +33,8 @@ const YEARS_BACKWARD = 5;
 const TIME_FRAMES = ['7 days', '30 days', '60 days', '90 days'];
 const gChartContainerId = 'registrationByCountry';
 
+const LAST_UPDATE_TIME_FORMAT = 'MMM DD, YYYY H mm';
+
 const defaultQueryMonth = moment().subtract(1, 'month');
 
 const PLATFORM_NAME = {
@@ -430,7 +432,7 @@ const EndUsersOverview = React.createClass({
         </FilterBar.Wrapper>
 
         <div className="inner-wrap end-users-overview">
-          <div className="large-7 columns">
+          <div className="large-24 columns">
             <Panel.Wrapper>
               <Panel.Header customClass="narrow" title="Total User" />
               <Panel.Body customClass="narrow no-padding">
@@ -444,9 +446,13 @@ const EndUsersOverview = React.createClass({
             </Panel.Wrapper>
           </div>
 
-          <div className="large-17 columns">
+          <div className="large-24 columns">
             <Panel.Wrapper>
-              <Panel.Header customClass="narrow" title="Monthly Statistics">
+              <Panel.Header
+                customClass="narrow"
+                title="Monthly Statistics"
+                caption={this.getLastUpdate({ year: this.state.selectedYear, month: this.state.selectedMonth })}
+              >
                 <div className="input-group picker month right">
                   <Select
                     name="month-picker"
@@ -600,6 +606,11 @@ const EndUsersOverview = React.createClass({
         </div>
       </div>
     );
+  },
+
+  getLastUpdate(date) {
+    const lastUpdate = moment(date).endOf('month').format(LAST_UPDATE_TIME_FORMAT);
+    return `Data updated till: ${lastUpdate}`;
   },
 });
 
