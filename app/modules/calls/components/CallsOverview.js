@@ -486,8 +486,6 @@ var CallsOverview = React.createClass({
             <Panel.Body customClass="narrow no-padding">
               <div className="inner-wrap">
                 <div className="chart-cell large-24 columns">
-                  <div className="chart-cell__header row">
-                  </div>
                   <div className="chart-cell__chart row">
                     <DataGrid.Wrapper>
                       <DataGrid.Cell
@@ -516,12 +514,13 @@ var CallsOverview = React.createClass({
               <div className="inner-wrap">
                 <div className="chart-cell large-24 columns">
                   <div className="chart-cell__header row">
-                    <div className="large-4 columns">
-                      <div className="chart-cell__header__title">Total Calls</div>
-                    </div>
-                    <div className="large-3 columns end chart-cell__overview">
-                      <div className="chart-cell__overview__value">{ this._getTotalCallAttempt() }</div>
-                      <div className="chart-cell__overview__unit">Attempts</div>
+                    <div className="large-24 columns">
+                      <div className="chart-cell__header__title">
+                        Call Success Analytic - ASR (%)
+                      </div>
+                      <div className="chart-cell__header__subtitle">
+                        Answer Seizure Ratio
+                      </div>
                     </div>
                   </div>
                   <div className="line-chart chart-cell__chart row">
@@ -547,12 +546,13 @@ var CallsOverview = React.createClass({
               <div className="inner-wrap">
                 <div className="chart-cell large-24 columns">
                   <div className="chart-cell__header row">
-                    <div className="large-4 columns">
-                      <div className="chart-cell__header__title">Call Duration</div>
-                    </div>
-                    <div className="large-3 columns end chart-cell__overview">
-                      <div className="chart-cell__overview__value">{ this._getTotalCallDuration() } mins</div>
-                      <div className="chart-cell__overview__unit">Total Call Duration</div>
+                    <div className="large-24 columns">
+                      <div className="chart-cell__header__title">
+                        Call Duration Analytic - ACD
+                      </div>
+                      <div className="chart-cell__header__subtitle">
+                        Average Call Duration
+                      </div>
                     </div>
                   </div>
                   <div className="line-chart chart-cell__chart row">
