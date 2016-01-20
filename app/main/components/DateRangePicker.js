@@ -17,7 +17,7 @@ const DateRangePicker = React.createClass({
       <div className="date-range-picker left">
         <i className="date-range-picker__icon icon-calendar left" />
         <div className="date-input-wrap left" onClick={this.handleStartDateClick}>
-          <div className="interactive-button">{this.props.startDate}</div>
+          <span className="interactive-button left date-range-picker__date-span">{this.props.startDate}</span>
           <DatePicker
             ref="startDatePicker"
             key="start-date"
@@ -29,7 +29,7 @@ const DateRangePicker = React.createClass({
         </div>
         <i className="date-range-picker__separator left">-</i>
         <div className="date-input-wrap left" onClick={this.handleEndDateClick}>
-          <span className="interactive-button">{this.props.endDate}</span>
+          <span className="interactive-button left date-range-picker__date-span">{this.props.endDate}</span>
           <DatePicker
             ref="endDatePicker"
             key="end-date"
