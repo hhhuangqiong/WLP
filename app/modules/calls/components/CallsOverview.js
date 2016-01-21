@@ -31,7 +31,7 @@ const defaultQueryMonth = moment().subtract(1, 'month');
 const STATS_TYPE = {
   TOTAL_ATTEMPT: 'Total Calls Attempt',
   SUCCESSFUL_ATTEMPT: 'Total Success Calls',
-  SUCCESSFUL_RATE: 'Average Success Rate',
+  SUCCESSFUL_RATE: 'ASR (%)',
   TOTAL_DURATION: 'Total Call Duration',
   AVERAGE_DURATION: 'Average Call Duration'
 };
@@ -183,7 +183,7 @@ var CallsOverview = React.createClass({
                 <div>${moment(x).local().format(get(TOOLTIP_TIME_FORMAT, `${timescale}`))}</div>
                 <div>Total Call Attempt: ${totalCallAttempt}</div>
                 <div>Total Success Call: ${totalSuccessCall}</div>
-                <div>Average Success Rate: ${Math.round(averageSuccessRate)}%</div>
+                <div>ASR (%): ${Math.round(averageSuccessRate)}%</div>
               </div>
             `;
     };
@@ -191,7 +191,7 @@ var CallsOverview = React.createClass({
     return !isEmpty(this.state.totalAttemptStats) && !isEmpty(this.state.successAttemptStats) && !isEmpty(this.state.successRateStats) ? [
       {
         name: STATS_TYPE.SUCCESSFUL_RATE,
-        legendName: 'Average Success Rate',
+        legendName: 'ASR (%)',
         legendIndex: 2,
         type: 'line',
         data: successRateData,
@@ -239,7 +239,7 @@ var CallsOverview = React.createClass({
                 <div>${moment(x).local().format(get(TOOLTIP_TIME_FORMAT, `${timescale}`))}</div>
                 <div>Total Call Attempt: ${totalDuration}</div>
                 <div>Total Success Call: ${averageDuration}</div>
-                <div>Average Success Rate: ${Math.round(successAttempt)}%</div>
+                <div>ASR (%): ${Math.round(successAttempt)}%</div>
               </div>
             `;
     };
