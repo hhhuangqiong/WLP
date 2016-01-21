@@ -430,7 +430,11 @@ const EndUsersOverview = React.createClass({
         <div className="inner-wrap end-users-overview">
           <div className="large-24 columns">
             <Panel.Wrapper>
-              <Panel.Header customClass="narrow" title="Total User" />
+              <Panel.Header
+                customClass="narrow"
+                title="Total User"
+                caption={`Data updated till: ${moment().subtract(1, 'day').endOf('day').format(LAST_UPDATE_TIME_FORMAT)}`}
+              />
               <Panel.Body customClass="narrow no-padding">
                 <DataGrid.Wrapper>
                   <DataGrid.Cell

@@ -22,7 +22,7 @@
     }
   }
   .header {
-    > .title {
+    .title {
       text-transform: uppercase;
       padding: 0;
       margin: 0;
@@ -59,7 +59,7 @@
   .header.narrow {
     padding: rem-calc(18);
 
-    > .title {
+    .title {
       text-transform: capitalize;
       font-weight: 400;
     }
