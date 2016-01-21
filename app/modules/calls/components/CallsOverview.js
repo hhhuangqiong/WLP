@@ -518,19 +518,19 @@ var CallsOverview = React.createClass({
                   <div className="chart-cell__chart row">
                     <DataGrid.Wrapper>
                       <DataGrid.Cell
-                        title="Total calls attempt"
+                        title="Total Call Attempts"
                         data={this._getTotalCallAttempt()} />
                       <DataGrid.Cell
-                        title="Average succesful rate"
+                        title="ASR (%)"
                         data={this._getAverageSuccessfulRate()}
                         decimalPlace={2}
                         unit="%" />
                       <DataGrid.Cell
-                        title="Total call duration"
+                        title="Total Call Duration"
                         data={this._getTotalCallDuration()}
-                        unit="mins" />
+                        unit="minutes" />
                       <DataGrid.Cell
-                        title="Average call duration"
+                        title="Average Call Duration"
                         data={this._getAverageCallDuration()}
                         decimalPlace={2}
                         unit="seconds" />
