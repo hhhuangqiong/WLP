@@ -502,7 +502,7 @@ export default React.createClass({
     } else {
       // TODO: add the individual line removal logic
       // remove all lines except the dummy (series[0])
-      _.rest(this.chart.series).forEach(this.removeLine);
+      _.rest(this.chart.series).forEach(this.removeSeries);
     }
 
     // the points are ready
