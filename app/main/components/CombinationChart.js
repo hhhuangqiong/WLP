@@ -233,8 +233,8 @@ export default React.createClass({
       xAxis: {
         type: 'datetime',
         dateTimeLabelFormats: {
-          day: '%T',
-          hour: '%H:%M',
+          day: '%d %b',
+          hour: '%H:%M'
         },
         title: {
           text: xAxis.title,
