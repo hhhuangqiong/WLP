@@ -508,11 +508,7 @@ const EndUsersOverview = React.createClass({
               <Panel.Body customClass="narrow no-padding">
                 <div className="inner-wrap">
                   <div className="chart-cell large-24 columns">
-                    <div className="chart-cell__header row">
-                      <div className="large-4 columns">
-                        <div className="chart-cell__header__title">Registration</div>
-                      </div>
-                    </div>
+                    <div className="chart-cell__header row"></div>
                     <div className="chart-cell__controls row">
                       <div className="chart-cell__line-toggle large-24 columns">
                         <ul className="inner-wrap">
