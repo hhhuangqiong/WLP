@@ -196,15 +196,11 @@ const EndUsersOverview = React.createClass({
 
   _getDeviceStats(lastXDays) {
     const { identity } = this.context.router.getCurrentParams();
-    const timeRange = lastXDays || this.state.selectedLastXDays;
-
-    const { from, to, timescale } = parseTimeRange(timeRange);
 
     this.context.executeAction(fetchDeviceStats, {
-      fromTime: from,
-      toTime: to,
-      carrierId: identity,
-      timescale,
+      fromTime: moment().startOf('day').format('x'),
+      toTime: moment().endOf('day').format('x'),
+      carrierId: identity
     });
   },
 
