@@ -2,7 +2,7 @@ import React from 'react';
 import { Link } from 'react-router';
 import Select from 'react-select';
 import moment from 'moment';
-import { merge, max, clone, reduce, isEmpty, sortByOrder, values } from 'lodash';
+import { merge, max, clone, reduce, isEmpty } from 'lodash';
 import getMapConfig from '../utils/getMapConfig';
 import MAP_DATA from '../constants/mapData';
 
@@ -16,7 +16,7 @@ import LineChart from '../../../main/components/LineChart';
 import TimeFramePicker, { parseTimeRange } from '../../../main/components/TimeFramePicker';
 import * as DataGrid from '../../../main/statistics/components/DataGrid';
 import PercentageChart from '../../../main/components/PercentageChart';
-import CountryFlag from '../../../main/components/CountryFlag';
+import DateSelector from '../../../main/components/DateSelector';
 
 import EndUsersOverviewStore from '../stores/EndUsersOverviewStore';
 import EndUsersRegistrationStatsStore from '../stores/EndUsersRegistrationStatsStore';
@@ -29,7 +29,6 @@ import fetchRegistrationStats from '../actions/fetchEndUsersRegistrationStats';
 import fetchDeviceStats from '../actions/fetchDeviceStats';
 import fetchGeographicStats from '../actions/fetchGeographicStats';
 
-const YEARS_BACKWARD = 5;
 const TIME_FRAMES = ['7 days', '30 days', '60 days', '90 days'];
 const gChartContainerId = 'registrationByCountry';
 
@@ -140,202 +139,10 @@ const EndUsersOverview = React.createClass({
     this._getGeographicStats(time);
   },
 
-  _getStats() {
-    const { identity } = this.context.router.getCurrentParams();
-
-    this.context.executeAction(fetchEndUsersStatsTotal, {
-      fromTime: moment().startOf('day').format('x'),
-      toTime: moment().endOf('day').format('x'),
-      carrierId: identity,
-    });
-  },
-
-  _getMonthlyStats(month, year) {
-    const { identity } = this.context.router.getCurrentParams();
-
-    const selectedMonth = (month || month === 0) ? month : this.state.selectedMonth;
-    const selectedYear = year || this.state.selectedYear;
-
-    const queryTime = moment().month(selectedMonth).year(selectedYear);
-
-    this.context.executeAction(fetchEndUsersStatsMonthly, {
-      fromTime: queryTime.startOf('month').format('x'),
-      toTime: queryTime.endOf('month').format('x'),
-      carrierId: identity,
-      timeWindow: 'Month',
-    });
-  },
-
-  _getLastXDaysStats(lastXDays) {
-    const { identity } = this.context.router.getCurrentParams();
-    const timeRange = lastXDays || this.state.selectedLastXDays;
-
-    const { from, to, timescale } = parseTimeRange(timeRange);
-
-    this.context.executeAction(fetchRegistrationStats, {
-      fromTime: from,
-      toTime: to,
-      carrierId: identity,
-      timescale,
-    });
-  },
-
-  _getGeographicStats(lastXDays) {
-    const { identity } = this.context.router.getCurrentParams();
-    const timeRange = lastXDays || this.state.selectedLastXDays;
-
-    const { from, to, timescale } = parseTimeRange(timeRange);
-
-    this.context.executeAction(fetchGeographicStats, {
-      fromTime: from,
-      toTime: to,
-      carrierId: identity,
-      timescale,
-    });
-  },
-
-  _getDeviceStats(lastXDays) {
-    const { identity } = this.context.router.getCurrentParams();
-
-    this.context.executeAction(fetchDeviceStats, {
-      fromTime: moment().startOf('day').format('x'),
-      toTime: moment().endOf('day').format('x'),
-      carrierId: identity
-    });
-  },
-
   getChangeColor(value) {
     if (!value) return '';
 
     return (value > 0) ? 'positive' : 'negative';
-  },
-
-  monthlyStatsMonthChange(month) {
-    this.setState({ selectedMonth: month });
-    this._getMonthlyStats(month);
-  },
-
-  monthlyStatsYearChange(year) {
-    this.setState({ selectedYear: year });
-    this._getMonthlyStats(null, year);
-  },
-
-  toggleSummaryType(summaryType) {
-    this.setState({ selectedLine: summaryType });
-  },
-
-  _getAppIdSelectOptions() {
-    return reduce(this.state.appIds, (result, id) => {
-      const option = { value: id, label: id };
-      result.push(option);
-      return result;
-    }, []);
-  },
-
-  _getMonths() {
-    const monthArray = Array.apply(0, Array(12)).map((_, i) => i);
-
-    return reduce(monthArray, (result, n) => {
-      const option = { value: n, label: moment().month(n).format('MMMM') };
-      result.push(option);
-      return result;
-    }, []);
-  },
-
-  _getYears() {
-    const years = [];
-
-    for (let i = 0; i < YEARS_BACKWARD; i++) {
-      years.push({
-        value: (i > 0) ? moment().subtract(i, 'years').format('YYYY') : moment().format('YYYY'),
-        label: (i > 0) ? moment().subtract(i, 'years').format('YYYY') : moment().format('YYYY'),
-      });
-    }
-
-    return years;
-  },
-
-  _getTotalRegisteredUser() {
-    const { totalRegisteredUser } = this.state;
-    return totalRegisteredUser;
-  },
-
-  _getMonthlyActiveUserStats() {
-    const { thisMonthActive, lastMonthActive } = this.state;
-    const activeUserChange = thisMonthActive - lastMonthActive;
-
-    return {
-      total: thisMonthActive,
-      change: thisMonthActive - lastMonthActive,
-      percent: activeUserChange && lastMonthActive ? Math.round((activeUserChange / lastMonthActive) * 100) : '-',
-      direction: activeUserChange > 0 ? 'up' : 'down',
-    };
-  },
-
-  _getMonthlyRegisteredUserStats() {
-    const { thisMonthRegistered, lastMonthRegistered  } = this.state;
-    const registeredUserChange = thisMonthRegistered - lastMonthRegistered;
-
-    return {
-      total: thisMonthRegistered,
-      change: registeredUserChange,
-      percent: registeredUserChange && lastMonthRegistered ? Math.round((registeredUserChange / lastMonthRegistered) * 100) : '-',
-      direction: (registeredUserChange > 0) ? 'up' : 'down',
-    };
-  },
-
-  _getLineChartXAxis() {
-    const { from, quantity, timescale } = parseTimeRange(this.state.selectedLastXDays);
-
-    return {
-      start: from,
-      tickCount: parseInt(quantity, 10),
-      tickInterval: (timescale === 'day' ? 24 : 1) * 3600 * 1000,
-    };
-  },
-
-  _getLineChartData() {
-    const tooltipFormatter = (x, y) => {
-      return `
-              <div style="text-align: center">
-                <div>${moment(x).local().format(TOOLTIP_TIME_FORMAT)}</div>
-                <div>Success Attempts: ${y}</div>
-              </div>
-            `;
-    };
-
-    return !isEmpty(this.state.lastXDaysRegisteredUser) && !isEmpty(this.state.lastXDaysActiveUser) ? [
-      {
-        name: STATS_TYPE.REGISTERED_USER,
-        data: reduce(this.state.lastXDaysRegisteredUser, (result, stat) => { result.push(Math.round(stat.v)); return result; }, []),
-        color: '#FB3940',
-        tooltipFormatter: tooltipFormatter,
-      },
-      {
-        name: STATS_TYPE.ACTIVE_USER,
-        data: reduce(this.state.lastXDaysActiveUser, (result, stat) => { result.push(Math.round(stat.v)); return result; }, []),
-        color: '#21C031',
-        tooltipFormatter: tooltipFormatter,
-      },
-    ] : null;
-  },
-
-  _getLineChartSelectedLine() {
-    return this.state.selectedLine;
-  },
-
-  _getDeviceTotal() {
-    return reduce(this.state.deviceStats, (total, stat) => {
-      total += stat.total;
-      return total;
-    }, 0);
-  },
-
-  _getGeographicTotal() {
-    return reduce(this.state.geographicStats, (total, stat) => {
-      total += stat.value;
-      return total;
-    }, 0);
   },
 
   /*
@@ -393,6 +200,18 @@ const EndUsersOverview = React.createClass({
   //     </table>
   //   );
   // },
+
+  getMonthlyStatsDate() {
+    return moment({
+      month: this.state.selectedMonth,
+      year: this.state.selectedYear,
+    }).format('L');
+  },
+
+  getLastUpdate(date) {
+    const lastUpdate = moment(date).endOf('month').format(LAST_UPDATE_TIME_FORMAT);
+    return `Data updated till: ${lastUpdate}`;
+  },
 
   render() {
     const { role, identity } = this.context.router.getCurrentParams();
@@ -454,22 +273,12 @@ const EndUsersOverview = React.createClass({
                 caption={this.getLastUpdate({ year: this.state.selectedYear, month: this.state.selectedMonth })}
               >
                 <div className="input-group picker month right">
-                  <Select
-                    name="month-picker"
-                    className="end-users-overview__month-picker left"
-                    options={this._getMonths()}
-                    value={this.state.selectedMonth}
-                    clearable={false}
-                    searchable={false}
-                    onChange={this.monthlyStatsMonthChange} />
-                  <Select
-                    name="year-picker"
-                    className="end-users-overview__year-picker left"
-                    options={this._getYears()}
-                    value={this.state.selectedYear}
-                    clearable={false}
-                    searchable={false}
-                    onChange={this.monthlyStatsYearChange} />
+                  <DateSelector
+                    date={this.getMonthlyStatsDate()}
+                    minDate={moment().subtract(1, 'months').subtract(1, 'years').startOf('month').format('L')}
+                    maxDate={moment().subtract(1, 'months').endOf('month').format('L')}
+                    onChange={this.handleMonthlyStatsChange}
+                  />
                 </div>
               </Panel.Header>
               <Panel.Body customClass="narrow no-padding">
@@ -604,9 +413,186 @@ const EndUsersOverview = React.createClass({
     );
   },
 
-  getLastUpdate(date) {
-    const lastUpdate = moment(date).endOf('month').format(LAST_UPDATE_TIME_FORMAT);
-    return `Data updated till: ${lastUpdate}`;
+  handleMonthlyStatsChange(date) {
+    const momentDate = moment(date, 'L');
+    const selectedMonth = momentDate.month();
+    const selectedYear = momentDate.year();
+
+    this.setState({ selectedMonth, selectedYear });
+    this._getMonthlyStats(selectedMonth, selectedYear);
+  },
+
+  monthlyStatsMonthChange(month) {
+    this.setState({ selectedMonth: month });
+    this._getMonthlyStats(month);
+  },
+
+  monthlyStatsYearChange(year) {
+    this.setState({ selectedYear: year });
+    this._getMonthlyStats(null, year);
+  },
+
+  toggleSummaryType(summaryType) {
+    this.setState({ selectedLine: summaryType });
+  },
+
+  _getStats() {
+    const { identity } = this.context.router.getCurrentParams();
+
+    this.context.executeAction(fetchEndUsersStatsTotal, {
+      fromTime: moment().startOf('day').format('x'),
+      toTime: moment().endOf('day').format('x'),
+      carrierId: identity,
+    });
+  },
+
+  _getAppIdSelectOptions() {
+    return reduce(this.state.appIds, (result, id) => {
+      const option = { value: id, label: id };
+      result.push(option);
+      return result;
+    }, []);
+  },
+
+  _getTotalRegisteredUser() {
+    const { totalRegisteredUser } = this.state;
+    return totalRegisteredUser;
+  },
+
+  _getMonthlyActiveUserStats() {
+    const { thisMonthActive, lastMonthActive } = this.state;
+    const activeUserChange = thisMonthActive - lastMonthActive;
+
+    return {
+      total: thisMonthActive,
+      change: thisMonthActive - lastMonthActive,
+      percent: activeUserChange && lastMonthActive ? Math.round((activeUserChange / lastMonthActive) * 100) : '-',
+      direction: activeUserChange > 0 ? 'up' : 'down',
+    };
+  },
+
+  _getMonthlyRegisteredUserStats() {
+    const { thisMonthRegistered, lastMonthRegistered  } = this.state;
+    const registeredUserChange = thisMonthRegistered - lastMonthRegistered;
+
+    return {
+      total: thisMonthRegistered,
+      change: registeredUserChange,
+      percent: registeredUserChange && lastMonthRegistered ? Math.round((registeredUserChange / lastMonthRegistered) * 100) : '-',
+      direction: (registeredUserChange > 0) ? 'up' : 'down',
+    };
+  },
+
+  _getLineChartXAxis() {
+    const { from, quantity, timescale } = parseTimeRange(this.state.selectedLastXDays);
+
+    return {
+      start: from,
+      tickCount: parseInt(quantity, 10),
+      tickInterval: (timescale === 'day' ? 24 : 1) * 3600 * 1000,
+    };
+  },
+
+  _getLineChartData() {
+    const tooltipFormatter = (x, y) => {
+      return `
+              <div style="text-align: center">
+                <div>${moment(x).local().format(TOOLTIP_TIME_FORMAT)}</div>
+                <div>Success Attempts: ${y}</div>
+              </div>
+            `;
+    };
+
+    return !isEmpty(this.state.lastXDaysRegisteredUser) && !isEmpty(this.state.lastXDaysActiveUser) ? [
+      {
+        name: STATS_TYPE.REGISTERED_USER,
+        data: reduce(this.state.lastXDaysRegisteredUser, (result, stat) => { result.push(Math.round(stat.v)); return result; }, []),
+        color: '#FB3940',
+        tooltipFormatter: tooltipFormatter,
+      },
+      {
+        name: STATS_TYPE.ACTIVE_USER,
+        data: reduce(this.state.lastXDaysActiveUser, (result, stat) => { result.push(Math.round(stat.v)); return result; }, []),
+        color: '#21C031',
+        tooltipFormatter: tooltipFormatter,
+      },
+    ] : null;
+  },
+
+  _getLineChartSelectedLine() {
+    return this.state.selectedLine;
+  },
+
+  _getDeviceTotal() {
+    return reduce(this.state.deviceStats, (total, stat) => {
+      total += stat.total;
+      return total;
+    }, 0);
+  },
+
+  _getGeographicTotal() {
+    return reduce(this.state.geographicStats, (total, stat) => {
+      total += stat.value;
+      return total;
+    }, 0);
+  },
+
+  _getMonthlyStats(month, year) {
+    const { identity } = this.context.router.getCurrentParams();
+
+    const selectedMonth = (month || month === 0) ? month : this.state.selectedMonth;
+    const selectedYear = year || this.state.selectedYear;
+
+    const queryTime = moment().month(selectedMonth).year(selectedYear);
+
+    this.context.executeAction(fetchEndUsersStatsMonthly, {
+      fromTime: queryTime.startOf('month').format('x'),
+      toTime: queryTime.endOf('month').format('x'),
+      carrierId: identity,
+      timeWindow: 'Month',
+    });
+  },
+
+  _getLastXDaysStats(lastXDays) {
+    const { identity } = this.context.router.getCurrentParams();
+    const timeRange = lastXDays || this.state.selectedLastXDays;
+
+    const { from, to, timescale } = parseTimeRange(timeRange);
+
+    this.context.executeAction(fetchRegistrationStats, {
+      fromTime: from,
+      toTime: to,
+      carrierId: identity,
+      timescale,
+    });
+  },
+
+  _getGeographicStats(lastXDays) {
+    const { identity } = this.context.router.getCurrentParams();
+    const timeRange = lastXDays || this.state.selectedLastXDays;
+
+    const { from, to, timescale } = parseTimeRange(timeRange);
+
+    this.context.executeAction(fetchGeographicStats, {
+      fromTime: from,
+      toTime: to,
+      carrierId: identity,
+      timescale,
+    });
+  },
+
+  _getDeviceStats(lastXDays) {
+    const { identity } = this.context.router.getCurrentParams();
+    const timeRange = lastXDays || this.state.selectedLastXDays;
+
+    const { from, to, timescale } = parseTimeRange(timeRange);
+
+    this.context.executeAction(fetchDeviceStats, {
+      fromTime: from,
+      toTime: to,
+      carrierId: identity,
+      timescale,
+    });
   },
 });
 

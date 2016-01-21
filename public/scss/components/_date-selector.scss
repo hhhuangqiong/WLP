@@ -1,18 +1,30 @@
 $light-gray: #e3e3e3;
 
 .date-selector {
+  cursor: default;
+
+  // a hack of border-radius using collapse border
+  display: table;
   border-radius: rem-calc($global-radius);
   border-collapse: collapse;
-  display: table;
-  cursor: default;
+  border-style: hidden;
+  box-shadow: 0 0 0 1px $light-gray;
 
   &__item {
     display: table-cell;
-    border: 1px solid $light-gray;
+    padding: 0 rem-calc(5);
+
+    &:first-child {
+      padding-left: rem-calc(10);
+    }
+
+    &:last-child {
+      padding-right: rem-calc(10);
+    }
   }
 }
 
-.date-selector-grid {
+.date-selector-label {
   display: table;
   margin: rem-calc(6);
 
@@ -62,7 +74,8 @@ $light-gray: #e3e3e3;
 
     &.arrow {
       cursor: pointer;
-      color: #666666;
+      color: #999999;
+      font-size: rem-calc(18);
 
       &.disabled {
         cursor: default;
@@ -74,7 +87,7 @@ $light-gray: #e3e3e3;
       }
 
       &:hover {
-        color: #999999;
+        color: #cccccc;
       }
 
       &:active {
