@@ -390,7 +390,7 @@ var CallsOverview = React.createClass({
       return total;
     }, 0);
 
-    return Math.round(totalDurationInMs / 1000 / 60);
+    return totalDurationInMs / 1000 / 60;
   },
 
   /**
