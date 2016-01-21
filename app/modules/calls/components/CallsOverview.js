@@ -25,6 +25,7 @@ import fetchCallsStatsMonthly from '../actions/fetchCallsStatsMonthly';
 import fetchCallsStatsTotal from '../actions/fetchCallsStatsTotal';
 import clearCallsStats from '../actions/clearCallsStats';
 
+const LAST_UPDATE_TIME_FORMAT = 'MMM DD, YYYY H:mm';
 const defaultQueryMonth = moment().subtract(1, 'month');
 
 const STATS_TYPE = {
@@ -406,6 +407,18 @@ var CallsOverview = React.createClass({
     return (totalDuration/totalAttempt) * 60;
   },
 
+  _getLastUpdate(date) {
+    const lastUpdate = moment(date).endOf('month').format(LAST_UPDATE_TIME_FORMAT);
+    return `Data updated till: ${lastUpdate}`;
+  },
+
+  _getLastUpdateFromTimeFrame() {
+    let timeframe = this.state.selectedLastXDays;
+    const { timescale } = parseTimeRange(timeframe);
+    let lastUpdate = moment().endOf(timescale).format(LAST_UPDATE_TIME_FORMAT);
+    return `Data updated till: ${lastUpdate}`;
+  },
+
   getMonthlyStatsDate() {
     return moment({
       month: this.state.selectedMonth,
@@ -456,7 +469,10 @@ var CallsOverview = React.createClass({
 
         <div className="large-24 columns">
           <Panel.Wrapper>
-            <Panel.Header customClass="narrow" title="Monthly Voice Call User">
+            <Panel.Header
+              customClass="narrow"
+              title="Monthly Voice Call User"
+              caption={this._getLastUpdate({ year: this.state.selectedYear, month: this.state.selectedMonth })} >
               <div className="input-group picker month right">
                 <DateSelector
                   date={this.getMonthlyStatsDate()}
@@ -481,7 +497,10 @@ var CallsOverview = React.createClass({
 
         <div className="large-24 columns">
           <Panel.Wrapper>
-            <Panel.Header customClass="narrow" title="Statistics">
+            <Panel.Header
+              customClass="narrow"
+              title="Statistics"
+              caption={this._getLastUpdateFromTimeFrame()} >
               <div className="input-group right">
                 <label className="left">Past:</label>
                 <TimeFramePicker
