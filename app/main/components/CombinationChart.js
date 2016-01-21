@@ -269,6 +269,7 @@ export default React.createClass({
             lineColor: AXIS_COLOR,
             // control the alignment of the y-axis, default to left
             opposite: axis.alignment === 'right',
+            tickInterval: axis.tickInterval || null,
             ceiling: axis.unit === '%' ? 100 : null,
             visible: !_.isUndefined(axis.visible) ? axis.visible : true
           }
@@ -295,7 +296,13 @@ export default React.createClass({
         symbolRadius: 4,
         symbolHeight: 8,
         symbolPadding: 15,
-        itemMarginBottom: 10
+        itemMarginBottom: 10,
+
+        // As the legends are not clickable in our charts
+        // the hover style is set to `normal` from `pointer` by default
+        itemHoverStyle: {
+          cursor: 'normal'
+        }
       },
       plotOptions: {
         series: {
@@ -305,6 +312,15 @@ export default React.createClass({
             // disable marker so that the data point is not explicitly drawn
             enabled: false,
           },
+          events: {
+            // had an issue that toggling on/off a series makes the charts
+            // have no yAxis, so until we have a full solution, we will
+            // disable the legend toggle function for Combination Charts
+            legendItemClick: function(e) {
+              e.preventDefault();
+              return false;
+            }
+          }
         },
         line: {
           states: {

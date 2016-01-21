@@ -27,7 +27,7 @@ const LAST_UPDATE_TIME_FORMAT = 'MMM DD, YYYY H:mm';
 const defaultQueryMonth = moment().subtract(1, 'month');
 
 const STATS_TYPE = {
-  TOTAL_ATTEMPT: 'Total Calls Attempt',
+  TOTAL_ATTEMPT: 'Total Calls Attempts',
   SUCCESSFUL_ATTEMPT: 'Total Success Calls',
   SUCCESSFUL_RATE: 'ASR (%)',
   TOTAL_DURATION: 'Total Call Duration',
@@ -156,7 +156,7 @@ const CallsOverview = React.createClass({
                 <div>${moment(x).local().format(get(TOOLTIP_TIME_FORMAT, `${timescale}`))}</div>
                 <div>Total Call Attempt: ${totalCallAttempt}</div>
                 <div>Total Success Call: ${totalSuccessCall}</div>
-                <div>ASR (%): ${Math.round(averageSuccessRate)}%</div>
+                <div>ASR (%): ${averageSuccessRate}%</div>
               </div>
             `;
     };
@@ -210,9 +210,9 @@ const CallsOverview = React.createClass({
       return `
               <div class="text-left">
                 <div>${moment(x).local().format(get(TOOLTIP_TIME_FORMAT, `${timescale}`))}</div>
-                <div>Total Call Attempt: ${totalDuration}</div>
-                <div>Total Success Call: ${averageDuration}</div>
-                <div>ASR (%): ${Math.round(successAttempt)}%</div>
+                <div>Total Call Duration: ${totalDuration.toFixed(2)} mins</div>
+                <div>Total Success Calls: ${successAttempt}</div>
+                <div>Average Call Duration: ${(averageDuration / 60).toFixed(2)} mins</div>
               </div>
             `;
     };
@@ -450,7 +450,7 @@ const CallsOverview = React.createClass({
           <Panel.Wrapper>
             <Panel.Header
               customClass="narrow"
-              title="Statistics"
+              title="Call Behaviour Statistics"
               caption={this._getLastUpdateFromTimeFrame()} >
               <div className="input-group right">
                 <label className="left">Past:</label>
@@ -469,7 +469,7 @@ const CallsOverview = React.createClass({
                   <div className="chart-cell__chart row">
                     <DataGrid.Wrapper>
                       <DataGrid.Cell
-                        title="Total Call Attempts"
+                        title="Total Calls Attempts"
                         data={this._getTotalCallAttempt()} />
                       <DataGrid.Cell
                         title="ASR (%)"
@@ -479,6 +479,7 @@ const CallsOverview = React.createClass({
                       <DataGrid.Cell
                         title="Total Call Duration"
                         data={this._getTotalCallDuration()}
+                        decimalPlace={2}
                         unit="minutes" />
                       <DataGrid.Cell
                         title="Average Call Duration"
@@ -547,7 +548,8 @@ const CallsOverview = React.createClass({
                       yAxis={[
                         {
                           unit: 's',
-                          alignment: 'left'
+                          alignment: 'left',
+                          tickInterval: 60
                         },
                         {
                           unit: 'm',
