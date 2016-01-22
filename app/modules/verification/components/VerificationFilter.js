@@ -5,16 +5,22 @@ import Dropdown from '../../../main/dropdown';
 export default class VerificationFilter extends Component {
   static propTypes = {
     appId: PropTypes.string,
-    options: PropTypes.array,
+    options: PropTypes.array.isRequired,
     appIdChange: PropTypes.func,
     os: PropTypes.string,
-    osTypes: PropTypes.array,
+    osTypes: PropTypes.array.isRequired,
     osChange: PropTypes.func,
     method: PropTypes.string,
-    methods: PropTypes.array,
+    methods: PropTypes.array.isRequired,
     methodChange: PropTypes.func,
     defaultOption: PropTypes.string,
     transformVerificationTypes: PropTypes.func,
+  };
+
+  static defaultProps = {
+    options: [],
+    osTypes: [],
+    methods: [],
   };
 
   render() {
