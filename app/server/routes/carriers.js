@@ -1095,12 +1095,11 @@ let getCallUserStatsTotal = function(req, res) {
 
   Q.allSettled([
       Q.ninvoke(callStatsRequest, 'getCallStats', callAttemptParams),
-      Q.ninvoke(callStatsRequest, 'getCallStats', asrParams),
       Q.ninvoke(callStatsRequest, 'getCallStats', tcdParams),
       Q.ninvoke(callStatsRequest, 'getCallStats', acdParams)
     ])
-    .spread((callAttemptStats, asrStats, tcdStats, acdStats) => {
-      let responses = [callAttemptStats, asrStats, tcdStats, acdStats]
+    .spread((callAttemptStats, tcdStats, acdStats) => {
+      let responses = [callAttemptStats, tcdStats, acdStats];
       let errors = _.reduce(responses, (result, response) => {
         if (response.state !== 'fulfilled') {
           result.push(response.reason);
@@ -1135,10 +1134,25 @@ let getCallUserStatsTotal = function(req, res) {
         return total;
       }, []);
 
+      let successRate = _.reduce(totalAttemptStats, (rates, stat) => {
+        let total = stat.v;
+
+        let success = _.result(_.find(successAttemptStats, (saStat) => {
+          return saStat.t == stat.t
+        }), 'v');
+
+        rates.push({
+          t: stat.t,
+          v: (total == 0) ? 0 : (success / total) * 100
+        });
+
+        return rates;
+      }, []);
+
       return res.json({
         totalAttemptStats: totalAttemptStats,
         successAttemptStats: successAttemptStats,
-        successRateStats: _.get(asrStats, 'value.0.data'),
+        successRateStats: successRate,
         totalDurationStats: _.get(tcdStats, 'value.0.data'),
         averageDurationStats: _.get(acdStats, 'value.0.data')
       });
