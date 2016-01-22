@@ -72,6 +72,7 @@ const MIN_Y_RANGE = 50;
 export default React.createClass({
   propTypes: {
     className: PropTypes.string,
+    shareTooltip: PropTypes.bool,
     showLegend: PropTypes.bool,
     /**
      * The option object for drawing the x-axis.
@@ -82,6 +83,7 @@ export default React.createClass({
       start: PropTypes.number.isRequired,
       tickCount: PropTypes.number.isRequired,
       tickInterval: PropTypes.number.isRequired,
+      crosshair: PropTypes.object,
     }).isRequired,
     /**
      * The option objects for drawing the y-axis.
@@ -92,6 +94,7 @@ export default React.createClass({
       unit: PropTypes.string,
       alignment: PropTypes.string,
       max: PropTypes.number,
+      visible: PropTypes.bool,
     })).isRequired,
     /**
      * The option objects for drawing the lines.
@@ -101,8 +104,17 @@ export default React.createClass({
       name: PropTypes.string.isRequired,
       data: PropTypes.arrayOf(PropTypes.number).isRequired,
       color: PropTypes.string,
-      selected: PropTypes.boolean,
+      legendIndex: PropTypes.number,
+      lineWidth: PropTypes.number,
+      selected: PropTypes.bool,
+      symbol: PropTypes.oneOf(['circle', 'sqaure', 'diamond', 'triangle', 'triangle-down']),
       tooltipFormatter: PropTypes.func,
+      tooltip: PropTypes.object,
+      // check only for line & column
+      // @See: http://api.highcharts.com/highcharts#series
+      type: PropTypes.oneOf(['line', 'column']).isRequired,
+      yAxis: PropTypes.number,
+      zIndex: PropTypes.number,
     })),
     /**
      * The option objects for drawing the points.
@@ -248,6 +260,21 @@ export default React.createClass({
         // the data points should be above the x-axis's ticks, not between 2 ticks
         tickmarkPlacement: 'on',
         lineColor: AXIS_COLOR,
+        crosshair: xAxis.crosshair || null,
+        events: {
+          afterSetExtremes: function() {
+            // if xAxis crosshair is defined,
+            // dynamically set the width as the width of column
+            // (highlighting the whole column rather than a thin line)
+            // unless the width is predefined
+            if (xAxis.crosshair) {
+              this.crosshair = {
+                color: xAxis.crosshair.color,
+                width: xAxis.crosshair.width || (this.width / (this.series[0].points.length-1))
+              }
+            }
+          }
+        }
       },
       yAxis: _.reduce(yAxis, (result, axis) => {
         result.push(
@@ -334,6 +361,11 @@ export default React.createClass({
       tooltip: {
         // use HTML for more flexible formatting
         useHTML: true,
+        shared: props.shareTooltip || false,
+        dateTimeLabelFormats: {
+          day: '%d %b %Y',
+          hour: '%H:%M %d %b %Y'
+        }
       },
     });
   },
@@ -357,6 +389,7 @@ export default React.createClass({
       name,
       selected,
       symbol,
+      tooltip,
       type,
       yAxis,
       zIndex
@@ -377,7 +410,8 @@ export default React.createClass({
       // and let this to be overwritten by the type option below
       selected: false,
       enableMouseTracking: selected,
-      tooltip: tooltipOptions,
+      tooltip: tooltip,
+      tooltipOptions: tooltipOptions
     };
 
     switch(type) {

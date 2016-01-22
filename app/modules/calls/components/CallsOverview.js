@@ -1,4 +1,4 @@
-import { bindKey, get, reduce, isEmpty, isUndefined } from 'lodash';
+import { bindKey, get, reduce, isEmpty, isUndefined, round } from 'lodash';
 import moment from 'moment';
 import classNames from 'classnames';
 
@@ -136,48 +136,36 @@ const CallsOverview = React.createClass({
       start: from,
       tickCount: parseInt(quantity, 10),
       tickInterval: (timescale === 'day' ? 24 : 1) * 3600 * 1000,
+      crosshair: {
+        color: 'rgba(76,145,222,0.3)'
+      }
     };
   },
 
   _getAttemptLineChartData() {
     const { timescale } = parseTimeRange(this.state.selectedLastXDays);
 
-    const totalAttemptData = reduce(this.state.totalAttemptStats, (result, stat) => { result.push(Math.round(stat.v)); return result; }, []);
-    const successAttemptData = reduce(this.state.successAttemptStats, (result, stat) => { result.push(Math.round(stat.v)); return result; }, []);
-    const successRateData = reduce(this.state.successRateStats, (result, stat) => { result.push(stat.v); return result; }, []);
-
-    const totalAttemptTooltipFormatter = (x, y, index) => {
-      const totalCallAttempt =  totalAttemptData[index];
-      const totalSuccessCall =  successAttemptData[index];
-      const averageSuccessRate =  successRateData[index];
-
-      return `
-              <div class="text-left">
-                <div>${moment(x).local().format(get(TOOLTIP_TIME_FORMAT, `${timescale}`))}</div>
-                <div>Total Call Attempt: ${totalCallAttempt}</div>
-                <div>Total Success Call: ${totalSuccessCall}</div>
-                <div>ASR (%): ${averageSuccessRate}%</div>
-              </div>
-            `;
-    };
+    const totalAttemptData = reduce(this.state.totalAttemptStats, (result, stat) => { result.push(round(stat.v, 2)); return result; }, []);
+    const successAttemptData = reduce(this.state.successAttemptStats, (result, stat) => { result.push(round(stat.v, 2)); return result; }, []);
+    const successRateData = reduce(this.state.successRateStats, (result, stat) => { result.push(round(stat.v, 2)); return result; }, []);
 
     return !isEmpty(this.state.totalAttemptStats) && !isEmpty(this.state.successAttemptStats) && !isEmpty(this.state.successRateStats) ? [
       {
         name: STATS_TYPE.SUCCESSFUL_RATE,
-        legendName: 'ASR (%)',
         legendIndex: 2,
         type: 'line',
         data: successRateData,
         color: '#4C91DE',
-        tooltipFormatter: totalAttemptTooltipFormatter,
         yAxis: 1,
         zIndex: 9,
         symbol: 'circle',
         lineWidth: 2,
+        tooltip: {
+          valueSuffix: ' %'
+        }
       },
       {
         name: STATS_TYPE.TOTAL_ATTEMPT,
-        legendName: 'Total Calls Attempt',
         legendIndex: 0,
         type: 'column',
         data: totalAttemptData,
@@ -186,7 +174,6 @@ const CallsOverview = React.createClass({
       },
       {
         name: STATS_TYPE.SUCCESSFUL_ATTEMPT,
-        legendName: 'Total Success Calls',
         legendIndex: 1,
         type: 'column',
         data: successAttemptData,
@@ -198,24 +185,9 @@ const CallsOverview = React.createClass({
 
   _getDurationLineChartData() {
     const { timescale } = parseTimeRange(this.state.selectedLastXDays);
-    const totalDurationData = reduce(this.state.totalDurationStats, (result, stat) => { result.push(Math.round(stat.v / 1000 / 60)); return result; }, []);
-    const averageDurationData = reduce(this.state.averageDurationStats, (result, stat) => { result.push(Math.round(stat.v) / 1000); return result; }, []);
-    const successAttemptData = reduce(this.state.successAttemptStats, (result, stat) => { result.push(Math.round(stat.v)); return result; }, []);
-
-    const averageDurationTooltipFormatter = (x, y, index) => {
-      const totalDuration =  totalDurationData[index];
-      const averageDuration =  averageDurationData[index];
-      const successAttempt =  successAttemptData[index];
-
-      return `
-              <div class="text-left">
-                <div>${moment(x).local().format(get(TOOLTIP_TIME_FORMAT, `${timescale}`))}</div>
-                <div>Total Call Duration: ${totalDuration.toFixed(2)} mins</div>
-                <div>Total Success Calls: ${successAttempt}</div>
-                <div>Average Call Duration: ${(averageDuration / 60).toFixed(2)} mins</div>
-              </div>
-            `;
-    };
+    const totalDurationData = reduce(this.state.totalDurationStats, (result, stat) => { result.push(round((stat.v / 1000 / 60), 2)); return result; }, []);
+    const averageDurationData = reduce(this.state.averageDurationStats, (result, stat) => { result.push(round((stat.v / 1000), 2)); return result; }, []);
+    const successAttemptData = reduce(this.state.successAttemptStats, (result, stat) => { result.push(stat.v); return result; }, []);
 
     return !isEmpty(this.state.totalDurationStats) && !isEmpty(this.state.averageDurationStats) && !isEmpty(this.state.averageDurationStats) ? [
       {
@@ -224,11 +196,13 @@ const CallsOverview = React.createClass({
         type: 'line',
         data: averageDurationData,
         color: '#4C91DE',
-        tooltipFormatter: averageDurationTooltipFormatter,
         yAxis: 0,
         zIndex: 9,
         symbol: 'circle',
         lineWidth: 2,
+        tooltip: {
+          valueSuffix: ' s'
+        }
       },
       {
         name: STATS_TYPE.TOTAL_DURATION,
@@ -237,10 +211,12 @@ const CallsOverview = React.createClass({
         data: totalDurationData,
         color: '#D8D8D8',
         yAxis: 1,
+        tooltip: {
+          valueSuffix: ' mins'
+        }
       },
       {
         name: STATS_TYPE.SUCCESSFUL_ATTEMPT,
-        legendName: 'Total Success Calls',
         legendIndex: 1,
         type: 'column',
         data: successAttemptData,
@@ -506,10 +482,11 @@ const CallsOverview = React.createClass({
                   </div>
                   <div className="line-chart chart-cell__chart row">
                     <CombinationChart
+                      alignTicks={false}
                       className="attempt-line"
                       lines={this._getAttemptLineChartData()}
+                      shareTooltip={true}
                       showLegend={true}
-                      alignTicks={false}
                       xAxis={this._getLineChartXAxis()}
                       yAxis={[
                         {
@@ -540,9 +517,10 @@ const CallsOverview = React.createClass({
                   </div>
                   <div className="line-chart chart-cell__chart row">
                     <CombinationChart
+                      alignTicks={false}
                       className="attempt-line"
                       lines={this._getDurationLineChartData()}
-                      alignTicks={false}
+                      shareTooltip={true}
                       showLegend={true}
                       xAxis={this._getLineChartXAxis()}
                       yAxis={[
