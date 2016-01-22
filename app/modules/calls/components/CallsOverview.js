@@ -13,8 +13,6 @@ import * as FilterBar from '../../../main/components/FilterBar';
 import * as Panel from './../../../main/components/Panel';
 import * as DataGrid from '../../../main/statistics/components/DataGrid';
 import TimeFramePicker, { parseTimeRange } from '../../../main/components/TimeFramePicker';
-import ColorRadioButton from '../../../main/components/ColorRadioButton';
-import LineChart from '../../../main/components/LineChart';
 import DateSelector from '../../../main/components/DateSelector';
 import CombinationChart from '../../../main/components/CombinationChart';
 
@@ -33,62 +31,32 @@ const STATS_TYPE = {
   SUCCESSFUL_ATTEMPT: 'Total Success Calls',
   SUCCESSFUL_RATE: 'ASR (%)',
   TOTAL_DURATION: 'Total Call Duration',
-  AVERAGE_DURATION: 'Average Call Duration'
+  AVERAGE_DURATION: 'Average Call Duration',
 };
 
 const CALL_TYPE = {
   ALL: '',
   ONNET: 'ONNET',
-  OFFNET: 'OFFNET'
+  OFFNET: 'OFFNET',
 };
 
-const YEARS_BACKWARD = 5;
 const TIME_FRAMES = ['24 hours', '7 days'];
 const TOOLTIP_TIME_FORMAT = {
   hour: 'HH:00, DD MMM',
-  day: 'DD MMM'
+  day: 'DD MMM',
 };
-const ATTEMPT_LINECHART_TOGGLES = [
-  {
-    id: STATS_TYPE.TOTAL_ATTEMPT,
-    title: 'Total Calls Attempt',
-    color: 'red'
-  },
-  {
-    id: STATS_TYPE.SUCCESSFUL_ATTEMPT,
-    title: 'Total Successful Calls',
-    color: 'green'
-  }
-];
-const DURATION_LINECHART_TOGGLES = [
-  {
-    id: STATS_TYPE.TOTAL_DURATION,
-    title: 'Total Call Duration (minute)',
-    color: 'red'
-  },
-  {
-    id: STATS_TYPE.AVERAGE_DURATION,
-    title: 'Average Call Duration (second)',
-    color: 'green'
-  }
-];
 
-var CallsOverview = React.createClass({
+const CallsOverview = React.createClass({
   contextTypes: {
-    router: React.PropTypes.func.isRequired
+    router: React.PropTypes.func.isRequired,
   },
 
   mixins: [FluxibleMixin, AuthMixin],
 
   statics: {
     storeListeners: {
-      onCallsStatsChange: CallsOverviewStore
-    }
-  },
-
-  onCallsStatsChange() {
-    let states = this.context.getStore(CallsOverviewStore).getState();
-    this.setState(states);
+      onCallsStatsChange: CallsOverviewStore,
+    },
   },
 
   getInitialState() {
@@ -116,13 +84,18 @@ var CallsOverview = React.createClass({
     this.context.executeAction(clearCallsStats);
   },
 
+  onCallsStatsChange() {
+    const states = this.context.getStore(CallsOverviewStore).getState();
+    this.setState(states);
+  },
+
   changeCallType(type) {
     // THIS IS A HACK FOR LINECHART
     // the lines key has to be cleared (e.g. set to null)
     // in order to reset the LineChart
     this.setState({
       totalAttemptStats: null, successfulAttemptStats: null,
-      totalDurationStats: null, averageDurationStats: null
+      totalDurationStats: null, averageDurationStats: null,
     });
 
     this.setState({ type });
@@ -141,7 +114,7 @@ var CallsOverview = React.createClass({
     // in order to reset the LineChart
     this.setState({
       totalAttemptStats: null, successfulAttemptStats: null,
-      totalDurationStats: null, averageDurationStats: null
+      totalDurationStats: null, averageDurationStats: null,
     });
 
     this.setState({ selectedLastXDays: time });
@@ -153,30 +126,30 @@ var CallsOverview = React.createClass({
   },
 
   toggleDurationType(type) {
-    this.setState({ selectedDurationLine: type })
+    this.setState({ selectedDurationLine: type });
   },
 
   _getLineChartXAxis() {
-    let { from, quantity, timescale } = parseTimeRange(this.state.selectedLastXDays);
+    const { from, quantity, timescale } = parseTimeRange(this.state.selectedLastXDays);
 
     return {
       start: from,
-      tickCount: parseInt(quantity),
-      tickInterval: (timescale === 'day' ? 24 : 1) * 3600 * 1000
+      tickCount: parseInt(quantity, 10),
+      tickInterval: (timescale === 'day' ? 24 : 1) * 3600 * 1000,
     };
   },
 
   _getAttemptLineChartData() {
-    let { timescale } = parseTimeRange(this.state.selectedLastXDays);
+    const { timescale } = parseTimeRange(this.state.selectedLastXDays);
 
-    let totalAttemptData = reduce(this.state.totalAttemptStats, (result, stat) => { result.push(Math.round(stat.v)); return result; }, []);
-    let successAttemptData = reduce(this.state.successAttemptStats, (result, stat) => { result.push(Math.round(stat.v)); return result; }, []);
-    let successRateData = reduce(this.state.successRateStats, (result, stat) => { result.push(stat.v); return result; }, []);
+    const totalAttemptData = reduce(this.state.totalAttemptStats, (result, stat) => { result.push(Math.round(stat.v)); return result; }, []);
+    const successAttemptData = reduce(this.state.successAttemptStats, (result, stat) => { result.push(Math.round(stat.v)); return result; }, []);
+    const successRateData = reduce(this.state.successRateStats, (result, stat) => { result.push(stat.v); return result; }, []);
 
-    let totalAttemptTooltipFormatter = (x, y, index) => {
-      let totalCallAttempt =  totalAttemptData[index];
-      let totalSuccessCall =  successAttemptData[index];
-      let averageSuccessRate =  successRateData[index];
+    const totalAttemptTooltipFormatter = (x, y, index) => {
+      const totalCallAttempt =  totalAttemptData[index];
+      const totalSuccessCall =  successAttemptData[index];
+      const averageSuccessRate =  successRateData[index];
 
       return `
               <div class="text-left">
@@ -200,7 +173,7 @@ var CallsOverview = React.createClass({
         yAxis: 1,
         zIndex: 9,
         symbol: 'circle',
-        lineWidth: 2
+        lineWidth: 2,
       },
       {
         name: STATS_TYPE.TOTAL_ATTEMPT,
@@ -209,7 +182,7 @@ var CallsOverview = React.createClass({
         type: 'column',
         data: totalAttemptData,
         color: '#D8D8D8',
-        yAxis: 0
+        yAxis: 0,
       },
       {
         name: STATS_TYPE.SUCCESSFUL_ATTEMPT,
@@ -218,21 +191,21 @@ var CallsOverview = React.createClass({
         type: 'column',
         data: successAttemptData,
         color: '#81D135',
-        yAxis: 0
-      }
+        yAxis: 0,
+      },
     ] : null;
   },
 
   _getDurationLineChartData() {
-    let { timescale } = parseTimeRange(this.state.selectedLastXDays);
-    let totalDurationData = reduce(this.state.totalDurationStats, (result, stat) => { result.push(Math.round(stat.v / 1000 / 60)); return result; }, []);
-    let averageDurationData = reduce(this.state.averageDurationStats, (result, stat) => { result.push(Math.round(stat.v) / 1000); return result; }, []);
-    let successAttemptData = reduce(this.state.successAttemptStats, (result, stat) => { result.push(Math.round(stat.v)); return result; }, []);
+    const { timescale } = parseTimeRange(this.state.selectedLastXDays);
+    const totalDurationData = reduce(this.state.totalDurationStats, (result, stat) => { result.push(Math.round(stat.v / 1000 / 60)); return result; }, []);
+    const averageDurationData = reduce(this.state.averageDurationStats, (result, stat) => { result.push(Math.round(stat.v) / 1000); return result; }, []);
+    const successAttemptData = reduce(this.state.successAttemptStats, (result, stat) => { result.push(Math.round(stat.v)); return result; }, []);
 
-    let averageDurationTooltipFormatter = (x, y, index) => {
-      let totalDuration =  totalDurationData[index];
-      let averageDuration =  averageDurationData[index];
-      let successAttempt =  successAttemptData[index];
+    const averageDurationTooltipFormatter = (x, y, index) => {
+      const totalDuration =  totalDurationData[index];
+      const averageDuration =  averageDurationData[index];
+      const successAttempt =  successAttemptData[index];
 
       return `
               <div class="text-left">
@@ -255,7 +228,7 @@ var CallsOverview = React.createClass({
         yAxis: 0,
         zIndex: 9,
         symbol: 'circle',
-        lineWidth: 2
+        lineWidth: 2,
       },
       {
         name: STATS_TYPE.TOTAL_DURATION,
@@ -263,7 +236,7 @@ var CallsOverview = React.createClass({
         type: 'column',
         data: totalDurationData,
         color: '#D8D8D8',
-        yAxis: 1
+        yAxis: 1,
       },
       {
         name: STATS_TYPE.SUCCESSFUL_ATTEMPT,
@@ -272,8 +245,8 @@ var CallsOverview = React.createClass({
         type: 'column',
         data: successAttemptData,
         color: '#81D135',
-        yAxis: 2
-      }
+        yAxis: 2,
+      },
     ] : null;
   },
 
@@ -287,80 +260,57 @@ var CallsOverview = React.createClass({
 
   _getAppIdSelectOptions() {
     return reduce(this.state.appIds, (result, id) => {
-      var option = { value: id, label: id };
-      result.push(option);
-      return result;
-    }, [])
-  },
-
-  _getMonths() {
-    let monthArray = Array.apply(0, Array(12)).map((_, i ) => { return i });
-
-    return reduce(monthArray, (result, n) => {
-      var option = { value: n, label: moment().month(n).format('MMMM') };
+      const option = { value: id, label: id };
       result.push(option);
       return result;
     }, []);
   },
 
-  _getYears() {
-    let years = [];
-
-    for (let i = 0; i < YEARS_BACKWARD; i++) {
-      years.push({
-        value: (i > 0) ? moment().subtract(i, 'years').format('YYYY') : moment().format('YYYY'),
-        label: (i > 0) ? moment().subtract(i, 'years').format('YYYY') : moment().format('YYYY')
-      });
-    }
-
-    return years;
-  },
-
   _getMonthlyStats(type, month, year) {
-    let { identity } = this.context.router.getCurrentParams();
+    const { identity } = this.context.router.getCurrentParams();
 
-    let selectedMonth = (month || month === 0) ? month : this.state.selectedMonth;
-    let selectedYear = year || this.state.selectedYear;
+    const selectedMonth = (month || month === 0) ? month : this.state.selectedMonth;
+    const selectedYear = year || this.state.selectedYear;
 
-    let queryTime = moment().month(selectedMonth).year(selectedYear);
+    const queryTime = moment().month(selectedMonth).year(selectedYear);
 
     this.context.executeAction(fetchCallsStatsMonthly, {
       fromTime: queryTime.startOf('month').format('x'),
       toTime: queryTime.endOf('month').format('x'),
       carrierId: identity,
-      type: !isUndefined(type) ? type : this.state.type
+      type: !isUndefined(type) ? type : this.state.type,
     });
   },
 
   _getMonthlyUser() {
-    let { thisMonthUser, lastMonthUser  } = this.state;
-    let userChange = thisMonthUser - lastMonthUser;
+    const { thisMonthUser, lastMonthUser  } = this.state;
+    const userChange = thisMonthUser - lastMonthUser;
 
     return {
       total: thisMonthUser,
       change: userChange,
       percent: userChange && lastMonthUser ? Math.round((userChange / lastMonthUser) * 100) : '-',
-      direction: (userChange > 0) ? 'up' : 'down'
+      direction: (userChange > 0) ? 'up' : 'down',
     };
   },
 
   _getLastXDaysStats(type, lastXDays) {
-    let { identity } = this.context.router.getCurrentParams();
-    let timeRange = lastXDays || this.state.selectedLastXDays;
+    const { identity } = this.context.router.getCurrentParams();
+    const timeRange = lastXDays || this.state.selectedLastXDays;
 
-    let { from, to, quantity: selectedLastXDays, timescale } = parseTimeRange(timeRange);
+    const { from, to, quantity: selectedLastXDays, timescale } = parseTimeRange(timeRange);
 
     this.context.executeAction(fetchCallsStatsTotal, {
       fromTime: from,
       toTime: to,
       carrierId: identity,
       timescale,
-      type: !isUndefined(type) ? type : this.state.type
+      type: !isUndefined(type) ? type : this.state.type,
     });
   },
 
   _getTotalCallAttempt() {
-    let totalCall = reduce(this.state.totalAttemptStats, (total, stat) => {
+    const totalCall = reduce(this.state.totalAttemptStats, (total, stat) => {
       total += stat.v;
       return total;
     }, 0);
@@ -369,7 +319,7 @@ var CallsOverview = React.createClass({
   },
 
   _getSuccessfulAttempt() {
-    let totalSuccess = reduce(this.state.successAttemptStats, (success, stat) => {
+    const totalSuccess = reduce(this.state.successAttemptStats, (success, stat) => {
       success += stat.v;
       return success
     }, 0);
@@ -378,14 +328,14 @@ var CallsOverview = React.createClass({
   },
 
   _getAverageSuccessfulRate() {
-    let totalAttempt = this._getTotalCallAttempt();
-    let totalSuccess = this._getSuccessfulAttempt();
+    const totalAttempt = this._getTotalCallAttempt();
+    const totalSuccess = this._getSuccessfulAttempt();
 
     return (totalSuccess / totalAttempt) * 100;
   },
 
   _getTotalCallDuration() {
-    let totalDurationInMs =  reduce(this.state.totalDurationStats, (total, stat) => {
+    const totalDurationInMs =  reduce(this.state.totalDurationStats, (total, stat) => {
       total += stat.v;
       return total;
     }, 0);
@@ -401,10 +351,10 @@ var CallsOverview = React.createClass({
    *
    **/
   _getAverageCallDuration() {
-    let totalAttempt = this._getTotalCallAttempt();
-    let totalDuration = this._getTotalCallDuration();
+    const totalAttempt = this._getTotalCallAttempt();
+    const totalDuration = this._getTotalCallDuration();
 
-    return (totalDuration/totalAttempt) * 60;
+    return (totalDuration / totalAttempt) * 60;
   },
 
   _getLastUpdate(date) {
@@ -476,9 +426,10 @@ var CallsOverview = React.createClass({
               <div className="input-group picker month right">
                 <DateSelector
                   date={this.getMonthlyStatsDate()}
+                  minDate={moment().subtract(1, 'months').subtract(1, 'years').startOf('month').format('L')}
+                  maxDate={moment().subtract(1, 'months').endOf('month').format('L')}
                   onChange={this.handleMonthlyStatsChange}
-                  monthOptions={this._getMonths()}
-                  yearOptions={this._getYears()} />
+                />
               </div>
             </Panel.Header>
             <Panel.Body customClass="narrow no-padding">
@@ -617,7 +568,7 @@ var CallsOverview = React.createClass({
         </div>
       </div>
     );
-  }
+  },
 });
 
 export default CallsOverview;
