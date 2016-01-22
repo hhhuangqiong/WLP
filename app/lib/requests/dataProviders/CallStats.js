@@ -132,6 +132,9 @@ export default class UserStatsRequest {
 
         let output = [];
 
+        // IMPORTANT:
+        // DO NOT SUPPORT TIME SCALE OF HOUR FOR MORE THAN ONE DAY
+
         // do this only when the load balancing is used
         if (results.length > 1) {
           // get the max number of results as sample for the segment details
