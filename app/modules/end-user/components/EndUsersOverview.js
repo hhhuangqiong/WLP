@@ -76,7 +76,10 @@ const EndUsersOverview = React.createClass({
     storeListeners: {
       onEndUsersOverviewChange: EndUsersOverviewStore,
       onEndUsersRegistrationStatsChange: EndUsersRegistrationStatsStore,
-      onEndUsersGeographicStatsChange: EndUsersGeographicStatsStore,
+      // WLP-595
+      // Disable Country Table field as SDK does not support country data at this moment
+      // and the capability settings for features are pending implementation
+      // onEndUsersGeographicStatsChange: EndUsersGeographicStatsStore,
     },
   },
 
@@ -96,7 +99,10 @@ const EndUsersOverview = React.createClass({
     this._getMonthlyStats();
     this._getLastXDaysStats();
     this._getDeviceStats();
-    this._getGeographicStats();
+    // WLP-595
+    // Disable Country Table field as SDK does not support country data at this moment
+    // and the capability settings for features are pending implementation
+    // this._getGeographicStats();
   },
 
   onEndUsersOverviewChange() {
@@ -136,7 +142,10 @@ const EndUsersOverview = React.createClass({
     });
 
     this._getLastXDaysStats(time);
-    this._getGeographicStats(time);
+    // WLP-595
+    // Disable Country Table field as SDK does not support country data at this moment
+    // and the capability settings for features are pending implementation
+    // this._getGeographicStats(time);
   },
 
   getChangeColor(value) {
