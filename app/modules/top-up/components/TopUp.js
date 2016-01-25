@@ -1,6 +1,6 @@
-import _ from 'lodash';
+import { omit, merge, last, clone } from 'lodash';
 import moment from 'moment';
-import {concurrent} from 'contra';
+import { concurrent } from 'contra';
 
 import React from 'react';
 import { Link } from 'react-router';
@@ -64,13 +64,13 @@ const TopUp = React.createClass({
 
       concurrent([
         context.executeAction.bind(context, clearTopUp, {}),
-        context.executeAction.bind(context, loadTransactions, _.merge(_.clone(defaultQuery), getInitialQueryFromURL(params, query), { reload: true })),
+        context.executeAction.bind(context, loadTransactions, merge(clone(defaultQuery), getInitialQueryFromURL(params, query), { reload: true })),
       ], done || () => {});
     },
   },
 
   getInitialState() {
-    return _.merge(_.clone(this.getDefaultQuery()), this.getRequestBodyFromQuery(), this.getStateFromStores());
+    return merge(clone(this.getDefaultQuery()), this.getRequestBodyFromQuery(), this.getStateFromStores());
   },
 
 
@@ -155,11 +155,18 @@ const TopUp = React.createClass({
   },
 
   handleQueryChange(newQuery) {
-    const routeName = _.last(this.context.router.getCurrentRoutes()).name;
+    const routeName = last(this.context.router.getCurrentRoutes()).name;
     const params = this.context.router.getCurrentParams();
-    const query = _.merge(this.getRequestBodyFromQuery(), this.getRequestBodyFromState(), newQuery);
+    const query = merge(this.getRequestBodyFromQuery(), this.getRequestBodyFromState(), newQuery);
 
-    this.context.router.transitionTo(routeName, params, _.omit(query, value => !value));
+    const requiredKey = ['number'];
+
+    const sanitizedQuery = omit(query || {}, (value, key) => {
+       return !value && requiredKey.indexOf(key) === -1;
+    });
+
+    /* Should not omit null value as 'number' field is always required even it is null */
+    this.context.router.transitionTo(routeName, params, sanitizedQuery);
   },
 
   // action for client side
@@ -168,7 +175,7 @@ const TopUp = React.createClass({
     const targetPage = +this.state.page + 1;
     this.setState({ page: targetPage });
 
-    this.context.executeAction(loadTransactions, _.merge(this.getRequestBodyFromState(), { page: targetPage }));
+    this.context.executeAction(loadTransactions, merge(this.getRequestBodyFromState(), { page: targetPage }));
   },
 
   handleStartDateChange(momentDate) {
