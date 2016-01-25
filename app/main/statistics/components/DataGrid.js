@@ -46,7 +46,18 @@ class DataCell extends Component {
     changeEffect: PropTypes.oneOf([
       'positive', 'negative'
     ]),
-    changePercentage: PropTypes.string
+    changePercentage: PropTypes.string,
+    formatter: PropTypes.func,
+  };
+
+  static defaultProps = {
+    formatter: (data) => {
+      if (!data || isNaN(data) || data === 'Infinity') {
+        return EMPTY_DATA;
+      }
+
+      return data;
+    },
   };
 
   constructor(props) {
@@ -54,42 +65,21 @@ class DataCell extends Component {
   }
 
   _localiseData(data) {
-    if (data == 'Infinity') {
-      return null;
+    if (!data || isNaN(data) || data === 'Infinity') {
+      return EMPTY_DATA;
     }
 
-    return (data && data.toLocaleString()) || null;
-  }
-
-  _localiseRate(data, decimalPlace) {
-    if (data == 'Infinity') {
-      return null;
-    }
-
-    return (data && data.toFixed(decimalPlace)) || null;
+    return (data && data.toLocaleString());
   }
 
   render() {
-    let { title, data, unit, changeDir, changeEffect, changeAmount, changePercentage, decimalPlace } = this.props;
-
-    if (!!decimalPlace) {
-      data = this._localiseRate(data, decimalPlace);
-    }
+    let { title, data, unit, changeDir, changeEffect, changeAmount, changePercentage, formatter } = this.props;
 
     return (
       <div className="data-cell">
         <div className="data-cell__title">{ title }</div>
         <div className="data-cell__data">
-          <If condition={!data}>
-            <span>{EMPTY_DATA}</span>
-          <Else />
-            <span>
-              { this._localiseData(data) }
-              <If condition={!!data && unit === '%'}>
-                {unit}
-              </If>
-            </span>
-          </If>
+          { this._localiseData(formatter(data)) }
         </div>
         <If condition={!!unit && unit !== '%'}>
           <div className="data-cell__unit">{ unit }</div>
