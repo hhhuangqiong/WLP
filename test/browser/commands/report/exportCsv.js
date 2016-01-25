@@ -2,6 +2,7 @@ import { expect } from 'chai';
 
 import {
   WAIT_FOR_FETCHING_TIMEOUT,
+  PAGE_TRANSITION_TIMEOUT,
 } from '../../lib/constants';
 
 export default function exportCsv() {
@@ -15,7 +16,10 @@ export default function exportCsv() {
     .then(date => fromDate = date)
     .getValue('.export-datetime-picker.export-to-time .datepicker__input')
     .then(date => toDate = date)
-    .click('.button--primary')
+    .pause(PAGE_TRANSITION_TIMEOUT)
+    .moveToObject('a=Proceed')
+    .isVisibleWithinViewport('a=Proceed')
+    .click('a=Proceed')
     .isVisible('.export-loading-text')
     .waitUntil(function waitUntil() {
       return this.isVisible('.export-loading-text').then(isVisible => !isVisible);
