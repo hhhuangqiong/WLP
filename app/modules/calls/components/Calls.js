@@ -246,6 +246,7 @@ const Calls = React.createClass({
             <Searchbox
               value={this.state.search}
               searchTypes={searchTypes}
+              selectedType={this.state.searchType}
               placeHolder="Username/Mobile"
               onInputChangeHandler={this.handleUsernameChange}
               onSelectChangeHandler={this.handleSearchTypeChange}
