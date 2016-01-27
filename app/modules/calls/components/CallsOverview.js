@@ -414,7 +414,7 @@ const CallsOverview = React.createClass({
             <Panel.Body customClass="narrow no-padding">
               <DataGrid.Wrapper>
                 <DataGrid.Cell
-                  title="Monthly Voice Call User"
+                  title="Monthly Voice Call User (Unique)"
                   data={monthlyUserStats.total}
                   changeDir={monthlyUserStats.direction}
                   changeAmount={monthlyUserStats.change}
