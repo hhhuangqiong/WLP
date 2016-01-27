@@ -1090,6 +1090,7 @@ let getCallUserStatsTotal = function(req, res) {
     to: toTime,
     timescale: timescale || 'day',
     stat_type: 'acd',
+    breakdown: 'success',
     type
   }, (val) => { return !val; });
 
@@ -1149,12 +1150,18 @@ let getCallUserStatsTotal = function(req, res) {
         return rates;
       }, []);
 
+      acdStats = _.get(acdStats, 'value');
+
+      let averageDurationStats = _.get(_.find(acdStats, (stat) => {
+        return stat.segment.success === 'true';
+      }), 'data');
+
       return res.json({
         totalAttemptStats: totalAttemptStats,
         successAttemptStats: successAttemptStats,
         successRateStats: successRate,
         totalDurationStats: _.get(tcdStats, 'value.0.data'),
-        averageDurationStats: _.get(acdStats, 'value.0.data')
+        averageDurationStats: averageDurationStats
       });
     })
     .catch((err) => {
