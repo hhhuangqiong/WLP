@@ -603,10 +603,9 @@ const EndUsersOverview = React.createClass({
     const { from, to, timescale } = parseTimeRange(timeRange);
 
     this.context.executeAction(fetchDeviceStats, {
-      fromTime: from,
-      toTime: to,
-      carrierId: identity,
-      timescale,
+      fromTime: moment().startOf('day').format('x'),
+      toTime: moment().endOf('day').format('x'),
+      carrierId: identity
     });
   },
 });
