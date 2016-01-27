@@ -385,10 +385,16 @@ const EndUsersOverview = React.createClass({
                     </div>
                   </div>
                   */}
+                </div>
+              </Panel.Body>
+            </Panel.Wrapper>
+            <Panel.Wrapper>
+              <Panel.Body customClass="narrow no-padding">
+                <div className="inner-wrap">
                   <div className="chart-cell large-24 columns">
                     <div className="chart-cell__header row">
                       <div className="large-4 columns">
-                        <div className="chart-cell__header__title text-center">Device OS</div>
+                        <div className="chart-cell__header__title text-center">User Distribution by OS</div>
                       </div>
                       <div className="large-3 columns end chart-cell__overview">
                         <div className="chart-cell__overview__value">{ this._getDeviceTotal() }</div>
