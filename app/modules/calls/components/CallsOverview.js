@@ -41,9 +41,12 @@ const CALL_TYPE = {
 };
 
 const TIME_FRAMES = ['24 hours', '7 days'];
-const TOOLTIP_TIME_FORMAT = {
-  hour: 'HH:00, DD MMM',
-  day: 'DD MMM',
+
+// this should be application-wide variable
+const DECIMAL_PLACE = 1;
+
+const decimalPlaceFormatter = function(data) {
+  return (data && data.toFixed(DECIMAL_PLACE));
 };
 
 const CallsOverview = React.createClass({
@@ -145,9 +148,9 @@ const CallsOverview = React.createClass({
   _getAttemptLineChartData() {
     const { timescale } = parseTimeRange(this.state.selectedLastXDays);
 
-    const totalAttemptData = reduce(this.state.totalAttemptStats, (result, stat) => { result.push(round(stat.v, 2)); return result; }, []);
-    const successAttemptData = reduce(this.state.successAttemptStats, (result, stat) => { result.push(round(stat.v, 2)); return result; }, []);
-    const successRateData = reduce(this.state.successRateStats, (result, stat) => { result.push(round(stat.v, 2)); return result; }, []);
+    const totalAttemptData = reduce(this.state.totalAttemptStats, (result, stat) => { result.push(round(stat.v, DECIMAL_PLACE)); return result; }, []);
+    const successAttemptData = reduce(this.state.successAttemptStats, (result, stat) => { result.push(round(stat.v, DECIMAL_PLACE)); return result; }, []);
+    const successRateData = reduce(this.state.successRateStats, (result, stat) => { result.push(round(stat.v, DECIMAL_PLACE)); return result; }, []);
 
     return !isEmpty(this.state.totalAttemptStats) && !isEmpty(this.state.successAttemptStats) && !isEmpty(this.state.successRateStats) ? [
       {
@@ -185,8 +188,8 @@ const CallsOverview = React.createClass({
 
   _getDurationLineChartData() {
     const { timescale } = parseTimeRange(this.state.selectedLastXDays);
-    const totalDurationData = reduce(this.state.totalDurationStats, (result, stat) => { result.push(round((stat.v / 1000 / 60), 2)); return result; }, []);
-    const averageDurationData = reduce(this.state.averageDurationStats, (result, stat) => { result.push(round((stat.v / 1000), 2)); return result; }, []);
+    const totalDurationData = reduce(this.state.totalDurationStats, (result, stat) => { result.push(round((stat.v / 1000 / 60), DECIMAL_PLACE)); return result; }, []);
+    const averageDurationData = reduce(this.state.averageDurationStats, (result, stat) => { result.push(round((stat.v / 1000), DECIMAL_PLACE)); return result; }, []);
     const successAttemptData = reduce(this.state.successAttemptStats, (result, stat) => { result.push(stat.v); return result; }, []);
 
     return !isEmpty(this.state.totalDurationStats) && !isEmpty(this.state.averageDurationStats) && !isEmpty(this.state.averageDurationStats) ? [
@@ -450,17 +453,17 @@ const CallsOverview = React.createClass({
                       <DataGrid.Cell
                         title="ASR (%)"
                         data={this._getAverageSuccessfulRate()}
-                        decimalPlace={2}
+                        formatter={decimalPlaceFormatter}
                         unit="%" />
                       <DataGrid.Cell
                         title="Total Call Duration"
                         data={this._getTotalCallDuration()}
-                        decimalPlace={2}
+                        formatter={decimalPlaceFormatter}
                         unit="minutes" />
                       <DataGrid.Cell
                         title="Average Call Duration"
                         data={this._getAverageCallDuration()}
-                        decimalPlace={2}
+                        formatter={decimalPlaceFormatter}
                         unit="seconds" />
                     </DataGrid.Wrapper>
                   </div>
