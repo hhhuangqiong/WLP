@@ -74,7 +74,7 @@ const EndUserTable = React.createClass({
             <th>Username</th>
             <th>Registration Date</th>
             <th>Account Status</th>
-            <th>Device Model</th>
+            <th>Latest Device Model</th>
             <th>Bundle ID</th>
             <th>App Version no.</th>
           </tr>
