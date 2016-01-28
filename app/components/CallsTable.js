@@ -27,7 +27,7 @@ var CallsTable = React.createClass({
         });
 
         let calleeCountry = _.find(Countries, (c) => {
-          return c.alpha2.toLowerCase() == u.callee_country
+          return c.alpha2.toLowerCase() == u.target_country_tel_code;
         });
 
         let callStart = moment(u.start_time).format('h:mm:ss a');
@@ -55,7 +55,7 @@ var CallsTable = React.createClass({
                   <div className="large-11 columns">
                     <div className="caller_info">
                       <div className="flag__container left">
-                        <span className={u.caller_country ? 'flag--'+u.caller_country : ''}></span>
+                        <span className={u.target_country_tel_code ? 'flag--'+u.target_country_tel_code : ''}></span>
                       </div>
                       <div className="left">
                         <span className="caller">{u.caller}</span>
@@ -72,7 +72,7 @@ var CallsTable = React.createClass({
                   <div className="large-11 columns">
                     <div className="callee_info">
                       <div className="flag__container left">
-                        <span className={u.callee_country ? 'flag--'+u.callee_country : ''}></span>
+                        <span className={u.target_country_tel_code ? 'flag--'+u.target_country_tel_code : ''}></span>
                       </div>
                       <div className="left">
                         <span className="callee">{u.callee}</span>
