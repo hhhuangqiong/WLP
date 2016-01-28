@@ -342,10 +342,10 @@ const CallsOverview = React.createClass({
   },
 
   _getLastUpdateFromTimeFrame() {
-    let timeframe = this.state.selectedLastXDays;
-    const { to, timescale } = parseTimeRange(timeframe);
-    let lastUpdate = timescale === 'hour' ? moment(to).format(LAST_UPDATE_TIME_FORMAT) : moment(to).endOf(timescale).format(LAST_UPDATE_TIME_FORMAT);
-    return `Data updated till: ${lastUpdate}`;
+    const { to, timescale } = parseTimeRange(this.state.selectedLastXDays);
+    const lastUpdate = timescale === 'hour' ? moment(to).subtract(1, timescale) : moment(to);
+
+    return `Data updated till: ${lastUpdate.endOf(timescale).format(LAST_UPDATE_TIME_FORMAT)}`;
   },
 
   getMonthlyStatsDate() {

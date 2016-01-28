@@ -32,7 +32,7 @@ import fetchGeographicStats from '../actions/fetchGeographicStats';
 const TIME_FRAMES = ['7 days', '30 days', '60 days', '90 days'];
 const gChartContainerId = 'registrationByCountry';
 
-const LAST_UPDATE_TIME_FORMAT = 'MMM DD, YYYY H mm';
+const LAST_UPDATE_TIME_FORMAT = 'MMM DD, YYYY H:mm';
 
 const defaultQueryMonth = moment().subtract(1, 'month');
 
