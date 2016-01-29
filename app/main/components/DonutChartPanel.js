@@ -52,34 +52,34 @@ export default React.createClass({
     colors: PropTypes.arrayOf(PropTypes.string)
   },
 
-  getInitialState: function () {
+  getInitialState: function() {
     return {
       // create empty legend item as place holder
       useDummy: true
     };
   },
 
-  getDefaultProps: function () {
+  getDefaultProps: function() {
     return {
       bars: 4
     };
   },
 
-  componentWillReceiveProps: function (nextProps) {
+  componentWillReceiveProps: function(nextProps) {
     // use dummy legend if no data
     this.setState({
       useDummy: !nextProps.data || nextProps.data.length === 0
     });
   },
 
-  renderLegendItems: function (data, colors) {
+  renderLegendItems: function(data, colors) {
     // calculate the total number for percentage calculation
     let total = data.reduce((acc, d) => {
       return acc + d.value;
     }, 0);
 
     // sort the data so that the larger number goes first in the legend
-    data.sort(function (a, b) {
+    data.sort(function(a, b) {
       return a.value < b.value;
     });
 
@@ -100,7 +100,7 @@ export default React.createClass({
     });
   },
 
-  render: function () {
+  render: function() {
     // use default colors if not set
     let colors = this.props.colors || DEFAULT_COLORS;
 

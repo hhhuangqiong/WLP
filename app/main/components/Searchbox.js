@@ -21,11 +21,11 @@ var SearchBox = React.createClass({
       onInputChangeHandler: null,
       onKeyPressHandler: null,
       onSelectChangeHandler: null
-    }
+    };
   },
 
   render: function() {
-    return(
+    return (
       <div>
         <If condition={this.props.searchTypes}>
           <select className={classNames('top-bar-section__query-select', 'left')} name={this.props.searchTypeInputName} onChange={this.props.onSelectChangeHandler}>

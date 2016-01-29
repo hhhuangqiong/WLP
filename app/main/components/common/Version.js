@@ -11,7 +11,7 @@ let style = {
 };
 
 module.exports = React.createClass({
-  render: function(){
+  render: function() {
     return (
       <div style={style}>{pkg.version}</div>
     );

@@ -25,7 +25,7 @@ class DataCellWrapper extends Component {
               <div className={classNames(`large-${ totalColumns / children.length }`, `columns`)}>
                 { child }
               </div>
-            )
+            );
           })
         }
       </div>
@@ -74,7 +74,7 @@ class DataCell extends Component {
           </div>
         </If>
       </div>
-    )
+    );
   }
 }
 

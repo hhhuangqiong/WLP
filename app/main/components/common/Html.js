@@ -18,7 +18,7 @@ if (enabledHotloader()) {
   bundlePath = `${appUrl}/${bundleFile}`;
 }
 else {
-  bundlePath = '/javascript/bundle.js'
+  bundlePath = '/javascript/bundle.js';
 }
 
 var Html = React.createClass({

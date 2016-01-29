@@ -9,7 +9,7 @@ let MainContent = React.createClass({
           <RouteHandler/>
         </div>
       </div>
-    )
+    );
   }
 });
 

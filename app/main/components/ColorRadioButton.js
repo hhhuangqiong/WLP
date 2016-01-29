@@ -41,7 +41,7 @@ export default class ColorRadioButton extends Component {
         </If>
       </div>
     );
-  };
+  }
 }
 
 ColorRadioButton.propTypes = {

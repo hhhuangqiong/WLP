@@ -5,14 +5,14 @@ import ReactModal from 'react-modal';
 import { CLIENT } from '../../utils/env';
 
 export default class Modal extends Component {
-  componentWillMount(){
+  componentWillMount() {
     if (CLIENT) ReactModal.setAppElement(document.getElementById('app'));
   }
 
   getDefaultProps() {
     return {
       isOpened: false
-    }
+    };
   }
 
   render() {

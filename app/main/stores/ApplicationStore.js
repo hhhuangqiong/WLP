@@ -35,17 +35,17 @@ var ApplicationStore = createStore({
     return this.managingCompanies;
   },
 
-  handleAppIdsFetched: function (payload) {
+  handleAppIdsFetched: function(payload) {
     this.appIds = payload;
     this.defaultAppId = (this.appIds || [])[0];
     this.emitChange();
   },
 
-  getAppIds: function () {
+  getAppIds: function() {
     return this.appIds;
   },
 
-  getDefaultAppId: function () {
+  getDefaultAppId: function() {
     return this.defaultAppId;
   },
 

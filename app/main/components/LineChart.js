@@ -119,13 +119,13 @@ export default React.createClass({
     selectedLine: PropTypes.string
   },
 
-  getInitialState: function () {
+  getInitialState: function() {
     return {
       containerId: 'line' + Math.floor(Math.random() * ID_MAX)
     };
   },
 
-  drawChart: function (props) {
+  drawChart: function(props) {
     let xAxis = props.xAxis;
     let yAxis = props.yAxis;
 
@@ -138,11 +138,11 @@ export default React.createClass({
     }
 
     // append the unit to the axis label when available
-    let yAxisLabelFormatter = function (unit) { return !unit ? `${this.value}` : `${this.value}${unit}`; };
+    let yAxisLabelFormatter = function(unit) { return !unit ? `${this.value}` : `${this.value}${unit}`; };
 
     Highcharts.dateFormats = {
       // return the day of month in 1st, 2nd, 23rd, 25th format
-      T: function (timestamp) {
+      T: function(timestamp) {
         return moment(timestamp).format('Do');
       }
     };
@@ -262,7 +262,7 @@ export default React.createClass({
    * @method
    * @param {LineChart~LineOpts} opts  The line drawing options
    */
-  addLine: function (opts) {
+  addLine: function(opts) {
     let tooltipOptions = opts.tooltipFormatter ? this.createCustomTooltipOptions(opts.tooltipFormatter) : {};
     let lineWidth = opts.selected ? SELECTED_LINE_WIDTH : DEFAULT_LINE_WIDTH;
 
@@ -285,7 +285,7 @@ export default React.createClass({
    * @param {Series} series  The Highcharts series object to remove
    * @see {@link http://api.highcharts.com/highcharts#Series.remove}
    */
-  removeLine: function (series) {
+  removeLine: function(series) {
     series.remove();
   },
 
@@ -296,9 +296,9 @@ export default React.createClass({
    * @method
    * @param {LineChart~PointOpts} opts  The point drawing options
    */
-  addPoint: function (opts) {
+  addPoint: function(opts) {
     let name = `point-${opts.x}-${opts.y}`;
-    let existingPoint = _.find(this.chart.series, function (series) {
+    let existingPoint = _.find(this.chart.series, function(series) {
       return series.name === name;
     });
 
@@ -315,7 +315,7 @@ export default React.createClass({
       },
       tooltip: {
         // TODO: support formatter for point
-        pointFormatter: function () {
+        pointFormatter: function() {
           return `<div style="text-align: center">${this.y}</div>`;
         }
       }
@@ -328,7 +328,7 @@ export default React.createClass({
    * @method
    * @param {Series} line  The series object from the chart
    */
-  selectLine: function (line) {
+  selectLine: function(line) {
     line.update({
       selected: true,
       lineWidth: SELECTED_LINE_WIDTH,
@@ -342,7 +342,7 @@ export default React.createClass({
    * @method
    * @param {Series} line  The series object from the chart
    */
-  unselectLine: function (line) {
+  unselectLine: function(line) {
     line.update({
       selected: false,
       lineWidth: DEFAULT_LINE_WIDTH,
@@ -357,17 +357,17 @@ export default React.createClass({
    * @param {Function} formatter  The custom formatter from the consumer
    * @returns {Object} A plain object that can be used as the tooltip options
    */
-  createCustomTooltipOptions: function (formatter) {
+  createCustomTooltipOptions: function(formatter) {
     return {
       headerFormat: '',
       footerFormat: '',
-      pointFormatter: function () {
+      pointFormatter: function() {
         return formatter(this.category, this.y, this.index);
       }
     };
   },
 
-  componentDidMount: function () {
+  componentDidMount: function() {
     // can only draw the chart when the x-axis is ready
     // if not drawn, it will be drawn when the x-axis data is received at componentWillReceiveProps
     if (this.props.xAxis) {
@@ -389,11 +389,11 @@ export default React.createClass({
     }
   },
 
-  shouldComponentUpdate: function (nextProps) {
+  shouldComponentUpdate: function(nextProps) {
     return !_.eq(nextProps, this.props);
   },
 
-  componentWillUpdate: function (nextProps) {
+  componentWillUpdate: function(nextProps) {
     // We have to wait for the x-axis from props from parent.
     // However, child component is mounted before the parent.
     // Therefore, if the parent set the props in its componentDidMount,
@@ -404,7 +404,7 @@ export default React.createClass({
     }
   },
 
-  componentDidUpdate: function () {
+  componentDidUpdate: function() {
     if (this.chart) {
       // The container may have been resized,
       // or the chart was draw in invisible node and then change to visible.
@@ -413,7 +413,7 @@ export default React.createClass({
     }
   },
 
-  updateChart: function () {
+  updateChart: function() {
     if (!this.chart) {
       return;
     }
@@ -424,7 +424,7 @@ export default React.createClass({
       this.props.lines.forEach((lineOpts) => {
         let selected = this.props.selectedLine && lineOpts.name === this.props.selectedLine;
 
-        let existingLine = _.find(this.chart.series, function (series) {
+        let existingLine = _.find(this.chart.series, function(series) {
           return series.name === lineOpts.name;
         });
 
@@ -455,7 +455,7 @@ export default React.createClass({
     }
   },
 
-  render: function () {
+  render: function() {
     this.updateChart();
 
     return (

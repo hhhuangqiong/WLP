@@ -28,7 +28,7 @@ let Tab = React.createClass({
         Invariant(
           child.type.displayName === 'TabPanel',
           'Tab should only contain TabPanel component(s)'
-        )
+        );
       }
     });
   },
@@ -116,7 +116,7 @@ let TabButton = React.createClass({
     return {
       title: 'tab',
       isActive: false
-    }
+    };
   },
 
   render: function() {
@@ -163,4 +163,4 @@ let TabPanel = React.createClass({
 export {
   Tab as Wrapper,
   TabPanel as Panel
-}
+};

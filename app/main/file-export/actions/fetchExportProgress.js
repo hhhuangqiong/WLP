@@ -20,7 +20,7 @@ export default function(context, params, done) {
     result.exportType = exportType;
     context.dispatch('FETCH_EXPORT_PROGRESS_SUCCESS', result);
     done();
-  };
+  }
 
   context.api.getExportProgress(params, exportProgressCallback);
-};
+}

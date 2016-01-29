@@ -38,7 +38,7 @@ export default React.createClass({
   },
 
   componentWillUpdate(nextProps) {
-    if(!nextProps.exportTriggered || nextProps.progress === 100) {
+    if (!nextProps.exportTriggered || nextProps.progress === 100) {
       return;
     }
 
@@ -50,7 +50,7 @@ export default React.createClass({
     let isCompleted = this.isCompleted();
     let isInProgress = this.isInProgress();
 
-    if(isFailed) {
+    if (isFailed) {
       return (
         <ul className="button-group round">
           <li>
@@ -68,7 +68,7 @@ export default React.createClass({
       );
     }
 
-    else if(isCompleted) {
+    else if (isCompleted) {
       return (
         <div className="export-download-button export-ie-fix" onClick={this.props.download}>
           Download<span className="icon-download"></span>
@@ -76,7 +76,7 @@ export default React.createClass({
       );
     }
 
-    else if(isInProgress) {
+    else if (isInProgress) {
       return (
         <ul className="button-group round">
           <li><a className="spinner left button"></a></li>
@@ -110,6 +110,6 @@ export default React.createClass({
       <div className={className}>
         {this.renderCurrentProgress()}
       </div>
-    )
+    );
   }
 });

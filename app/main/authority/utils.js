@@ -25,7 +25,7 @@ export function decodeAclString(aclString) {
   try {
     let [action, resource] = aclString.split(ACL_STRING_SEPARATOR);
     return { action, resource };
-  } catch(err) {
+  } catch (err) {
     throw err;
   }
 }
@@ -63,4 +63,4 @@ export function getPathByResource(resource) {
   return _.result(_.find(navResources, function(nav) {
     return nav.page === resource;
   }), 'path');
-};
+}

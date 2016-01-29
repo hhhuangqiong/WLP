@@ -43,7 +43,7 @@ export default React.createClass({
     return this.defaultState();
   },
 
-  componentWillMount(){
+  componentWillMount() {
     if (CLIENT) Modal.setAppElement(document.getElementById('app'));
   },
 
@@ -89,7 +89,7 @@ export default React.createClass({
 
     this.pollingTimeout = setTimeout(() => {
       this.executeAction(fetchExportProgress, data);
-     }, UPDATE_PROGRESS_TIMEOUT);
+    }, UPDATE_PROGRESS_TIMEOUT);
   },
 
   handleExport(params) {

@@ -28,7 +28,7 @@ export default React.createClass({
               return <option
                 key={country.countryCode}
                 value={country.alpha2}
-              >{country.name}</option>
+              >{country.name}</option>;
             })}
           </select>
         </div>

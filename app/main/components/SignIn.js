@@ -34,7 +34,7 @@ const SignIn = React.createClass({
     }, this.getStateFromStores());
   },
 
-  getStateFromStores: function () {
+  getStateFromStores: function() {
     return {
       numberOfTrial: this.getStore(SignInStore).getNumberOfTrial(),
       isSigningIn: this.getStore(AuthStore).isSigningIn(),
@@ -46,7 +46,7 @@ const SignIn = React.createClass({
     this.setState(this.getStateFromStores());
   },
 
-  handleSignIn(e){
+  handleSignIn(e) {
     e.preventDefault();
 
     this.validate((error, data)=>{

@@ -33,7 +33,7 @@ class PercentageChart extends Component {
           <span className="percentage-chart secondary">{ stat } { unit }</span>
         </div>
       </div>
-    )
+    );
   }
 }
 

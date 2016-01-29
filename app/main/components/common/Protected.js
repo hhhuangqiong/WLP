@@ -31,13 +31,13 @@ var Protected = React.createClass({
   getInitialState: function() {
     return {
       isOffCanvas: true
-    }
+    };
   },
 
   _setOffCanvas: function(isOffCanvas) {
     this.setState({
       isOffCanvas: isOffCanvas
-    })
+    });
   },
 
   render: function() {

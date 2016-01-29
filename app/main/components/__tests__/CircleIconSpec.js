@@ -46,14 +46,14 @@ describe('CircleIcon', () => {
   it('change the icon ratio', () => {
     let smallSizeMockData = {
       size: SMALL,
-      width: SMALL_SIZE*SIZE_RATIO,
-      height: SMALL_SIZE*SIZE_RATIO
+      width: SMALL_SIZE * SIZE_RATIO,
+      height: SMALL_SIZE * SIZE_RATIO
     };
 
     let mediumSizeMockData = {
       size: MEDIUM,
-      width: MEDIUM_SIZE*SIZE_RATIO,
-      height: MEDIUM_SIZE*SIZE_RATIO
+      width: MEDIUM_SIZE * SIZE_RATIO,
+      height: MEDIUM_SIZE * SIZE_RATIO
     };
 
     let smallRenderedComponent = TestUtils.renderIntoDocument(

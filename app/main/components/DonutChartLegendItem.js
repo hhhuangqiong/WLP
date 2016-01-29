@@ -36,7 +36,7 @@ export default React.createClass({
     unit: PropTypes.string
   },
 
-  render: function () {
+  render: function() {
     return (
       <div className="donut-legend-item">
         <div>

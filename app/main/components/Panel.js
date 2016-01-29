@@ -37,7 +37,7 @@ let PanelHeader = React.createClass({
   getDefaultProps: function() {
     return {
       title: 'panel header'
-    }
+    };
   },
 
   render: function() {
@@ -48,7 +48,7 @@ let PanelHeader = React.createClass({
         </If>
         {this.props.children}
       </div>
-    )
+    );
   }
 });
 
@@ -65,7 +65,7 @@ let PanelBody = React.createClass({
       <div className={classNames(`body`, this.props.customClass)}>
         {this.props.children}
       </div>
-    )
+    );
   }
 });
 

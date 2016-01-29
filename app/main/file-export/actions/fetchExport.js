@@ -25,7 +25,7 @@ export default function(context, params, done) {
     debug('Success');
     context.dispatch('FETCH_EXPORT_SUCCESS', result);
     done();
-  };
+  }
 
   context.api.getExport(params, exportCallback);
-};
+}

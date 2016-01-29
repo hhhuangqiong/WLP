@@ -6,7 +6,7 @@ let NavigationBar = React.createClass({
       <nav className="top-bar app-header" data-topbar role="navigation">
         {this.props.children}
       </nav>
-    )
+    );
   }
 });
 

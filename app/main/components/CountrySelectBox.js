@@ -102,7 +102,7 @@ let CountrySelectBox = React.createClass({
             result[key] = {
               value: country.alpha2,
               label: country.name
-            }
+            };
           })}
           optionRenderer={this._renderOption}
           valueRenderer={this._renderValue}

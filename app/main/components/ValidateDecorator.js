@@ -87,7 +87,7 @@ function withValidator(validator = {}) {
       modifyErrorState = (input, result) => {
         let errorId = `${input.name}Error`;
         if (result.error) return this.setErrorState(input, result.error.message, errorId);
-        this.removeErrorState(input, errorId)
+        this.removeErrorState(input, errorId);
       }
 
       setErrorState = (input, errorMessage, errorId) => {
@@ -105,7 +105,7 @@ function withValidator(validator = {}) {
       }
 
       isError = () => {
-        for(let key in this.state) {
+        for (let key in this.state) {
           if (key.indexOf('Error') > 0 && this.state[key]) return true;
         }
 
@@ -118,7 +118,7 @@ function withValidator(validator = {}) {
     }
 
     return ValidatorComponent;
-  }
+  };
 }
 
 export default withValidator;
