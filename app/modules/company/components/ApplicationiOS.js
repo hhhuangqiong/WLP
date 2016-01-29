@@ -82,7 +82,7 @@ let ApplicationiOS = React.createClass({
           </InputGroup.Input>
         </InputGroup.Row>
       </section>
-    )
+    );
   }
 });
 

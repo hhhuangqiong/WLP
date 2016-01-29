@@ -57,18 +57,18 @@ var ImTable = React.createClass({
     router: React.PropTypes.func.isRequired
   },
 
-  getTypeSize: function(item,typeText) {
+  getTypeSize: function(item, typeText) {
     let typeSize = '';
     if (item.message_type !== 'undefined') {
       if (item.file_size > 1024) {
-        typeSize = (Math.round((item.file_size/1024)))+'kb';
+        typeSize = (Math.round((item.file_size / 1024))) + 'kb';
       } else if (item.file_size > 0 && item.file_size < 1024) {
-        typeSize = item.file_size+'b';
+        typeSize = item.file_size + 'b';
       } else {
         if (item.message_size > 1024) {
-          typeSize = (Math.round((item.message_size/1024)))+'kb';
+          typeSize = (Math.round((item.message_size / 1024))) + 'kb';
         } else if (item.message_size > 0 && item.message_size < 1024) {
-          typeSize = item.message_size+'b';
+          typeSize = item.message_size + 'b';
         }
       }
     }
@@ -88,11 +88,11 @@ var ImTable = React.createClass({
     let rows = this.props.ims.map((u, key) => {
 
       let callerCountry = _.find(Countries, (c) => {
-        return c.alpha2.toLowerCase() == u.origin
+        return c.alpha2.toLowerCase() === u.origin;
       });
 
       let calleeCountry = _.find(Countries, (c) => {
-        return c.alpha2.toLowerCase() == u.destination
+        return c.alpha2.toLowerCase() === u.destination;
       });
 
       let imDate = moment(u.timestamp).format(IM_DATETIME_FORMAT);
@@ -143,7 +143,7 @@ var ImTable = React.createClass({
             <If condition={_.isArray(u.recipients)}>
               <div className="recipient_info">
                 <div className="icon-multiuser"></div>
-                <Tooltip placement="right" trigger={['hover']} overlay={u.recipients.map((n)=>{return <span className="recip-info">{n}</span>})}>
+                <Tooltip placement="right" trigger={['hover']} overlay={u.recipients.map((n)=>{return <span className="recip-info">{n}</span>;})}>
                   <span className="recipient-num">{u.recipients.length} Recipients</span>
                 </Tooltip>
               </div>

@@ -40,7 +40,7 @@ var ImOverview = React.createClass({
     };
   },
 
-  getInitialState: function () {
+  getInitialState: function() {
     return this.getStateFromStores();
   },
 
@@ -51,7 +51,7 @@ var ImOverview = React.createClass({
   renderImWidgets() {
     let widgets = this.state.widgets;
 
-    if (!widgets || !widgets.length){
+    if (!widgets || !widgets.length) {
       return (<WidgetNotAvailable />);
     }
 

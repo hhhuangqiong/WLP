@@ -17,17 +17,17 @@ let VSFTransactionTable = React.createClass({
   getStyleByStoreType(platform) {
     return classNames({
       'icon-apple': platform === IOS_PLATFORM
-    },{
+    }, {
       'icon-apple-hack': platform === IOS_PLATFORM
-    },{
+    }, {
       'icon-android': platform === ANDROID_PLATFORM
-    },{
+    }, {
       'icon-android-hack': platform === ANDROID_PLATFORM
     });
   },
 
   renderPlatform(platform) {
-    if(!platform) {
+    if (!platform) {
       return NO_VALUE_LABEL;
     }
 
@@ -88,7 +88,7 @@ let VSFTransactionTable = React.createClass({
             <span>{transaction.transactionId || NO_VALUE_LABEL}</span>
           </td>
         </tr>
-      )
+      );
     });
   },
 

@@ -11,7 +11,7 @@ var InfoPanel = React.createClass({
   getDefaultProps: function() {
     return {
       title: 'User'
-    }
+    };
   },
 
   render: function() {
@@ -30,7 +30,7 @@ var InfoPanel = React.createClass({
           </div>
         </div>
       </div>
-    )
+    );
   }
 });
 

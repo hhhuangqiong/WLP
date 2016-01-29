@@ -33,7 +33,7 @@ export default class VerificationFilter extends Component {
             <select
               className="radius"
               name="appid"
-              value={appId ? appId : "-"}
+              value={appId ? appId : '-'}
               onChange={appIdChange}
             >
               {options.map((appId) => {
@@ -41,7 +41,7 @@ export default class VerificationFilter extends Component {
                   <option key={appId.label} value={appId.value}>
                     {appId.label}
                   </option>
-                )
+                );
               })}
             </select>
           </div>
@@ -60,7 +60,7 @@ export default class VerificationFilter extends Component {
                     <option key={type} value={type}>
                       {this.props.transformVerificationTypes(type)}
                     </option>
-                  )
+                  );
                 })}
             </select>
           </div>
@@ -79,7 +79,7 @@ export default class VerificationFilter extends Component {
                   <option key={platform} value={platform}>
                     {platform}
                   </option>
-                )
+                );
               })}
             </select>
           </div>

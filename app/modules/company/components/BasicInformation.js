@@ -163,7 +163,7 @@ let BasicInformation = React.createClass({
             </div>
           </div>
           <InputGroup.Row>
-            <InputGroup.Label for="companyName">company name*</InputGroup.Label>
+            <InputGroup.Label htmlFor="companyName">company name*</InputGroup.Label>
             <InputGroup.Input>
               <input
                   className="radius"
@@ -178,7 +178,7 @@ let BasicInformation = React.createClass({
             </InputGroup.Input>
           </InputGroup.Row>
           <InputGroup.Row>
-            <InputGroup.Label for="carrierId">carrier ID*</InputGroup.Label>
+            <InputGroup.Label htmlFor="carrierId">carrier ID*</InputGroup.Label>
             <InputGroup.Input>
               <input
                   className="radius"
@@ -193,7 +193,7 @@ let BasicInformation = React.createClass({
             </InputGroup.Input>
           </InputGroup.Row>
           <InputGroup.Row>
-            <InputGroup.Label for="address">company address</InputGroup.Label>
+            <InputGroup.Label htmlFor="address">company address</InputGroup.Label>
             <InputGroup.Input>
               <textarea
                   className="radius"
@@ -232,7 +232,7 @@ let BasicInformation = React.createClass({
             </InputGroup.Input>
           </InputGroup.Row>
           <InputGroup.Row>
-            <InputGroup.Label for="parentCompany">parent company*</InputGroup.Label>
+            <InputGroup.Label htmlFor="parentCompany">parent company*</InputGroup.Label>
             <InputGroup.Input>
               <select className="radius" name="parentCompany" value={this.props.parentCompany} onChange={_.bindKey(this.props, 'onDataChange', 'parentCompany')} onBlur={this.props.onInputBlur}>
                 <option value="">please select</option>
@@ -255,7 +255,7 @@ let BasicInformation = React.createClass({
             </InputGroup.Input>
           </InputGroup.Row>
           <InputGroup.Row>
-            <InputGroup.Label for="accountManager">account manager</InputGroup.Label>
+            <InputGroup.Label htmlFor="accountManager">account manager</InputGroup.Label>
             <InputGroup.Input>
               <input
                   className="radius"
@@ -270,7 +270,7 @@ let BasicInformation = React.createClass({
             </InputGroup.Input>
           </InputGroup.Row>
           <InputGroup.Row>
-            <InputGroup.Label for="billCode">bill code</InputGroup.Label>
+            <InputGroup.Label htmlFor="billCode">bill code</InputGroup.Label>
             <InputGroup.Input>
               <input
                   className="radius"
@@ -285,7 +285,7 @@ let BasicInformation = React.createClass({
             </InputGroup.Input>
           </InputGroup.Row>
           <InputGroup.Row>
-            <InputGroup.Label for="categoryId">category ID</InputGroup.Label>
+            <InputGroup.Label htmlFor="categoryId">category ID</InputGroup.Label>
             <InputGroup.Input>
               <input
                   className="radius"
@@ -300,9 +300,9 @@ let BasicInformation = React.createClass({
             </InputGroup.Input>
           </InputGroup.Row>
           <InputGroup.Row>
-            <InputGroup.Label for="expectedServiceDate">expected service date</InputGroup.Label>
+            <InputGroup.Label htmlFor="expectedServiceDate">expected service date</InputGroup.Label>
             <InputGroup.Input>
-              <DatePicker withIcon={true} type="button" selectedDate={this.props.expectedServiceDate ? moment(this.props.expectedServiceDate).format(DATE_FORMAT) : moment().format(DATE_FORMAT)} onChange={this.props.onDateChange} />
+              <DatePicker withIcon type="button" selectedDate={this.props.expectedServiceDate ? moment(this.props.expectedServiceDate).format(DATE_FORMAT) : moment().format(DATE_FORMAT)} onChange={this.props.onDateChange} />
               <input
                   className="radius"
                   type="hidden"
@@ -316,21 +316,21 @@ let BasicInformation = React.createClass({
             </InputGroup.Input>
           </InputGroup.Row>
           <InputGroup.Row>
-            <InputGroup.Label for="country">country*</InputGroup.Label>
+            <InputGroup.Label htmlFor="country">country*</InputGroup.Label>
             <InputGroup.Input>
               <CountrySelectBox
                   name="country"
                   value={this.props.country}
-                  searchable={true}
-                  showFlag={true}
-                  showText={true}
+                  searchable
+                  showFlag
+                  showText
                   onChange={this.props.onCountryChange}
               />
               {this.props.getValidationMessages('country').map(this.props.renderHelpText)}
             </InputGroup.Input>
           </InputGroup.Row>
           <InputGroup.Row>
-            <InputGroup.Label for="timezone">timezone*</InputGroup.Label>
+            <InputGroup.Label htmlFor="timezone">timezone*</InputGroup.Label>
             <InputGroup.Input>
               <select className="radius" name="timezone" value={this.props.timezone} onChange={_.bindKey(this.props, 'onDataChange', 'timezone')} onBlur={this.props.onInputBlur}>
                 <option>please select</option>
@@ -341,7 +341,7 @@ let BasicInformation = React.createClass({
           </InputGroup.Row>
         </Panel.Body>
       </Panel.Wrapper>
-    )
+    );
   }
 });
 

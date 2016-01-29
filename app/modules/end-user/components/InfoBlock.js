@@ -33,7 +33,7 @@ var InfoBlock = React.createClass({
           {this.props.children}
         </div>
       </li>
-    )
+    );
   }
 });
 

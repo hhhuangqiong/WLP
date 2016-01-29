@@ -14,7 +14,7 @@ import createProfile from '../actions/createCompany';
 import updateProfile from '../actions/updateProfile';
 import fetchParentCompanies from '../actions/fetchParentCompanies';
 
-import Tooltip from 'rc-tooltip'
+import Tooltip from 'rc-tooltip';
 import TopBar from './TopBar';
 import BasicInformation from './BasicInformation';
 import Contacts from './Contacts';
@@ -61,7 +61,7 @@ let CompanyProfile = React.createClass({
     let { carrierId } = this.context.router.getCurrentParams();
 
     if (carrierId) {
-      return this.getStore(CompanyStore).getCompanyByCarrierId(carrierId)
+      return this.getStore(CompanyStore).getCompanyByCarrierId(carrierId);
     } else {
       return this.getStore(CompanyStore).getNewCompany();
     }
@@ -120,7 +120,7 @@ let CompanyProfile = React.createClass({
     });
   },
 
-  _handleCountryChange: function(val) {;
+  _handleCountryChange: function(val) {
     this.setState({
       country: val
     });
@@ -206,7 +206,7 @@ let CompanyProfile = React.createClass({
           </div>
         </form>
       </div>
-    )
+    );
   }
 });
 

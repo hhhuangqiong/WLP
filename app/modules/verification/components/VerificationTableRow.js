@@ -25,7 +25,7 @@ let mobileOperators = require('../../../data/mobileOperators.json');
  * @param {String} alpha2  The alpha2 country code
  * @returns {Country} The country object
  */
-let lookupCountry = function (alpha2) {
+let lookupCountry = function(alpha2) {
   if (!alpha2) {
     return null;
   }
@@ -43,7 +43,7 @@ let lookupCountry = function (alpha2) {
  * @param {Number} mnc  The mobile network code of the operator
  * @returns {String} The operator name, or empty string if not found
  */
-let lookupMobileOperator = function (mcc, mnc) {
+let lookupMobileOperator = function(mcc, mnc) {
   if (!mcc || !mnc) {
     return '';
   }
@@ -54,9 +54,9 @@ let lookupMobileOperator = function (mcc, mnc) {
     return '';
   }
 
-  let operatorObject = _.find(operatorsInCountry, function (obj) {
+  let operatorObject = _.find(operatorsInCountry, function(obj) {
     // no `===`, try to compare string and number
-    return obj.mnc == mnc;
+    return obj.mnc === mnc;
   });
 
   return operatorObject ? operatorObject.operator : '';
@@ -69,14 +69,14 @@ let lookupMobileOperator = function (mcc, mnc) {
  * @param {String} type  The type of the verification event
  * @returns {String} The verification method
  */
-let getVerificationMethod = function (type) {
+let getVerificationMethod = function(type) {
   switch (type) {
-    case 'MobileTerminated':
-      return 'call-in';
-    case 'MobileOriginated':
-      return 'call-out';
-    default:
-      return type;
+  case 'MobileTerminated':
+    return 'call-in';
+  case 'MobileOriginated':
+    return 'call-out';
+  default:
+    return type;
   }
 };
 
@@ -86,21 +86,21 @@ let getVerificationMethod = function (type) {
  * the icon-font that has been defined in the CSS. The word "OS" is technically
  * incorrect because the icon name was defined as "apple", while apple is not
  * an OS name.)
- * 
+ *
  * @method
  * @param {String} platform  The platform of the mobile phone used during the verification
  * @returns {String} The icon name for the OS
  */
-let getOsIconName = function (platform) {
+let getOsIconName = function(platform) {
   if (!platform) {
     return null;
   }
 
   switch (platform.toUpperCase()) {
-    case 'IOS':
-      return 'apple';
-    default:
-      return platform;
+  case 'IOS':
+    return 'apple';
+  default:
+    return platform;
   }
 };
 
@@ -170,7 +170,7 @@ let VerificationTableRow = React.createClass({
     })
   },
 
-  render: function () {
+  render: function() {
     let verification = this.props.verification;
 
     let time = moment(verification.timestamp);

@@ -28,7 +28,7 @@ var SMSTable = React.createClass({
     if (status.toLowerCase() === 'submitted') {
       return <span className="status-label label radius success">submitted</span>;
     } else {
-      return <span className="status-label label radius alert">rejected</span>
+      return <span className="status-label label radius alert">rejected</span>;
     }
   },
 
@@ -45,7 +45,7 @@ var SMSTable = React.createClass({
       return (
         <tr>
           <td className="text-center">
-            <span className={classNames('label', 'status', { success: sms.status.toLowerCase() == 'submitted' }, { alert: sms.status.toLowerCase() == 'rejected' })} />
+            <span className={classNames('label', 'status', { success: sms.status.toLowerCase() === 'submitted' }, { alert: sms.status.toLowerCase() === 'rejected' })} />
           </td>
           <td>{this._getDisplayTimestamp(sms.request_date)}</td>
           <td>
@@ -91,7 +91,7 @@ var SMSTable = React.createClass({
             </If>
           </td>
         </tr>
-      )
+      );
     });
 
     return (

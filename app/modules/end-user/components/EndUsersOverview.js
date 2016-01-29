@@ -92,7 +92,7 @@ const EndUsersOverview = React.createClass({
       selectedYear: defaultQueryMonth.get('year'),
       selectedLastXDays: TIME_FRAMES[1],
       selectedLine: STATS_TYPE.REGISTERED_USER,
-    }
+    };
   },
 
   componentDidMount() {
@@ -238,11 +238,11 @@ const EndUsersOverview = React.createClass({
       var option = { value: id, label: id };
       result.push(option);
       return result;
-    }, [])
+    }, []);
   },
 
   _getMonths() {
-    let monthArray = Array.apply(0, Array(12)).map((_, i ) => { return i });
+    let monthArray = Array.apply(0, Array(12)).map((_, i ) => { return i; });
 
     return _.reduce(monthArray, (result, n) => {
       var option = { value: n, label: moment().month(n).format('MMMM') };
@@ -296,8 +296,8 @@ const EndUsersOverview = React.createClass({
 
     return {
       start: from,
-        tickCount: parseInt(quantity),
-        tickInterval: (timescale === 'day' ? 24 : 1) * 3600 * 1000
+      tickCount: parseInt(quantity),
+      tickInterval: (timescale === 'day' ? 24 : 1) * 3600 * 1000
     };
   },
 
@@ -360,7 +360,7 @@ const EndUsersOverview = React.createClass({
         </div>
         {(
         sortedCountries.slice(0, 10) || []).map((country) => {
-            return (
+          return (
               <div className="geographic-chart__country-table__body row" key={country.code}>
                 <div className="country large-15 columns">
                   <CountryFlag code={country.code} />
@@ -369,10 +369,10 @@ const EndUsersOverview = React.createClass({
                 <div className="stats large-9 columns">{country.value || EMPTY_CELL_PLACEHOLDER}</div>
               </div>
             );
-          }
+        }
         )}
       </div>
-    )
+    );
 
     return (
       <table className="geographic-chart__country-table">
@@ -418,7 +418,7 @@ const EndUsersOverview = React.createClass({
               name="appid"
               className="end-users-details__app-select"
               options={this._getAppIdSelectOptions()}
-              value={"Application ID: " + (this.state.appId ? this.state.appId : "-")}
+              value={'Application ID: ' + (this.state.appId ? this.state.appId : '-')}
               clearable={false}
               searchable={false}
               onChange={this.onAppIdChange}
@@ -574,7 +574,7 @@ const EndUsersOverview = React.createClass({
                     <div className="chart-cell__chart row">
                       {
                         this.state.deviceStats && this.state.deviceStats.map((stat) => {
-                          let percentage = Math.round(stat.total/this._getDeviceTotal() * 100);
+                          let percentage = Math.round(stat.total / this._getDeviceTotal() * 100);
                           return (
                             <div className="large-12 columns left">
                               <PercentageChart

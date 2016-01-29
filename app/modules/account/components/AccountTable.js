@@ -39,7 +39,7 @@ export default React.createClass({
   },
 
   renderSearchBar() {
-    if(!this.props.accounts.length) return;
+    if (!this.props.accounts.length) return;
 
     return (
       <nav className="top-bar company-sidebar__search" data-topbar role="navigation">
@@ -75,7 +75,7 @@ export default React.createClass({
   },
 
   renderRoleSections() {
-    if(!this.props.accounts.length) return;
+    if (!this.props.accounts.length) return;
 
     if (this.state.searchItem.length > 0) return this.renderSearchResults();
 
@@ -117,8 +117,8 @@ export default React.createClass({
             </div>
           </Link>
         </li>
-      )
-    })
+      );
+    });
   },
 
   render() {

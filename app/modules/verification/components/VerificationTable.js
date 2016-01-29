@@ -21,13 +21,13 @@ export default React.createClass({
     onLoadMoreClick: PropTypes.func.isRequired
   },
 
-  getDefaultProps: function () {
+  getDefaultProps: function() {
     return {
       verifications: []
     };
   },
 
-  renderTableRows: function () {
+  renderTableRows: function() {
     return this.props.verifications.map(item => {
       return (
         <VerificationTableRow key={item.id} verification={item} />
@@ -35,7 +35,7 @@ export default React.createClass({
     });
   },
 
-  renderPaginationFooter: function () {
+  renderPaginationFooter: function() {
     if (this.props.verifications.length < this.props.total) {
       return (<div className="pagination__button text-center" onClick={this.props.onLoadMoreClick}>Load More</div>);
     } else {
@@ -43,7 +43,7 @@ export default React.createClass({
     }
   },
 
-  render: function () {
+  render: function() {
     return (
       <table className="data-table small-24 large-22 large-offset-1">
         <thead>

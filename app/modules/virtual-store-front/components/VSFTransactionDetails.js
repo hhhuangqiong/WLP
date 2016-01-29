@@ -81,7 +81,7 @@ let VSFTransactionDetails = React.createClass({
       userNumber: this.state.userNumber && this.state.userNumber.trim(),
       pageIndex: ensureNumber(this.state.pageIndex),
       pageSize: ensureNumber(this.state.pageSize),
-    }
+    };
   },
 
   render() {

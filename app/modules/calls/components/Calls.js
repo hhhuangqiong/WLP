@@ -51,16 +51,16 @@ var Calls = React.createClass({
     }
   },
 
-getStateFromStores: function() {
-    let store = this.getStore(CallsStore);
+  getStateFromStores: function() {
+  let store = this.getStore(CallsStore);
 
-    return {
+  return {
       calls: store.getCalls(),
       callsCount: store.getCallsCount(),
       page: store.getPageNumber(),
       totalPages: store.getTotalPages()
     };
-  },
+},
 
   getDefaultQuery: function() {
     return {
@@ -75,7 +75,7 @@ getStateFromStores: function() {
     };
   },
 
-  getInitialState: function () {
+  getInitialState: function() {
     let query = _.merge(this.getDefaultQuery(), this.context.router.getCurrentQuery());
     let queryAndStore = _.merge(this.getStateFromStores(), query);
     return queryAndStore;
@@ -95,7 +95,7 @@ getStateFromStores: function() {
       size: config.PAGES.CALLS.PAGE_SIZE,
       type: this.state.type && this.state.type.trim(),
       searchType: this.state.searchType && this.state.searchType.trim()
-    }
+    };
   },
 
   handleQueryChange: function(newQuery) {
@@ -139,7 +139,7 @@ getStateFromStores: function() {
     let type = null;
 
     if (this.state.type !== 'ONNET') {
-      type = 'ONNET'
+      type = 'ONNET';
     }
 
     this.handleQueryChange({ type: type });
@@ -151,7 +151,7 @@ getStateFromStores: function() {
     let type = null;
 
     if (this.state.type !== 'OFFNET') {
-      type = 'OFFNET'
+      type = 'OFFNET';
     }
 
     this.handleQueryChange({ type: type });
@@ -165,7 +165,7 @@ getStateFromStores: function() {
 
   handleSearchSubmit: function(e) {
     // on enter pressed
-    if (e.which == 13) {
+    if (e.which === 13) {
       e.preventDefault();
       this.handleQueryChange();
     }
@@ -189,13 +189,13 @@ getStateFromStores: function() {
     this.refs.endDatePicker.handleFocus();
   },
 
-  componentDidMount : function () {
+  componentDidMount : function() {
     $(document).foundation('reveal', 'reflow');
   },
 
   render: function() {
     let params = this.context.router.getCurrentParams();
-    let searchTypes = [{name:'Caller', value: 'caller'},{name:'Callee', value: 'callee'}];
+    let searchTypes = [{name:'Caller', value: 'caller'}, {name:'Callee', value: 'callee'}];
 
     /* Temporarily disabled overview section for Calls
     TODO: put it back into tab-bar

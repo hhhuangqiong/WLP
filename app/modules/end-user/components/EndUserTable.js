@@ -35,27 +35,27 @@ var EndUserTable = React.createClass({
     let rows = this.props.users.map((u) => {
       let device = _.get(u, 'devices.0') || {};
 
-        let country = _.find(Countries, (c) => {
-          return c.alpha2.toLowerCase() == u.countryCode
+      let country = _.find(Countries, (c) => {
+          return c.alpha2.toLowerCase() === u.countryCode;
         }) || {
           name: NOT_FOUND_LABEL,
           alpha2: NOT_FOUND_LABEL
         };
 
-        let creationDate = moment(u.creationDate).format(DATE_FORMAT);
-        let handleOnClick = _.bindKey(this.props, 'onUserClick', u.username.trim());
+      let creationDate = moment(u.creationDate).format(DATE_FORMAT);
+      let handleOnClick = _.bindKey(this.props, 'onUserClick', u.username.trim());
 
-        let platform = device.platform || NOT_FOUND_LABEL;
-        let currentUser = this.props.currentUser;
+      let platform = device.platform || NOT_FOUND_LABEL;
+      let currentUser = this.props.currentUser;
 
-        return <tr className={classNames('end-user-table-row', { selected: currentUser && currentUser.userDetails.username === u.username })} onClick={handleOnClick}>
+      return <tr className={classNames('end-user-table-row', { selected: currentUser && currentUser.userDetails.username === u.username })} onClick={handleOnClick}>
           <td>
             {u.jid}
           </td>
           <td className="creation-date">{creationDate}</td>
           <td className="account-status">
             <span>
-              <span className={classNames('label', 'status', (u.accountStatus === 'ACTIVE')?'success':'alert')}></span>
+              <span className={classNames('label', 'status', (u.accountStatus === 'ACTIVE') ? 'success':'alert')}></span>
               {_.capitalize((u.accountStatus || '').toLowerCase())}
             </span>
           </td>
@@ -65,8 +65,8 @@ var EndUserTable = React.createClass({
           </td>
           <td>{device.appBundleId || NOT_FOUND_LABEL}</td>
           <td>{device.appVersionNumber || NOT_FOUND_LABEL}</td>
-        </tr>
-      }
+        </tr>;
+    }
     );
 
     return (

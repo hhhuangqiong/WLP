@@ -27,7 +27,7 @@ var TopUpTable = React.createClass({
   },
 
   _isFreeWallet: function(type) {
-    return type.toLowerCase() == 'free';
+    return type.toLowerCase() === 'free';
   },
 
   _getDisplayTimestamp: function(timestamp) {
@@ -49,7 +49,7 @@ var TopUpTable = React.createClass({
       return (
         <tr>
           <td className="text-center">
-            <span className={classNames('label', 'status', { success: history.status.toLowerCase() == 'success' }, { alert: history.status.toLowerCase() == 'failure' || history.status.toLowerCase() == 'processing' })} />
+            <span className={classNames('label', 'status', { success: history.status.toLowerCase() === 'success' }, { alert: history.status.toLowerCase() === 'failure' || history.status.toLowerCase() === 'processing' })} />
           </td>
           <td>{this._getDisplayTimestamp(history.rechargeDate)}</td>
           <td>{this._getDisplayUsername(history.username)}</td>
@@ -66,7 +66,7 @@ var TopUpTable = React.createClass({
             </If>
           </td>
         </tr>
-      )
+      );
     });
 
     return (

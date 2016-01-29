@@ -93,7 +93,7 @@ var CallsOverview = React.createClass({
       selectedLastXDays: TIME_FRAMES[0],
       selectedAttemptLine: STATS_TYPE.TOTAL_ATTEMPT,
       selectedDurationLine: STATS_TYPE.TOTAL_DURATION
-    }
+    };
   },
 
   componentDidMount() {
@@ -143,7 +143,7 @@ var CallsOverview = React.createClass({
   },
 
   toggleDurationType(type) {
-    this.setState({ selectedDurationLine: type })
+    this.setState({ selectedDurationLine: type });
   },
 
   _getLineChartXAxis() {
@@ -222,11 +222,11 @@ var CallsOverview = React.createClass({
       var option = { value: id, label: id };
       result.push(option);
       return result;
-    }, [])
+    }, []);
   },
 
   _getMonths() {
-    let monthArray = Array.apply(0, Array(12)).map((_, i ) => { return i });
+    let monthArray = Array.apply(0, Array(12)).map((_, i ) => { return i; });
 
     return _.reduce(monthArray, (result, n) => {
       var option = { value: n, label: moment().month(n).format('MMMM') };
@@ -328,7 +328,7 @@ var CallsOverview = React.createClass({
               name="appid"
               className="end-users-details__app-select"
               options={this._getAppIdSelectOptions()}
-              value={"Application ID: " + (this.state.appId ? this.state.appId : "-")}
+              value={'Application ID: ' + (this.state.appId ? this.state.appId : '-')}
               clearable={false}
               searchable={false}
               onChange={this.onAppIdChange}

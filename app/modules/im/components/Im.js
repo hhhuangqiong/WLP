@@ -13,7 +13,7 @@ import AuthMixin from '../../../utils/AuthMixin';
 import ImStore from '../stores/ImStore';
 
 import fetchIm from '../actions/fetchIm';
-import fetchMoreIms from '../actions/fetchMoreIms'
+import fetchMoreIms from '../actions/fetchMoreIms';
 
 import ImTable from './ImTable';
 import Searchbox from '../../../main/components/Searchbox';
@@ -77,7 +77,7 @@ var Im = React.createClass({
     };
   },
 
-  getInitialState: function () {
+  getInitialState: function() {
     let defaultSearchType = _.first(searchTypes);
     let query = _.merge(this.getDefaultQuery(), this.context.router.getCurrentQuery(), { searchType: defaultSearchType.value });
     return _.merge(this.getStateFromStores(), query);
@@ -97,7 +97,7 @@ var Im = React.createClass({
       page: 0,
       size: config.PAGES.IMS.PAGE_SIZE,
       type: this.state.type && this.state.type.trim()
-    }
+    };
   },
 
   getDefaultMessageTypes: function() {
@@ -111,7 +111,7 @@ var Im = React.createClass({
       {title: 'Sticker', value: 'sticker'},
       {title: 'Voice Sticker', value: 'voice_sticker'},
       {title: 'Ephemeral Image', value: 'ephemeral_image'}
-    ]
+    ];
   },
 
   handleQueryChange: function(newQuery) {
@@ -164,7 +164,7 @@ var Im = React.createClass({
     let search = e.target.value;
     this.setState({ search: search });
 
-    if (e.which == 13) {
+    if (e.which === 13) {
       this.handleQueryChange({ search: search });
     }
   },
@@ -238,7 +238,7 @@ var Im = React.createClass({
             </ul>
 
             <div className="im-type large-2 columns left top-bar-section">
-              <select className={classNames('top-bar-section__message-type-select','left')} name="messageTypeDropDown" onChange={this.handleTypeChange}>
+              <select className={classNames('top-bar-section__message-type-select', 'left')} name="messageTypeDropDown" onChange={this.handleTypeChange}>
                 <option key={'messageType-default'} value="">Choose</option>
                 {this.getDefaultMessageTypes().map((messageType)=>{
                   return <option key={this.getOptKey(messageType)} value={messageType.value} selected={messageType.value === query.type}>{messageType.title}</option>;

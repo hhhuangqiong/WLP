@@ -8,14 +8,14 @@ export default createStore({
     FETCH_MORE_VERIFICATIONS_SUCCESS: 'handleMoreVerificationsFetched'
   },
 
-  initialize: function () {
+  initialize: function() {
     this.pageSize = 10;
     this.verifications = [];
     this.page = 0;
     this.count = 0;
   },
 
-  handleVerificationsFetched: function (payload) {
+  handleVerificationsFetched: function(payload) {
     this.page = payload.page;
     this.count = payload.count;
     this.verifications = payload.items;
@@ -23,7 +23,7 @@ export default createStore({
     this.emitChange();
   },
 
-  handleMoreVerificationsFetched: function (payload) {
+  handleMoreVerificationsFetched: function(payload) {
     this.page = payload.page;
     this.count = payload.count;
 
@@ -34,27 +34,27 @@ export default createStore({
     this.emitChange();
   },
 
-  getVerifications: function () {
+  getVerifications: function() {
     return this.verifications || [];
   },
 
-  getVerificationCount: function () {
+  getVerificationCount: function() {
     return this.count;
   },
 
-  getPageNumber: function () {
+  getPageNumber: function() {
     return this.page;
   },
 
-  getPageSize: function () {
+  getPageSize: function() {
     return this.pageSize;
   },
 
-  getPageCount: function () {
+  getPageCount: function() {
     return Math.ceil(this.count / this.pageSize);
   },
 
-  dehydrate: function () {
+  dehydrate: function() {
     return {
       verifications: this.verifications,
       pageSize: this.pageSize,
@@ -64,7 +64,7 @@ export default createStore({
     };
   },
 
-  rehydrate: function (state) {
+  rehydrate: function(state) {
     this.verifications = state.verifications;
     this.page = state.page;
     this.pageSize = state.pageSize;

@@ -50,7 +50,7 @@ class CreatePassword extends Component {
 
     if (this.props.isError() || !this.state.password.length || !this.state.passwordConfirm.length) return;
     let { token } = this.context.router.getCurrentQuery();
-    this.context.executeAction(createPassword, { password: this.state.password , token });
+    this.context.executeAction(createPassword, { password: this.state.password, token });
   }
 
   passwordOnChange = (event) => {

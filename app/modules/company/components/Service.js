@@ -152,7 +152,7 @@ let CompanyService = React.createClass({
               <Panel.Header title="service config information" />
               <Panel.Body>
                 <InputGroup.Row>
-                  <InputGroup.Label for="applicationId">application ID</InputGroup.Label>
+                  <InputGroup.Label htmlFor="applicationId">application ID</InputGroup.Label>
                   <InputGroup.Input>
                     <input
                         className="radius"
@@ -163,7 +163,7 @@ let CompanyService = React.createClass({
                   </InputGroup.Input>
                 </InputGroup.Row>
                 <InputGroup.Row>
-                  <InputGroup.Label for="developerKey">developer key</InputGroup.Label>
+                  <InputGroup.Label htmlFor="developerKey">developer key</InputGroup.Label>
                   <InputGroup.Input>
                     <input
                         className="radius"
@@ -175,7 +175,7 @@ let CompanyService = React.createClass({
                   </InputGroup.Input>
                 </InputGroup.Row>
                 <InputGroup.Row>
-                  <InputGroup.Label for="developerSecret">developer secret</InputGroup.Label>
+                  <InputGroup.Label htmlFor="developerSecret">developer secret</InputGroup.Label>
                   <InputGroup.Input>
                     <input
                         className="radius"
@@ -215,7 +215,7 @@ let CompanyService = React.createClass({
           </div>
         </form>
       </div>
-    )
+    );
   }
 });
 

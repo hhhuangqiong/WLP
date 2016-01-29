@@ -61,7 +61,7 @@ export default React.createClass({
     let constructChangeText = (numberChange, percentageChange) => {
       let percentageText = isFinite(percentageChange) ? Math.abs(percentageChange) : ' - ';
       return `${Math.abs(numberChange)} (${percentageText}%)`;
-    }
+    };
 
     let computeTrend = (prevValue, value, isPositiveGood) => {
       let numberChange = this.numberChanges(prevValue, value);
@@ -138,7 +138,7 @@ export default React.createClass({
   renderCells(cellMetadataList) {
     return cellMetadataList.map((cell, index) => {
       return (
-        <section key={index} className={classNames(`large-${Math.floor(TOTAL_COLUMNS/cellMetadataList.length)}`, 'columns', index !== 0 ? 'left-border' : '' )}>
+        <section key={index} className={classNames(`large-${Math.floor(TOTAL_COLUMNS / cellMetadataList.length)}`, 'columns', index !== 0 ? 'left-border' : '' )}>
           <div className="verification-overview__title">{cell.title}</div>
           <div className="verification-overview__value">{cell.value}</div>
           <div className={classNames('verification-overview__changes', cell.changes.status, cell.changes.direction, { hide: !cell.changes.status })}>

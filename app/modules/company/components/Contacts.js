@@ -51,13 +51,13 @@ let Contacts = React.createClass({
 
   render: function() {
     return (
-      <Panel.Wrapper addOn={true}>
+      <Panel.Wrapper addOn>
         <Panel.Header title="contacts" />
         <Panel.Body>
           <Accordion.Wrapper>
             <Accordion.Navigation title="business contact">
               <InputGroup.Row>
-                <InputGroup.Label for="bcName">name</InputGroup.Label>
+                <InputGroup.Label htmlFor="bcName">name</InputGroup.Label>
                 <InputGroup.Input>
                   <input
                       className="radius"
@@ -71,7 +71,7 @@ let Contacts = React.createClass({
                 </InputGroup.Input>
               </InputGroup.Row>
               <InputGroup.Row>
-                <InputGroup.Label for="bcPhone">phone</InputGroup.Label>
+                <InputGroup.Label htmlFor="bcPhone">phone</InputGroup.Label>
                 <InputGroup.Input>
                   <input
                       className="radius"
@@ -84,7 +84,7 @@ let Contacts = React.createClass({
                 </InputGroup.Input>
               </InputGroup.Row>
               <InputGroup.Row>
-                <InputGroup.Label for="bcEmail">email</InputGroup.Label>
+                <InputGroup.Label htmlFor="bcEmail">email</InputGroup.Label>
                 <InputGroup.Input>
                   <input
                       className="radius"
@@ -100,7 +100,7 @@ let Contacts = React.createClass({
             </Accordion.Navigation>
             <Accordion.Navigation title="technical contact">
               <InputGroup.Row>
-                <InputGroup.Label for="tcName">name</InputGroup.Label>
+                <InputGroup.Label htmlFor="tcName">name</InputGroup.Label>
                 <InputGroup.Input>
                   <input
                       className="radius"
@@ -114,7 +114,7 @@ let Contacts = React.createClass({
                 </InputGroup.Input>
               </InputGroup.Row>
               <InputGroup.Row>
-                <InputGroup.Label for="tcPhone">phone</InputGroup.Label>
+                <InputGroup.Label htmlFor="tcPhone">phone</InputGroup.Label>
                 <InputGroup.Input>
                   <input
                       className="radius"
@@ -128,7 +128,7 @@ let Contacts = React.createClass({
                 </InputGroup.Input>
               </InputGroup.Row>
               <InputGroup.Row>
-                <InputGroup.Label for="tcEmail">email</InputGroup.Label>
+                <InputGroup.Label htmlFor="tcEmail">email</InputGroup.Label>
                 <InputGroup.Input>
                   <input
                       className="radius"
@@ -144,7 +144,7 @@ let Contacts = React.createClass({
             </Accordion.Navigation>
             <Accordion.Navigation title="support contact">
               <InputGroup.Row>
-                <InputGroup.Label for="scName">name</InputGroup.Label>
+                <InputGroup.Label htmlFor="scName">name</InputGroup.Label>
                 <InputGroup.Input>
                   <input
                       className="radius"
@@ -158,7 +158,7 @@ let Contacts = React.createClass({
                 </InputGroup.Input>
               </InputGroup.Row>
               <InputGroup.Row>
-                <InputGroup.Label for="scPhone">phone</InputGroup.Label>
+                <InputGroup.Label htmlFor="scPhone">phone</InputGroup.Label>
                 <InputGroup.Input>
                   <input
                       className="radius"
@@ -172,7 +172,7 @@ let Contacts = React.createClass({
                 </InputGroup.Input>
               </InputGroup.Row>
               <InputGroup.Row>
-                <InputGroup.Label for="scEmail">email</InputGroup.Label>
+                <InputGroup.Label htmlFor="scEmail">email</InputGroup.Label>
                 <InputGroup.Input>
                   <input
                       className="radius"
@@ -189,7 +189,7 @@ let Contacts = React.createClass({
           </Accordion.Wrapper>
         </Panel.Body>
       </Panel.Wrapper>
-    )
+    );
   }
 });
 

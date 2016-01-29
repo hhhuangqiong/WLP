@@ -34,7 +34,7 @@ export default React.createClass({
 
           <div className="large-11 columns">
             <DateRangePicker
-              withIcon={true}
+              withIcon
               startDate={this.state.startDate.format('L')}
               endDate={this.state.endDate.format('L')}
               handleStartDateChange={this.handleStartDateChange}

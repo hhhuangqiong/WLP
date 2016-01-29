@@ -57,14 +57,14 @@ let VSFTransactionStore = createStore({
       hasNextPage: this.hasNextPage,
       widgets: this.widgets,
       transactions: this.transactions
-    }
+    };
   },
 
   dehydrate() {
     return this.getState();
   },
 
-  rehydrate (state) {
+  rehydrate(state) {
     this.fromTime = state.fromTime;
     this.toTime = state.toTime;
     this.category = state.category;

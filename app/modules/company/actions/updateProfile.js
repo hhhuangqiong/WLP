@@ -15,7 +15,7 @@ export default function(context, params) {
 
     // if carrierId is changed
     // change the current Url to new carrierId
-    if (result.carrierId != result.company.carrierId) {
+    if (result.carrierId !== result.company.carrierId) {
       let router = context.getRouter();
       let params = router.getCurrentParams();
       let query = router.getCurrentQuery();
@@ -24,4 +24,4 @@ export default function(context, params) {
       router.replaceWith('company-profile', _.merge(params, { carrierId: result.company.carrierId }), query);
     }
   });
-};
+}

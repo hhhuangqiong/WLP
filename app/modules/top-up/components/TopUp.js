@@ -100,7 +100,7 @@ var TopUp = React.createClass({
     return {
       totalRec: this.getStore(TopUpStore).getTotalRec(),
       page: this.getStore(TopUpStore).getPage()
-    }
+    };
   },
 
   onChange: function() {
@@ -120,7 +120,7 @@ var TopUp = React.createClass({
   // action for client side
   // so properties in state will domainate
   handlePageLoad: function() {
-    let targetPage = +this.state.page + 1
+    let targetPage = +this.state.page + 1;
     this.setState({ page: targetPage });
 
     this.context.executeAction(loadTransactions, _.merge(this.getRequestBodyFromState(), { page: targetPage }));
@@ -134,7 +134,7 @@ var TopUp = React.createClass({
     };
 
     if (moment(this.state.endDate, 'L').diff(momentDate, 'days') > MAX_QUERY_DATE_RANGE) {
-      updates.endDate = moment(momentDate).add(MAX_QUERY_DATE_RANGE,'days').format(DATE_FORMAT);
+      updates.endDate = moment(momentDate).add(MAX_QUERY_DATE_RANGE, 'days').format(DATE_FORMAT);
     }
 
     this.setState(updates);
@@ -151,8 +151,8 @@ var TopUp = React.createClass({
       endDate: date
     };
 
-    if (moment(momentDate).diff(moment(this.state.startDate,'L'), 'days') > MAX_QUERY_DATE_RANGE) {
-      updates.startDate = moment(momentDate).subtract(MAX_QUERY_DATE_RANGE,'days').format(DATE_FORMAT);
+    if (moment(momentDate).diff(moment(this.state.startDate, 'L'), 'days') > MAX_QUERY_DATE_RANGE) {
+      updates.startDate = moment(momentDate).subtract(MAX_QUERY_DATE_RANGE, 'days').format(DATE_FORMAT);
     }
 
     this.setState(updates);
@@ -172,7 +172,7 @@ var TopUp = React.createClass({
   },
 
   handleSearchInputSubmit: function(e) {
-    if ( e.which == 13 && this.validateSearchInput(e.target.value) ) {
+    if ( e.which === 13 && this.validateSearchInput(e.target.value) ) {
       this.handleQueryChange({ number: e.target.value, page: INITIAL_PAGE_NUMBER });
     }
   },
@@ -204,7 +204,7 @@ var TopUp = React.createClass({
           </FilterBar.NavigationItems>
           <FilterBar.LeftItems>
             <DateRangePicker
-              withIcon={true}
+              withIcon
               startDate={this.state.startDate}
               endDate={this.state.endDate}
               handleStartDateChange={this.handleStartDateChange}

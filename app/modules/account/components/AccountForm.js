@@ -2,15 +2,15 @@ import _ from 'lodash';
 import React, { PropTypes, Component } from 'react';
 import classnames from 'classnames';
 import Select from 'react-select';
-import Tooltip from 'rc-tooltip'
+import Tooltip from 'rc-tooltip';
 import Joi from 'joi';
 
 import FormField from '../../../main/components/FormField';
 import PredefinedGroups from '../constants/PredefinedGroups';
 import ConfirmationDialog from '../../../main/components/ConfirmationDialog';
 
-const COMPANY_DROPDOWN_PLACEHOLDER = "Choose companies";
-const COMPANY_NO_RESULT_TEXT = "No records";
+const COMPANY_DROPDOWN_PLACEHOLDER = 'Choose companies';
+const COMPANY_NO_RESULT_TEXT = 'No records';
 
 export default class AccountForm extends Component {
   static propTypes = {
@@ -87,7 +87,7 @@ export default class AccountForm extends Component {
 
     let userName = `${firstName} ${lastName}`;
 
-    let companyOptions = _.isEmpty(carrierManagingCompanies) ? [{ label: currentCompany.name, value: currentCompany._id }] : carrierManagingCompanies.map(company => ({ label: company.name, value: company._id }))
+    let companyOptions = _.isEmpty(carrierManagingCompanies) ? [{ label: currentCompany.name, value: currentCompany._id }] : carrierManagingCompanies.map(company => ({ label: company.name, value: company._id }));
 
     return (
       <form className="account-form" onSubmit={this.props.handleSave}>
@@ -203,7 +203,7 @@ export default class AccountForm extends Component {
                           <input id={company._id} type="checkbox" checked={assignedCompanies.indexOf(company._id) >= 0} onChange={this.props.handleAssignedCompanyChange} />
                           <label htmlFor={company._id}>{company.name}</label>
                         </li>
-                      )
+                      );
                     })
                   }
                 </ul>

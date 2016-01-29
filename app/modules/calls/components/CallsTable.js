@@ -27,7 +27,7 @@ var CallsTable = React.createClass({
     countryName = countryName || '';
 
     // Get the actual country name
-    let countryData = _.find(Countries, country => country.alpha2.toLowerCase() == countryName.toLowerCase());
+    let countryData = _.find(Countries, country => country.alpha2.toLowerCase() === countryName.toLowerCase());
 
     if (!countryData) return (<span className={callType}>{number}</span>);
 
@@ -71,7 +71,7 @@ var CallsTable = React.createClass({
               {this.renderCountryField(u.callee, u.target_country_tel_code, 'callee')}
             </td>
 
-            <td className="calls-table--cell"><span className={"call_type radius label " + callType}>{callType}</span></td>
+            <td className="calls-table--cell"><span className={'call_type radius label ' + callType}>{callType}</span></td>
             <td className="calls-table--cell">
               <span className="call_time">{callStartTime} - {callEndTime}</span>
               <label>{callEndDate}</label>
@@ -80,7 +80,7 @@ var CallsTable = React.createClass({
               <span className="left duration">{parseDuration(u.duration)}</span>
             </td>
             <td className="calls-table--cell">
-              <span className={classNames('call_status',(u.success)?'success':'alert')}>{(u.success)?'Success':'Failure'}</span>
+              <span className={classNames('call_status', (u.success) ? 'success':'alert')}>{(u.success) ? 'Success':'Failure'}</span>
             </td>
             <td className="calls-table--cell">
               {!u.success && u.bye_reason && u.bye_reason !== 'null' ? (
@@ -90,7 +90,7 @@ var CallsTable = React.createClass({
             <td className="calls-table--cell"><span className="caller_bundle_id">{u.caller_bundle_id || EMPTY_STRING}</span></td>
             <td className="calls-table--cell"><span className="sip_trunk">{u.sip_trunk || EMPTY_STRING}</span></td>
           </tr>
-        )
+        );
       });
     } else {
       rows = <tr className="calls-table--row">
@@ -102,7 +102,7 @@ var CallsTable = React.createClass({
           <td className="calls-table--cell"></td>
           <td className="calls-table--cell"></td>
           <td className="calls-table--cell"></td>
-        </tr>
+        </tr>;
     }
 
     let footer = null;
@@ -113,13 +113,13 @@ var CallsTable = React.createClass({
         <div className="pagination text-center">
           <span className="pagination__button" onClick={this.props.onDataLoad}>Load More</span>
         </div>
-      )
+      );
     } else {
       pagination = (
         <div className="text-center">
           <span className="pagination__button pagination__button--inactive">no more result</span>
         </div>
-      )
+      );
     }
 
     if (!_.isEmpty(this.props.calls)) {
@@ -131,7 +131,7 @@ var CallsTable = React.createClass({
             </td>
           </tr>
         </tfoot>
-      )
+      );
     }
 
     return (

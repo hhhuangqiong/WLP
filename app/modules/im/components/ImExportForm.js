@@ -128,6 +128,6 @@ export default React.createClass({
         />
 
       </form>
-    )
+    );
   }
 });

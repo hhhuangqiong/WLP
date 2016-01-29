@@ -24,9 +24,9 @@ function prefix_(prefix, str) {
 /**
  * Creates and returns a callback function for the apiCreator.
  *
- * The callback function will handle the result transformation 
+ * The callback function will handle the result transformation
  * and dispatch the correct event with respect to the lifecycle.
- * 
+ *
  * @method
  * @param {String} actionName  The action name for event dispatch purpose
  * @param {Object} context  The execution context
@@ -42,7 +42,7 @@ function createVerificationSearchApiCallback(actionName, context) {
 
   let debug = require('debug')(`app:${actionName}`);
 
-  return function (err, response) {
+  return function(err, response) {
     if (err) {
       debug(`Failed: ${err.message}`);
       context.dispatch(lifecycle.FAILURE, err);
@@ -94,15 +94,15 @@ function transformParameters(params) {
     method,
     phone_number,
     platform
-  }, function (value) {
+  }, function(value) {
     return !value;
   });
 
   return query;
 }
 
-export default function (actionName, apiMethod) {
-  return function (context, params, done) {
+export default function(actionName, apiMethod) {
+  return function(context, params, done) {
     // create the API function object, pass in the custom callback
     let api = actionCreator(actionName, apiMethod, {
       cb: createVerificationSearchApiCallback(actionName, context)
@@ -111,4 +111,4 @@ export default function (actionName, apiMethod) {
     // invoke the API
     api(context, transformParameters(params), done);
   };
-};
+}
