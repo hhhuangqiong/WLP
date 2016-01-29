@@ -222,6 +222,13 @@ const EndUsersOverview = React.createClass({
     return `Data updated till: ${lastUpdate}`;
   },
 
+  getLastUpdateFromTimeFrame() {
+    let timeframe = this.state.selectedLastXDays;
+    const { to, timescale } = parseTimeRange(timeframe);
+    let lastUpdate = timescale === 'hour' ? moment(to).format(LAST_UPDATE_TIME_FORMAT) : moment(to).endOf(timescale).format(LAST_UPDATE_TIME_FORMAT);
+    return `Data updated till: ${lastUpdate}`;
+  },
+
   render() {
     const { role, identity } = this.context.router.getCurrentParams();
     const totalRegisteredUser = this._getTotalRegisteredUser();
@@ -313,7 +320,10 @@ const EndUsersOverview = React.createClass({
 
           <div className="large-24 columns">
             <Panel.Wrapper>
-              <Panel.Header customClass="narrow" title="Daily Statistics">
+              <Panel.Header
+                customClass="narrow"
+                title="Daily Statistics"
+                caption={this.getLastUpdateFromTimeFrame()} >
                 <div className="input-group right">
                   <label className="left">Past:</label>
                   <TimeFramePicker
