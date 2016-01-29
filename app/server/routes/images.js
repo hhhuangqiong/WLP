@@ -26,7 +26,7 @@ let getImage = function(req, res, next) {
         if (err) return cb(err);
         file.imageData = data;
         return cb(null, file);
-      })
+      });
     });
   }
 

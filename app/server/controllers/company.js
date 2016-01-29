@@ -238,7 +238,7 @@ export default class CompanyController {
       .then((companies) => {
         return res.status(200).json({
           companies: companies
-        })
+        });
       })
       .catch((err) => {
         logger.error(err);
@@ -247,7 +247,7 @@ export default class CompanyController {
         });
       })
       .done();
-  };
+  }
 
   /**
    * @method getParentCompanies
@@ -299,29 +299,29 @@ export default class CompanyController {
         });
       })
       .done();
-  };
+  }
 
   // By Kareem and is not reviewed yet
   getCriteria(params) {
     var criteria = {};
     for (var key in params) {
       switch (key) {
-        case 'id':
-        case 'domain':
-        case 'name':
-        case 'address':
-          if (!_.isNull(params[key]) && !_.isUndefined(params[key])) {
+      case 'id':
+      case 'domain':
+      case 'name':
+      case 'address':
+        if (!_.isNull(params[key]) && !_.isUndefined(params[key])) {
             criteria[key] = params[key];
           }
 
-        default:
-          logger.warn('Invalid search criteria requested: ' + key);
+      default:
+        logger.warn('Invalid search criteria requested: ' + key);
       }
     }
 
     logger.debug('Requested search criteria: %j', criteria, {});
     return criteria;
-  };
+  }
 
   /**
    * Check if the given company is assigned to the current PortalUser
@@ -345,17 +345,17 @@ export default class CompanyController {
     }
 
     return Q.ninvoke(PortalUser, 'findOne', {
-        _id: user._id,
-        assignedCompanies: {
+      _id: user._id,
+      assignedCompanies: {
           $in: [companyId]
         }
-      })
+    })
       .catch((err) => {
         logger.error(err);
         cb(err);
         return;
       });
-  };
+  }
 
   saveProfile(req, res) {
     //req.checkBody('name').notEmpty();
@@ -434,7 +434,7 @@ export default class CompanyController {
      */
     var uploadImage = _.bind(function(params, cb) {
       var file = this.file;
-      if (file && (file.originalFilename != '' && file.size > 0)) {
+      if (file && (file.originalFilename !== '' && file.size > 0)) {
         logger.debug('file upload is detected, starting gridfs writing stream');
 
         let db = mongoose.connection.db;
@@ -460,7 +460,7 @@ export default class CompanyController {
             if (err) return cb(err);
             return cb(null, params);
           });
-        })
+        });
       } else {
         logger.debug('no logo uploaded');
         return cb(null, params);
@@ -475,7 +475,7 @@ export default class CompanyController {
      */
     var unlinkImage = _.bind(function(params, cb) {
       let oldImageId = this.oldImageId;
-      if (mongoose.Types.ObjectId.isValid(oldImageId) && params.logo != oldImageId) {
+      if (mongoose.Types.ObjectId.isValid(oldImageId) && params.logo !== oldImageId) {
         logger.debug('unlinking image with id %s in mongodb', oldImageId);
 
         let db = mongoose.connection.db;
@@ -522,16 +522,16 @@ export default class CompanyController {
         res.status(200).json({
           company: company,
           carrierId: req.params.carrierId
-        })
+        });
       })
       .catch((err) => {
         logger.error(err);
         res.status(err.code || 500).json({
           error: err
-        })
+        });
       })
       .done();
-  };
+  }
 
   saveService(req, res) {
     /**
@@ -608,7 +608,7 @@ export default class CompanyController {
         });
       })
       .done();
-  };
+  }
 
   saveWidget(req, res) {
     //req.checkBody('carrierId').notEmpty();
@@ -663,7 +663,7 @@ export default class CompanyController {
         });
       })
       .done();
-  };
+  }
 
   /**
    * Checks if the user having the specified userId can access the application information.
@@ -677,10 +677,10 @@ export default class CompanyController {
    * @throws {Promise.<Error>} If anything goes wrong
    */
   canAccessApplicationInformation(userId) {
-    let hasPermission = function (companyId) {
+    let hasPermission = function(companyId) {
       // besides Root and M800 Admin, M800 Dev is the only role
       // who has permission to edit, and hence, to fetch the Company applications
-      let isM800AdminOrDev = function () {
+      let isM800AdminOrDev = function() {
         return Q.ninvoke(PortalUser, 'find', {
           _id: userId,
           affiliatedCompany: companyId,
@@ -697,7 +697,7 @@ export default class CompanyController {
 
     return Q.ninvoke(Company, 'getRootCompanyId')
       .then(hasPermission);
-  };
+  }
 
   /**
    * Creates an error object which can be used as a response to the client.
@@ -738,12 +738,12 @@ export default class CompanyController {
       return res.status(400).json({
         error: new Error('missing query parameter `userId`')
       });
-    };
+    }
 
     let userId = req.query.userId;
     let carrierId = req.params.carrierId;
 
-    let makeApiRequest = _.partial(function (carrierId) {
+    let makeApiRequest = _.partial(function(carrierId) {
       let request = new ApplicationRequest({
         baseUrl: nconf.get('mumsApi:baseUrl'),
         timeout: nconf.get('mumsApi:timeout')
@@ -811,7 +811,7 @@ export default class CompanyController {
       return res.status(400).json({
         error: new Error('missing query parameter `userId`')
       });
-    };
+    }
 
     let userId = req.query.userId;
     let carrierId = req.params.carrierId;
@@ -820,9 +820,9 @@ export default class CompanyController {
       let request = new ApplicationRequest({ baseUrl: nconf.get('mumsApi:baseUrl'), timeout: nconf.get('mumsApi:timeout') });
 
       return Q.allSettled([
-          Q.ninvoke(request, 'getApplications', carrierId),
-          Q.ninvoke(request, 'getApiService', carrierId)
-        ])
+        Q.ninvoke(request, 'getApplications', carrierId),
+        Q.ninvoke(request, 'getApiService', carrierId)
+      ])
         .spread((applications, services)=> {
           let result = {
             applicationId: null,
@@ -836,7 +836,7 @@ export default class CompanyController {
 
           if (services.value) {
             _.filter(services.value, function(service) {
-              if (service.type == 'API') {
+              if (service.type === 'API') {
                 _.merge(result, {
                   developerKey: service.key,
                   developerSecret: service.secret

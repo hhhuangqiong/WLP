@@ -21,10 +21,10 @@ export default function processFn(mailer) {
     var data = job.data;
 
     // MAYBE stronger data structure protocol between job & processor
-    var mailOpts     = data.mailOpts
+    var mailOpts     = data.mailOpts;
     var templateName = data.templateName;
     var templateData = data.templateData;
 
     mailer.send(mailOpts, templateName, templateData, done);
-  }
+  };
 }

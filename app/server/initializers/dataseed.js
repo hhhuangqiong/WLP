@@ -58,7 +58,7 @@ function initialize(seedFilePath) {
       }
 
       return Q.ninvoke(model, 'addLogo', path.join(__dirname, `../../../public/images/${data.company.logoFile}`), {});
-    };
+    }
 
     var infoLogger = function(model) {
       logger.info('Seeded: %j', model, {});

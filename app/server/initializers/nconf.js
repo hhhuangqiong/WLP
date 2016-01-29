@@ -16,7 +16,7 @@ const ENV_CONFIG_FILE_PREFIX = 'env-';
  * @param {string} [opts.envSeparator=__]
  * @return {Object} nconf
  */
-export default function initialize(env, configDir, opts={ envSeparator: '__' }) {
+export default function initialize(env, configDir, opts = { envSeparator: '__' }) {
   nconf.argv();
   nconf.env(opts.envSeparator);
 

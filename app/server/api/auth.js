@@ -31,6 +31,6 @@ export default function(apiPrefix = '') {
       .set('Authorization', this._getToken())
       .end(genericHandler(cb));
     }
-  }
+  };
 }
 

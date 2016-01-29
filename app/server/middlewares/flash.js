@@ -19,6 +19,6 @@ export default function(opts = {}) {
     }
 
     next();
-  }
+  };
 }
 

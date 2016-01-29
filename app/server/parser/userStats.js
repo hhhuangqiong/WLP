@@ -6,7 +6,7 @@ export function parseTotalAtTime(stats, cb) {
   let result = _.last(data);
 
   return cb(null, result.v);
-};
+}
 
 export function parseMonthlyTotalInTime(stats) {
   let { segment, data } = stats.results[0];
@@ -18,4 +18,4 @@ export function parseMonthlyTotalInTime(stats) {
   });
 
   return result;
-};
+}

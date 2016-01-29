@@ -196,9 +196,9 @@ export function standardiseStatusDataSet(results, params) {
 
   // it may happens that only 1 result object is in the response
   results.forEach((result) => {
-    if (result.segment.success == "false") {
+    if (result.segment.success === 'false') {
       failureSet = result.data;
-    } else if (result.segment.success == "true") {
+    } else if (result.segment.success === 'true') {
       successSet = result.data;
     }
   });

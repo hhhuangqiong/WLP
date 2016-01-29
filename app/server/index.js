@@ -117,12 +117,12 @@ function initialize(port) {
 
   function handlePermissionError(err, req, res, next) {
     if (err) {
-      err.status == 404 ? res.redirect(ERROR_404) : res.redirect(ERROR_401);
+      err.status === 404 ? res.redirect(ERROR_404) : res.redirect(ERROR_401);
       return;
     }
 
     next();
-  };
+  }
 
   server.use(require('./middlewares/aclMiddleware'), handlePermissionError, function(req, res, next) {
     if (config.DISABLE_ISOMORPHISM) {

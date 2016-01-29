@@ -91,7 +91,7 @@ let getUsers = function(req, res) {
 
     return res.json(result);
   });
-}
+};
 
 // '/carriers/:carrierId/users/:username/wallet'
 let getUsername = function(req, res) {
@@ -104,7 +104,7 @@ let getUsername = function(req, res) {
     return {
       carrierId: this.carrierId.trim(),
       username: this.username.trim()
-    }
+    };
   }, req.params);
 
   var prepareWalletRequestParams = function(user) {
@@ -115,7 +115,7 @@ let getUsername = function(req, res) {
       carrier: user.carrierId,
       number: firstLetter === '+' ? username.substring(1, username.length) : username,
       sessionUserName: 'Whitelabel-Portal'
-    }
+    };
   };
 
   var sendEndUserRequest = _.bind(function(params) {
@@ -184,7 +184,7 @@ let getUserWallet = function(req, res) {
       carrier: this.carrierId.trim(),
       number: this.username[0] === '+' ? this.username.substring(1, this.username.length) : this.username,
       sessionUserName: 'Whitelabel-Portal'
-    }
+    };
   }, req.params);
 
   var sendWalletRequest = _.bind(function(params) {
@@ -206,8 +206,8 @@ let getUserWallet = function(req, res) {
           timeout
         }
       });
-    })
-}
+    });
+};
 
 // '/carriers/:carrierId/users/:username/suspension'
 let suspendUser = function(req, res) {
@@ -232,7 +232,7 @@ let suspendUser = function(req, res) {
         }
       });
     });
-}
+};
 
 // '/carriers/:carrierId/users/:username/suspension'
 let reactivateUser = function(req, res) {
@@ -257,7 +257,7 @@ let reactivateUser = function(req, res) {
         }
       });
     });
-}
+};
 
 // '/carriers/:carrierId/calls'
 let getCalls = function(req, res) {
@@ -301,7 +301,7 @@ let getCalls = function(req, res) {
 
     return res.json(result);
   });
-}
+};
 
 // '/carriers/:carrierId/topup'
 let getTopUp = function(req, res) {
@@ -338,7 +338,7 @@ let getTopUp = function(req, res) {
 
     return res.json(result);
   });
-}
+};
 
 // '/carriers/:carrierId/widgets/:type(calls|im|overview|store|sms|vsf)?userId'
 let getWidgets = function(req, res) {
@@ -351,8 +351,8 @@ let getWidgets = function(req, res) {
   let userId = req.query.userId;
 
   Q.ninvoke(PortalUser, 'findOne', {
-      _id: userId
-    })
+    _id: userId
+  })
     .then((user) => {
       if (!user) {
         return res.status(401).json({
@@ -374,7 +374,7 @@ let getWidgets = function(req, res) {
           error: {
             name: 'Invalid Carrier'
           }
-        })
+        });
       }
 
       return res.json({
@@ -395,7 +395,7 @@ let getWidgets = function(req, res) {
         });
       }
     });
-}
+};
 
 // '/carriers/:carrierId/sms'
 let getSMS = function(req, res) {
@@ -433,7 +433,7 @@ let getSMS = function(req, res) {
 
     return res.json(result);
   });
-}
+};
 
 // '/carriers/:carrierId/im'
 let getIM = function(req, res) {
@@ -484,7 +484,7 @@ let getIM = function(req, res) {
 
     return res.json(result);
   });
-}
+};
 
 // '/carriers/:carrierId/vsf'
 let getVSF = function(req, res) {
@@ -529,10 +529,10 @@ let getVSF = function(req, res) {
     records.hasNextPage = (numberOfPages - 1) > pageNumberIndex;
     return res.json(records);
   });
-}
+};
 
 // '/carriers/:carrierId/verifications'
-let getVerifications = function (req, res) {
+let getVerifications = function(req, res) {
   req.checkParams('carrierId').notEmpty();
   req.checkQuery('application').notEmpty();
   req.checkQuery('from').notEmpty();
@@ -574,7 +574,7 @@ let getVerifications = function (req, res) {
   });
 };
 
-let validateStatisticsRequest = function (req, cb) {
+let validateStatisticsRequest = function(req, cb) {
   req.checkParams('carrierId').notEmpty();
   req.checkQuery('application').notEmpty();
   req.checkQuery('from').notEmpty();
@@ -583,7 +583,7 @@ let validateStatisticsRequest = function (req, cb) {
   cb(req.validationErrors());
 };
 
-let mapVerificationStatsRequestParameters = function (req) {
+let mapVerificationStatsRequestParameters = function(req) {
   return _.omit({
     carrier: req.params.carrierId,
     application: req.query.application,
@@ -596,7 +596,7 @@ let mapVerificationStatsRequestParameters = function (req) {
   });
 };
 
-let getVerificationStatistics = function (req, res) {
+let getVerificationStatistics = function(req, res) {
   validateStatisticsRequest(req, (err) => {
     if (err) {
       return res.status(400).json({
@@ -609,7 +609,7 @@ let getVerificationStatistics = function (req, res) {
     let params = mapVerificationStatsRequestParameters(req);
     let breakdownType = req.query.type;
 
-    Q.ninvoke(verificationRequest,'getVerificationStats', params, breakdownType)
+    Q.ninvoke(verificationRequest, 'getVerificationStats', params, breakdownType)
       .then((response) => {
         return Q.nfcall(parseVerificationStatistic, response, params);
       })
@@ -690,7 +690,7 @@ let getEndUsersStatsMonthly = function(req, res) {
     });
   }
 
-  let thisMonthTime = moment(req.query.fromTime, 'x').get('month') != moment().get('month') ?
+  let thisMonthTime = moment(req.query.fromTime, 'x').get('month') !== moment().get('month') ?
     moment(req.query.fromTime, 'x') :
     moment().subtract(1, 'day');
 
@@ -746,13 +746,13 @@ let getEndUsersStatsMonthly = function(req, res) {
   });
 
   Q.allSettled([
-      Q.ninvoke(userStatsRequest, 'getNewUserStats', thisMonthRegisteredParams),
-      Q.ninvoke(userStatsRequest, 'getNewUserStats', lastMonthRegisteredParams),
-      Q.ninvoke(userStatsRequest, 'getActiveUserStats', thisMonthActiveParams),
-      Q.ninvoke(userStatsRequest, 'getActiveUserStats', lastMonthActiveParams),
-    ])
+    Q.ninvoke(userStatsRequest, 'getNewUserStats', thisMonthRegisteredParams),
+    Q.ninvoke(userStatsRequest, 'getNewUserStats', lastMonthRegisteredParams),
+    Q.ninvoke(userStatsRequest, 'getActiveUserStats', thisMonthActiveParams),
+    Q.ninvoke(userStatsRequest, 'getActiveUserStats', lastMonthActiveParams),
+  ])
     .spread((thisMonthRegisteredStats, lastMonthRegisteredStats, thisMonthActiveStats, lastMonthActiveStats) => {
-      let responses = [thisMonthRegisteredStats, lastMonthRegisteredStats, thisMonthActiveStats, lastMonthActiveStats]
+      let responses = [thisMonthRegisteredStats, lastMonthRegisteredStats, thisMonthActiveStats, lastMonthActiveStats];
       let errors = _.reduce(responses, (result, response) => {
         if (response.state !== 'fulfilled') {
           result.push(response.reason);
@@ -814,15 +814,15 @@ let getEndUsersStats = function(req, res) {
   }, (val) => { return !val; });
 
   switch (type) {
-    case 'registration':
-      params.breakdown = 'carrier';
+  case 'registration':
+    params.breakdown = 'carrier';
 
-      Q.allSettled([
-          Q.ninvoke(userStatsRequest, 'getNewUserStats', params),
-          Q.ninvoke(userStatsRequest, 'getActiveUserStats', params)
-        ])
+    Q.allSettled([
+        Q.ninvoke(userStatsRequest, 'getNewUserStats', params),
+        Q.ninvoke(userStatsRequest, 'getActiveUserStats', params)
+      ])
         .spread((newUserStats, activeUserStats) => {
-          let responses = [newUserStats, activeUserStats]
+          let responses = [newUserStats, activeUserStats];
           let errors = _.reduce(responses, (result, response) => {
             if (response.state !== 'fulfilled') {
               result.push(response.reason);
@@ -854,12 +854,12 @@ let getEndUsersStats = function(req, res) {
           });
         })
         .done();
-        break;
+    break;
 
-    case 'device':
-      params.breakdown = 'carrier,platform';
+  case 'device':
+    params.breakdown = 'carrier,platform';
 
-      Q.ninvoke(userStatsRequest, 'getUserStats', params)
+    Q.ninvoke(userStatsRequest, 'getUserStats', params)
         .then((stats) => {
           let results = _.get(stats, 'results') || [];
 
@@ -886,12 +886,12 @@ let getEndUsersStats = function(req, res) {
           });
         })
         .done();
-      break;
+    break;
 
-    case 'geographic':
-      params.breakdown = 'country';
+  case 'geographic':
+    params.breakdown = 'country';
 
-      Q.ninvoke(userStatsRequest, 'getNewUserStats', params)
+    Q.ninvoke(userStatsRequest, 'getNewUserStats', params)
         .then((stats) => {
           let results = _.get(stats, 'results') || [];
 
@@ -925,7 +925,7 @@ let getEndUsersStats = function(req, res) {
           });
         })
         .done();
-      break;
+    break;
   }
 };
 
@@ -947,7 +947,7 @@ let getCallUserStatsMonthly = function(req, res) {
   let { fromTime, toTime, timescale, type } = req.query;
   let { carrierId } = req.params;
 
-  let thisMonthTime = moment(fromTime, 'x').get('month') != moment().get('month') ?
+  let thisMonthTime = moment(fromTime, 'x').get('month') !== moment().get('month') ?
     moment(fromTime, 'x') :
     moment().subtract(1, 'day');
 
@@ -978,7 +978,7 @@ let getCallUserStatsMonthly = function(req, res) {
     Q.ninvoke(callStatsRequest, 'getCalleeStats', lastMonthParams)
   ])
     .spread((thisMonthCallerStats, lastMonthCallerStats, thisMonthCalleeStats, lastMonthCalleeStats) => {
-      let responses = [thisMonthCallerStats, lastMonthCallerStats, thisMonthCalleeStats, lastMonthCalleeStats]
+      let responses = [thisMonthCallerStats, lastMonthCallerStats, thisMonthCalleeStats, lastMonthCalleeStats];
       let errors = _.reduce(responses, (result, response) => {
         if (response.state !== 'fulfilled') {
           result.push(response.reason);
@@ -1094,13 +1094,13 @@ let getCallUserStatsTotal = function(req, res) {
   }, (val) => { return !val; });
 
   Q.allSettled([
-      Q.ninvoke(callStatsRequest, 'getCallStats', callAttemptParams),
-      Q.ninvoke(callStatsRequest, 'getCallStats', asrParams),
-      Q.ninvoke(callStatsRequest, 'getCallStats', tcdParams),
-      Q.ninvoke(callStatsRequest, 'getCallStats', acdParams)
-    ])
+    Q.ninvoke(callStatsRequest, 'getCallStats', callAttemptParams),
+    Q.ninvoke(callStatsRequest, 'getCallStats', asrParams),
+    Q.ninvoke(callStatsRequest, 'getCallStats', tcdParams),
+    Q.ninvoke(callStatsRequest, 'getCallStats', acdParams)
+  ])
     .spread((callAttemptStats, asrStats, tcdStats, acdStats) => {
-      let responses = [callAttemptStats, asrStats, tcdStats, acdStats]
+      let responses = [callAttemptStats, asrStats, tcdStats, acdStats];
       let errors = _.reduce(responses, (result, response) => {
         if (response.state !== 'fulfilled') {
           result.push(response.reason);
@@ -1129,7 +1129,7 @@ let getCallUserStatsTotal = function(req, res) {
         total.push({
           t: stat.t,
           v: stat.v + _.result(_.find(successAttemptStats, (saStat) => {
-            return saStat.t == stat.t
+            return saStat.t === stat.t;
           }), 'v')
         });
         return total;

@@ -22,6 +22,6 @@ export default function(apiPrefix = '') {
         cb(err, token);
       });
     }
-  }
+  };
 }
 

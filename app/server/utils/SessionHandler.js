@@ -56,7 +56,7 @@ SessionHandler.prototype.getSession = function(token) {
 
     try {
       sessionData = JSON.parse(result);
-    } catch(e) {
+    } catch (e) {
       // it successfully grab the data from Redis
       // but the format is just invalid
       // so it does not reject with error

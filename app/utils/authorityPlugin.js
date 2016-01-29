@@ -10,13 +10,13 @@ module.exports = {
       plugComponentContext: function(componentContext) {
         componentContext.getAuthority = function() {
           return authorityChecker;
-        }
+        };
       },
       plugActionContext: function(actionContext) {
         actionContext.getAuthority = function() {
           return authorityChecker;
-        }
+        };
       }
-    }
+    };
   }
 };
