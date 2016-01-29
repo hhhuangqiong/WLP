@@ -43,7 +43,7 @@ export default class CallsRequest {
     Q.nfcall(swapDate, params)
       .then((params) => {
         var format = nconf.get(util.format('%s:format:timestamp', this.opts.type)) || 'x';
-        return formatDateString(params, format)
+        return formatDateString(params, format);
       })
       .then(normalizeData)
       .fail((err) => {
@@ -89,7 +89,7 @@ export default class CallsRequest {
    * as the index of the api endpoints array
    * @param cb {Function} Callback function from @method getCalls
    */
-  sendRequest(params, loadBalanceIndex=0, cb) {
+  sendRequest(params, loadBalanceIndex = 0, cb) {
     if (!cb && _.isFunction(loadBalanceIndex)) {
       cb = loadBalanceIndex;
       loadBalanceIndex = 0;
@@ -133,7 +133,7 @@ export default class CallsRequest {
     if (data && data.content) {
       data.content = _.filter(data.content, function(call) {
         if (call.type.toLowerCase() === 'offnet') {
-          return call.source == 'GATEWAY';
+          return call.source === 'GATEWAY';
         } else {
           return call;
         }

@@ -60,6 +60,6 @@ export default class VSFTransactionRequest {
         this.sendRequest(carrierId, params, cb);
       }).catch((err) => {
         return handleError(err, 500);
-      })
+      });
   }
 }

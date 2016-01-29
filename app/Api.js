@@ -3,7 +3,7 @@ import assign from 'object-assign';
 import superagent from 'superagent';
 
 import { API_PATH_PREFIX, EXPORT_PATH_PREFIX } from './config';
-import * as saUtil from './utils/superagent'
+import * as saUtil from './utils/superagent';
 
 let debug = require('debug')('app:api');
 let genericHandler = _.partial(saUtil.genericHandler, debug);
@@ -74,7 +74,7 @@ Api.prototype.getCompanyService = function(params, cb) {
     .accept('json')
     .set('Authorization', this._getToken())
     .query({ userId: params.userId })
-    .end(genericHandler(cb))
+    .end(genericHandler(cb));
 };
 
 Api.prototype.getCarrierManagingCompanies = function(params, cb) {
@@ -82,7 +82,7 @@ Api.prototype.getCarrierManagingCompanies = function(params, cb) {
     .get(`${this._getHost()}/api/companies/${params.carrierId}/managingCompanies`)
     .accept('json')
     .set('Authorization', this._getToken())
-    .end(genericHandler(cb))
+    .end(genericHandler(cb));
 };
 
 Api.prototype.getApplications = function(params, cb) {
@@ -90,10 +90,10 @@ Api.prototype.getApplications = function(params, cb) {
     .get(`${this._getHost()}/api/companies/${params.carrierId}/applications`)
     .accept('json')
     .set('Authorization', this._getToken())
-    .end(genericHandler(cb))
+    .end(genericHandler(cb));
 };
 
-Api.prototype.getApplicationIds = function (params, cb) {
+Api.prototype.getApplicationIds = function(params, cb) {
   superagent
     .get(`${this._getHost()}/api/companies/${params.carrierId}/applicationIds`)
     .accept('json')
@@ -187,7 +187,7 @@ Api.prototype.deactivateEndUser = function(params, cb) {
     .post(`${this._getHost()}/api/carriers/${params.carrierId}/users/${params.username}/suspension`)
     .accept('json')
     .set('Authorization', this._getToken())
-    .end(genericHandler(cb))
+    .end(genericHandler(cb));
 };
 
 Api.prototype.reactivateEndUser = function(params, cb) {
@@ -195,7 +195,7 @@ Api.prototype.reactivateEndUser = function(params, cb) {
     .del(`${this._getHost()}/api/carriers/${params.carrierId}/users/${params.username}/suspension`)
     .accept('json')
     .set('Authorization', this._getToken())
-    .end(genericHandler(cb))
+    .end(genericHandler(cb));
 };
 
 Api.prototype.getSMS = function(params, cb) {
@@ -270,7 +270,7 @@ Api.prototype.getImHistory = function(params, cb) {
     .end(genericHandler(cb));
 };
 
-Api.prototype.getVerifications = function (params, cb) {
+Api.prototype.getVerifications = function(params, cb) {
   superagent
     .get(`${this._getHost()}/api/carriers/${params.carrierId}/verifications`)
     .accept('json')
@@ -279,7 +279,7 @@ Api.prototype.getVerifications = function (params, cb) {
     .end(genericHandler(cb));
 };
 
-Api.prototype.getVerificationStatsByStatus = function (params, cb) {
+Api.prototype.getVerificationStatsByStatus = function(params, cb) {
   superagent
     .get(`${this._getHost()}/api/carriers/${params.carrierId}/verificationStats`)
     .accept('json')
@@ -288,7 +288,7 @@ Api.prototype.getVerificationStatsByStatus = function (params, cb) {
     .end(genericHandler(cb));
 };
 
-Api.prototype.getVerificationStatsByPlatform = function (params, cb) {
+Api.prototype.getVerificationStatsByPlatform = function(params, cb) {
   superagent
     .get(`${this._getHost()}/api/carriers/${params.carrierId}/verificationStats`)
     .accept('json')
@@ -297,7 +297,7 @@ Api.prototype.getVerificationStatsByPlatform = function (params, cb) {
     .end(genericHandler(cb));
 };
 
-Api.prototype.getVerificationStatsByType = function (params, cb) {
+Api.prototype.getVerificationStatsByType = function(params, cb) {
   superagent
     .get(`${this._getHost()}/api/carriers/${params.carrierId}/verificationStats`)
     .accept('json')
@@ -306,7 +306,7 @@ Api.prototype.getVerificationStatsByType = function (params, cb) {
     .end(genericHandler(cb));
 };
 
-Api.prototype.getVerificationStatsByCountry = function (params, cb) {
+Api.prototype.getVerificationStatsByCountry = function(params, cb) {
   superagent
     .get(`${this._getHost()}/api/carriers/${params.carrierId}/verificationStats`)
     .accept('json')

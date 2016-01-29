@@ -93,7 +93,7 @@ export default class WalletRequest {
 
           return cb(null, response.result.wallets);
         }
-        catch(e) {
+        catch (e) {
           // unexpected response
           logger.debug('Unexpected response from BOSS for user %s', params.number, response);
           logger.debug('Error stack:', e.stack);

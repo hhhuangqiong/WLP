@@ -88,7 +88,7 @@ export default class PortalUserManager {
       user.affiliatedCompany = user.affiliatedCompany._id;
       user.carrierId = carrierId;
       return user;
-    })
+    });
   }
 
   /**
@@ -203,7 +203,7 @@ export default class PortalUserManager {
    * @param {Function} cb
    */
   async changePassword(user, oldPassword, newPassword) {
-    if (!user || !user.isValidPassword(oldPassword)){
+    if (!user || !user.isValidPassword(oldPassword)) {
       return Promise.reject(new NotPermittedError('The password of current user is incorrect'));
     }
 
@@ -461,7 +461,7 @@ export default class PortalUserManager {
           }
 
           resolve(appMeta.recipient);
-        } catch(e) {
+        } catch (e) {
           reject(e);
         }
       };

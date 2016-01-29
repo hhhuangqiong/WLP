@@ -1,6 +1,6 @@
 /** @module requests/application */
 
-import _ from 'lodash'
+import _ from 'lodash';
 import assign from 'object-assign';
 import request from 'superagent';
 import qs from 'qs';
@@ -25,38 +25,38 @@ export class ApplicationRequest {
 
   _processPath(contentType, carrierId) {
     switch (contentType) {
-      case CONTENT_TYPE_APISERVICE:
-        return `${this._baseUrl}/1.0/carriers/${carrierId}`;
-        break;
-      case CONTENT_TYPE_APPLICATIONS:
-        return `${this._baseUrl}/1.0/carriers/${carrierId}/applications`;
-        break;
-      case CONTENT_TYPE_CARRIER:
-        return `${this._baseUrl}/1.0/carriers/${carrierId}`;
-        break;
-      default:
-        throw new Error('Content Type requested is not available');
-        break;
+    case CONTENT_TYPE_APISERVICE:
+      return `${this._baseUrl}/1.0/carriers/${carrierId}`;
+      break;
+    case CONTENT_TYPE_APPLICATIONS:
+      return `${this._baseUrl}/1.0/carriers/${carrierId}/applications`;
+      break;
+    case CONTENT_TYPE_CARRIER:
+      return `${this._baseUrl}/1.0/carriers/${carrierId}`;
+      break;
+    default:
+      throw new Error('Content Type requested is not available');
+      break;
     }
   }
 
   _trimResponse(contentType, response) {
     switch (contentType) {
-      case CONTENT_TYPE_APISERVICE:
-        return response.services;
-        break;
-      case CONTENT_TYPE_APPLICATIONS:
-        return {
+    case CONTENT_TYPE_APISERVICE:
+      return response.services;
+      break;
+    case CONTENT_TYPE_APPLICATIONS:
+      return {
           applicationId: response.applicationDetails.applicationIdentifier,
           applications: response.applicationDetails.applications
         };
-        break;
-      case CONTENT_TYPE_CARRIER:
-        return { isValid: !_.has(response.body, 'error') };
-        break;
-      default:
-        throw new Error('Content Type requested is not available');
-        break;
+      break;
+    case CONTENT_TYPE_CARRIER:
+      return { isValid: !_.has(response.body, 'error') };
+      break;
+    default:
+      throw new Error('Content Type requested is not available');
+      break;
     }
   }
 

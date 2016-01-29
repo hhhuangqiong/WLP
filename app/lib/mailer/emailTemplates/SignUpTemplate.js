@@ -10,7 +10,7 @@ export default class SignUp {
    * @param {Object} [extraData]
    */
   constructor(templateFolderName, mailOpts = {}, extraData = {}) {
-    if (!templateFolderName) throw new Error('`templateFolderName` is required')
+    if (!templateFolderName) throw new Error('`templateFolderName` is required');
     this.templateFolderName = templateFolderName;
 
     //TODO verify if `from` is a valid email address

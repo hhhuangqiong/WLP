@@ -115,7 +115,7 @@ if (!dehydratedState) {
           startApp(firstRender, context, Handler, routerState, function() {
             firstRender = false;
           });
-        })
+        });
       } else {
         startApp(firstRender, context, Handler, routerState, function() {
           firstRender = false;

@@ -326,7 +326,7 @@ schema.static('getCompanyByCarrierId', function getCompanyByCarrierId(carrierId,
  * @method getRootCompanyId
  * @param {Function} cb  The node-style callback to be called when the process is done
  */
-schema.static('getRootCompanyId', function (cb) {
+schema.static('getRootCompanyId', function(cb) {
   this.getCompanyByCarrierId(ROOT_COMPANY_CARRIER_ID, (err, company) => {
     if (err) {
       cb(err);
