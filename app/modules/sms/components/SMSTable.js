@@ -4,7 +4,9 @@ import classNames from 'classnames';
 import React, { PropTypes } from 'react';
 import Tooltip from 'rc-tooltip';
 
+import { getCountryName } from '../../../utils/StringFormatter';
 import config from './../../../main/config';
+import CountryFlag from '../../../main/components/CountryFlag';
 
 const { displayDateFormat: DATE_FORMAT } = config;
 const SYSTEM_MESSAGE_LABEL = 'System Message';
@@ -26,7 +28,7 @@ const SMSTable = React.createClass({
           </td>
           <td>{moment(sms.request_date).format(DATE_FORMAT)}</td>
           <td>
-            {this._renderTypeIcon(sms.type2)}
+          {this._renderTypeIcon(sms.type2)}
           </td>
           <td>
             <div className="large-24 columns">
@@ -45,13 +47,11 @@ const SMSTable = React.createClass({
                 </div>
                 <div className="large-11 columns">
                   <div className="callee_info">
-                    <div className="flag__container left">
-                      <span className={sms.country ? 'flag--' + sms.country : ''}></span>
-                    </div>
+                    <CountryFlag className="left" code={sms.country} />
                     <div className="left">
                       <span className="callee">{sms.destination_address_inbound}</span>
                       <br/>
-                      <span>{sms.country}</span>
+                      <span>{getCountryName(sms.country)}</span>
                     </div>
                   </div>
                 </div>

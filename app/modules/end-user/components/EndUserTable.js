@@ -4,7 +4,7 @@ import React, { PropTypes } from 'react';
 import classNames from 'classnames';
 
 const { displayDateFormat: DATE_FORMAT } = require('./../../../main/config');
-const Countries = require('../../../data/countries.json');
+
 const NOT_FOUND_LABEL = 'N/A';
 const INACTIVE_ACCOUNT_LABEL = 'Inactive';
 
@@ -31,15 +31,6 @@ const EndUserTable = React.createClass({
   render() {
     const rows = this.props.users.map(u => {
       const device = _.get(u, 'devices.0') || {};
-
-      let country = _.find(Countries, c => {
-        return c.alpha2.toLowerCase() === u.countryCode;
-      });
-
-      country = country || {
-        name: NOT_FOUND_LABEL,
-        alpha2: NOT_FOUND_LABEL,
-      };
 
       const creationDate = moment(u.creationDate).format(DATE_FORMAT);
       const handleOnClick = _.bindKey(this.props, 'onUserClick', u.username.trim());

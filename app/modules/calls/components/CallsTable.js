@@ -6,7 +6,8 @@ import _ from 'lodash';
 import {parseDuration} from '../../../utils/StringFormatter';
 
 // TODO: Replace it with country-data
-const Countries = require('../../../data/countries.json');
+import { getCountryName } from '../../../utils/StringFormatter';
+import CountryFlag from '../../../main/components/CountryFlag';
 
 const EMPTY_STRING = 'N/A';
 
@@ -36,25 +37,21 @@ const CallsTable = React.createClass({
     router: React.PropTypes.func.isRequired,
   },
 
-  renderCountryField(number, countryName, callType = 'caller') {
+  renderCountryField(number, countryCode, callType = 'caller') {
     // Prevent display carrier
     number = number.split('@')[0];
-    countryName = countryName || '';
+    const countryName = getCountryName(countryCode);
 
     // Get the actual country name
-    const countryData = _.find(Countries, country => country.alpha2.toLowerCase() === countryName.toLowerCase());
-
-    if (!countryData) return (<span className={callType}>{number}</span>);
+    if (!countryName) return (<span className={callType}>{number}</span>);
 
     return (
       <div className="caller_info">
-        <div className="flag__container left">
-          <span className={'flag--' + countryName}></span>
-        </div>
+        <CountryFlag className="left" code={countryCode} />
         <div className="left">
           <span className={callType}>{number}</span>
           <br/>
-          <span>{countryData.name}</span>
+          <span>{countryName}</span>
         </div>
       </div>
     );

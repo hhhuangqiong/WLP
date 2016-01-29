@@ -38,15 +38,20 @@ export default {
   },
 
   getCountryName(countryAlpha2) {
-    if(!countryAlpha2) return PLACEHOLDER_FOR_NULL;
-
-    let country = CountryData.countries[countryAlpha2.toUpperCase()];
-
+    const country = CountryData.countries[(countryAlpha2 || '').toUpperCase()];
     if(!country) return PLACEHOLDER_FOR_NULL;
 
-    let countryName = country.name;
+    const name = country.name;
 
-    return countryName;
+    // Country names containing ',' always have a reverse order of display:
+    // Micronesia, Federated States Of
+    // Iran, Islamic Republic Of
+    if (name.indexOf(',') > -1) {
+      const nameParts = name.split(',');
+      return `${nameParts[1]} ${nameParts[0]}`;
+    }
+
+    return name;
   },
 
 
