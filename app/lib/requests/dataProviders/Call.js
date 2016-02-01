@@ -6,6 +6,7 @@ var Q       = require('q');
 var request = require('superagent');
 var util    = require('util');
 
+import {buildCallSolrQueryString} from '../queryBuilder/call';
 import {constructOpts, formatDateString, swapDate, composeResponse, handleError} from '../helper';
 import qs from 'qs';
 
@@ -20,8 +21,12 @@ export default class CallsRequest {
       methods: {
         CALLS: {
           URL: '/api/v1/sip/cdr/query',
-          METHOD: 'GET'
-        }
+          METHOD: 'GET',
+        },
+        CALLSOLR: {
+          URL: '/api/v1/sip/cdr/rawQuery',
+          METHOD: 'GET',
+        },
       }
     };
 
@@ -105,7 +110,7 @@ export default class CallsRequest {
       baseUrl = _.first(baseUrlArray);
     }
 
-    let url = util.format('%s%s', baseUrl, this.opts.methods.CALLS.URL);
+    let url = util.format('%s%s', baseUrl, params.q ? this.opts.methods.CALLSOLR.URL : this.opts.methods.CALLS.URL);
 
     logger.debug(`Calls: ${this.opts.methods.CALLS.METHOD} ${url}?${qs.stringify(params)}`, params);
 
@@ -153,6 +158,9 @@ export default class CallsRequest {
     logger.debug('get calls from carrier %s', params);
 
     Q.ninvoke(this, 'formatQueryData', params)
+      .then((params) => {
+        return Q.nfcall(buildCallSolrQueryString, params);
+      })
       .then((params) => {
         this.sendRequest(params, cb);
       })

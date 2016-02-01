@@ -34,11 +34,7 @@ const STATS_TYPE = {
   AVERAGE_DURATION: 'Average Call Duration',
 };
 
-const CALL_TYPE = {
-  ALL: '',
-  ONNET: 'ONNET',
-  OFFNET: 'OFFNET',
-};
+import CALL_TYPE from '../constants/callType';
 
 const TIME_FRAMES = ['24 hours', '7 days'];
 

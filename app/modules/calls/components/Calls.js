@@ -21,12 +21,9 @@ import Export from '../../../main/file-export/components/Export';
 import CallsExportForm from './CallsExportForm';
 
 import config from '../../../config';
+import CALL_TYPE from '../constants/callType';
 
-const CALL_TYPE = {
-  ALL: '',
-  ONNET: 'ONNET',
-  OFFNET: 'OFFNET',
-};
+const debug = require('debug')('app:components/Calls');
 
 const Calls = React.createClass({
   contextTypes: {
@@ -142,20 +139,40 @@ const Calls = React.createClass({
     this.handleQueryChange({ endDate: date, page: 0 });
   },
 
-  handleAllTypeClick() {
-    this.handleQueryChange({ type: CALL_TYPE.ALL });
+  handleOnnetClick: function(e) {
+    e.preventDefault();
+
+    let type = null;
+
+    if (this.state.type !== CALL_TYPE.ONNET) {
+      type = CALL_TYPE.ONNET;
+    }
+
+    this.handleQueryChange({ type: type });
   },
 
-  handleOnnetClick() {
+  handleOffnetClick: function(e) {
+    e.preventDefault();
+
     let type = null;
-    if (this.state.type !== CALL_TYPE.ONNET) type = CALL_TYPE.ONNET;
-    this.handleQueryChange({ type });
+
+    if (this.state.type !== CALL_TYPE.OFFNET) {
+      type = CALL_TYPE.OFFNET;
+    }
+
+    this.handleQueryChange({ type: type });
   },
 
-  handleOffnetClick() {
+  handleMaaiiInClick: function(e) {
+    e.preventDefault();
+
     let type = null;
-    if (this.state.type !== CALL_TYPE.OFFNET) type = CALL_TYPE.OFFNET;
-    this.handleQueryChange({ type });
+
+    if (this.state.type !== CALL_TYPE.MAAII_IN) {
+      type = CALL_TYPE.MAAII_IN;
+    }
+
+    this.handleQueryChange({ type: type });
   },
 
   handleUsernameChange(e) {
@@ -163,7 +180,7 @@ const Calls = React.createClass({
   },
 
   handleSearchSubmit(e) {
-    if (e.which == 13) {
+    if (e.which === 13) {
       e.preventDefault();
       this.handleQueryChange();
     }
@@ -202,6 +219,7 @@ const Calls = React.createClass({
             <a className={classNames({ active: this.state.type === CALL_TYPE.ALL })} onClick={this.handleAllTypeClick}>All</a>
             <a className={classNames({ active: this.state.type === CALL_TYPE.ONNET })} onClick={this.handleOnnetClick}>On-net</a>
             <a className={classNames({ active: this.state.type === CALL_TYPE.OFFNET })} onClick={this.handleOffnetClick}>Off-net</a>
+            <a className={classNames({ active: this.state.type === CALL_TYPE.MAAII_IN })} onClick={this.handleMaaiiInClick}>Maaii-in</a>
           </FilterBar.LeftItems>
           <FilterBar.RightItems>
             {/* TODO: Move filter control items into DropdownFilter according to new design */}
