@@ -308,6 +308,7 @@ let getTopUp = function(req, res) {
   req.checkParams('carrierId').notEmpty();
   req.checkQuery('startDate').notEmpty();
   req.checkQuery('endDate').notEmpty();
+  req.checkQuery('number').notEmpty();
   req.checkQuery('page').notEmpty().isInt();
   req.checkQuery('pageRec').notEmpty().isInt();
 
