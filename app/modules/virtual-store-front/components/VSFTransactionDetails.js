@@ -1,7 +1,8 @@
-import React from 'react';
+import React, { PropTypes, createClass } from 'react';
 import { Link } from 'react-router';
 import moment from 'moment';
-import _ from 'lodash';
+import { concurrent } from 'contra';
+import { merge, last, omit, clone } from 'lodash';
 import FluxibleMixin from 'fluxible/addons/FluxibleMixin';
 import AuthMixin from '../../../utils/AuthMixin';
 
@@ -17,71 +18,64 @@ import clearVSFTransaction from '../actions/clearVSFTransaction';
 const SUBMIT_KEY = 13;
 const PAGE_SIZE = 100;
 
-function ensureNumber(value) {
-  return +value;
-}
-
-let VSFTransactionDetails = React.createClass({
-  mixins: [FluxibleMixin, AuthMixin],
-
+const VSFTransactionDetails = createClass({
   contextTypes: {
-    router: React.PropTypes.func.isRequired,
-    executeAction: React.PropTypes.func.isRequired,
-    getStore: React.PropTypes.func.isRequired,
+    router: PropTypes.func.isRequired,
+    executeAction: PropTypes.func.isRequired,
+    getStore: PropTypes.func.isRequired,
   },
+
+  mixins: [FluxibleMixin, AuthMixin],
 
   statics: {
     storeListeners: [VSFTransactionStore],
 
     fetchData(context, params, query, done) {
-      context.executeAction(fetchVSFTransactions, {
-        carrierId: params.identity,
-        fromTime: query.fromTime || moment().subtract(2, 'day').startOf('day').format('L'),
-        toTime: query.toTime || moment().endOf('day').format('L'),
-        category: query.category || '',
-        pageIndex: query.page || 0,
+      const defaultQuery = {
+        fromTime: moment().subtract(2, 'day').startOf('day').format('L'),
+        toTime: moment().endOf('day').format('L'),
+        category: '',
+        pageIndex: 0,
         pageSize: PAGE_SIZE,
-        userNumber: query.userNumber || '',
-      }, done || () => {});
+        userNumber: '',
+      };
+
+      const queryAndParams = {
+        carrierId: params.identity,
+        fromTime: query.fromTime,
+        toTime: query.toTime,
+        category: query.category,
+        pageIndex: query.pageIndex,
+        pageSize: query.pageSize,
+        userNumber: query.userNumber,
+      };
+
+      concurrent([
+        context.executeAction.bind(context, clearVSFTransaction, {}),
+        context.executeAction.bind(context, fetchVSFTransactions, merge(clone(defaultQuery), queryAndParams)),
+      ], done || () => {});
     },
   },
 
   getInitialState() {
-    const state = this.getStore(VSFTransactionStore).getState();
-    const query = this.context.router.getCurrentQuery();
-    const data = _.merge(state, this.getDefaultQuery(), query);
+    const { fromTime, toTime, category, userNumber } = this.syncQueryAndState();
+    const { transactions } = this.getStore(VSFTransactionStore).getData();
 
-    return data;
+    return { fromTime, toTime, category, userNumber, transactions };
+  },
+
+  syncQueryAndState(newState) {
+    const state = this.getStore(VSFTransactionStore).getQuery();
+    const query = this.context.router.getCurrentQuery();
+
+    const renewedState = newState ? merge(state, query, newState) : merge(state, query);
+
+    return renewedState;
   },
 
   onChange() {
-    const state = this.getStore(VSFTransactionStore).getState();
-    const query = this.context.router.getCurrentQuery();
-    const data = _.merge({ fromTime: this.getDefaultQuery().fromTime, toTime: this.getDefaultQuery().toTime }, query, state);
-
+    const data = this.getStore(VSFTransactionStore).getData();
     this.setState(data);
-  },
-
-  getDefaultQuery() {
-    return {
-      fromTime: moment().subtract(2, 'day').startOf('day').format('L'),
-      toTime: moment().endOf('day').format('L'),
-      category: '',
-      pageSize: PAGE_SIZE,
-      pageIndex: 0,
-      userNumber: '',
-    };
-  },
-
-  getQueryFromState() {
-    return {
-      fromTime: this.state.fromTime && this.state.fromTime.trim(),
-      toTime: this.state.toTime && this.state.toTime.trim(),
-      category: this.state.category && this.state.category.trim(),
-      userNumber: this.state.userNumber && this.state.userNumber.trim(),
-      pageIndex: ensureNumber(this.state.pageIndex),
-      pageSize: ensureNumber(this.state.pageSize),
-    }
   },
 
   render() {
@@ -127,7 +121,7 @@ let VSFTransactionDetails = React.createClass({
             <div className="call-search top-bar-section right">
               <Searchbox
                 value={this.state.userNumber}
-                placeHolder="Username/Mobile"
+                placeHolder="Mobile"
                 onInputChangeHandler={this.handleNumberChange}
                 onKeyPressHandler={this.handleSearchSubmit}
               />
@@ -147,41 +141,35 @@ let VSFTransactionDetails = React.createClass({
     );
   },
 
-  handleChange(newValue) {
-    this.setState(newValue);
-
-    const routeName = _.last(this.context.router.getCurrentRoutes()).name;
+  handleQueryChange(newQueryChange) {
+    const routeName = last(this.context.router.getCurrentRoutes()).name;
     const params = this.context.router.getCurrentParams();
-    const query = this.context.router.getCurrentQuery();
-    const state = this.getQueryFromState();
-    const toBeSent = _.merge(query, state, newValue);
+    const toBeSent = this.syncQueryAndState(newQueryChange);
 
-    this.context.executeAction(clearVSFTransaction);
-    this.context.router.transitionTo(routeName, params, _.omit(toBeSent || {}, (value) => { return !value; }));
+    this.context.router.transitionTo(routeName, params, omit(toBeSent || {}, value => !value));
   },
 
-  handlePageChange: function(e) {
-    let { identity } = this.context.router.getCurrentParams();
+  handlePageChange() {
+    const { identity: carrierId } = this.context.router.getCurrentParams();
+    const { fromTime, toTime, pageIndex, pageSize, category, userNumber } = this.state;
 
     this.context.executeAction(fetchVSFTransactions, {
-      carrierId: identity,
-      fromTime: this.state.fromTime,
-      toTime: this.state.toTime,
-      pageIndex: +this.state.pageIndex + 1,
-      pageSize: +this.state.pageSize,
-      category: this.state.category,
-      userNumber: this.state.userNumber,
+      carrierId, fromTime, toTime, category, userNumber,
+      pageIndex: +pageIndex + 1,
+      pageSize: +pageSize,
     });
   },
 
   handleStartDateChange(date) {
     const changes = { fromTime: moment(date).startOf('day').format('L') };
-    this.handleChange(changes);
+    this.setState(changes);
+    this.handleQueryChange(changes);
   },
 
   handleEndDateChange(date) {
     const changes = { toTime: moment(date).endOf('day').format('L') };
-    this.handleChange(changes);
+    this.setState(changes);
+    this.handleQueryChange(changes);
   },
 
   handleNumberChange(e) {
@@ -190,23 +178,33 @@ let VSFTransactionDetails = React.createClass({
   },
 
   handleSearchSubmit(e) {
-    if (e.which === SUBMIT_KEY) this.handleChange();
+    if (e.which !== SUBMIT_KEY) return;
+    const changes = { userNumber: e.target.value };
+    this.handleQueryChange(changes);
   },
 
   handleVoiceFilterToggle() {
-    this.handleChange({ category: this.state.category === 'voice_sticker' ? '' : 'voice_sticker' });
+    const changes = { category: this.state.category === 'voice_sticker' ? '' : 'voice_sticker' };
+    this.setState(changes);
+    this.handleQueryChange(changes);
   },
 
   handleAnimationFilterToggle() {
-    this.handleChange({ category: this.state.category === 'animation' ? '' : 'animation' });
+    const changes = { category: this.state.category === 'animation' ? '' : 'animation' };
+    this.setState(changes);
+    this.handleQueryChange(changes);
   },
 
   handleStickerFilterToggle() {
-    this.handleChange({ category: this.state.category === 'sticker' ? '' : 'sticker' });
+    const changes = { category: this.state.category === 'sticker' ? '' : 'sticker' };
+    this.setState(changes);
+    this.handleQueryChange(changes);
   },
 
   handleCreditFilterToggle() {
-    this.handleChange({ category: this.state.category === 'credit' ? '' : 'credit' });
+    const changes = { category: this.state.category === 'credit' ? '' : 'credit' };
+    this.setState(changes);
+    this.handleQueryChange(changes);
   },
 });
 

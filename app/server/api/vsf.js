@@ -1,10 +1,9 @@
 import _ from 'lodash';
 import superagent from 'superagent';
-import { SESSION } from '../paths';
 import * as saUtil from '../../utils/superagent';
 
-let debug = require('debug')('app:server/api/vsf');
-let genericHandler = _.partial(saUtil.genericHandler, debug);
+const debug = require('debug')('app:server/api/vsf');
+const genericHandler = _.partial(saUtil.genericHandler, debug);
 
 export default function(apiPrefix = '') {
   const carrierBasePath = `${apiPrefix}/carriers`;
@@ -26,6 +25,6 @@ export default function(apiPrefix = '') {
         .accept('json')
         .set('Authorization', this._getToken())
         .end(genericHandler(cb));
-    }
-  }
+    },
+  };
 }
