@@ -122,7 +122,7 @@ const SMS = React.createClass({
           </FilterBar.LeftItems>
           <FilterBar.RightItems>
             <SearchBox
-              placeHolder="Mobile Destination"
+              placeHolder="Sender"
               value={this.state.number}
               onInputChangeHandler={this.handleSearchInputChange}
               onKeyPressHandler={this.handleSearchInputSubmit}

@@ -399,42 +399,42 @@ let getWidgets = function(req, res) {
 }
 
 // '/carriers/:carrierId/sms'
-let getSMS = function(req, res) {
+const getSMS = function(req, res) {
   req.checkParams('carrierId').notEmpty();
   req.checkQuery('page').notEmpty().isInt();
   req.checkQuery('pageRec').notEmpty().isInt();
 
-  let carrierId = req.params.carrierId;
+  const carrierId = req.params.carrierId;
 
-  let query = {
+  const query = {
     from: req.query.startDate,
     to: req.query.endDate,
-    destination_address_inbound: req.query.number,
+    source_address_inbound: req.query.number,
     page: req.query.page,
-    size: req.query.pageRec
+    size: req.query.pageRec,
   };
 
-  let request = new SmsRequest({
+  const request = new SmsRequest({
     baseUrl: nconf.get('dataProviderApi:baseUrl'),
-    timeout: nconf.get('dataProviderApi:timeout')
+    timeout: nconf.get('dataProviderApi:timeout'),
   });
 
   request.get(carrierId, query, (err, result) => {
     if (err) {
-      let { code, message, timeout, status } = err;
+      const { code, message, timeout, status } = err;
 
       return res.status(status || 500).json({
         error: {
           code,
           message,
-          timeout
-        }
+          timeout,
+        },
       });
     }
 
     return res.json(result);
   });
-}
+};
 
 // '/carriers/:carrierId/im'
 let getIM = function(req, res) {
