@@ -1,4 +1,6 @@
-import React, { PropTypes } from 'react';
+import React, { createClass, PropTypes } from 'react';
+
+const DEFAULT_CODE = 'default';
 
 /**
  * YOU MUST HAVE A CORRESPONDING CSS FILE BEFORE USING THIS.
@@ -10,26 +12,23 @@ import React, { PropTypes } from 'react';
  * @todo accepting custom dimension, it is not done as we do not have
  * a guideline for INLINE CSS IN JS.
  */
-let CountryFlag = React.createClass({
-  PropTypes: {
+const CountryFlag = createClass({
+  propTypes: {
     // the country code as defined in css
     // we are currently using `alpha2` as code
-    code: PropTypes.string.isRequired
+    code: PropTypes.string.isRequired,
+    className: PropTypes.string,
   },
 
-  getDefaultProps: function() {
-    return {
-      code: 'default'
-    };
-  },
+  render() {
+    if (!this.props.code) return null;
 
-  render: function() {
     return (
-      <div className="flag__container">
-        <span className={`flag--${this.props.code.toLowerCase()}`} />
+      <div className={`flag__container ${this.props.className}`}>
+        <span className={`flag--${(this.props.code || DEFAULT_CODE).toLowerCase()}`} />
       </div>
     );
-  }
+  },
 });
 
 export default CountryFlag;

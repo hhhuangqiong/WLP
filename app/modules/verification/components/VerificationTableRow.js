@@ -6,9 +6,8 @@ import classNames from 'classnames';
 
 import Tooltip from 'rc-tooltip';
 
+import { getCountryName } from '../../../utils/StringFormatter';
 import CountryFlag from '../../../main/components/CountryFlag';
-
-let countries = require('../../../data/countries.json');
 let mobileOperators = require('../../../data/mobileOperators.json');
 
 /**
@@ -17,23 +16,6 @@ let mobileOperators = require('../../../data/mobileOperators.json');
  * @property {String} alpha2  The alpha2 country code
  * @property {String} countryCode  The server defined country code
  */
-
-/**
- * Look up and return the country object for the specified alpha2 country code.
- *
- * @method
- * @param {String} alpha2  The alpha2 country code
- * @returns {Country} The country object
- */
-let lookupCountry = function (alpha2) {
-  if (!alpha2) {
-    return null;
-  }
-
-  return _.find(countries, (c) => {
-    return c.alpha2 === alpha2.toUpperCase();
-  });
-};
 
 /**
  * Returns the mobile operator object corresponding to the specified codes.
@@ -86,7 +68,7 @@ let getVerificationMethod = function (type) {
  * the icon-font that has been defined in the CSS. The word "OS" is technically
  * incorrect because the icon name was defined as "apple", while apple is not
  * an OS name.)
- * 
+ *
  * @method
  * @param {String} platform  The platform of the mobile phone used during the verification
  * @returns {String} The icon name for the OS
@@ -185,10 +167,10 @@ let VerificationTableRow = React.createClass({
     });
 
     let phone = verification.phone_number;
-    let phoneCountry = lookupCountry(verification.country) || {};
+    let phoneCountry = getCountryName(verification.country);
 
     let ip = verification.source_ip;
-    let ipCountry = lookupCountry(verification.source_country) || {};
+    let ipCountry = getCountryName(verification.source_country);
 
     let method = getVerificationMethod(verification.type);
 
@@ -205,17 +187,17 @@ let VerificationTableRow = React.createClass({
           <div className="verification-table__date">{dateString}</div>
         </td>
         <td>
-          <CountryFlag code={phoneCountry.alpha2} />
+          <CountryFlag code={verification.country} />
           <div className="left">
             <div className="verification-table__phone">{phone || '-'}</div>
-            <div className="verification-table__country">{phoneCountry.name || '-'}</div>
+            <div className="verification-table__country">{phoneCountry}</div>
           </div>
         </td>
         <td>
-          <CountryFlag code={ipCountry.alpha2} />
+          <CountryFlag code={verification.source_country} />
           <div className="left">
             <div className="verification-table__ip">{ip || '-'}</div>
-            <div className="verification-table__country">{ipCountry.name || '-'}</div>
+            <div className="verification-table__country">{ipCountry}</div>
           </div>
         </td>
         <td>{method}</td>

@@ -3,7 +3,9 @@ import moment from 'moment';
 import _ from 'lodash';
 import classNames from 'classnames';
 import Tooltip from 'rc-tooltip';
-import { countries } from 'country-data';
+
+import { getCountryName } from '../../../utils/StringFormatter';
+import CountryFlag from '../../../main/components/CountryFlag';
 
 const IM_DATETIME_FORMAT = 'MMMM DD YYYY, hh:mm:ss a';
 const LABEL_FOR_NULL = 'N/A';
@@ -83,9 +85,6 @@ const ImTable = React.createClass({
 
   render() {
     const rows = this.props.ims.map((u, key) => {
-      const callerCountry = countries[(u.origin || '').toUpperCase()];
-      const calleeCountry = countries[(u.destination || '').toUpperCase()];
-
       const imDate = moment(u.timestamp).format(IM_DATETIME_FORMAT);
       const imType = MESSAGE_TYPES[u.message_type] || LABEL_FOR_NULL;
       const typeSize = this.getTypeSize(u, imType.title);
@@ -113,15 +112,11 @@ const ImTable = React.createClass({
             </div>
           </td>
           <td className="im-table--cell">
-            <If condition={u.origin}>
-              <div className="flag__container left">
-                <span className={classNames('flag--' + u.origin, 'left')}></span>
-              </div>
-            </If>
+            <CountryFlag className="left" code={u.origin} />
             <div className="sender_info">
               <span className="sender dark">{sender}</span>
               <br/>
-              <span>{(callerCountry) ? callerCountry.name : ''}</span>
+              <span>{getCountryName(u.origin)}</span>
             </div>
           </td>
           <td className="im-table--cell">
@@ -136,17 +131,13 @@ const ImTable = React.createClass({
                   <span className="recipient-num">{u.recipients.length} Recipients</span>
                 </Tooltip>
               </div>
-              <Else />
+            <Else />
               <div>
-                <If condition={u.destination}>
-                  <div className="flag__container left">
-                    <span className={classNames('flag--' + u.destination, 'left')}></span>
-                  </div>
-                </If>
+                <CountryFlag className="left" code={u.destination} />
                 <div className="recipient_info">
                   <span className="recipient">{u.recipient}</span>
                   <br/>
-                  <span>{(calleeCountry) ? calleeCountry.name : ''}</span>
+                <span>{getCountryName(u.destination)}</span>
                 </div>
               </div>
             </If>

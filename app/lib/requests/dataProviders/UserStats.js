@@ -4,9 +4,8 @@ import request from 'superagent';
 import util from 'util';
 import _ from 'lodash';
 import moment from 'moment';
-import CountryData from 'country-data';
 import qs from 'qs';
-import {constructOpts, formatDateString, swapDate, handleError} from '../helper';
+import { constructOpts, formatDateString, swapDate, handleError } from '../helper';
 import jsonSchema from '../../../utils/getSimplifiedJsonSchema.js';
 
 const REQUEST_TYPE = {
@@ -14,11 +13,6 @@ const REQUEST_TYPE = {
   NEW_USERS: 'NEW_USERS',
   ACTIVE_USERS: 'ACTIVE_USERS'
 };
-
-const TIMESCALE_OPTS = ['day', 'hour'];
-const BREAKDOWN_OPTS = ['country', 'status'];
-const STATUS_OPTS = ['ACTIVE', 'TERMINATED', 'ALL'];
-const COUNTRIES_OPTS = CountryData.all;
 
 export default class UserStatsRequest {
   constructor(baseUrl, timeout) {
