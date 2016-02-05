@@ -21,7 +21,7 @@ const TopUpTable = React.createClass({
     onPageLoad: PropTypes.func,
   },
 
-  renderPagination() {
+  renderFooter() {
     if (this.props.totalRec > this.props.page * this.props.pageRec) {
       return (
         <tfoot>
@@ -29,7 +29,6 @@ const TopUpTable = React.createClass({
             <td colSpan="7" className="pagination">
               <div className="text-center">
                 <span className="pagination__button" onClick={this.props.onPageLoad}>Load More</span>
-                {this.renderPagination()}
               </div>
             </td>
           </tr>
@@ -81,6 +80,7 @@ const TopUpTable = React.createClass({
         <tbody>
           {rows}
         </tbody>
+        {this.renderFooter()}
       </table>
     );
   },
