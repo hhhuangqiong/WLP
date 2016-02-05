@@ -40,10 +40,11 @@ const CallsTable = React.createClass({
   renderCountryField(number, countryCode, callType = 'caller') {
     // Prevent display carrier
     number = number.split('@')[0];
-    const countryName = getCountryName(countryCode);
+
+    if (!countryCode) return (<span className={callType}>{number}</span>);
 
     // Get the actual country name
-    if (!countryName) return (<span className={callType}>{number}</span>);
+    const countryName = getCountryName(countryCode);
 
     return (
       <div className="caller_info">
