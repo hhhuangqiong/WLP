@@ -228,7 +228,11 @@ export default class UserStatsRequest {
 
         // get the first result as sample for the segment details
         // as the breakdown could be dynamic
-        let resultSample = _.get(results, '0.value.results');
+        let resultSample = _.max(results, (result) => {
+          return (_.get(result, 'value.results')).length;
+        });
+
+        resultSample = _.get(resultSample, 'value.results');
 
         // init the data array with segment
         // assume that the returned results are always with the
@@ -242,9 +246,11 @@ export default class UserStatsRequest {
         _.map(results, (result) => {
           let values = _.get(result, 'value.results');
           _.map(values, (value, index) => {
-            _.map(value.data, (record) => {
-              output[index].data.push(record);
-            });
+            if (value && value.data) {
+              _.map(value.data, (record) => {
+                output[index].data.push(record);
+              });
+            }
           });
         });
 
@@ -280,7 +286,11 @@ export default class UserStatsRequest {
 
         // get the first result as sample for the segment details
         // as the breakdown could be dynamic
-        let resultSample = _.get(results, '0.value.results');
+        let resultSample = _.max(results, (result) => {
+          return (_.get(result, 'value.results')).length;
+        });
+
+        resultSample = _.get(resultSample, 'value.results');
 
         // init the data array with segment
         // assume that the returned results are always with the
@@ -294,9 +304,11 @@ export default class UserStatsRequest {
         _.map(results, (result) => {
           let values = _.get(result, 'value.results');
           _.map(values, (value, index) => {
-            _.map(value.data, (record) => {
-              output[index].data.push(record);
-            });
+            if (value && value.data) {
+              _.map(value.data, (record) => {
+                output[index].data.push(record);
+              });
+            }
           });
         });
 
