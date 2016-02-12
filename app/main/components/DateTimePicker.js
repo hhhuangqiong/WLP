@@ -1,23 +1,39 @@
-import React from 'react';
 import moment from 'moment';
 
+import React, { PropTypes } from 'react';
+import classnames from 'classnames';
 import DatePicker from 'react-datepicker';
+
 import TimePicker from './TimePicker';
 
 export default React.createClass({
-  _handleFocus() {
-    this.refs[this.props.dataPickerRef].handleFocus();
+  propTypes: {
+    name: PropTypes.string,
+    date: PropTypes.string,
+    dataPickerkey: PropTypes.string,
+    dataPickerRef: PropTypes.string,
+    minDate: PropTypes.string,
+    dateFormat: PropTypes.string,
+    timeFormat: PropTypes.string,
+    className: PropTypes.string,
+    dateOnChange: PropTypes.func.isRequired,
   },
 
   render() {
-    let {
-      name, date, dataPickerkey, dataPickerRef,
-      minDate, maxDate, dateOnClick, dateOnChange,
-      dateFormat, timeFormat
-    } = this.props
+    const {
+      name,
+      date,
+      dataPickerkey,
+      dataPickerRef,
+      minDate,
+      dateFormat,
+      timeFormat,
+      className,
+      dateOnChange,
+    } = this.props;
 
     return (
-      <div className="date-range-picker export-datetime-picker">
+      <div className={classnames('date-range-picker', className)}>
         <i className="date-range-picker__icon icon-calendar left" />
 
         <div className="date-input-wrap left" onClick={this._handleFocus}>
@@ -47,8 +63,11 @@ export default React.createClass({
           className="date-input-wrap left"
           onChange={dateOnChange}
         />
-
       </div>
-    )
-  }
+    );
+  },
+
+  _handleFocus() {
+    this.refs[this.props.dataPickerRef].handleFocus();
+  },
 });

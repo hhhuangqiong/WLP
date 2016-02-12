@@ -108,23 +108,37 @@ export default class VerificationRequest {
    * @method
    * @param {Object} endpoint  The endpoint object
    * @param {Object} params  Formatted query object
+   * @param {Number} [loadBalanceIndex=0] the load balancing index which serves
+   * as the index of the api endpoints array
    * @param {Function} cb  Callback function
    */
-  sendRequest(endpoint, params, cb) {
-    const base = this.opts.baseUrl;
-    const path = endpoint.PATH;
-    const method = endpoint.METHOD;
-    const url = util.format('%s%s', base, path);
+  sendRequest(endpoint, params, loadBalanceIndex=0, cb) {
+    if (!cb && _.isFunction(loadBalanceIndex)) {
+      cb = loadBalanceIndex;
+      loadBalanceIndex = 0;
+    }
 
-    logger.debug(`Verification API Endpoint: ${url}?${qs.stringify(params)}`);
+    let baseUrl = this.opts.baseUrl;
+    let baseUrlArray = baseUrl.split(',');
 
-    request(method, url)
+    if (baseUrlArray.length > 1) {
+      let index = loadBalanceIndex % baseUrlArray.length;
+      baseUrl = baseUrlArray[index];
+    } else {
+      baseUrl = _.first(baseUrlArray);
+    }
+
+    let reqUrl = util.format('%s%s', baseUrl, endpoint.PATH);
+
+    logger.debug(`Verification API Endpoint: ${reqUrl}?${qs.stringify(params)}`);
+
+    request(endpoint.METHOD, reqUrl)
       .query(params)
       .buffer()
       .timeout(this.opts.timeout)
       .end((err, res) => {
         if (!err) {
-          logger.debug(util.format('Received a response from %s: ', url), jsonSchema(res.body));
+          logger.debug(util.format('Received a response from %s: ', reqUrl), jsonSchema(res.body));
           cb(null, res.body);
           return;
         }
@@ -151,7 +165,7 @@ export default class VerificationRequest {
         }
 
         logger.debug(util.format('Received a %s response from %s: %s',
-          error.status, url, error.message));
+          error.status, reqUrl, error.message));
 
         cb(error);
       });

@@ -41,8 +41,18 @@ export function parseTimeRange(timeRange) {
   // +1 to align the time to the corresponding bucket
   // for the time that is 24 hours before 12:09, we need 13:00
   // 12:09 + 1 hour = 13:09, startOf(13:09) = 13:00, 13:00 - 24 hour = 13:00
-  let to = moment().add(1, timescale).startOf(timescale).valueOf();
-  let from = moment(to).subtract(quantity, timescale).startOf(timescale).valueOf();
+
+  // The requirement has changed to
+  // `display only the timescale unit which has complete data set`
+  // so the above comment has become invalid as the latest timescale for hour
+  // is always incomplete, which means
+  // for 12:09, it should show only up to 12:00, but not 13:00
+  let to = timescale === 'hour' ?
+    moment().startOf(timescale).valueOf() :
+    // Issue: WLP-584
+    // from day n-1 to day n-7
+    moment().subtract(1, timescale).endOf(timescale).valueOf();
+  let from = timescale === 'hour' ? moment(to).subtract(quantity, timescale).startOf(timescale).valueOf() : moment(to).subtract(quantity - 1, timescale).startOf(timescale).valueOf();
 
   return {
     from,

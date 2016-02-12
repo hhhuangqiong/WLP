@@ -1,7 +1,6 @@
 import _ from 'lodash';
 import React from 'react';
 import FluxibleMixin from 'fluxible/addons/FluxibleMixin';
-import Tooltip from 'rc-tooltip';
 
 import ApplicationStore from '../../stores/ApplicationStore';
 import switchCompany from '../../../modules/company/actions/switchCompany';
@@ -35,11 +34,9 @@ const CompanySwitcher = React.createClass({
 
       return (
         <li className="navigation-bar__item" title={name} key={carrierId}>
-          <Tooltip overlay={name}>
-            <a href="#" onClick={this.switchCompany.bind(this, { role, identity })}>
-              <img src={logoSrc} alt={name} />
-            </a>
-          </Tooltip>
+          <a href="#" onClick={this.switchCompany.bind(this, { role, identity })}>
+            <img src={logoSrc} alt={name} />
+          </a>
         </li>
       );
     });
@@ -47,7 +44,7 @@ const CompanySwitcher = React.createClass({
     return (
       <If condition={!_.isEmpty(this.state.companies)}>
         <li className="has-dropdown not-click navigation-bar__item">
-          <a>
+          <a className="company-switcher">
             <span className="icon-companymenu" />
           </a>
           <ul className="dropdown dropdown--company-switcher">

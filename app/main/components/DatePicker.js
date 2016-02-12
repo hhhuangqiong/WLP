@@ -1,12 +1,12 @@
 import moment from 'moment';
-import React, {PropTypes} from 'react';
+import React, { PropTypes } from 'react';
 import ReactDatePicker from 'react-datepicker';
 import classNames from 'classnames';
 
 // TODO verify and extend the compatibility of `selectDate` DateFormat input
 // this component assume users will always input/output date with same format
 
-let DatePicker = React.createClass({
+const DatePicker = React.createClass({
   propTypes: {
     withIcon: PropTypes.bool,
     type: PropTypes.string,
@@ -14,11 +14,12 @@ let DatePicker = React.createClass({
     minDate: PropTypes.string,
     maxDate: PropTypes.string,
     dateFormat: PropTypes.string,
-    onChange: PropTypes.func.isRequired
+    onChange: PropTypes.func.isRequired,
   },
 
-  getDefaultProps: function() {
+  getDefaultProps() {
     const defaultDateFormat = 'L';
+
     return {
       withIcon: false,
       type: 'input',
@@ -26,20 +27,16 @@ let DatePicker = React.createClass({
       minDate: null,
       maxDate: null,
       dateFormat: defaultDateFormat,
-      onChange: null
-    }
+      onChange: null,
+    };
   },
 
-  _handleFocus: function() {
-    this.refs.datepicker.handleFocus();
-  },
-
-  render: function() {
+  render() {
     return (
       <div className={classNames('date-picker', {'date-picker-button': this.props.type === 'button'}, 'left')}>
-        <div className={classNames('date-input-wrap', 'left', {'data-input-button-wrap': this.props.type == 'button'})} onClick={this._handleFocus}>
+        <div className={classNames('date-input-wrap', 'left', {'data-input-button-wrap': this.props.type === 'button'})} onClick={this._handleFocus}>
           <If condition={this.props.type === 'button'}>
-            <i className="date-range-picker__icon icon-calendar left" />
+            <span className="date-range-picker__icon icon-calendar left"></span>
           </If>
           <If condition={this.props.type === 'button' || this.props.type === 'range'}>
             <span className="date-range-picker__date-text left">{this.props.selectedDate}</span>
@@ -49,13 +46,18 @@ let DatePicker = React.createClass({
             key="start-date"
             dateFormat={moment.localeData().longDateFormat(this.props.dateFormat)}
             selected={moment(this.props.selectedDate, this.props.dateFormat)}
+            minDate={this.props.minDate}
             maxDate={moment(this.props.maxDate, this.props.dateFormat)}
             onChange={this.props.onChange}
           />
         </div>
       </div>
     );
-  }
+  },
+
+  _handleFocus() {
+    this.refs.datepicker.handleFocus();
+  },
 });
 
 export default DatePicker;

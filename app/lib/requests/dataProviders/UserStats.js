@@ -4,9 +4,8 @@ import request from 'superagent';
 import util from 'util';
 import _ from 'lodash';
 import moment from 'moment';
-import CountryData from 'country-data';
 import qs from 'qs';
-import {constructOpts, formatDateString, swapDate, handleError} from '../helper';
+import { constructOpts, formatDateString, swapDate, handleError } from '../helper';
 import jsonSchema from '../../../utils/getSimplifiedJsonSchema.js';
 
 const REQUEST_TYPE = {
@@ -14,11 +13,6 @@ const REQUEST_TYPE = {
   NEW_USERS: 'NEW_USERS',
   ACTIVE_USERS: 'ACTIVE_USERS'
 };
-
-const TIMESCALE_OPTS = ['day', 'hour'];
-const BREAKDOWN_OPTS = ['country', 'status'];
-const STATUS_OPTS = ['ACTIVE', 'TERMINATED', 'ALL'];
-const COUNTRIES_OPTS = CountryData.all;
 
 export default class UserStatsRequest {
   constructor(baseUrl, timeout) {
@@ -59,7 +53,7 @@ export default class UserStatsRequest {
         // sending out the request
         if (type === REQUEST_TYPE.NEW_USERS || type === REQUEST_TYPE.ACTIVE_USERS) {
           query.from = moment(params.from, 'x').add(1, 'day').startOf('day').format('x');
-          query.to = moment(params.to, 'x').add(1, 'day').startOf('day').format('x');
+          query.to = moment(params.to, 'x').add(1, 'day').endOf('day').format('x');
         } else {
           query.from = params.from;
           query.to = params.to;
@@ -83,8 +77,23 @@ export default class UserStatsRequest {
       .done();
   }
 
-  sendRequest(endpoint, params, cb) {
-    let reqUrl = util.format('%s%s', this.opts.baseUrl, endpoint.PATH);
+  sendRequest(endpoint, params, loadBalanceIndex=0, cb) {
+    if (!cb && _.isFunction(loadBalanceIndex)) {
+      cb = loadBalanceIndex;
+      loadBalanceIndex = 0;
+    }
+
+    let baseUrl = this.opts.baseUrl;
+    let baseUrlArray = baseUrl.split(',');
+
+    if (baseUrlArray.length > 1) {
+      let index = loadBalanceIndex % baseUrlArray.length;
+      baseUrl = baseUrlArray[index];
+    } else {
+      baseUrl = _.first(baseUrlArray);
+    }
+
+    let reqUrl = util.format('%s%s', baseUrl, endpoint.PATH);
 
     logger.debug(`EndUser Statistic API Endpoint: ${reqUrl}?${qs.stringify(params)}`);
 

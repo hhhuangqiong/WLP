@@ -9,7 +9,7 @@ export default class SearchButton extends Component {
     searchTypeInputName: PropTypes.string,
     onInputChangeHandler: PropTypes.func,
     onSelectChangeHandler: PropTypes.func,
-    onKeyPressHandler: PropTypes.func.isRequired
+    onKeyPressHandler: PropTypes.func.isRequired,
   };
 
   render() {

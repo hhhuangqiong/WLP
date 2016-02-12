@@ -91,21 +91,32 @@ export default class ImRequest {
    * @method sendRequest Send request with SuperAgent
    *
    * @param params {Object} Formatted query object
+   * @param [loadBalanceIndex=0] {Number} the load balancing index which serves
+   * as the index of the api endpoints array
    * @param cb {Function} Callback function from @method getImStat
    */
-  sendRequest(params, cb) {
-    var base = this.opts.baseUrl;
-    var url = '';
-    if (params.q) {
-      url = this.opts.methods.IMSOLR.URL;
-    } else {
-      url = this.opts.methods.IMS.URL;
+  sendRequest(params, loadBalanceIndex=0, cb) {
+    if (!cb && _.isFunction(loadBalanceIndex)) {
+      cb = loadBalanceIndex;
+      loadBalanceIndex = 0;
     }
 
-    logger.debug('IM request: %s?%s', util.format('%s%s', base, url), qs.stringify(params));
+    let baseUrl = this.opts.baseUrl;
+    let baseUrlArray = baseUrl.split(',');
+
+    if (baseUrlArray.length > 1) {
+      let index = loadBalanceIndex % baseUrlArray.length;
+      baseUrl = baseUrlArray[index];
+    } else {
+      baseUrl = _.first(baseUrlArray);
+    }
+
+    let url = util.format('%s%s', baseUrl, params.q ? this.opts.methods.IMSOLR.URL : this.opts.methods.IMS.URL);
+
+    logger.debug(`IM request: ${url}?${qs.stringify(params)}`);
 
     request
-      .get(util.format('%s%s', base, url))
+      .get(url)
       .query(params)
       .buffer()
       .timeout(this.opts.timeout)

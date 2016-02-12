@@ -1,6 +1,8 @@
 import React, { PropTypes, Component } from 'react';
 import classNames from 'classnames';
 
+const EMPTY_DATA = 'N/A';
+
 class DataCellWrapper extends Component {
   static propTypes = {
     totalColumns: PropTypes.number
@@ -38,26 +40,48 @@ class DataCell extends Component {
     title: PropTypes.string.isRequired,
     data: PropTypes.string.isRequired,
     unit: PropTypes.string,
+    decimalPlace: PropTypes.number,
     changeDir: PropTypes.string,
     changeAmount: PropTypes.string,
     changeEffect: PropTypes.oneOf([
       'positive', 'negative'
     ]),
-    changePercentage: PropTypes.string
+    changePercentage: PropTypes.string,
+    formatter: PropTypes.func,
+  };
+
+  static defaultProps = {
+    formatter: (data) => {
+      if (!data || isNaN(data) || data === 'Infinity') {
+        return EMPTY_DATA;
+      }
+
+      return data;
+    },
   };
 
   constructor(props) {
     super(props);
   }
 
+  _localiseData(data) {
+    if (!data || isNaN(data) || data === 'Infinity') {
+      return EMPTY_DATA;
+    }
+
+    return (data && data.toLocaleString());
+  }
+
   render() {
-    let { title, data, unit, changeDir, changeEffect, changeAmount, changePercentage } = this.props;
+    let { title, data, unit, changeDir, changeEffect, changeAmount, changePercentage, formatter } = this.props;
 
     return (
       <div className="data-cell">
         <div className="data-cell__title">{ title }</div>
-        <div className="data-cell__data">{ data }</div>
-        <If condition={!!unit}>
+        <div className="data-cell__data">
+          { this._localiseData(formatter(data)) }
+        </div>
+        <If condition={!!unit && unit !== '%'}>
           <div className="data-cell__unit">{ unit }</div>
         </If>
         <If condition={!!changeAmount || !!changePercentage}>

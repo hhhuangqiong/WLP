@@ -27,8 +27,8 @@ const MISSING_PAGE_DATA_MSG = 'Invalid pageNumber/totalPages';
  * @param  {string}   param.to - timestamp in millisecond
  * @param  {number}   param.page - specify starting page, always 0
  * @param  {number}   param.size - specify no. records on each page, always 1000
- * @param  {string}   [param.origin] - specify 2 letter country code for origin, value is referenced in /app/data/countries.json using 'alpha2' code
- * @param  {string}   [param.destination] - specify 2 letter country code for origin, value is referenced in /app/data/countries.json using 'alpha2' code
+ * @param  {string}   [param.origin] - specify 2 letter country code for origin, value is referenced in country-data node package
+ * @param  {string}   [param.destination] - specify 2 letter country code for origin, value is referenced in country-data node package
      in /app/lib
  */
 export default class ExportTask {

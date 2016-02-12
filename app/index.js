@@ -12,6 +12,7 @@ import AccountStore from './modules/account/stores/AccountStore';
 import CreatePasswordStore from './modules/account/stores/CreatePasswordStore';
 import ChangePasswordStore from './modules/account/stores/ChangePasswordStore';
 import CallsStore from './modules/calls/stores/CallsStore';
+import CallsOverviewStore from './modules/calls/stores/CallsOverviewStore';
 import SMSStore from './modules/sms/stores/SMSStore';
 import TopUpStore from './modules/top-up/stores/TopUpStore';
 import ImStore from './modules/im/stores/ImStore';
@@ -20,6 +21,8 @@ import LoadingSpinnerStore from './main/stores/LoadingSpinnerStore';
 import VSFTransactionStore from './modules/virtual-store-front/stores/VSFTransactionStore';
 import ExportStore from './main/file-export/stores/ExportStore';
 import EndUsersOverviewStore from './modules/end-user/stores/EndUsersOverviewStore';
+import EndUsersRegistrationStatsStore from './modules/end-user/stores/EndUsersRegistrationStatsStore';
+import EndUsersGeographicStatsStore from './modules/end-user/stores/EndUsersGeographicStatsStore';
 
 // seems not passing anything is okay
 let app = new Fluxible();
@@ -44,6 +47,7 @@ app.registerStore(AccountStore);
 app.registerStore(CreatePasswordStore);
 app.registerStore(ChangePasswordStore);
 app.registerStore(CallsStore);
+app.registerStore(CallsOverviewStore);
 app.registerStore(SMSStore);
 app.registerStore(TopUpStore);
 app.registerStore(SystemMessageStore);
@@ -52,5 +56,7 @@ app.registerStore(ImStore);
 app.registerStore(VSFTransactionStore);
 app.registerStore(ExportStore);
 app.registerStore(EndUsersOverviewStore);
+app.registerStore(EndUsersRegistrationStatsStore);
+app.registerStore(EndUsersGeographicStatsStore);
 
 export default app;

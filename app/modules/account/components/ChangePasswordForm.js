@@ -138,7 +138,7 @@ class ChangePasswordForm extends Component {
           <input
             ref="currentPassword"
             name="currentPassword"
-            placeholder="New password"
+            placeholder="Current password"
             className={classnames('radius', { error: currentPasswordIncorrectError || currentPasswordError })}
             type="password"
             value={this.state.currentPassword}

@@ -4,21 +4,6 @@
     "support": "support@M800.com",
     "no_reply": "No-Reply@M800.com"
   },
-  "mongodb": {
-    "uri": "mongodb://localhost/m800-whitelabel-portal",
-    "options": {
-      "mongos": false,
-      "user": "",
-      "pass": "",
-      "server": {
-        "auto_reconnect": true,
-        "socketOptions": {
-          "keepAlive": 1,
-          "connectTimeoutMS": 3000
-        }
-      }
-    }
-  },
   "queue": {
     "enable": true,
     "prefix": "q",

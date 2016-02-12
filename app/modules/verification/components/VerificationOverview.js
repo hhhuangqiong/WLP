@@ -79,13 +79,13 @@ export default React.createClass({
       osTypes: [],
       timeRange: timeRange || timeRangeFromStore || DEFAULT_TIME_RANGE,
       xAxis: {},
-      yAxis: {},
+      yAxis: [{}],
       sXAxis: {},
-      sYAxis: {
+      sYAxis: [{
         unit: '%',
         alignment: 'right',
-        max: 100,
-      },
+        max: 100
+      }],
       lines: null,
       successRateSeries: null,
       busiestAttempts: 0,
@@ -233,15 +233,19 @@ export default React.createClass({
             <Link to="verification-details" params={{role, identity}}>Details Report</Link>
           </FilterBar.NavigationItems>
           <FilterBar.LeftItems>
-            <Select
-              name="appid"
-              className="verification-details__app-select"
-              options={options}
-              value={`Application ID: ${(this.state.appId ? this.state.appId : '-')}`}
-              clearable={false}
-              searchable={false}
-              onChange={this.onAppIdChange}
-            />
+            {/* Need not to provide selection when there is only one single selected options to avoid confusion */}
+            <If condition={options.length > 1}>
+              <Select
+                name="appid"
+                className="verification-details__app-select"
+                options={options}
+                value={`Application ID: ${(this.state.appId ? this.state.appId : '-')}`}
+                clearable={false}
+                searchable={false}
+                onChange={this.onAppIdChange}
+              />
+            </If>
+
           </FilterBar.LeftItems>
           <FilterBar.RightItems>
             <TimeFramePicker

@@ -1,108 +1,557 @@
-import _ from 'lodash';
+import { bindKey, get, reduce, isEmpty, isUndefined, round } from 'lodash';
 import moment from 'moment';
+import classNames from 'classnames';
 
 import React from 'react';
 import {Link} from 'react-router';
+import Select from 'react-select';
 
 import FluxibleMixin from 'fluxible/addons/FluxibleMixin';
 import AuthMixin from '../../../utils/AuthMixin';
 
-import WidgetNotAvailable from '../../../main/components/common/WidgetNotAvailable';
+import * as FilterBar from '../../../main/components/FilterBar';
+import * as Panel from './../../../main/components/Panel';
+import * as DataGrid from '../../../main/statistics/components/DataGrid';
+import TimeFramePicker, { parseTimeRange } from '../../../main/components/TimeFramePicker';
+import DateSelector from '../../../main/components/DateSelector';
+import CombinationChart from '../../../main/components/CombinationChart';
 
-import CallsStore from '../stores/CallsStore';
-import AuthStore  from '../../../main/stores/AuthStore';
+import CallsOverviewStore from '../stores/CallsOverviewStore';
+import ApplicationStore from '../../../main/stores/ApplicationStore';
 
-import fetchCallsWidgets from '../actions/fetchCallsWidgets';
+import fetchCallsStatsMonthly from '../actions/fetchCallsStatsMonthly';
+import fetchCallsStatsTotal from '../actions/fetchCallsStatsTotal';
+import clearCallsStats from '../actions/clearCallsStats';
 
-const ERROR_MESSAGE = '<div className="widget-not-found">Dashboard is not available</div>';
+const LAST_UPDATE_TIME_FORMAT = 'MMM DD, YYYY H:mm';
+const defaultQueryMonth = moment().subtract(1, 'month');
 
-var CallsOverview = React.createClass({
+const STATS_TYPE = {
+  TOTAL_ATTEMPT: 'Total Calls Attempts',
+  SUCCESSFUL_ATTEMPT: 'Total Success Calls',
+  SUCCESSFUL_RATE: 'ASR (%)',
+  TOTAL_DURATION: 'Total Call Duration',
+  AVERAGE_DURATION: 'Average Call Duration',
+};
+
+const CALL_TYPE = {
+  ALL: '',
+  ONNET: 'ONNET',
+  OFFNET: 'OFFNET',
+};
+
+const TIME_FRAMES = ['24 hours', '7 days'];
+
+// this should be application-wide variable
+const DECIMAL_PLACE = 1;
+
+const decimalPlaceFormatter = function(data) {
+  return (data && data.toFixed(DECIMAL_PLACE));
+};
+
+const CallsOverview = React.createClass({
   contextTypes: {
-    router: React.PropTypes.func.isRequired
+    router: React.PropTypes.func.isRequired,
   },
 
   mixins: [FluxibleMixin, AuthMixin],
 
   statics: {
-    storeListeners: [CallsStore],
-
-    fetchData: function(context, params, query, done) {
-      context.executeAction(fetchCallsWidgets, {
-        carrierId: params.identity,
-        userId: context.getStore(AuthStore).getUserId()
-      }, done || function() {});
-    }
+    storeListeners: {
+      onCallsStatsChange: CallsOverviewStore,
+    },
   },
 
-  getStateFromStores: function() {
+  getInitialState() {
     return {
-      widgets: this.getStore(CallsStore).getWidgets()
+      appIds: this.getStore(ApplicationStore).getAppIds() || [],
+      appId: this.getStore(ApplicationStore).getDefaultAppId(),
+      type: CALL_TYPE.ALL,
+      selectedMonth: defaultQueryMonth.get('month'),
+      selectedYear: defaultQueryMonth.get('year'),
+      selectedLastXDays: TIME_FRAMES[0],
+      selectedAttemptLine: STATS_TYPE.TOTAL_ATTEMPT,
+      selectedDurationLine: STATS_TYPE.TOTAL_DURATION,
     };
   },
 
-  getInitialState: function () {
-    return this.getStateFromStores();
+  componentDidMount() {
+    this._getMonthlyStats(CALL_TYPE.ALL, defaultQueryMonth.get('month'), defaultQueryMonth.get('year'));
+    this._getLastXDaysStats(CALL_TYPE.ALL, TIME_FRAMES[0]);
   },
 
-  onChange: function() {
-    this.setState(this.getStateFromStores());
+  componentWillUnmount() {
+    // I am unsure about this in long term
+    // but this is essential for now to make the
+    // highcharts work properly.
+    this.context.executeAction(clearCallsStats);
   },
 
-  renderWidgets() {
-    let widgets = this.state.widgets;
-
-    if (!widgets || !widgets.length){
-      return (<WidgetNotAvailable />);
-    }
-
-    return (
-      <table className="widget-table">
-        <tr>
-          <td dangerouslySetInnerHTML={{__html: widgets[0] || ERROR_MESSAGE}}></td>
-          <td dangerouslySetInnerHTML={{__html: widgets[1] || ERROR_MESSAGE}}></td>
-          <td dangerouslySetInnerHTML={{__html: widgets[2] || ERROR_MESSAGE}}></td>
-          <td dangerouslySetInnerHTML={{__html: widgets[3] || ERROR_MESSAGE}}></td>
-        </tr>
-
-        <tr>
-          <td dangerouslySetInnerHTML={{__html: widgets[4] || ERROR_MESSAGE}}></td>
-          <td dangerouslySetInnerHTML={{__html: widgets[5] || ERROR_MESSAGE}}></td>
-          <td rowSpan="2" dangerouslySetInnerHTML={{__html: widgets[6] || ERROR_MESSAGE}}></td>
-          <td rowSpan="2" dangerouslySetInnerHTML={{__html: widgets[7] || ERROR_MESSAGE}}></td>
-        </tr>
-
-        <tr>
-          <td dangerouslySetInnerHTML={{__html: widgets[8] || ERROR_MESSAGE}}></td>
-          <td dangerouslySetInnerHTML={{__html: widgets[9] || ERROR_MESSAGE}}></td>
-        </tr>
-      </table>
-    );
+  onCallsStatsChange() {
+    const states = this.context.getStore(CallsOverviewStore).getState();
+    this.setState(states);
   },
 
-  render: function() {
-    let params = this.context.router.getCurrentParams();
+  changeCallType(type) {
+    // THIS IS A HACK FOR LINECHART
+    // the lines key has to be cleared (e.g. set to null)
+    // in order to reset the LineChart
+    this.setState({
+      totalAttemptStats: null, successfulAttemptStats: null,
+      totalDurationStats: null, averageDurationStats: null,
+    });
+
+    this.setState({ type });
+    this._getMonthlyStats(type);
+    this._getLastXDaysStats(type);
+  },
+
+  monthlyStatsYearChange(year) {
+    this.setState({ selectedYear: year });
+    this._getMonthlyStats(this.state.type, null, year);
+  },
+
+  timeFrameChange(time) {
+    // THIS IS A HACK FOR LINECHART
+    // the lines key has to be cleared (e.g. set to null)
+    // in order to reset the LineChart
+    this.setState({
+      totalAttemptStats: null, successfulAttemptStats: null,
+      totalDurationStats: null, averageDurationStats: null,
+    });
+
+    this.setState({ selectedLastXDays: time });
+    this._getLastXDaysStats(this.state.type, time);
+  },
+
+  toggleAttemptType(type) {
+    this.setState({ selectedAttemptLine: type });
+  },
+
+  toggleDurationType(type) {
+    this.setState({ selectedDurationLine: type });
+  },
+
+  _getLineChartXAxis() {
+    const { from, quantity, timescale } = parseTimeRange(this.state.selectedLastXDays);
+
+    return {
+      start: from,
+      tickCount: parseInt(quantity, 10),
+      tickInterval: (timescale === 'day' ? 24 : 1) * 3600 * 1000,
+      crosshair: {
+        color: 'rgba(76,145,222,0.3)'
+      }
+    };
+  },
+
+  _getAttemptLineChartData() {
+    const { timescale } = parseTimeRange(this.state.selectedLastXDays);
+
+    const totalAttemptData = reduce(this.state.totalAttemptStats, (result, stat) => { result.push(round(stat.v, DECIMAL_PLACE)); return result; }, []);
+    const successAttemptData = reduce(this.state.successAttemptStats, (result, stat) => { result.push(round(stat.v, DECIMAL_PLACE)); return result; }, []);
+    const successRateData = reduce(this.state.successRateStats, (result, stat) => { result.push(round(stat.v, DECIMAL_PLACE)); return result; }, []);
+
+    return !isEmpty(this.state.totalAttemptStats) && !isEmpty(this.state.successAttemptStats) && !isEmpty(this.state.successRateStats) ? [
+      {
+        name: STATS_TYPE.SUCCESSFUL_RATE,
+        legendIndex: 2,
+        type: 'line',
+        data: successRateData,
+        color: '#4C91DE',
+        yAxis: 1,
+        zIndex: 9,
+        symbol: 'circle',
+        lineWidth: 2,
+        tooltip: {
+          valueSuffix: ' %'
+        }
+      },
+      {
+        name: STATS_TYPE.TOTAL_ATTEMPT,
+        legendIndex: 0,
+        type: 'column',
+        data: totalAttemptData,
+        color: '#D8D8D8',
+        yAxis: 0,
+      },
+      {
+        name: STATS_TYPE.SUCCESSFUL_ATTEMPT,
+        legendIndex: 1,
+        type: 'column',
+        data: successAttemptData,
+        color: '#81D135',
+        yAxis: 0,
+      },
+    ] : null;
+  },
+
+  _getDurationLineChartData() {
+    const { timescale } = parseTimeRange(this.state.selectedLastXDays);
+    const totalDurationData = reduce(this.state.totalDurationStats, (result, stat) => { result.push(round((stat.v / 1000 / 60), DECIMAL_PLACE)); return result; }, []);
+    const averageDurationData = reduce(this.state.averageDurationStats, (result, stat) => { result.push(round((stat.v / 1000), DECIMAL_PLACE)); return result; }, []);
+    const successAttemptData = reduce(this.state.successAttemptStats, (result, stat) => { result.push(stat.v); return result; }, []);
+
+    return !isEmpty(this.state.totalDurationStats) && !isEmpty(this.state.averageDurationStats) && !isEmpty(this.state.averageDurationStats) ? [
+      {
+        name: STATS_TYPE.AVERAGE_DURATION,
+        legendIndex: 2,
+        type: 'line',
+        data: averageDurationData,
+        color: '#4C91DE',
+        yAxis: 0,
+        zIndex: 9,
+        symbol: 'circle',
+        lineWidth: 2,
+        tooltip: {
+          valueSuffix: ' s'
+        }
+      },
+      {
+        name: STATS_TYPE.TOTAL_DURATION,
+        legendIndex: 0,
+        type: 'column',
+        data: totalDurationData,
+        color: '#D8D8D8',
+        yAxis: 1,
+        tooltip: {
+          valueSuffix: ' mins'
+        }
+      },
+      {
+        name: STATS_TYPE.SUCCESSFUL_ATTEMPT,
+        legendIndex: 1,
+        type: 'column',
+        data: successAttemptData,
+        color: '#81D135',
+        yAxis: 2,
+      },
+    ] : null;
+  },
+
+  _getAttemptLineChartSelectedLine() {
+    return this.state.selectedAttemptLine;
+  },
+
+  _getDurationLineChartSelectedLine() {
+    return this.state.selectedDurationLine;
+  },
+
+  _getAppIdSelectOptions() {
+    return reduce(this.state.appIds, (result, id) => {
+      const option = { value: id, label: id };
+      result.push(option);
+      return result;
+    }, []);
+  },
+
+  _getMonthlyStats(type, month, year) {
+    const { identity } = this.context.router.getCurrentParams();
+
+    const selectedMonth = (month || month === 0) ? month : this.state.selectedMonth;
+    const selectedYear = year || this.state.selectedYear;
+
+    const queryTime = moment().month(selectedMonth).year(selectedYear);
+
+    this.context.executeAction(fetchCallsStatsMonthly, {
+      fromTime: queryTime.startOf('month').format('x'),
+      toTime: queryTime.endOf('month').format('x'),
+      carrierId: identity,
+      type: !isUndefined(type) ? type : this.state.type,
+    });
+  },
+
+  _getMonthlyUser() {
+    const { thisMonthUser, lastMonthUser  } = this.state;
+    const userChange = thisMonthUser - lastMonthUser;
+
+    return {
+      total: thisMonthUser,
+      change: userChange,
+      percent: userChange && lastMonthUser ? Math.round((userChange / lastMonthUser) * 100) : '-',
+      direction: (userChange > 0) ? 'up' : 'down',
+    };
+  },
+
+  _getLastXDaysStats(type, lastXDays) {
+    const { identity } = this.context.router.getCurrentParams();
+    const timeRange = lastXDays || this.state.selectedLastXDays;
+
+    const { from, to, quantity: selectedLastXDays, timescale } = parseTimeRange(timeRange);
+
+    this.context.executeAction(fetchCallsStatsTotal, {
+      fromTime: from,
+      toTime: to,
+      carrierId: identity,
+      timescale,
+      type: !isUndefined(type) ? type : this.state.type,
+    });
+  },
+
+  _getTotalCallAttempt() {
+    const totalCall = reduce(this.state.totalAttemptStats, (total, stat) => {
+      total += stat.v;
+      return total;
+    }, 0);
+
+    return totalCall;
+  },
+
+  _getSuccessfulAttempt() {
+    const totalSuccess = reduce(this.state.successAttemptStats, (success, stat) => {
+      success += stat.v;
+      return success
+    }, 0);
+
+    return totalSuccess;
+  },
+
+  _getAverageSuccessfulRate() {
+    const totalAttempt = this._getTotalCallAttempt();
+    const totalSuccess = this._getSuccessfulAttempt();
+
+    return (totalSuccess / totalAttempt) * 100;
+  },
+
+  _getTotalCallDuration() {
+    const totalDurationInMs =  reduce(this.state.totalDurationStats, (total, stat) => {
+      total += stat.v;
+      return total;
+    }, 0);
+
+    return totalDurationInMs / 1000 / 60;
+  },
+
+  /**
+   * @method _getAverageCallDuration
+   * @description to calculate the average call duration. The divisor is
+   * total number of call attempt but not that of successful attempt. The
+   * result will be in seconds
+   *
+   **/
+  _getAverageCallDuration() {
+    const totalAttempt = this._getTotalCallAttempt();
+    const totalDuration = this._getTotalCallDuration();
+
+    return (totalDuration / totalAttempt) * 60;
+  },
+
+  _getLastUpdate(date) {
+    const lastUpdate = moment(date).endOf('month').format(LAST_UPDATE_TIME_FORMAT);
+    return `Data updated till: ${lastUpdate}`;
+  },
+
+  _getLastUpdateFromTimeFrame() {
+    const { to, timescale } = parseTimeRange(this.state.selectedLastXDays);
+    const lastUpdate = timescale === 'hour' ? moment(to).subtract(1, timescale) : moment(to);
+
+    return `Data updated till: ${lastUpdate.endOf(timescale).format(LAST_UPDATE_TIME_FORMAT)}`;
+  },
+
+  getMonthlyStatsDate() {
+    return moment({
+      month: this.state.selectedMonth,
+      year: this.state.selectedYear,
+    }).format('L');
+  },
+
+  handleMonthlyStatsChange(date) {
+    const momentDate = moment(date, 'L');
+    const selectedMonth = momentDate.month();
+    const selectedYear = momentDate.year();
+    this.setState({ selectedMonth, selectedYear });
+    this._getMonthlyStats(this.state.type, selectedMonth, selectedYear);
+  },
+
+  render() {
+    const { role, identity } = this.context.router.getCurrentParams();
+    const monthlyUserStats = this._getMonthlyUser();
+    const appIds = this._getAppIdSelectOptions();
 
     return (
       <div className="row">
-        <nav className="top-bar top-bar--inner">
-          <div className="top-bar-section">
-            <ul className="left top-bar--inner tab--inverted">
-              <li className="top-bar--inner tab--inverted__title">
-                <Link to="calls-overview" params={params}>Overview</Link>
-              </li>
+        <FilterBar.Wrapper>
+          <FilterBar.NavigationItems>
+            <Link to="calls-overview" params={{ role, identity }}>Overview</Link>
+            <Link to="calls-details" params={{ role, identity }}>Details Report</Link>
+          </FilterBar.NavigationItems>
+          <FilterBar.LeftItems>
+            <a className={classNames({ active: this.state.type === CALL_TYPE.ALL })} onClick={ bindKey(this, 'changeCallType', CALL_TYPE.ALL) }>All</a>
+            <a className={classNames({ active: this.state.type === CALL_TYPE.ONNET })} onClick={ bindKey(this, 'changeCallType', CALL_TYPE.ONNET) }>On-net</a>
+            <a className={classNames({ active: this.state.type === CALL_TYPE.OFFNET })} onClick={ bindKey(this, 'changeCallType', CALL_TYPE.OFFNET) }>Off-net</a>
+          </FilterBar.LeftItems>
+          <FilterBar.RightItems>
+            {/* Need not to provide selection when there is only one single selected options to avoid confusion */}
+            <If condition={appIds.length > 1}>
+              <Select
+                name="appid"
+                className="end-users-details__app-select"
+                options={appIds}
+                value={'Application ID: ' + (this.state.appId ? this.state.appId : '-')}
+                clearable={false}
+                searchable={false}
+                onChange={this.onAppIdChange}
+              />
+            </If>
+          </FilterBar.RightItems>
+        </FilterBar.Wrapper>
 
-              <li className="top-bar--inner tab--inverted__title">
-                <Link to="calls-details" params={params}>Details Report</Link>
-              </li>
-            </ul>
-          </div>
-        </nav>
         <div className="large-24 columns">
-          {this.renderWidgets()}
+          <Panel.Wrapper>
+            <Panel.Header
+              customClass="narrow"
+              title="Monthly Voice Call User"
+              caption={this._getLastUpdate({ year: this.state.selectedYear, month: this.state.selectedMonth })} >
+              <div className="input-group picker month right">
+                <DateSelector
+                  date={this.getMonthlyStatsDate()}
+                  minDate={moment().subtract(1, 'months').subtract(1, 'years').startOf('month').format('L')}
+                  maxDate={moment().subtract(1, 'months').endOf('month').format('L')}
+                  onChange={this.handleMonthlyStatsChange}
+                />
+              </div>
+            </Panel.Header>
+            <Panel.Body customClass="narrow no-padding">
+              <DataGrid.Wrapper>
+                <DataGrid.Cell
+                  title="Monthly Voice Call User (Unique)"
+                  data={monthlyUserStats.total}
+                  changeDir={monthlyUserStats.direction}
+                  changeAmount={monthlyUserStats.change}
+                  changeEffect="positive"
+                  changePercentage={monthlyUserStats.percent} />
+              </DataGrid.Wrapper>
+            </Panel.Body>
+          </Panel.Wrapper>
+        </div>
+
+        <div className="large-24 columns">
+          <Panel.Wrapper>
+            <Panel.Header
+              customClass="narrow"
+              title="Call Behaviour Statistics"
+              caption={this._getLastUpdateFromTimeFrame()} >
+              <div className="input-group right">
+                <label className="left">Past:</label>
+                <TimeFramePicker
+                  frames={TIME_FRAMES}
+                  customClass={['input', 'right']}
+                  currentFrame={this.state.selectedLastXDays}
+                  onChange={this.timeFrameChange} />
+              </div>
+            </Panel.Header>
+            <Panel.Body customClass="narrow no-padding">
+              <div className="inner-wrap">
+                <div className="chart-cell large-24 columns">
+                  <div className="chart-cell__header row">
+                  </div>
+                  <div className="chart-cell__chart row">
+                    <DataGrid.Wrapper>
+                      <DataGrid.Cell
+                        title="Total Calls Attempts"
+                        data={this._getTotalCallAttempt()} />
+                      <DataGrid.Cell
+                        title="ASR (%)"
+                        data={this._getAverageSuccessfulRate()}
+                        formatter={decimalPlaceFormatter}
+                        unit="%" />
+                      <DataGrid.Cell
+                        title="Total Call Duration"
+                        data={this._getTotalCallDuration()}
+                        formatter={decimalPlaceFormatter}
+                        unit="minutes" />
+                      <DataGrid.Cell
+                        title="Average Call Duration"
+                        data={this._getAverageCallDuration()}
+                        formatter={decimalPlaceFormatter}
+                        unit="seconds" />
+                    </DataGrid.Wrapper>
+                  </div>
+                </div>
+              </div>
+            </Panel.Body>
+            <Panel.Body customClass="narrow no-padding">
+              <div className="inner-wrap">
+                <div className="chart-cell large-24 columns">
+                  <div className="chart-cell__header row">
+                    <div className="large-24 columns">
+                      <div className="chart-cell__header__title">
+                        Call Success Analytic - ASR (%)
+                      </div>
+                      <div className="chart-cell__header__subtitle">
+                        Answer Seizure Ratio
+                      </div>
+                    </div>
+                  </div>
+                  <div className="line-chart chart-cell__chart row">
+                    <CombinationChart
+                      alignTicks={false}
+                      className="attempt-line"
+                      lines={this._getAttemptLineChartData()}
+                      shareTooltip={true}
+                      showLegend={true}
+                      xAxis={this._getLineChartXAxis()}
+                      yAxis={[
+                        {
+                          alignment: 'left',
+                          visible: false
+                        },
+                        {
+                          unit: '%',
+                          alignment: 'left',
+                        }
+                      ]} />
+                  </div>
+                </div>
+              </div>
+            </Panel.Body>
+            <Panel.Body customClass="narrow no-padding">
+              <div className="inner-wrap">
+                <div className="chart-cell large-24 columns">
+                  <div className="chart-cell__header row">
+                    <div className="large-24 columns">
+                      <div className="chart-cell__header__title">
+                        Call Duration Analytic - ACD
+                      </div>
+                      <div className="chart-cell__header__subtitle">
+                        Average Call Duration
+                      </div>
+                    </div>
+                  </div>
+                  <div className="line-chart chart-cell__chart row">
+                    <CombinationChart
+                      alignTicks={false}
+                      className="attempt-line"
+                      lines={this._getDurationLineChartData()}
+                      shareTooltip={true}
+                      showLegend={true}
+                      xAxis={this._getLineChartXAxis()}
+                      yAxis={[
+                        {
+                          unit: 's',
+                          alignment: 'left',
+                          tickInterval: 60
+                        },
+                        {
+                          unit: 'm',
+                          alignment: 'right',
+                          visible: false
+                        },
+                        {
+                          unit: '',
+                          alignment: 'right',
+                          visible: false
+                        }
+                      ]} />
+                  </div>
+                </div>
+              </div>
+            </Panel.Body>
+          </Panel.Wrapper>
         </div>
       </div>
     );
-  }
+  },
 });
 
 export default CallsOverview;

@@ -1,48 +1,23 @@
-.calls-table {
-  &--row {
-
-    .duration {}
-
-    .timestamp {
-      .call_date {
-        font-size: 12px;
-        color: gray;
-        font-weight: lighter;
-      }
-    }
-  }
-
-  &__remark {
-    position: relative;
-  }
-
-  &__arrow {
-    > i {
-      line-height: rem-calc(36);
-    }
-  }
-}
 .call_status {
   &.success {
     color: $success-color;
   }
+
   &.alert {
     color: $alert-color;
   }
 }
+
 .call_type {
   color: $white;
   font-size: rem-calc(14);
   text-transform: capitalize;
+
   &.onnet {
     background-color: $status-active;
   }
+
   &.offnet {
     background-color: $status-disable;
   }
-}
-.bye_reason {
-  width: rem-calc(150);
-  display: inline-block;
-  word-wrap: break-word;
 }

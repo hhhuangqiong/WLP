@@ -71,3 +71,7 @@ docker/envfile
 
 # OS related
 .DS_Store
+
+# Browse test related results
+test/browser/reports
+test/browser/screenshots

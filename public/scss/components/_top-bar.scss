@@ -134,7 +134,8 @@
       &__query-input {
         width: rem-calc(220);
         font-size: rem-calc(12);
-        border-radius: rem-calc(14);
+        border-radius: rem-calc($global-radius);
+
         &.with-select {
           border-top-left-radius: rem-calc(0);
           border-bottom-left-radius: rem-calc(0);
@@ -145,8 +146,8 @@
       &__query-select {
         width: rem-calc(80);
         font-size: rem-calc(12);
-        border-top-left-radius: rem-calc(14);
-        border-bottom-left-radius: rem-calc(14);
+        border-top-left-radius: rem-calc($global-radius);
+        border-bottom-left-radius: rem-calc($global-radius);
         padding: 0 0.5rem;
         border-right: none;
       }
@@ -154,7 +155,7 @@
       &__message-type-select {
         width: rem-calc(180);
         font-size: rem-calc(12);
-        border-radius: rem-calc(14);
+        border-radius: rem-calc($global-radius);
       }
 
     }

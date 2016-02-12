@@ -1,16 +1,47 @@
+$grid-border-color: #eee;
+
 .chart-cell {
+  padding-bottom: rem-calc(20px);
 
   &__header {
-    margin-bottom: rem-calc(20px);
+    margin-bottom: rem-calc(20px) !important;
+    border-bottom: 1px solid $grid-border-color;
+
+    > .columns {
+      padding: $column-gutter/2;
+    }
 
     &__title {
-      font-size: rem-calc(14px);
       font-weight: 400;
-      text-align: center;
-      line-height: rem-calc(70px);
-      border-right: 1px solid #eee;
-      margin-left: - $column-gutter/2;
-      margin-right: - $column-gutter/2;
+
+      &--small {
+        font-size: rem-calc(14px);
+        font-weight: 400;
+        text-align: center;
+        line-height: rem-calc(70px);
+        border-right: 1px solid $grid-border-color;
+        margin-left: - $column-gutter/2;
+        margin-right: - $column-gutter/2;
+      }
+    }
+
+    &__subtitle {
+      font-size: rem-calc(14px);
+    }
+  }
+
+  &__overview {
+    text-align: center;
+    padding-top: rem-calc(15px);
+
+    &__value {
+      font-size: rem-calc(16px);
+      font-weight: bolder;
+    }
+
+    &__unit {
+      color: grey;
+      font-size: rem-calc(14px);
     }
   }
 
@@ -32,6 +63,16 @@
 
   &__chart {
     margin-bottom: rem-calc(20px);
-    min-height: rem-calc(400px);
+
+    // this is to prevent from a jumpy layout
+    &.line-chart,
+    &.map-chart {
+      padding: 0 rem-calc(40);
+      min-height: rem-calc(400px);
+    }
+  }
+
+  &:not(:first-child) {
+    border-top: 1px solid $grid-border-color;
   }
 }

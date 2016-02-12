@@ -9,7 +9,7 @@ let EndUsersOverviewStore = createStore({
   handlers: {
     FETCH_END_USERS_STATS_TOTAL_SUCCESS: 'handleEndUserStatsTotal',
     FETCH_END_USERS_STATS_MONTHLY_SUCCESS: 'handleEndUserStatsMonthly',
-    FETCH_END_USERS_STATS_SUCCESS: 'handleEndUserStats'
+    FETCH_END_USERS_DEVICE_STATS_SUCCESS: 'handleDeviceStats'
   },
 
   initialize() {
@@ -18,8 +18,7 @@ let EndUsersOverviewStore = createStore({
     this.lastMonthRegisteredUser = 0;
     this.thisMonthActiveUser = 0;
     this.lastMonthActiveUser = 0;
-    this.lastXDaysRegisteredUser = [];
-    this.lastXDaysActiveUser = [];
+    this.deviceStats = [];
   },
 
   handleEndUserStatsTotal(payload) {
@@ -35,9 +34,8 @@ let EndUsersOverviewStore = createStore({
     this.emitChange();
   },
 
-  handleEndUserStats(payload) {
-    this.lastXDaysRegisteredUser = payload.newUserStats;
-    this.lastXDaysActiveUser = payload.activeUserStats;
+  handleDeviceStats(payload) {
+    this.deviceStats = payload.deviceStats;
     this.emitChange();
   },
 
@@ -48,8 +46,7 @@ let EndUsersOverviewStore = createStore({
       lastMonthRegistered: this.lastMonthRegisteredUser,
       thisMonthActive: this.thisMonthActiveUser,
       lastMonthActive: this.lastMonthActiveUser,
-      lastXDaysRegisteredUser: this.lastXDaysRegisteredUser,
-      lastXDaysActiveUser: this.lastXDaysActiveUser
+      deviceStats: this.deviceStats
     };
   },
 
@@ -60,8 +57,7 @@ let EndUsersOverviewStore = createStore({
       lastMonthRegistered: this.lastMonthRegisteredUser,
       thisMonthActive: this.thisMonthActiveUser,
       lastMonthActive: this.lastMonthActiveUser,
-      lastXDaysRegisteredUser: this.lastXDaysRegisteredUser,
-      lastXDaysActiveUser: this.lastXDaysActiveUser
+      deviceStats: this.deviceStats
     };
   },
 
@@ -71,10 +67,8 @@ let EndUsersOverviewStore = createStore({
     this.lastMonthRegisteredUser = state.lastMonthRegisteredUser;
     this.thisMonthActiveUser = state.thisMonthActiveUser;
     this.lastMonthActiveUser = state.lastMonthActiveUser;
-    this.lastXDaysRegisteredUser = state.lastXDaysRegisteredUser;
-    this.lastXDaysActiveUser = state.lastXDaysActiveUser;
-  },
-
+    this.deviceStats = state.deviceStats;
+  }
 });
 
 export default EndUsersOverviewStore;

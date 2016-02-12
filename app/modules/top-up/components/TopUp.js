@@ -1,6 +1,6 @@
-import _ from 'lodash';
+import { omit, merge, last, clone } from 'lodash';
 import moment from 'moment';
-import {concurrent} from 'contra';
+import { concurrent } from 'contra';
 
 import React from 'react';
 import { Link } from 'react-router';
@@ -15,12 +15,11 @@ import TopUpStore from '../stores/TopUpStore';
 
 import * as FilterBar from './../../../main/components/FilterBar';
 import DateRangePicker from './../../../main/components/DateRangePicker';
-import DatePicker from './../../../main/components/DatePicker';
 import SearchBox from './../../../main/components/Searchbox';
 import Tooltip from './../../../main/components/Tooltip';
 
-let { inputDateFormat: DATE_FORMAT } = require('./../../../main/config');
-let { pages: { topUp: { pageRec: PAGE_REC } } } = require('./../../../main/config');
+const { inputDateFormat: DATE_FORMAT } = require('./../../../main/config');
+const { pages: { topUp: { pageRec: PAGE_REC } } } = require('./../../../main/config');
 
 // See: https://issuetracking.maaii.com:9443/display/HKBoss/Maaii+Payment#MaaiiPayment-GetTransactionHistory
 // page = 0 shows only total records
@@ -39,13 +38,13 @@ function getInitialQueryFromURL(params, query = {}) {
     endDate: query.endDate,
     number: query.number,
     page: query.page,
-    pageRec: query.pageRec
+    pageRec: query.pageRec,
   };
 }
 
-var TopUp = React.createClass({
+const TopUp = React.createClass({
   contextTypes: {
-    router: React.PropTypes.func.isRequired
+    router: React.PropTypes.func.isRequired,
   },
 
   mixins: [FluxibleMixin, AuthMixin],
@@ -53,25 +52,37 @@ var TopUp = React.createClass({
   statics: {
     storeListeners: [TopUpStore],
 
-    fetchData: function(context, params, query, done) {
-      let defaultQuery = {
+    fetchData(context, params, query, done) {
+      const defaultQuery = {
         carrierId: null,
         startDate: moment().startOf('day').subtract(MAX_QUERY_DATE_RANGE, 'days').format(DATE_FORMAT),
         endDate: moment().endOf('day').format(DATE_FORMAT),
         number: null,
         page: INITIAL_PAGE_NUMBER,
-        pageRec: PAGE_REC
+        pageRec: PAGE_REC,
       };
 
       concurrent([
         context.executeAction.bind(context, clearTopUp, {}),
-        context.executeAction.bind(context, loadTransactions, _.merge(_.clone(defaultQuery), getInitialQueryFromURL(params, query), { reload: true }))
-      ], done || function() {});
-    }
+        context.executeAction.bind(context, loadTransactions, merge(clone(defaultQuery), getInitialQueryFromURL(params, query), { reload: true })),
+      ], done || () => {});
+    },
   },
 
-  getInitialState: function() {
-    return _.merge(_.clone(this.getDefaultQuery()), this.getRequestBodyFromQuery(), this.getStateFromStores());
+  getInitialState() {
+    return merge(clone(this.getDefaultQuery()), this.getRequestBodyFromQuery(), this.getStateFromStores());
+  },
+
+
+  onChange() {
+    this.setState(this.getStateFromStores());
+  },
+
+  getStateFromStores() {
+    return {
+      totalRec: this.getStore(TopUpStore).getTotalRec(),
+      page: this.getStore(TopUpStore).getPage(),
+    };
   },
 
   getDefaultQuery() {
@@ -81,120 +92,23 @@ var TopUp = React.createClass({
       endDate: moment().endOf('day').format(DATE_FORMAT),
       number: null,
       page: INITIAL_PAGE_NUMBER,
-      pageRec: PAGE_REC
+      pageRec: PAGE_REC,
     };
   },
 
-  getRequestBodyFromQuery: function(query) {
-    let { startDate, endDate, number, page, pageRec } = query || this.context.router.getCurrentQuery();
+  getRequestBodyFromQuery(query) {
+    const { startDate, endDate, number, page, pageRec } = query || this.context.router.getCurrentQuery();
     return { startDate, endDate, number, page, pageRec };
   },
 
-  getRequestBodyFromState: function() {
-    let { identity } = this.context.router.getCurrentParams();
-    let { startDate, endDate, number, page, pageRec } = this.state;
+  getRequestBodyFromState() {
+    const { identity } = this.context.router.getCurrentParams();
+    const { startDate, endDate, number, page, pageRec } = this.state;
     return { carrierId: identity, startDate, endDate, number, page, pageRec };
   },
 
-  getStateFromStores: function() {
-    return {
-      totalRec: this.getStore(TopUpStore).getTotalRec(),
-      page: this.getStore(TopUpStore).getPage()
-    }
-  },
-
-  onChange: function() {
-    this.setState(this.getStateFromStores());
-  },
-
-  handleQueryChange: function(newQuery) {
-    let routeName = _.last(this.context.router.getCurrentRoutes()).name;
-    let params = this.context.router.getCurrentParams();
-    let query = _.merge(this.getRequestBodyFromQuery(), this.getRequestBodyFromState(), newQuery);
-
-    this.context.router.transitionTo(routeName, params, _.omit(query, function(value) {
-      return !value;
-    }));
-  },
-
-  // action for client side
-  // so properties in state will domainate
-  handlePageLoad: function() {
-    let targetPage = +this.state.page + 1
-    this.setState({ page: targetPage });
-
-    this.context.executeAction(loadTransactions, _.merge(this.getRequestBodyFromState(), { page: targetPage }));
-  },
-
-  handleStartDateChange: function(momentDate) {
-    let date = moment(momentDate).format(DATE_FORMAT);
-
-    let updates = {
-      startDate: date
-    };
-
-    if (moment(this.state.endDate, 'L').diff(momentDate, 'days') > MAX_QUERY_DATE_RANGE) {
-      updates.endDate = moment(momentDate).add(MAX_QUERY_DATE_RANGE,'days').format(DATE_FORMAT);
-    }
-
-    this.setState(updates);
-
-    updates.page = INITIAL_PAGE_NUMBER;
-
-    this.handleQueryChange(updates);
-  },
-
-  handleEndDateChange: function(momentDate) {
-    let date = moment(momentDate).format(DATE_FORMAT);
-
-    let updates = {
-      endDate: date
-    };
-
-    if (moment(momentDate).diff(moment(this.state.startDate,'L'), 'days') > MAX_QUERY_DATE_RANGE) {
-      updates.startDate = moment(momentDate).subtract(MAX_QUERY_DATE_RANGE,'days').format(DATE_FORMAT);
-    }
-
-    this.setState(updates);
-
-    updates.page = INITIAL_PAGE_NUMBER;
-    this.handleQueryChange(updates);
-  },
-
-  handleSearchInputChange: function(e) {
-    if (!this.validateSearchInput(e.target.value)) {
-      this.showTooltip();
-      return;
-    } else {
-      this.hideTooltip();
-    }
-    this.setState({ number: e.target.value });
-  },
-
-  handleSearchInputSubmit: function(e) {
-    if ( e.which == 13 && this.validateSearchInput(e.target.value) ) {
-      this.handleQueryChange({ number: e.target.value, page: INITIAL_PAGE_NUMBER });
-    }
-  },
-
-  validateSearchInput(number) {
-    if (!number) {
-      return true;
-    }
-    let regex = /^\d+$/;
-    return regex.test(number);
-  },
-
-  showTooltip: function() {
-    this.setState({tooltipShow: true});
-  },
-
-  hideTooltip: function() {
-    this.setState({tooltipShow: false});
-  },
-
-  render: function() {
-    let params = this.context.router.getCurrentParams();
+  render() {
+    const params = this.context.router.getCurrentParams();
 
     return (
       <div className="row">
@@ -217,7 +131,7 @@ var TopUp = React.createClass({
               mouseActive={false}
               cssName="top-up"
               tip={ONLY_NUMBER_MESSAGE}
-              placement='left'>
+              placement="left">
               <SearchBox
                 value={this.state.number}
                 placeHolder="Mobile"
@@ -238,7 +152,93 @@ var TopUp = React.createClass({
         </div>
       </div>
     );
-  }
+  },
+
+  handleQueryChange(newQuery) {
+    const routeName = last(this.context.router.getCurrentRoutes()).name;
+    const params = this.context.router.getCurrentParams();
+    const query = merge(this.getRequestBodyFromQuery(), this.getRequestBodyFromState(), newQuery);
+
+    const requiredKey = ['number'];
+
+    const sanitizedQuery = omit(query || {}, (value, key) => {
+       return !value && requiredKey.indexOf(key) === -1;
+    });
+
+    /* Should not omit null value as 'number' field is always required even it is null */
+    this.context.router.transitionTo(routeName, params, sanitizedQuery);
+  },
+
+  // action for client side
+  // so properties in state will domainate
+  handlePageLoad() {
+    const targetPage = +this.state.page + 1;
+    this.setState({ page: targetPage });
+
+    this.context.executeAction(loadTransactions, merge(this.getRequestBodyFromState(), { page: targetPage }));
+  },
+
+  handleStartDateChange(momentDate) {
+    const date = moment(momentDate).format(DATE_FORMAT);
+
+    const updates = { startDate: date };
+
+    if (moment(this.state.endDate, 'L').diff(momentDate, 'days') > MAX_QUERY_DATE_RANGE) {
+      updates.endDate = moment(momentDate).add(MAX_QUERY_DATE_RANGE, 'days').format(DATE_FORMAT);
+    }
+
+    this.setState(updates);
+
+    updates.page = INITIAL_PAGE_NUMBER;
+
+    this.handleQueryChange(updates);
+  },
+
+  handleEndDateChange(momentDate) {
+    const date = moment(momentDate).format(DATE_FORMAT);
+
+    const updates = { endDate: date };
+
+    if (moment(momentDate).diff(moment(this.state.startDate, 'L'), 'days') > MAX_QUERY_DATE_RANGE) {
+      updates.startDate = moment(momentDate).subtract(MAX_QUERY_DATE_RANGE, 'days').format(DATE_FORMAT);
+    }
+
+    this.setState(updates);
+
+    updates.page = INITIAL_PAGE_NUMBER;
+    this.handleQueryChange(updates);
+  },
+
+  handleSearchInputChange(e) {
+    if (!this.validateSearchInput(e.target.value)) {
+      this.showTooltip();
+      return;
+    }
+
+    this.hideTooltip();
+    this.setState({ number: e.target.value });
+  },
+
+  handleSearchInputSubmit(e) {
+    if ( e.which === 13 && this.validateSearchInput(e.target.value) ) {
+      this.handleQueryChange({ number: e.target.value, page: INITIAL_PAGE_NUMBER });
+    }
+  },
+
+  validateSearchInput(number) {
+    if (!number) return true;
+
+    const regex = /^\d+$/;
+    return regex.test(number);
+  },
+
+  showTooltip() {
+    this.setState({tooltipShow: true});
+  },
+
+  hideTooltip() {
+    this.setState({tooltipShow: false});
+  },
 });
 
 export default TopUp;

@@ -19,7 +19,6 @@ let { inputDateFormat: DATE_FORMAT } = config;
 // determinant of logo image src
 const imageDataRegex = /^data:.+\/(.+);base64,(.*)$/;
 
-let Countries = require('../../../data/countries.json');
 let Timezones = require('../../../data/timezones.json');
 
 let BasicInformation = React.createClass({
