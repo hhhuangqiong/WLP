@@ -7,7 +7,7 @@
 }
 
 .verification-filter-button {
-  @include sidebar-button;
+  @include button-control;
 
   &__text {
     margin-right: rem-calc(10);

@@ -1,3 +1,4 @@
+const selenium = require('selenium-standalone');
 const log = require('logging');
 const fs = require('fs-extra');
 
@@ -7,6 +8,19 @@ exports.config = {
     `./test/browser/specs/${process.env.FEATURE ? process.env.FEATURE : '**'}/*.js`,
   ],
 
+  // =====================
+  // Server Configurations
+  // =====================
+  // Host address of the running Selenium server. This information is usually obsolete as
+  // WebdriverIO automatically connects to localhost. Also if you are using one of the
+  // supported cloud services like Sauce Labs, Browserstack or Testing Bot you also don't
+  // need to define host and port information because WebdriverIO can figure that our
+  // according to your user and key information. However if you are using a private Selenium
+  // backend you should define the host address, port, and path here.
+  //
+  host: process.env.REMOTE ? (process.env.SELENIUM_HOST || 'deploy.dev.maaii.com') : 'localhost',
+  port: process.env.SELENIUM_PORT || 4444,
+  path: process.env.SELENIUM_PATH || '/wd/hub',
   //
   // ============
   // Capabilities
@@ -16,8 +30,9 @@ exports.config = {
   // https://docs.saucelabs.com/reference/platforms-configurator
   //
   capabilities: [{
-    browserName: process.env.BROWSER ? process.env.BROWSER : 'phantomjs',
-    'phantomjs.binary.path': 'node_modules/phantomjs/bin/phantomjs',
+    browserName: process.env.BROWSER || 'firefox',
+    // browserName: process.env.BROWSER ? process.env.BROWSER : 'phantomjs',
+    // 'phantomjs.binary.path': 'node_modules/phantomjs/bin/phantomjs',
   }],
   //
   // ===================
@@ -26,7 +41,8 @@ exports.config = {
   // Define all options that are relevant for the WebdriverIO instance here
   //
   // Level of logging verbosity: silent | verbose | command | data | result | error
-  logLevel: 'command',
+  // to avoid overwhleming selenium system log
+  logLevel: 'silent',
 
   coloredLogs: true,
 
@@ -34,7 +50,7 @@ exports.config = {
   //
   // Set a base URL in order to shorten url command calls. If your url parameter starts
   // with "/", the base url gets prepended.
-  baseUrl: 'http://localhost:3000',
+  baseUrl: process.env.TEST_URL || 'http://localhost:3000',
   //
   // Default timeout for all waitForXXX commands.
   waitforTimeout: 15000,
@@ -100,6 +116,16 @@ exports.config = {
   //
   // Gets executed before all workers get launched.
   onPrepare() {
+    // Start selenium server automatically when start for local running instance
+    if (!process.env.REMOTE) {
+      selenium.install(function install() {
+        selenium.start(function start(err, child) {
+          if (err) log(err);
+          selenium.child = child;
+        });
+      });
+    }
+
     log('Start running browser test');
 
     /* Ensure no previous result left inside reports dir */
@@ -121,6 +147,8 @@ exports.config = {
     // Report Related
     browser.addCommand('validateDate', require('./test/browser/commands/report/validateDate'));
     browser.addCommand('changeAndValidateDate', require('./test/browser/commands/report/changeAndValidateDate'));
+    browser.addCommand('clickFirstAvailableDate', require('./test/browser/commands/report/clickFirstAvailableDate'));
+    browser.addCommand('expectToHaveData', require('./test/browser/commands/report/expectToHaveData'));
     browser.addCommand('searchMobile', require('./test/browser/commands/report/searchMobile'));
     browser.addCommand('clearSearch', require('./test/browser/commands/report/clearSearch'));
     browser.addCommand('searchAndValidate', require('./test/browser/commands/report/searchAndValidate'));

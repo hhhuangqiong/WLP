@@ -308,6 +308,7 @@ let getTopUp = function(req, res) {
   req.checkParams('carrierId').notEmpty();
   req.checkQuery('startDate').notEmpty();
   req.checkQuery('endDate').notEmpty();
+  req.checkQuery('number').notEmpty();
   req.checkQuery('page').notEmpty().isInt();
   req.checkQuery('pageRec').notEmpty().isInt();
 
@@ -398,36 +399,36 @@ let getWidgets = function(req, res) {
 };
 
 // '/carriers/:carrierId/sms'
-let getSMS = function(req, res) {
+const getSMS = function(req, res) {
   req.checkParams('carrierId').notEmpty();
   req.checkQuery('page').notEmpty().isInt();
   req.checkQuery('pageRec').notEmpty().isInt();
 
-  let carrierId = req.params.carrierId;
+  const carrierId = req.params.carrierId;
 
-  let query = {
+  const query = {
     from: req.query.startDate,
     to: req.query.endDate,
-    destination_address_inbound: req.query.number,
+    source_address_inbound: req.query.number,
     page: req.query.page,
-    size: req.query.pageRec
+    size: req.query.pageRec,
   };
 
-  let request = new SmsRequest({
+  const request = new SmsRequest({
     baseUrl: nconf.get('dataProviderApi:baseUrl'),
-    timeout: nconf.get('dataProviderApi:timeout')
+    timeout: nconf.get('dataProviderApi:timeout'),
   });
 
   request.get(carrierId, query, (err, result) => {
     if (err) {
-      let { code, message, timeout, status } = err;
+      const { code, message, timeout, status } = err;
 
       return res.status(status || 500).json({
         error: {
           code,
           message,
-          timeout
-        }
+          timeout,
+        },
       });
     }
 
@@ -905,7 +906,7 @@ let getEndUsersStats = function(req, res) {
                 total += data.v;
                 return total;
               }, 0),
-              name: countries[countryCode].name
+              name: !_.isEmpty(countryCode) ? countries[countryCode].name : 'N/A'
             });
 
             return data;
@@ -1090,17 +1091,17 @@ let getCallUserStatsTotal = function(req, res) {
     to: toTime,
     timescale: timescale || 'day',
     stat_type: 'acd',
+    breakdown: 'success',
     type
   }, (val) => { return !val; });
 
   Q.allSettled([
-    Q.ninvoke(callStatsRequest, 'getCallStats', callAttemptParams),
-    Q.ninvoke(callStatsRequest, 'getCallStats', asrParams),
-    Q.ninvoke(callStatsRequest, 'getCallStats', tcdParams),
-    Q.ninvoke(callStatsRequest, 'getCallStats', acdParams)
-  ])
-    .spread((callAttemptStats, asrStats, tcdStats, acdStats) => {
-      let responses = [callAttemptStats, asrStats, tcdStats, acdStats];
+      Q.ninvoke(callStatsRequest, 'getCallStats', callAttemptParams),
+      Q.ninvoke(callStatsRequest, 'getCallStats', tcdParams),
+      Q.ninvoke(callStatsRequest, 'getCallStats', acdParams)
+    ])
+    .spread((callAttemptStats, tcdStats, acdStats) => {
+      let responses = [callAttemptStats, tcdStats, acdStats];
       let errors = _.reduce(responses, (result, response) => {
         if (response.state !== 'fulfilled') {
           result.push(response.reason);
@@ -1135,12 +1136,33 @@ let getCallUserStatsTotal = function(req, res) {
         return total;
       }, []);
 
+      let successRate = _.reduce(totalAttemptStats, (rates, stat) => {
+        let total = stat.v;
+
+        let success = _.result(_.find(successAttemptStats, (saStat) => {
+          return saStat.t == stat.t
+        }), 'v');
+
+        rates.push({
+          t: stat.t,
+          v: (total == 0) ? 0 : (success / total) * 100
+        });
+
+        return rates;
+      }, []);
+
+      acdStats = _.get(acdStats, 'value');
+
+      let averageDurationStats = _.get(_.find(acdStats, (stat) => {
+        return stat.segment.success === 'true';
+      }), 'data');
+
       return res.json({
         totalAttemptStats: totalAttemptStats,
         successAttemptStats: successAttemptStats,
-        successRateStats: _.get(asrStats, 'value.0.data'),
+        successRateStats: successRate,
         totalDurationStats: _.get(tcdStats, 'value.0.data'),
-        averageDurationStats: _.get(acdStats, 'value.0.data')
+        averageDurationStats: averageDurationStats
       });
     })
     .catch((err) => {

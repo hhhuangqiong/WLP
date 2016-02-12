@@ -1,54 +1,30 @@
-import React from 'react';
+import React, { createClass, PropTypes } from 'react';
 import FluxibleMixin from 'fluxible/addons/FluxibleMixin';
 
-const debug = require('debug')('app:modules/file-export/components/ExportPanel');
+export default createClass({
+  propTypes: {
+    exportId: PropTypes.number,
+    exportTriggered: PropTypes.bool,
+    progress: PropTypes.number,
+    carrierId: PropTypes.string,
+    cancel: PropTypes.func,
+    openModal: PropTypes.func,
+    download: PropTypes.func,
+    pollProgress: PropTypes.func,
+    className: PropTypes.string,
+  },
 
-export default React.createClass({
   mixins: [FluxibleMixin],
 
-  propTypes: {
-    exportId: React.PropTypes.number,
-    exportTriggered: React.PropTypes.boolean,
-    progress: React.PropTypes.number,
-    carrierId: React.PropTypes.string,
-    cancel: React.PropTypes.func,
-    openModal: React.PropTypes.func,
-    download: React.PropTypes.func,
-    pollProgress: React.PropTypes.func
-  },
-
-  isTriggered() {
-    return !!this.props.exportTriggered;
-  },
-
-  isFailed() {
-    return this.exportProgress() < 0;
-  },
-
-  isCompleted() {
-    return this.isTriggered() && parseInt(this.exportProgress()) === 100;
-  },
-
-  isInProgress() {
-    return this.isTriggered() && !this.isFailed() && !this.isCompleted();
-  },
-
-  exportProgress() {
-    return this.props.progress;
-  },
-
   componentWillUpdate(nextProps) {
-    if (!nextProps.exportTriggered || nextProps.progress === 100) {
-      return;
-    }
-
+    if (!nextProps.exportTriggered || nextProps.progress === 100) return;
     this.props.pollProgress(nextProps.exportId, nextProps.carrierId);
   },
 
   renderCurrentProgress() {
-    let isFailed = this.isFailed();
-    let isCompleted = this.isCompleted();
-    let isInProgress = this.isInProgress();
+    const isFailed = this.isFailed();
+    const isCompleted = this.isCompleted();
+    const isInProgress = this.isInProgress();
 
     if (isFailed) {
       return (
@@ -66,17 +42,13 @@ export default React.createClass({
           </li>
         </ul>
       );
-    }
-
-    else if (isCompleted) {
+    } else if (isCompleted) {
       return (
         <div className="export-download-button export-ie-fix" onClick={this.props.download}>
           Download<span className="icon-download"></span>
         </div>
       );
-    }
-
-    else if (isInProgress) {
+    } else if (isInProgress) {
       return (
         <ul className="button-group round">
           <li><a className="spinner left button"></a></li>
@@ -97,19 +69,39 @@ export default React.createClass({
     }
 
     return (
-      <div className="export-download-button export-ie-fix" onClick={this.props.openModal}>
+      <div className="interactive-button export-download-button export-ie-fix" onClick={this.props.openModal}>
         <span className="icon-download"></span>
       </div>
     );
   },
 
   render() {
-    let {className} = this.props;
+    const { className } = this.props;
 
     return (
       <div className={className}>
         {this.renderCurrentProgress()}
       </div>
     );
-  }
+  },
+
+  isTriggered() {
+    return !!this.props.exportTriggered;
+  },
+
+  isFailed() {
+    return this.exportProgress() < 0;
+  },
+
+  isCompleted() {
+    return this.isTriggered() && parseInt(this.exportProgress(), 10) === 100;
+  },
+
+  isInProgress() {
+    return this.isTriggered() && !this.isFailed() && !this.isCompleted();
+  },
+
+  exportProgress() {
+    return this.props.progress;
+  },
 });

@@ -9,6 +9,7 @@ import qs from 'qs';
 import {constructOpts, formatDateString, swapDate, handleError} from '../helper';
 import jsonSchema from '../../../utils/getSimplifiedJsonSchema.js';
 import * as requestHelper from '../utils/requestHelper';
+import equals from 'shallow-equals';
 
 const REQUEST_TYPE = {
   CALLS: 'CALLS',
@@ -129,27 +130,71 @@ export default class UserStatsRequest {
           throw new Error('error occurred when querying data');
         }
 
-        // get the first result as sample for the segment details
-        // as the breakdown could be dynamic
-        let resultSample = _.get(results, '0.value.results');
+        let output = [];
 
-        // init the data array with segment
-        // assume that the returned results are always with the
-        // same order of segment
-        let output = _.reduce(resultSample, (data, result) => {
-          data.push({ segment: _.get(result, 'segment'), data: [] });
-          return data;
-        }, []);
+        // IMPORTANT:
+        // DO NOT SUPPORT TIME SCALE OF HOUR FOR MORE THAN ONE DAY
 
-        // map the data into the data key in output
-        _.map(results, (result) => {
-          let values = _.get(result, 'value.results');
-          _.map(values, (value, index) => {
-            _.map(value.data, (record) => {
-              output[index].data.push(record);
+        // do this only when the load balancing is used
+        if (results.length > 1) {
+          // get the max number of results as sample for the segment details
+          // as the breakdown could be dynamic
+
+          // IMPORTANT: when the api returns no data,
+          // it no longer follows the breakdown,
+          // but return all segment keys with value of 'all'
+          // e.g. breakdown success should return two array of results
+          // which has the value of 'false' and 'true' for key of 'success'
+          // when it returns no data, the value of key of 'success' will become 'all'
+
+          // so, you will have to get the max number of segment and
+          // make it as a sample
+          let resultSample = _.max(results, (result) => {
+            return (_.get(result, 'value.results')).length;
+          });
+
+          resultSample = _.get(resultSample, 'value.results');
+
+          // init the data array with segment
+          // assume that the returned results are always with the
+          // same order of segment
+          output = _.reduce(resultSample, (data, result) => {
+            data.push({segment: _.get(result, 'segment'), data: []});
+            return data;
+          }, []);
+
+          _.map(results, (result, resultIndex) => {
+            let values = _.get(result, 'value.results');
+
+            // looping over the sample rather than values
+            // as the value structure varies
+            _.map(resultSample, (sample, segmentIndex) => {
+              let sampleSegment = _.get(sample, 'segment');
+
+              // if an identical segment is found,
+              // populate the data into the segment
+              let value = _.find(values, (value) => {
+                return equals(sampleSegment, _.get(value, 'segment'));
+              });
+
+              if (!_.isEmpty(value) && !_.isUndefined(value)) {
+                _.map(value.data, (record) => {
+
+                  // the manually load balancing invades the correct t value,
+                  // so it has to be overwritten here again with the resultIndex
+                  output[segmentIndex].data.push(_.merge(record, {t: resultIndex}));
+                });
+
+              // if no identical segment is found,
+              // populate an empty data set as it is unrecognisable
+              } else {
+                output[segmentIndex].data.push({t: resultIndex, v: 0});
+              }
             });
           });
-        });
+        } else {
+          output = _.get(results, '0.value.results');
+        }
 
         cb(null, output);
       })
@@ -183,7 +228,11 @@ export default class UserStatsRequest {
 
         // get the first result as sample for the segment details
         // as the breakdown could be dynamic
-        let resultSample = _.get(results, '0.value.results');
+        let resultSample = _.max(results, (result) => {
+          return (_.get(result, 'value.results')).length;
+        });
+
+        resultSample = _.get(resultSample, 'value.results');
 
         // init the data array with segment
         // assume that the returned results are always with the
@@ -197,9 +246,11 @@ export default class UserStatsRequest {
         _.map(results, (result) => {
           let values = _.get(result, 'value.results');
           _.map(values, (value, index) => {
-            _.map(value.data, (record) => {
-              output[index].data.push(record);
-            });
+            if (value && value.data) {
+              _.map(value.data, (record) => {
+                output[index].data.push(record);
+              });
+            }
           });
         });
 
@@ -235,7 +286,11 @@ export default class UserStatsRequest {
 
         // get the first result as sample for the segment details
         // as the breakdown could be dynamic
-        let resultSample = _.get(results, '0.value.results');
+        let resultSample = _.max(results, (result) => {
+          return (_.get(result, 'value.results')).length;
+        });
+
+        resultSample = _.get(resultSample, 'value.results');
 
         // init the data array with segment
         // assume that the returned results are always with the
@@ -249,9 +304,11 @@ export default class UserStatsRequest {
         _.map(results, (result) => {
           let values = _.get(result, 'value.results');
           _.map(values, (value, index) => {
-            _.map(value.data, (record) => {
-              output[index].data.push(record);
-            });
+            if (value && value.data) {
+              _.map(value.data, (record) => {
+                output[index].data.push(record);
+              });
+            }
           });
         });
 

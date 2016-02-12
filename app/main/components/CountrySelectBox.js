@@ -3,7 +3,7 @@ import React, { PropTypes } from 'react';
 import Select from 'react-select';
 import CountryFlag from './CountryFlag';
 
-let countryData = require('../../data/countries.json');
+import { countries } from 'country-data';
 
 /**
  * @class CountrySelectBox
@@ -98,11 +98,11 @@ let CountrySelectBox = React.createClass({
           matchProp="any"
           searchable={this.props.searchable}
           clearable={false}
-          options={this.props.options || _.transform(countryData, (result, country, key) => {
-            result[key] = {
+          options={this.props.options || countries.all.map(country => {
+            return {
               value: country.alpha2,
-              label: country.name
-            };
+              label: country.name,
+            }
           })}
           optionRenderer={this._renderOption}
           valueRenderer={this._renderValue}

@@ -5,12 +5,7 @@
 ### To start
 
 1. npm i
-2. npm run selenium
-3. gulp
-
-### Selenium server failure
-
-`pkill -f selenium-standalone`
+2. gulp
 
 ### Running test case
 
@@ -29,6 +24,12 @@ FEATURE=call npm run test:browser
 
 // Specifying both
 BROWSER=firefox FEATURE=sms npm run test:browser
+
+// Running on remote with selenium server config (e.g. Jenkins)
+REMOTE=true npm run test:browser
+
+// Specifying test location (default: localhost:3000)
+TEST_URL=http://deploy.dev.maaii.com:4004 npm run test:browser
 ```
 
 ## 2. Interacting with Page Object

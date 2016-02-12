@@ -50,6 +50,10 @@ export default class SMSRequest {
       query.destination_address_inbound = '*' + opts.destination_address_inbound + '*';
     }
 
+    if (opts.source_address_inbound) {
+      query.source_address_inbound = '*' + opts.source_address_inbound + '*';
+    }
+
     // jscs:enable
     if (opts.page) {
       query.page = opts.page;

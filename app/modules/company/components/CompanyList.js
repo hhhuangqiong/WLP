@@ -3,7 +3,7 @@ import React, { PropTypes } from 'react';
 import {Link} from 'react-router';
 import classNames from 'classnames';
 
-let Countries = require('../../../data/countries.json');
+import { getCountryName } from '../../../utils/StringFormatter';
 
 let CompanyList = React.createClass({
   PropTypes: {
@@ -94,7 +94,7 @@ let CompanyList = React.createClass({
               {company.name}
             </span>
             <span className="company-sidebar__list__item__info__location">
-              {_.pluck(_.filter(Countries, { alpha2: company.country }), 'name')}
+              {getCountryName(company.country)}
             </span>
           </span>
           <span className="company-sidebar__list__item__status left">

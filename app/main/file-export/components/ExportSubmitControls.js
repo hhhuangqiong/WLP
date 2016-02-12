@@ -17,10 +17,7 @@ export default React.createClass({
             e.preventDefault();
             this.props.closeModal();
           }}
-
         >Cancel</a>
-
-        <span className="extra-space"></span>
 
         <a
           role="button"
@@ -30,7 +27,6 @@ export default React.createClass({
             e.preventDefault();
             this.props.handleExport();
           }}
-
         >Proceed</a>
       </div>
     );

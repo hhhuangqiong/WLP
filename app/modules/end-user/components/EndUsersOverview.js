@@ -1,11 +1,8 @@
 import React from 'react';
 import { Link } from 'react-router';
 import Select from 'react-select';
-import classNames from 'classnames';
 import moment from 'moment';
-import _ from 'lodash';
-import {concurrent} from 'contra';
-import { countries } from 'country-data';
+import { merge, max, clone, reduce, isEmpty } from 'lodash';
 import getMapConfig from '../utils/getMapConfig';
 import MAP_DATA from '../constants/mapData';
 
@@ -19,7 +16,7 @@ import LineChart from '../../../main/components/LineChart';
 import TimeFramePicker, { parseTimeRange } from '../../../main/components/TimeFramePicker';
 import * as DataGrid from '../../../main/statistics/components/DataGrid';
 import PercentageChart from '../../../main/components/PercentageChart';
-import CountryFlag from '../../../main/components/CountryFlag';
+import DateSelector from '../../../main/components/DateSelector';
 
 import EndUsersOverviewStore from '../stores/EndUsersOverviewStore';
 import EndUsersRegistrationStatsStore from '../stores/EndUsersRegistrationStatsStore';
@@ -32,36 +29,35 @@ import fetchRegistrationStats from '../actions/fetchEndUsersRegistrationStats';
 import fetchDeviceStats from '../actions/fetchDeviceStats';
 import fetchGeographicStats from '../actions/fetchGeographicStats';
 
-const YEARS_BACKWARD = 5;
 const TIME_FRAMES = ['7 days', '30 days', '60 days', '90 days'];
 const gChartContainerId = 'registrationByCountry';
 
-const debug = require('debug')('app:end-user/components/EndUsersOverview');
+const LAST_UPDATE_TIME_FORMAT = 'MMM DD, YYYY H:mm';
 
 const defaultQueryMonth = moment().subtract(1, 'month');
 
 const PLATFORM_NAME = {
   ios: 'IOS',
   android: 'Android',
-  phone: 'Windows Phone'
+  phone: 'Windows Phone',
 };
 
 const STATS_TYPE = {
   REGISTERED_USER: 'registereduser',
-  ACTIVE_USER: 'activeuser'
+  ACTIVE_USER: 'activeuser',
 };
 
 const LINECHART_TOGGLES = [
   {
     id: STATS_TYPE.REGISTERED_USER,
     title: 'new registered user',
-    color: 'red'
+    color: 'red',
   },
   {
     id: STATS_TYPE.ACTIVE_USER,
     title: 'active user',
-    color: 'green'
-  }
+    color: 'green',
+  },
 ];
 
 const TOOLTIP_TIME_FORMAT = 'lll';
@@ -71,7 +67,7 @@ const EndUsersOverview = React.createClass({
 
   contextTypes: {
     router: React.PropTypes.func.isRequired,
-    executeAction: React.PropTypes.func.isRequired
+    executeAction: React.PropTypes.func.isRequired,
   },
 
   mixins: [FluxibleMixin, AuthMixin],
@@ -80,8 +76,11 @@ const EndUsersOverview = React.createClass({
     storeListeners: {
       onEndUsersOverviewChange: EndUsersOverviewStore,
       onEndUsersRegistrationStatsChange: EndUsersRegistrationStatsStore,
-      onEndUsersGeographicStatsChange: EndUsersGeographicStatsStore
-    }
+      // WLP-595
+      // Disable Country Table field as SDK does not support country data at this moment
+      // and the capability settings for features are pending implementation
+      // onEndUsersGeographicStatsChange: EndUsersGeographicStatsStore,
+    },
   },
 
   getInitialState() {
@@ -100,29 +99,32 @@ const EndUsersOverview = React.createClass({
     this._getMonthlyStats();
     this._getLastXDaysStats();
     this._getDeviceStats();
-    this._getGeographicStats();
+    // WLP-595
+    // Disable Country Table field as SDK does not support country data at this moment
+    // and the capability settings for features are pending implementation
+    // this._getGeographicStats();
   },
 
   onEndUsersOverviewChange() {
-    let states = this.context.getStore(EndUsersOverviewStore).getState();
+    const states = this.context.getStore(EndUsersOverviewStore).getState();
     this.setState(states);
   },
 
   onEndUsersGeographicStatsChange() {
-    let states = this.context.getStore(EndUsersGeographicStatsStore).getState();
-    this.setState(_.merge(this.state, states));
+    const states = this.context.getStore(EndUsersGeographicStatsStore).getState();
+    this.setState(merge(this.state, states));
 
     // Inject custom world data provided by Highmaps
     Highcharts.maps['custom/world'] = MAP_DATA;
 
     // Copy source data to be a new one for Highmap to avoid the behavior of changing source data
-    const maxValue = _.max(states.geographicStats, country => country.total).total;
-    new Highcharts.Map(getMapConfig(gChartContainerId, _.clone(states.geographicStats), maxValue));
+    const maxValue = max(states.geographicStats, country => country.total).total;
+    this.geographicMap = new Highcharts.Map(getMapConfig(gChartContainerId, clone(states.geographicStats), maxValue));
   },
 
   onEndUsersRegistrationStatsChange() {
-    let states = this.context.getStore(EndUsersRegistrationStatsStore).getState();
-    this.setState(_.merge(this.state, states));
+    const states = this.context.getStore(EndUsersRegistrationStatsStore).getState();
+    this.setState(merge(this.state, states));
   },
 
   onAppIdChange(appId) {
@@ -132,276 +134,107 @@ const EndUsersOverview = React.createClass({
   onTimeFrameChange(time) {
     this.setState({ selectedLastXDays: time });
 
-    //// THIS IS A HACK FOR LINECHART
-    //// the lines key has to be cleared (e.g. set to null)
-    //// in order to reset the LineChart
+    // THIS IS A HACK FOR LINECHART
+    // the lines key has to be cleared (e.g. set to null)
+    // in order to reset the LineChart
     this.setState({
-      lastXDaysRegisteredUser: null, lastXDaysActiveUser: null
+      lastXDaysRegisteredUser: null, lastXDaysActiveUser: null,
     });
 
     this._getLastXDaysStats(time);
-    this._getGeographicStats(time);
-  },
-
-  _getStats() {
-    let { identity } = this.context.router.getCurrentParams();
-
-    this.context.executeAction(fetchEndUsersStatsTotal, {
-      fromTime: moment().startOf('day').format('x'),
-      toTime: moment().endOf('day').format('x'),
-      carrierId: identity
-    });
-  },
-
-  _getMonthlyStats(month, year) {
-    let { identity } = this.context.router.getCurrentParams();
-
-    let selectedMonth = (month || month === 0) ? month : this.state.selectedMonth;
-    let selectedYear = year || this.state.selectedYear;
-
-    let queryTime = moment().month(selectedMonth).year(selectedYear);
-
-    this.context.executeAction(fetchEndUsersStatsMonthly, {
-      fromTime: queryTime.startOf('month').format('x'),
-      toTime: queryTime.endOf('month').format('x'),
-      carrierId: identity,
-      timeWindow: `Month`
-    });
-  },
-
-  _getLastXDaysStats(lastXDays) {
-    let { identity } = this.context.router.getCurrentParams();
-    let timeRange = lastXDays || this.state.selectedLastXDays;
-
-    let { from, to, quantity: selectedLastXDays, timescale } = parseTimeRange(timeRange);
-
-    this.context.executeAction(fetchRegistrationStats, {
-      fromTime: from,
-      toTime: to,
-      carrierId: identity,
-      timescale
-    });
-  },
-
-  _getGeographicStats(lastXDays) {
-    let { identity } = this.context.router.getCurrentParams();
-    let timeRange = lastXDays || this.state.selectedLastXDays;
-
-    let { from, to, quantity: selectedLastXDays, timescale } = parseTimeRange(timeRange);
-
-    this.context.executeAction(fetchGeographicStats, {
-      fromTime: from,
-      toTime: to,
-      carrierId: identity,
-      timescale
-    });
-  },
-
-  _getDeviceStats(lastXDays) {
-    let { identity } = this.context.router.getCurrentParams();
-    let timeRange = lastXDays || this.state.selectedLastXDays;
-
-    let { from, to, quantity: selectedLastXDays, timescale } = parseTimeRange(timeRange);
-
-    this.context.executeAction(fetchDeviceStats, {
-      fromTime: from,
-      toTime: to,
-      carrierId: identity,
-      timescale
-    });
+    // WLP-595
+    // Disable Country Table field as SDK does not support country data at this moment
+    // and the capability settings for features are pending implementation
+    // this._getGeographicStats(time);
   },
 
   getChangeColor(value) {
-    if (!value) {
-      return '';
-    }
+    if (!value) return '';
 
     return (value > 0) ? 'positive' : 'negative';
   },
 
-  monthlyStatsMonthChange(month) {
-    this.setState({ selectedMonth: month });
-    this._getMonthlyStats(month);
+  /*
+    WLP-595
+    Disable Country Table field as SDK does not support country data at this moment
+    and the capability settings for features are pending implementation
+    */
+  // _renderCountryTable() {
+  //   const sortedCountries = sortByOrder(this.state.geographicStats, ['value'], ['desc'], values);
+  //
+  //   return (
+  //     <div className="geographic-chart__country-table">
+  //       <div className="geographic-chart__country-table__header row">
+  //         <div className="large-15 columns">
+  //           Location
+  //         </div>
+  //         <div className="large-9 columns">
+  //           Registered
+  //         </div>
+  //       </div>
+  //       {(
+  //       sortedCountries.slice(0, 10) || []).map((country) => {
+  //         return (
+  //           <div className="geographic-chart__country-table__body row" key={country.code}>
+  //             <div className="country large-15 columns">
+  //               <CountryFlag code={country.code} />
+  //               {country.name || EMPTY_CELL_PLACEHOLDER}
+  //             </div>
+  //             <div className="stats large-9 columns">{country.value || EMPTY_CELL_PLACEHOLDER}</div>
+  //           </div>
+  //         );
+  //       })}
+  //     </div>
+  //   );
+  //
+  //   return (
+  //     <table className="geographic-chart__country-table">
+  //       <tr>
+  //         <th>Location</th>
+  //         <th>Attempts</th>
+  //       </tr>
+  //       {(
+  //         sortedCountries.slice(0, 10) || []).map((country) => {
+  //           return (
+  //             <tr key={country.code}>
+  //               <td>
+  //                 <CountryFlag code={country.code} />
+  //                 {country.name || EMPTY_CELL_PLACEHOLDER}
+  //               </td>
+  //               <td>{country.value || EMPTY_CELL_PLACEHOLDER}</td>
+  //             </tr>
+  //           );
+  //         }
+  //       )}
+  //     </table>
+  //   );
+  // },
+
+  getMonthlyStatsDate() {
+    return moment({
+      month: this.state.selectedMonth,
+      year: this.state.selectedYear,
+    }).format('L');
   },
 
-  monthlyStatsYearChange(year) {
-    this.setState({ selectedYear: year });
-    this._getMonthlyStats(null, year);
+  getLastUpdate(date) {
+    const lastUpdate = moment(date).endOf('month').format(LAST_UPDATE_TIME_FORMAT);
+    return `Data updated till: ${lastUpdate}`;
   },
 
-  toggleSummaryType(summaryType) {
-    this.setState({ selectedLine: summaryType });
-  },
-
-  _getAppIdSelectOptions() {
-    return _.reduce(this.state.appIds, (result, id) => {
-      var option = { value: id, label: id };
-      result.push(option);
-      return result;
-    }, []);
-  },
-
-  _getMonths() {
-    let monthArray = Array.apply(0, Array(12)).map((_, i ) => { return i; });
-
-    return _.reduce(monthArray, (result, n) => {
-      var option = { value: n, label: moment().month(n).format('MMMM') };
-      result.push(option);
-      return result;
-    }, []);
-  },
-
-  _getYears() {
-    let years = [];
-
-    for (let i = 0; i < YEARS_BACKWARD; i++) {
-      years.push({
-        value: (i > 0) ? moment().subtract(i, 'years').format('YYYY') : moment().format('YYYY'),
-        label: (i > 0) ? moment().subtract(i, 'years').format('YYYY') : moment().format('YYYY')
-      });
-    }
-  },
-
-  _getTotalRegisteredUser() {
-    let { totalRegisteredUser } = this.state;
-    return totalRegisteredUser;
-  },
-
-  _getMonthlyActiveUserStats() {
-    let { thisMonthActive, lastMonthActive } = this.state;
-    let activeUserChange = thisMonthActive - lastMonthActive;
-
-    return {
-      total: thisMonthActive,
-      change: thisMonthActive - lastMonthActive,
-      percent: activeUserChange && lastMonthActive ? Math.round((activeUserChange / lastMonthActive) * 100) : '-',
-      direction: activeUserChange > 0 ? 'up' : 'down'
-    };
-  },
-
-  _getMonthlyRegisteredUserStats() {
-    let { thisMonthRegistered, lastMonthRegistered  } = this.state;
-    let registeredUserChange = thisMonthRegistered - lastMonthRegistered;
-
-    return {
-      total: thisMonthRegistered,
-      change: registeredUserChange,
-      percent: registeredUserChange && lastMonthRegistered ? Math.round((registeredUserChange / lastMonthRegistered) * 100) : '-',
-      direction: (registeredUserChange > 0) ? 'up' : 'down'
-    };
-  },
-
-  _getLineChartXAxis() {
-    let { from, quantity, timescale } = parseTimeRange(this.state.selectedLastXDays);
-
-    return {
-      start: from,
-      tickCount: parseInt(quantity),
-      tickInterval: (timescale === 'day' ? 24 : 1) * 3600 * 1000
-    };
-  },
-
-  _getLineChartData() {
-    let tooltipFormatter = (x, y) => {
-      return `
-              <div style="text-align: center">
-                <div>${moment(x).local().format(TOOLTIP_TIME_FORMAT)}</div>
-                <div>Success Attempts: ${y}</div>
-              </div>
-            `;
-    };
-
-    return !_.isEmpty(this.state.lastXDaysRegisteredUser) && !_.isEmpty(this.state.lastXDaysActiveUser) ? [
-      {
-        name: STATS_TYPE.REGISTERED_USER,
-        data: _.reduce(this.state.lastXDaysRegisteredUser, (result, stat) => { result.push(Math.round(stat.v)); return result; }, []),
-        color: '#FB3940',
-        tooltipFormatter: tooltipFormatter
-      },
-      {
-        name: STATS_TYPE.ACTIVE_USER,
-        data: _.reduce(this.state.lastXDaysActiveUser, (result, stat) => { result.push(Math.round(stat.v)); return result; }, []),
-        color: '#21C031',
-        tooltipFormatter: tooltipFormatter
-      }
-    ] : null;
-  },
-
-  _getLineChartSelectedLine() {
-    return this.state.selectedLine;
-  },
-
-  _getDeviceTotal() {
-    return _.reduce(this.state.deviceStats, (total, stat) => {
-      total += stat.total;
-      return total;
-    }, 0);
-  },
-
-  _getGeographicTotal() {
-    return _.reduce(this.state.geographicStats, (total, stat) => {
-      total += stat.value;
-      return total;
-    }, 0);
-  },
-
-  _renderCountryTable() {
-    const sortedCountries = _.sortByOrder(this.state.geographicStats, ['value'], ['desc'], _.values);
-
-    return (
-      <div className="geographic-chart__country-table">
-        <div className="geographic-chart__country-table__header row">
-          <div className="large-15 columns">
-            Location
-          </div>
-          <div className="large-9 columns">
-            Registered
-          </div>
-        </div>
-        {(
-        sortedCountries.slice(0, 10) || []).map((country) => {
-          return (
-              <div className="geographic-chart__country-table__body row" key={country.code}>
-                <div className="country large-15 columns">
-                  <CountryFlag code={country.code} />
-                  {country.name || EMPTY_CELL_PLACEHOLDER}
-                </div>
-                <div className="stats large-9 columns">{country.value || EMPTY_CELL_PLACEHOLDER}</div>
-              </div>
-            );
-        }
-        )}
-      </div>
-    );
-
-    return (
-      <table className="geographic-chart__country-table">
-        <tr>
-          <th>Location</th>
-          <th>Attempts</th>
-        </tr>
-        {(
-          sortedCountries.slice(0, 10) || []).map((country) => {
-            return (
-              <tr key={country.code}>
-                <td>
-                  <CountryFlag code={country.code} />
-                  {country.name || EMPTY_CELL_PLACEHOLDER}
-                </td>
-                <td>{country.value || EMPTY_CELL_PLACEHOLDER}</td>
-              </tr>
-            );
-          }
-        )}
-      </table>
-    );
+  getLastUpdateFromTimeFrame() {
+    let timeframe = this.state.selectedLastXDays;
+    const { to, timescale } = parseTimeRange(timeframe);
+    let lastUpdate = timescale === 'hour' ? moment(to).format(LAST_UPDATE_TIME_FORMAT) : moment(to).endOf(timescale).format(LAST_UPDATE_TIME_FORMAT);
+    return `Data updated till: ${lastUpdate}`;
   },
 
   render() {
-    let { role, identity } = this.context.router.getCurrentParams();
-    let totalRegisteredUser = this._getTotalRegisteredUser();
-    let monthlyRegisteredUserStats = this._getMonthlyRegisteredUserStats();
-    let monthlyActiveUserStats = this._getMonthlyActiveUserStats();
+    const { role, identity } = this.context.router.getCurrentParams();
+    const totalRegisteredUser = this._getTotalRegisteredUser();
+    const monthlyRegisteredUserStats = this._getMonthlyRegisteredUserStats();
+    const monthlyActiveUserStats = this._getMonthlyActiveUserStats();
+    const appIds = this._getAppIdSelectOptions();
 
     return (
       <div className="row">
@@ -414,22 +247,29 @@ const EndUsersOverview = React.createClass({
 
           </FilterBar.LeftItems>
           <FilterBar.RightItems>
-            <Select
-              name="appid"
-              className="end-users-details__app-select"
-              options={this._getAppIdSelectOptions()}
-              value={'Application ID: ' + (this.state.appId ? this.state.appId : '-')}
-              clearable={false}
-              searchable={false}
-              onChange={this.onAppIdChange}
-            />
+            {/* Need not to provide selection when there is only one single selected options to avoid confusion */}
+            <If condition={appIds.length > 1}>
+              <Select
+                name="appid"
+                className="end-users-details__app-select"
+                options={appIds}
+                value={'Application ID: ' + (this.state.appId ? this.state.appId : '-')}
+                clearable={false}
+                searchable={false}
+                onChange={this.onAppIdChange}
+              />
+            </If>
           </FilterBar.RightItems>
         </FilterBar.Wrapper>
 
         <div className="inner-wrap end-users-overview">
-          <div className="large-7 columns">
+          <div className="large-24 columns">
             <Panel.Wrapper>
-              <Panel.Header customClass="narrow" title="Total User" />
+              <Panel.Header
+                customClass="narrow"
+                title="Total User"
+                caption={`Data updated till: ${moment().subtract(1, 'day').endOf('day').format(LAST_UPDATE_TIME_FORMAT)}`}
+              />
               <Panel.Body customClass="narrow no-padding">
                 <DataGrid.Wrapper>
                   <DataGrid.Cell
@@ -441,26 +281,20 @@ const EndUsersOverview = React.createClass({
             </Panel.Wrapper>
           </div>
 
-          <div className="large-17 columns">
+          <div className="large-24 columns">
             <Panel.Wrapper>
-              <Panel.Header customClass="narrow" title="Monthly Statistics">
+              <Panel.Header
+                customClass="narrow"
+                title="Monthly Statistics"
+                caption={this.getLastUpdate({ year: this.state.selectedYear, month: this.state.selectedMonth })}
+              >
                 <div className="input-group picker month right">
-                  <Select
-                    name="month-picker"
-                    className="end-users-overview__month-picker left"
-                    options={this._getMonths()}
-                    value={this.state.selectedMonth}
-                    clearable={false}
-                    searchable={false}
-                    onChange={this.monthlyStatsMonthChange} />
-                  <Select
-                    name="year-picker"
-                    className="end-users-overview__year-picker left"
-                    options={this._getYears()}
-                    value={this.state.selectedYear}
-                    clearable={false}
-                    searchable={false}
-                    onChange={this.monthlyStatsYearChange} />
+                  <DateSelector
+                    date={this.getMonthlyStatsDate()}
+                    minDate={moment().subtract(1, 'months').subtract(1, 'years').startOf('month').format('L')}
+                    maxDate={moment().subtract(1, 'months').endOf('month').format('L')}
+                    onChange={this.handleMonthlyStatsChange}
+                  />
                 </div>
               </Panel.Header>
               <Panel.Body customClass="narrow no-padding">
@@ -486,7 +320,10 @@ const EndUsersOverview = React.createClass({
 
           <div className="large-24 columns">
             <Panel.Wrapper>
-              <Panel.Header customClass="narrow" title="Statistics">
+              <Panel.Header
+                customClass="narrow"
+                title="Daily Statistics"
+                caption={this.getLastUpdateFromTimeFrame()} >
                 <div className="input-group right">
                   <label className="left">Past:</label>
                   <TimeFramePicker
@@ -499,17 +336,7 @@ const EndUsersOverview = React.createClass({
               <Panel.Body customClass="narrow no-padding">
                 <div className="inner-wrap">
                   <div className="chart-cell large-24 columns">
-                    <div className="chart-cell__header row">
-                      <div className="large-4 columns">
-                        <div className="chart-cell__header__title">Registration</div>
-                      </div>
-                      { /* // DESIGN IS NOT FINALISED
-                      <div className="large-4 columns end verification-overview__attempt__datetime">
-                        <div className="verification-overview__value">2219</div>
-                        <div className="verification-overview__title">New registered User</div>
-                      </div>
-                      */ }
-                    </div>
+                    <div className="chart-cell__header row"></div>
                     <div className="chart-cell__controls row">
                       <div className="chart-cell__line-toggle large-24 columns">
                         <ul className="inner-wrap">
@@ -541,14 +368,20 @@ const EndUsersOverview = React.createClass({
                         selectedLine={this._getLineChartSelectedLine()} />
                     </div>
                   </div>
+                  {/*
+
+                    WLP-595
+                    Disable Country Table field as SDK does not support country data at this moment
+                    and the capability settings for features are pending implementation
+
                   <div className="chart-cell large-24 columns">
                     <div className="chart-cell__header row">
                       <div className="large-4 columns">
-                        <div className="chart-cell__header__title">Registration by Country</div>
+                        <div className="chart-cell__header__title text-center">Registration by Country</div>
                       </div>
-                      <div className="large-3 columns end chart-cell__overview">
+                      <div className="large-4 columns end chart-cell__overview">
                         <div className="chart-cell__overview__value">{ this._getGeographicTotal() }</div>
-                        <div className="chart-cell__overview__unit">Total User</div>
+                        <div className="chart-cell__overview__unit">New Registered User</div>
                       </div>
                     </div>
                     <div className="map-chart chart-cell__chart row">
@@ -561,10 +394,17 @@ const EndUsersOverview = React.createClass({
                       </div>
                     </div>
                   </div>
+                  */}
+                </div>
+              </Panel.Body>
+            </Panel.Wrapper>
+            <Panel.Wrapper>
+              <Panel.Body customClass="narrow no-padding">
+                <div className="inner-wrap">
                   <div className="chart-cell large-24 columns">
                     <div className="chart-cell__header row">
                       <div className="large-4 columns">
-                        <div className="chart-cell__header__title">Device</div>
+                        <div className="chart-cell__header__title text-center">User Distribution by OS</div>
                       </div>
                       <div className="large-3 columns end chart-cell__overview">
                         <div className="chart-cell__overview__value">{ this._getDeviceTotal() }</div>
@@ -574,7 +414,8 @@ const EndUsersOverview = React.createClass({
                     <div className="chart-cell__chart row">
                       {
                         this.state.deviceStats && this.state.deviceStats.map((stat) => {
-                          let percentage = Math.round(stat.total / this._getDeviceTotal() * 100);
+                          const percentage = Math.round(stat.total / this._getDeviceTotal() * 100);
+
                           return (
                             <div className="large-12 columns left">
                               <PercentageChart
@@ -595,7 +436,188 @@ const EndUsersOverview = React.createClass({
         </div>
       </div>
     );
-  }
+  },
+
+  handleMonthlyStatsChange(date) {
+    const momentDate = moment(date, 'L');
+    const selectedMonth = momentDate.month();
+    const selectedYear = momentDate.year();
+
+    this.setState({ selectedMonth, selectedYear });
+    this._getMonthlyStats(selectedMonth, selectedYear);
+  },
+
+  monthlyStatsMonthChange(month) {
+    this.setState({ selectedMonth: month });
+    this._getMonthlyStats(month);
+  },
+
+  monthlyStatsYearChange(year) {
+    this.setState({ selectedYear: year });
+    this._getMonthlyStats(null, year);
+  },
+
+  toggleSummaryType(summaryType) {
+    this.setState({ selectedLine: summaryType });
+  },
+
+  _getStats() {
+    const { identity } = this.context.router.getCurrentParams();
+
+    this.context.executeAction(fetchEndUsersStatsTotal, {
+      fromTime: moment().startOf('day').format('x'),
+      toTime: moment().endOf('day').format('x'),
+      carrierId: identity,
+    });
+  },
+
+  _getAppIdSelectOptions() {
+    return reduce(this.state.appIds, (result, id) => {
+      const option = { value: id, label: id };
+      result.push(option);
+      return result;
+    }, []);
+  },
+
+  _getTotalRegisteredUser() {
+    const { totalRegisteredUser } = this.state;
+    return totalRegisteredUser;
+  },
+
+  _getMonthlyActiveUserStats() {
+    const { thisMonthActive, lastMonthActive } = this.state;
+    const activeUserChange = thisMonthActive - lastMonthActive;
+
+    return {
+      total: thisMonthActive,
+      change: thisMonthActive - lastMonthActive,
+      percent: activeUserChange && lastMonthActive ? Math.round((activeUserChange / lastMonthActive) * 100) : '-',
+      direction: activeUserChange > 0 ? 'up' : 'down',
+    };
+  },
+
+  _getMonthlyRegisteredUserStats() {
+    const { thisMonthRegistered, lastMonthRegistered  } = this.state;
+    const registeredUserChange = thisMonthRegistered - lastMonthRegistered;
+
+    return {
+      total: thisMonthRegistered,
+      change: registeredUserChange,
+      percent: registeredUserChange && lastMonthRegistered ? Math.round((registeredUserChange / lastMonthRegistered) * 100) : '-',
+      direction: (registeredUserChange > 0) ? 'up' : 'down',
+    };
+  },
+
+  _getLineChartXAxis() {
+    const { from, quantity, timescale } = parseTimeRange(this.state.selectedLastXDays);
+
+    return {
+      start: from,
+      tickCount: parseInt(quantity, 10),
+      tickInterval: (timescale === 'day' ? 24 : 1) * 3600 * 1000,
+    };
+  },
+
+  _getLineChartData() {
+    const tooltipFormatter = (x, y) => {
+      return `
+              <div style="text-align: center">
+                <div>${moment(x).local().format(TOOLTIP_TIME_FORMAT)}</div>
+                <div>Success Attempts: ${y}</div>
+              </div>
+            `;
+    };
+
+    return !isEmpty(this.state.lastXDaysRegisteredUser) && !isEmpty(this.state.lastXDaysActiveUser) ? [
+      {
+        name: STATS_TYPE.REGISTERED_USER,
+        data: reduce(this.state.lastXDaysRegisteredUser, (result, stat) => { result.push(Math.round(stat.v)); return result; }, []),
+        color: '#FB3940',
+        tooltipFormatter: tooltipFormatter,
+      },
+      {
+        name: STATS_TYPE.ACTIVE_USER,
+        data: reduce(this.state.lastXDaysActiveUser, (result, stat) => { result.push(Math.round(stat.v)); return result; }, []),
+        color: '#21C031',
+        tooltipFormatter: tooltipFormatter,
+      },
+    ] : null;
+  },
+
+  _getLineChartSelectedLine() {
+    return this.state.selectedLine;
+  },
+
+  _getDeviceTotal() {
+    return reduce(this.state.deviceStats, (total, stat) => {
+      total += stat.total;
+      return total;
+    }, 0);
+  },
+
+  _getGeographicTotal() {
+    return reduce(this.state.geographicStats, (total, stat) => {
+      total += stat.value;
+      return total;
+    }, 0);
+  },
+
+  _getMonthlyStats(month, year) {
+    const { identity } = this.context.router.getCurrentParams();
+
+    const selectedMonth = (month || month === 0) ? month : this.state.selectedMonth;
+    const selectedYear = year || this.state.selectedYear;
+
+    const queryTime = moment().month(selectedMonth).year(selectedYear);
+
+    this.context.executeAction(fetchEndUsersStatsMonthly, {
+      fromTime: queryTime.startOf('month').format('x'),
+      toTime: queryTime.endOf('month').format('x'),
+      carrierId: identity,
+      timeWindow: 'Month',
+    });
+  },
+
+  _getLastXDaysStats(lastXDays) {
+    const { identity } = this.context.router.getCurrentParams();
+    const timeRange = lastXDays || this.state.selectedLastXDays;
+
+    const { from, to, timescale } = parseTimeRange(timeRange);
+
+    this.context.executeAction(fetchRegistrationStats, {
+      fromTime: from,
+      toTime: to,
+      carrierId: identity,
+      timescale,
+    });
+  },
+
+  _getGeographicStats(lastXDays) {
+    const { identity } = this.context.router.getCurrentParams();
+    const timeRange = lastXDays || this.state.selectedLastXDays;
+
+    const { from, to, timescale } = parseTimeRange(timeRange);
+
+    this.context.executeAction(fetchGeographicStats, {
+      fromTime: from,
+      toTime: to,
+      carrierId: identity,
+      timescale,
+    });
+  },
+
+  _getDeviceStats(lastXDays) {
+    const { identity } = this.context.router.getCurrentParams();
+    const timeRange = lastXDays || this.state.selectedLastXDays;
+
+    const { from, to, timescale } = parseTimeRange(timeRange);
+
+    this.context.executeAction(fetchDeviceStats, {
+      fromTime: moment().startOf('day').format('x'),
+      toTime: moment().endOf('day').format('x'),
+      carrierId: identity
+    });
+  },
 });
 
 export default EndUsersOverview;

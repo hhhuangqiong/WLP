@@ -7,7 +7,7 @@ const NO_VALUE_LABEL = 'N/A';
 const IOS_PLATFORM = 'com.maaii.platform.ios';
 const ANDROID_PLATFORM = 'com.maaii.platform.android';
 
-let VSFTransactionTable = React.createClass({
+const VSFTransactionTable = React.createClass({
   propTypes: {
     transactions: React.PropTypes.array.isRequired,
     hasNextPage: React.PropTypes.bool.isRequired,
@@ -16,21 +16,18 @@ let VSFTransactionTable = React.createClass({
 
   getStyleByStoreType(platform) {
     return classNames({
-      'icon-apple': platform === IOS_PLATFORM
+      'icon-apple': platform === IOS_PLATFORM,
     }, {
-      'icon-apple-hack': platform === IOS_PLATFORM
+      'icon-apple-hack': platform === IOS_PLATFORM,
     }, {
-      'icon-android': platform === ANDROID_PLATFORM
+      'icon-android': platform === ANDROID_PLATFORM,
     }, {
-      'icon-android-hack': platform === ANDROID_PLATFORM
+      'icon-android-hack': platform === ANDROID_PLATFORM,
     });
   },
 
   renderPlatform(platform) {
-    if (!platform) {
-      return NO_VALUE_LABEL;
-    }
-
+    if (!platform) return NO_VALUE_LABEL;
     return (<span className={this.getStyleByStoreType(platform)}></span>);
   },
 
@@ -110,11 +107,11 @@ let VSFTransactionTable = React.createClass({
     );
   },
 
-  render: function() {
+  render() {
     return (
       <table className="large-24 clickable vsf-table" key="vsf-table">
         <thead className="vsf-table--head">
-          <tr className="vsf-table--row">
+          <tr>
             <th className="vsf-table--cell"></th>
             <th className="vsf-table--cell">DATE & TIME</th>
             <th className="vsf-table--cell">MOBILE</th>
@@ -128,7 +125,7 @@ let VSFTransactionTable = React.createClass({
         <tfoot className="vsf-table--foot" key="vsf-table--foot">{this.renderFooter()}</tfoot>
       </table>
     );
-  }
+  },
 });
 
 export default VSFTransactionTable;

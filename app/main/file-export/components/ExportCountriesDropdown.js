@@ -1,6 +1,6 @@
 import React from 'react';
 
-import COUNTRIES from '../../../data/countries.json';
+import { countries } from 'country-data';
 
 export default React.createClass({
   propTypes: {
@@ -24,11 +24,13 @@ export default React.createClass({
             onChange={this.props.onChange}
           >
             <option>{this.props.defaultOption}</option>
-            {COUNTRIES.map((country) => {
-              return <option
-                key={country.countryCode}
-                value={country.alpha2}
-              >{country.name}</option>;
+            {countries.all.map(country => {
+              return (
+                <option
+                  key={country.alpha2}
+                  value={country.alpha2}
+                >{country.name}</option>
+              )
             })}
           </select>
         </div>

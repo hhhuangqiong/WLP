@@ -1,63 +1,59 @@
 import _ from 'lodash';
-import {concurrent} from 'contra';
 import moment from 'moment';
 
 import React from 'react';
-import FluxibleMixin from 'fluxible/addons/FluxibleMixin';
 import classNames from 'classnames';
 
 import AuthMixin from '../../../utils/AuthMixin';
-
-import EndUserStore from '../stores/EndUserStore';
 
 import fetchWallet from '../actions/fetchWallet';
 import deactivateEndUser from '../actions/deactivateEndUser';
 import reactivateEndUser from '../actions/reactivateEndUser';
 
-import InfoPanel from './InfoPanel';
-import Section from './InfoBlock';
 import * as Accordion from '../../../main/components/Accordion';
 import * as Panel from '../../../main/components/Panel';
+import CountryFlag from '../../../main/components/CountryFlag';
+
 import WalletInfoItem from './WalletInfoItem';
 import Item from './InfoItem';
 
 const { displayDateFormat: DATE_FORMAT } = require('./../../../main/config');
-const Countries = require('../../../data/countries.json');
+import { getCountryName } from '../../../utils/StringFormatter';
 
 const EMPTY_STRING = 'N/A';
 
-var EndUserProfile = React.createClass({
+const EndUserProfile = React.createClass({
   contextTypes: {
     executeAction: React.PropTypes.func.isRequired,
-    router: React.PropTypes.func.isRequired
+    router: React.PropTypes.func.isRequired,
   },
 
   mixins: [AuthMixin],
 
-  getParams: function() {
-    let { identity: carrierId } = this.context.router.getCurrentParams();
-    let username = this.props.user.userDetails.username;
+  getParams() {
+    const { identity: carrierId } = this.context.router.getCurrentParams();
+    const username = this.props.user.userDetails.username;
 
     return { carrierId, username };
   },
 
-  handleSuspendClick: function() {
+  handleSuspendClick() {
     this.context.executeAction(deactivateEndUser, this.getParams());
   },
 
-  handleReactivateClick: function() {
+  handleReactivateClick() {
     this.context.executeAction(reactivateEndUser, this.getParams());
   },
 
-  handleRefreshButtonClick: function() {
+  handleRefreshButtonClick() {
     this.context.executeAction(fetchWallet, this.getParams());
   },
 
-  checkPlatformOS: function(platform, matchOS) {
+  checkPlatformOS(platform, matchOS) {
     return (platform) ? platform.toLowerCase() === matchOS : false;
   },
 
-  renderWalletPanel: function() {
+  renderWalletPanel() {
     let wallets = (
       <Accordion.Navigation title="Wallet Info">
         <div className="error text-center">
@@ -106,20 +102,9 @@ var EndUserProfile = React.createClass({
     return wallets;
   },
 
-  renderAccountPanel: function() {
-    let country = {
-      name: EMPTY_STRING,
-      alpha2: EMPTY_STRING
-    };
-
-    if (this.props.user.userDetails.countryCode) {
-      let countryCode = this.props.user.userDetails.countryCode.toLowerCase();
-      country = _.find(Countries, (c) => {
-        return c.alpha2.toLowerCase() === countryCode;
-      }) || country;
-    }
-
-    let creationDate = moment(this.props.user.userDetails.creationDate).format(DATE_FORMAT);
+  renderAccountPanel() {
+    const creationDate = moment(this.props.user.userDetails.creationDate).format(DATE_FORMAT);
+    const countryCode = (this.props.user.userDetails.countryCode || '').toLowerCase();
 
     return (
       <Accordion.Navigation title="Account Info" hasIndicator verified={this.props.user.userDetails.verified}>
@@ -133,10 +118,8 @@ var EndUserProfile = React.createClass({
         </Item>
         <Item label="Country">
           <div className="country-label">
-            <div className="flag__container left">
-              <span className={classNames('flag--' + country.alpha2.toLowerCase(), 'left')}/>
-            </div>
-            {country.name}
+            <CountryFlag code={countryCode} />
+            {getCountryName(countryCode)}
           </div>
         </Item>
         <Item label="Username">{this.props.user.userDetails.jid}</Item>
@@ -154,7 +137,7 @@ var EndUserProfile = React.createClass({
     );
   },
 
-  renderDevicePanel: function() {
+  renderDevicePanel() {
     return this.props.user.userDetails.devices.map((device) => {
       return (
         <Accordion.Navigation title="App Info">
@@ -177,7 +160,7 @@ var EndUserProfile = React.createClass({
     });
   },
 
-  render: function() {
+  render() {
     return (
       <If condition={this.props.user && this.props.user.userDetails}>
         <Panel.Wrapper addOn>
@@ -209,7 +192,7 @@ var EndUserProfile = React.createClass({
         </Panel.Wrapper>
       </If>
     );
-  }
+  },
 });
 
 export default EndUserProfile;

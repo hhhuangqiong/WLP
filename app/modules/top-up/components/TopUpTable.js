@@ -1,51 +1,46 @@
-import _ from 'lodash';
+import { first } from 'lodash';
 import moment from 'moment';
 import classNames from 'classnames';
-
 import React, { PropTypes } from 'react';
-import FluxibleMixin from 'fluxible/addons/FluxibleMixin';
-
 import Tooltip from 'rc-tooltip';
 
 import currencyData from '../../../data/bossCurrencies.json';
 import Converter from '../../../utils/bossCurrencyConverter';
-
 import config from './../../../main/config';
 
-let { displayDateFormat: DATE_FORMAT } = config;
+const { displayDateFormat: DATE_FORMAT } = config;
+const converter = new Converter(currencyData, { default: '840' });
 
-let converter = new Converter(currencyData, { default: '840' });
-
-var TopUpTable = React.createClass({
-  PropTypes: {
+const TopUpTable = React.createClass({
+  propTypes: {
     dateFormat: PropTypes.string,
-    histories: PropTypes.object,
+    histories: PropTypes.array.isRequired,
     page: PropTypes.number,
     pageRec: PropTypes.number,
     totalRec: PropTypes.number,
-    onPageLoad: PropTypes.func
+    onPageLoad: PropTypes.func,
   },
 
-  _isFreeWallet: function(type) {
-    return type.toLowerCase() === 'free';
+  renderFooter() {
+    if (this.props.totalRec > this.props.page * this.props.pageRec) {
+      return (
+        <tfoot>
+          <tr>
+            <td colSpan="7" className="pagination">
+              <div className="text-center">
+                <span className="pagination__button" onClick={this.props.onPageLoad}>Load More</span>
+              </div>
+            </td>
+          </tr>
+        </tfoot>
+      );
+    }
+
+    return null;
   },
 
-  _getDisplayTimestamp: function(timestamp) {
-    return moment(timestamp).format(this.props.dateFormat || DATE_FORMAT);
-  },
-
-  _getDisplayUsername: function(username) {
-    return _.first(username.split('@'));
-  },
-
-  _getFormattedAmount: function(code, amount) {
-    // toString to prevent from code = 0 returned by API
-    let currency = converter.getCurrencyById(code.toString());
-    return (!currency.sign ? '' : currency.sign) + amount.toFixed(1) + ' ' + (!currency.code ? '' : currency.code);
-  },
-
-  render: function() {
-    let rows = this.props.histories.map((history) => {
+  render() {
+    const rows = this.props.histories.map(history => {
       return (
         <tr>
           <td className="text-center">
@@ -85,24 +80,28 @@ var TopUpTable = React.createClass({
         <tbody>
           {rows}
         </tbody>
-        <tfoot>
-          <tr>
-            <td colSpan="7" className="pagination">
-              <If condition={!_.isEmpty(this.props.histories)}>
-                <div className="text-center">
-                  <If condition={this.props.totalRec > this.props.page * this.props.pageRec}>
-                    <span className="pagination__button" onClick={this.props.onPageLoad}>Load More</span>
-                    <Else />
-                    <span className="pagination__button pagination__button--inactive">no more result</span>
-                  </If>
-                </div>
-              </If>
-            </td>
-          </tr>
-        </tfoot>
+        {this.renderFooter()}
       </table>
     );
-  }
+  },
+
+  _isFreeWallet(type) {
+    return type.toLowerCase() === 'free';
+  },
+
+  _getDisplayTimestamp(timestamp) {
+    return moment(timestamp).format(this.props.dateFormat || DATE_FORMAT);
+  },
+
+  _getDisplayUsername(username) {
+    return first(username.split('@'));
+  },
+
+  _getFormattedAmount(code, amount) {
+    // toString to prevent from code = 0 returned by API
+    const currency = converter.getCurrencyById(code.toString());
+    return (!currency.sign ? '' : currency.sign) + amount.toFixed(1) + ' ' + (!currency.code ? '' : currency.code);
+  },
 });
 
 export default TopUpTable;

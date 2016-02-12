@@ -1,0 +1,25 @@
+.dropdown-filter {
+  width: rem-calc(300);
+
+  select {
+    top: 0 !important;
+  }
+}
+
+.dropdown-filter-button {
+  @include button-control;
+
+  width: rem-calc(100);
+  display: table;
+
+  > .text {
+    text-align: left;
+    display: table-cell;
+  }
+
+  > .icon-dropdown {
+    text-align: right;
+    display: table-cell;
+    font-size: small;
+  }
+}

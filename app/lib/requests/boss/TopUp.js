@@ -31,6 +31,7 @@ export default class TopUpRequest {
     logger.debug('formatting query data for transaction history');
 
     Q.fcall(swapDate)
+      .then(formatUserNumberField)
       .then(formatDateString)
       .fail(function(err) {
         return cb(err);
@@ -38,6 +39,15 @@ export default class TopUpRequest {
       .done(function(params) {
         return cb(null, params);
       });
+
+    function formatUserNumberField(params) {
+      if (!params.number) {
+        params.number = null;
+        return params;
+      }
+
+      return params;
+    }
 
     function formatDateString() {
       params.startDate = moment(params.startDate, 'L').startOf('day').format('YYYYMMDDHHmmss');
@@ -100,7 +110,7 @@ export default class TopUpRequest {
 
     Q.ninvoke(this, 'formatQueryData', params)
       .then(appendRequestId)
-      .then((params) => {
+      .then(params => {
         this.sendRequest(params, cb);
       })
       .catch((err) => {

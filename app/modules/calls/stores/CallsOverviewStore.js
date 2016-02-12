@@ -8,7 +8,8 @@ let CallsOverviewStore = createStore({
 
   handlers: {
     FETCH_CALLS_STATS_MONTHLY_SUCCESS: 'handleCallsStatsMonthly',
-    FETCH_CALLS_STATS_TOTAL_SUCCESS: 'handleCallsStatsTotal'
+    FETCH_CALLS_STATS_TOTAL_SUCCESS: 'handleCallsStatsTotal',
+    CLEAR_CALLS_STATS: 'handleClearCallsStats'
   },
 
   initialize() {
@@ -33,6 +34,11 @@ let CallsOverviewStore = createStore({
     this.successRateStats = payload.successRateStats;
     this.totalDurationStats = payload.totalDurationStats;
     this.averageDurationStats = payload.averageDurationStats;
+    this.emitChange();
+  },
+
+  handleClearCallsStats() {
+    this.initialize();
     this.emitChange();
   },
 

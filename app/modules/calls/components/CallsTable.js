@@ -1,108 +1,92 @@
-import React from 'react';
-import FluxibleMixin from 'fluxible/addons/FluxibleMixin';
-import {Link} from 'react-router';
+import React, { PropTypes } from 'react';
 import classNames from 'classnames';
-
-import Remark from '../../../main/components/Remark';
-import CallsStore from '../stores/CallsStore';
-import {parseDuration} from '../../../utils/StringFormatter';
-
 import moment from 'moment';
 import _ from 'lodash';
 
-var Countries = require('../../../data/countries.json');
+import {parseDuration} from '../../../utils/StringFormatter';
+
+// TODO: Replace it with country-data
+import { getCountryName } from '../../../utils/StringFormatter';
+import CountryFlag from '../../../main/components/CountryFlag';
+
 const EMPTY_STRING = 'N/A';
 
 const DATE_FORMAT = 'MMM DD YYYY';
-const TIME_FORMAT = 'h:mm:ss a';
+const TIME_FORMAT = 'H:mm:ss';
 
-var CallsTable = React.createClass({
-  contextTypes: {
-    router: React.PropTypes.func.isRequired
+const TABLE_TITLES = [
+  'Caller',
+  'Callee',
+  'Call Duration',
+  'Date',
+  'Status',
+  'Last Response Code',
+  'Bye Reason',
+  'Release Party',
+];
+
+const CallsTable = React.createClass({
+  propTypes: {
+    calls: PropTypes.array.isRequired,
+    totalPages: PropTypes.number.isRequired,
+    page: PropTypes.number.isRequired,
+    onDataLoad: PropTypes.func.isRequired,
   },
 
-  renderCountryField(number, countryName, callType = 'caller') {
+  contextTypes: {
+    router: React.PropTypes.func.isRequired,
+  },
+
+  renderCountryField(number, countryCode, callType = 'caller') {
     // Prevent display carrier
     number = number.split('@')[0];
-    countryName = countryName || '';
+
+    if (!countryCode) return (<span className={callType}>{number}</span>);
 
     // Get the actual country name
-    let countryData = _.find(Countries, country => country.alpha2.toLowerCase() === countryName.toLowerCase());
-
-    if (!countryData) return (<span className={callType}>{number}</span>);
+    const countryName = getCountryName(countryCode);
 
     return (
       <div className="caller_info">
-        <div className="flag__container left">
-          <span className={'flag--' + countryName}></span>
-        </div>
+        <CountryFlag className="left" code={countryCode} />
         <div className="left">
           <span className={callType}>{number}</span>
           <br/>
-          <span>{countryData.name}</span>
+          <span>{countryName}</span>
         </div>
       </div>
     );
   },
 
-  render: function() {
-    let params = this.context.router.getCurrentParams();
-
+  render() {
     let rows;
+
     if (!_.isEmpty(this.props.calls)) {
-      rows = this.props.calls.map((u) => {
-        let callStartDate = moment(u.start_time).format(DATE_FORMAT);
-        let callEndDate = (u.end_time > 0) ? moment(u.end_time).format(DATE_FORMAT) : callStartDate;
-        let callStart = moment(u.start_time).format(TIME_FORMAT);
-        let callEnd = (u.end_time > 0) ? moment(u.end_time).format(TIME_FORMAT) : callStart;
+      rows = this.props.calls.map(u => {
+        const callStartDate = moment(u.start_time).format(DATE_FORMAT);
+        const callEndDate = (u.end_time > 0) ? moment(u.end_time).format(DATE_FORMAT) : callStartDate;
 
-        let callType = u.type.toLowerCase();
-
-        let callStartTime = moment(u.start_time).format(TIME_FORMAT);
-        let callEndTime = (u.end_time > 0) ? moment(u.end_time).format(TIME_FORMAT) : callStartTime;
+        const callStartTime = moment(u.start_time).format(TIME_FORMAT);
+        const callEndTime = (u.end_time > 0) ? moment(u.end_time).format(TIME_FORMAT) : callStartTime;
 
         return (
-          <tr className="calls-table--row" key={u.record_id}>
-            <td className="calls-table--cell">
-              {this.renderCountryField(u.caller, u.source_country_tel_code)}
-            </td>
+          <tr key={u.record_id}>
+            <td>{this.renderCountryField(u.caller, u.source_country_tel_code)}</td>
+            <td>{this.renderCountryField(u.callee, u.target_country_tel_code, 'callee')}</td>
+            <td><span className="left duration">{parseDuration(u.duration)}</span></td>
 
-            <td className="calls-table--cell">
-              {this.renderCountryField(u.callee, u.target_country_tel_code, 'callee')}
-            </td>
-
-            <td className="calls-table--cell"><span className={'call_type radius label ' + callType}>{callType}</span></td>
-            <td className="calls-table--cell">
+            <td>
+              <div>{callEndDate},</div>
               <span className="call_time">{callStartTime} - {callEndTime}</span>
-              <label>{callEndDate}</label>
             </td>
-            <td className="calls-table--cell">
-              <span className="left duration">{parseDuration(u.duration)}</span>
-            </td>
-            <td className="calls-table--cell">
-              <span className={classNames('call_status', (u.success) ? 'success':'alert')}>{(u.success) ? 'Success':'Failure'}</span>
-            </td>
-            <td className="calls-table--cell">
-              {!u.success && u.bye_reason && u.bye_reason !== 'null' ? (
-                <Remark tip={u.bye_reason} />
-              ) : null}
-            </td>
-            <td className="calls-table--cell"><span className="caller_bundle_id">{u.caller_bundle_id || EMPTY_STRING}</span></td>
-            <td className="calls-table--cell"><span className="sip_trunk">{u.sip_trunk || EMPTY_STRING}</span></td>
+
+            <td><span className={classNames('call_status', u.success ? 'success' : 'alert')}>{u.success ? 'Success' : 'Failure'}</span></td>
+            <td><span className="last_response_code">{u.last_response_code || EMPTY_STRING}</span></td>
+            <td><span className="text-truncate">{u.bye_reason || EMPTY_STRING}</span></td>
+            <td><span>{u.release_party || EMPTY_STRING}</span></td>
           </tr>
         );
       });
-    } else {
-      rows = <tr className="calls-table--row">
-          <td className="text-center calls-table--cell"></td>
-          <td className="calls-table--cell"></td>
-          <td className="calls-table--cell"></td>
-          <td className="calls-table--cell"></td>
-          <td className="calls-table--cell"></td>
-          <td className="calls-table--cell"></td>
-          <td className="calls-table--cell"></td>
-          <td className="calls-table--cell"></td>
-        </tr>;
     }
 
     let footer = null;
@@ -126,7 +110,7 @@ var CallsTable = React.createClass({
       footer = (
         <tfoot>
           <tr>
-            <td colSpan="9">
+            <td colSpan={TABLE_TITLES.length}>
               {pagination}
             </td>
           </tr>
@@ -135,27 +119,17 @@ var CallsTable = React.createClass({
     }
 
     return (
-      <table className="large-24 clickable calls-table" key="calls-table">
-        <thead className="calls-table--head">
-          <tr className="calls-table--row">
-            <th className="calls-table--cell">Caller</th>
-            <th className="calls-table--cell">Callee</th>
-            <th className="calls-table--cell">Type</th>
-            <th className="calls-table--cell">Date</th>
-            <th className="calls-table--cell">Duration</th>
-            <th className="calls-table--cell">Status</th>
-            <th className="calls-table--cell">Failure Reason</th>
-            <th className="calls-table--cell">Bundle ID</th>
-            <th className="calls-table--cell">SIP Trunk</th>
+      <table className="large-24 clickable data-table" key="calls-table">
+        <thead>
+          <tr>
+            {TABLE_TITLES.map(title => <th>{title}</th>)}
           </tr>
         </thead>
-        <tbody className="calls-table--body" key="calls-table--body">
-          {rows}
-        </tbody>
+        <tbody key="calls-table--body">{rows}</tbody>
         {footer}
       </table>
     );
-  }
+  },
 });
 
 export default CallsTable;
