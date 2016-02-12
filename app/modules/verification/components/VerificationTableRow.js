@@ -26,7 +26,8 @@ let mobileOperators = require('../../../data/mobileOperators.json');
  * @returns {String} The operator name, or empty string if not found
  */
 let lookupMobileOperator = function (mcc, mnc) {
-  if (!mcc || !mnc) {
+  // mnc could be 0, so cannot be using `!`
+  if (_.isUndefined(mcc) || _.isUndefined(mnc)) {
     return '';
   }
 
@@ -180,6 +181,81 @@ let VerificationTableRow = React.createClass({
     let os = getOsIconName(verification.platform);
     let operator = lookupMobileOperator(verification.home_mcc, verification.home_mnc);
 
+    let details = {};
+
+    if (verification.hlr_query_response) {
+      let hlr = verification.hlr_query_response;
+      details.hlr = {
+        id: hlr.id,
+        country: hlr.msisdn_country_code,
+        msisdn: hlr.msisdn,
+        mcc: hlr.mcc,
+        mnc: hlr.mnc,
+        msin: hlr.msin,
+        imsi: hlr.imsi,
+        time: hlr.insert_time,
+        original: {
+          country: hlr.original_country_code,
+          prefix: hlr.original_country_prefix,
+          operator: hlr.original_network_name,
+          networkPrefix: hlr.original_network_prefix
+        }
+      };
+
+      if (hlr.is_roaming === 'Yes') {
+        details.isRoaming = true;
+        details.hlr.roaming = {
+          country: hlr.roaming_country_code,
+          prefix: hlr.roaming_country_prefix,
+          operator: hlr.roaming_network_name,
+          networkPrefix: hlr.roaming_network_prefix
+        };
+      }
+
+      if (hlr.is_ported === 'Yes') {
+        details.isPorted = true;
+        details.hlr.ported = {
+          country: hlr.ported_country_code,
+          prefix: hlr.ported_country_prefix,
+          operator: hlr.ported_network_name,
+          networkPrefix: hlr.ported_network_prefix
+        };
+      }
+
+      details.isValid = hlr.is_valid === 'Yes' ? true : false;
+    }
+
+    if (verification.cell_info) {
+      details.cellInfo = verification.cell_info;
+    }
+
+    if (verification.sim_card_info) {
+      let sims = [];
+      verification.sim_card_info.forEach((sim) => {
+        sims.push({
+          imsi: sim.imsi,
+          home: {
+            operator: lookupMobileOperator(+sim.home_mcc, +sim.home_mnc),
+            mnc: sim.home_mnc,
+            mcc: sim.home_mcc
+          },
+          current: {
+            operator: lookupMobileOperator(+sim.current_mcc, +sim.current_mnc),
+            mnc: sim.current_mnc,
+            mcc: sim.current_mcc
+          }
+        });
+      });
+      details.sims = sims;
+    }
+
+    let showDetails = verification.hlr_query_response && verification.sim_card_info;
+      details.success = success;
+      details.deviceModel = deviceModel;
+      details.method = method;
+      details.ip = ip;
+      details.imsiMatched = _.get(details, 'hlr.imsi') === _.get(details, 'sims.0.imsi');
+
     return (
       <tr>
         <td>
@@ -210,6 +286,13 @@ let VerificationTableRow = React.createClass({
             <Tooltip placement="left" trigger={['hover']} overlay={<span>{remarks}</span>}>
               <span className="icon-error6" />
             </Tooltip>
+          </If>
+        </td>
+        <td>
+          <If condition={showDetails}>
+            <a onClick={_.bindKey(this.props, 'onClickProfile', details)}>
+              <span className="icon-arrow" />
+            </a>
           </If>
         </td>
       </tr>

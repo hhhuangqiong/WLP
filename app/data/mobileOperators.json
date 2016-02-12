@@ -7701,55 +7701,55 @@
     "mcc": 460,
     "mnc": 0,
     "network": "China Mobile ",
-    "operator": "",
+    "operator": "China Mobile",
     "status": "Operational"
   }, {
     "mcc": 460,
     "mnc": 1,
     "network": "China Unicom ",
-    "operator": "",
+    "operator": "China Unicom",
     "status": "Operational"
   }, {
     "mcc": 460,
     "mnc": 2,
     "network": "Liaoning PPTA",
-    "operator": "",
+    "operator": "Liaoning",
     "status": "Operational"
   }, {
     "mcc": 460,
     "mnc": 3,
     "network": "China Unicom CDMA ",
-    "operator": "",
+    "operator": "China Unicom",
     "status": "Operational"
   }, {
     "mcc": 460,
     "mnc": 4,
     "network": "China Satellite Global Star Network ",
-    "operator": "",
+    "operator": "China Satellite Global Star Network",
     "status": "Inactive"
   }, {
     "mcc": 460,
     "mnc": 5,
     "network": "China Telecom",
-    "operator": "",
+    "operator": "China Telecom",
     "status": "Operational"
   }, {
     "mcc": 460,
     "mnc": 6,
     "network": "China Unicom",
-    "operator": "",
+    "operator": "China Unicom",
     "status": "Operational"
   }, {
     "mcc": 460,
     "mnc": 7,
     "network": "China Mobile",
-    "operator": "",
+    "operator": "China Mobile",
     "status": "Operational"
   }, {
     "mcc": 460,
     "mnc": 20,
     "network": "China Tietong (GSM-R)",
-    "operator": "",
+    "operator": "China Tietong",
     "status": "Inactive"
   }],
   "466": [{

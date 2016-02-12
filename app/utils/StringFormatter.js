@@ -38,6 +38,10 @@ export default {
   },
 
   getCountryName(countryAlpha2) {
+    if (!countryAlpha2) {
+      return null;
+    }
+
     const country = CountryData.countries[(countryAlpha2 || '').toUpperCase()];
     if(!country) return PLACEHOLDER_FOR_NULL;
 
