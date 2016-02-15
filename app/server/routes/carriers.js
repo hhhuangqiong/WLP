@@ -5,6 +5,7 @@ import moment from 'moment';
 import logger from 'winston';
 import { fetchDep } from '../utils/bottle';
 import { countries } from 'country-data';
+import { makeCacheKey } from '../utils/apiCache';
 
 var endUserRequest      = fetchDep(nconf.get('containerName'), 'EndUserRequest');
 var walletRequest       = fetchDep(nconf.get('containerName'), 'WalletRequest');
@@ -15,6 +16,7 @@ var vsfRequest          = fetchDep(nconf.get('containerName'), 'VSFTransactionRe
 var verificationRequest = fetchDep(nconf.get('containerName'), 'VerificationRequest');
 var callStatsRequest    = fetchDep(nconf.get('containerName'), 'CallStatsRequest');
 var userStatsRequest    = fetchDep(nconf.get('containerName'), 'UserStatsRequest');
+var redisClient         = fetchDep(nconf.get('containerName'), 'RedisClient');
 
 import SmsRequest from '../../lib/requests/dataProviders/SMS';
 import PortalUser from '../../collections/portalUser';
@@ -610,7 +612,7 @@ let getVerificationStatistics = function (req, res) {
     let params = mapVerificationStatsRequestParameters(req);
     let breakdownType = req.query.type;
 
-    Q.ninvoke(verificationRequest,'getVerificationStats', params, breakdownType)
+    Q.ninvoke(verificationRequest, 'getVerificationStats', params, breakdownType)
       .then((response) => {
         return Q.nfcall(parseVerificationStatistic, response, params);
       })
@@ -972,58 +974,101 @@ let getCallUserStatsMonthly = function(req, res) {
     return !val;
   });
 
+  const currentMonthStatKey = makeCacheKey('callUserStatsMonthly', thisMonthParams);
+  const lastMonthStatKey = makeCacheKey('callUserStatsMonthly', lastMonthParams);
+
   Q.allSettled([
-    Q.ninvoke(callStatsRequest, 'getCallerStats', thisMonthParams),
-    Q.ninvoke(callStatsRequest, 'getCallerStats', lastMonthParams),
-    Q.ninvoke(callStatsRequest, 'getCalleeStats', thisMonthParams),
-    Q.ninvoke(callStatsRequest, 'getCalleeStats', lastMonthParams)
-  ])
-    .spread((thisMonthCallerStats, lastMonthCallerStats, thisMonthCalleeStats, lastMonthCalleeStats) => {
-      let responses = [thisMonthCallerStats, lastMonthCallerStats, thisMonthCalleeStats, lastMonthCalleeStats]
-      let errors = _.reduce(responses, (result, response) => {
-        if (response.state !== 'fulfilled') {
-          result.push(response.reason);
-        }
+      Q.ninvoke(redisClient, 'get', currentMonthStatKey),
+      Q.ninvoke(redisClient, 'get', lastMonthStatKey),
+    ])
+    .spread((currentMonthStat, lastMonthStat) => {
+      const thisMonthCallUser = _.get(currentMonthStat, 'value');
+      const lastMonthCallUser = _.get(lastMonthStat, 'value');
 
-        return result;
-      }, []);
+      // prevent from refetching via data provider if and only if
+      // both this & last month data could be found in redis
+      if (thisMonthCallUser && lastMonthCallUser) {
+        logger.debug('cache data is found on redis with key %s and key %s', currentMonthStatKey, lastMonthStatKey);
 
-      if (!_.isEmpty(errors)) {
-        return res.status(500).json({
-          error: errors
+        return res.json({
+          thisMonthCallUser, lastMonthCallUser
         });
       }
 
-      let thisMonthCallers = _.get(thisMonthCallerStats, 'value.0.data');
-      let thisMonthCallees = _.get(thisMonthCalleeStats, 'value.0.data');
+      // this is what we originally did:
+      // do the query from data provider server
+      Q.allSettled([
+          Q.ninvoke(callStatsRequest, 'getCallerStats', thisMonthParams),
+          Q.ninvoke(callStatsRequest, 'getCallerStats', lastMonthParams),
+          Q.ninvoke(callStatsRequest, 'getCalleeStats', thisMonthParams),
+          Q.ninvoke(callStatsRequest, 'getCalleeStats', lastMonthParams),
+        ])
+        .spread((thisMonthCallerStats, lastMonthCallerStats, thisMonthCalleeStats, lastMonthCalleeStats) => {
+          let responses = [thisMonthCallerStats, lastMonthCallerStats, thisMonthCalleeStats, lastMonthCalleeStats];
+          let errors = _.reduce(responses, (result, response) => {
+            if (response.state !== 'fulfilled') {
+              result.push(response.reason);
+            }
 
-      // concat callee with carrierId into caller array
-      // as callee contains OFFNET user
-      // that for callee is already done by parameter of caller_carrier
-      let thisMonthCallUser = _.reduce(thisMonthCallees, (result, callee) => {
-        if (callee.indexOf(carrierId) > 0) {
-          result.push(callee);
-        }
-        return result;
-      }, thisMonthCallers);
+            return result;
+          }, []);
 
-      let lastMonthCallers = _.get(lastMonthCallerStats, 'value.0.data');
-      let lastMonthCallees = _.get(lastMonthCalleeStats, 'value.0.data');
+          if (!_.isEmpty(errors)) {
+            return res.status(500).json({
+              error: errors
+            });
+          }
 
-      // concat callee with carrierId into caller array
-      // as callee contains OFFNET user
-      // that for callee is already done by parameter of caller_carrier
-      let lastMonthCallUser = _.reduce(lastMonthCallees, (result, callee) => {
-        if (callee.indexOf(carrierId) > 0) {
-          result.push(callee);
-        }
-        return result;
-      }, lastMonthCallers);
+          let thisMonthCallers = _.get(thisMonthCallerStats, 'value.0.data');
+          let thisMonthCallees = _.get(thisMonthCalleeStats, 'value.0.data');
 
-      return res.json({
-        thisMonthCallUser: (_.uniq(thisMonthCallUser)).length,
-        lastMonthCallUser: (_.uniq(lastMonthCallUser)).length
-      });
+          // concat callee with carrierId into caller array
+          // as callee contains OFFNET user
+          // that for callee is already done by parameter of caller_carrier
+          let thisMonthCallUser = _.reduce(thisMonthCallees, (result, callee) => {
+            if (callee.indexOf(carrierId) > 0) {
+              result.push(callee);
+            }
+            return result;
+          }, thisMonthCallers);
+
+          let lastMonthCallers = _.get(lastMonthCallerStats, 'value.0.data');
+          let lastMonthCallees = _.get(lastMonthCalleeStats, 'value.0.data');
+
+          // concat callee with carrierId into caller array
+          // as callee contains OFFNET user
+          // that for callee is already done by parameter of caller_carrier
+          let lastMonthCallUser = _.reduce(lastMonthCallees, (result, callee) => {
+            if (callee.indexOf(carrierId) > 0) {
+              result.push(callee);
+            }
+            return result;
+          }, lastMonthCallers);
+
+          thisMonthCallUser = (_.uniq(thisMonthCallUser)).length;
+          lastMonthCallUser = (_.uniq(lastMonthCallUser)).length;
+
+          // REMOVE THIS WHEN PERFORMANCE ISSUE IS RESOLVED
+          // put the result into cache
+          redisClient.set(currentMonthStatKey, thisMonthCallUser);
+          redisClient.set(lastMonthStatKey, lastMonthCallUser);
+
+          return res.json({
+            thisMonthCallUser, lastMonthCallUser
+          });
+        })
+        .catch((err) => {
+          let { code, message, timeout, status } = err;
+
+          return res.status(status || 500).json({
+            error: {
+              code,
+              message,
+              timeout
+            }
+          });
+        })
+        .done();
     })
     .catch((err) => {
       let { code, message, timeout, status } = err;
