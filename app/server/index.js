@@ -108,10 +108,10 @@ function initialize(port) {
   server.use(passport.session());
 
   // as API server
+  server.use(require('./routers/hlr'));
   server.use(config.EXPORT_PATH_PREFIX, require('./routers/export'));
   server.use(config.FILE_UPLOAD_PATH_PREFIX, require('./routers/data'));
   server.use(config.API_PATH_PREFIX, require('./routers/api'));
-
   server.use(config.API_PATH_PREFIX, errorHandler);
 
   var renderApp = require('./render')(app);
