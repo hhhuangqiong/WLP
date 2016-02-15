@@ -97,6 +97,7 @@ const CallsOverview = React.createClass({
     // the lines key has to be cleared (e.g. set to null)
     // in order to reset the LineChart
     this.setState({
+      thisMonthUser: null, lastMonthUser: null,
       totalAttemptStats: null, successfulAttemptStats: null,
       totalDurationStats: null, averageDurationStats: null,
     });
