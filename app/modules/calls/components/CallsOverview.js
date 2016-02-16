@@ -137,14 +137,12 @@ const CallsOverview = React.createClass({
       tickCount: parseInt(quantity, 10),
       tickInterval: (timescale === 'day' ? 24 : 1) * 3600 * 1000,
       crosshair: {
-        color: 'rgba(76,145,222,0.3)'
-      }
+        color: 'rgba(76,145,222,0.3)',
+      },
     };
   },
 
   _getAttemptLineChartData() {
-    const { timescale } = parseTimeRange(this.state.selectedLastXDays);
-
     const totalAttemptData = reduce(this.state.totalAttemptStats, (result, stat) => { result.push(round(stat.v, DECIMAL_PLACE)); return result; }, []);
     const successAttemptData = reduce(this.state.successAttemptStats, (result, stat) => { result.push(round(stat.v, DECIMAL_PLACE)); return result; }, []);
     const successRateData = reduce(this.state.successRateStats, (result, stat) => { result.push(round(stat.v, DECIMAL_PLACE)); return result; }, []);
@@ -161,8 +159,8 @@ const CallsOverview = React.createClass({
         symbol: 'circle',
         lineWidth: 2,
         tooltip: {
-          valueSuffix: ' %'
-        }
+          valueSuffix: ' %',
+        },
       },
       {
         name: STATS_TYPE.TOTAL_ATTEMPT,
@@ -525,12 +523,12 @@ const CallsOverview = React.createClass({
                       yAxis={[
                         {
                           alignment: 'left',
-                          visible: false
+                          visible: false,
                         },
                         {
                           unit: '%',
                           alignment: 'left',
-                        }
+                        },
                       ]} />
                   </div>
                 </div>

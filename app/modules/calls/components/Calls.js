@@ -45,22 +45,22 @@ const Calls = React.createClass({
           page: query.page || 0,
           type: query.type || CALL_TYPE.ALL,
           search: query.search || '',
-          searchType: query.searchType || 'caller'
-        })
+          searchType: query.searchType || 'caller',
+        }),
       ], done || function() {});
-    }
+    },
   },
 
   getStateFromStores() {
     const store = this.getStore(CallsStore);
 
-  return {
+    return {
       calls: store.getCalls(),
       callsCount: store.getCallsCount(),
       page: store.getPageNumber(),
       totalPages: store.getTotalPages(),
     };
-},
+  },
 
   getDefaultQuery() {
     return {
@@ -98,22 +98,22 @@ const Calls = React.createClass({
       page: 0,
       size: config.PAGES.CALLS.PAGE_SIZE,
       type: this.state.type && this.state.type.trim(),
-      searchType: this.state.searchType && this.state.searchType.trim()
+      searchType: this.state.searchType && this.state.searchType.trim(),
     };
   },
 
-  handleQueryChange: function(newQuery) {
-    let routeName = _.last(this.context.router.getCurrentRoutes()).name;
-    let params = this.context.router.getCurrentParams();
-    let query = _.merge(this.context.router.getCurrentQuery(), this.getQueryFromState(), newQuery);
+  handleQueryChange(newQuery) {
+    const routeName = _.last(this.context.router.getCurrentRoutes()).name;
+    const params = this.context.router.getCurrentParams();
+    const query = _.merge(this.context.router.getCurrentQuery(), this.getQueryFromState(), newQuery);
 
     this.context.router.transitionTo(routeName, params, _.omit(query, function(value) {
       return !value;
     }));
   },
 
-  handlePageChange: function(e) {
-    let { identity } = this.context.router.getCurrentParams();
+  handlePageChange(e) {
+    const { identity } = this.context.router.getCurrentParams();
 
     this.context.executeAction(fetchMoreCalls, {
       carrierId: identity,
@@ -211,7 +211,7 @@ const Calls = React.createClass({
           </FilterBar.LeftItems>
           <FilterBar.RightItems>
             {/* TODO: Move filter control items into DropdownFilter according to new design */}
-            {/*<DropdownFilter />*/}
+            {/* <DropdownFilter /> */}
 
             <div className="date-range-picker left">
               <i className="date-range-picker__icon icon-calendar left" />

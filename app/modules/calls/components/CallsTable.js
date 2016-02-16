@@ -3,7 +3,7 @@ import classNames from 'classnames';
 import moment from 'moment';
 import _ from 'lodash';
 
-import {parseDuration} from '../../../utils/StringFormatter';
+import { parseDuration } from '../../../utils/StringFormatter';
 
 // TODO: Replace it with country-data
 import { getCountryName } from '../../../utils/StringFormatter';

@@ -1,18 +1,15 @@
-import _ from 'lodash';
-import {createStore} from 'fluxible/addons';
+import { createStore } from 'fluxible/addons';
 
-const debug = require('debug')('app:components/CallsStore');
-
-var CallsStore = createStore({
+const CallsStore = createStore({
   storeName: 'CallsStore',
 
   handlers: {
     FETCH_CALLS_SUCCESS: 'handleCallsFetch',
     FETCH_CALLS_WIDGETS_SUCCESS: 'handleCallsWidgetsChange',
-    FETCH_MORE_CALLS_SUCCESS: 'handleLoadMoreCalls'
+    FETCH_MORE_CALLS_SUCCESS: 'handleLoadMoreCalls',
   },
 
-  initialize: function() {
+  initialize() {
     this.widgets = [];
     this.calls = [];
     this.offset = 0;
@@ -23,8 +20,8 @@ var CallsStore = createStore({
     this.params = {};
   },
 
-  handleLoadMoreCalls: function(payload) {
-    payload.contents.forEach((call) => {
+  handleLoadMoreCalls(payload) {
+    payload.contents.forEach(call => {
       this.calls.push(call);
     });
 
@@ -37,7 +34,7 @@ var CallsStore = createStore({
     this.emitChange();
   },
 
-  handleCallsFetch: function(payload) {
+  handleCallsFetch(payload) {
     this.calls = payload.contents;
     this.offset = payload.offset;
     this.page = (payload.offset / payload.pageSize) + 1;
@@ -48,7 +45,7 @@ var CallsStore = createStore({
     this.emitChange();
   },
 
-  handleCallsWidgetsChange: function(payload) {
+  handleCallsWidgetsChange(payload) {
     if (payload && payload.widgets) {
       this.widgets = payload.widgets;
     } else {
@@ -58,27 +55,27 @@ var CallsStore = createStore({
     this.emitChange();
   },
 
-  getCallsCount: function() {
+  getCallsCount() {
     return this.callsCount;
   },
 
-  getCalls: function() {
+  getCalls() {
     return this.calls;
   },
 
-  getWidgets: function() {
+  getWidgets() {
     return this.widgets;
   },
 
-  getTotalPages: function() {
+  getTotalPages() {
     return this.totalPages;
   },
 
-  getPageNumber: function() {
+  getPageNumber() {
     return this.page;
   },
 
-  getState: function() {
+  getState() {
     return {
       calls: this.calls,
       offset: this.offset,
@@ -87,15 +84,15 @@ var CallsStore = createStore({
       callsCount: this.callsCount,
       totalPages: this.totalPages,
       params: this.params,
-      widgets: this.widgets
+      widgets: this.widgets,
     };
   },
 
-  dehydrate: function() {
+  dehydrate() {
     return this.getState();
   },
 
-  rehydrate: function(state) {
+  rehydrate(state) {
     this.calls = state.calls;
     this.offset = state.offset;
     this.page = state.page;
@@ -104,7 +101,7 @@ var CallsStore = createStore({
     this.totalPages = state.totalPages;
     this.params = state.params;
     this.widgets = state.widgets;
-  }
+  },
 });
 
 export default CallsStore;

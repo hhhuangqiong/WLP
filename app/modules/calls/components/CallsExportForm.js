@@ -1,18 +1,17 @@
-import React from 'react';
+import React, { PropTypes } from 'react';
 import moment from 'moment';
 import classNames from 'classnames';
-import _ from 'lodash';
 
 import DateTimePicker from '../../../main/components/DateTimePicker';
 import ExportSubmitControls from '../../../main/file-export/components/ExportSubmitControls';
 
 export default React.createClass({
   propTypes: {
-    startDate: React.PropTypes.string,
-    endDate:  React.PropTypes.string,
-    netType: React.PropTypes.string,
-    handleExport: React.PropTypes.func.isRequired,
-    closeModal: React.PropTypes.func.isRequired
+    startDate: PropTypes.string,
+    endDate: PropTypes.string,
+    netType: PropTypes.string,
+    handleExport: PropTypes.func.isRequired,
+    closeModal: PropTypes.func.isRequired,
   },
 
   defaultState() {
@@ -20,7 +19,7 @@ export default React.createClass({
       startDate: moment(this.props.startDate),
       endDate: moment(this.props.endDate).endOf('day'),
       netType: this.props.netType,
-      destination: ''
+      destination: '',
     };
   },
 
@@ -55,7 +54,7 @@ export default React.createClass({
   },
 
   handleExport() {
-    let params = {
+    const params = {
       type: this.state.netType,
       startDate: this.state.startDate.format('x'),
       endDate: this.state.endDate.format('x'),
@@ -145,5 +144,5 @@ export default React.createClass({
 
       </form>
     );
-  }
+  },
 });
