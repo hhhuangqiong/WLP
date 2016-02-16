@@ -1,27 +1,24 @@
-var _       = require('lodash');
-var logger  = require('winston');
-var moment  = require('moment');
-var nconf   = require('nconf');
-var Q       = require('q');
-var request = require('superagent');
-var util    = require('util');
+import _ from 'lodash';
+import logger from 'winston';
+import moment from 'moment';
+import Q from 'q';
+import request from 'superagent';
+import util from 'util';
 
 import qs from 'qs';
 import {constructOpts, appendRequestId, handleError} from '../helper';
 
 export default class TopUpRequest {
-
   constructor(baseUrl, timeout) {
-
-    let opts = {
+    const opts = {
       baseUrl: baseUrl,
       timeout: timeout,
       methods: {
         LIST: {
           URL: '/api/transactionHistory',
-          METHOD: 'GET'
-        }
-      }
+          METHOD: 'GET',
+        },
+      },
     };
 
     this.opts = constructOpts(opts);
@@ -29,16 +26,6 @@ export default class TopUpRequest {
 
   formatQueryData(params, cb) {
     logger.debug('formatting query data for transaction history');
-
-    Q.fcall(swapDate)
-      .then(formatUserNumberField)
-      .then(formatDateString)
-      .fail(function(err) {
-        return cb(err);
-      })
-      .done(function(params) {
-        return cb(null, params);
-      });
 
     function formatUserNumberField(params) {
       if (!params.number) {
@@ -57,21 +44,31 @@ export default class TopUpRequest {
 
     function swapDate() {
       if (moment(params.startDate, 'L').isAfter(moment(params.endDate, 'L'))) {
-        let tmp = params.endDate;
+        const tmp = params.endDate;
         params.endDate = params.startDate;
         params.startDate = tmp;
       }
 
       return params;
     }
+
+    Q.fcall(swapDate)
+      .then(formatUserNumberField)
+      .then(formatDateString)
+      .fail(function(err) {
+        return cb(err);
+      })
+      .done(function(params) {
+        return cb(null, params);
+      });
   }
 
   sendRequest(params, cb) {
     logger.debug('sending transaction history request');
 
-    var base = this.opts.baseUrl;
-    var url = this.opts.methods.LIST.URL;
-    var fullUrl = util.format('%s%s', base, url);
+    const base = this.opts.baseUrl;
+    const url = this.opts.methods.LIST.URL;
+    const fullUrl = util.format('%s%s', base, url);
 
     logger.debug(`TopUp API Endpoint: ${util.format('%s%s', base, url)}?${qs.stringify(params)}`);
 
@@ -92,8 +89,7 @@ export default class TopUpRequest {
           _.assign(res.body.result, { page: params.page });
 
           return cb(null, res.body.result);
-        }
-        catch (e) {
+        } catch (e) {
           // unexpected response
           logger.debug('Unexpected response from BOSS transactionHistor: ', fullUrl, params);
           logger.debug('Parsing error stack:', e.stack);

@@ -1,7 +1,5 @@
 import _          from 'lodash';
-import logger     from 'winston';
 import moment     from 'moment';
-import mongoose   from 'mongoose';
 import nconf      from 'nconf';
 import url        from 'url';
 import request    from 'superagent';
@@ -12,7 +10,7 @@ import {
   NotFoundError,
   AlreadyInUseError,
   ArgumentNullError,
-  ConnectionError
+  ConnectionError,
 } from 'common-errors';
 
 import { fetchDep } from '../../server/utils/bottle';
@@ -28,15 +26,15 @@ const EMAIL_SENT_ERROR = 'Fail to send confirmation email';
 
 const CREATE_USER_EMAIL_CONFIG = {
   from: 'noreply@m800.com',
-  subject: 'M800 White Label Portal - Account activitation'
+  subject: 'M800 White Label Portal - Account activitation',
 };
 
 const CREATE_USER_TEMPLATE_DATA = {
   name: 'signUp',
   language: 'en-US',
   data: {
-    host: process.env.APP_URL
-  }
+    host: process.env.APP_URL,
+  },
 };
 
 /**
@@ -50,26 +48,26 @@ export default class PortalUserManager {
    * @param {PortalUserModel} user
    */
   formatUserResponse(user) {
-    let isVerified = user.tokens.find(token => token.event === CHANGE_PASSWORD_TOKEN) === undefined;
+    const isVerified = user.tokens.find(token => token.event === CHANGE_PASSWORD_TOKEN) === undefined;
 
-    let formattedUser = {
-      _id:                user._id,
-      username:           user.username,
-      name:               user.name,
-      status:             user.status,
-      assignedGroup:      user.assignedGroup,
-      affiliatedCompany:  user.affiliatedCompany,
-      assignedCompanies:  user.assignedCompanies,
-      parentCompany:      user.parentCompany,
-      carrierDomain:      user.carrierDomain,
-      carrierId:          user.carrierId,
-      createBy:           user.createBy,
+    const formattedUser = {
+      _id: user._id,
+      username: user.username,
+      name: user.name,
+      status: user.status,
+      assignedGroup: user.assignedGroup,
+      affiliatedCompany: user.affiliatedCompany,
+      assignedCompanies: user.assignedCompanies,
+      parentCompany: user.parentCompany,
+      carrierDomain: user.carrierDomain,
+      carrierId: user.carrierId,
+      createBy: user.createBy,
       isVerified,
 
       // date formatting could be left to view layer
-      createdAt:      moment(user.createdAt).format('LLL'),
-      updateAt:       moment(user.updateAt).format('LLL'),
-      updateBy:       user.updateBy
+      createdAt: moment(user.createdAt).format('LLL'),
+      updateAt: moment(user.updateAt).format('LLL'),
+      updateBy: user.updateBy,
     };
 
     return formattedUser;
@@ -122,11 +120,11 @@ export default class PortalUserManager {
         .populate({
           path: 'carrierDomain',
           match: {domain: {$in: ['m800.maaii.com']}},
-          select: 'name'
+          select: 'name',
         })
         .exec((err, users) => {
           if (err) return reject(new MongoDBError('Database error during getting users', err));
-          let formattedUsers = users.map(user => this.formatUserResponse(user));
+          const formattedUsers = users.map(user => this.formatUserResponse(user));
           resolve(formattedUsers);
         });
     });
@@ -146,8 +144,8 @@ export default class PortalUserManager {
       Company.getManagingCompany(companyId, (err, companies) => {
         if (err) return reject(new MongoDBError('Database error during getting managing companies', err));
 
-        let carrierIds = companies.map(company => company.carrierId);
-        let filteredUsers = users.filter(user => carrierIds.includes(user.carrierId));
+        const carrierIds = companies.map(company => company.carrierId);
+        const filteredUsers = users.filter(user => carrierIds.includes(user.carrierId));
 
         resolve(filteredUsers);
       });
@@ -162,14 +160,11 @@ export default class PortalUserManager {
    * @param {Function} cb
    */
   async getUsers(carrierId) {
-    let users = await this.getFormattedUsers();
-
-    let usersWithCarrierId = this.formatUsersByCarrier(carrierId, users);
-
-    let company = await this.getCompanyByCarrierId(carrierId);
-
-    let companyUsers = usersWithCarrierId.filter(user => user.carrierId === company.carrierId);
-    let managingUsers = await this.getManagingUsers(usersWithCarrierId, company._id);
+    const users = await this.getFormattedUsers();
+    const usersWithCarrierId = this.formatUsersByCarrier(carrierId, users);
+    const company = await this.getCompanyByCarrierId(carrierId);
+    const companyUsers = usersWithCarrierId.filter(user => user.carrierId === company.carrierId);
+    const managingUsers = await this.getManagingUsers(usersWithCarrierId, company._id);
 
     if (!_.isEmpty(managingUsers)) return managingUsers;
 
@@ -184,12 +179,12 @@ export default class PortalUserManager {
    * @param {Object} author
    * @param {Function} cb
    */
-  async newUser(data, author) {
+  async newUser(data) {
     /* Stop the remaining process if the username is registered */
     await this.validateDuplicatedUsername(data.username);
 
-    let token = await this.sendCreatePasswordConfirmation(data.username);
-    let user = await this.createUser(data);
+    const token = await this.sendCreatePasswordConfirmation(data.username);
+    const user = await this.createUser(data);
 
     return await this.addChangePasswordToken(user, token);
   }
@@ -219,10 +214,10 @@ export default class PortalUserManager {
   async reverifyUser(username) {
     if (!username) return Promise.reject(new ArgumentNullError('username'));
 
-    let user = await PortalUser.findByEmail(username);
+    const user = await PortalUser.findByEmail(username);
     if (!user) return Promise.reject(new NotFoundError('Cannot find user when reverifying user'));
 
-    let token = await this.sendCreatePasswordConfirmation(username);
+    const token = await this.sendCreatePasswordConfirmation(username);
 
     return await this.addChangePasswordToken(user, token);
   }
@@ -237,7 +232,7 @@ export default class PortalUserManager {
     return new Promise((resolve, reject) => {
       if (!email) return reject(new ArgumentNullError('email'));
 
-      let emailConfig = _.merge(CREATE_USER_EMAIL_CONFIG, { to: email });
+      const emailConfig = _.merge(CREATE_USER_EMAIL_CONFIG, { to: email });
 
       emailClient.send(emailConfig, CREATE_USER_TEMPLATE_DATA, { recipient: email }, (err, token) => {
         if (err) return reject(new ConnectionError(EMAIL_SENT_ERROR, err));
@@ -310,18 +305,19 @@ export default class PortalUserManager {
    * @param {Function} cb
    */
    async updateUser(params) {
-     let userBeforeUpdate = await PortalUser.findOne({ _id: params.userId }).exec();
+     const userBeforeUpdate = await PortalUser.findOne({ _id: params.userId }).exec();
      if (!userBeforeUpdate) return Promise.reject(new NotFoundError('Cannot find user when updating user'));
 
-     let emailChanged = userBeforeUpdate.username !== params.username;
+     const emailChanged = userBeforeUpdate.username !== params.username;
 
-     let toFind = { _id: params.userId };
-     let toModify = { $set: params };
-     let options = { 'new': true };
+     const toFind = { _id: params.userId };
+     const toModify = { $set: params };
+     const options = { 'new': true };
+
      let user = await PortalUser.findOneAndUpdate(toFind, toModify, options).exec();
 
      if (emailChanged) {
-       let token = await this.sendCreatePasswordConfirmation(params.username);
+       const token = await this.sendCreatePasswordConfirmation(params.username);
        user = await this.addChangePasswordToken(user, token);
        user = await this.saveUser(user);
      }
@@ -354,10 +350,10 @@ export default class PortalUserManager {
     * @param {Function} cb
     */
     deleteUser(params) {
-      let user = { _id: params.userId };
+      const user = { _id: params.userId };
 
       return new Promise((resolve, reject) => {
-        PortalUser.findOneAndRemove(user).exec((err, doc) => {
+        PortalUser.findOneAndRemove(user).exec(err => {
           if (err) return reject(err);
           resolve();
         });
@@ -371,8 +367,8 @@ export default class PortalUserManager {
    * @param {String} token
    */
   async verifySignUpToken(token) {
-    let recipient = await this.getEmailByToken(token);
-    let user = await this.getUserByTokenAndRecipient(recipient, token);
+    const recipient = await this.getEmailByToken(token);
+    const user = await this.getUserByTokenAndRecipient(recipient, token);
 
     return user;
   }
@@ -384,8 +380,8 @@ export default class PortalUserManager {
    * @param {String} token
    */
   async createPassword(token, password) {
-    let recipient = await this.getEmailByToken(token);
-    let user = await this.getUserByTokenAndRecipient(recipient, token);
+    const recipient = await this.getEmailByToken(token);
+    const user = await this.getUserByTokenAndRecipient(recipient, token);
 
     return await this.setPassword(user, password);
   }
@@ -426,11 +422,11 @@ export default class PortalUserManager {
         if (err) return reject(new MongoDBError('Encounter problem when finding recipient', err));
         if (!user) return reject(new NotFoundError(`recipient:${recipient}`));
 
-        let userToken = user.tokenOf(CHANGE_PASSWORD_TOKEN);
+        const userToken = user.tokenOf(CHANGE_PASSWORD_TOKEN);
 
         if (!userToken) return reject(new NotFoundError(`token:${CHANGE_PASSWORD_TOKEN}`));
 
-        let daysBefore = moment(userToken.createdAt).diff(moment(), 'days');
+        const daysBefore = moment(userToken.createdAt).diff(moment(), 'days');
 
         if (daysBefore > 3) return reject(new RangeError('"change-password" token is expired'));
 
@@ -448,13 +444,13 @@ export default class PortalUserManager {
    */
   getEmailByToken(token) {
     return new Promise((resolve, reject) => {
-      let targetUrl = url.resolve(emailUrl, `/tokens/${token}`);
+      const targetUrl = url.resolve(emailUrl, `/tokens/${token}`);
 
-      let emailCb = (err, res) => {
+      const emailCb = (err, res) => {
         if (err) return reject(err);
 
         try {
-          let { appMeta } = res.body;
+          const { appMeta } = res.body;
 
           if (!appMeta || !appMeta.recipient) {
             return reject(new NotFoundError('appMeta'));

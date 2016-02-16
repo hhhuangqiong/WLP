@@ -1,7 +1,5 @@
 import SolrQueryBuilder from 'solr-query-builder';
-import _ from 'lodash';
 import moment from 'moment';
-import nconf from 'nconf';
 
 const DEFAULT_SORT_ORDER = 'start_time desc';
 
@@ -36,13 +34,13 @@ export default {
 
     if (params.caller) {
       qb.any({
-        'caller': params.caller
+        'caller': params.caller,
       }, { contains: true });
     }
 
     if (params.callee) {
       qb.any({
-        'callee': params.callee
+        'callee': params.callee,
       }, { contains: true });
     }
 

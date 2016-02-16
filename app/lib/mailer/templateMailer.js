@@ -1,14 +1,15 @@
-var emailTemplates = require('email-templates');
-var fs             = require('fs');
-var logger         = require('winston');
+import emailTemplates from 'email-templates';
+import fs from 'fs';
+import logger from 'winston';
 
-var TemplateMailer = module.exports = function(mailer, opts) {
-  if (!mailer)
-    throw new Error('mailer is required');
+const TemplateMailer = module.exports = function(mailer, opts) {
+  if (!mailer) throw new Error('mailer is required');
   this.mailer = mailer;
   this._templatesDir = opts.templatesDir;
-  if (!fs.existsSync(this._templatesDir))
+
+  if (!fs.existsSync(this._templatesDir)) {
     throw new Error('templatesDir "' + this._templatesDir + '" doesn\'t not exist');
+  }
 };
 /**
  * Send email using the data with the template specified
@@ -19,18 +20,17 @@ var TemplateMailer = module.exports = function(mailer, opts) {
  * @param {Function} cb
  */
 TemplateMailer.prototype.send = function(mailOpts, tmplName, tmplData, cb) {
-  //TODO validate mailOpts
-  if (!mailOpts || !tmplName || !tmplData)
-    throw new Error('Invalid number of arguments');
+  // TODO validate mailOpts
+  if (!mailOpts || !tmplName || !tmplData) throw new Error('Invalid number of arguments');
+
   this._tmplContent(tmplName, tmplData, function(err, html) {
-    if (err)
-      return cb(err);
+    if (err) return cb(err);
     mailOpts.html = html;
 
     // TODO change it to make use of mailer
     this.mailer.sendHtmlContent(mailOpts, html, function(err, responseStatus) {
-      if (err)
-        return cb(err);
+      if (err) return cb(err);
+
       logger.info('Sending email using template %s with %j', tmplName, tmplData, {});
       cb(null, responseStatus.message);
     });

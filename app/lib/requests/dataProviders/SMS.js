@@ -17,7 +17,7 @@ export default class SMSRequest {
   constructor(opts) {
     if (!opts.baseUrl) throw new Error('`baseUrl is required`');
 
-    let baseUrlArray = opts.baseUrl.split(',');
+    const baseUrlArray = opts.baseUrl.split(',');
     this._baseUrl = baseUrlArray.length > 1 ? _.first(baseUrlArray) : opts.baseUrl;
     this._timeout = opts.timeout || 5000;
   }

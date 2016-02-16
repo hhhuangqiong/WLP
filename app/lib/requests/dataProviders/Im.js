@@ -1,10 +1,10 @@
-var logger  = require('winston');
-var nconf   = require('nconf');
-var Q       = require('q');
-var request = require('superagent');
-var util    = require('util');
-var _       = require('lodash');
-var qs      = require('qs');
+import logger from 'winston';
+import nconf from 'nconf';
+import Q from 'q';
+import request from 'superagent';
+import util from 'util';
+import _ from 'lodash';
+import qs from 'qs';
 
 import {buildImSolrQueryString} from '../queryBuilder/im';
 import {constructOpts, formatDateString, swapDate, composeSolrResponse, handleError} from '../helper';
@@ -12,22 +12,21 @@ import {constructOpts, formatDateString, swapDate, composeSolrResponse, handleEr
 const LABEL_FOR_NULL = 'N/A';
 
 export default class ImRequest {
-
   constructor(baseUrl, timeout) {
-    let opts = {
+    const opts = {
       type: 'dataProviderApi',
       baseUrl: baseUrl,
       timeout: timeout,
       methods: {
         IMS: {
           URL: '/api/v1/im/tdr/query',
-          METHOD: 'GET'
+          METHOD: 'GET',
         },
         IMSOLR: {
           URL: '/api/v1/im/tdr/rawQuery',
-          METHOD: 'GET'
-        }
-      }
+          METHOD: 'GET',
+        },
+      },
     };
 
     this.opts = constructOpts(opts);
@@ -48,21 +47,8 @@ export default class ImRequest {
    * @param cb {Function} Q callback
    */
   formatQueryData(params, cb) {
-    Q.nfcall(swapDate, params)
-      .then((params) => {
-        var format = nconf.get(util.format('%s:format:timestamp', this.opts.type)) || 'x';
-        return formatDateString(params, format);
-      })
-      .then(normalizeData)
-      .fail((err) => {
-        return cb(handleError(err, 500), null);
-      })
-      .done((params) => {
-        return cb(null, params);
-      });
-
     function normalizeData(params) {
-      var query = {};
+      const query = {};
 
       query.carrier     = params.carrier;
       query.from        = params.from;
@@ -74,17 +60,25 @@ export default class ImRequest {
       query.destination = params.destination;
 
       // jscs:disable requireCamelCaseOrUpperCaseIdentifiers
-      if (params.message_type)
-        query.message_type = params.message_type;
-
-      if (params.sender)
-        query.sender = params.sender;
-
-      if (params.recipient)
-        query.recipient = params.recipient;
+      if (params.message_type) query.message_type = params.message_type;
+      if (params.sender) query.sender = params.sender;
+      if (params.recipient) query.recipient = params.recipient;
 
       return query;
     }
+
+    Q.nfcall(swapDate, params)
+      .then(params => {
+        const format = nconf.get(util.format('%s:format:timestamp', this.opts.type)) || 'x';
+        return formatDateString(params, format);
+      })
+      .then(normalizeData)
+      .fail(err => {
+        return cb(handleError(err, 500), null);
+      })
+      .done(params => {
+        return cb(null, params);
+      });
   }
 
   /**
@@ -102,16 +96,16 @@ export default class ImRequest {
     }
 
     let baseUrl = this.opts.baseUrl;
-    let baseUrlArray = baseUrl.split(',');
+    const baseUrlArray = baseUrl.split(',');
 
     if (baseUrlArray.length > 1) {
-      let index = loadBalanceIndex % baseUrlArray.length;
+      const index = loadBalanceIndex % baseUrlArray.length;
       baseUrl = baseUrlArray[index];
     } else {
       baseUrl = _.first(baseUrlArray);
     }
 
-    let url = util.format('%s%s', baseUrl, params.q ? this.opts.methods.IMSOLR.URL : this.opts.methods.IMS.URL);
+    const url = util.format('%s%s', baseUrl, params.q ? this.opts.methods.IMSOLR.URL : this.opts.methods.IMS.URL);
 
     logger.debug(`IM request: ${url}?${qs.stringify(params)}`);
 
@@ -164,7 +158,7 @@ export default class ImRequest {
   getImStat(params, cb) {
     logger.debug('get im message statistic from BOSS with params', params);
     Q.ninvoke(this, 'formatQueryData', params)
-      .then((params) => {
+      .then(params => {
         this.sendRequest(params, cb);
       })
       .catch((err) => {
@@ -180,7 +174,7 @@ export default class ImRequest {
   getImSolr(params, cb) {
     logger.debug('get IM message history from dataProvider with params', params);
     Q.nfcall(buildImSolrQueryString, params)
-      .then((params) => {
+      .then(params => {
         this.sendRequest(params, cb);
       })
       .catch((err) => {

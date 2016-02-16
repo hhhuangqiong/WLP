@@ -1,20 +1,17 @@
-var _       = require('lodash');
-var logger  = require('winston');
-var nconf   = require('nconf');
-var moment  = require('moment');
-var Q       = require('q');
-var request = require('superagent');
-var util    = require('util');
+import _ from 'lodash';
+import logger from 'winston';
+import nconf from 'nconf';
+import Q from 'q';
+import request from 'superagent';
+import util from 'util';
 
 import {buildCallSolrQueryString} from '../queryBuilder/call';
 import {constructOpts, formatDateString, swapDate, composeSolrResponse, handleError} from '../helper';
 import qs from 'qs';
 
 export default class CallsRequest {
-
   constructor(baseUrl, timeout) {
-
-    let opts = {
+    const opts = {
       type: 'dataProviderApi',
       baseUrl: baseUrl,
       timeout: timeout,
@@ -27,7 +24,7 @@ export default class CallsRequest {
           URL: '/api/v1/sip/cdr/rawQuery',
           METHOD: 'GET',
         },
-      }
+      },
     };
 
     this.opts = constructOpts(opts);
@@ -45,21 +42,8 @@ export default class CallsRequest {
    * @param cb {Function} Q callback
    */
   formatQueryData(params, cb) {
-    Q.nfcall(swapDate, params)
-      .then((params) => {
-        var format = nconf.get(util.format('%s:format:timestamp', this.opts.type)) || 'x';
-        return formatDateString(params, format);
-      })
-      .then(normalizeData)
-      .fail((err) => {
-        return cb(handleError(err, 500), null);
-      })
-      .done((params) => {
-        return cb(null, params);
-      });
-
     function normalizeData(params) {
-      var query = {};
+      const query = {};
 
       query.from    = params.from;
       query.to      = params.to;
@@ -67,23 +51,30 @@ export default class CallsRequest {
       query.size    = params.size || 20;
 
       // jscs:disable requireCamelCaseOrUpperCaseIdentifiers
-      if (params.caller_carrier)
+      if (params.caller_carrier) {
         query.caller_carrier = params.caller_carrier;
+      }
 
-      if (params.caller)
-        query.caller = params.caller;
-
-      if (params.callee)
-        query.callee = params.callee;
-
-      if (params.caller_country)
-        query.caller_country = params.caller_country;
-
-      if (params.type)
-        query.type = params.type;
+      if (params.caller) query.caller = params.caller;
+      if (params.callee) query.callee = params.callee;
+      if (params.caller_country) query.caller_country = params.caller_country;
+      if (params.type) query.type = params.type;
 
       return query;
     }
+
+    Q.nfcall(swapDate, params)
+      .then(params => {
+        const format = nconf.get(util.format('%s:format:timestamp', this.opts.type)) || 'x';
+        return formatDateString(params, format);
+      })
+      .then(normalizeData)
+      .fail(err => {
+        return cb(handleError(err, 500), null);
+      })
+      .done(params => {
+        return cb(null, params);
+      });
   }
 
   /**
@@ -101,16 +92,16 @@ export default class CallsRequest {
     }
 
     let baseUrl = this.opts.baseUrl;
-    let baseUrlArray = baseUrl.split(',');
+    const baseUrlArray = baseUrl.split(',');
 
     if (baseUrlArray.length > 1) {
-      let index = loadBalanceIndex % baseUrlArray.length;
+      const index = loadBalanceIndex % baseUrlArray.length;
       baseUrl = baseUrlArray[index];
     } else {
       baseUrl = _.first(baseUrlArray);
     }
 
-    let url = util.format('%s%s', baseUrl, params.q ? this.opts.methods.CALLSOLR.URL : this.opts.methods.CALLS.URL);
+    const url = util.format('%s%s', baseUrl, params.q ? this.opts.methods.CALLSOLR.URL : this.opts.methods.CALLS.URL);
 
     logger.debug(`Calls: ${this.opts.methods.CALLS.METHOD} ${url}?${qs.stringify(params)}`, params);
 
@@ -139,9 +130,9 @@ export default class CallsRequest {
       data.content = _.filter(data.content, function(call) {
         if (call.type.toLowerCase() === 'offnet') {
           return call.source === 'GATEWAY';
-        } else {
-          return call;
         }
+
+        return call;
       });
     }
 
@@ -158,10 +149,10 @@ export default class CallsRequest {
     logger.debug('get calls from carrier %s', params);
 
     Q.ninvoke(this, 'formatQueryData', params)
-      .then((params) => {
+      .then(params => {
         return Q.nfcall(buildCallSolrQueryString, params);
       })
-      .then((params) => {
+      .then(params => {
         this.sendRequest(params, cb);
       })
       .catch((err) => {

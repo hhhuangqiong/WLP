@@ -5,35 +5,35 @@ import util from 'util';
 import _ from 'lodash';
 import moment from 'moment';
 import qs from 'qs';
-import { constructOpts, formatDateString, swapDate, handleError } from '../helper';
+import { constructOpts, swapDate, handleError } from '../helper';
 import jsonSchema from '../../../utils/getSimplifiedJsonSchema.js';
 
 const REQUEST_TYPE = {
   USER: 'USER',
   NEW_USERS: 'NEW_USERS',
-  ACTIVE_USERS: 'ACTIVE_USERS'
+  ACTIVE_USERS: 'ACTIVE_USERS',
 };
 
 export default class UserStatsRequest {
   constructor(baseUrl, timeout) {
-    let opts = {
+    const opts = {
       type: 'dataProviderApi',
       baseUrl: baseUrl,
       timeout: timeout,
       endpoints: {
         USER: {
           PATH: '/stats/1.0/user/query',
-          METHOD: 'GET'
+          METHOD: 'GET',
         },
         NEW_USERS: {
           PATH: '/stats/1.0/user/new_users',
-          METHOD: 'GET'
+          METHOD: 'GET',
         },
         ACTIVE_USERS: {
           PATH: '/stats/1.0/active_users/im-active-users-statistics',
-          METHOD: 'GET'
-        }
-      }
+          METHOD: 'GET',
+        },
+      },
     };
 
     this.opts = constructOpts(opts);
@@ -42,8 +42,8 @@ export default class UserStatsRequest {
   normalizeData(type, params, cb) {
     logger.debug('normalizeData', params);
     Q.nfcall(swapDate, params)
-      .then((data) => {
-        let query = {};
+      .then(data => {
+        const query = {};
 
         // for active user query API and new user API,
         // they return the -1 day stat from the `from` query
@@ -84,16 +84,16 @@ export default class UserStatsRequest {
     }
 
     let baseUrl = this.opts.baseUrl;
-    let baseUrlArray = baseUrl.split(',');
+    const baseUrlArray = baseUrl.split(',');
 
     if (baseUrlArray.length > 1) {
-      let index = loadBalanceIndex % baseUrlArray.length;
+      const index = loadBalanceIndex % baseUrlArray.length;
       baseUrl = baseUrlArray[index];
     } else {
       baseUrl = _.first(baseUrlArray);
     }
 
-    let reqUrl = util.format('%s%s', baseUrl, endpoint.PATH);
+    const reqUrl = util.format('%s%s', baseUrl, endpoint.PATH);
 
     logger.debug(`EndUser Statistic API Endpoint: ${reqUrl}?${qs.stringify(params)}`);
 
@@ -108,16 +108,16 @@ export default class UserStatsRequest {
           return;
         }
 
-        return cb(null, res.body);
+        cb(null, res.body);
       });
   }
 
   getUserStats(params, cb) {
     Q.ninvoke(this, 'normalizeData', REQUEST_TYPE.USER, params)
-      .then((query) => {
+      .then(query => {
         this.sendRequest(this.opts.endpoints.USER, query, cb);
       })
-      .catch((error) => {
+      .catch(error => {
         cb(handleError(error, error.status || 500));
       })
       .done();
@@ -125,10 +125,10 @@ export default class UserStatsRequest {
 
   getNewUserStats(params, cb) {
     Q.ninvoke(this, 'normalizeData', REQUEST_TYPE.NEW_USERS, params)
-      .then((query) => {
+      .then(query => {
         this.sendRequest(this.opts.endpoints.NEW_USERS, query, cb);
       })
-      .catch((error) => {
+      .catch(error => {
         cb(handleError(error, error.status || 500));
       })
       .done();

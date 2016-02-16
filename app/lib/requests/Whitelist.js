@@ -2,7 +2,6 @@
 
 import _ from 'lodash';
 import assign from 'object-assign';
-import logger from 'winston';
 import request from 'superagent';
 
 import errorMixin from '../requests/mixins/mumsErrorResponse';
@@ -50,13 +49,12 @@ export class WhitelistRequest {
     if (!usernames) throw new Error('`usernames` is required');
     if (!cb || !_.isFunction(cb)) throw new Error('`cb` is required and must be a function');
 
-    let _usernames = [].concat(usernames);
-    let path       = this._processPath(carrierId);
+    const path       = this._processPath(carrierId);
 
     request.put(path)
       .send({
         operationType: operationType,
-        usernames: usernames
+        usernames: usernames,
       })
       .end((err, res) => {
         // other kind of error?
@@ -104,8 +102,8 @@ export class WhitelistRequest {
 
     if (!cb) throw new Error('`cb` is required');
 
-    let path  = this._processPath(carrierId);
-    let scope = request.get(path);
+    const path  = this._processPath(carrierId);
+    const scope = request.get(path);
 
     // allow 0
     if (opts.from !== undefined) {
@@ -126,4 +124,3 @@ export class WhitelistRequest {
 }
 
 assign(WhitelistRequest.prototype, errorMixin);
-
