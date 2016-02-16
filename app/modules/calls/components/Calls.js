@@ -23,8 +23,6 @@ import CallsExportForm from './CallsExportForm';
 import config from '../../../config';
 import CALL_TYPE from '../constants/callType';
 
-const debug = require('debug')('app:components/Calls');
-
 const Calls = React.createClass({
   contextTypes: {
     router: React.PropTypes.func.isRequired,
@@ -36,7 +34,7 @@ const Calls = React.createClass({
   statics: {
     storeListeners: [CallsStore],
 
-    fetchData: function(context, params, query, done) {
+    fetchData(context, params, query, done) {
       concurrent([
         context.executeAction.bind(context, fetchCalls, {
           carrierId: params.identity,
@@ -139,31 +137,21 @@ const Calls = React.createClass({
     this.handleQueryChange({ endDate: date, page: 0 });
   },
 
-  handleOnnetClick: function(e) {
-    e.preventDefault();
-
-    let type = null;
-
-    if (this.state.type !== CALL_TYPE.ONNET) {
-      type = CALL_TYPE.ONNET;
-    }
-
-    this.handleQueryChange({ type: type });
+  handleAllTypeClick() {
+    this.handleQueryChange({ type: CALL_TYPE.ALL });
   },
 
-  handleOffnetClick: function(e) {
+  handleOnnetClick(e) {
     e.preventDefault();
-
-    let type = null;
-
-    if (this.state.type !== CALL_TYPE.OFFNET) {
-      type = CALL_TYPE.OFFNET;
-    }
-
-    this.handleQueryChange({ type: type });
+    this.handleQueryChange({ type: CALL_TYPE.ONNET });
   },
 
-  handleMaaiiInClick: function(e) {
+  handleOffnetClick(e) {
+    e.preventDefault();
+    this.handleQueryChange({ type: CALL_TYPE.OFFNET });
+  },
+
+  handleMaaiiInClick(e) {
     e.preventDefault();
 
     let type = null;
