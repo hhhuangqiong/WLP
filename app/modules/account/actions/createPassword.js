@@ -1,8 +1,6 @@
 import { ERROR_MESSAGE } from '../../../main/constants/actionTypes';
 import { userPath } from '../../../server/paths';
 
-const debug = require('debug')('app:createPassword');
-
 export default function(context, params, done) {
   context.dispatch('CREATE_PASSWORD_START');
 
@@ -13,7 +11,7 @@ export default function(context, params, done) {
       return;
     }
 
-    let { username } = payload.result;
+    const { username } = payload.result;
 
     context.api.signIn(username, params.password, function(err, auth) {
       if (err) {
@@ -36,10 +34,10 @@ export default function(context, params, done) {
       // before the transition
 
       context.api.getAuthorityList(auth.user.carrierId, function(err, { carrierId, capability }) {
-        let authority = context.getAuthority();
+        const authority = context.getAuthority();
         authority.reset(carrierId, capability);
 
-        let defaultPath = authority.getDefaultPath();
+        const defaultPath = authority.getDefaultPath();
 
         if (defaultPath) {
           context.getRouter().transitionTo(userPath(auth.user.role, auth.user.carrierId, defaultPath));

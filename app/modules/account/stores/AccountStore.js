@@ -19,7 +19,7 @@ const DEFAULT_ACCOUNT_PROPERTIES = {
   email: '',
   assignedGroup: 'administrator',
   assignedCompanies: [],
-  isVerified: false
+  isVerified: false,
 };
 
 export default createStore({
@@ -30,7 +30,7 @@ export default createStore({
     CREATE_ACCOUNT_SUCCESS: 'createAccount',
     UPDATE_ACCOUNT_SUCCESS: 'updateAccount',
     DELETE_ACCOUNT_SUCCESS: 'deleteAccount',
-    FETCH_CARRIER_MANAGING_COMPANIES_SUCCESS: 'fetchCarrierManagingCompanies'
+    FETCH_CARRIER_MANAGING_COMPANIES_SUCCESS: 'fetchCarrierManagingCompanies',
   },
 
   initialize() {
@@ -49,11 +49,11 @@ export default createStore({
   fetchAccounts(payload) {
     if (!payload) return;
 
-    let { result } = payload;
+    const { result } = payload;
 
     if (!result) return;
 
-    let accounts = Object.keys(result).map(key => result[key]);
+    const accounts = Object.keys(result).map(key => result[key]);
 
     this.accounts = accounts;
     this.emitChange();
@@ -62,7 +62,7 @@ export default createStore({
   createAccount(account) {
     this.selectedAccount = account;
 
-    let accounts = this.accounts;
+    const accounts = this.accounts;
     accounts.push(this.selectedAccount);
     this.accounts = accounts;
 
@@ -72,7 +72,7 @@ export default createStore({
   updateAccount(result) {
     this.selectedAccount = result;
 
-    let accounts = this.accounts.filter(account => account._id !== this.selectedAccount._id);
+    const accounts = this.accounts.filter(account => account._id !== this.selectedAccount._id);
     accounts.push(this.selectedAccount);
     this.accounts = accounts;
 
@@ -80,7 +80,7 @@ export default createStore({
   },
 
   deleteAccount(payload) {
-    let user = payload.result;
+    const user = payload.result;
 
     this.selectedAccount = {};
     this.accounts = _.clone(this.accounts.filter(account => account._id !== user._id), true);
@@ -101,7 +101,7 @@ export default createStore({
   },
 
   getAccountByAccountId(accountId) {
-    let account = this.accounts.find(account => account._id === accountId);
+    const account = this.accounts.find(account => account._id === accountId);
 
     if (!account) return {};
 
@@ -117,7 +117,7 @@ export default createStore({
       createdAt: account.createdAt,
       tokens: account.tokens,
       selectedAccount: account,
-      isVerified: account.isVerified
+      isVerified: account.isVerified,
     });
   },
 
@@ -129,5 +129,5 @@ export default createStore({
     this.accounts = state.accounts;
     this.selectedAccount = state.selectedAccount;
     this.carrierManagingCompanies = state.carrierManagingCompanies;
-  }
+  },
 });

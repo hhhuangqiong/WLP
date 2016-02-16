@@ -1,4 +1,4 @@
-import React, { PropTypes, findDOMNode, Component } from 'react';
+import React, { PropTypes, Component } from 'react';
 import reactMixin from 'react-mixin';
 import classnames from 'classnames';
 
@@ -6,7 +6,6 @@ import _ from 'lodash';
 import Joi from 'joi';
 
 import { connectToStores } from 'fluxible/addons';
-import FluxibleMixin from 'fluxible/addons/FluxibleMixin';
 import PublicOnlyMixin from '../../../utils/PublicOnlyMixin';
 
 import createPassword from '../actions/createPassword';
@@ -17,13 +16,13 @@ import validator from '../../../main/components/ValidateDecorator';
 
 @validator({
   password: Joi.string().min(8).max(30).required(),
-  passwordConfirm: 'password'
+  passwordConfirm: 'password',
 })
 @reactMixin.decorate(PublicOnlyMixin)
 class CreatePassword extends Component {
   static contextTypes = {
     executeAction: PropTypes.func.isRequired,
-    router: PropTypes.func.isRequired
+    router: PropTypes.func.isRequired,
   };
 
   constructor() {
@@ -32,7 +31,7 @@ class CreatePassword extends Component {
   }
 
   componentDidMount() {
-    let { token } = this.context.router.getCurrentQuery();
+    const { token } = this.context.router.getCurrentQuery();
     if (!token) this.context.router.transitionTo('sign-in', {}, {});
 
     this.context.executeAction(verifyAccountToken, { token });
@@ -49,7 +48,7 @@ class CreatePassword extends Component {
     e.preventDefault();
 
     if (this.props.isError() || !this.state.password.length || !this.state.passwordConfirm.length) return;
-    let { token } = this.context.router.getCurrentQuery();
+    const { token } = this.context.router.getCurrentQuery();
     this.context.executeAction(createPassword, { password: this.state.password, token });
   }
 
@@ -121,8 +120,8 @@ class CreatePassword extends Component {
   }
 }
 
-CreatePassword = connectToStores(CreatePassword, [CreatePasswordStore], (stores, props) => ({
-  user: stores.CreatePasswordStore.getUser()
+CreatePassword = connectToStores(CreatePassword, [CreatePasswordStore], stores => ({
+  user: stores.CreatePasswordStore.getUser(),
 }));
 
 export default CreatePassword;

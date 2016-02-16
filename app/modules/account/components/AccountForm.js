@@ -2,15 +2,10 @@ import _ from 'lodash';
 import React, { PropTypes, Component } from 'react';
 import classnames from 'classnames';
 import Select from 'react-select';
-import Tooltip from 'rc-tooltip';
-import Joi from 'joi';
 
 import FormField from '../../../main/components/FormField';
 import PredefinedGroups from '../constants/PredefinedGroups';
 import ConfirmationDialog from '../../../main/components/ConfirmationDialog';
-
-const COMPANY_DROPDOWN_PLACEHOLDER = 'Choose companies';
-const COMPANY_NO_RESULT_TEXT = 'No records';
 
 export default class AccountForm extends Component {
   static propTypes = {
@@ -39,7 +34,8 @@ export default class AccountForm extends Component {
     reverifyDialogOpened: PropTypes.bool,
     handleReverify: PropTypes.func.isRequired,
     handleOpenReverifyDialog: PropTypes.func.isRequired,
-    handleCloseReverifyDialog: PropTypes.func.isRequired
+    handleCloseReverifyDialog: PropTypes.func.isRequired,
+    handleCompanyChange: PropTypes.func.isRequired,
   };
 
   constructor() {
@@ -60,11 +56,11 @@ export default class AccountForm extends Component {
   }
 
   renderCompanyValueDisplay = ({ label, value }) => {
-    let { carrierManagingCompanies } = this.props;
+    const { carrierManagingCompanies } = this.props;
 
     if (_.isEmpty(carrierManagingCompanies)) return;
 
-    let selectedCompany = carrierManagingCompanies.find(company => company._id === value);
+    const selectedCompany = carrierManagingCompanies.find(company => company._id === value);
 
     if (!selectedCompany) return;
 
@@ -79,15 +75,14 @@ export default class AccountForm extends Component {
   }
 
   render() {
-    let {
-      firstName, lastName, email, assignedGroup, isCreate,
-      carrierManagingCompanies, currentCompany, affiliatedCompany, assignedCompanies,
-      handleCompanyChange, handleAssignedCompanyChange
+    const {
+      firstName, lastName, email, assignedGroup,
+      carrierManagingCompanies, currentCompany,
+      affiliatedCompany, assignedCompanies,
+      handleCompanyChange,
     } = this.props;
 
-    let userName = `${firstName} ${lastName}`;
-
-    let companyOptions = _.isEmpty(carrierManagingCompanies) ? [{ label: currentCompany.name, value: currentCompany._id }] : carrierManagingCompanies.map(company => ({ label: company.name, value: company._id }));
+    const companyOptions = _.isEmpty(carrierManagingCompanies) ? [{ label: currentCompany.name, value: currentCompany._id }] : carrierManagingCompanies.map(company => ({ label: company.name, value: company._id }));
 
     return (
       <form className="account-form" onSubmit={this.props.handleSave}>

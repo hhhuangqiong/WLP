@@ -5,7 +5,7 @@ export default createStore({
 
   handlers: {
     CHANGE_PASSWORD_SUCCESS: 'handlePasswordChangedSuccess',
-    CHANGE_PASSWORD_FAILURE: 'handlePasswordChangedFailure'
+    CHANGE_PASSWORD_FAILURE: 'handlePasswordChangedFailure',
   },
 
   initialize() {
@@ -23,8 +23,9 @@ export default createStore({
   },
 
   getCurrentPasswordIncorrectError() {
-    if (this.error && this.error.name !== 'NotPermittedError') return;
-    if (!this.error) return;
+    if (this.error && this.error.name !== 'NotPermittedError') return null;
+    if (!this.error) return null;
+
     return this.error.message;
   },
 
@@ -34,5 +35,5 @@ export default createStore({
 
   rehydrate(state) {
     this.error = state.error;
-  }
+  },
 });

@@ -16,11 +16,11 @@ export default function(context, params, done) {
     context.dispatch('INFO_MESSAGE', { message: 'Create account success!' });
 
     // Redirect to the newly created user profile
-    let router = context.getRouter();
-    let routerParams = router.getCurrentParams();
+    const router = context.getRouter();
+    const routerParams = router.getCurrentParams();
 
     router.transitionTo('account-profile', _.merge(routerParams, {
-      accountId: result._id
+      accountId: result._id,
     }));
 
     done();

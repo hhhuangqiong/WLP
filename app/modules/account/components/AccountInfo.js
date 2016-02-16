@@ -4,7 +4,6 @@ import classNames from 'classnames';
 import PredefinedGroups from '../constants/PredefinedGroups';
 import CircleIcon from '../../../main/components/CircleIcon';
 
-const SUCCESS_CLASS = 'active';
 const SUCCESS_LABEL = 'Verified';
 const FAIL_LABEL = 'Inactive';
 const DEFAULT_GROUP = 'technical';
@@ -17,16 +16,16 @@ export default createClass({
     firstName: PropTypes.string,
     lastName: PropTypes.string,
     createdAt: PropTypes.string,
-    assignedGroup: PropTypes.string
+    assignedGroup: PropTypes.string,
   },
 
   render() {
-    let firstName = this.props.firstName || '<First Name>';
-    let lastName = this.props.lastName || '<Last Name>';
-    let assignedGroup = this.props.assignedGroup || DEFAULT_GROUP;
-    let createdAt = this.props.createdAt;
-    let status = this.props.isVerified ? SUCCESS_LABEL : FAIL_LABEL;
-    let groupSettings = PredefinedGroups[assignedGroup];
+    const firstName = this.props.firstName || '<First Name>';
+    const lastName = this.props.lastName || '<Last Name>';
+    const assignedGroup = this.props.assignedGroup || DEFAULT_GROUP;
+    const createdAt = this.props.createdAt;
+    const status = this.props.isVerified ? SUCCESS_LABEL : FAIL_LABEL;
+    const groupSettings = PredefinedGroups[assignedGroup];
 
     return (
       <div className="profile-info">
@@ -58,5 +57,5 @@ export default createClass({
         </If>
       </div>
     );
-  }
+  },
 });

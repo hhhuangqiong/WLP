@@ -1,9 +1,6 @@
-import React, { PropTypes, findDOMNode, Component } from 'react';
-import reactMixin from 'react-mixin';
+import React, { PropTypes, Component } from 'react';
 import classnames from 'classnames';
 import { connectToStores } from 'fluxible/addons';
-
-import _ from 'lodash';
 import Joi from 'joi';
 
 import changePassword from '../actions/changePassword';
@@ -14,7 +11,7 @@ const PASSWORD_VALIDATION = Joi.string().min(8).max(30).required();
 class ChangePasswordForm extends Component {
   static contextTypes = {
     executeAction: PropTypes.func.isRequired,
-    router: PropTypes.func.isRequired
+    router: PropTypes.func.isRequired,
   };
 
   constructor() {
@@ -23,7 +20,7 @@ class ChangePasswordForm extends Component {
   }
 
   componentWillReceiveProps(newProps) {
-    let currentPasswordIncorrectError = newProps.currentPasswordIncorrectError;
+    const currentPasswordIncorrectError = newProps.currentPasswordIncorrectError;
 
     if (!currentPasswordIncorrectError) {
       this.props.handleClose();
@@ -39,34 +36,34 @@ class ChangePasswordForm extends Component {
       currentPassword: '',
       password: '',
       passwordConfirm: '',
-      currentPasswordIncorrectError: ''
+      currentPasswordIncorrectError: '',
     };
   }
 
   validateCurrentPassword = (e) => {
     e.preventDefault();
-    let result = PASSWORD_VALIDATION.validate(this.state.currentPassword);
+    const result = PASSWORD_VALIDATION.validate(this.state.currentPassword);
     this.setState({ currentPasswordError: result.error ? result.error.message : null });
   }
 
   validateNewPassword = (e) => {
     e.preventDefault();
-    let result = PASSWORD_VALIDATION.validate(this.state.password);
+    const result = PASSWORD_VALIDATION.validate(this.state.password);
     this.setState({ newPasswordError: result.error ? result.error.message : null });
   }
 
   validateNewPasswordConfirm = (e) => {
     e.preventDefault();
-    let result = this.state.password !== this.state.passwordConfirm;
+    const result = this.state.password !== this.state.passwordConfirm;
     this.setState({ newPasswordConfirmError: result ? 'Password is not the same' : null });
   }
 
   containErrors = () => {
-    let {
+    const {
       currentPasswordError,
       currentPasswordIncorrectError,
       newPasswordError,
-      newPasswordConfirmError
+      newPasswordConfirmError,
     } = this.state;
 
     return currentPasswordError || currentPasswordIncorrectError || newPasswordError || newPasswordConfirmError;
@@ -79,7 +76,7 @@ class ChangePasswordForm extends Component {
 
     this.setState({
       currentPassword: e.target.value,
-      currentPasswordIncorrectError: ''
+      currentPasswordIncorrectError: '',
     });
   }
 
@@ -114,20 +111,20 @@ class ChangePasswordForm extends Component {
 
     if (this.containErrors()) return;
 
-    let data = {
+    const data = {
       currentPassword: this.state.currentPassword,
-      password: this.state.password
+      password: this.state.password,
     };
 
     this.context.executeAction(changePassword, data);
   }
 
   render() {
-    let {
+    const {
       currentPasswordIncorrectError,
       currentPasswordError,
       newPasswordError,
-      newPasswordConfirmError
+      newPasswordConfirmError,
     } = this.state;
 
     return (
@@ -212,8 +209,8 @@ class ChangePasswordForm extends Component {
   }
 }
 
-ChangePasswordForm = connectToStores(ChangePasswordForm, [ChangePasswordStore], (stores, props) => ({
-  currentPasswordIncorrectError: stores.ChangePasswordStore.getCurrentPasswordIncorrectError()
+ChangePasswordForm = connectToStores(ChangePasswordForm, [ChangePasswordStore], stores => ({
+  currentPasswordIncorrectError: stores.ChangePasswordStore.getCurrentPasswordIncorrectError(),
 }));
 
 export default ChangePasswordForm;

@@ -5,7 +5,7 @@ export default createStore({
 
   handlers: {
     VERIFY_ACCOUNT_TOKEN_SUCCESS: 'handleTokenChange',
-    VERIFY_ACCOUNT_TOKEN_FAILURE: 'handleTokenChangeFailure'
+    VERIFY_ACCOUNT_TOKEN_FAILURE: 'handleTokenChangeFailure',
   },
 
   initialize() {
@@ -17,7 +17,7 @@ export default createStore({
     this.emitChange();
   },
 
-  handleTokenChangeFailure(payload) {
+  handleTokenChangeFailure() {
     /* By dispatching empty state without user, it will be redirected to the sign in page */
     this.emitChange();
   },
@@ -28,11 +28,11 @@ export default createStore({
 
   dehydrate() {
     return {
-      user: this.user
+      user: this.user,
     };
   },
 
   rehydrate(state) {
     this.user = state.user;
-  }
+  },
 });

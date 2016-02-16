@@ -1,23 +1,19 @@
-import _ from 'lodash';
 import React, { PropTypes } from 'react';
 import { RouteHandler } from 'react-router';
-import { concurrent } from 'contra';
 
 import FluxibleMixin from 'fluxible/addons/FluxibleMixin';
 import AuthMixin from '../../../utils/AuthMixin';
 
-import fetchManagingCompanies  from '../../../main/actions/fetchManagingCompanies';
 import fetchAccounts from '../actions/fetchAccounts';
 import AccountStore from '../stores/AccountStore';
 import AccountTable from './AccountTable';
-import AccountProfile from './AccountProfile';
 
 export default React.createClass({
   displayName: 'Account',
 
   contextTypes: {
-    executeAction: React.PropTypes.func.isRequired,
-    router: React.PropTypes.func.isRequired
+    executeAction: PropTypes.func.isRequired,
+    router: PropTypes.func.isRequired,
   },
 
   mixins: [FluxibleMixin, AuthMixin],
@@ -27,7 +23,7 @@ export default React.createClass({
 
     fetchData: (context, params, query, done = Function.prototype) => {
       context.executeAction(fetchAccounts, { carrierId: params.identity }, done);
-    }
+    },
   },
 
   onChange() {
@@ -49,5 +45,5 @@ export default React.createClass({
         <RouteHandler />
       </div>
     );
-  }
+  },
 });

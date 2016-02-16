@@ -2,7 +2,6 @@ import _ from 'lodash';
 import React, { PropTypes } from 'react';
 import { Link } from 'react-router';
 import classNames from 'classnames';
-import FluxibleMixin from 'fluxible/addons/FluxibleMixin';
 
 import CircleIcon from '../../../main/components/CircleIcon';
 import PredefinedGroups from '../constants/PredefinedGroups';
@@ -10,26 +9,20 @@ import PredefinedGroups from '../constants/PredefinedGroups';
 export default React.createClass({
   displayName: 'AccountTable',
 
-  contextTypes: {
-    router: PropTypes.func.isRequired
+  propTypes: {
+    accounts: PropTypes.array.isRequired,
   },
 
-  propTypes: {
-    accounts: PropTypes.array.isRequired
+  contextTypes: {
+    router: PropTypes.func.isRequired,
   },
 
   getInitialState() {
     return { searchItem: '' };
   },
 
-  handleSearchAccount(e) {
-    this.setState({
-      searchItem: e.target.value.trim()
-    });
-  },
-
   getGroups() {
-    return _.groupBy(this.props.accounts, (account) => {
+    return _.groupBy(this.props.accounts, account => {
       return account.assignedGroup;
     });
   },
@@ -39,7 +32,7 @@ export default React.createClass({
   },
 
   renderSearchBar() {
-    if (!this.props.accounts.length) return;
+    if (!this.props.accounts.length) return null;
 
     return (
       <nav className="top-bar company-sidebar__search" data-topbar role="navigation">
@@ -55,11 +48,11 @@ export default React.createClass({
   },
 
   renderSearchResults() {
-    let searchItems = [];
+    const searchItems = [];
 
-    _.forEach(this.getFilteredGroups(), (group) => {
-      let filteredAccounts = _.filter(this.getGroups()[group], (account) => {
-        let accountName = `${account.name.first} ${account.name.last}`;
+    _.forEach(this.getFilteredGroups(), group => {
+      const filteredAccounts = _.filter(this.getGroups()[group], account => {
+        const accountName = `${account.name.first} ${account.name.last}`;
         return _.includes(accountName.toLowerCase(), this.state.searchItem.toLowerCase());
       });
 
@@ -75,11 +68,15 @@ export default React.createClass({
   },
 
   renderRoleSections() {
-    if (!this.props.accounts.length) return;
+    if (!this.props.accounts.length) {
+      return null;
+    }
 
-    if (this.state.searchItem.length > 0) return this.renderSearchResults();
+    if (this.state.searchItem.length > 0) {
+      return this.renderSearchResults();
+    }
 
-    return this.getFilteredGroups().map((group) => {
+    return this.getFilteredGroups().map(group => {
       return (
         <ul className="account-table__list">
           <li className="account-table__item-catagory">{group}</li>
@@ -91,10 +88,10 @@ export default React.createClass({
   },
 
   renderAccountItems(accounts) {
-    let { role, identity, accountId } = this.context.router.getCurrentParams();
+    const { role, identity, accountId } = this.context.router.getCurrentParams();
 
-    return accounts.map((account) => {
-      let groupSettings = PredefinedGroups[account.assignedGroup];
+    return accounts.map(account => {
+      const groupSettings = PredefinedGroups[account.assignedGroup];
 
       return (
         <li className={classNames('account-table__item', { active: account._id === accountId })} key={account.Id}>
@@ -128,5 +125,11 @@ export default React.createClass({
         {this.renderRoleSections()}
       </div>
     );
-  }
+  },
+
+  handleSearchAccount(e) {
+    this.setState({
+      searchItem: e.target.value.trim(),
+    });
+  },
 });

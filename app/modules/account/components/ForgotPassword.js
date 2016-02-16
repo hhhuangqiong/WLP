@@ -1,11 +1,7 @@
 import React, { PropTypes, Component } from 'react';
 import reactMixin from 'react-mixin';
-import FluxibleMixin from 'fluxible/addons/FluxibleMixin';
 import { Link } from 'react-router';
-
-import _ from 'lodash';
 import classnames from 'classnames';
-import { concurrent } from 'contra';
 import Joi from 'joi';
 
 import PublicOnlyMixin from '../../../utils/PublicOnlyMixin';
@@ -17,7 +13,7 @@ import forgotPassword from '../actions/forgotPassword';
 export default class ForgotPassword extends Component {
   static contextTypes = {
     executeAction: PropTypes.func.isRequired,
-    router: PropTypes.func.isRequired
+    router: PropTypes.func.isRequired,
   };
 
   constructor() {
@@ -31,7 +27,7 @@ export default class ForgotPassword extends Component {
     if (this.props.isError() || !this.state.email.length) return;
 
     this.context.executeAction(forgotPassword, {
-      data: { username: this.state.email }
+      data: { username: this.state.email },
     });
 
     this.setState({ email: '' });

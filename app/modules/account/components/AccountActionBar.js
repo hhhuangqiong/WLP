@@ -10,17 +10,17 @@ export default React.createClass({
     handleSave: PropTypes.func.isRequired,
     handleDiscard: PropTypes.func.isRequired,
     handleDelete: PropTypes.func.isRequired,
-    isEnabled:  PropTypes.bool.isRequired,
+    isEnabled: PropTypes.bool.isRequired,
     deleteDialogOpened: PropTypes.bool.isRequired,
     handleOpenDeleteDialog: PropTypes.func.isRequired,
     handleCloseDeleteDialog: PropTypes.func.isRequired,
-    accountId: PropTypes.string.isRequired
+    accountId: PropTypes.string.isRequired,
   },
 
   mixins: [FluxibleMixin],
 
   render() {
-    let loggedInUserId = this.context.getStore(AuthStore).getUserId();
+    const loggedInUserId = this.context.getStore(AuthStore).getUserId();
 
     return (
       <nav className="account-top-bar top-bar top-bar--inner">
@@ -72,5 +72,5 @@ export default React.createClass({
         </div>
       </nav>
     );
-  }
+  },
 });

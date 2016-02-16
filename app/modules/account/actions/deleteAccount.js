@@ -1,5 +1,3 @@
-let debug = require('debug')('app:actions/deleteAccount');
-
 import fetchAccounts from './fetchAccounts';
 
 export default function(context, params, done) {
@@ -12,8 +10,8 @@ export default function(context, params, done) {
     }
 
     context.executeAction(fetchAccounts, { carrierId: params.carrierId }, () => {
-      let router = context.getRouter();
-      let routerParams = router.getCurrentParams();
+      const router = context.getRouter();
+      const routerParams = router.getCurrentParams();
 
       context.dispatch('DELETE_ACCOUNT_SUCCESS', result);
       router.transitionTo('account', routerParams);
