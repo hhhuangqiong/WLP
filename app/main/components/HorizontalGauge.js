@@ -7,18 +7,18 @@ import classNames from 'classnames';
  * @property {String} color  The color of the gauge
  */
 export default React.createClass({
-  render: function() {
-    let width = this.props.percentage + '%';
+  render() {
+    const width = this.props.percentage + '%';
 
-    let style = {
+    const style = {
       backgroundColor: this.props.color,
-      width: width
+      width: width,
     };
 
     return (
       <div className={classNames(this.props.className, 'horizontal-gauge')}>
-        <div className='horizontal-gauge__bar' style={style}></div>
+        <div className="horizontal-gauge__bar" style={style}></div>
       </div>
     );
-  }
+  },
 });

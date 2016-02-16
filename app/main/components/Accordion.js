@@ -7,15 +7,15 @@ import classNames from 'classnames';
  * @class Accordion
  * @throws {Invariant} this.props.children must be AccordionNavigation
  */
-let Accordion = React.createClass({
+const Accordion = React.createClass({
   displayName: 'AccordionWrapper',
 
-  PropTypes: {
+  propTypes: {
     children: PropTypes.arrayOf(PropTypes.element),
-    offsetMargin: PropTypes.bool
+    offsetMargin: PropTypes.bool,
   },
 
-  componentWillMount: function() {
+  componentWillMount() {
     React.Children.map(this.props.children, (child) => {
       if (child.type) {
         Invariant(
@@ -26,13 +26,13 @@ let Accordion = React.createClass({
     });
   },
 
-  render: function() {
+  render() {
     return (
       <ul className={classNames('accordion', { 'margin-offset': this.props.offsetMargin })} data-accordion>
         {this.props.children}
       </ul>
     );
-  }
+  },
 });
 
 /**
@@ -42,10 +42,10 @@ let Accordion = React.createClass({
  *
  * @see {@link http://foundation.zurb.com/docs/components/accordion.html}
  */
-let AccordionNavigation = React.createClass({
+const AccordionNavigation = React.createClass({
   displayName: 'AccordionNavigation',
 
-  PropTypes: {
+  propTypes: {
     title: PropTypes.string,
 
     // to determine if a status label
@@ -53,30 +53,30 @@ let AccordionNavigation = React.createClass({
     withStatusLabel: PropTypes.bool,
 
     // a determinant of the status label
-    status: PropTypes.bool
+    status: PropTypes.bool,
   },
 
-  getDefaultProps: function() {
+  getDefaultProps() {
     return {
       title: 'accordion header',
       withStatusLabel: false,
-      status: false
+      status: false,
     };
   },
 
-  getInitialState: function() {
+  getInitialState() {
     return {
-      isCollapsed: false
+      isCollapsed: false,
     };
   },
 
-  _toggleIsCollapsed: function() {
+  _toggleIsCollapsed() {
     this.setState({
-      isCollapsed: !this.state.isCollapsed
+      isCollapsed: !this.state.isCollapsed,
     });
   },
 
-  render: function() {
+  render() {
     return (
       <li ref="accordionItem" className={classNames('accordion__item', { collapsed: this.state.isCollapsed })}>
         <a className="accordion__item-head" onClick={this._toggleIsCollapsed}>
@@ -96,10 +96,10 @@ let AccordionNavigation = React.createClass({
         </div>
       </li>
     );
-  }
+  },
 });
 
 export {
   Accordion as Wrapper,
-  AccordionNavigation as Navigation
+  AccordionNavigation as Navigation,
 };

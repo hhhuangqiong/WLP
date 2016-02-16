@@ -23,7 +23,7 @@ export function getAclString(action, resource) {
  */
 export function decodeAclString(aclString) {
   try {
-    let [action, resource] = aclString.split(ACL_STRING_SEPARATOR);
+    const [action, resource] = aclString.split(ACL_STRING_SEPARATOR);
     return { action, resource };
   } catch (err) {
     throw err;

@@ -1,4 +1,4 @@
-let HttpError = function(errorCode, message) {
+const HttpError = function(errorCode, message) {
   this.name = 'HttpError';
   this.status = errorCode;
   this.errorCode = errorCode;

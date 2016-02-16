@@ -1,13 +1,13 @@
 import React from 'react';
 import classNames from 'classnames';
 
-let CategoryFilter = React.createClass({
+const CategoryFilter = React.createClass({
   propTypes: {
     category: React.PropTypes.string,
     handleVoiceFilterToggle: React.PropTypes.func,
     handleAnimationFilterToggle: React.PropTypes.func,
     handleStickerFilterToggle: React.PropTypes.func,
-    handleCreditFilterToggle: React.PropTypes.func
+    handleCreditFilterToggle: React.PropTypes.func,
   },
 
   render() {
@@ -35,7 +35,7 @@ let CategoryFilter = React.createClass({
         </li>
       </ul>
     );
-  }
+  },
 });
 
 export default CategoryFilter;

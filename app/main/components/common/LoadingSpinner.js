@@ -4,32 +4,32 @@ import FluxibleMixin from 'fluxible/addons/FluxibleMixin';
 import LoadingSpinnerStore from '../../stores/LoadingSpinnerStore';
 import classNames from 'classnames';
 
-var LoadingSpinner = React.createClass({
+const LoadingSpinner = React.createClass({
   mixins: [FluxibleMixin],
 
   statics: {
-    storeListeners: [LoadingSpinnerStore]
+    storeListeners: [LoadingSpinnerStore],
   },
 
-  getStateFromStore: function() {
+  getStateFromStore() {
     return {
       loaded: this.getStore(LoadingSpinnerStore).getLoaded(),
-      options: this.getStore(LoadingSpinnerStore).getOptions()
+      options: this.getStore(LoadingSpinnerStore).getOptions(),
     };
   },
 
-  getInitialState: function() {
+  getInitialState() {
     return {
       loaded: true,
-      options: this.getStore(LoadingSpinnerStore).getOptions()
+      options: this.getStore(LoadingSpinnerStore).getOptions(),
     };
   },
 
-  onChange: function() {
+  onChange() {
     this.setState(this.getStateFromStore());
   },
 
-  render: function() {
+  render() {
     return (
       !this.state.loaded ? (
       <div className="loading-spinner-container row">
@@ -40,7 +40,7 @@ var LoadingSpinner = React.createClass({
       </div>
       ) : null
     );
-  }
+  },
 });
 
 export default LoadingSpinner;

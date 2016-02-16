@@ -1,7 +1,6 @@
-import Moment from 'moment';
 import React from 'react';
 
-let TimePicker = React.createClass({
+const TimePicker = React.createClass({
   componentDidMount() {
     $(document).foundation('dropdown', 'reflow');
   },
@@ -23,7 +22,7 @@ let TimePicker = React.createClass({
   },
 
   render() {
-    let {datetime, format, timePickerId, className} = this.props;
+    const { datetime, format, timePickerId, className } = this.props;
 
     return (
       <div>
@@ -77,7 +76,7 @@ let TimePicker = React.createClass({
         </div>
       </div>
     );
-  }
+  },
 });
 
 export default TimePicker;

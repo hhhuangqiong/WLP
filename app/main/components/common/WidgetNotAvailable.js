@@ -10,5 +10,5 @@ export default React.createClass({
         </h2>
       </div>
     );
-  }
+  },
 });

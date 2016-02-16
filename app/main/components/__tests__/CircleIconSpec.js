@@ -10,85 +10,85 @@ const { TestUtils } = React.addons;
 
 describe('CircleIcon', () => {
   it('change the icon color and box color', () => {
-    let redAndWhiteMockData = {
+    const redAndWhiteMockData = {
       backgroundColor: 'red',
-      color: 'white'
+      color: 'white',
     };
 
-    let yellowAndBlackMockData = {
+    const yellowAndBlackMockData = {
       backgroundColor: 'yellow',
-      color: 'black'
+      color: 'black',
     };
 
-    let redAndWhiteRenderedComponent = TestUtils.renderIntoDocument(
+    const redAndWhiteRenderedComponent = TestUtils.renderIntoDocument(
       <CircleIcon
         backgroundColor={redAndWhiteMockData.backgroundColor}
         iconColor={redAndWhiteMockData.color}
       />
     );
 
-    let yellowAndBlackRenderedComponent = TestUtils.renderIntoDocument(
+    const yellowAndBlackRenderedComponent = TestUtils.renderIntoDocument(
       <CircleIcon
         backgroundColor={yellowAndBlackMockData.backgroundColor}
         iconColor={yellowAndBlackMockData.color}
       />
     );
 
-    let redAndWhiteIconBox = TestUtils.findRenderedDOMComponentWithTag(redAndWhiteRenderedComponent, 'div');
+    const redAndWhiteIconBox = TestUtils.findRenderedDOMComponentWithTag(redAndWhiteRenderedComponent, 'div');
     expect(redAndWhiteIconBox.getDOMNode().style.backgroundColor).toEqual(redAndWhiteMockData.backgroundColor);
     expect(redAndWhiteIconBox.getDOMNode().style.color).toEqual(redAndWhiteMockData.color);
 
-    let yellowAndBlackIconBox = TestUtils.findRenderedDOMComponentWithTag(yellowAndBlackRenderedComponent, 'div');
+    const yellowAndBlackIconBox = TestUtils.findRenderedDOMComponentWithTag(yellowAndBlackRenderedComponent, 'div');
     expect(yellowAndBlackIconBox.getDOMNode().style.backgroundColor).toEqual(yellowAndBlackMockData.backgroundColor);
     expect(yellowAndBlackIconBox.getDOMNode().style.color).toEqual(yellowAndBlackMockData.color);
   });
 
   it('change the icon ratio', () => {
-    let smallSizeMockData = {
+    const smallSizeMockData = {
       size: SMALL,
       width: SMALL_SIZE * SIZE_RATIO,
-      height: SMALL_SIZE * SIZE_RATIO
+      height: SMALL_SIZE * SIZE_RATIO,
     };
 
-    let mediumSizeMockData = {
+    const mediumSizeMockData = {
       size: MEDIUM,
       width: MEDIUM_SIZE * SIZE_RATIO,
-      height: MEDIUM_SIZE * SIZE_RATIO
+      height: MEDIUM_SIZE * SIZE_RATIO,
     };
 
-    let smallRenderedComponent = TestUtils.renderIntoDocument(
+    const smallRenderedComponent = TestUtils.renderIntoDocument(
       <CircleIcon size={smallSizeMockData.size} />
     );
 
-    let mediumRenderedComponent = TestUtils.renderIntoDocument(
+    const mediumRenderedComponent = TestUtils.renderIntoDocument(
       <CircleIcon size={mediumSizeMockData.size} />
     );
 
-    let smallIconBox = TestUtils.findRenderedDOMComponentWithTag(smallRenderedComponent, 'div');
+    const smallIconBox = TestUtils.findRenderedDOMComponentWithTag(smallRenderedComponent, 'div');
     expect(smallIconBox.getDOMNode().style.width).toEqual(`${smallSizeMockData.width}px`);
     expect(smallIconBox.getDOMNode().style.height).toEqual(`${smallSizeMockData.height}px`);
 
-    let mediumIconBox = TestUtils.findRenderedDOMComponentWithTag(mediumRenderedComponent, 'div');
+    const mediumIconBox = TestUtils.findRenderedDOMComponentWithTag(mediumRenderedComponent, 'div');
     expect(mediumIconBox.getDOMNode().style.width).toEqual(`${mediumSizeMockData.width}px`);
     expect(mediumIconBox.getDOMNode().style.height).toEqual(`${mediumSizeMockData.height}px`);
   });
 
   it('change the component icon', function() {
-    let adminMockData = { icon: 'icon-administrator' };
-    let marketerMockData = { icon: 'icon-marketer' };
+    const adminMockData = { icon: 'icon-administrator' };
+    const marketerMockData = { icon: 'icon-marketer' };
 
-    let adminComponent = TestUtils.renderIntoDocument(
+    const adminComponent = TestUtils.renderIntoDocument(
       <CircleIcon icon={adminMockData.icon} />
     );
 
-    let marketerComponent = TestUtils.renderIntoDocument(
+    const marketerComponent = TestUtils.renderIntoDocument(
       <CircleIcon icon={marketerMockData.icon} />
     );
 
-    let adminIcon = TestUtils.findRenderedDOMComponentWithTag(adminComponent, 'span');
+    const adminIcon = TestUtils.findRenderedDOMComponentWithTag(adminComponent, 'span');
     expect(adminIcon.getDOMNode().className).toContain(adminMockData.icon);
 
-    let marketerIcon = TestUtils.findRenderedDOMComponentWithTag(marketerComponent, 'span');
+    const marketerIcon = TestUtils.findRenderedDOMComponentWithTag(marketerComponent, 'span');
     expect(marketerIcon.getDOMNode().className).toContain(marketerMockData.icon);
   });
 });

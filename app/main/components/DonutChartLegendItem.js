@@ -33,10 +33,10 @@ export default React.createClass({
      * The unit of the numeric value.
      * @type {String}
      */
-    unit: PropTypes.string
+    unit: PropTypes.string,
   },
 
-  render: function() {
+  render() {
     return (
       <div className="donut-legend-item">
         <div>
@@ -60,5 +60,5 @@ export default React.createClass({
         </div>
       </div>
     );
-  }
+  },
 });

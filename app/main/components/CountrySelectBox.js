@@ -12,8 +12,8 @@ import { countries } from 'country-data';
  *
  * @see https://github.com/JedWatson/react-select
  */
-let CountrySelectBox = React.createClass({
-  PropTypes: {
+const CountrySelectBox = React.createClass({
+  propTypes: {
     // name attribute of input tag
     name: PropTypes.string.isRequired,
 
@@ -28,7 +28,7 @@ let CountrySelectBox = React.createClass({
     // by default, it uses our own json data file
     options: PropTypes.shape({
       label: PropTypes.string,
-      value: PropTypes.string
+      value: PropTypes.string,
     }),
 
     // to enable search(filter) function
@@ -44,10 +44,10 @@ let CountrySelectBox = React.createClass({
     // default is `true`
     showText: PropTypes.bool,
 
-    onChange: PropTypes.func.isRequired
+    onChange: PropTypes.func.isRequired,
   },
 
-  getDefaultProps: function() {
+  getDefaultProps() {
     return {
       name: 'country',
       value: null,
@@ -55,11 +55,11 @@ let CountrySelectBox = React.createClass({
       options: null,
       searchable: false,
       showFlag: true,
-      showText: true
+      showText: true,
     };
   },
 
-  _renderOption: function(option) {
+  _renderOption(option) {
     return (
       <div>
         <CountryFlag code={option.value} />
@@ -68,7 +68,7 @@ let CountrySelectBox = React.createClass({
     );
   },
 
-  _renderValue: function(option) {
+  _renderValue(option) {
     return (
       <div>
         <If condition={this.props.showFlag}>
@@ -81,13 +81,13 @@ let CountrySelectBox = React.createClass({
     );
   },
 
-  _handleOnBlur: function(e) {
+  _handleOnBlur(e) {
     if (this.props.searchable && !_.isEmpty(e.target.value)) {
       this.refs.countrySelectBox.resetValue();
     }
   },
 
-  render: function() {
+  render() {
     return (
       <Select
           ref="countrySelectBox"
@@ -102,7 +102,7 @@ let CountrySelectBox = React.createClass({
             return {
               value: country.alpha2,
               label: country.name,
-            }
+            };
           })}
           optionRenderer={this._renderOption}
           valueRenderer={this._renderValue}
@@ -110,7 +110,7 @@ let CountrySelectBox = React.createClass({
           onBlur={this._handleOnBlur}
         />
     );
-  }
+  },
 });
 
 export default CountrySelectBox;

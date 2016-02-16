@@ -1,15 +1,15 @@
-import React from 'react';
+import React, { PropTypes } from 'react';
 import moment from 'moment';
 
 import DatePicker from 'react-datepicker';
 
 const DateRangePicker = React.createClass({
   propTypes: {
-    displayFormat: React.PropTypes.string,
-    startDate: React.PropTypes.string,
-    endDate: React.PropTypes.string,
-    handleStartDateChange: React.PropTypes.func,
-    handleEndDateChange: React.PropTypes.func,
+    displayFormat: PropTypes.string,
+    startDate: PropTypes.string,
+    endDate: PropTypes.string,
+    handleStartDateChange: PropTypes.func,
+    handleEndDateChange: PropTypes.func,
   },
 
   render() {

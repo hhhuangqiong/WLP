@@ -7,8 +7,8 @@ import classNames from 'classnames';
  * @classdesc to create a circular button which accept
  * EITHER text OR icon
  */
-let CircleButton = React.createClass({
-  PropTypes: {
+const CircleButton = React.createClass({
+  propTypes: {
     // name of the route to link to, or a full URL
     // that would serve as prop of `to` for Link of react-router
     to: PropTypes.string,
@@ -29,20 +29,20 @@ let CircleButton = React.createClass({
     // class name of icon
     // if this is not null, an icon will be displayed inside the button
     icon: PropTypes.string,
-    onClick: PropTypes.func.isRequired
+    onClick: PropTypes.func.isRequired,
   },
 
-  getDefaultProps: function() {
+  getDefaultProps() {
     return {
       to: null,
       params: null,
       query: null,
       title: null,
-      icon: null
+      icon: null,
     };
   },
 
-  render: function() {
+  render() {
     return (
       <If condition={!!this.props.to}>
         <div role="button" className={classNames('button', 'button--circle', { 'button--circle--text': !!this.props.title })} onClick={this.props.onClick}>
@@ -68,9 +68,9 @@ let CircleButton = React.createClass({
         </div>
       </If>
     );
-  }
+  },
 });
 
 export {
-  CircleButton
+  CircleButton,
 };

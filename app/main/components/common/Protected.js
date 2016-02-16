@@ -1,6 +1,5 @@
 import React                   from 'react';
-import classnames              from 'classnames';
-import {concurrent}            from 'contra';
+import { concurrent }            from 'contra';
 import Sidebar                 from './Sidebar';
 import CanvasWrapper           from './CanvasWrapper';
 import Navigation              from './NavigationBar';
@@ -15,11 +14,10 @@ import fetchCurrentCompanyInfo from '../../actions/fetchCurrentCompanyInfo';
 import fetchManagingCompanies  from '../../actions/fetchManagingCompanies';
 import fetchAppIds             from '../../../main/actions/fetchAppIds';
 
-var Protected = React.createClass({
-
+const Protected = React.createClass({
   statics: {
     // `context` is prepared by server's `renderApp()`
-    fetchData: function(context, params, query, done) {
+    fetchData(context, params, query, done) {
       concurrent([
         context.executeAction.bind(context, fetchCurrentCompanyInfo, { carrierId: params.identity }),
         context.executeAction.bind(context, fetchManagingCompanies, {}),
@@ -28,19 +26,19 @@ var Protected = React.createClass({
     }
   },
 
-  getInitialState: function() {
+  getInitialState() {
     return {
-      isOffCanvas: true
+      isOffCanvas: true,
     };
   },
 
-  _setOffCanvas: function(isOffCanvas) {
+  _setOffCanvas(isOffCanvas) {
     this.setState({
-      isOffCanvas: isOffCanvas
+      isOffCanvas: isOffCanvas,
     });
   },
 
-  render: function() {
+  render() {
     return (
       <div>
         <Sidebar isOffCanvas={this.state.isOffCanvas} handleOffCavnas={this._setOffCanvas} />
@@ -55,7 +53,7 @@ var Protected = React.createClass({
         <LoadingSpinner />
       </div>
     );
-  }
+  },
 });
 
 module.exports = Protected;

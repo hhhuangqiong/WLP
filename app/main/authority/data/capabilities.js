@@ -252,7 +252,7 @@ export default {
     'device.ios',
     'device.android',
     'call.onnet_call',
-    'call'
+    'call',
   ],
   'hollycall.maaii.com': [
     'service.white_label',

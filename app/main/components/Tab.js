@@ -10,14 +10,14 @@ import Invariant from 'react/lib/invariant';
  * @throws {Invariant} will throw error if this.props.children
  * is not TabPanel component
  */
-let Tab = React.createClass({
+const Tab = React.createClass({
   displayName: 'Tab',
 
-  PropTypes: {
+  propTypes: {
     children: PropTypes.arrayOf(PropTypes.element)
   },
 
-  componentWillMount: function() {
+  componentWillMount() {
     Invariant(
       React.Children.count(this.props.children) > 0,
       'Tab should contain at least one child of TabPanel component'
@@ -33,23 +33,23 @@ let Tab = React.createClass({
     });
   },
 
-  getInitialState: function() {
+  getInitialState() {
     return {
-      currentTabIndex: 0
+      currentTabIndex: 0,
     };
   },
 
-  _isTabActive: function(index) {
+  _isTabActive(index) {
     return this.state.currentTabIndex === index;
   },
 
-  _switchTab: function(index) {
+  _switchTab(index) {
     this.setState({
-      currentTabIndex: index
+      currentTabIndex: index,
     });
   },
 
-  render: function() {
+  render() {
     return (
       <div className="inner-wrap">
         <div className="large-24 columns">
@@ -74,17 +74,17 @@ let Tab = React.createClass({
         </div>
       </div>
     );
-  }
+  },
 });
 
 /**
  * @class TabList
  * @classdesc to create a wrapper for tab buttons
  */
-let TabList = React.createClass({
+const TabList = React.createClass({
   displayName: 'TabList',
 
-  render: function() {
+  render() {
     return (
       <div className="row">
         <ul className="tab">
@@ -92,7 +92,7 @@ let TabList = React.createClass({
         </ul>
       </div>
     );
-  }
+  },
 });
 
 

@@ -1,16 +1,16 @@
-let debug = require('debug')('app:actions/loadSession');
-let sessionDebug = require('debug')('app:sessionFlow');
+const debug = require('debug')('app:actions/loadSession');
+const sessionDebug = require('debug')('app:sessionFlow');
 
 module.exports = function(context, payload, done) {
   debug('Started');
 
-  let token = context.cookie.get('token');
+  const token = context.cookie.get('token');
   sessionDebug('loadSession token:', token);
-  let user = context.cookie.get('user');
-  let username = context.cookie.get('username');
-  let displayName = context.cookie.get('displayName');
-  let carrierId = context.cookie.get('carrierId');
-  let role = context.cookie.get('role');
+  const user = context.cookie.get('user');
+  const username = context.cookie.get('username');
+  const displayName = context.cookie.get('displayName');
+  const carrierId = context.cookie.get('carrierId');
+  const role = context.cookie.get('role');
 
   if (!token) {
     context.dispatch('LOAD_SESSION', null);
@@ -42,15 +42,15 @@ module.exports = function(context, payload, done) {
       return;
     }
 
-    let session = {
+    const session = {
       token: token,
       user: {
         _id: user,
         username: username,
         displayName: displayName,
         carrierId: carrierId,
-        role: role
-      }
+        role: role,
+      },
     };
 
     debug('Success');

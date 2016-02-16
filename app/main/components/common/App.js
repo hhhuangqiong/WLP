@@ -1,25 +1,24 @@
 import React from 'react';
-import {RouteHandler} from 'react-router';
+import { RouteHandler } from 'react-router';
 
-var App = React.createClass({
+const App = React.createClass({
   childContextTypes: {
-    getAuthority: React.PropTypes.func.isRequired
+    getAuthority: React.PropTypes.func.isRequired,
   },
 
-  getChildContext: function() {
+  getChildContext() {
     return {
-      getAuthority: this.props.context.getAuthority
+      getAuthority: this.props.context.getAuthority,
     };
   },
 
-  render: function() {
-    let props = this.props;
+  render() {
     return (
       <div>
-        <RouteHandler {...props} />
+        <RouteHandler {...this.props} />
       </div>
     );
-  }
+  },
 });
 
 module.exports = App;

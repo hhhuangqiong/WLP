@@ -30,7 +30,7 @@ export default React.createClass({
                   key={country.alpha2}
                   value={country.alpha2}
                 >{country.name}</option>
-              )
+              );
             })}
           </select>
         </div>

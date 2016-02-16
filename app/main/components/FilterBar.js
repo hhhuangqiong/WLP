@@ -1,8 +1,7 @@
-import _ from 'lodash';
 import React from 'react';
 
-let FilterBar = React.createClass({
-  render: function() {
+const FilterBar = React.createClass({
+  render() {
     return (
       <nav className="top-bar top-bar--inner" data-topbar role="navigation">
         <section className="top-bar-section">
@@ -10,35 +9,35 @@ let FilterBar = React.createClass({
         </section>
       </nav>
     );
-  }
+  },
 });
 
-let FilterBarNavigationItems = React.createClass({
-  render: function() {
+const FilterBarNavigationItems = React.createClass({
+  render() {
     return (
       <ul className="left top-bar--inner tab--inverted">
-        {React.Children.map(this.props.children, (child)=>{
+        {React.Children.map(this.props.children, child => {
           return (
             <li className="top-bar--inner tab--inverted__title">{child}</li>
           );
         })}
       </ul>
     );
-  }
+  },
 });
 
-let FilterBarLeftItems = React.createClass({
-  render: function() {
+const FilterBarLeftItems = React.createClass({
+  render() {
     return (
       <ul className="left">
-        {React.Children.map(this.props.children, (child)=>{
+        {React.Children.map(this.props.children, child => {
           return (
             <li>{child}</li>
           );
         })}
       </ul>
     );
-  }
+  },
 });
 
 let FilterBarRightItems = React.createClass({

@@ -1,26 +1,28 @@
-import React, { PropTypes, findDOMNode, Component } from 'react';
+import React, { findDOMNode, Component } from 'react';
 
 export function assertError(event, validation) {
-  let target = event.target;
+  const target = event.target;
 
   if (!validation) return false;
 
-  let result = validation.validate(target.value);
+  const result = validation.validate(target.value);
 
   if (!hasError(event)) return true;
 
-  if (result.error)
+  if (result.error) {
     appendError(target, result.error.message, `${target.name}Error`);
-  else
+  } else {
     removeError(target, `${target.name}Error`);
+  }
 
   return !!result.error;
 }
 
 export function appendError(input, errorMessage, errorId) {
   // Append error label
-  let appendedErrorElement = document.getElementById(errorId);
-  let errorLabel = document.createElement('label');
+  const appendedErrorElement = document.getElementById(errorId);
+  const errorLabel = document.createElement('label');
+
   errorLabel.id = errorId;
   errorLabel.innerHTML = errorMessage;
   if (!appendedErrorElement) findDOMNode(input).parentNode.appendChild(errorLabel);
@@ -32,7 +34,7 @@ export function appendError(input, errorMessage, errorId) {
 export function removeError(input, errorId) {
   do {
     // Remove error label
-    let appendedErrorElement = document.getElementById(errorId);
+    const appendedErrorElement = document.getElementById(errorId);
     if (appendedErrorElement) findDOMNode(input).parentNode.removeChild(appendedErrorElement);
 
     // Remove error class
@@ -53,8 +55,8 @@ function withValidator(validator = {}) {
       }
 
       validateMatch = (key, targetName) => {
-        let targetValue = this.state[targetName];
-        let validationResult = { error: null, value: key };
+        const targetValue = this.state[targetName];
+        const validationResult = { error: null, value: key };
 
         if (key !== targetValue) {
           validationResult['error'] = {
@@ -71,11 +73,11 @@ function withValidator(validator = {}) {
 
         event.preventDefault();
 
-        let target = event.target;
-        let name = target.name;
-        let value = target.value;
-        let validation = validator[name];
-        let result = (typeof validation === 'string') ? this.validateMatch(value, validation) : validation.validate(value);
+        const target = event.target;
+        const name = target.name;
+        const value = target.value;
+        const validation = validator[name];
+        const result = (typeof validation === 'string') ? this.validateMatch(value, validation) : validation.validate(value);
 
         // Keep current input data for matching
         this.setState({ [name]: value });
@@ -85,7 +87,7 @@ function withValidator(validator = {}) {
       }
 
       modifyErrorState = (input, result) => {
-        let errorId = `${input.name}Error`;
+        const errorId = `${input.name}Error`;
         if (result.error) return this.setErrorState(input, result.error.message, errorId);
         this.removeErrorState(input, errorId);
       }
@@ -105,7 +107,7 @@ function withValidator(validator = {}) {
       }
 
       isError = () => {
-        for (let key in this.state) {
+        for (const key in this.state) {
           if (key.indexOf('Error') > 0 && this.state[key]) return true;
         }
 

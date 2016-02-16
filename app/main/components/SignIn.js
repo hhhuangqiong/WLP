@@ -1,5 +1,4 @@
 import _ from 'lodash';
-import debug from 'debug';
 import React from 'react';
 import FluxibleMixin from 'fluxible/addons/FluxibleMixin';
 import { Link } from 'react-router';
@@ -19,30 +18,30 @@ const SignIn = React.createClass({
   mixins: [FluxibleMixin, PublicOnlyMixin, ValidationMixin, React.addons.LinkedStateMixin],
 
   statics: {
-    storeListeners: [AuthStore, SignInStore]
+    storeListeners: [AuthStore, SignInStore],
   },
 
   validatorTypes:  {
     username: Joi.string().email().required().label('Username'),
-    password: Joi.string().min(8).max(30).required().label('Password')
+    password: Joi.string().min(8).max(30).required().label('Password'),
   },
 
-  getInitialState: function() {
+  getInitialState() {
     return _.merge({
       username: null,
-      password: null
+      password: null,
     }, this.getStateFromStores());
   },
 
-  getStateFromStores: function() {
+  getStateFromStores() {
     return {
       numberOfTrial: this.getStore(SignInStore).getNumberOfTrial(),
       isSigningIn: this.getStore(AuthStore).isSigningIn(),
-      error: this.getStore(AuthStore).getSignInError()
+      error: this.getStore(AuthStore).getSignInError(),
     };
   },
 
-  onChange: function() {
+  onChange() {
     this.setState(this.getStateFromStores());
   },
 
@@ -61,30 +60,30 @@ const SignIn = React.createClass({
       }
 
       if (!error) {
-        let username = this.refs.username.getDOMNode().value.trim();
-        let password = this.refs.password.getDOMNode().value.trim();
-        //let rememberMe = this.refs.rememberMe.getDOMNode().checked;
+        const username = this.refs.username.getDOMNode().value.trim();
+        const password = this.refs.password.getDOMNode().value.trim();
+        // let rememberMe = this.refs.rememberMe.getDOMNode().checked;
 
         this.context.executeAction(signInAction, {
           username: username,
-          password: password
-          //rememberMe: rememberMe
+          password: password,
+          // rememberMe: rememberMe
         });
       }
     });
   },
 
-  handleInputChange: function(inputName, e) {
+  handleInputChange(inputName, e) {
     this.setState({
-      [inputName]: e.target.value.trim()
+      [inputName]: e.target.value.trim(),
     });
   },
 
-  handleInputBlur: function(inputName) {
+  handleInputBlur(inputName) {
     this.validate(inputName, function(error, validationErrors) {});
   },
 
-  renderHelpText: function(message) {
+  renderHelpText(message) {
     return (
       <Tooltip overlay={message}>
         <a href="#" className="field-set--indicator"><i className="icon-error6" /></a>
@@ -152,7 +151,7 @@ const SignIn = React.createClass({
         </div>
       </form>
     );
-  }
+  },
 });
 
 export default SignIn;

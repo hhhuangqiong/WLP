@@ -20,7 +20,7 @@ import { CLIENT } from '../../utils/env';
  *   <p>This operation cannot be undone. Delete anyway?</p>
  * </ConfirmationDialog>
  */
-let ConfirmationDialog = React.createClass({
+const ConfirmationDialog = React.createClass({
   displayName: 'ConfirmationDialog',
 
   propTypes: {
@@ -43,21 +43,21 @@ let ConfirmationDialog = React.createClass({
      * The text displayed on the cancel button.
      * @type {String}
      */
-    cancelLabel: PropTypes.string
+    cancelLabel: PropTypes.string,
   },
 
-  getDefaultProps: function() {
+  getDefaultProps() {
     return {
       confirmLabel: 'OK',
-      cancelLabel: 'Cancel'
+      cancelLabel: 'Cancel',
     };
   },
 
-  componentWillMount: function() {
+  componentWillMount() {
     if (CLIENT) Modal.setAppElement(document.getElementById('app'));
   },
 
-  render: function() {
+  render() {
     return (
       <Modal className="confirmation" isOpen={this.props.isOpen}>
         <If condition={this.props.title}>
@@ -80,7 +80,7 @@ let ConfirmationDialog = React.createClass({
         </div>
       </Modal>
     );
-  }
+  },
 });
 
 export default ConfirmationDialog;

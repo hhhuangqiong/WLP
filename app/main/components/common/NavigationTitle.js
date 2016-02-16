@@ -1,7 +1,7 @@
 import React from 'react';
 
-let NavigationTitle = React.createClass({
-  render: function() {
+const NavigationTitle = React.createClass({
+  render() {
     return (
       <ul className="title-area app-header__title-area">
         <li className="name app-header__title">
@@ -9,7 +9,7 @@ let NavigationTitle = React.createClass({
         </li>
       </ul>
     );
-  }
+  },
 });
 
 export default NavigationTitle;

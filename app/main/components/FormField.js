@@ -1,7 +1,4 @@
-import _ from 'lodash';
-import Joi from 'joi';
 import React, { PropTypes } from 'react';
-import classnames from 'classnames';
 
 export default React.createClass({
   displayName: 'FormField',
@@ -9,17 +6,17 @@ export default React.createClass({
   propTypes: {
     label: PropTypes.string,
     leftColumns: PropTypes.string,
-    rightColumns: PropTypes.string
+    rightColumns: PropTypes.string,
   },
 
   contextTypes: {
-    router: React.PropTypes.func.isRequired
+    router: React.PropTypes.func.isRequired,
   },
 
   getDefaultProps() {
     return {
       leftColumns: '7',
-      rightColumns: '17'
+      rightColumns: '17',
     };
   },
 
@@ -35,5 +32,5 @@ export default React.createClass({
         </div>
       </div>
     );
-  }
+  },
 });

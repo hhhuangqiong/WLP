@@ -227,7 +227,7 @@ export default React.createClass({
         type: 'datetime',
         dateTimeLabelFormats: {
           day: '%d %b',
-          hour: '%H:%M'
+          hour: '%H:%M',
         },
         title: {
           text: xAxis.title,

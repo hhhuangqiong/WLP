@@ -1,8 +1,7 @@
 import React from 'react';
 import classNames from 'classnames';
-import _ from 'lodash';
 
-var Tooltip = React.createClass({
+const Tooltip = React.createClass({
   propTypes: {
     // if mouseActive is false, prop showTooltip is needed, otherwise tooltip will not be shown
     showTooltip: React.PropTypes.bool,
@@ -12,26 +11,27 @@ var Tooltip = React.createClass({
     tip: React.PropTypes.string,
   },
 
-  getInitialState: function() {
+  getInitialState() {
     return {
-      showTooltip: false
+      showTooltip: false,
     };
   },
 
-  componentWillReceiveProps: function(nextProps) {
+  componentWillReceiveProps(nextProps) {
     if (!nextProps.mouseActive) {
-      let {showTooltip} = nextProps;
-      this.setState({showTooltip});
+      const { showTooltip } = nextProps;
+      this.setState({ showTooltip });
     }
     this.handleMouseEventBinding();
   },
 
-  componentDidMount: function() {
+  componentDidMount() {
     this.handleMouseEventBinding();
   },
 
   handleMouseEventBinding() {
-    let tooltipWrapper = this.refs.tooltipWrapper.getDOMNode();
+    const tooltipWrapper = this.refs.tooltipWrapper.getDOMNode();
+
     if (this.props.mouseActive) {
       tooltipWrapper.addEventListener('mouseenter', this._handleMouseEnter);
       tooltipWrapper.addEventListener('mouseleave', this._handleMouseLeave);
@@ -41,20 +41,21 @@ var Tooltip = React.createClass({
     }
   },
 
-  _handleMouseEnter: function(e) {
+  _handleMouseEnter() {
     this.setState({
-      showTooltip: true
+      showTooltip: true,
     });
   },
 
-  _handleMouseLeave: function(e) {
+  _handleMouseLeave() {
     this.setState({
-      showTooltip: false
+      showTooltip: false,
     });
   },
 
-  render: function() {
-    let placement = 'place-' + this.props.placement;
+  render() {
+    const placement = 'place-' + this.props.placement;
+
     return (
       <div ref="tooltipWrapper" className={classNames('tooltip-wrapper', this.props.cssName)}>
         {this.props.children}
@@ -63,7 +64,7 @@ var Tooltip = React.createClass({
         </span>
       </div>
     );
-  }
+  },
 });
 
 module.exports = Tooltip;

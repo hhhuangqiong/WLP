@@ -1,8 +1,8 @@
 import React from 'react';
-import {RouteHandler} from 'react-router';
+import { RouteHandler } from 'react-router';
 
-let MainContent = React.createClass({
-  render: function() {
+const MainContent = React.createClass({
+  render() {
     return (
       <div className="row">
         <div className="large-24 columns">
@@ -10,7 +10,7 @@ let MainContent = React.createClass({
         </div>
       </div>
     );
-  }
+  },
 });
 
 export default MainContent;

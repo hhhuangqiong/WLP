@@ -1,6 +1,4 @@
 import React, { Component } from 'react';
-import moment from 'moment';
-import FluxibleMixin from 'fluxible/addons/FluxibleMixin';
 import ReactModal from 'react-modal';
 import { CLIENT } from '../../utils/env';
 
@@ -11,7 +9,7 @@ export default class Modal extends Component {
 
   getDefaultProps() {
     return {
-      isOpened: false
+      isOpened: false,
     };
   }
 

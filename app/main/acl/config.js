@@ -1,52 +1,51 @@
 // this is the pre-defined permission settings
-
 [
   {
     roles: ['m800.admin'],
-    allows: []
+    allows: [],
   },
   {
     roles: ['m800.marketing'],
-    allows: []
+    allows: [],
   },
   {
     roles: ['m800.engineering'],
-    allows: []
+    allows: [],
   },
   {
     roles: ['reseller.admin'],
-    allows: []
+    allows: [],
   },
   {
     roles: ['reseller.marketing'],
-    allows: []
+    allows: [],
   },
   {
     roles: ['reseller.engineering'],
-    allows: []
+    allows: [],
   },
   {
     roles: ['wl.admin'],
-    allows: []
+    allows: [],
   },
   {
     roles: ['wl.marketing'],
-    allows: []
+    allows: [],
   },
   {
     roles: ['wl.engineering'],
-    allows: []
+    allows: [],
   },
   {
     roles: ['sdk.admin'],
-    allows: []
+    allows: [],
   },
   {
     roles: ['sdk.marketing'],
-    allows: []
+    allows: [],
   },
   {
     roles: ['sdk.engineering'],
-    allows: []
-  }
+    allows: [],
+  },
 ];

@@ -5,33 +5,33 @@ import FluxibleMixin      from 'fluxible/addons/FluxibleMixin';
 import Crouton            from 'react-crouton';
 import SystemMessageStore from '../../stores/SystemMessageStore';
 
-var SystemMessage = React.createClass({
+const SystemMessage = React.createClass({
   mixins: [FluxibleMixin],
 
   statics: {
-    storeListeners: [SystemMessageStore]
+    storeListeners: [SystemMessageStore],
   },
 
-  getInitialState: function() {
+  getInitialState() {
     return { systemMessage: {} };
   },
 
-  onChange: function() {
+  onChange() {
     // IMPORTANT
     // DO NOT remove these or you will have to take care of the css changes
-    let message = this.getStore(SystemMessageStore).getState();
-    let onDismiss = () => {
+    const message = this.getStore(SystemMessageStore).getState();
+    const onDismiss = () => {
       setTimeout(() => {
         this.setState({ systemMessage: null });
       }, 0);
     };
 
     this.setState({
-      systemMessage: _.merge(message, { onDismiss: onDismiss })
+      systemMessage: _.merge(message, { onDismiss: onDismiss }),
     });
   },
 
-  render: function() {
+  render() {
     return (
       <div className="system-message-container row">
         {
@@ -52,7 +52,7 @@ var SystemMessage = React.createClass({
         }
       </div>
     );
-  }
+  },
 });
 
 export default SystemMessage;

@@ -49,39 +49,39 @@ export default React.createClass({
      */
     data: PropTypes.arrayOf(PropTypes.shape({
       name: PropTypes.string,
-      value: PropTypes.number
-    }))
+      value: PropTypes.number,
+    })),
   },
 
-  getInitialState: function() {
+  getInitialState() {
     return {
-      containerId: 'donut' + Math.floor(Math.random() * ID_MAX)
+      containerId: 'donut' + Math.floor(Math.random() * ID_MAX),
     };
   },
 
-  getDefaultProps: function() {
+  getDefaultProps() {
     return {
       size: 200,
       width: 7,
-      borderWidth: 5
+      borderWidth: 5,
     };
   },
 
-  componentDidMount: function() {
-    let size = this.props.size;
-    let width = this.props.width;
-    let borderWidth = this.props.borderWidth;
+  componentDidMount() {
+    const size = this.props.size;
+    const width = this.props.width;
+    const borderWidth = this.props.borderWidth;
 
     this.chart = new Highcharts.Chart({
       chart: {
         renderTo: this.state.containerId,
-        height: size + borderWidth * 2
+        height: size + borderWidth * 2,
       },
       exporting: {
-        enabled: false
+        enabled: false,
       },
       credits: {
-        enabled: false
+        enabled: false,
       },
       title: {
         text: '0',
@@ -89,8 +89,8 @@ export default React.createClass({
         verticalAlign: 'middle',
         y: 5,
         style: {
-          'fontSize': '1.5rem'
-        }
+          'fontSize': '1.5rem',
+        },
       },
       subtitle: {
         text: this.props.unit,
@@ -99,25 +99,25 @@ export default React.createClass({
         y: 22,
         style: {
           'color': '#888',
-          'fontSize': '0.7rem'
-        }
+          'fontSize': '0.7rem',
+        },
       },
       tooltip: {
-        enabled: false
+        enabled: false,
       },
       plotOptions: {
         pie: {
           dataLabels: {
-            enabled: false
+            enabled: false,
           },
           startAngle: 0,
           endAngle: 360,
-          center: ['50%', '50%']
+          center: ['50%', '50%'],
         },
         series: {
           // no animation for the initial plot, otherwise the background will animate...
-          animation: false
-        }
+          animation: false,
+        },
       },
       // default series as the donut background
       series: [{
@@ -127,39 +127,35 @@ export default React.createClass({
         size: size,
         borderWidth: 0,
         colors: [BACKGROUND_COLOR],
-        data: [1]
-      }]
+        data: [1],
+      }],
     });
   },
 
-  componentWillReceiveProps: function(nextProps) {
+  componentWillReceiveProps(nextProps) {
     // this function will be called when the user interacts with the sidebar
     // unnecessary redraw will be invoked
     // avoid unnecessary redraw
-    if (_.eq(nextProps, this.props)) {
-      return;
-    }
+    if (_.eq(nextProps, this.props)) return;
 
-    let size = this.props.size || DEFAULT_SIZE;
-    let width = this.props.width || DEFAULT_WIDTH;
-    let borderWidth = this.props.borderWidth || DEFAULT_BORDER_WIDTH;
+    const size = this.props.size || DEFAULT_SIZE;
+    const width = this.props.width || DEFAULT_WIDTH;
+    const borderWidth = this.props.borderWidth || DEFAULT_BORDER_WIDTH;
 
-    let total = nextProps.data.reduce(function(acc, d) {
+    const total = nextProps.data.reduce(function(acc, d) {
       return acc + d.value;
     }, 0);
 
-    let chartData = nextProps.data.map(function(d) {
+    const chartData = nextProps.data.map(function(d) {
       return d.value;
     });
 
     // bigger data goes first
-    chartData.sort(function(a, b) {
-      return a > b;
-    });
+    chartData.sort((a, b) => a > b);
 
     // the chart goes anti-clockwise, but the colors go clockwise
     // therefore we extract the colors we need then reverse them
-    let colors = this.props.colors.slice(0, chartData.length).reverse();
+    const colors = this.props.colors.slice(0, chartData.length).reverse();
 
     // if the actual data hasn't been set yet,
     // add a new series to display the data set
@@ -172,24 +168,23 @@ export default React.createClass({
         size: size + borderWidth,
         borderWidth: borderWidth,
         colors: colors,
-        data: chartData
+        data: chartData,
       });
-    }
-    // otherwise, update the existing data set
-    else {
+    } else {
+      // otherwise, update the existing data set
       this.chart.series[1].setData(chartData);
     }
 
     this.chart.setTitle({
-      text: total || '0'
+      text: total || '0',
     });
   },
 
-  render: function() {
-    let className = classNames(this.props.className, 'donut-chart');
+  render() {
+    const className = classNames(this.props.className, 'donut-chart');
 
     return (
       <div id={this.state.containerId} className={className}></div>
     );
-  }
+  },
 });

@@ -1,26 +1,26 @@
 import React from 'react';
 import classNames from 'classnames';
 
-var Remark = React.createClass({
-  getInitialState: function() {
+const Remark = React.createClass({
+  getInitialState() {
     return {
-      showTooltip: false
+      showTooltip: false,
     };
   },
 
-  _handleMouseEnter: function(e) {
+  _handleMouseEnter(e) {
     this.setState({
-      showTooltip: true
+      showTooltip: true,
     });
   },
 
-  _handleMouseLeave: function(e) {
+  _handleMouseLeave(e) {
     this.setState({
-      showTooltip: false
+      showTooltip: false,
     });
   },
 
-  render: function() {
+  render() {
     return (
       <span className="calls-table__remark" onMouseEnter={this._handleMouseEnter} onMouseLeave={this._handleMouseLeave}>
         <i className="icon-error6" />
@@ -29,7 +29,7 @@ var Remark = React.createClass({
         </span>
       </span>
     );
-  }
+  },
 });
 
 module.exports = Remark;

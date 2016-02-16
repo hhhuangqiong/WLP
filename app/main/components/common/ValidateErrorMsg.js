@@ -1,8 +1,7 @@
-
-'use strict';
 import React from 'react';
-var Message = React.createClass({
-  render:function() {
+
+const Message = React.createClass({
+  render() {
     return (
       <div className="error-message-box">
         <span className="error">
@@ -10,6 +9,7 @@ var Message = React.createClass({
         </span>
       </div>
     );
-  }
+  },
 });
+
 export default Message;

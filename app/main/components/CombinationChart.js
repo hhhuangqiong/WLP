@@ -228,10 +228,10 @@ export default React.createClass({
         // That's almost a fixed amount, unless there are too much series that
         // makes a two-row legend
         marginTop: props.showLegend ? 50 : 0,
-        renderTo: this.state.containerId
+        renderTo: this.state.containerId,
       },
       exporting: {
-        enabled: false
+        enabled: false,
       },
       credits: {
         enabled: false,
@@ -240,13 +240,13 @@ export default React.createClass({
         text: null,
       },
       subtitle: {
-        text: null
+        text: null,
       },
       xAxis: {
         type: 'datetime',
         dateTimeLabelFormats: {
           day: '%d %b',
-          hour: '%H:%M'
+          hour: '%H:%M',
         },
         title: {
           text: xAxis.title,
@@ -270,11 +270,11 @@ export default React.createClass({
             if (xAxis.crosshair) {
               this.crosshair = {
                 color: xAxis.crosshair.color,
-                width: xAxis.crosshair.width || (this.width / (this.series[0].points.length-1))
-              }
+                width: xAxis.crosshair.width || (this.width / (this.series[0].points.length - 1)),
+              };
             }
-          }
-        }
+          },
+        },
       },
       yAxis: _.reduce(yAxis, (result, axis) => {
         result.push(
@@ -298,7 +298,7 @@ export default React.createClass({
             opposite: axis.alignment === 'right',
             tickInterval: axis.tickInterval || null,
             ceiling: axis.unit === '%' ? 100 : null,
-            visible: !_.isUndefined(axis.visible) ? axis.visible : true
+            visible: !_.isUndefined(axis.visible) ? axis.visible : true,
           }
         );
         return result;
@@ -328,8 +328,8 @@ export default React.createClass({
         // As the legends are not clickable in our charts
         // the hover style is set to `normal` from `pointer` by default
         itemHoverStyle: {
-          cursor: 'normal'
-        }
+          cursor: 'normal',
+        },
       },
       plotOptions: {
         series: {
@@ -346,8 +346,8 @@ export default React.createClass({
             legendItemClick: function(e) {
               e.preventDefault();
               return false;
-            }
-          }
+            },
+          },
         },
         line: {
           states: {
@@ -364,8 +364,8 @@ export default React.createClass({
         shared: props.shareTooltip || false,
         dateTimeLabelFormats: {
           day: '%d %b %Y',
-          hour: '%H:%M %d %b %Y'
-        }
+          hour: '%H:%M %d %b %Y',
+        },
       },
     });
   },
@@ -392,11 +392,12 @@ export default React.createClass({
       tooltip,
       type,
       yAxis,
-      zIndex
+      zIndex,
     } = opts;
 
     let typeOption = {};
-    let series = {
+
+    const series = {
       type,
       name,
       data,
@@ -411,32 +412,32 @@ export default React.createClass({
       selected: false,
       enableMouseTracking: selected,
       tooltip: tooltip,
-      tooltipOptions: tooltipOptions
+      tooltipOptions: tooltipOptions,
     };
 
     switch(type) {
       // TODO: add support to other types if needed
-      case 'line':
-        typeOption = {
+    case 'line':
+      typeOption = {
+        lineWidth: lineWidth || DEFAULT_LINE_WIDTH,
+        marker: {
           lineWidth: lineWidth || DEFAULT_LINE_WIDTH,
-          marker: {
-            lineWidth: lineWidth || DEFAULT_LINE_WIDTH,
-            lineColor: color,
-            fillColor: 'white',
-            symbol: symbol
-          },
-          pointPadding: 0,
-          selected: true
-        };
-        break;
+          lineColor: color,
+          fillColor: 'white',
+          symbol: symbol,
+        },
+        pointPadding: 0,
+        selected: true,
+      };
+      break;
 
-      case 'column':
-        typeOption = {
-          pointPadding: 0.2,
-          borderColor: borderColor || opts.color,
-          borderWidth: borderWidth || 0
-        };
-        break;
+    case 'column':
+      typeOption = {
+        pointPadding: 0.2,
+        borderColor: borderColor || opts.color,
+        borderWidth: borderWidth || 0,
+      };
+      break;
     }
 
     this.chart.addSeries(_.merge(series, typeOption));
@@ -535,7 +536,7 @@ export default React.createClass({
     // the lines are ready
     // TODO: add the line removal logic
     if (this.props.lines) {
-      this.props.lines.forEach((lineOpts, lineIndex) => {
+      this.props.lines.forEach(lineOpts => {
         const selected = this.props.selectedLine && lineOpts.name === this.props.selectedLine;
 
         const existingLine = _.find(this.chart.series, series => series.name === lineOpts.name);

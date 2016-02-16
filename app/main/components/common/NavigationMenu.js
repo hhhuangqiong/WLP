@@ -1,11 +1,9 @@
 import _ from 'lodash';
-import React   from 'react';
-import {Link}  from 'react-router';
+import React, { PropTypes } from 'react';
+import { Link }  from 'react-router';
 import FluxibleMixin from 'fluxible/addons/FluxibleMixin';
 
 import CompanySwitcher from './CompanySwitcher';
-
-import showModal from '../../actions/showModal';
 import signOut from '../../actions/signOut';
 import Modal from '../../../main/components/Modal';
 import ChangePasswordForm from '../../../modules/account/components/ChangePasswordForm';
@@ -15,39 +13,39 @@ import AuthStore from '../../stores/AuthStore';
 const companyPages = ['companies', 'company-create', 'company-profile', 'company-widget', 'company-service'];
 const accountPages = ['account', 'account-create', 'account-profile'];
 
-var Navigation = React.createClass({
-  context: {
-    getStore: React.PropTypes.func.isRequired
+const Navigation = React.createClass({
+  contextTypes: {
+    getStore: PropTypes.func.isRequired,
   },
 
   mixins: [FluxibleMixin],
 
   statics: {
-    storeListeners: [AuthStore]
+    storeListeners: [AuthStore],
   },
 
-  getInitialState: function() {
+  getInitialState() {
     return {
       modal: 'close',
       isChangePasswordOpened: false,
-      displayName: this.context.getStore(AuthStore).getDisplayName()
+      displayName: this.context.getStore(AuthStore).getDisplayName(),
     };
   },
 
-  onChange: function() {
+  onChange() {
     this.setState({
-      displayName: this.context.getStore(AuthStore).getDisplayName()
+      displayName: this.context.getStore(AuthStore).getDisplayName(),
     });
   },
 
-  handleSignOut: function(e) {
+  handleSignOut(e) {
     e.preventDefault();
     this.context.executeAction(signOut, {});
   },
 
   renderCreateUser() {
-    let currentRoute = _.last(this.context.router.getCurrentRoutes());
-    let { role, identity } = this.context.router.getCurrentParams();
+    const currentRoute = _.last(this.context.router.getCurrentRoutes());
+    const { role, identity } = this.context.router.getCurrentParams();
 
     if (_.includes(accountPages, currentRoute.name)) {
       return (
@@ -63,8 +61,8 @@ var Navigation = React.createClass({
   },
 
   renderCreateCompany() {
-    let currentRoute = _.last(this.context.router.getCurrentRoutes());
-    let { role, identity } = this.context.router.getCurrentParams();
+    const currentRoute = _.last(this.context.router.getCurrentRoutes());
+    const { role, identity } = this.context.router.getCurrentParams();
 
     if (_.includes(companyPages, currentRoute.name)) {
       return (
@@ -88,7 +86,7 @@ var Navigation = React.createClass({
     this.setState({ isChangePasswordOpened: false });
   },
 
-  render: function() {
+  render() {
     return (
       <section className="top-bar-section navigation-bar">
         <Modal
@@ -128,13 +126,13 @@ var Navigation = React.createClass({
         </ul>
       </section>
     );
-  }
+  },
 });
 
 Navigation.contextTypes = {
   getStore: React.PropTypes.func.isRequired,
   executeAction: React.PropTypes.func.isRequired,
-  router: React.PropTypes.func.isRequired
+  router: React.PropTypes.func.isRequired,
 };
 
 export default Navigation;

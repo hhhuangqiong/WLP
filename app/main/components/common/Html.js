@@ -2,28 +2,26 @@ import React from 'react';
 
 import Version from './Version';
 
- //TODO may need to detect which file to import based on environment
+ // TODO may need to detect which file to import based on environment
 import webpackConfig from '../../../../webpack.config.js';
+import { baseUrl } from '../../../utils/url';
+import { enabledHotloader } from '../../../utils/env';
 
-import {baseUrl} from '../../../utils/url';
-
-import {isDev, enabledHotloader} from '../../../utils/env';
-
-var appUrl, bundleFile, bundlePath;
+let appUrl;
+let bundleFile;
+let bundlePath;
 
 if (enabledHotloader()) {
-  //use empty root path for client side, rely on relative path resolving
+  // use empty root path for client side, rely on relative path resolving
   appUrl = baseUrl(webpackConfig.custom.hotLoadPort);
   bundleFile =  'bundle.js';
   bundlePath = `${appUrl}/${bundleFile}`;
-}
-else {
+} else {
   bundlePath = '/javascript/bundle.js';
 }
 
-var Html = React.createClass({
-
-  render: function() {
+const Html = React.createClass({
+  render() {
     return (
       <html lang="en">
         <head>
@@ -52,7 +50,7 @@ var Html = React.createClass({
         </body>
       </html>
     );
-  }
+  },
 });
 
 export default Html;

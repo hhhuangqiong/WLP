@@ -1,12 +1,10 @@
-import _                  from 'lodash';
 import React              from 'react';
-import FluxibleMixin      from 'fluxible/addons/FluxibleMixin';
-import {RouteHandler}     from 'react-router';
+import { RouteHandler }     from 'react-router';
 import SystemMessage      from './SystemMessage';
 import LoadingSpinner     from './LoadingSpinner';
 
-var Public = React.createClass({
-  render: function() {
+const Public = React.createClass({
+  render() {
     return (
       <div>
         <nav className="top-bar public-header" data-topbar role="navigation">
@@ -31,7 +29,7 @@ var Public = React.createClass({
         <LoadingSpinner />
       </div>
     );
-  }
+  },
 });
 
 export default Public;

@@ -4,18 +4,18 @@ import classNames from 'classnames';
 import { HOME } from '../../server/paths';
 import errors from '../../config/errors.json';
 
-let ErrorTemplate = React.createClass({
-  PropTypes: {
+const ErrorTemplate = React.createClass({
+  propTypes: {
     code: PropTypes.number.isRequired,
     name: PropTypes.number.isRequired,
-    message: PropTypes.number.isRequired
+    message: PropTypes.number.isRequired,
   },
 
-  getDefaultProps: function() {
+  getDefaultProps() {
     return errors['500'];
   },
 
-  render: function() {
+  render() {
     return (
       <div>
         <nav className="top-bar public-header" data-topbar role="navigation">
@@ -51,25 +51,25 @@ let ErrorTemplate = React.createClass({
         </div>
       </div>
     );
-  }
+  },
 });
 
-let Error = React.createFactory(ErrorTemplate);
+const Error = React.createFactory(ErrorTemplate);
 
-export let Error401 = React.createClass({
-  render: function() {
+export const Error401 = React.createClass({
+  render() {
     return Error(errors['401']);
-  }
+  },
 });
 
-export let Error404 = React.createClass({
-  render: function() {
+export const Error404 = React.createClass({
+  render() {
     return Error(errors['404']);
-  }
+  },
 });
 
-export let Error500 = React.createClass({
-  render: function() {
+export const Error500 = React.createClass({
+  render() {
     return Error(errors['500']);
-  }
+  },
 });

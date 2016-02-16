@@ -9,16 +9,16 @@ class PercentageChart extends Component {
   static propTypes = {
     customClass: PropTypes.oneOfType([
       PropTypes.string,
-      PropTypes.array
+      PropTypes.array,
     ]),
     title: PropTypes.string.isRequired,
     percentage: PropTypes.number.isRequired,
     stat: PropTypes.number.isRequired,
-    unit: PropTypes.string
+    unit: PropTypes.string,
   };
 
   render() {
-    let { customClass, title, percentage, stat, unit } = this.props;
+    const { customClass, title, percentage, stat, unit } = this.props;
 
     return (
       <div className={classNames(`percentage-chart`, customClass)}>
