@@ -290,7 +290,7 @@ export default React.createClass({
                     lines={this.state.successRateSeries}
                     xAxis={this.state.sXAxis}
                     yAxis={this.state.sYAxis}
-                    selectedLine={this.state.selectedLineInChartB} />
+                    selectedLine={SUCCESS_ATTEMPTS_RATE} />
                 </div>
               </div>
             </Panel.Wrapper>

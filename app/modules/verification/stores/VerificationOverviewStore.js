@@ -112,6 +112,9 @@ export default createStore({
 
   handleTimeRangeChange(timeRange) {
     this.timeRange = timeRange;
+    this.successAttempts = null;
+    this.successRates = null;
+    this.totalAttempts = null;
 
     this.emitChange();
   },
