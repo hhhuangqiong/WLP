@@ -693,9 +693,12 @@ let getEndUsersStatsMonthly = function(req, res) {
     });
   }
 
-  let thisMonthTime = moment(req.query.fromTime, 'x').get('month') !== moment().get('month') ?
-    moment(req.query.fromTime, 'x') :
-    moment().subtract(1, 'day');
+  // to check if it's querying for the latest month
+  // if yes, make it starting from latest
+  let thisMonthTime = (
+  moment(fromTime, 'x').get('month') !== moment().get('month') ||
+  moment(fromTime, 'x').get('year') !== moment().get('year')
+  ) ? moment(fromTime, 'x') : moment().subtract(1, 'day');
 
   let thisMonthActiveParams = _.omit({
     carriers: req.params.carrierId,
@@ -950,9 +953,12 @@ let getCallUserStatsMonthly = function(req, res) {
   let { fromTime, toTime, timescale, type } = req.query;
   let { carrierId } = req.params;
 
-  let thisMonthTime = moment(fromTime, 'x').get('month') !== moment().get('month') ?
-    moment(fromTime, 'x') :
-    moment().subtract(1, 'day');
+  // to check if it's querying for the latest month
+  // if yes, make it starting from latest
+  let thisMonthTime = (
+    moment(fromTime, 'x').get('month') !== moment().get('month') ||
+    moment(fromTime, 'x').get('year') !== moment().get('year')
+  ) ? moment(fromTime, 'x') : moment().subtract(1, 'day');
 
   let thisMonthParams = _.omit({
     caller_carrier: carrierId,
