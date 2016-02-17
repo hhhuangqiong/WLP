@@ -9,10 +9,6 @@ var LoadingSpinnerStore = createStore({
   handlers: {
     FETCH_START: 'showSpinner',
     FETCH_END:   'hideSpinner',
-    FETCH_CALLS_STATS_MONTHLY_START: 'showSpinner',
-    FETCH_CALLS_STATS_MONTHLY_END: 'hideSpinner',
-    FETCH_CALLS_STATS_TOTAL_START: 'showSpinner',
-    FETCH_CALLS_STATS_TOTAL_END: 'hideSpinner'
   },
 
   showSpinner: function() {

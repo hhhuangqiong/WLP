@@ -369,7 +369,7 @@ Api.prototype.getEndUsersGeographicStats = function(params, cb) {
 };
 
 Api.prototype.getCallsStatsMonthly = function(params, cb) {
-  superagent
+  return superagent
     .get(`${this._getHost()}/api/carriers/${params.carrierId}/callUserStatsMonthly`)
     .accept('json')
     .set('Authorization', this._getToken())
@@ -378,7 +378,7 @@ Api.prototype.getCallsStatsMonthly = function(params, cb) {
 };
 
 Api.prototype.getCallsStatsTotal = function(params, cb) {
-  superagent
+  return superagent
     .get(`${this._getHost()}/api/carriers/${params.carrierId}/callUserStatsTotal`)
     .accept('json')
     .set('Authorization', this._getToken())

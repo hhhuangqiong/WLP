@@ -9,7 +9,7 @@ import _ from 'lodash';
 
 import { ERROR_MESSAGE } from '../../main/constants/actionTypes';
 
-const EVENT_KEYS = ['START', 'END', 'SUCCESS', 'FAILURE'];
+const EVENT_KEYS = ['START', 'END', 'SUCCESS', 'FAILURE', 'ABORT'];
 
 function prefix_(prefix, str) {
   return `${prefix.toUpperCase()}_${str}`;
@@ -50,21 +50,21 @@ export default function apiActionCreator(key, apiMethod, opts = { debugPrefix: '
   return function(context, params, done) {
     debug('Started');
 
-    context.dispatch(lifecycle.START);
+    let request;
 
     if (opts.cb) {
       if (!_.isFunction(opts.cb)) {
         throw new Error('`cb` must be a function');
       }
 
-      context.api[apiMethod](params, (...theArgs) => {
+      request = context.api[apiMethod](params, (...theArgs) => {
         context.dispatch(lifecycle.END);
         opts.cb(...theArgs, context);
         done();
       });
     } else {
       // default: return the *whole* result to `dispatch()`
-      context.api[apiMethod](params, function(err, result) {
+      request = context.api[apiMethod](params, function(err, result) {
         context.dispatch(lifecycle.END);
 
         if (err) {
@@ -83,6 +83,9 @@ export default function apiActionCreator(key, apiMethod, opts = { debugPrefix: '
         done();
       });
     }
+
+    // dispatch a ACTION_START event with a request reference
+    context.dispatch(lifecycle.START, request);
   };
 }
 
