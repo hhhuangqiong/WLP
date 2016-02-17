@@ -1,9 +1,5 @@
 import _ from 'lodash';
-import {createStore} from 'fluxible/addons';
-
-var debug = require('debug')('app:companyStore');
-
-const newContactObject = {name: '', phone: '', email: ''};
+import { createStore } from 'fluxible/addons';
 
 const defaultCompanyObject = {
   name: null,
@@ -19,10 +15,10 @@ const defaultCompanyObject = {
   timezone: null,
   businessContact: {name: '', phone: '', email: ''},
   technicalContact: {name: '', phone: '', email: ''},
-  supportContact: {name: '', phone: '', email: ''}
+  supportContact: {name: '', phone: '', email: ''},
 };
 
-var CompanyStore = createStore({
+const CompanyStore = createStore({
   storeName: 'CompanyStore',
 
   handlers: {
@@ -37,41 +33,41 @@ var CompanyStore = createStore({
     UPDATE_COMPANY_WIDGET_SUCCESS: 'handleCompanyUpdated',
     RESET_COMPANY: 'handleCompanyReset',
     REACTIVATE_COMPANY_SUCCESS: 'handleCompanyStatusChanged',
-    DEACTIVATE_COMPANY_SUCCESS: 'handleCompanyStatusChanged'
+    DEACTIVATE_COMPANY_SUCCESS: 'handleCompanyStatusChanged',
   },
 
-  initialize: function() {
+  initialize() {
     this.companies = [];
     this.parentCompanies = [];
   },
 
-  getParentCompanies: function() {
+  getParentCompanies() {
     return this.parentCompanies;
   },
 
-  getCompanies: function() {
+  getCompanies() {
     return this.companies;
   },
 
-  getNewCompany: function() {
+  getNewCompany() {
     return _.clone(defaultCompanyObject, true);
   },
 
-  getCompanyByCarrierId: function(carrierId) {
+  getCompanyByCarrierId(carrierId) {
     return _.merge(_.clone(defaultCompanyObject, true), this.companies[carrierId]);
   },
 
-  handleCompanyReset: function() {
+  handleCompanyReset() {
     this.currentCompany = _.clone(defaultCompanyObject, true);
     this.emitChange();
   },
 
-  handleCompanyCreated: function(company) {
+  handleCompanyCreated(company) {
     this.companies[company.carrierId] = company;
     this.emitChange();
   },
 
-  handleCompanyUpdated: function({ company, carrierId }) {
+  handleCompanyUpdated({ company, carrierId }) {
     if (company.carrierId !== carrierId) {
       // if carrierId is changed
       // update the companies object key
@@ -84,59 +80,59 @@ var CompanyStore = createStore({
     this.emitChange();
   },
 
-  handleCompanyServiceUpdated: function({ company, carrierId }) {
+  handleCompanyServiceUpdated({ company, carrierId }) {
     _.merge(this.companies[carrierId], company);
 
     this.emitChange();
   },
 
-  handleCompanyStatusChanged: function({ carrierId, status }) {
+  handleCompanyStatusChanged({ carrierId, status }) {
     this.companies[carrierId].status = status;
     this.emitChange();
   },
 
-  receiveParentCompanies: function({ companies }) {
+  receiveParentCompanies({ companies }) {
     this.parentCompanies = companies;
     this.emitChange();
   },
 
-  receiveCompanies: function({ companies }) {
+  receiveCompanies({ companies }) {
     this.companies = companies;
     this.emitChange();
   },
 
-  receiveCompany: function(company) {
+  receiveCompany(company) {
     this.currentCompany = company;
     this.emitChange();
   },
 
-  receiveCompanyService: function({ carrierId, services }) {
+  receiveCompanyService({ carrierId, services }) {
     _.merge(this.companies[carrierId], { serviceConfig: services });
     this.emitChange();
   },
 
-  receiveCompanyApplications: function(carrierId, applications) {
+  receiveCompanyApplications(carrierId, applications) {
     _.merge(this.companies[carrierId], applications);
     this.emitChange();
   },
 
-  getState: function() {
+  getState() {
     return {
       companies: this.companies,
       parentCompanies: this.parentCompanies,
-      currentCompany: this.currentCompany
+      currentCompany: this.currentCompany,
     };
   },
 
-  dehydrate: function() {
+  dehydrate() {
     return this.getState();
   },
 
-  rehydrate: function(state) {
+  rehydrate(state) {
     this.companies = state.companies;
     this.parentCompanies = state.parentCompanies;
     this.currentCompany = state.currentCompany;
-  }
+  },
 });
 
 export default CompanyStore;

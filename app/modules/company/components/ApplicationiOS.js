@@ -1,43 +1,44 @@
 import React, { PropTypes } from 'react';
-import classNames from 'classnames';
 import Joi from 'joi';
 
 import * as InputGroup from '../../../main/components/InputGroup';
 
-let ApplicationiOS = React.createClass({
-  PropTypes: {
+const ApplicationiOS = React.createClass({
+  propTypes: {
     application: PropTypes.shape({
       name: PropTypes.string,
       applicationKey: PropTypes.string,
-      applicationSecret: PropTypes.string
+      applicationSecret: PropTypes.string,
     }),
     onDataChange: PropTypes.func.isRequired,
-    onInputBlur: PropTypes.func.isRequired
+    onInputBlur: PropTypes.func.isRequired,
+    getValidationMessages: PropTypes.func.isRequired,
+    renderHelpText: PropTypes.func.isRequired,
   },
 
-  getValidatorTypes: function() {
+  getValidatorTypes() {
     return {
-      iOSApplicationName: Joi.string().allow(null).allow('').max(10).label('iOS Application Name')
+      iOSApplicationName: Joi.string().allow(null).allow('').max(10).label('iOS Application Name'),
     };
   },
 
-  getValidatorData: function() {
+  getValidatorData() {
     return {
-      iOSApplicationName: this.props.application.name
+      iOSApplicationName: this.props.application.name,
     };
   },
 
-  getDefaultProps: function() {
+  getDefaultProps() {
     return {
       application: {
         name: null,
         applicationKey: null,
-        applicationSecret: null
-      }
+        applicationSecret: null,
+      },
     };
   },
 
-  render: function() {
+  render() {
     return (
       <section>
         <InputGroup.Row>
@@ -83,7 +84,7 @@ let ApplicationiOS = React.createClass({
         </InputGroup.Row>
       </section>
     );
-  }
+  },
 });
 
 export default ApplicationiOS;

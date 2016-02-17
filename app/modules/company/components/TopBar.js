@@ -1,4 +1,3 @@
-import _ from 'lodash';
 import React, { PropTypes } from 'react';
 import classNames from 'classnames';
 import { Link } from 'react-router';
@@ -9,42 +8,32 @@ import reactivateCompany from '../actions/reactivateCompany';
 import * as FilterBar from '../../../main/components/FilterBar';
 import { CircleButton } from '../../../main/components/Buttons';
 
-let CompanyTopBar = React.createClass({
-  PropTypes: {
+const CompanyTopBar = React.createClass({
+  propTypes: {
     _id: PropTypes.string,
     status: PropTypes.oneOf(['active', 'inactive']),
     hasError: PropTypes.bool.isRequired,
-    onSave: PropTypes.func.isRequired
-  },
-
-  getDefaultProps: function() {
-    return {
-      _id: null,
-      status: null,
-      hasError: true
-    };
+    onSave: PropTypes.func.isRequired,
   },
 
   contextTypes: {
     executeAction: PropTypes.func.isRequired,
-    router: PropTypes.func.isRequired
+    router: PropTypes.func.isRequired,
   },
 
-  _handleDeactivateCompany: function() {
-    let { carrierId } = this.context.router.getCurrentParams();
-    this.context.executeAction(deactivateCompany, { carrierId });
+  getDefaultProps() {
+    return {
+      _id: null,
+      status: null,
+      hasError: true,
+    };
   },
 
-  _handleReactivateCompany: function() {
-    let { carrierId } = this.context.router.getCurrentParams();
-    this.context.executeAction(reactivateCompany, { carrierId });
-  },
-
-  render: function() {
-    let navParams = this.context.router.getCurrentParams();
-    let role = navParams.role || null;
-    let identity = navParams.identity || null;
-    let carrierId = navParams.carrierId || null;
+  render() {
+    const navParams = this.context.router.getCurrentParams();
+    const role = navParams.role || null;
+    const identity = navParams.identity || null;
+    const carrierId = navParams.carrierId || null;
 
     return (
       <FilterBar.Wrapper>
@@ -73,7 +62,17 @@ let CompanyTopBar = React.createClass({
         </FilterBar.RightItems>
       </FilterBar.Wrapper>
     );
-  }
+  },
+
+  _handleDeactivateCompany() {
+    const { carrierId } = this.context.router.getCurrentParams();
+    this.context.executeAction(deactivateCompany, { carrierId });
+  },
+
+  _handleReactivateCompany() {
+    const { carrierId } = this.context.router.getCurrentParams();
+    this.context.executeAction(reactivateCompany, { carrierId });
+  },
 });
 
 export default CompanyTopBar;

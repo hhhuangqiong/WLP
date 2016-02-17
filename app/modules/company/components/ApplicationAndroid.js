@@ -1,43 +1,43 @@
 import React, { PropTypes } from 'react';
-import classNames from 'classnames';
 import Joi from 'joi';
 
 import * as InputGroup from '../../../main/components/InputGroup';
 
-let ApplicationAndroid = React.createClass({
-  PropTypes: {
+const ApplicationAndroid = React.createClass({
+  propTypes: {
     application: PropTypes.shape({
       name: PropTypes.string,
       applicationKey: PropTypes.string,
-      applicationSecret: PropTypes.string
+      applicationSecret: PropTypes.string,
     }),
     onDataChange: PropTypes.func.isRequired,
-    onInputBlur: PropTypes.func.isRequired
+    onInputBlur: PropTypes.func.isRequired,
+    getValidationMessages: PropTypes.func.isRequired,
   },
 
-  getValidatorTypes: function() {
+  getValidatorTypes() {
     return {
-      androidApplicationName: Joi.string().allow(null).allow('').max(10).label('Android Application Name')
+      androidApplicationName: Joi.string().allow(null).allow('').max(10).label('Android Application Name'),
     };
   },
 
-  getValidatorData: function() {
+  getValidatorData() {
     return {
-      androidApplicationName: this.props.application.name
+      androidApplicationName: this.props.application.name,
     };
   },
 
-  getDefaultProps: function() {
+  getDefaultProps() {
     return {
       application: {
         name: null,
         applicationKey: null,
-        applicationSecret: null
-      }
+        applicationSecret: null,
+      },
     };
   },
 
-  render: function() {
+  render() {
     return (
       <section>
         <InputGroup.Row>
@@ -83,7 +83,7 @@ let ApplicationAndroid = React.createClass({
         </InputGroup.Row>
       </section>
     );
-  }
+  },
 });
 
 export default ApplicationAndroid;

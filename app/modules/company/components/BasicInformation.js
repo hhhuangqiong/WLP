@@ -1,10 +1,7 @@
-var debug = require('debug')('app:BasicInformation');
-
 import _ from 'lodash';
 import classNames from 'classnames';
 import moment from 'moment';
 import React, { PropTypes } from 'react';
-
 import Joi from 'joi';
 
 import * as Panel from '../../../main/components/Panel';
@@ -14,32 +11,47 @@ import CountrySelectBox from '../../../main/components/CountrySelectBox';
 
 import config from './../../../main/config';
 
-let { inputDateFormat: DATE_FORMAT } = config;
+const { inputDateFormat: DATE_FORMAT } = config;
 
 // determinant of logo image src
 const imageDataRegex = /^data:.+\/(.+);base64,(.*)$/;
 
-let Timezones = require('../../../data/timezones.json');
+const Timezones = require('../../../data/timezones.json');
 
-let BasicInformation = React.createClass({
-  PropTypes: {
+const BasicInformation = React.createClass({
+  propTypes: {
     parentCompanies: PropTypes.array,
     onDataChange: PropTypes.func.isRequired,
     onDateChange: PropTypes.func.isRequired,
     onLogoChange: PropTypes.func.isRequired,
     onInputBlur: PropTypes.func.isRequired,
     getValidationMessages: PropTypes.func.isRequired,
-    renderHelpText: PropTypes.func.isRequired
+    renderHelpText: PropTypes.func.isRequired,
+    onCountryChange: PropTypes.func.isRequired,
+    parentCompany: PropTypes.string,
+    name: PropTypes.string.isRequired,
+    carrierId: PropTypes.string.isRequired,
+    address: PropTypes.string.isRequired,
+    accountManager: PropTypes.string.isRequired,
+    billCode: PropTypes.string.isRequired,
+    referenceNumber: PropTypes.number.isRequired,
+    contractNumber: PropTypes.number.isRequired,
+    categoryID: PropTypes.number.isRequired,
+    country: PropTypes.string.isRequired,
+    timezone: PropTypes.string.isRequired,
+    expectedServiceDate: PropTypes.string.isRequired,
+    logo: PropTypes.string,
+    reseller: PropTypes.bool,
   },
 
-  getDefaultProps: function() {
+  getDefaultProps() {
     return {
-      parentCompanies: []
+      parentCompanies: [],
     };
   },
 
   // intend to expose this function to parent
-  getValidatorTypes: function() {
+  getValidatorTypes() {
     return {
       companyName: Joi.string().max(30).required().label('company name'),
 
@@ -54,12 +66,12 @@ let BasicInformation = React.createClass({
       contractNumber: Joi.string().allow('').allow(null).max(20).label('contract no.'),
       categoryId: Joi.string().allow('').allow(null).max(20).label('category ID'),
       country: Joi.string().required().label('country'),
-      timezone: Joi.string().required().label('timezone')
+      timezone: Joi.string().required().label('timezone'),
     };
   },
 
   // intend to expose this function to parent
-  getValidatorData: function() {
+  getValidatorData() {
     return {
       companyName: this.props.name,
       carrierId: this.props.carrierId,
@@ -71,7 +83,7 @@ let BasicInformation = React.createClass({
       contractNumber: this.props.contractNumber,
       categoryId: this.props.categoryID,
       country: this.props.country,
-      timezone: this.props.timezone
+      timezone: this.props.timezone,
     };
   },
 
@@ -82,7 +94,7 @@ let BasicInformation = React.createClass({
    * @param carrierId
    * @returns {string}
    */
-  _getServiceType: function(carrierId) {
+  _getServiceType(carrierId) {
     return carrierId && carrierId.indexOf('.m800-api.com') > -1 ? 'sdk' : 'wl';
   },
 
@@ -92,7 +104,7 @@ let BasicInformation = React.createClass({
    *
    * @returns {boolean} isWhiteLabel
    */
-  _isWhiteLabel: function(carrierId) {
+  _isWhiteLabel(carrierId) {
     return this._getServiceType(carrierId) === 'wl';
   },
 
@@ -102,7 +114,7 @@ let BasicInformation = React.createClass({
    *
    * @returns {boolean} isSDK
    */
-  _isSDK: function(carrierId) {
+  _isSDK(carrierId) {
     return this._getServiceType(carrierId) === 'sdk';
   },
 
@@ -110,29 +122,29 @@ let BasicInformation = React.createClass({
    * @method _handleClickOnLogo
    * trigger opening OS file finder by clicking on Logo image
    */
-  _handleClickOnLogo: function() {
+  _handleClickOnLogo() {
     React.findDOMNode(this.refs.logoInput).click();
   },
 
-  _renderParentCompanyOption: function(company) {
+  _renderParentCompanyOption(company) {
     return (
       <option value={company._id}>{company.name}</option>
     );
   },
 
-  _renderTimezoneOption: function(timezone) {
+  _renderTimezoneOption(timezone) {
     return (
       <option value={timezone.value}>{timezone.name}</option>
     );
   },
 
-  _renderCountryOption: function(country) {
+  _renderCountryOption(country) {
     return (
       <option value={country.alpha2}>{country.name}</option>
     );
   },
 
-  _renderLogoImage: function() {
+  _renderLogoImage() {
     let logo;
 
     if (this.props.logo) {
@@ -150,7 +162,7 @@ let BasicInformation = React.createClass({
     );
   },
 
-  render: function() {
+  render() {
     return (
       <Panel.Wrapper>
         <Panel.Header title="basic information" />
@@ -341,7 +353,7 @@ let BasicInformation = React.createClass({
         </Panel.Body>
       </Panel.Wrapper>
     );
-  }
+  },
 });
 
 export default BasicInformation;

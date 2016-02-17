@@ -1,26 +1,36 @@
-var debug = require('debug')('app:Contacts');
-
 import _ from 'lodash';
-import classNames from 'classnames';
-import moment from 'moment';
 import React, { PropTypes } from 'react';
-
 import Joi from 'joi';
 
 import * as Accordion from '../../../main/components/Accordion';
 import * as Panel from '../../../main/components/Panel';
 import * as InputGroup from '../../../main/components/InputGroup';
 
-let Contacts = React.createClass({
-  PropTypes: {
+const Contacts = React.createClass({
+  propTypes: {
     onDataChange: PropTypes.func.isRequired,
     onInputBlur: PropTypes.func.isRequired,
     getValidationMessages: PropTypes.func.isRequired,
-    renderHelpText: PropTypes.func.isRequired
+    renderHelpText: PropTypes.func.isRequired,
+    businessContact: PropTypes.shape({
+      name: PropTypes.string.isRequired,
+      phone: PropTypes.string.isRequired,
+      email: PropTypes.string.isRequired,
+    }),
+    technicalContact: PropTypes.shape({
+      name: PropTypes.string.isRequired,
+      phone: PropTypes.string.isRequired,
+      email: PropTypes.string.isRequired,
+    }),
+    supportContact: PropTypes.shape({
+      name: PropTypes.string.isRequired,
+      phone: PropTypes.string.isRequired,
+      email: PropTypes.string.isRequired,
+    }),
   },
 
   // intend to expose this function to parent
-  getValidatorTypes: function() {
+  getValidatorTypes() {
     return {
       bcName: Joi.string().allow('').max(30).label('business contact name'),
       bcPhone: Joi.string().allow('').min(3).max(20).label('business contact phone'),
@@ -30,12 +40,12 @@ let Contacts = React.createClass({
       tcEmail: Joi.string().allow('').email().label('technical contact email'),
       scName: Joi.string().allow('').max(30).label('support contact name'),
       scPhone: Joi.string().allow('').min(3).max(20).label('support contact phone'),
-      scEmail: Joi.string().allow('').email().label('support contact email')
+      scEmail: Joi.string().allow('').email().label('support contact email'),
     };
   },
 
   // intend to expose this function to parent
-  getValidatorData: function() {
+  getValidatorData() {
     return {
       bcName: this.props.businessContact.name,
       bcPhone: this.props.businessContact.phone,
@@ -45,11 +55,11 @@ let Contacts = React.createClass({
       tcEmail: this.props.technicalContact.email,
       scName: this.props.supportContact.name,
       scPhone: this.props.supportContact.phone,
-      scEmail: this.props.supportContact.email
+      scEmail: this.props.supportContact.email,
     };
   },
 
-  render: function() {
+  render() {
     return (
       <Panel.Wrapper addOn>
         <Panel.Header title="contacts" />
@@ -190,7 +200,7 @@ let Contacts = React.createClass({
         </Panel.Body>
       </Panel.Wrapper>
     );
-  }
+  },
 });
 
 export default Contacts;
