@@ -1,9 +1,6 @@
 import {createStore} from 'fluxible/addons';
-import moment from 'moment';
 
-let debug = require('debug')('app:end-user/stores/EndUsersOverviewStore');
-
-let EndUsersOverviewStore = createStore({
+const EndUsersOverviewStore = createStore({
   storeName: 'EndUsersOverviewStore',
 
   handlers: {

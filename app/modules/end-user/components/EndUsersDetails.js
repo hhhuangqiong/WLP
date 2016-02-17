@@ -1,11 +1,10 @@
 import _ from 'lodash';
 import moment from 'moment';
-import {concurrent} from 'contra';
-
+import { concurrent } from 'contra';
 import React from 'react';
 import { Link } from 'react-router';
-import FluxibleMixin from 'fluxible/addons/FluxibleMixin';
 
+import FluxibleMixin from 'fluxible/addons/FluxibleMixin';
 import AuthMixin from '../../../utils/AuthMixin';
 
 import EndUserStore from '../stores/EndUserStore';
@@ -26,28 +25,16 @@ import EndUserExportForm from './EndUserExportForm';
 import config from './../../../main/config';
 
 const { inputDateFormat: DATE_FORMAT } = config;
-const { pages: { endUser: { pageRec: PAGE_REC } } } = config;
 
 // See: https://issuetracking.maaii.com:9443/display/MAAIIP/MUMS+User+Management+by+Carrier+HTTP+API
 // page = 0 1st page
 const INITIAL_PAGE_NUMBER = 0;
 const MONTHS_BEFORE_TODAY = 1;
 
-function getInitialQueryFromURL(params, query = {}) {
-  return {
-    carrierId: params.identity,
-    startDate: query.startDate,
-    endDate: query.endDate,
-    bundleId: query.bundleId,
-    status: query.status,
-    page: query.page
-  };
-}
-
-var EndUsers = React.createClass({
+const EndUsers = React.createClass({
   contextTypes: {
     executeAction: React.PropTypes.func.isRequired,
-    router: React.PropTypes.func.isRequired
+    router: React.PropTypes.func.isRequired,
   },
 
   mixins: [FluxibleMixin, AuthMixin],
@@ -55,15 +42,29 @@ var EndUsers = React.createClass({
   statics: {
     storeListeners: [EndUserStore],
 
-    fetchData: function(context, params, query, done) {
+    fetchData(context, params, query, done) {
       concurrent([
-        context.executeAction.bind(context, clearEndUsers)
-      ], done || function() {});
-    }
+        context.executeAction.bind(context, clearEndUsers),
+      ], done || () => {});
+    },
   },
 
-  getInitialState: function() {
+  getInitialState() {
     return _.merge(_.clone(this.getDefaultQuery()), this.getRequestBodyFromQuery(), this.getStateFromStores());
+  },
+
+  componentDidMount() {
+    this.executeAction(fetchEndUsers, _.merge(_.clone(this.getDefaultQuery()), this.getRequestBodyFromState(), this.getStateFromStores()));
+  },
+
+  componentDidUpdate(prevProps, prevState) {
+    // @TODO should not update userList here, need to change it later or perhaps call within `fetchData`?
+    this.loadUserList(prevState);
+  },
+
+  onChange() {
+    this.setState(this.getStateFromStores());
+    this.loadFirstUserDetail();
   },
 
   getDefaultQuery() {
@@ -71,145 +72,12 @@ var EndUsers = React.createClass({
       carrierId: null,
       startDate: moment().startOf('day').subtract(MONTHS_BEFORE_TODAY, 'month').format(DATE_FORMAT),
       endDate: moment().endOf('day').format(DATE_FORMAT),
-      page: INITIAL_PAGE_NUMBER
+      page: INITIAL_PAGE_NUMBER,
     };
   },
 
-  componentDidMount: function() {
-    this.executeAction(fetchEndUsers, _.merge(_.clone(this.getDefaultQuery()), this.getRequestBodyFromState(), this.getStateFromStores()));
-  },
-
-  componentDidUpdate: function(prevProps, prevState) {
-    // @TODO should not update userList here, need to change it later or perhaps call within `fetchData`?
-    this.loadUserList(prevState);
-  },
-
-  loadFirstUserDetail: function() {
-    let users = this.getStore(EndUserStore).getDisplayUsers();
-    let currentUser = this.getStore(EndUserStore).getCurrentUser();
-    if (!_.isEmpty(users) && _.isEmpty(currentUser)) {
-      let {username} = users[0];
-      this.handleUserClick(username);
-    }
-  },
-
-  loadUserList: function(prevState) {
-    let prevStartDate = prevState.startDate;
-    let prevEndDate = prevState.endDate;
-    let nextStartDate = this.getRequestBodyFromQuery().startDate;
-    let nextEndDate = this.getRequestBodyFromQuery().endDate;
-    if ( nextStartDate && nextEndDate && (prevStartDate !== nextStartDate || prevEndDate !== nextEndDate) ) {
-      this.executeAction(fetchEndUsers, _.merge(_.clone(this.getDefaultQuery()), this.getRequestBodyFromState(), this.getRequestBodyFromQuery()));
-    }
-  },
-
-  getRequestBodyFromQuery: function(query) {
-    let { startDate, endDate, page } = query || this.context.router.getCurrentQuery();
-    return { startDate, endDate, page };
-  },
-
-  getRequestBodyFromState: function() {
-    let { identity } = this.context.router.getCurrentParams();
-    let { startDate, endDate, page } = this.state;
-    return { carrierId: identity, startDate, endDate, page };
-  },
-
-  getStateFromStores: function() {
-    return {
-      page: this.getStore(EndUserStore).getPage(),
-      hasNextPage: this.getStore(EndUserStore).getHasNextPage(),
-      currentUser: this.context.router.getCurrentParams.username ? this.getStore(EndUserStore).getCurrentUser() : null
-    };
-  },
-
-  onChange: function() {
-    this.setState(this.getStateFromStores());
-    this.loadFirstUserDetail();
-  },
-
-  /**
-   * handleQueryChange
-   * this is for changes in either startDate/formTime or endDate/toTime
-   * upon query changes, the data in store should be cleared
-   *
-   * @param newQuery Object
-   */
-  handleQueryChange: function(newQuery) {
-    let routeName = _.last(this.context.router.getCurrentRoutes()).name;
-    let params = this.context.router.getCurrentParams();
-    let query = _.merge(this.getRequestBodyFromQuery(), this.getRequestBodyFromState(), newQuery);
-
-    this.context.router.transitionTo(routeName, params, _.omit(query, function(value) {
-      return !value;
-    }));
-  },
-
-  handleStartDateChange: function(momentDate) {
-    let date = moment(momentDate).format(DATE_FORMAT);
-    this.setState({ startDate: date });
-    this.handleQueryChange({ startDate: date, page: INITIAL_PAGE_NUMBER });
-  },
-
-  handleEndDateChange: function(momentDate) {
-    let date = moment(momentDate).format(DATE_FORMAT);
-    this.setState({ endDate: date });
-    this.handleQueryChange({ endDate: date, page: INITIAL_PAGE_NUMBER });
-  },
-
-  handleShowNextPage: function() {
-    this.context.executeAction(showNextPage);
-
-    if (this.getStore(EndUserStore).getNeedMoreData()) {
-      let params = this.context.router.getCurrentParams();
-      this.context.executeAction(fetchEndUsers, {
-        carrierId: params.identity,
-        startDate: this.state.startDate,
-        endDate: this.state.endDate,
-        page: this.state.page + 1
-      });
-    }
-  },
-
-  handleUserClick: function(username) {
-    let { identity: carrierId } = this.context.router.getCurrentParams();
-
-    this.context.executeAction(fetchEndUser, {
-      carrierId: carrierId,
-      username: username
-    });
-  },
-
-  handleBundleIdChange: function(e) {
-    let query = { bundleId: e.target.value };
-    this.setState(query);
-  },
-
-  handleStatusChange: function(e) {
-    let query = { status: e.target.value };
-    this.setState(query);
-  },
-
-  applyFilters: function(users) {
-    if (this.state.bundleId) {
-      users = _.filter(users, (user)=> {
-        let device = _.get(user, 'devices.0') || {};
-        return device.appBundleId === this.state.bundleId;
-      });
-    }
-    if (this.state.status) {
-      users = _.filter(users, (user)=> {
-        return user.accountStatus === this.state.status;
-      });
-    }
-    return users;
-  },
-
-  _checkHasNext: function() {
-    return this.state.hasNextPage || this.getStore(EndUserStore).getTotalDisplayUsers() < this.getStore(EndUserStore).getTotalUsers();
-  },
-
-  render: function() {
-    let { role, identity } = this.context.router.getCurrentParams();
+  render() {
+    const { role, identity } = this.context.router.getCurrentParams();
 
     return (
       <div className="row">
@@ -272,7 +140,128 @@ var EndUsers = React.createClass({
         </div>
       </div>
     );
-  }
+  },
+
+  loadFirstUserDetail() {
+    const users = this.getStore(EndUserStore).getDisplayUsers();
+    const currentUser = this.getStore(EndUserStore).getCurrentUser();
+
+    if (!_.isEmpty(users) && _.isEmpty(currentUser)) {
+      const { username } = users[0];
+      this.handleUserClick(username);
+    }
+  },
+
+  loadUserList(prevState) {
+    const prevStartDate = prevState.startDate;
+    const prevEndDate = prevState.endDate;
+    const nextStartDate = this.getRequestBodyFromQuery().startDate;
+    const nextEndDate = this.getRequestBodyFromQuery().endDate;
+
+    if ( nextStartDate && nextEndDate && (prevStartDate !== nextStartDate || prevEndDate !== nextEndDate) ) {
+      this.executeAction(fetchEndUsers, _.merge(_.clone(this.getDefaultQuery()), this.getRequestBodyFromState(), this.getRequestBodyFromQuery()));
+    }
+  },
+
+  getRequestBodyFromQuery(query) {
+    const { startDate, endDate, page } = query || this.context.router.getCurrentQuery();
+    return { startDate, endDate, page };
+  },
+
+  getRequestBodyFromState() {
+    const { identity } = this.context.router.getCurrentParams();
+    const { startDate, endDate, page } = this.state;
+    return { carrierId: identity, startDate, endDate, page };
+  },
+
+  getStateFromStores() {
+    return {
+      page: this.getStore(EndUserStore).getPage(),
+      hasNextPage: this.getStore(EndUserStore).getHasNextPage(),
+      currentUser: this.context.router.getCurrentParams.username ? this.getStore(EndUserStore).getCurrentUser() : null,
+    };
+  },
+
+  /**
+   * handleQueryChange
+   * this is for changes in either startDate/formTime or endDate/toTime
+   * upon query changes, the data in store should be cleared
+   *
+   * @param newQuery Object
+   */
+  handleQueryChange(newQuery) {
+    const routeName = _.last(this.context.router.getCurrentRoutes()).name;
+    const params = this.context.router.getCurrentParams();
+    const query = _.merge(this.getRequestBodyFromQuery(), this.getRequestBodyFromState(), newQuery);
+
+    this.context.router.transitionTo(routeName, params, _.omit(query, function(value) {
+      return !value;
+    }));
+  },
+
+  handleStartDateChange(momentDate) {
+    const date = moment(momentDate).format(DATE_FORMAT);
+    this.setState({ startDate: date });
+    this.handleQueryChange({ startDate: date, page: INITIAL_PAGE_NUMBER });
+  },
+
+  handleEndDateChange(momentDate) {
+    const date = moment(momentDate).format(DATE_FORMAT);
+    this.setState({ endDate: date });
+    this.handleQueryChange({ endDate: date, page: INITIAL_PAGE_NUMBER });
+  },
+
+  handleShowNextPage() {
+    this.context.executeAction(showNextPage);
+
+    if (this.getStore(EndUserStore).getNeedMoreData()) {
+      const params = this.context.router.getCurrentParams();
+
+      this.context.executeAction(fetchEndUsers, {
+        carrierId: params.identity,
+        startDate: this.state.startDate,
+        endDate: this.state.endDate,
+        page: this.state.page + 1,
+      });
+    }
+  },
+
+  handleUserClick(username) {
+    const { identity: carrierId } = this.context.router.getCurrentParams();
+
+    this.context.executeAction(fetchEndUser, {
+      carrierId: carrierId,
+      username: username,
+    });
+  },
+
+  handleBundleIdChange(e) {
+    this.setState({ bundleId: e.target.value });
+  },
+
+  handleStatusChange(e) {
+    this.setState({ status: e.target.value });
+  },
+
+  applyFilters(users) {
+    if (this.state.bundleId) {
+      users = _.filter(users, user => {
+        const device = _.get(user, 'devices.0') || {};
+        return device.appBundleId === this.state.bundleId;
+      });
+    }
+
+    if (this.state.status) {
+      users = _.filter(users, user => {
+        return user.accountStatus === this.state.status;
+      });
+    }
+    return users;
+  },
+
+  _checkHasNext() {
+    return this.state.hasNextPage || this.getStore(EndUserStore).getTotalDisplayUsers() < this.getStore(EndUserStore).getTotalUsers();
+  },
 });
 
 export default EndUsers;

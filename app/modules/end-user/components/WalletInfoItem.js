@@ -1,17 +1,27 @@
-import React from 'react';
+import React, { PropTypes } from 'react';
 import moment from 'moment';
 import classNames from 'classnames';
+
 import currencyData from '../../../data/bossCurrencies.json';
+import Converter from  '../../../utils/bossCurrencyConverter';
 
-let Converter = require('../../../utils/bossCurrencyConverter');
-let CurrencyConverter = new Converter(currencyData);
+const CurrencyConverter = new Converter(currencyData);
 
-var WalletItem = React.createClass({
-  render: function() {
-    let currency = CurrencyConverter.getCurrencyById(this.props.wallet.currency);
-    let expiryDate = moment(this.props.wallet.expiryDate, 'yyyymmddhh24miss').isValid() ?
+const WalletItem = React.createClass({
+  propTypes: {
+    wallet: PropTypes.shape({
+      currency: PropTypes.string.isRequired,
+      expiryDate: PropTypes.string.isRequired,
+      lastTopupDate: PropTypes.string.isRequired,
+      walletType: PropTypes.string.isRequired,
+    }),
+  },
+
+  render() {
+    const currency = CurrencyConverter.getCurrencyById(this.props.wallet.currency);
+    const expiryDate = moment(this.props.wallet.expiryDate, 'yyyymmddhh24miss').isValid() ?
       moment(this.props.wallet.expiryDate, 'yyyymmddhh24miss').format('MMMM DD, YYYY h:mm:ss a') : 'N/A';
-    let lastTopUpDate = moment(this.props.wallet.lastTopupDate, 'yyyymmddhh24miss').isValid() ?
+    const lastTopUpDate = moment(this.props.wallet.lastTopupDate, 'yyyymmddhh24miss').isValid() ?
       moment(this.props.wallet.lastTopupDate, 'yyyymmddhh24miss').format('MMMM DD,YYYY h:mm:ss a') : 'N/A';
 
     return (
@@ -35,9 +45,9 @@ var WalletItem = React.createClass({
                     <span className="wallet-item--label">expiration date</span>
                   </div>
                   <div className="right">
-                <span className="wallet-item--label--bold">
-                  {expiryDate}
-                </span>
+                    <span className="wallet-item--label--bold">
+                      {expiryDate}
+                    </span>
                   </div>
                 </div>
               ) : null
@@ -60,7 +70,7 @@ var WalletItem = React.createClass({
         </div>
       </div>
     );
-  }
+  },
 });
 
 export default WalletItem;

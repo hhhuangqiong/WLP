@@ -3,18 +3,19 @@ import React, { PropTypes } from 'react';
 /**
  * The right side panel used to display details about the selected entity (company, user and so on)
  */
-var InfoPanel = React.createClass({
-  PropTypes: {
-    title: PropTypes.string
+const InfoPanel = React.createClass({
+  propTypes: {
+    title: PropTypes.string,
+    children: PropTypes.element.isRequired,
   },
 
-  getDefaultProps: function() {
+  getDefaultProps() {
     return {
-      title: 'User'
+      title: 'User',
     };
   },
 
-  render: function() {
+  render() {
     return (
       <div className="panel panel--addon">
         <div className="row">
@@ -31,7 +32,7 @@ var InfoPanel = React.createClass({
         </div>
       </div>
     );
-  }
+  },
 });
 
 export default InfoPanel;

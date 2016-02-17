@@ -1,18 +1,21 @@
-import React from 'react';
+import React, { PropTypes } from 'react';
 import classNames from 'classnames';
 
-var InfoBlock = React.createClass({
-  getInitialState: function() {
+const InfoBlock = React.createClass({
+  propTypes: {
+    title: PropTypes.string.isRequired,
+    hasIndicator: PropTypes.bool.isRequired,
+    verified: PropTypes.bool.isRequired,
+    children: PropTypes.element.isRequired,
+  },
+
+  getInitialState() {
     return {
-      isCollapsed: false
+      isCollapsed: false,
     };
   },
-  _toggleIsCollapsed: function() {
-    this.setState({
-      isCollapsed: !this.state.isCollapsed
-    });
-  },
-  render: function() {
+
+  render() {
     return (
       <li className="accordion__item">
         <If condition={this.props.title}>
@@ -34,7 +37,13 @@ var InfoBlock = React.createClass({
         </div>
       </li>
     );
-  }
+  },
+
+  _toggleIsCollapsed() {
+    this.setState({
+      isCollapsed: !this.state.isCollapsed,
+    });
+  },
 });
 
 export default InfoBlock;

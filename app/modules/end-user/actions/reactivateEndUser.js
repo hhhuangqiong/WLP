@@ -10,5 +10,5 @@ export default actionCreator('REACTIVATE_END_USER', 'reactivateEndUser', {
 
     context.dispatch('REACTIVATE_END_USER_SUCCESS', result);
     context.dispatch('INFO_MESSAGE', { message: 'User activated' });
-  }
+  },
 });

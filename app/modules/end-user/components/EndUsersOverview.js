@@ -224,9 +224,9 @@ const EndUsersOverview = React.createClass({
   },
 
   getLastUpdateFromTimeFrame() {
-    let timeframe = this.state.selectedLastXDays;
+    const timeframe = this.state.selectedLastXDays;
     const { to, timescale } = parseTimeRange(timeframe);
-    let lastUpdate = timescale === 'hour' ? moment(to).format(LAST_UPDATE_TIME_FORMAT) : moment(to).endOf(timescale).format(LAST_UPDATE_TIME_FORMAT);
+    const lastUpdate = timescale === 'hour' ? moment(to).format(LAST_UPDATE_TIME_FORMAT) : moment(to).endOf(timescale).format(LAST_UPDATE_TIME_FORMAT);
     return `Data updated till: ${lastUpdate}`;
   },
 
@@ -617,16 +617,13 @@ const EndUsersOverview = React.createClass({
     });
   },
 
-  _getDeviceStats(lastXDays) {
+  _getDeviceStats() {
     const { identity } = this.context.router.getCurrentParams();
-    const timeRange = lastXDays || this.state.selectedLastXDays;
-
-    const { from, to, timescale } = parseTimeRange(timeRange);
 
     this.context.executeAction(fetchDeviceStats, {
       fromTime: moment().startOf('day').format('x'),
       toTime: moment().endOf('day').format('x'),
-      carrierId: identity
+      carrierId: identity,
     });
   },
 

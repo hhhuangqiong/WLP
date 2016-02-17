@@ -1,11 +1,11 @@
 import _ from 'lodash';
-import moment from 'moment';
-import {createStore} from 'fluxible/addons';
+import { createStore } from 'fluxible/addons';
+
 import config from './../../../main/config';
 
-let { pages: { endUser: { pageRec: PAGE_REC } } } = config;
+const { pages: { topUp: { pageRec: PAGE_REC } } } = config;
 
-var EndUserStore = createStore({
+const EndUserStore = createStore({
   storeName: 'EndUserStore',
 
   handlers: {
@@ -18,10 +18,10 @@ var EndUserStore = createStore({
     FETCH_END_USERS_FAILURE: 'handleFetchEndUsersFailure',
     FETCH_END_USER_WALLET_SUCCESS: 'handleFetchEndUserWallet',
     FETCH_END_USER_WALLET_FAILURE: 'handleFetchEndUserWalletFailure',
-    SHOW_NEXT_PAGE: 'handleShowNextPage'
+    SHOW_NEXT_PAGE: 'handleShowNextPage',
   },
 
-  initialize: function() {
+  initialize() {
     this.users = [];
     this.displayUsers = [];
     this.currentUser = null;
@@ -31,19 +31,19 @@ var EndUserStore = createStore({
     this.currentPage = 1;
   },
 
-  _getStartIndex: function() {
+  _getStartIndex() {
     return _.max([(+this.currentPage - 1), 0]) * +this.pageRec;
   },
 
-  _getLastIndex: function() {
+  _getLastIndex() {
     return +this.pageRec * +this.currentPage;
   },
 
-  _getDisplayUsers: function() {
+  _getDisplayUsers() {
     return this.users.slice(this._getStartIndex(), this._getLastIndex());
   },
 
-  handleShowNextPage: function() {
+  handleShowNextPage() {
     this.currentPage = +this.currentPage + 1;
 
     // in case we need more data,
@@ -54,11 +54,11 @@ var EndUserStore = createStore({
     }
   },
 
-  handleClearEndUsers: function() {
+  handleClearEndUsers() {
     this.initialize();
   },
 
-  handleEndUsersChange: function(payload) {
+  handleEndUsersChange(payload) {
     this.users = this.users.concat(payload.userList);
     this.displayUsers = this.displayUsers.concat(this._getDisplayUsers());
     this.hasNextPage = payload.hasNextPage;
@@ -66,32 +66,32 @@ var EndUserStore = createStore({
     this.emitChange();
   },
 
-  handleEndUserChange: function(payload) {
+  handleEndUserChange(payload) {
     this.currentUser = payload;
     this.emitChange();
   },
 
-  handleFetchEndUserWallet: function(payload) {
+  handleFetchEndUserWallet(payload) {
     this.currentUser.wallets = payload;
     this.emitChange();
   },
 
-  handleFetchEndUserWalletFailure: function() {
+  handleFetchEndUserWalletFailure() {
     this.currentUser.wallets = [];
     this.emitChange();
   },
 
-  handleEndUserDeactivate: function(payload) {
+  handleEndUserDeactivate(payload) {
     this.currentUser.userDetails.accountStatus = payload.userState;
     this.emitChange();
   },
 
-  handleEndUserReactivate: function(payload) {
+  handleEndUserReactivate(payload) {
     this.currentUser.userDetails.accountStatus = payload.userState;
     this.emitChange();
   },
 
-  handleEndUserDelete: function(payload) {
+  handleEndUserDelete(payload) {
     _.remove(this.displayUsers, function(user) {
       return user.username === payload.username;
     });
@@ -104,57 +104,57 @@ var EndUserStore = createStore({
     this.emitChange();
   },
 
-  handleFetchEndUsersFailure: function() {
+  handleFetchEndUsersFailure() {
     this.flush();
     this.emitChange();
   },
 
-  getUsers: function() {
+  getUsers() {
     return this.users;
   },
 
-  getDisplayUsers: function() {
+  getDisplayUsers() {
     return this.displayUsers;
   },
 
-  getCurrentUser: function() {
+  getCurrentUser() {
     return this.currentUser;
   },
 
-  getPage: function() {
+  getPage() {
     return this.page;
   },
 
-  getHasNextPage: function() {
+  getHasNextPage() {
     return this.hasNextPage;
   },
 
-  getCurrentPage: function() {
+  getCurrentPage() {
     return this.currentPage;
   },
 
-  getTotalUsers: function() {
+  getTotalUsers() {
     return this.users.length;
   },
 
-  getTotalDisplayUsers: function() {
+  getTotalDisplayUsers() {
     return this.displayUsers.length;
   },
 
   getBundleIds() {
-    let usersWithBundleId = this.users.filter(u => _.get(u, 'devices[0].appBundleId'));
+    const usersWithBundleId = this.users.filter(u => _.get(u, 'devices[0].appBundleId'));
     return usersWithBundleId.map(u => u.appBundleId);
   },
 
-  getNeedMoreData: function() {
+  getNeedMoreData() {
     return this.displayUsers.length === this.users.length;
   },
 
-  flush: function() {
+  flush() {
     this.initialize();
   },
 
-  dehydrate: function() {
+  dehydrate() {
     return {
       users: this.users,
       displayUsers: this.displayUsers,
@@ -162,11 +162,11 @@ var EndUserStore = createStore({
       hasNextPage: this.hasNextPage,
       page: this.page,
       pageRec: this.pageRec,
-      currentPage: this.currentPage
+      currentPage: this.currentPage,
     };
   },
 
-  rehydrate: function(state) {
+  rehydrate(state) {
     this.users = state.users;
     this.displayUsers = state.displayUsers;
     this.currentUser = state.currentUser;
@@ -174,7 +174,7 @@ var EndUserStore = createStore({
     this.page = state.page;
     this.pageRec = state.pageRec;
     this.currentPage = state.currentPage;
-  }
+  },
 });
 
 export default EndUserStore;

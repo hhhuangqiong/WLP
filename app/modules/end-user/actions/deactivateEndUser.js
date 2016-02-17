@@ -10,5 +10,5 @@ export default actionCreator('DEACTIVATE_END_USER', 'deactivateEndUser', {
 
     context.dispatch('DEACTIVATE_END_USER_SUCCESS', result);
     context.dispatch('INFO_MESSAGE', { message: 'User deactivated' });
-  }
+  },
 });

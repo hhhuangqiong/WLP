@@ -1,13 +1,10 @@
-import {createStore} from 'fluxible/addons';
-import moment from 'moment';
+import { createStore } from 'fluxible/addons';
 
-let debug = require('debug')('app:end-user/stores/EndUsersOverviewStore');
-
-let EndUsersRegistrationStatsStore = createStore({
+const EndUsersRegistrationStatsStore = createStore({
   storeName: 'EndUsersRegistrationStatsStore',
 
   handlers: {
-    FETCH_END_USERS_REGISTRATION_STATS_SUCCESS: 'handleEndUserRegistrationStats'
+    FETCH_END_USERS_REGISTRATION_STATS_SUCCESS: 'handleEndUserRegistrationStats',
   },
 
   initialize() {
@@ -37,21 +34,21 @@ let EndUsersRegistrationStatsStore = createStore({
   getState() {
     return {
       lastXDaysRegisteredUser: this.lastXDaysRegisteredUser,
-      lastXDaysActiveUser: this.lastXDaysActiveUser
+      lastXDaysActiveUser: this.lastXDaysActiveUser,
     };
   },
 
   dehydrate() {
     return {
       lastXDaysRegisteredUser: this.lastXDaysRegisteredUser,
-      lastXDaysActiveUser: this.lastXDaysActiveUser
+      lastXDaysActiveUser: this.lastXDaysActiveUser,
     };
   },
 
   rehydrate(state) {
     this.lastXDaysRegisteredUser = state.lastXDaysRegisteredUser;
     this.lastXDaysActiveUser = state.lastXDaysActiveUser;
-  }
+  },
 });
 
 export default EndUsersRegistrationStatsStore;

@@ -1,13 +1,15 @@
 import React, { PropTypes } from 'react';
 import classNames from 'classnames';
 
-var InfoItem = React.createClass({
-  PropTypes: {
+const InfoItem = React.createClass({
+  propTypes: {
     label: PropTypes.string,
-    capitalze: PropTypes.boolean
+    capitalze: PropTypes.bool,
+    capitalize: PropTypes.bool,
+    children: PropTypes.element.isRequired,
   },
 
-  render: function() {
+  render() {
     return (
       <div className="row">
         <div className="large-24 columns">
@@ -22,7 +24,7 @@ var InfoItem = React.createClass({
         </div>
       </div>
     );
-  }
+  },
 });
 
 export default InfoItem;

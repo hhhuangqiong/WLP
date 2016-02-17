@@ -11,7 +11,7 @@ const INACTIVE_ACCOUNT_LABEL = 'Inactive';
 const EndUserTable = React.createClass({
   propTypes: {
     users: PropTypes.array,
-    hasNext: PropTypes.boolean,
+    hasNext: PropTypes.bool,
     onUserClick: PropTypes.func,
     onPageChange: PropTypes.func.isRequired,
     currentUser: PropTypes.object.isRequired,

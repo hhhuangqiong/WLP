@@ -1,7 +1,7 @@
 import _ from 'lodash';
 import moment from 'moment';
 
-import React from 'react';
+import React, { PropTypes } from 'react';
 import classNames from 'classnames';
 
 import AuthMixin from '../../../utils/AuthMixin';
@@ -23,6 +23,14 @@ import { getCountryName } from '../../../utils/StringFormatter';
 const EMPTY_STRING = 'N/A';
 
 const EndUserProfile = React.createClass({
+  propTypes: {
+    user: PropTypes.shape({
+      userDetails: PropTypes.shape({
+        username: PropTypes.string.isRequired,
+      }),
+    }),
+  },
+
   contextTypes: {
     executeAction: React.PropTypes.func.isRequired,
     router: React.PropTypes.func.isRequired,
@@ -37,21 +45,6 @@ const EndUserProfile = React.createClass({
     return { carrierId, username };
   },
 
-  handleSuspendClick() {
-    this.context.executeAction(deactivateEndUser, this.getParams());
-  },
-
-  handleReactivateClick() {
-    this.context.executeAction(reactivateEndUser, this.getParams());
-  },
-
-  handleRefreshButtonClick() {
-    this.context.executeAction(fetchWallet, this.getParams());
-  },
-
-  checkPlatformOS(platform, matchOS) {
-    return (platform) ? platform.toLowerCase() === matchOS : false;
-  },
 
   renderWalletPanel() {
     let wallets = (
@@ -70,14 +63,14 @@ const EndUserProfile = React.createClass({
 
     if (this.props.user.wallets && this.props.user.wallets.length > 0) {
       // create an overview wallet
-      let overviewWallet = {
+      const overviewWallet = {
         walletType: 'overview',
         // assume the currency are consistent between free & paid wallet
         currency: _.first(this.props.user.wallets).currency,
-        balance: 0
+        balance: 0,
       };
 
-      this.props.user.wallets.map((wallet) => {
+      this.props.user.wallets.map(wallet => {
         overviewWallet.balance += +wallet.balance;
         // the business logic saying that the expiry date
         // would always be the same, pick the latter one
@@ -192,6 +185,22 @@ const EndUserProfile = React.createClass({
         </Panel.Wrapper>
       </If>
     );
+  },
+
+  handleSuspendClick() {
+    this.context.executeAction(deactivateEndUser, this.getParams());
+  },
+
+  handleReactivateClick() {
+    this.context.executeAction(reactivateEndUser, this.getParams());
+  },
+
+  handleRefreshButtonClick() {
+    this.context.executeAction(fetchWallet, this.getParams());
+  },
+
+  checkPlatformOS(platform, matchOS) {
+    return (platform) ? platform.toLowerCase() === matchOS : false;
   },
 });
 
