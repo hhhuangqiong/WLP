@@ -997,7 +997,8 @@ let getCallUserStatsMonthly = function(req, res) {
         logger.debug('cache data is found on redis with key %s and key %s', currentMonthStatKey, lastMonthStatKey);
 
         return res.json({
-          thisMonthCallUser, lastMonthCallUser
+          thisMonthCallUser: parseInt(thisMonthCallUser),
+          lastMonthCallUser: parseInt(lastMonthCallUser),
         });
       }
 
