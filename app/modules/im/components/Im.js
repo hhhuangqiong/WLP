@@ -1,10 +1,10 @@
 import _ from 'lodash';
 import moment from 'moment';
-import {concurrent} from 'contra';
+import { concurrent } from 'contra';
 import classNames from 'classnames';
 
 import React from 'react';
-import {Link} from 'react-router';
+import { Link } from 'react-router';
 import FluxibleMixin from 'fluxible/addons/FluxibleMixin';
 import DatePicker from 'react-datepicker';
 
@@ -21,16 +21,16 @@ import Searchbox from '../../../main/components/Searchbox';
 import Export from '../../../main/file-export/components/Export';
 import ImExportForm from './ImExportForm';
 
-var config = require('../../../config');
+import config from '../../../config';
 
 const searchTypes = [
   { name: 'Sender', value: 'sender' },
-  { name: 'Recipient', value: 'recipient' }
+  { name: 'Recipient', value: 'recipient' },
 ];
 
-var Im = React.createClass({
+const Im = React.createClass({
   contextTypes: {
-    router: React.PropTypes.func.isRequired
+    router: React.PropTypes.func.isRequired,
   },
 
   mixins: [FluxibleMixin, AuthMixin],
@@ -38,7 +38,7 @@ var Im = React.createClass({
   statics: {
     storeListeners: [ImStore],
 
-    fetchData: function(context, params, query, done) {
+    fetchData(context, params, query, done) {
       concurrent([
         context.executeAction.bind(context, fetchIm, {
           carrierId: params.identity,
@@ -49,22 +49,33 @@ var Im = React.createClass({
           search: query.search,
           size: config.PAGES.IMS.PAGE_SIZE,
           // The page number, starting from 0, defaults to 0 if not specified.
-          page: query.page || 0
-        })
-      ], done || function() {});
-    }
+          page: query.page || 0,
+        }),
+      ], done || () => {});
+    },
   },
 
-  getStateFromStores: function() {
+  getInitialState() {
+    const defaultSearchType = _.first(searchTypes);
+    const query = _.merge(this.getDefaultQuery(), this.context.router.getCurrentQuery(), { searchType: defaultSearchType.value });
+    return _.merge(this.getStateFromStores(), query);
+  },
+
+  onChange() {
+    const query = _.merge(this.getDefaultQuery(), this.context.router.getCurrentQuery());
+    this.setState(_.merge(query, this.getStateFromStores()));
+  },
+
+  getStateFromStores() {
     return {
       ims: this.getStore(ImStore).getIMs(),
       imsCount: this.getStore(ImStore).getIMsCount(),
       page: this.getStore(ImStore).getPageNumber(),
-      totalPages: this.getStore(ImStore).getTotalPages()
+      totalPages: this.getStore(ImStore).getTotalPages(),
     };
   },
 
-  getDefaultQuery: function() {
+  getDefaultQuery() {
     return {
       // The page number, starting from 0, defaults to 0 if not specified.
       page: 0,
@@ -73,22 +84,11 @@ var Im = React.createClass({
       toTime: moment().endOf('day').format('L'),
       type: '',
       search: '',
-      searchType: ''
+      searchType: '',
     };
   },
 
-  getInitialState: function() {
-    let defaultSearchType = _.first(searchTypes);
-    let query = _.merge(this.getDefaultQuery(), this.context.router.getCurrentQuery(), { searchType: defaultSearchType.value });
-    return _.merge(this.getStateFromStores(), query);
-  },
-
-  onChange: function() {
-    let query = _.merge(this.getDefaultQuery(), this.context.router.getCurrentQuery());
-    this.setState(_.merge(query, this.getStateFromStores()));
-  },
-
-  getQueryFromState: function() {
+  getQueryFromState() {
     return {
       fromTime: this.state.fromTime,
       toTime: this.state.toTime,
@@ -96,11 +96,11 @@ var Im = React.createClass({
       search: this.state.search && this.state.search.trim(),
       page: 0,
       size: config.PAGES.IMS.PAGE_SIZE,
-      type: this.state.type && this.state.type.trim()
+      type: this.state.type && this.state.type.trim(),
     };
   },
 
-  getDefaultMessageTypes: function() {
+  getDefaultMessageTypes() {
     return [
       {title: 'Text', value: 'text'},
       {title: 'Image', value: 'image'},
@@ -110,86 +110,17 @@ var Im = React.createClass({
       {title: 'Animation', value: 'animation'},
       {title: 'Sticker', value: 'sticker'},
       {title: 'Voice Sticker', value: 'voice_sticker'},
-      {title: 'Ephemeral Image', value: 'ephemeral_image'}
+      {title: 'Ephemeral Image', value: 'ephemeral_image'},
     ];
   },
 
-  handleQueryChange: function(newQuery) {
-    let routeName = _.last(this.context.router.getCurrentRoutes()).name;
-    let params = this.context.router.getCurrentParams();
-    let query = _.merge(this.context.router.getCurrentQuery(), this.getQueryFromState(), newQuery);
-
-    this.context.router.transitionTo(routeName, params, _.omit(query, function(value, key) {
-      return !value || key === 'page' || key === 'size';
-    }));
-  },
-
-  handlePageChange: function() {
-    let { identity } = this.context.router.getCurrentParams();
-
-    this.context.executeAction(fetchMoreIms, {
-      carrierId: identity,
-      fromTime: this.state.fromTime,
-      toTime: this.state.toTime,
-      page: this.state.page,
-      size: config.PAGES.IMS.PAGE_SIZE,
-      type: this.state.type,
-      search: this.state.search,
-      searchType: this.state.searchType
-    });
-  },
-
-  handleStartDateChange: function(momentDate) {
-    let date = moment(momentDate).format('L');
-    this.handleQueryChange({ fromTime: date, page: 0 });
-  },
-
-  handleEndDateChange: function(momentDate) {
-    let date = moment(momentDate).format('L');
-    this.handleQueryChange({ toTime: date, page: 0 });
-  },
-
-  handleTypeChange: function(e) {
-    e.preventDefault();
-    let type = e.target.value;
-    let _type = this.state.type !== type ? type : null;
-    this.handleQueryChange({ type: _type });
-  },
-
-  getOptKey: function(messageType) {
+  getOptKey(messageType) {
     return `messageType-${messageType.value}`;
   },
 
-  handleSearchChange: function(e) {
-    let search = e.target.value;
-    this.setState({ search: search });
-
-    if (e.which === 13) {
-      this.handleQueryChange({ search: search });
-    }
-  },
-
-  handleSearchTypeChange: function(e) {
-    let searchType = e.target.value;
-    this.setState({ searchType: searchType });
-
-    // only submit change if search input isn't empty
-    if (this.state.search) {
-      this.handleQueryChange({ searchType: searchType });
-    }
-  },
-
-  _handleStartDateClick: function() {
-    this.refs.startDatePicker.handleFocus();
-  },
-
-  _handleEndDateClick: function() {
-    this.refs.endDatePicker.handleFocus();
-  },
-
-  render: function() {
-    let params = this.context.router.getCurrentParams();
-    let query = this.context.router.getCurrentQuery();
+  render() {
+    const params = this.context.router.getCurrentParams();
+    const query = this.context.router.getCurrentQuery();
 
     return (
       <div className="row">
@@ -272,7 +203,7 @@ var Im = React.createClass({
           <ImTable
             ims={this.state.ims}
             totalRec={this.state.imsCount}
-            page={parseInt(this.state.page)}
+            page={parseInt(this.state.page, 10)}
             pageRec={this.state.size}
             totalPages={this.state.totalPages}
             onDataLoad={this.handlePageChange}
@@ -280,7 +211,76 @@ var Im = React.createClass({
         </div>
       </div>
     );
-  }
+  },
+
+  handleQueryChange(newQuery) {
+    const routeName = _.last(this.context.router.getCurrentRoutes()).name;
+    const params = this.context.router.getCurrentParams();
+    const query = _.merge(this.context.router.getCurrentQuery(), this.getQueryFromState(), newQuery);
+
+    this.context.router.transitionTo(routeName, params, _.omit(query, (value, key) => {
+      return !value || key === 'page' || key === 'size';
+    }));
+  },
+
+  handlePageChange() {
+    const { identity } = this.context.router.getCurrentParams();
+
+    this.context.executeAction(fetchMoreIms, {
+      carrierId: identity,
+      fromTime: this.state.fromTime,
+      toTime: this.state.toTime,
+      page: this.state.page,
+      size: config.PAGES.IMS.PAGE_SIZE,
+      type: this.state.type,
+      search: this.state.search,
+      searchType: this.state.searchType,
+    });
+  },
+
+  handleStartDateChange(momentDate) {
+    const date = moment(momentDate).format('L');
+    this.handleQueryChange({ fromTime: date, page: 0 });
+  },
+
+  handleEndDateChange(momentDate) {
+    const date = moment(momentDate).format('L');
+    this.handleQueryChange({ toTime: date, page: 0 });
+  },
+
+  handleTypeChange(e) {
+    e.preventDefault();
+    const type = e.target.value;
+    const _type = this.state.type !== type ? type : null;
+    this.handleQueryChange({ type: _type });
+  },
+
+  handleSearchChange(e) {
+    const search = e.target.value;
+    this.setState({ search: search });
+
+    if (e.which === 13) {
+      this.handleQueryChange({ search: search });
+    }
+  },
+
+  handleSearchTypeChange(e) {
+    const searchType = e.target.value;
+    this.setState({ searchType: searchType });
+
+    // only submit change if search input isn't empty
+    if (this.state.search) {
+      this.handleQueryChange({ searchType: searchType });
+    }
+  },
+
+  _handleStartDateClick() {
+    this.refs.startDatePicker.handleFocus();
+  },
+
+  _handleEndDateClick() {
+    this.refs.endDatePicker.handleFocus();
+  },
 });
 
 export default Im;

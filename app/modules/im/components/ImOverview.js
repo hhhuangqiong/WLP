@@ -1,6 +1,3 @@
-import _ from 'lodash';
-import moment from 'moment';
-
 import React from 'react';
 import {Link} from 'react-router';
 
@@ -16,9 +13,9 @@ import fetchImWidgets from '../actions/fetchImWidgets';
 
 const errorMessage = '<div className="widget-not-found">Dashboard is not available</div>';
 
-var ImOverview = React.createClass({
+const ImOverview = React.createClass({
   contextTypes: {
-    router: React.PropTypes.func.isRequired
+    router: React.PropTypes.func.isRequired,
   },
 
   mixins: [FluxibleMixin, AuthMixin],
@@ -26,30 +23,30 @@ var ImOverview = React.createClass({
   statics: {
     storeListeners: [ImStore],
 
-    fetchData: function(context, params, query, done) {
+    fetchData(context, params, query, done) {
       context.executeAction(fetchImWidgets, {
         carrierId: params.identity,
-        userId: context.getStore(AuthStore).getUserId()
-      }, done || function() {});
-    }
+        userId: context.getStore(AuthStore).getUserId(),
+      }, done || () => {});
+    },
   },
 
-  getStateFromStores: function() {
-    return {
-      widgets: this.getStore(ImStore).getWidgets()
-    };
-  },
-
-  getInitialState: function() {
+  getInitialState() {
     return this.getStateFromStores();
   },
 
-  onChange: function() {
+  onChange() {
     this.setState(this.getStateFromStores());
   },
 
+  getStateFromStores() {
+    return {
+      widgets: this.getStore(ImStore).getWidgets(),
+    };
+  },
+
   renderImWidgets() {
-    let widgets = this.state.widgets;
+    const widgets = this.state.widgets;
 
     if (!widgets || !widgets.length) {
       return (<WidgetNotAvailable />);
@@ -78,8 +75,8 @@ var ImOverview = React.createClass({
     );
   },
 
-  render: function() {
-    let params = this.context.router.getCurrentParams();
+  render() {
+    const params = this.context.router.getCurrentParams();
 
     return (
       <div className="row">
@@ -100,7 +97,7 @@ var ImOverview = React.createClass({
         </div>
       </div>
     );
-  }
+  },
 });
 
 export default ImOverview;

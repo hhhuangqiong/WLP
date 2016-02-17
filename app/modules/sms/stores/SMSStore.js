@@ -1,27 +1,26 @@
-import _ from 'lodash';
-import {createStore} from 'fluxible/addons';
+import { createStore } from 'fluxible/addons';
 
-var SMSStore = createStore({
+const SMSStore = createStore({
   storeName: 'SMSStore',
 
   handlers: {
     FETCH_SMS_SUCCESS: 'handleLoadSMS',
     CLEAR_SMS: 'handleClearSMS',
-    LOAD_SMS_WIDGETS_SUCCESS: 'handleLoadSMSWidgets'
+    LOAD_SMS_WIDGETS_SUCCESS: 'handleLoadSMSWidgets',
   },
 
-  initialize: function() {
+  initialize() {
     this.widgets = [];
     this.records = [];
     this.page = 1;
     this.totalPage = 0;
   },
 
-  handleClearSMS: function() {
+  handleClearSMS() {
     this.initialize();
   },
 
-  handleLoadSMS: function(payload) {
+  handleLoadSMS(payload) {
     if (payload) {
       this.records = this.records.concat(payload.content);
 
@@ -38,7 +37,7 @@ var SMSStore = createStore({
     this.emitChange();
   },
 
-  handleLoadSMSWidgets: function(payload) {
+  handleLoadSMSWidgets(payload) {
     if (payload && payload.widgets) {
       this.widgets = payload.widgets;
     } else {
@@ -48,41 +47,41 @@ var SMSStore = createStore({
     this.emitChange();
   },
 
-  getWidgets: function() {
+  getWidgets() {
     return this.widgets;
   },
 
-  getTotalPage: function() {
+  getTotalPage() {
     return this.totalPage;
   },
 
-  getPage: function() {
+  getPage() {
     return this.page;
   },
 
-  getSMS: function() {
+  getSMS() {
     return this.records;
   },
 
-  getState: function() {
+  getState() {
     return {
       widgets: this.widgets,
       records: this.records,
       page: this.page,
-      totalPage: this.totalPage
+      totalPage: this.totalPage,
     };
   },
 
-  dehydrate: function() {
+  dehydrate() {
     return this.getState();
   },
 
-  rehydrate: function(state) {
+  rehydrate(state) {
     this.widgets = state.widgets;
     this.records = state.records;
     this.page = state.page;
     this.totalPage = state.totalPage;
-  }
+  },
 });
 
 export default SMSStore;

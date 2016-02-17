@@ -118,7 +118,7 @@ const TopUp = React.createClass({
           </FilterBar.NavigationItems>
           <FilterBar.LeftItems>
             <DateRangePicker
-              withIcon={true}
+              withIcon
               startDate={this.state.startDate}
               endDate={this.state.endDate}
               handleStartDateChange={this.handleStartDateChange}
@@ -162,7 +162,7 @@ const TopUp = React.createClass({
     const requiredKey = ['number'];
 
     const sanitizedQuery = omit(query || {}, (value, key) => {
-       return !value && requiredKey.indexOf(key) === -1;
+      return !value && requiredKey.indexOf(key) === -1;
     });
 
     /* Should not omit null value as 'number' field is always required even it is null */

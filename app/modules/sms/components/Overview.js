@@ -1,8 +1,5 @@
-import _ from 'lodash';
-import moment from 'moment';
-
-import React from 'react';
-import {Link} from 'react-router';
+import React, { PropTypes } from 'react';
+import { Link } from 'react-router';
 
 import FluxibleMixin from 'fluxible/addons/FluxibleMixin';
 import AuthMixin from '../../../utils/AuthMixin';
@@ -15,9 +12,9 @@ import AuthStore from '../../../main/stores/AuthStore';
 
 const errorMessage = '<div className="widget-not-found">Dashboard is not available</div>';
 
-var SMSOverview = React.createClass({
+const SMSOverview = React.createClass({
   contextTypes: {
-    router: React.PropTypes.func.isRequired
+    router: PropTypes.func.isRequired,
   },
 
   mixins: [FluxibleMixin, AuthMixin],
@@ -25,30 +22,30 @@ var SMSOverview = React.createClass({
   statics: {
     storeListeners: [SMSStore],
 
-    fetchData: function(context, params, query, done) {
+    fetchData(context, params, query, done) {
       context.executeAction(loadSMSWidgets, {
         carrierId: params.identity,
-        userId:    context.getStore(AuthStore).getUserId()
-      }, done || function() {});
-    }
+        userId: context.getStore(AuthStore).getUserId(),
+      }, done || () => {});
+    },
   },
 
-  getStateFromStores: function() {
-    return {
-      widgets: this.getStore(SMSStore).getWidgets()
-    };
-  },
-
-  getInitialState: function() {
+  getInitialState() {
     return this.getStateFromStores();
   },
 
-  onChange: function() {
+  onChange() {
     this.setState(this.getStateFromStores());
   },
 
+  getStateFromStores() {
+    return {
+      widgets: this.getStore(SMSStore).getWidgets(),
+    };
+  },
+
   renderWidgets() {
-    let widgets = this.state.widgets;
+    const widgets = this.state.widgets;
 
     if (!widgets || !widgets.length) {
       return (<WidgetNotAvailable />);
@@ -69,8 +66,8 @@ var SMSOverview = React.createClass({
     );
   },
 
-  render: function() {
-    let params = this.context.router.getCurrentParams();
+  render() {
+    const params = this.context.router.getCurrentParams();
 
     return (
       <div className="row">
@@ -91,7 +88,7 @@ var SMSOverview = React.createClass({
         </div>
       </div>
     );
-  }
+  },
 });
 
 export default SMSOverview;
