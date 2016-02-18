@@ -782,15 +782,19 @@ export default class CompanyController {
             let error = this.createResponseError(_.get(err, 'response.body.error') || err);
 
             res.status(error.status).json({
-              error: error
+              error: {
+                message: error.message
+              }
             });
           });
       })
       .catch((err) => {
         logger.error(err);
 
-        res.status(500).json({
-          error: err
+        res.status(err.status).json({
+          error: {
+            message: err.message
+          }
         });
       })
       .done();
