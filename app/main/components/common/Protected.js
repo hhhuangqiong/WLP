@@ -45,11 +45,11 @@ var Protected = React.createClass({
       <div>
         <Sidebar isOffCanvas={this.state.isOffCanvas} handleOffCavnas={this._setOffCanvas} />
         <CanvasWrapper isOffCanvas={this.state.isOffCanvas}>
-          <Navigation>
+          <Navigation isOffCanvas={this.state.isOffCanvas}>
             <Title title={this.props.pageTitle} />
             <Menu />
           </Navigation>
-          <Content />
+          <Content isOffCanvas={this.state.isOffCanvas} />
         </CanvasWrapper>
         <SystemMessage />
         <LoadingSpinner />
