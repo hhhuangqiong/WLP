@@ -29,9 +29,9 @@ let debug = require('debug')('app:modules/verification/actions/fetchVerification
  * // { from: "2015-09-24T01:00:00+08:00", to: "2015-09-25T01:00:00+08:00"}
  */
 let getIsoTimeRangeFromNow = function(quantity, timescale, offset = 0) {
-  // -1 because we want the buckets align with the timescale
-  // consider the case of 14:23 with timescale "hour", we would like to get 15:00
-  let to = moment().subtract(offset - 1, timescale).startOf(timescale);
+  // consider the case of 14:23 with timescale "hour", we would like to get data up to 14:00
+  // as the data is very likely to be 0 (not ready) for the latest time scale
+  let to = moment().subtract(offset, timescale).startOf(timescale);
   let from = moment(to).subtract(quantity, timescale).startOf(timescale);
 
   return {
