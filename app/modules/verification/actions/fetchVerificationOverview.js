@@ -41,8 +41,6 @@ let getIsoTimeRangeFromNow = function(quantity, timescale, offset = 0) {
 };
 
 export default (context, params, done) => {
-  context.dispatch('FETCH_START');
-
   let {
     getVerificationStatsByStatus,
     getVerificationStatsByCountry,
@@ -113,8 +111,6 @@ export default (context, params, done) => {
 
   Q.allSettled(runningActions)
     .then((promises) => {
-      context.dispatch('FETCH_END');
-
       let failureStatusList = [];
 
       promises.forEach((promise) => {

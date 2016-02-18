@@ -22,6 +22,11 @@ $light-gray: #e3e3e3;
       padding-right: rem-calc(10);
     }
   }
+
+  &.disabled {
+    filter: opacity(.3);
+    pointer-events: none !important;
+  }
 }
 
 .date-selector-label {

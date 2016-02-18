@@ -1,5 +1,6 @@
 import { reduce } from 'lodash';
 import moment from 'moment';
+import classnames from 'classnames';
 import React, { Component, PropTypes } from 'react';
 
 import DateSelectorLabel from './DateSelectorLabel';
@@ -15,6 +16,7 @@ export default class DateSelector extends Component {
     maxDate: PropTypes.string,
     monthFormat: PropTypes.string,
     yearFormat: PropTypes.string,
+    className: PropTypes.string,
   };
 
   static defaultProps = {
@@ -56,7 +58,7 @@ export default class DateSelector extends Component {
 
   render() {
     return (
-      <div className="date-selector">
+      <div className={classnames('date-selector', this.props.className)}>
         <div className="date-selector__item">
           <DateSelectorArrow
             direction="left"

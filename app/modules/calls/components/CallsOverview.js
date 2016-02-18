@@ -1,4 +1,5 @@
-import { bindKey, get, reduce, isEmpty, isUndefined, round } from 'lodash';
+import { bindKey, reduce, isEmpty, isUndefined, round } from 'lodash';
+import { isNull } from 'validator';
 import moment from 'moment';
 import classNames from 'classnames';
 
@@ -184,7 +185,6 @@ const CallsOverview = React.createClass({
   },
 
   _getDurationLineChartData() {
-    const { timescale } = parseTimeRange(this.state.selectedLastXDays);
     const totalDurationData = reduce(this.state.totalDurationStats, (result, stat) => { result.push(round((stat.v / 1000 / 60), DECIMAL_PLACE)); return result; }, []);
     const averageDurationData = reduce(this.state.averageDurationStats, (result, stat) => { result.push(round((stat.v / 1000), DECIMAL_PLACE)); return result; }, []);
     const successAttemptData = reduce(this.state.successAttemptStats, (result, stat) => { result.push(stat.v); return result; }, []);
@@ -201,8 +201,8 @@ const CallsOverview = React.createClass({
         symbol: 'circle',
         lineWidth: 2,
         tooltip: {
-          valueSuffix: ' s'
-        }
+          valueSuffix: ' s',
+        },
       },
       {
         name: STATS_TYPE.TOTAL_DURATION,
@@ -212,8 +212,8 @@ const CallsOverview = React.createClass({
         color: '#D8D8D8',
         yAxis: 1,
         tooltip: {
-          valueSuffix: ' mins'
-        }
+          valueSuffix: ' mins',
+        },
       },
       {
         name: STATS_TYPE.SUCCESSFUL_ATTEMPT,
@@ -356,7 +356,8 @@ const CallsOverview = React.createClass({
     const momentDate = moment(date, 'L');
     const selectedMonth = momentDate.month();
     const selectedYear = momentDate.year();
-    this.setState({ selectedMonth, selectedYear });
+
+    this.setState({ selectedMonth, selectedYear, thisMonthUser: null, lastMonthUser: null });
     this._getMonthlyStats(this.state.type, selectedMonth, selectedYear);
   },
 
@@ -399,14 +400,14 @@ const CallsOverview = React.createClass({
               customClass="narrow"
               title="Monthly Voice Call User"
               caption={this._getLastUpdate({ year: this.state.selectedYear, month: this.state.selectedMonth })} >
-              <div className="input-group picker month right">
-                <DateSelector
-                  date={this.getMonthlyStatsDate()}
-                  minDate={moment().subtract(1, 'months').subtract(1, 'years').startOf('month').format('L')}
-                  maxDate={moment().subtract(1, 'months').endOf('month').format('L')}
-                  onChange={this.handleMonthlyStatsChange}
-                />
-              </div>
+              <div className={classNames('tiny-spinner', { active: this.isMonthlyStatsLoading() })}></div>
+              <DateSelector
+                className={classNames({ disabled: this.isMonthlyStatsLoading() })}
+                date={this.getMonthlyStatsDate()}
+                minDate={moment().subtract(1, 'months').subtract(1, 'years').startOf('month').format('L')}
+                maxDate={moment().subtract(1, 'months').endOf('month').format('L')}
+                onChange={this.handleMonthlyStatsChange}
+              />
             </Panel.Header>
             <Panel.Body customClass="narrow no-padding">
               <DataGrid.Wrapper>
@@ -416,7 +417,9 @@ const CallsOverview = React.createClass({
                   changeDir={monthlyUserStats.direction}
                   changeAmount={monthlyUserStats.change}
                   changeEffect="positive"
-                  changePercentage={monthlyUserStats.percent} />
+                  changePercentage={monthlyUserStats.percent}
+                  isLoading={this.isMonthlyStatsLoading()}
+                />
               </DataGrid.Wrapper>
             </Panel.Body>
           </Panel.Wrapper>
@@ -428,14 +431,13 @@ const CallsOverview = React.createClass({
               customClass="narrow"
               title="Call Behaviour Statistics"
               caption={this._getLastUpdateFromTimeFrame()} >
-              <div className="input-group right">
-                <label className="left">Past:</label>
-                <TimeFramePicker
-                  frames={TIME_FRAMES}
-                  customClass={['input', 'right']}
-                  currentFrame={this.state.selectedLastXDays}
-                  onChange={this.timeFrameChange} />
-              </div>
+              <div className={classNames('tiny-spinner', { active: this.isTotalStatsLoading() })}></div>
+              <TimeFramePicker
+                className={classNames({ disabled: this.isTotalStatsLoading() })}
+                frames={TIME_FRAMES}
+                currentFrame={this.state.selectedLastXDays}
+                onChange={this.timeFrameChange}
+              />
             </Panel.Header>
             <Panel.Body customClass="narrow no-padding">
               <div className="inner-wrap">
@@ -446,22 +448,30 @@ const CallsOverview = React.createClass({
                     <DataGrid.Wrapper>
                       <DataGrid.Cell
                         title="Total Calls Attempts"
-                        data={this._getTotalCallAttempt()} />
+                        data={this._getTotalCallAttempt()}
+                        isLoading={this.isTotalStatsLoading()}
+                      />
                       <DataGrid.Cell
                         title="ASR (%)"
                         data={this._getAverageSuccessfulRate()}
                         formatter={decimalPlaceFormatter}
-                        unit="%" />
+                        unit="%"
+                        isLoading={this.isTotalStatsLoading()}
+                      />
                       <DataGrid.Cell
                         title="Total Call Duration"
                         data={this._getTotalCallDuration()}
                         formatter={decimalPlaceFormatter}
-                        unit="minutes" />
+                        unit="minutes"
+                        isLoading={this.isTotalStatsLoading()}
+                      />
                       <DataGrid.Cell
                         title="Average Call Duration"
                         data={this._getAverageCallDuration()}
                         formatter={decimalPlaceFormatter}
-                        unit="seconds" />
+                        unit="seconds"
+                        isLoading={this.isTotalStatsLoading()}
+                      />
                     </DataGrid.Wrapper>
                   </div>
                 </div>
@@ -548,6 +558,15 @@ const CallsOverview = React.createClass({
         </div>
       </div>
     );
+  },
+
+  isMonthlyStatsLoading() {
+    const monthlyUserStats = this._getMonthlyUser();
+    return isNull(monthlyUserStats.total) && isNull(this.state.monthlyStatsError);
+  },
+
+  isTotalStatsLoading() {
+    return isNull(this.state.totalAttemptStats) && isNull(this.state.totalStatsError);
   },
 });
 

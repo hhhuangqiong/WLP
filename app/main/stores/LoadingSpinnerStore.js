@@ -1,27 +1,14 @@
-import _ from 'lodash';
-import {createStore} from 'fluxible/addons';
+import { createStore } from 'fluxible/addons';
 
-var debug = require('debug')('wlp:loadingSpinnerStore');
-
-var LoadingSpinnerStore = createStore({
+const LoadingSpinnerStore = createStore({
   storeName: 'LoadingSpinnerStore',
 
   handlers: {
     FETCH_START: 'showSpinner',
-    FETCH_END:   'hideSpinner',
+    FETCH_END: 'hideSpinner',
   },
 
-  showSpinner: function() {
-    this.loaded = false;
-    this.emitChange();
-  },
-
-  hideSpinner: function() {
-    this.loaded = true;
-    this.emitChange();
-  },
-
-  initialize: function() {
+  initialize() {
     this.loaded = true;
     this.options = {
       lines: 50, // The number of lines to draw
@@ -43,33 +30,43 @@ var LoadingSpinnerStore = createStore({
       left: '50%', // Left position relative to parent
       shadow: false, // Whether to render a shadow
       hwaccel: false, // Whether to use hardware acceleration
-      position: 'absolute' // Element positioning
+      position: 'absolute', // Element positioning
     };
   },
 
-  getLoaded: function() {
+  showSpinner() {
+    this.loaded = false;
+    this.emitChange();
+  },
+
+  hideSpinner() {
+    this.loaded = true;
+    this.emitChange();
+  },
+
+  getLoaded() {
     return this.loaded;
   },
 
-  getOptions: function() {
+  getOptions() {
     return this.options;
   },
 
-  getState: function() {
+  getState() {
     return {
       loaded: this.loaded,
-      options: this.options
+      options: this.options,
     };
   },
 
-  dehydrate: function() {
+  dehydrate() {
     return this.getState();
   },
 
-  rehydrate: function(state) {
+  rehydrate(state) {
     this.loaded = state.loaded;
     this.options = state.options;
-  }
+  },
 });
 
 export default LoadingSpinnerStore;

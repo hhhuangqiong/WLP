@@ -1,20 +1,43 @@
 .time-frame-picker {
-  $border-color: #D17273;
+  $red: #D17273;
+  $gray: #999;
+  $light-gray: #e3e3e3;
 
-  margin-top: rem-calc(15);
-  border-radius: rem-calc(5);
+  border-radius: rem-calc($global-radius);
+  border: 1px solid $light-gray;
+  padding: rem-calc(5);
 
-  border: 1px solid $border-color;
+  &.disabled {
+    filter: opacity(.3);
+    pointer-events: none !important;
+  }
 
-  span {
+  .item {
     cursor: pointer;
-    color: $border-color;
+    color: $gray;
+    margin: 0 rem-calc(20);
 
-    margin: rem-calc(20);
-    font-size: rem-calc(15);
+    &.active {
+      color: $red;
+    }
 
-    &:hover, &.active {
-      color: white;
+    &:hover {
+      color: $light-gray;
+    }
+  }
+
+  // To show difference style if this control is placed in Top bar section
+  &.revert {
+    @include button-control;
+    border: 0;
+
+    .item {
+      color: $light-gray;
+
+      &.active, &:hover {
+        color: white;
+        font-weight: bolder;
+      }
     }
   }
 }

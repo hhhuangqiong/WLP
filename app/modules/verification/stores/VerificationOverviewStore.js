@@ -13,6 +13,32 @@ export default createStore({
     FETCH_VERIFICATION_COUNTRIES_DATA_FAILURE: 'handleCountriesDataFetchedFailure',
     FETCH_VERIFICATION_PAST_ATTEMPTS_FAILURE: 'handlePastAttemptsFetchedFailure',
     CHANGE_TIME_RANGE: 'handleTimeRangeChange',
+    RESET_VERIFICATION_DATA: 'reset',
+  },
+
+  reset() {
+    this.initialize();
+    this.emitChange();
+  },
+
+  initialize() {
+    this.countriesData = null;
+    this.types = null;
+    this.osTypes = null;
+
+    this.accumulatedAttempts = null;
+    this.accumulatedFailure = null;
+    this.accumulatedSuccess = null;
+    this.averageSuccessRate = null;
+
+    this.pastAccumulatedAttempts = null;
+    this.pastAccumulatedFailure = null;
+    this.pastAccumulatedSuccess = null;
+    this.pastAverageSuccessRate = null;
+
+    this.successAttempts = null;
+    this.successRates = null;
+    this.totalAttempts = null;
   },
 
   handleOverviewDataFetched(payload) {
@@ -41,26 +67,6 @@ export default createStore({
     this.pastAttemptsError = null;
 
     this.emitChange();
-  },
-
-  initialize() {
-    this.countriesData = [];
-    this.types = [];
-    this.osTypes = [];
-
-    this.accumulatedAttempts = 0;
-    this.accumulatedFailure = 0;
-    this.accumulatedSuccess = 0;
-    this.averageSuccessRate = 0;
-
-    this.pastAccumulatedAttempts = 0;
-    this.pastAccumulatedFailure = 0;
-    this.pastAccumulatedSuccess = 0;
-    this.pastAverageSuccessRate = 0;
-
-    this.successAttempts = [];
-    this.successRates = [];
-    this.totalAttempts = [];
   },
 
   handleCountriesDataFetchedFailure(err) {
