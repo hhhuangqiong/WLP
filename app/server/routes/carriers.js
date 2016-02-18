@@ -693,6 +693,8 @@ let getEndUsersStatsMonthly = function(req, res) {
     });
   }
 
+  const { fromTime, toTime, timeWindow } = req.query;
+
   // to check if it's querying for the latest month
   // if yes, make it starting from latest
   let thisMonthTime = (
@@ -712,7 +714,7 @@ let getEndUsersStatsMonthly = function(req, res) {
     from: thisMonthTime.endOf('month').startOf('day').format('x'),
     to: thisMonthTime.endOf('month').endOf('day').format('x'),
     timescale: 'day',
-    timeWindow: req.query.timeWindow
+    timeWindow
   }, (val) => {
     return !val;
   });
@@ -723,10 +725,10 @@ let getEndUsersStatsMonthly = function(req, res) {
 
     // we only need to get the data for the latest day of last month
     // with timeWindow (retrospectively) for a month
-    from: moment(req.query.fromTime, 'x').subtract(1, 'months').endOf('month').startOf('day').format('x'),
-    to: moment(req.query.toTime, 'x').subtract(1, 'months').endOf('month').format('x'),
+    from: moment(fromTime, 'x').subtract(1, 'months').endOf('month').startOf('day').format('x'),
+    to: moment(toTime, 'x').subtract(1, 'months').endOf('month').format('x'),
     timescale: 'day',
-    timeWindow: req.query.timeWindow
+    timeWindow
   }, (val) => {
     return !val;
   });
@@ -734,8 +736,8 @@ let getEndUsersStatsMonthly = function(req, res) {
   let thisMonthRegisteredParams = _.omit({
     carriers: req.params.carrierId,
     breakdown: 'carrier',
-    from: req.query.fromTime,
-    to: req.query.toTime,
+    from: fromTime,
+    to: toTime,
     timescale: 'day'
   }, (val) => {
     return !val;
@@ -744,8 +746,8 @@ let getEndUsersStatsMonthly = function(req, res) {
   let lastMonthRegisteredParams = _.omit({
     carriers: req.params.carrierId,
     breakdown: 'carrier',
-    from: moment(req.query.fromTime, 'x').subtract(1, 'months').startOf('month').format('x'),
-    to: moment(req.query.toTime, 'x').subtract(1, 'months').endOf('month').format('x'),
+    from: moment(fromTime, 'x').subtract(1, 'months').startOf('month').format('x'),
+    to: moment(toTime, 'x').subtract(1, 'months').endOf('month').format('x'),
     timescale: 'day'
   }, (val) => {
     return !val;
