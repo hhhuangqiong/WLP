@@ -169,7 +169,7 @@ export default React.createClass({
     // this state will be used to determine whether the chart should be redraw
     // within the updateChart function below
     this.setState({
-      isDataChanging: !this.props.lines && nextProps.lines
+      isDataChanging: !this.props.lines && nextProps.lines || !nextProps.lines && this.props.lines
     })
   },
 
