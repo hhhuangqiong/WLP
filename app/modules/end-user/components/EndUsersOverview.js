@@ -2,9 +2,8 @@ import React from 'react';
 import { Link } from 'react-router';
 import Select from 'react-select';
 import moment from 'moment';
-import { isNull } from 'validator';
 import classNames from 'classnames';
-import { merge, max, clone, reduce, isEmpty } from 'lodash';
+import { isNull, merge, max, clone, reduce, isEmpty } from 'lodash';
 import getMapConfig from '../utils/getMapConfig';
 import MAP_DATA from '../constants/mapData';
 

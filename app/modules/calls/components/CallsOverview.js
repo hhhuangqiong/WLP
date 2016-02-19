@@ -1,5 +1,4 @@
-import { bindKey, get, reduce, isEmpty, isUndefined, round, max } from 'lodash';
-import { isNull } from 'validator';
+import { isNull, bindKey, get, reduce, isEmpty, isUndefined, round, max } from 'lodash';
 import moment from 'moment';
 import classNames from 'classnames';
 

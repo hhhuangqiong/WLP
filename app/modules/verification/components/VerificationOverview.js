@@ -1,10 +1,9 @@
 import React, { PropTypes } from 'react';
 import { Link } from 'react-router';
 import Select from 'react-select';
-import { isNull } from 'validator';
 import classNames from 'classnames';
 import moment from 'moment';
-import { max, last, merge, sortByOrder, some, values } from 'lodash';
+import { isNull, max, last, merge, sortByOrder, some, values } from 'lodash';
 
 import FluxibleMixin from 'fluxible/addons/FluxibleMixin';
 import AuthMixin from '../../../utils/AuthMixin';
