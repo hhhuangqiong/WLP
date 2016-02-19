@@ -42,7 +42,7 @@ var Protected = React.createClass({
 
   render: function() {
     return (
-      <div>
+      <div className={classnames({ 'wrapper--extended': !this.state.isOffCanvas })}>
         <Sidebar isOffCanvas={this.state.isOffCanvas} handleOffCavnas={this._setOffCanvas} />
         <CanvasWrapper isOffCanvas={this.state.isOffCanvas}>
           <Navigation isOffCanvas={this.state.isOffCanvas}>
