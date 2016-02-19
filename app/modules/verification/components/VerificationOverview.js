@@ -91,6 +91,12 @@ export default React.createClass({
       successRateSeries: null,
       busiestAttempts: 0,
       busiestTime: null,
+      attemptsError: null,
+      pastAttemptsError: null,
+      countriesError: null,
+      typeError: null,
+      osError: null,
+      accumulatedAttempts: null,
     };
   },
 

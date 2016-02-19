@@ -39,6 +39,12 @@ export default createStore({
     this.successAttempts = null;
     this.successRates = null;
     this.totalAttempts = null;
+
+    this.countriesError = null;
+    this.typeError = null;
+    this.osError = null;
+    this.attemptsError = null;
+    this.pastAttemptsError = null;
   },
 
   handleOverviewDataFetched(payload) {
