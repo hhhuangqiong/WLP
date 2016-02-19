@@ -2,9 +2,17 @@ import React from 'react';
 import classNames from 'classnames';
 
 const TOTAL_COLUMNS = 24;
+const EMPTY_DATA_LABEL = '0';
+const DATA_FETCHING_LABEL = '-';
 
 export default React.createClass({
   displayName: 'SummaryCells',
+
+  getDefaultProps() {
+    return {
+      isLoading: false,
+    };
+  },
 
   /**
    * Returns the percentage change of 2 values.
@@ -36,12 +44,12 @@ export default React.createClass({
    * @method
    * @param {Number} change  The value changed
    * @param {Boolean} isPositiveGood  Indicate whether a positive change is good
-   * @returns {String} Empty string if no change, "up" for good change, "down" for bad change
+   * @returns {String} Empty strnig if no change, "up" for good change, "down" for bad change
    */
   getChangesStatus(change, isPositiveGood) {
     // NaN or 0 will both go into this case
     if (!change) {
-      return '';
+      return EMPTY_DATA_LABEL;
     }
 
     return (change > 0 && isPositiveGood) ? 'positive' : 'negative';
@@ -135,16 +143,32 @@ export default React.createClass({
     return cellMetadataList;
   },
 
+  renderCell(cell) {
+    if (this.props.isLoading) {
+      return <div className="verification-overview__value">{DATA_FETCHING_LABEL}</div>;
+    }
+
+    if (!cell.value || cell.value === 'Infinity') {
+      return <div className="verification-overview__value">{EMPTY_DATA_LABEL}</div>;
+    }
+
+    return (
+      <div>
+        <div className="verification-overview__value">{cell.value}</div>
+        <div className={classNames('verification-overview__changes', cell.changes.status, cell.changes.direction, { hide: !cell.changes.status })}>
+          <span className="arrow"></span>
+          <span>{cell.changes.text}</span>
+        </div>
+      </div>
+    );
+  },
+
   renderCells(cellMetadataList) {
     return cellMetadataList.map((cell, index) => {
       return (
         <section key={index} className={classNames(`large-${Math.floor(TOTAL_COLUMNS / cellMetadataList.length)}`, 'columns', index !== 0 ? 'left-border' : '' )}>
           <div className="verification-overview__title">{cell.title}</div>
-          <div className="verification-overview__value">{cell.value}</div>
-          <div className={classNames('verification-overview__changes', cell.changes.status, cell.changes.direction, { hide: !cell.changes.status })}>
-            <span className="arrow"></span>
-            <span>{cell.changes.text}</span>
-          </div>
+          {this.renderCell(cell)}
         </section>
       );
     });
