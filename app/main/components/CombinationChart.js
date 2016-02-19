@@ -283,7 +283,10 @@ export default React.createClass({
               text: axis.title,
             },
             labels: {
-              formatter: _.partial(yAxisLabelFormatter, axis.unit),
+              // allow to use custom formatter
+              // while global label formatter assumes that
+              // the yAxis unit is always the same as data unit
+              formatter: _.get(axis, 'labels.formatter') || _.partial(yAxisLabelFormatter, axis.unit),
             },
             // do not allow decimal labels (e.g. 12.5)
             allowDecimals: false,

@@ -1,4 +1,4 @@
-import { bindKey, reduce, isEmpty, isUndefined, round } from 'lodash';
+import { bindKey, get, reduce, isEmpty, isUndefined, round, max } from 'lodash';
 import { isNull } from 'validator';
 import moment from 'moment';
 import classNames from 'classnames';
@@ -130,6 +130,10 @@ const CallsOverview = React.createClass({
     this.setState({ selectedDurationLine: type });
   },
 
+  _isAverageDurationInMinutes() {
+    return get(max(this.state.averageDurationStats, stat => stat.v), 'v') > (60 * 1000);
+  },
+
   _getLineChartXAxis() {
     const { from, quantity, timescale } = parseTimeRange(this.state.selectedLastXDays);
 
@@ -224,6 +228,39 @@ const CallsOverview = React.createClass({
         yAxis: 2,
       },
     ] : null;
+  },
+
+  _getDurationLineChartYAxis() {
+    return [
+      (
+        this._isAverageDurationInMinutes() ?
+        {
+          unit: 's',
+          alignment: 'left',
+          tickInterval: 60,
+        } :
+        {
+          unit: 'm',
+          alignment: 'left',
+          labels: {
+            // it don't have to be rounded
+            // as allowDecimal could be configured from HighCharts
+            formatter: function() { return `${this.value / 60}m`; }
+          },
+          tickInterval: 300
+        }
+      ),
+      {
+        unit: 'm',
+        alignment: 'right',
+        visible: false,
+      },
+      {
+        unit: '',
+        alignment: 'right',
+        visible: false,
+      }
+    ]
   },
 
   _getAttemptLineChartSelectedLine() {
@@ -533,23 +570,7 @@ const CallsOverview = React.createClass({
                       shareTooltip={true}
                       showLegend={true}
                       xAxis={this._getLineChartXAxis()}
-                      yAxis={[
-                        {
-                          unit: 's',
-                          alignment: 'left',
-                          tickInterval: 60
-                        },
-                        {
-                          unit: 'm',
-                          alignment: 'right',
-                          visible: false
-                        },
-                        {
-                          unit: '',
-                          alignment: 'right',
-                          visible: false
-                        }
-                      ]} />
+                      yAxis={this._getDurationLineChartYAxis()} />
                   </div>
                 </div>
               </div>
