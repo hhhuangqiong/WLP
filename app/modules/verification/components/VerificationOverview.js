@@ -181,7 +181,9 @@ export default React.createClass({
       <div>
         <div className="large-4 columns verification-overview__attempt__information">
           <div className="verification-overview__title">Busiest Time:</div>
-          <div className="verification-overview__value">{this.state.busiestAttempts}</div>
+          <div className="verification-overview__value">
+            {this.isLoading() ? EMPTY_CELL_PLACEHOLDER : this.state.busiestAttempts}
+          </div>
           <div className="verification-overview__title">attempts</div>
         </div>
 
@@ -267,6 +269,7 @@ export default React.createClass({
               <div className="header narrow"><h5 className="title">Summary</h5></div>
               <div className={classNames('body', 'verification-overview__summary', {error: this.state.attemptsError || this.state.pastAttemptsError})}>
                 <SummaryCells
+                  isLoading={this.isLoading()}
                   accumulatedAttempts={this.state.accumulatedAttempts}
                   accumulatedFailure={this.state.accumulatedFailure}
                   accumulatedSuccess={this.state.accumulatedSuccess}
@@ -274,7 +277,8 @@ export default React.createClass({
                   pastAccumulatedAttempts={this.state.pastAccumulatedAttempts}
                   pastAccumulatedSuccess={this.state.pastAccumulatedSuccess}
                   pastAccumulatedFailure={this.state.pastAccumulatedFailure}
-                  pastAverageSuccessRate={this.state.pastAverageSuccessRate} />
+                  pastAverageSuccessRate={this.state.pastAverageSuccessRate}
+                />
               </div>
             </Panel.Wrapper>
 
