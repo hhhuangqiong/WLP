@@ -227,24 +227,16 @@ const CallsOverview = React.createClass({
 
   _getDurationLineChartYAxis() {
     return [
-      (
-        this._isAverageDurationInMinutes() ?
-        {
-          unit: 's',
-          alignment: 'left',
-          tickInterval: 60,
-        } :
-        {
-          unit: 'm',
-          alignment: 'left',
-          labels: {
-            // it don't have to be rounded
-            // as allowDecimal could be configured from HighCharts
-            formatter: function() { return `${this.value / 60}m`; }
-          },
-          tickInterval: 300
-        }
-      ),
+      {
+        unit: 's',
+        alignment: 'left',
+        tickInterval: 60,
+        labels: {
+          // it don't have to be rounded
+          // as allowDecimal could be configured from HighCharts
+          formatter: function() { return `${this.value / 60}m`; }
+        },
+      },
       {
         unit: 'm',
         alignment: 'right',
