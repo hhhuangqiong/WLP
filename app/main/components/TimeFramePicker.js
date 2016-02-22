@@ -5,14 +5,14 @@ import moment from 'moment';
 export default class TimeFramePicker extends Component {
   render() {
     return (
-      <div className={classNames(`time-frame-picker`, this.props.customClass)}>
+      <div className={classNames(`time-frame-picker`, this.props.className, this.props.customClass)}>
         {
           this.props.frames.map(frame => {
             return (
               <span
+                className={classNames('item', { active: this.props.currentFrame === frame })}
                 key={frame}
                 onClick={this.props.onChange.bind(null, frame)}
-                className={classNames({ 'active': this.props.currentFrame === frame })}
               >
                 {frame.replace('hours', 'hrs')}
               </span>

@@ -40,14 +40,14 @@ const Protected = React.createClass({
 
   render() {
     return (
-      <div>
+      <div className={classnames({ 'wrapper--extended': !this.state.isOffCanvas })}>
         <Sidebar isOffCanvas={this.state.isOffCanvas} handleOffCavnas={this._setOffCanvas} />
         <CanvasWrapper isOffCanvas={this.state.isOffCanvas}>
-          <Navigation>
+          <Navigation isOffCanvas={this.state.isOffCanvas}>
             <Title title={this.props.pageTitle} />
             <Menu />
           </Navigation>
-          <Content />
+          <Content isOffCanvas={this.state.isOffCanvas} />
         </CanvasWrapper>
         <SystemMessage />
         <LoadingSpinner />

@@ -50,22 +50,7 @@
     cursor: auto;
   }
 
-  input::placeholder:before {
-    font-family: 'icomoon' !important;
-  	speak: none;
-  	font-style: normal;
-  	font-weight: lighter;
-  	font-variant: normal;
-  	text-transform: none;
-  	line-height: 100%;
-
-  	/* Better Font Rendering =========== */
-  	-webkit-font-smoothing: antialiased;
-  	-moz-osx-font-smoothing: grayscale;
-
-    content: "\e632";
-    color: #fff;
-
-    margin-right: rem-calc(15);
+  input::placeholder {
+    color: white;
   }
 }

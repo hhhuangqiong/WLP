@@ -21,3 +21,8 @@
     background-color: $status-disable;
   }
 }
+
+.call_by_reason {
+  width: rem-calc(150);
+  word-wrap: break-word;
+}

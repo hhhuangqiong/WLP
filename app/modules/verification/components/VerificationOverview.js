@@ -3,7 +3,7 @@ import { Link } from 'react-router';
 import Select from 'react-select';
 import classNames from 'classnames';
 import moment from 'moment';
-import _ from 'lodash';
+import { isNull, max, last, merge, sortByOrder, some, values } from 'lodash';
 
 import FluxibleMixin from 'fluxible/addons/FluxibleMixin';
 import AuthMixin from '../../../utils/AuthMixin';
@@ -18,6 +18,7 @@ import LineChart from '../../../main/components/LineChart';
 import DonutChartPanel from '../../../main/components/DonutChartPanel';
 import SummaryCells from './SummaryCells';
 import fetchVerificationOverview from '../actions/fetchVerificationOverview';
+import resetVerificationData from '../actions/resetVerificationData';
 import VerificationOverviewStore from '../stores/VerificationOverviewStore';
 import ApplicationStore from '../../../main/stores/ApplicationStore';
 import { timeFromNow } from '../../../utils/StringFormatter';
@@ -35,7 +36,7 @@ const EMPTY_CELL_PLACEHOLDER = '-';
 const TOOLTIP_TIME_FORMAT = 'lll';
 
 function fromTimeslot(collection, fromTime, timeframe) {
-  const maxNumber = _.max(collection);
+  const maxNumber = max(collection);
 
   // Map the index to real world numbers representing the number of hours/days
   const maxIndex = collection.indexOf(maxNumber) + 1;
@@ -90,6 +91,12 @@ export default React.createClass({
       successRateSeries: null,
       busiestAttempts: 0,
       busiestTime: null,
+      attemptsError: null,
+      pastAttemptsError: null,
+      countriesError: null,
+      typeError: null,
+      osError: null,
+      accumulatedAttempts: null,
     };
   },
 
@@ -114,7 +121,7 @@ export default React.createClass({
     const methodAttempts = this.getStore(VerificationOverviewStore).getMethodAttempts();
     const successFailAttempts = this.getStore(VerificationOverviewStore).getSuccessFailAttempts();
 
-    const overviewData = _.merge(summaryAttempts, countryAttempts, osAttempts, methodAttempts);
+    const overviewData = merge(summaryAttempts, countryAttempts, osAttempts, methodAttempts);
     this.setState(overviewData);
 
     // Avoid multiple execution of this function that makes the line chart have dirty preoccupied data
@@ -127,7 +134,7 @@ export default React.createClass({
     Highcharts.maps['custom/world'] = MAP_DATA;
 
     // Copy source data to be a new one for Highmap to avoid the behavior of changing source data
-    const maxValue = _.max(countryAttempts.countriesData, country => country.value).value;
+    const maxValue = max(countryAttempts.countriesData, country => country.value).value;
     new Highcharts.Map(getMapConfig('verificationCountrySection', (countryAttempts.countriesData || []).slice(0), maxValue));
   },
 
@@ -180,7 +187,9 @@ export default React.createClass({
       <div>
         <div className="large-4 columns verification-overview__attempt__information">
           <div className="verification-overview__title">Busiest Time:</div>
-          <div className="verification-overview__value">{this.state.busiestAttempts}</div>
+          <div className="verification-overview__value">
+            {this.isLoading() ? EMPTY_CELL_PLACEHOLDER : this.state.busiestAttempts}
+          </div>
           <div className="verification-overview__title">attempts</div>
         </div>
 
@@ -203,7 +212,7 @@ export default React.createClass({
   },
 
   renderCountryTable() {
-    const sortedCountries = _.sortByOrder(this.state.countriesData, ['value'], ['desc'], _.values);
+    const sortedCountries = sortByOrder(this.state.countriesData, ['value'], ['desc'], values);
 
     return (
       <table className="verification-overview__country__table">
@@ -248,11 +257,15 @@ export default React.createClass({
 
           </FilterBar.LeftItems>
           <FilterBar.RightItems>
-            <TimeFramePicker
-              frames={TIME_FRAMES}
-              currentFrame={this.state.timeRange}
-              onChange={this.handleTimeFrameChange}
-            />
+            <div className="inline-with-space">
+              <div className={classNames('tiny-spinner', 'revert', { active: this.isLoading() })}></div>
+              <TimeFramePicker
+                className={classNames('revert', { disabled: this.isLoading() })}
+                frames={TIME_FRAMES}
+                currentFrame={this.state.timeRange}
+                onChange={this.handleTimeFrameChange}
+                />
+            </div>
           </FilterBar.RightItems>
         </FilterBar.Wrapper>
 
@@ -262,6 +275,7 @@ export default React.createClass({
               <div className="header narrow"><h5 className="title">Summary</h5></div>
               <div className={classNames('body', 'verification-overview__summary', {error: this.state.attemptsError || this.state.pastAttemptsError})}>
                 <SummaryCells
+                  isLoading={this.isLoading()}
                   accumulatedAttempts={this.state.accumulatedAttempts}
                   accumulatedFailure={this.state.accumulatedFailure}
                   accumulatedSuccess={this.state.accumulatedSuccess}
@@ -269,7 +283,8 @@ export default React.createClass({
                   pastAccumulatedAttempts={this.state.pastAccumulatedAttempts}
                   pastAccumulatedSuccess={this.state.pastAccumulatedSuccess}
                   pastAccumulatedFailure={this.state.pastAccumulatedFailure}
-                  pastAverageSuccessRate={this.state.pastAverageSuccessRate} />
+                  pastAverageSuccessRate={this.state.pastAverageSuccessRate}
+                />
               </div>
             </Panel.Wrapper>
 
@@ -290,7 +305,7 @@ export default React.createClass({
                     lines={this.state.successRateSeries}
                     xAxis={this.state.sXAxis}
                     yAxis={this.state.sYAxis}
-                    selectedLine={this.state.selectedLineInChartB} />
+                    selectedLine={SUCCESS_ATTEMPTS_RATE} />
                 </div>
               </div>
             </Panel.Wrapper>
@@ -382,7 +397,7 @@ export default React.createClass({
     this.setState({
       attemptToggle: TOTAL_NUMBER_ATTEMPTS,
       selectedLineInChartA: TOTAL_NUMBER_ATTEMPTS,
-      busiestAttempts: _.max(this.state.totalAttempts),
+      busiestAttempts: max(this.state.totalAttempts),
       busiestTime: this.state.totalAttempts ? fromTimeslot(this.state.totalAttempts, moment(), this.state.timeRange) : null,
       showSuccessRate: false,
     });
@@ -394,7 +409,7 @@ export default React.createClass({
     this.setState({
       attemptToggle: SUCCESS_ATTEMPTS_NUMBER,
       selectedLineInChartA: SUCCESS_ATTEMPTS_NUMBER,
-      busiestAttempts: _.max(this.state.successAttempts),
+      busiestAttempts: max(this.state.successAttempts),
       busiestTime: this.state.successAttempts ? fromTimeslot(this.state.successAttempts, moment(), this.state.timeRange) : null,
       showSuccessRate: false,
     });
@@ -405,7 +420,7 @@ export default React.createClass({
   setSuccessRates() {
     this.setState({
       attemptToggle: SUCCESS_ATTEMPTS_RATE,
-      busiestAttempts: _.max(this.state.successAttempts),
+      busiestAttempts: max(this.state.successAttempts),
       busiestTime: this.state.successAttempts ? fromTimeslot(this.state.successAttempts, moment(), this.state.timeRange) : null,
       successRateSeries: [
         {
@@ -473,14 +488,37 @@ export default React.createClass({
 
   handleTimeFrameChange(timeRange) {
     /* Add timeRange value to query */
-    const routeName = _.last(this.context.router.getCurrentRoutes()).name;
+    const routeName = last(this.context.router.getCurrentRoutes()).name;
     const params = this.context.router.getCurrentParams();
 
     this.context.router.transitionTo(routeName, params, { timeRange });
 
     /* Store timeRange to store so that we can set it back into query back switch pages */
+    this.executeAction(resetVerificationData);
     this.executeAction(changeTimeRange, timeRange);
 
     this.setState({ timeRange });
+  },
+
+  isLoading() {
+    const {
+      attemptsError,
+      pastAttemptsError,
+      countriesError,
+      typeError,
+      osError,
+    } = this.state;
+
+    const pendingFetched = isNull(this.state.accumulatedAttempts);
+
+    const hasError = some([
+      attemptsError,
+      pastAttemptsError,
+      countriesError,
+      typeError,
+      osError,
+    ], errorObj => !isNull(errorObj));
+
+    return pendingFetched && !hasError;
   },
 });

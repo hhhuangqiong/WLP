@@ -7,7 +7,7 @@ var request = require('superagent');
 var util    = require('util');
 
 import {buildCallSolrQueryString} from '../queryBuilder/call';
-import {constructOpts, formatDateString, swapDate, composeResponse, handleError} from '../helper';
+import {constructOpts, formatDateString, swapDate, composeSolrResponse, handleError} from '../helper';
 import qs from 'qs';
 
 export default class CallsRequest {
@@ -121,7 +121,7 @@ export default class CallsRequest {
       .timeout(this.opts.timeout)
       .end((err, res) => {
         if (err) return cb(handleError(err, err.status || 400));
-        this.filterCalls(res.body, cb);
+        this.filterCalls(res.body, params.rows, cb);
       });
   }
 
@@ -134,7 +134,7 @@ export default class CallsRequest {
    * @param data {Object} result return from API request
    * @param cb {Function} Callback function from @method getCalls
    */
-  filterCalls(data, cb) {
+  filterCalls(data, pageSize, cb) {
     if (data && data.content) {
       data.content = _.filter(data.content, function(call) {
         if (call.type.toLowerCase() === 'offnet') {
@@ -145,7 +145,7 @@ export default class CallsRequest {
       });
     }
 
-    cb(null, composeResponse(data));
+    cb(null, composeSolrResponse(data, pageSize));
   }
 
   /**

@@ -1,6 +1,7 @@
 import _ from 'lodash';
 import React, { PropTypes } from 'react';
 import moment from 'moment';
+import equals from 'shallow-equals';
 
 const ID_MAX = 100000;
 const DEFAULT_LINE_WIDTH = 1;
@@ -161,6 +162,17 @@ export default React.createClass({
     }
   },
 
+  componentWillReceiveProps(nextProps) {
+    // in this case, we assumed that when updating the chart,
+    // the parent component will first clear the existing data,
+    // and then re-assigned with the new data
+    // this state will be used to determine whether the chart should be redraw
+    // within the updateChart function below
+    this.setState({
+      isDataChanging: !this.props.lines && nextProps.lines || !nextProps.lines && this.props.lines
+    })
+  },
+
   shouldComponentUpdate(nextProps) {
     return !_.eq(nextProps, this.props);
   },
@@ -283,7 +295,10 @@ export default React.createClass({
               text: axis.title,
             },
             labels: {
-              formatter: _.partial(yAxisLabelFormatter, axis.unit),
+              // allow to use custom formatter
+              // while global label formatter assumes that
+              // the yAxis unit is always the same as data unit
+              formatter: _.get(axis, 'labels.formatter') || _.partial(yAxisLabelFormatter, axis.unit),
             },
             // do not allow decimal labels (e.g. 12.5)
             allowDecimals: false,
@@ -529,7 +544,7 @@ export default React.createClass({
   },
 
   updateChart() {
-    if (!this.chart) {
+    if (!this.chart || !this.state.isDataChanging) {
       return;
     }
 

@@ -35,17 +35,9 @@ const PanelHeader = React.createClass({
     children: PropTypes.element.isRequired,
     caption: PropTypes.string.isRequired,
   },
-
-  getDefaultProps() {
-    return {
-      title: 'panel header',
-    };
-  },
-
   render() {
     return (
-      <div className={classNames(`header`, this.props.customClass)}>
-        <If condition={!!this.props.title}>
+        <div className={classNames('header', 'inline-with-space', this.props.customClass)}>
           <div className="inline-container">
             <h4 className="title inline">
               {this.props.title}
@@ -54,9 +46,9 @@ const PanelHeader = React.createClass({
               <span className="caption inline">{this.props.caption}</span>
             </If>
           </div>
-        </If>
-        {this.props.children}
-      </div>
+
+          <div className="inline-with-space">{this.props.children}</div>
+        </div>
     );
   },
 });

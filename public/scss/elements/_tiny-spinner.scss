@@ -1,0 +1,28 @@
+.tiny-spinner {
+  &.active {
+    margin-right: rem-calc(30);
+
+    width: rem-calc(8);
+    height: rem-calc(8);
+
+    background: tra;
+    border-radius: 100%;
+    box-shadow:
+      rem-calc(-5) rem-calc(5) 0px $brand-primary,
+      rem-calc(5) rem-calc(5) 0px $brand-primary;
+
+    animation:spin .7s linear infinite;
+  }
+
+  &.revert {
+    box-shadow:
+      rem-calc(-5) rem-calc(5) 0px white,
+      rem-calc(5) rem-calc(5) 0px white;
+  }
+
+  @keyframes spin {
+    100% {
+      transform: rotate(360deg);
+    }
+  }
+}

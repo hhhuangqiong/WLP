@@ -4,6 +4,7 @@ import classNames from 'classnames';
 
 const ID_MAX = 100000;
 const BACKGROUND_COLOR = '#D8D8D8';
+const EMPTY_CELL_PLACEHOLDER = '-';
 
 /**
  * A configurable donut chart component.
@@ -176,7 +177,7 @@ export default React.createClass({
     }
 
     this.chart.setTitle({
-      text: total || '0',
+      text: total || EMPTY_CELL_PLACEHOLDER,
     });
   },
 

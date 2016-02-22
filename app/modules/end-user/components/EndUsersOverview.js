@@ -2,7 +2,8 @@ import React from 'react';
 import { Link } from 'react-router';
 import Select from 'react-select';
 import moment from 'moment';
-import { merge, max, clone, reduce, isEmpty } from 'lodash';
+import classNames from 'classnames';
+import { isNull, merge, max, clone, reduce, isEmpty } from 'lodash';
 import getMapConfig from '../utils/getMapConfig';
 import MAP_DATA from '../constants/mapData';
 
@@ -288,14 +289,14 @@ const EndUsersOverview = React.createClass({
                 title="Monthly Statistics"
                 caption={this.getLastUpdate({ year: this.state.selectedYear, month: this.state.selectedMonth })}
               >
-                <div className="input-group picker month right">
-                  <DateSelector
-                    date={this.getMonthlyStatsDate()}
-                    minDate={moment().subtract(1, 'months').subtract(1, 'years').startOf('month').format('L')}
-                    maxDate={moment().subtract(1, 'months').endOf('month').format('L')}
-                    onChange={this.handleMonthlyStatsChange}
-                  />
-                </div>
+                <div className={classNames('tiny-spinner', { active: this.isMonthlyStatsLoading() })}></div>
+                <DateSelector
+                  className={classNames({ disabled: this.isMonthlyStatsLoading() })}
+                  date={this.getMonthlyStatsDate()}
+                  minDate={moment().subtract(1, 'months').subtract(1, 'years').startOf('month').format('L')}
+                  maxDate={moment().subtract(1, 'months').endOf('month').format('L')}
+                  onChange={this.handleMonthlyStatsChange}
+                />
               </Panel.Header>
               <Panel.Body customClass="narrow no-padding">
                 <DataGrid.Wrapper>
@@ -305,14 +306,18 @@ const EndUsersOverview = React.createClass({
                     changeDir={monthlyRegisteredUserStats.direction}
                     changeAmount={monthlyRegisteredUserStats.change}
                     changeEffect="positive"
-                    changePercentage={monthlyRegisteredUserStats.percent} />
+                    changePercentage={monthlyRegisteredUserStats.percent}
+                    isLoading={this.isMonthlyStatsLoading()}
+                  />
                   <DataGrid.Cell
                     title="Active User"
                     data={monthlyActiveUserStats.total}
                     changeDir={monthlyActiveUserStats.direction}
                     changeAmount={monthlyActiveUserStats.change}
                     changeEffect="positive"
-                    changePercentage={monthlyActiveUserStats.percent} />
+                    changePercentage={monthlyActiveUserStats.percent}
+                    isLoading={this.isMonthlyStatsLoading()}
+                  />
                 </DataGrid.Wrapper>
               </Panel.Body>
             </Panel.Wrapper>
@@ -324,14 +329,13 @@ const EndUsersOverview = React.createClass({
                 customClass="narrow"
                 title="Daily Statistics"
                 caption={this.getLastUpdateFromTimeFrame()} >
-                <div className="input-group right">
-                  <label className="left">Past:</label>
-                  <TimeFramePicker
-                    frames={TIME_FRAMES}
-                    customClass={['input', 'right']}
-                    currentFrame={this.state.selectedLastXDays}
-                    onChange={this.onTimeFrameChange} />
-                </div>
+                <div className={classNames('tiny-spinner', { active: this.isTotalStatsLoading() })}></div>
+                <TimeFramePicker
+                  className={classNames({ disabled: this.isTotalStatsLoading() })}
+                  frames={TIME_FRAMES}
+                  currentFrame={this.state.selectedLastXDays}
+                  onChange={this.onTimeFrameChange}
+                />
               </Panel.Header>
               <Panel.Body customClass="narrow no-padding">
                 <div className="inner-wrap">
@@ -443,7 +447,14 @@ const EndUsersOverview = React.createClass({
     const selectedMonth = momentDate.month();
     const selectedYear = momentDate.year();
 
-    this.setState({ selectedMonth, selectedYear });
+    this.setState({
+      selectedMonth,
+      selectedYear,
+      thisMonthRegisteredUser: null,
+      lastMonthRegisteredUser: null,
+      thisMonthActiveUser: null,
+      lastMonthActiveUser: null,
+    });
     this._getMonthlyStats(selectedMonth, selectedYear);
   },
 
@@ -617,6 +628,15 @@ const EndUsersOverview = React.createClass({
       toTime: moment().endOf('day').format('x'),
       carrierId: identity
     });
+  },
+
+  isMonthlyStatsLoading() {
+    const monthlyRegisteredUserStats = this._getMonthlyRegisteredUserStats();
+    return isNull(monthlyRegisteredUserStats.total) && isNull(this.state.monthlyStatsError);
+  },
+
+  isTotalStatsLoading() {
+    return isNull(this.state.lastXDaysRegisteredUser) && isNull(this.state.totalStatsError);
   },
 });
 
