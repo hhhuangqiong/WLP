@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { PropTypes } from 'react';
 import classNames from 'classnames';
 
 const TOTAL_COLUMNS = 24;
@@ -8,10 +8,55 @@ const DATA_FETCHING_LABEL = '-';
 export default React.createClass({
   displayName: 'SummaryCells',
 
-  getDefaultProps() {
-    return {
-      isLoading: false,
-    };
+  propTypes: {
+    accumulatedAttempts: PropTypes.number,
+    accumulatedSuccess: PropTypes.number,
+    accumulatedFailure: PropTypes.number,
+    averageSuccessRate: PropTypes.number,
+    pastAccumulatedAttempts: PropTypes.number,
+    pastAccumulatedSuccess: PropTypes.number,
+    pastAccumulatedFailure: PropTypes.number,
+    pastAverageSuccessRate: PropTypes.number,
+  },
+
+  /**
+   * Returns a string for the change icon display.
+   *
+   * @method
+   * @param {Number} change  The value changed
+   * @param {Boolean} isPositiveGood  Indicate whether a positive change is good
+   * @returns {String} Empty string if no change, "up" for good change, "down" for bad change
+   */
+  getChangesStatus(change, isPositiveGood) {
+    // NaN or 0 will both go into this case
+    if (!change) {
+      return '';
+    }
+
+    return (change > 0 && isPositiveGood) ? 'positive' : 'negative';
+  },
+
+  renderCells(cellMetadataList) {
+    return cellMetadataList.map((cell, index) => {
+      return (
+        <section key={index} className={classNames(`large-${Math.floor(TOTAL_COLUMNS / cellMetadataList.length)}`, 'columns', index !== 0 ? 'left-border' : '' )}>
+          <div className="verification-overview__title">{cell.title}</div>
+          <div className="verification-overview__value">{cell.value}</div>
+          <div className={classNames('verification-overview__changes', cell.changes.status, cell.changes.direction, { hide: !cell.changes.status })}>
+            <span className="arrow"></span>
+            <span>{cell.changes.text}</span>
+          </div>
+        </section>
+      );
+    });
+  },
+
+  render() {
+    return (
+      <div>
+        {this.renderCells(this.prepareCellsMetadata())}
+      </div>
+    );
   },
 
   /**
@@ -38,54 +83,37 @@ export default React.createClass({
     return value - prevValue;
   },
 
-  /**
-   * Returns a string for the change icon display.
-   *
-   * @method
-   * @param {Number} change  The value changed
-   * @param {Boolean} isPositiveGood  Indicate whether a positive change is good
-   * @returns {String} Empty strnig if no change, "up" for good change, "down" for bad change
-   */
-  getChangesStatus(change, isPositiveGood) {
-    // NaN or 0 will both go into this case
-    if (!change) {
-      return EMPTY_DATA_LABEL;
-    }
-
-    return (change > 0 && isPositiveGood) ? 'positive' : 'negative';
-  },
-
   prepareCellsMetadata() {
-    let accumulatedAttempts = this.props.accumulatedAttempts;
-    let accumulatedSuccess = this.props.accumulatedSuccess;
-    let accumulatedFailure = this.props.accumulatedFailure;
-    let averageSuccessRate = this.props.averageSuccessRate;
+    const accumulatedAttempts = this.props.accumulatedAttempts;
+    const accumulatedSuccess = this.props.accumulatedSuccess;
+    const accumulatedFailure = this.props.accumulatedFailure;
+    const averageSuccessRate = this.props.averageSuccessRate;
 
-    let pastAccumulatedAttempts = this.props.pastAccumulatedAttempts;
-    let pastAccumulatedSuccess = this.props.pastAccumulatedSuccess;
-    let pastAccumulatedFailure = this.props.pastAccumulatedFailure;
-    let pastAverageSuccessRate = this.props.pastAverageSuccessRate;
+    const pastAccumulatedAttempts = this.props.pastAccumulatedAttempts;
+    const pastAccumulatedSuccess = this.props.pastAccumulatedSuccess;
+    const pastAccumulatedFailure = this.props.pastAccumulatedFailure;
+    const pastAverageSuccessRate = this.props.pastAverageSuccessRate;
 
-    let constructChangeText = (numberChange, percentageChange) => {
-      let percentageText = isFinite(percentageChange) ? Math.abs(percentageChange) : ' - ';
+    const constructChangeText = (numberChange, percentageChange) => {
+      const percentageText = isFinite(percentageChange) ? Math.abs(percentageChange) : ' - ';
       return `${Math.abs(numberChange)} (${percentageText}%)`;
     };
 
-    let computeTrend = (prevValue, value, isPositiveGood) => {
-      let numberChange = this.numberChanges(prevValue, value);
-      let percentageChange = this.percentageChanges(prevValue, value);
-      let status = this.getChangesStatus(numberChange, isPositiveGood);
-      let direction = numberChange > 0 ? 'up' : 'down';
+    const computeTrend = (prevValue, value, isPositiveGood) => {
+      const numberChange = this.numberChanges(prevValue, value);
+      const percentageChange = this.percentageChanges(prevValue, value);
+      const status = this.getChangesStatus(numberChange, isPositiveGood);
+      const direction = numberChange > 0 ? 'up' : 'down';
 
       return {
         numberChange,
         percentageChange,
         status,
-        direction
+        direction,
       };
     };
 
-    let cellMetadataList = [];
+    const cellMetadataList = [];
     let trend;
 
     // Total number of verification attempts
@@ -97,8 +125,8 @@ export default React.createClass({
       changes: {
         status: trend.status,
         direction: trend.direction,
-        text: constructChangeText(trend.numberChange, trend.percentageChange)
-      }
+        text: constructChangeText(trend.numberChange, trend.percentageChange),
+      },
     });
 
     // Total number of success verification
@@ -110,8 +138,8 @@ export default React.createClass({
       changes: {
         status: trend.status,
         direction: trend.direction,
-        text: constructChangeText(trend.numberChange, trend.percentageChange)
-      }
+        text: constructChangeText(trend.numberChange, trend.percentageChange),
+      },
     });
 
     // Number of failure verification
@@ -123,8 +151,8 @@ export default React.createClass({
       changes: {
         status: trend.status,
         direction: trend.direction,
-        text: constructChangeText(trend.numberChange, trend.percentageChange)
-      }
+        text: constructChangeText(trend.numberChange, trend.percentageChange),
+      },
     });
 
     // Average success rate
@@ -136,49 +164,10 @@ export default React.createClass({
       changes: {
         status: trend.status,
         direction: trend.direction,
-        text: `${Math.abs(Math.round(trend.numberChange))}%`
-      }
+        text: `${Math.abs(Math.round(trend.numberChange))}%`,
+      },
     });
 
     return cellMetadataList;
   },
-
-  renderCell(cell) {
-    if (this.props.isLoading) {
-      return <div className="verification-overview__value">{DATA_FETCHING_LABEL}</div>;
-    }
-
-    if (!cell.value || cell.value === 'Infinity') {
-      return <div className="verification-overview__value">{EMPTY_DATA_LABEL}</div>;
-    }
-
-    return (
-      <div>
-        <div className="verification-overview__value">{cell.value}</div>
-        <div className={classNames('verification-overview__changes', cell.changes.status, cell.changes.direction, { hide: !cell.changes.status })}>
-          <span className="arrow"></span>
-          <span>{cell.changes.text}</span>
-        </div>
-      </div>
-    );
-  },
-
-  renderCells(cellMetadataList) {
-    return cellMetadataList.map((cell, index) => {
-      return (
-        <section key={index} className={classNames(`large-${Math.floor(TOTAL_COLUMNS / cellMetadataList.length)}`, 'columns', index !== 0 ? 'left-border' : '' )}>
-          <div className="verification-overview__title">{cell.title}</div>
-          {this.renderCell(cell)}
-        </section>
-      );
-    });
-  },
-
-  render() {
-    return (
-      <div>
-        {this.renderCells(this.prepareCellsMetadata())}
-      </div>
-    );
-  }
 });

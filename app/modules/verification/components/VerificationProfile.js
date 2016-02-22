@@ -2,10 +2,9 @@ import _ from 'lodash';
 import React, { PropTypes } from 'react';
 import moment from 'moment';
 
-import VerificationTableRow from './VerificationTableRow';
-import CountryFlag from '../../../main/components/CountryFlag'
-
+import CountryFlag from '../../../main/components/CountryFlag';
 import { getCountryName } from '../../../utils/StringFormatter';
+
 const EMPTY_CELL = 'N/A';
 const maxColumns = 5;
 
@@ -21,27 +20,27 @@ export default React.createClass({
 
     let index = 0;
     let emptyColumns = 0;
-    let length = Object.keys(hlr).length;
+    const length = Object.keys(hlr).length;
 
     return _.map(hlr, (property, type) => {
       index ++;
 
       if (!property.country || !property.operator) {
         emptyColumns ++;
-        if (index == length) {
+        if (index === length) {
           return (
-            <td colSpan={ index == length ? (maxColumns - length + emptyColumns) : 1} />
+            <td colSpan={ index === length ? (maxColumns - length + emptyColumns) : 1} />
           );
         }
         return false;
       }
 
       return (
-        <td colSpan={ index == length ? (maxColumns - length + emptyColumns) : 1}>
+        <td colSpan={ index === length ? (maxColumns - length + emptyColumns) : 1}>
           <span className="heading">{ type }</span>
         </td>
       );
-    })
+    });
   },
 
   renderHLRTypeRow(rowName) {
@@ -50,16 +49,16 @@ export default React.createClass({
 
     let index = 0;
     let emptyColumns = 0;
-    let length = Object.keys(hlr).length;
+    const length = Object.keys(hlr).length;
 
     return _.map(hlr, (property) => {
       index ++;
 
       if (!property.country || !property.operator) {
         emptyColumns ++;
-        if (index == length) {
+        if (index === length) {
           return (
-            <td className="spacer" colSpan={ index == length ? (maxColumns - length + emptyColumns) : 1} />
+            <td className="spacer" colSpan={ index === length ? (maxColumns - length + emptyColumns) : 1} />
           );
         }
         return false;
@@ -67,25 +66,25 @@ export default React.createClass({
 
       if (rowName === 'country') {
         return (
-          <td colSpan={ index == length ? (maxColumns - length + emptyColumns) : 1}>
+          <td colSpan={ index === length ? (maxColumns - length + emptyColumns) : 1}>
             <div className="country">
               <CountryFlag code={property.country} />
               { getCountryName(property.country) }
             </div>
           </td>
         );
-      } else {
-        return (
-          <td colSpan={ index == length ? (maxColumns - length + emptyColumns) : 1}>
-            { property[rowName] }
-          </td>
-        )
       }
-    })
+
+      return (
+        <td colSpan={ index === length ? (maxColumns - length + emptyColumns) : 1}>
+          { property[rowName] }
+        </td>
+      );
+    });
   },
 
   renderHLRRow(rowName) {
-    let { hlr } = this.props.profile || {};
+    const { hlr } = this.props.profile || {};
 
     if (rowName === 'country') {
       return (
@@ -95,30 +94,30 @@ export default React.createClass({
             { getCountryName(hlr.country) }
           </div>
         </td>
-      )
-    } else {
-      return (
-        <td colSpan={maxColumns - 1}>
-          { hlr[rowName] }
-        </td>
-      )
+      );
     }
+
+    return (
+      <td colSpan={maxColumns - 1}>
+        { hlr[rowName] }
+      </td>
+    );
   },
 
   renderSIMHeader() {
-    let { sims: simCard } = this.props.profile || {};
+    const { sims: simCard } = this.props.profile || {};
 
     return _.map(simCard, (card, index) => {
       return (
-        <td colSpan={ index == (simCard.length - 1) ? (maxColumns - simCard.length) : 1}>
+        <td colSpan={ index === (simCard.length - 1) ? (maxColumns - simCard.length) : 1}>
           <span className="heading">SIM Card #{index + 1}</span>
         </td>
       );
-    })
+    });
   },
 
   renderSIMRow(rowName) {
-    let { sims: simCard } = this.props.profile || {};
+    const { sims: simCard } = this.props.profile || {};
 
     return (
       <td colSpan={ maxColumns - 1 }>
@@ -133,45 +132,45 @@ export default React.createClass({
     simCard = _.pick(_.first(simCard), ['home', 'current']);
 
     let index = 0;
-    let length = Object.keys(simCard).length;
+    const length = Object.keys(simCard).length;
 
     return _.map(simCard, (property) => {
       index ++;
       return (
-        <td colSpan={ index == length ? (maxColumns - length) : 1}>
+        <td colSpan={ index === length ? (maxColumns - length) : 1}>
           { _.get(property, rowName) }
         </td>
       );
-    })
+    });
   },
 
   renderCellInfoHeader() {
-    let { cellInfo } = this.props.profile || {};
+    const { cellInfo } = this.props.profile || {};
 
     return _.map(cellInfo, (info, index) => {
       return (
-        <td colSpan={ index == (cellInfo.length - 1) ? (maxColumns - cellInfo.length) : 1}>
+        <td colSpan={ index === (cellInfo.length - 1) ? (maxColumns - cellInfo.length) : 1}>
           <span className="heading">Cell #{index + 1}</span>
         </td>
       );
-    })
+    });
   },
 
   renderCellInfoRow(rowName) {
-    let { cellInfo } = this.props.profile || {};
+    const { cellInfo } = this.props.profile || {};
 
     return _.map(cellInfo, (info, index) => {
       return (
-        <td colSpan={ index == (cellInfo.length - 1) ? (maxColumns - cellInfo.length) : 1}>
+        <td colSpan={ index === (cellInfo.length - 1) ? (maxColumns - cellInfo.length) : 1}>
           { _.get(info, rowName) }
         </td>
       );
-    })
+    });
   },
 
-  render: function () {
-    let { profile } = this.props;
-    let { hlr, sims: simCard, cellInfo } = profile || {};
+  render() {
+    const { profile } = this.props;
+    const { hlr, sims: simCard } = profile || {};
 
     return (
       <table className="verification-profile data-table small-24 large-22 large-offset-1">
@@ -201,7 +200,7 @@ export default React.createClass({
                     <span>{ moment(_.get(hlr, 'time')).format('h:mm:ss a') }</span>
                     <span>{ moment(_.get(hlr, 'time')).format('DD MMMM YYYY') }</span>
                   </div>
-                  <Else />
+                <Else />
                   <span>{ EMPTY_CELL }</span>
                 </If>
               </div>
@@ -209,12 +208,12 @@ export default React.createClass({
                 <div className="status">
                   <If condition={_.get(profile, 'success')}>
                     <span className="success label">Success</span>
-                    <Else />
+                  <Else />
                     <span className="failure label">Failure</span>
                   </If>
                   <If condition={_.get(profile, 'isValid')}>
                     <span className="default label">Valid</span>
-                    <Else />
+                  <Else />
                     <span className="warning label">Invalid</span>
                   </If>
                   <If condition={_.get(profile, 'isPorted')}>
@@ -504,5 +503,5 @@ export default React.createClass({
         </tfoot>
       </table>
     );
-  }
+  },
 });

@@ -8,7 +8,8 @@ import Tooltip from 'rc-tooltip';
 
 import { getCountryName } from '../../../utils/StringFormatter';
 import CountryFlag from '../../../main/components/CountryFlag';
-let mobileOperators = require('../../../data/mobileOperators.json');
+
+const mobileOperators = require('../../../data/mobileOperators.json');
 
 /**
  * @typedef Country
@@ -25,21 +26,21 @@ let mobileOperators = require('../../../data/mobileOperators.json');
  * @param {Number} mnc  The mobile network code of the operator
  * @returns {String} The operator name, or empty string if not found
  */
-let lookupMobileOperator = function (mcc, mnc) {
+const lookupMobileOperator = function(mcc, mnc) {
   // mnc could be 0, so cannot be using `!`
   if (_.isUndefined(mcc) || _.isUndefined(mnc)) {
     return '';
   }
 
-  let operatorsInCountry = mobileOperators[mcc];
+  const operatorsInCountry = mobileOperators[mcc];
 
   if (!operatorsInCountry) {
     return '';
   }
 
-  let operatorObject = _.find(operatorsInCountry, function (obj) {
+  const operatorObject = _.find(operatorsInCountry, obj => {
     // no `===`, try to compare string and number
-    return obj.mnc == mnc;
+    return obj.mnc === mnc;
   });
 
   return operatorObject ? operatorObject.operator : '';
@@ -52,14 +53,14 @@ let lookupMobileOperator = function (mcc, mnc) {
  * @param {String} type  The type of the verification event
  * @returns {String} The verification method
  */
-let getVerificationMethod = function (type) {
+const getVerificationMethod = function(type) {
   switch (type) {
-    case 'MobileTerminated':
-      return 'call-in';
-    case 'MobileOriginated':
-      return 'call-out';
-    default:
-      return type;
+  case 'MobileTerminated':
+    return 'call-in';
+  case 'MobileOriginated':
+    return 'call-out';
+  default:
+    return type;
   }
 };
 
@@ -74,20 +75,20 @@ let getVerificationMethod = function (type) {
  * @param {String} platform  The platform of the mobile phone used during the verification
  * @returns {String} The icon name for the OS
  */
-let getOsIconName = function (platform) {
+const getOsIconName = function(platform) {
   if (!platform) {
     return null;
   }
 
   switch (platform.toUpperCase()) {
-    case 'IOS':
-      return 'apple';
-    default:
-      return platform;
+  case 'IOS':
+    return 'apple';
+  default:
+    return platform;
   }
 };
 
-let VerificationTableRow = React.createClass({
+const VerificationTableRow = React.createClass({
   propTypes: {
     verification: PropTypes.shape({
       /**
@@ -149,42 +150,43 @@ let VerificationTableRow = React.createClass({
        * Verification failure reason
        * @type {String}
        */
-      reason_message: PropTypes.string
-    })
+      reason_message: PropTypes.string,
+    }),
   },
 
-  render: function () {
-    let verification = this.props.verification;
+  render() {
+    const verification = this.props.verification;
 
-    let time = moment(verification.timestamp);
-    let dateString = time.format('D MMM YYYY');
-    let timeString = time.format('h:mm:ss a');
+    const time = moment(verification.timestamp);
+    const dateString = time.format('D MMM YYYY');
+    const timeString = time.format('h:mm:ss a');
 
-    let success = verification.success;
-    let status = (success ? 'success' : 'failure');
-    let statusFlagClasses = classNames('verification-table__result-tag', {
+    const success = verification.success;
+    const status = (success ? 'success' : 'failure');
+    const statusFlagClasses = classNames('verification-table__result-tag', {
       'verification-table__success-tag': success,
-      'verification-table__failure-tag': !success
+      'verification-table__failure-tag': !success,
     });
 
-    let phone = verification.phone_number;
-    let phoneCountry = getCountryName(verification.country);
+    const phone = verification.phone_number;
+    const phoneCountry = getCountryName(verification.country);
 
-    let ip = verification.source_ip;
-    let ipCountry = getCountryName(verification.source_country);
+    const ip = verification.source_ip;
+    const ipCountry = getCountryName(verification.source_country);
 
-    let method = getVerificationMethod(verification.type);
+    const method = getVerificationMethod(verification.type);
 
-    let deviceModel = verification.hardware_identifier || '';
-    let remarks = verification.reason_message;
+    const deviceModel = verification.hardware_identifier || '';
+    const remarks = verification.reason_message;
 
-    let os = getOsIconName(verification.platform);
-    let operator = lookupMobileOperator(verification.home_mcc, verification.home_mnc);
+    const os = getOsIconName(verification.platform);
+    const operator = lookupMobileOperator(verification.home_mcc, verification.home_mnc);
 
-    let details = {};
+    const details = {};
 
     if (verification.hlr_query_response) {
-      let hlr = verification.hlr_query_response;
+      const hlr = verification.hlr_query_response;
+
       details.hlr = {
         id: hlr.id,
         country: hlr.msisdn_country_code,
@@ -198,8 +200,8 @@ let VerificationTableRow = React.createClass({
           country: hlr.original_country_code,
           prefix: hlr.original_country_prefix,
           operator: hlr.original_network_name,
-          networkPrefix: hlr.original_network_prefix
-        }
+          networkPrefix: hlr.original_network_prefix,
+        },
       };
 
       if (hlr.is_roaming === 'Yes') {
@@ -208,7 +210,7 @@ let VerificationTableRow = React.createClass({
           country: hlr.roaming_country_code,
           prefix: hlr.roaming_country_prefix,
           operator: hlr.roaming_network_name,
-          networkPrefix: hlr.roaming_network_prefix
+          networkPrefix: hlr.roaming_network_prefix,
         };
       }
 
@@ -218,7 +220,7 @@ let VerificationTableRow = React.createClass({
           country: hlr.ported_country_code,
           prefix: hlr.ported_country_prefix,
           operator: hlr.ported_network_name,
-          networkPrefix: hlr.ported_network_prefix
+          networkPrefix: hlr.ported_network_prefix,
         };
       }
 
@@ -230,31 +232,33 @@ let VerificationTableRow = React.createClass({
     }
 
     if (verification.sim_card_info) {
-      let sims = [];
-      verification.sim_card_info.forEach((sim) => {
+      const sims = [];
+
+      verification.sim_card_info.forEach(sim => {
         sims.push({
           imsi: sim.imsi,
           home: {
             operator: lookupMobileOperator(+sim.home_mcc, +sim.home_mnc),
             mnc: sim.home_mnc,
-            mcc: sim.home_mcc
+            mcc: sim.home_mcc,
           },
           current: {
             operator: lookupMobileOperator(+sim.current_mcc, +sim.current_mnc),
             mnc: sim.current_mnc,
-            mcc: sim.current_mcc
-          }
+            mcc: sim.current_mcc,
+          },
         });
       });
       details.sims = sims;
     }
 
-    let showDetails = verification.hlr_query_response && verification.sim_card_info;
-      details.success = success;
-      details.deviceModel = deviceModel;
-      details.method = method;
-      details.ip = ip;
-      details.imsiMatched = _.get(details, 'hlr.imsi') === _.get(details, 'sims.0.imsi');
+    const showDetails = verification.hlr_query_response && verification.sim_card_info;
+
+    details.success = success;
+    details.deviceModel = deviceModel;
+    details.method = method;
+    details.ip = ip;
+    details.imsiMatched = _.get(details, 'hlr.imsi') === _.get(details, 'sims.0.imsi');
 
     return (
       <tr>
@@ -297,7 +301,7 @@ let VerificationTableRow = React.createClass({
         </td>
       </tr>
     );
-  }
+  },
 });
 
 export default VerificationTableRow;

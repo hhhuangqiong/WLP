@@ -85,7 +85,7 @@ export default React.createClass({
       sYAxis: [{
         unit: '%',
         alignment: 'right',
-        max: 100
+        max: 100,
       }],
       lines: null,
       successRateSeries: null,
@@ -365,7 +365,7 @@ export default React.createClass({
 
     const xAxis = {
       start: from,
-      tickCount: parseInt(quantity),
+      tickCount: parseInt(quantity, 10),
       tickInterval: (timescale === 'day' ? 24 : 1) * 3600 * 1000,
     };
 

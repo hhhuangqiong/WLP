@@ -1,7 +1,6 @@
 import React, { PropTypes } from 'react';
 import VerificationTableRow from './VerificationTableRow';
 import VerificationProfile from './VerificationProfile';
-import CountryFlag from '../../../main/components/CountryFlag';
 
 export default React.createClass({
   propTypes: {
@@ -19,22 +18,30 @@ export default React.createClass({
      * Callback for loading more content
      * @type {Function}
      */
-    onLoadMoreClick: PropTypes.func.isRequired
+    onLoadMoreClick: PropTypes.func.isRequired,
   },
 
-  getInitialState: function() {
+  getInitialState() {
     return {
-      selectedProfile: null
+      selectedProfile: null,
     };
   },
 
-  getDefaultProps: function () {
+  getDefaultProps() {
     return {
-      verifications: []
+      verifications: [],
     };
   },
 
-  renderTableRows: function () {
+  onClickProfile(selectedProfile) {
+    this.setState({ selectedProfile });
+  },
+
+  onClickBackButton() {
+    this.setState({ selectedProfile: null });
+  },
+
+  renderTableRows() {
     return this.props.verifications.map(item => {
       return (
         <VerificationTableRow
@@ -45,24 +52,16 @@ export default React.createClass({
     });
   },
 
-  renderPaginationFooter: function () {
+  renderPaginationFooter() {
     if (this.props.verifications.length < this.props.total) {
       return (<div className="pagination__button text-center" onClick={this.props.onLoadMoreClick}>Load More</div>);
-    } else {
-      return (<div className="pagination__button pagination__button--inactive text-center">no more result</div>);
     }
+
+    return (<div className="pagination__button pagination__button--inactive text-center">no more result</div>);
   },
 
-  onClickProfile: function(selectedProfile) {
-    this.setState({ selectedProfile });
-  },
-
-  onClickBackButton: function() {
-    this.setState({ selectedProfile: null });
-  },
-
-  render: function () {
-    let { selectedProfile } = this.state;
+  render() {
+    const { selectedProfile } = this.state;
 
     return (
       <If condition={!selectedProfile}>
@@ -98,5 +97,5 @@ export default React.createClass({
           onClickBack={this.onClickBackButton} />
       </If>
     );
-  }
+  },
 });

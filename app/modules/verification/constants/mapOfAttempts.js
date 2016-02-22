@@ -1,17 +1,17 @@
 export default (containerId, data, maxNumber) => {
   return {
     chart: {
-      renderTo: containerId
+      renderTo: containerId,
     },
 
     title: '',
 
     exporting: {
-      enabled: false
+      enabled: false,
     },
 
     credits: {
-      enabled: false
+      enabled: false,
     },
 
     colorAxis: {
@@ -24,21 +24,21 @@ export default (containerId, data, maxNumber) => {
       gridLineColor: 'white',
       minorTickInterval: 0.1,
       minorGridLineColor: 'white',
-      tickLength: 0
+      tickLength: 0,
     },
 
-    series : [{
-      data : data,
+    series: [{
+      data: data,
       mapData: Highcharts.maps['custom/world'],
       joinBy: ['iso-a2', 'code'],
       animation: true,
       name: 'Number of attemps',
       states: {
         hover: {
-          color: '#BADA55'
-        }
-      }
-    }]
+          color: '#BADA55',
+        },
+      },
+    }],
 
   };
 };

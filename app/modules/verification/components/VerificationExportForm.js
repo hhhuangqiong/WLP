@@ -1,7 +1,5 @@
 import React, { PropTypes, Component } from 'react';
 import moment from 'moment';
-import classNames from 'classnames';
-import _ from 'lodash';
 
 import DateTimePicker from '../../../main/components/DateTimePicker';
 import ExportSubmitControls from '../../../main/file-export/components/ExportSubmitControls';
@@ -11,9 +9,15 @@ const EXPORT_HEADING = 'DOWNLOAD REPORT';
 export default class VerificationExportForm extends Component {
   static propTypes = {
     verificationType: PropTypes.string,
-    osType:  PropTypes.string,
+    osType: PropTypes.string,
     handleExport: PropTypes.func.isRequired,
-    closeModal: PropTypes.func.isRequired
+    closeModal: PropTypes.func.isRequired,
+    handleVerificationMethodChange: PropTypes.func.isRequired,
+    transformVerificationTypes: PropTypes.func.isRequired,
+    defaultOption: PropTypes.string,
+    verificationTypes: PropTypes.array,
+    handleOsTypeChange: PropTypes.func.isRequired,
+    osTypes: PropTypes.array,
   };
 
   constructor(props) {
@@ -25,35 +29,6 @@ export default class VerificationExportForm extends Component {
     this._export = this._export.bind(this);
 
     this.state = this._resetState(props);
-  }
-
-  _handleStartDateChange(newDate) {
-    this.setState({ fromTime: moment.isMoment(newDate) ? newDate : moment(newDate) });
-  }
-
-  _handleEndDateChange(newDate) {
-    this.setState({ toTime: moment.isMoment(newDate) ? newDate : moment(newDate) });
-  }
-
-  _resetState(props) {
-    return {
-      verificationType: '',
-      osType: '',
-      fromTime: moment(props.fromTime),
-      toTime: moment(props.toTime).endOf('day')
-    };
-  }
-
-  _export() {
-    let params = {
-      from: this.state.fromTime.format('x'),
-      to: this.state.toTime.format('x'),
-      verificationType: this.props.verificationType,
-      osType: this.props.osType
-    };
-
-    this.props.handleExport(params);
-    this._resetState(this.props);
   }
 
   render() {
@@ -121,7 +96,7 @@ export default class VerificationExportForm extends Component {
             onChange={this.props.handleOsTypeChange}
           >
             <option>{this.props.defaultOption}</option>
-            {this.props.osTypes.map((platform) => {
+            {this.props.osTypes.map(platform => {
               return (
                 <option key={platform} value={platform}>
                   {platform}
@@ -137,8 +112,36 @@ export default class VerificationExportForm extends Component {
           closeModal={this.props.closeModal}
           handleExport={this._export}
         />
-
       </form>
     );
+  }
+
+  _handleStartDateChange(newDate) {
+    this.setState({ fromTime: moment.isMoment(newDate) ? newDate : moment(newDate) });
+  }
+
+  _handleEndDateChange(newDate) {
+    this.setState({ toTime: moment.isMoment(newDate) ? newDate : moment(newDate) });
+  }
+
+  _resetState(props) {
+    return {
+      verificationType: '',
+      osType: '',
+      fromTime: moment(props.fromTime),
+      toTime: moment(props.toTime).endOf('day'),
+    };
+  }
+
+  _export() {
+    const params = {
+      from: this.state.fromTime.format('x'),
+      to: this.state.toTime.format('x'),
+      verificationType: this.props.verificationType,
+      osType: this.props.osType,
+    };
+
+    this.props.handleExport(params);
+    this._resetState(this.props);
   }
 }

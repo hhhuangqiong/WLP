@@ -1,5 +1,5 @@
 import React                   from 'react';
-import { concurrent }            from 'contra';
+import { concurrent }          from 'contra';
 import Sidebar                 from './Sidebar';
 import CanvasWrapper           from './CanvasWrapper';
 import Navigation              from './NavigationBar';
@@ -8,6 +8,7 @@ import Menu                    from './NavigationMenu';
 import Content                 from './MainContent';
 import SystemMessage           from './SystemMessage';
 import LoadingSpinner          from './LoadingSpinner';
+import classnames              from 'classnames';
 
 import AuthStore               from '../../../main/stores/AuthStore';
 import fetchCurrentCompanyInfo from '../../actions/fetchCurrentCompanyInfo';

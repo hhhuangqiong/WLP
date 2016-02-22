@@ -2,8 +2,6 @@ import _ from 'lodash';
 import Q from 'q';
 import moment from 'moment';
 
-let debug = require('debug')('app:modules/verification/actions/fetchVerificationOverview');
-
 /**
  * Returns an ISO 8601 string formatted time of a time range from now, aligned to the timescale.
  * The term 'now' is actually not correct because it will be aligned to the end
@@ -28,80 +26,75 @@ let debug = require('debug')('app:modules/verification/actions/fetchVerification
  * getIsoTimeRangeFromNow(24, 'hour', 12)
  * // { from: "2015-09-24T01:00:00+08:00", to: "2015-09-25T01:00:00+08:00"}
  */
-let getIsoTimeRangeFromNow = function(quantity, timescale, offset = 0) {
-  // consider the case of 14:23 with timescale "hour", we would like to get data up to 14:00
-  // as the data is very likely to be 0 (not ready) for the latest time scale
-  let to = moment().subtract(offset, timescale).startOf(timescale);
-  let from = moment(to).subtract(quantity, timescale).startOf(timescale);
+function getIsoTimeRangeFromNow(quantity, timescale, offset = 0) {
+  // -1 because we want the buckets align with the timescale
+  // consider the case of 14:23 with timescale "hour", we would like to get 15:00
+  const to = moment().subtract(offset - 1, timescale).startOf(timescale);
+  const from = moment(to).subtract(quantity, timescale).startOf(timescale);
 
   return {
     from: from.format(),
-    to: to.format()
+    to: to.format(),
   };
-};
+}
 
 export default (context, params, done) => {
-  let {
+  const {
     getVerificationStatsByStatus,
     getVerificationStatsByCountry,
     getVerificationStatsByType,
-    getVerificationStatsByPlatform
+    getVerificationStatsByPlatform,
   } = context.api;
 
-  let quantity = params.quantity;
-  let timescale = params.timescale;
+  const quantity = params.quantity;
+  const timescale = params.timescale;
 
-  let timeRangeForCurrentPeriod = getIsoTimeRangeFromNow(quantity, timescale);
-  let paramsForCurrentPeriod = _.merge({
+  const timeRangeForCurrentPeriod = getIsoTimeRangeFromNow(quantity, timescale);
+  const paramsForCurrentPeriod = _.merge({
     timescale: timescale,
     application: params.application,
-    carrierId: params.carrierId
+    carrierId: params.carrierId,
   }, timeRangeForCurrentPeriod);
 
-  let timeRangeForPreviousPeriod = getIsoTimeRangeFromNow(quantity, timescale, quantity);
-  let paramsForLastPeriod = _.merge({}, paramsForCurrentPeriod, timeRangeForPreviousPeriod);
+  const timeRangeForPreviousPeriod = getIsoTimeRangeFromNow(quantity, timescale, quantity);
+  const paramsForLastPeriod = _.merge({}, paramsForCurrentPeriod, timeRangeForPreviousPeriod);
 
-  let fetchedData = {};
+  const fetchedData = {};
 
-  let actions = [{
+  const actions = [{
     name: 'FETCH_VERIFICATION_ATTEMPTS',
-    bindedApi: Q.nbind(getVerificationStatsByStatus, context.api, paramsForCurrentPeriod)
+    bindedApi: Q.nbind(getVerificationStatsByStatus, context.api, paramsForCurrentPeriod),
   }, {
     name: 'FETCH_VERIFICATION_TYPE',
-    bindedApi: Q.nbind(getVerificationStatsByType, context.api, paramsForCurrentPeriod)
+    bindedApi: Q.nbind(getVerificationStatsByType, context.api, paramsForCurrentPeriod),
   }, {
     name: 'FETCH_VERIFICATION_OS_TYPE',
-    bindedApi: Q.nbind(getVerificationStatsByPlatform, context.api, paramsForCurrentPeriod)
+    bindedApi: Q.nbind(getVerificationStatsByPlatform, context.api, paramsForCurrentPeriod),
   }, {
     name: 'FETCH_VERIFICATION_COUNTRIES_DATA',
-    bindedApi: Q.nbind(getVerificationStatsByCountry, context.api, paramsForCurrentPeriod)
+    bindedApi: Q.nbind(getVerificationStatsByCountry, context.api, paramsForCurrentPeriod),
   }, {
     name: 'FETCH_VERIFICATION_PAST_ATTEMPTS',
-    bindedApi: Q.nbind(getVerificationStatsByStatus, context.api, paramsForLastPeriod)
+    bindedApi: Q.nbind(getVerificationStatsByStatus, context.api, paramsForLastPeriod),
   }];
 
-  let runningActions = actions.map((action) => {
+  const runningActions = actions.map(action => {
     return action.bindedApi()
-      .then((result) => {
+      .then(result => {
         // Prepare all data from endpoint first and dispatch once afterward to ensure the data update problem of Line Chart
         if (action.name === 'FETCH_VERIFICATION_COUNTRIES_DATA') {
-          fetchedData['countriesData'] = result;
-
+          fetchedData.countriesData = result;
         } else if (action.name === 'FETCH_VERIFICATION_OS_TYPE') {
-          fetchedData['osData'] = result.data;
-
+          fetchedData.osData = result.data;
         } else if (action.name === 'FETCH_VERIFICATION_PAST_ATTEMPTS') {
-          fetchedData['pastAttemptData'] = result;
-
+          fetchedData.pastAttemptData = result;
         } else if (action.name === 'FETCH_VERIFICATION_ATTEMPTS') {
-          fetchedData['currentAttemptData'] = result;
-
+          fetchedData.currentAttemptData = result;
         } else if (action.name === 'FETCH_VERIFICATION_TYPE') {
-          fetchedData['typeData'] = result.data;
-
+          fetchedData.typeData = result.data;
         }
       })
-      .catch((err) => {
+      .catch(err => {
         context.dispatch(action.name + '_FAILURE', err);
         // we don't want to handle the error here
         throw err;
@@ -110,17 +103,17 @@ export default (context, params, done) => {
   });
 
   Q.allSettled(runningActions)
-    .then((promises) => {
-      let failureStatusList = [];
+    .then(promises => {
+      const failureStatusList = [];
 
-      promises.forEach((promise) => {
+      promises.forEach(promise => {
         // rejected promise and the reason is not in our list
         if (promise.reason && failureStatusList.indexOf(promise.reason.status) < 0) {
           failureStatusList.push(promise.reason.status);
         }
       });
 
-      let possibleReasons = failureStatusList.map((status) => {
+      const possibleReasons = failureStatusList.map(status => {
         switch (status) {
         case 504:
           return 'Request timeout';
@@ -131,7 +124,7 @@ export default (context, params, done) => {
 
       if (failureStatusList.length > 0) {
         context.dispatch('ERROR_MESSAGE', {
-          message: 'Sorry. Some data cannot be retrieved. Possible reason(s): ' + _.unique(possibleReasons).join(', ')
+          message: `Sorry. Some data cannot be retrieved. Possible reason(s): ${_.unique(possibleReasons).join(', ')}`,
         });
       } else {
         context.dispatch('FETCH_VERIFICATION_OVERVIEW_SUCCESS', fetchedData);

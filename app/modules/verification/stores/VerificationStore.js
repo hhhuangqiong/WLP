@@ -1,21 +1,21 @@
-import {createStore} from 'fluxible/addons';
+import { createStore } from 'fluxible/addons';
 
 export default createStore({
   storeName: 'VerificationStore',
 
   handlers: {
     FETCH_VERIFICATIONS_SUCCESS: 'handleVerificationsFetched',
-    FETCH_MORE_VERIFICATIONS_SUCCESS: 'handleMoreVerificationsFetched'
+    FETCH_MORE_VERIFICATIONS_SUCCESS: 'handleMoreVerificationsFetched',
   },
 
-  initialize: function() {
+  initialize() {
     this.pageSize = 10;
     this.verifications = [];
     this.page = 0;
     this.count = 0;
   },
 
-  handleVerificationsFetched: function(payload) {
+  handleVerificationsFetched(payload) {
     this.page = payload.page;
     this.count = payload.count;
     this.verifications = payload.items;
@@ -23,51 +23,51 @@ export default createStore({
     this.emitChange();
   },
 
-  handleMoreVerificationsFetched: function(payload) {
+  handleMoreVerificationsFetched(payload) {
     this.page = payload.page;
     this.count = payload.count;
 
-    payload.items.forEach((item) => {
+    payload.items.forEach(item => {
       this.verifications.push(item);
     });
 
     this.emitChange();
   },
 
-  getVerifications: function() {
+  getVerifications() {
     return this.verifications || [];
   },
 
-  getVerificationCount: function() {
+  getVerificationCount() {
     return this.count;
   },
 
-  getPageNumber: function() {
+  getPageNumber() {
     return this.page;
   },
 
-  getPageSize: function() {
+  getPageSize() {
     return this.pageSize;
   },
 
-  getPageCount: function() {
+  getPageCount() {
     return Math.ceil(this.count / this.pageSize);
   },
 
-  dehydrate: function() {
+  dehydrate() {
     return {
       verifications: this.verifications,
       pageSize: this.pageSize,
       page: this.page,
       maxPage: this.getPageCount(),
-      count: this.count
+      count: this.count,
     };
   },
 
-  rehydrate: function(state) {
+  rehydrate(state) {
     this.verifications = state.verifications;
     this.page = state.page;
     this.pageSize = state.pageSize;
     this.count = state.count;
-  }
+  },
 });

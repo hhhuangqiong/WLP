@@ -5,7 +5,7 @@ import actionCreator from '../../../main/utils/apiActionCreator';
 import { ERROR_MESSAGE } from '../../../main/constants/actionTypes';
 import config from '../../../config';
 
-let { inputDateFormat: DATE_FORMAT } = require('./../../../main/config');
+const { inputDateFormat: DATE_FORMAT } = require('./../../../main/config');
 
 const EVENT_KEYS = ['SUCCESS', 'FAILURE'];
 
@@ -34,13 +34,13 @@ function prefix_(prefix, str) {
  */
 function createVerificationSearchApiCallback(actionName, context) {
   // prepare the lifecycle messages
-  let transform = _.partial(prefix_, actionName);
-  let lifecycle = EVENT_KEYS.reduce((obj, value) => {
+  const transform = _.partial(prefix_, actionName);
+  const lifecycle = EVENT_KEYS.reduce((obj, value) => {
     obj[value] = transform(value);
     return obj;
   }, {});
 
-  let debug = require('debug')(`app:${actionName}`);
+  const debug = require('debug')(`app:${actionName}`);
 
   return function(err, response) {
     if (err) {
@@ -51,11 +51,11 @@ function createVerificationSearchApiCallback(actionName, context) {
     }
 
     // transform the result from API-specific to UI-specific
-    let result = {
+    const result = {
       items: response.content,
       count: response.total_elements,
       page: response.page_number,
-      pageSize: response.page_size
+      pageSize: response.page_size,
     };
 
     debug('Success');
@@ -72,19 +72,19 @@ function createVerificationSearchApiCallback(actionName, context) {
  */
 function transformParameters(params) {
   // transform the params from UI-specific to API-specific
-  let size = params.pageSize || config.PAGES.VERIFICATIONS.PAGE_SIZE;
-  let page = params.page || 0;
-  let carrierId = params.carrierId;
-  let application = params.appId;
+  const size = params.pageSize || config.PAGES.VERIFICATIONS.PAGE_SIZE;
+  const page = params.page || 0;
+  const carrierId = params.carrierId;
+  const application = params.appId;
   // "2014-09-08T08:02:17-05:00" (ISO 8601)
-  let from = moment(params.startDate, DATE_FORMAT).startOf('day').format();
-  let to = moment(params.endDate, DATE_FORMAT).endOf('day').format();
-  let method = params.method;
-  let platform = params.os;
-  let phone_number = params.number && (`*${params.number}*`);
+  const from = moment(params.startDate, DATE_FORMAT).startOf('day').format();
+  const to = moment(params.endDate, DATE_FORMAT).endOf('day').format();
+  const method = params.method;
+  const platform = params.os;
+  const phone_number = params.number && (`*${params.number}*`);
 
   // only send the query which has been set by the client
-  let query = _.omit({
+  const query = _.omit({
     size,
     page,
     application,
@@ -93,7 +93,7 @@ function transformParameters(params) {
     carrierId,
     method,
     phone_number,
-    platform
+    platform,
   }, function(value) {
     return !value;
   });
@@ -104,8 +104,8 @@ function transformParameters(params) {
 export default function(actionName, apiMethod) {
   return function(context, params, done) {
     // create the API function object, pass in the custom callback
-    let api = actionCreator(actionName, apiMethod, {
-      cb: createVerificationSearchApiCallback(actionName, context)
+    const api = actionCreator(actionName, apiMethod, {
+      cb: createVerificationSearchApiCallback(actionName, context),
     });
 
     // invoke the API

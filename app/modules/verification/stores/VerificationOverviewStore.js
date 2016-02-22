@@ -1,5 +1,5 @@
 import _ from 'lodash';
-import {createStore} from 'fluxible/addons';
+import { createStore } from 'fluxible/addons';
 
 export default createStore({
   storeName: 'VerificationOverviewStore',

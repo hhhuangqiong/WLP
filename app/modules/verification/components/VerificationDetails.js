@@ -1,13 +1,9 @@
 import _ from 'lodash';
 import moment from 'moment';
-import classNames from 'classnames';
 
-import React from 'react';
+import React, { PropTypes } from 'react';
 import FluxibleMixin from 'fluxible/addons/FluxibleMixin';
-import {Link} from 'react-router';
-
-import DatePicker from 'react-datepicker';
-import Select from 'react-select';
+import { Link } from 'react-router';
 
 import AuthMixin from '../../../utils/AuthMixin';
 
@@ -29,27 +25,29 @@ import VerificationFilter from './VerificationFilter';
 
 import SearchButton from '../../../main/search-button/SearchButton';
 
-const debug = require('debug')('app:verification/components/Verification');
 const ENTER_KEY = 13;
-
 const LABEL_OF_ALL = 'All';
 
 const VERIFICATION_TYPES = [
   'call-in',
-  'call-out'
+  'call-out',
 ];
 
 const OS_TYPES = [
   'ios',
-  'android'
+  'android',
 ];
 
-let { inputDateFormat: DATE_FORMAT } = require('./../../../main/config');
+const { inputDateFormat: DATE_FORMAT } = require('./../../../main/config');
 
-let VerificationDetails = React.createClass({
+const VerificationDetails = React.createClass({
+  propTypes: {
+    appIds: PropTypes.array.isRequired,
+  },
+
   contextTypes: {
     router: React.PropTypes.func.isRequired,
-    executeAction: React.PropTypes.func.isRequired
+    executeAction: React.PropTypes.func.isRequired,
   },
 
   mixins: [FluxibleMixin, AuthMixin],
@@ -57,10 +55,10 @@ let VerificationDetails = React.createClass({
   statics: {
     storeListeners: {
       onChange: VerificationStore,
-      onApplicationStoreChange: ApplicationStore
+      onApplicationStoreChange: ApplicationStore,
     },
 
-    fetchData: function(context, params, query, done) {
+    fetchData(context, params, query, done) {
       // when no appId was provided, don't have to pre-render
       if (!query.appId) {
         done();
@@ -76,9 +74,9 @@ let VerificationDetails = React.createClass({
         os: query.os,
         number: query.number,
         size: config.PAGES.VERIFICATIONS.PAGE_SIZE,
-        page: query.page || 0
+        page: query.page || 0,
       }, done || Function.prototype);
-    }
+    },
   },
 
   /**
@@ -94,61 +92,17 @@ let VerificationDetails = React.createClass({
    * @property {String} method  The verification method, for remote API
    * @property {String} os  The OS of the end user's mobile device, for remote API
    */
-  getInitialState: function() {
-    let query = _.merge(this.getDefaultQuery(), this.context.router.getCurrentQuery());
-
+  getInitialState() {
+    const query = _.merge(this.getDefaultQuery(), this.context.router.getCurrentQuery());
     return _.merge(this.getStateFromStores(), query);
   },
 
-  getDefaultQuery: function() {
-    return {
-      // The page number, starting from 0, defaults to 0 if not specified.
-      page: 0,
-      size: config.PAGES.VERIFICATIONS.PAGE_SIZE,
-      startDate: moment().subtract(2, 'month').startOf('day').format(DATE_FORMAT),
-      endDate: moment().endOf('day').format(DATE_FORMAT),
-      number: '',
-      method: '',
-      os: ''
-    };
+  onChange() {
+    const query = _.merge(this.getDefaultQuery(), this.context.router.getCurrentQuery());
+    this.setState(_.merge(query, this.getStateFromStores()));
   },
 
-  getQueryFromState: function() {
-    return {
-      appId: this.state.appId,
-      startDate: this.state.startDate && this.state.startDate.trim(),
-      endDate: this.state.endDate && this.state.endDate.trim(),
-      number: this.state.number && this.state.number.trim(),
-      page: 0,
-      size: config.PAGES.VERIFICATIONS.PAGE_SIZE,
-      method: this.state.method && this.state.method.trim(),
-      os: this.state.os && this.state.os.trim()
-    };
-  },
-
-  getStateFromStores: function() {
-    let store = this.getStore(VerificationStore);
-
-    return {
-      verifications: store.getVerifications(),
-      page: store.getPageNumber(),
-      maxPage: store.getPageCount(),
-      count: store.getVerificationCount()
-    };
-  },
-
-  handleQueryChange: function(newQuery) {
-    let routeName = _.last(this.context.router.getCurrentRoutes()).name;
-    let params = this.context.router.getCurrentParams();
-    let query = _.merge(this.context.router.getCurrentQuery(), this.getQueryFromState(), newQuery);
-    let changedQuery = _.omit(query, function(value) {
-      return !value;
-    });
-
-    this.context.router.transitionTo(routeName, params, changedQuery);
-  },
-
-  componentDidMount: function() {
+  componentDidMount() {
     // auto select the default appId from the list
     // TODO: optimize this UX with server side rendering
 
@@ -157,7 +111,7 @@ let VerificationDetails = React.createClass({
       return;
     }
 
-    let appId = this.getStore(ApplicationStore).getDefaultAppId();
+    const appId = this.getStore(ApplicationStore).getDefaultAppId();
 
     // no default, cannot select and fetch
     // proper fetch will be done after onApplicationStoreChange
@@ -167,10 +121,10 @@ let VerificationDetails = React.createClass({
 
     // auto select without modifying the query string
     this.setState({
-      appId
+      appId,
     });
 
-    let { identity } = this.context.router.getCurrentParams();
+    const { identity } = this.context.router.getCurrentParams();
 
     // fetch using the local appId because setState is async
     this.context.executeAction(fetchVerifications, {
@@ -182,49 +136,8 @@ let VerificationDetails = React.createClass({
       endDate: this.state.endDate,
       number: this.state.number,
       os: this.state.os,
-      method: this.state.method
+      method: this.state.method,
     });
-  },
-
-  /**
-   * Selects the default application ID according to the ApplicationStore.
-   * This will change the state `appId`.
-   *
-   * @method
-   */
-  autoSelectAppId: function() {
-    this.onAppIdChange(this.context.getStore(ApplicationStore).getDefaultAppId());
-  },
-
-  /**
-   * Fetch the verification events by advancing the page number.
-   *
-   * @method
-   */
-  fetchMore: function() {
-    let { identity } = this.context.router.getCurrentParams();
-    let nextPage = this.state.page + 1;
-
-    this.setState({
-      page: nextPage
-    });
-
-    this.context.executeAction(fetchMoreVerifications, {
-      carrierId: identity,
-      appId: this.state.appId,
-      page: nextPage,
-      pageSize: this.state.pageSize,
-      startDate: this.state.startDate,
-      endDate: this.state.endDate,
-      number: this.state.number,
-      os: this.state.os,
-      method: this.state.method
-    });
-  },
-
-  onChange: function() {
-    let query = _.merge(this.getDefaultQuery(), this.context.router.getCurrentQuery());
-    this.setState(_.merge(query, this.getStateFromStores()));
   },
 
   /**
@@ -233,7 +146,7 @@ let VerificationDetails = React.createClass({
    *
    * @method
    */
-  onApplicationStoreChange: function() {
+  onApplicationStoreChange() {
     // do nothing if there is a selected appId, otherwise select the default
     if (this.state.appId) {
       return;
@@ -242,74 +155,63 @@ let VerificationDetails = React.createClass({
     this.autoSelectAppId();
   },
 
-  onAppIdChange: function(val) {
+  onAppIdChange(val) {
     this.setState({
-      appId: val
+      appId: val,
     });
 
     this.handleQueryChange({
       appId: val,
-      page: 0
+      page: 0,
     });
   },
 
-  handleStartDateChange: function(dateString) {
-    let date = moment(dateString).format(DATE_FORMAT);
-    this.handleQueryChange({ startDate: date, page: 0 });
+  getStateFromStores() {
+    const store = this.getStore(VerificationStore);
+
+    return {
+      verifications: store.getVerifications(),
+      page: store.getPageNumber(),
+      maxPage: store.getPageCount(),
+      count: store.getVerificationCount(),
+    };
   },
 
-  handleEndDateChange: function(dateString) {
-    let date = moment(dateString).format(DATE_FORMAT);
-    this.handleQueryChange({ endDate: date, page: 0 });
+  getQueryFromState() {
+    return {
+      appId: this.state.appId,
+      startDate: this.state.startDate && this.state.startDate.trim(),
+      endDate: this.state.endDate && this.state.endDate.trim(),
+      number: this.state.number && this.state.number.trim(),
+      page: 0,
+      size: config.PAGES.VERIFICATIONS.PAGE_SIZE,
+      method: this.state.method && this.state.method.trim(),
+      os: this.state.os && this.state.os.trim(),
+    };
   },
 
-  _handleStartDateClick: function() {
-    this.refs.startDatePicker.handleFocus();
+  getDefaultQuery() {
+    return {
+      // The page number, starting from 0, defaults to 0 if not specified.
+      page: 0,
+      size: config.PAGES.VERIFICATIONS.PAGE_SIZE,
+      startDate: moment().subtract(2, 'month').startOf('day').format(DATE_FORMAT),
+      endDate: moment().endOf('day').format(DATE_FORMAT),
+      number: '',
+      method: '',
+      os: '',
+    };
   },
 
-  _handleEndDateClick: function() {
-    this.refs.endDatePicker.handleFocus();
-  },
+  render() {
+    const { role, identity } = this.context.router.getCurrentParams();
 
-  transformVerificationTypes(type) {
-    switch (type) {
-    case 'MobileTerminated': return 'call-in';
-    case 'MobileOriginated': return 'call-out';
-    default: return type;
-    }
-  },
-
-  handleSearchInputChange: function(evt) {
-    this.setState({
-      number: evt.target.value
-    });
-  },
-
-  handleSearchInputSubmit: function(evt) {
-    if (evt.which === ENTER_KEY) {
-      this.handleQueryChange({ number: evt.target.value, page: 0 });
-    }
-  },
-
-  handleVerificationMethodChange(event) {
-    let value = event.target.value;
-    this.handleQueryChange({ method: value === LABEL_OF_ALL ? '' : event.target.value });
-  },
-
-  handleOsTypeChange(event) {
-    let value = event.target.value;
-    this.handleQueryChange({ os: value === LABEL_OF_ALL ? '' : event.target.value });
-  },
-
-  render: function() {
-    let { role, identity } = this.context.router.getCurrentParams();
-
-    let options = [];
+    const options = [];
 
     this.props.appIds.forEach(item => {
       options.push({
         value: item,
-        label: item
+        label: item,
       });
     });
 
@@ -373,7 +275,102 @@ let VerificationDetails = React.createClass({
           onLoadMoreClick={this.fetchMore} />
       </div>
     );
-  }
+  },
+
+  handleStartDateChange(dateString) {
+    const date = moment(dateString).format(DATE_FORMAT);
+    this.handleQueryChange({ startDate: date, page: 0 });
+  },
+
+  handleEndDateChange(dateString) {
+    const date = moment(dateString).format(DATE_FORMAT);
+    this.handleQueryChange({ endDate: date, page: 0 });
+  },
+
+  _handleStartDateClick() {
+    this.refs.startDatePicker.handleFocus();
+  },
+
+  _handleEndDateClick() {
+    this.refs.endDatePicker.handleFocus();
+  },
+
+  transformVerificationTypes(type) {
+    switch (type) {
+    case 'MobileTerminated': return 'call-in';
+    case 'MobileOriginated': return 'call-out';
+    default: return type;
+    }
+  },
+
+  handleSearchInputChange(evt) {
+    this.setState({
+      number: evt.target.value,
+    });
+  },
+
+  handleSearchInputSubmit(evt) {
+    if (evt.which === ENTER_KEY) {
+      this.handleQueryChange({ number: evt.target.value, page: 0 });
+    }
+  },
+
+  handleVerificationMethodChange(event) {
+    const value = event.target.value;
+    this.handleQueryChange({ method: value === LABEL_OF_ALL ? '' : event.target.value });
+  },
+
+  handleOsTypeChange(event) {
+    const value = event.target.value;
+    this.handleQueryChange({ os: value === LABEL_OF_ALL ? '' : event.target.value });
+  },
+
+  /**
+   * Fetch the verification events by advancing the page number.
+   *
+   * @method
+   */
+  fetchMore() {
+    const { identity } = this.context.router.getCurrentParams();
+    const nextPage = this.state.page + 1;
+
+    this.setState({
+      page: nextPage,
+    });
+
+    this.context.executeAction(fetchMoreVerifications, {
+      carrierId: identity,
+      appId: this.state.appId,
+      page: nextPage,
+      pageSize: this.state.pageSize,
+      startDate: this.state.startDate,
+      endDate: this.state.endDate,
+      number: this.state.number,
+      os: this.state.os,
+      method: this.state.method,
+    });
+  },
+
+  /**
+   * Selects the default application ID according to the ApplicationStore.
+   * This will change the state `appId`.
+   *
+   * @method
+   */
+  autoSelectAppId() {
+    this.onAppIdChange(this.context.getStore(ApplicationStore).getDefaultAppId());
+  },
+
+  handleQueryChange(newQuery) {
+    const routeName = _.last(this.context.router.getCurrentRoutes()).name;
+    const params = this.context.router.getCurrentParams();
+    const query = _.merge(this.context.router.getCurrentQuery(), this.getQueryFromState(), newQuery);
+    const changedQuery = _.omit(query, function(value) {
+      return !value;
+    });
+
+    this.context.router.transitionTo(routeName, params, changedQuery);
+  },
 });
 
 export default VerificationDetails;
