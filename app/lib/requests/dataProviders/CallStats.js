@@ -3,45 +3,37 @@ import Q from 'q';
 import request from 'superagent';
 import util from 'util';
 import _ from 'lodash';
-import moment from 'moment';
-import CountryData from 'country-data';
 import qs from 'qs';
-import {constructOpts, formatDateString, swapDate, handleError} from '../helper';
-import jsonSchema from '../../../utils/getSimplifiedJsonSchema.js';
+import { constructOpts, swapDate, handleError } from '../helper';
 import * as requestHelper from '../utils/requestHelper';
 import equals from 'shallow-equals';
 
 const REQUEST_TYPE = {
   CALLS: 'CALLS',
   CALLERS: 'CALLERS',
-  CALLEES: 'CALLEES'
+  CALLEES: 'CALLEES',
 };
-
-const TIMESCALE_OPTS = ['day', 'hour'];
-const BREAKDOWN_OPTS = ['country', 'status'];
-const STATUS_OPTS = ['ACTIVE', 'TERMINATED', 'ALL'];
-const COUNTRIES_OPTS = CountryData.all;
 
 export default class UserStatsRequest {
   constructor(baseUrl, timeout) {
-    let opts = {
+    const opts = {
       type: 'dataProviderApi',
       baseUrl: baseUrl,
       timeout: timeout,
       endpoints: {
         CALLERS: {
           PATH: '/stats/1.0/sip/callers',
-          METHOD: 'GET'
+          METHOD: 'GET',
         },
         CALLEES: {
           PATH: '/stats/1.0/sip/callees',
-          METHOD: 'GET'
+          METHOD: 'GET',
         },
         CALLS: {
           PATH: '/stats/1.0/sip/query',
-          METHOD: 'GET'
-        }
-      }
+          METHOD: 'GET',
+        },
+      },
     };
 
     this.opts = constructOpts(opts);
@@ -50,8 +42,8 @@ export default class UserStatsRequest {
   normalizeData(type, params, cb) {
     logger.debug('normalizeData', params);
     Q.nfcall(swapDate, params)
-      .then((data) => {
-        let query = {};
+      .then(data => {
+        const query = {};
 
         query.from = params.from;
         query.to = params.to;
@@ -67,10 +59,10 @@ export default class UserStatsRequest {
 
         return _.omit(query, (value) => { return !value; });
       })
-      .then((query) => {
+      .then(query => {
         cb(null, query);
       })
-      .catch((err) => {
+      .catch(err => {
         cb(handleError(err, 500), null);
       })
       .done();
@@ -83,16 +75,16 @@ export default class UserStatsRequest {
     }
 
     let baseUrl = this.opts.baseUrl;
-    let baseUrlArray = baseUrl.split(',');
+    const baseUrlArray = baseUrl.split(',');
 
     if (baseUrlArray.length > 1) {
-      let index = loadBalanceIndex % baseUrlArray.length;
+      const index = loadBalanceIndex % baseUrlArray.length;
       baseUrl = baseUrlArray[index];
     } else {
       baseUrl = _.first(baseUrlArray);
     }
 
-    let reqUrl = util.format('%s%s', baseUrl, endpoint.PATH);
+    const reqUrl = util.format('%s%s', baseUrl, endpoint.PATH);
 
     logger.debug(`SIP Statistic API Endpoint: ${reqUrl}?${qs.stringify(params)}`);
 
@@ -111,18 +103,18 @@ export default class UserStatsRequest {
 
   getCallStats(params, cb) {
     Q.ninvoke(this, 'normalizeData', REQUEST_TYPE.CALLS, params)
-      .then((query) => {
+      .then(query => {
         return Q.ninvoke(requestHelper, 'splitQuery', query);
       })
-      .then((queries) => {
+      .then(queries => {
         return Q.allSettled(
           _.map(queries, (query, index) => {
             return Q.ninvoke(this, 'sendRequest', this.opts.endpoints.CALLS, query, index);
           })
         );
       })
-      .then((results) => {
-        let error = _.find(results, (result) => {
+      .then(results => {
+        const error = _.find(results, result => {
           return result.state !== 'fulfilled';
         });
 
@@ -164,22 +156,21 @@ export default class UserStatsRequest {
           }, []);
 
           _.map(results, (result, resultIndex) => {
-            let values = _.get(result, 'value.results');
+            const values = _.get(result, 'value.results');
 
             // looping over the sample rather than values
             // as the value structure varies
             _.map(resultSample, (sample, segmentIndex) => {
-              let sampleSegment = _.get(sample, 'segment');
+              const sampleSegment = _.get(sample, 'segment');
 
               // if an identical segment is found,
               // populate the data into the segment
-              let value = _.find(values, (value) => {
+              const value = _.find(values, value => {
                 return equals(sampleSegment, _.get(value, 'segment'));
               });
 
               if (!_.isEmpty(value) && !_.isUndefined(value)) {
-                _.map(value.data, (record) => {
-
+                _.map(value.data, record => {
                   // the manually load balancing invades the correct t value,
                   // so it has to be overwritten here again with the resultIndex
                   output[segmentIndex].data.push(_.merge(record, {t: resultIndex}));
@@ -198,7 +189,7 @@ export default class UserStatsRequest {
 
         cb(null, output);
       })
-      .catch((error) => {
+      .catch(error => {
         logger.error(error);
         cb(handleError(error, error.status || 500));
       })
@@ -207,20 +198,18 @@ export default class UserStatsRequest {
 
   getCallerStats(params, cb) {
     Q.ninvoke(this, 'normalizeData', REQUEST_TYPE.CALLERS, params)
-      .then((query) => {
+      .then(query => {
         return Q.ninvoke(requestHelper, 'splitQuery', query);
       })
-      .then((queries) => {
+      .then(queries => {
         return Q.allSettled(
           _.map(queries, (query, index) => {
             return Q.ninvoke(this, 'sendRequest', this.opts.endpoints.CALLERS, query, index);
           })
         );
       })
-      .then((results) => {
-        let error = _.find(results, (result) => {
-          return result.state !== 'fulfilled';
-        });
+      .then(results => {
+        const error = _.find(results, result => result.state !== 'fulfilled');
 
         if (error) {
           throw new Error('error occurred when querying data');
@@ -228,7 +217,7 @@ export default class UserStatsRequest {
 
         // get the first result as sample for the segment details
         // as the breakdown could be dynamic
-        let resultSample = _.max(results, (result) => {
+        let resultSample = _.max(results, result => {
           return (_.get(result, 'value.results')).length;
         });
 
@@ -237,17 +226,17 @@ export default class UserStatsRequest {
         // init the data array with segment
         // assume that the returned results are always with the
         // same order of segment
-        let output = _.reduce(resultSample, (data, result) => {
+        const output = _.reduce(resultSample, (data, result) => {
           data.push({ segment: _.get(result, 'segment'), data: [] });
           return data;
         }, []);
 
         // map the data into the data key in output
-        _.map(results, (result) => {
-          let values = _.get(result, 'value.results');
+        _.map(results, result => {
+          const values = _.get(result, 'value.results');
           _.map(values, (value, index) => {
             if (value && value.data) {
-              _.map(value.data, (record) => {
+              _.map(value.data, record => {
                 output[index].data.push(record);
               });
             }
@@ -256,7 +245,7 @@ export default class UserStatsRequest {
 
         cb(null, output);
       })
-      .catch((error) => {
+      .catch(error => {
         logger.error(error);
         cb(handleError(error, error.status || 500));
       })
@@ -265,18 +254,18 @@ export default class UserStatsRequest {
 
   getCalleeStats(params, cb) {
     Q.ninvoke(this, 'normalizeData', REQUEST_TYPE.CALLEES, params)
-      .then((query) => {
+      .then(query => {
         return Q.ninvoke(requestHelper, 'splitQuery', query);
       })
-      .then((queries) => {
+      .then(queries => {
         return Q.allSettled(
           _.map(queries, (query, index) => {
             return Q.ninvoke(this, 'sendRequest', this.opts.endpoints.CALLEES, query, index);
           })
         );
       })
-      .then((results) => {
-        let error = _.find(results, (result) => {
+      .then(results => {
+        const error = _.find(results, result => {
           return result.state !== 'fulfilled';
         });
 
@@ -286,7 +275,7 @@ export default class UserStatsRequest {
 
         // get the first result as sample for the segment details
         // as the breakdown could be dynamic
-        let resultSample = _.max(results, (result) => {
+        let resultSample = _.max(results, result => {
           return (_.get(result, 'value.results')).length;
         });
 
@@ -295,17 +284,18 @@ export default class UserStatsRequest {
         // init the data array with segment
         // assume that the returned results are always with the
         // same order of segment
-        let output = _.reduce(resultSample, (data, result) => {
+        const output = _.reduce(resultSample, (data, result) => {
           data.push({ segment: _.get(result, 'segment'), data: [] });
           return data;
         }, []);
 
         // map the data into the data key in output
-        _.map(results, (result) => {
-          let values = _.get(result, 'value.results');
+        _.map(results, result => {
+          const values = _.get(result, 'value.results');
+
           _.map(values, (value, index) => {
             if (value && value.data) {
-              _.map(value.data, (record) => {
+              _.map(value.data, record => {
                 output[index].data.push(record);
               });
             }
@@ -314,7 +304,7 @@ export default class UserStatsRequest {
 
         cb(null, output);
       })
-      .catch((error) => {
+      .catch(error => {
         logger.error(error);
         cb(handleError(error, error.status || 500));
       })

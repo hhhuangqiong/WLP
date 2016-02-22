@@ -1,6 +1,4 @@
-import _ from 'lodash';
 import moment from 'moment';
-import validator from 'validator';
 
 /**
  * @method contructOpts Provides basic function for validating
@@ -50,22 +48,22 @@ export function formatDateString(params, format) {
  * @returns {*}
  */
 export function swapDate(params, cb) {
-  let { from, to } = params;
+  const { from, to } = params;
 
-  let isValid = (target) => {
+  const isValid = (target) => {
     return moment(from, target, true).isValid();
   };
 
-  let fromIsAfterTo = (target) => {
+  const fromIsAfterTo = (target) => {
     return moment(from, target).isAfter(moment(to, target));
   };
 
-  let needToBeSwapped = (target) => {
+  const needToBeSwapped = (target) => {
     return isValid(target) && fromIsAfterTo(target);
   };
 
   if (needToBeSwapped('x') || needToBeSwapped('L')) {
-    let tmp = to;
+    const tmp = to;
     params.to = from;
     params.from = tmp;
   }
@@ -98,7 +96,7 @@ export function composeResponse(response) {
     pageNumber: response.page_number,
     pageSize: response.page_size,
     totalPages: response.total_pages,
-    totalElements: response.total_elements
+    totalElements: response.total_elements,
   };
 }
 
@@ -111,22 +109,22 @@ export function composeResponse(response) {
  */
 export function composeSolrResponse(response, pageSize) {
   // jscs:disable requireCamelCaseOrUpperCaseIdentifiers
-  let pageNumber = response.offset / pageSize;
-  let totalPages = Math.ceil(response.total_elements / pageSize);
+  const pageNumber = response.offset / pageSize;
+  const totalPages = Math.ceil(response.total_elements / pageSize);
+
   if ( !Number.isInteger(pageNumber) || !Number.isInteger(totalPages) ) {
     throw new TypeError('`pageNumber` or `totalPages` must be integer');
   }
+
   return {
     offset: response.offset,
     contents: response.content,
     pageNumber: pageNumber,
     pageSize: response.page_size,
     totalPages: totalPages,
-    totalElements: response.total_elements
+    totalElements: response.total_elements,
   };
 }
-
-
 
 /**
  * @method handleError Unify error data received from different APIs

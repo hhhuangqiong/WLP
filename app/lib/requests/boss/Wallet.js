@@ -7,18 +7,16 @@ import qs from 'qs';
 import {constructOpts, appendRequestId} from '../helper';
 
 export default class WalletRequest {
-
   constructor(baseUrl, timeout) {
-
-    let opts = {
+    const opts = {
       baseUrl: baseUrl,
       timeout: timeout,
       methods: {
         LIST: {
           URL: '/api/walletBalance',
-          METHOD: 'GET'
-        }
-      }
+          METHOD: 'GET',
+        },
+      },
     };
 
     this.opts = constructOpts(opts);
@@ -27,16 +25,16 @@ export default class WalletRequest {
   validateQuery(params, cb) {
     logger.debug('validate user wallet request query, %j', params, {});
 
-    if (!params.number || !params.carrier || !params.sessionUserName)
+    if (!params.number || !params.carrier || !params.sessionUserName) {
       return cb(new Error('missing mandatory fields.'), null);
+    }
 
     return cb(null, params);
   }
 
   sendRequest(params, cb) {
-
-    var base = this.opts.baseUrl;
-    var url = this.opts.methods.LIST.URL;
+    const base = this.opts.baseUrl;
+    const url = this.opts.methods.LIST.URL;
 
     logger.debug('sending user wallet request %s?%s', util.format('%s%s', base, url), qs.stringify(params));
 
@@ -52,7 +50,7 @@ export default class WalletRequest {
           logger.debug('failed to get user %s\'s wallet info from BOSS', params.number);
 
           // TODO: generalize the network error handling (maybe extending Error class?)
-          let error = new Error();
+          const error = new Error();
           error.status = err.status;
           error.message = err.message;
 
@@ -68,7 +66,7 @@ export default class WalletRequest {
           return cb(error);
         }
 
-        let response = res.body;
+        const response = res.body;
 
         try {
           // no response
@@ -83,7 +81,7 @@ export default class WalletRequest {
           // failure response
           if (!response.success) {
             logger.debug('Failure response from BOSS for user %s', params.number, response);
-            let responseError = response.error;
+            const responseError = response.error;
             err = new Error();
             err.message = responseError.description;
             err.code = responseError.code;
@@ -92,8 +90,7 @@ export default class WalletRequest {
           }
 
           return cb(null, response.result.wallets);
-        }
-        catch (e) {
+        } catch (e) {
           // unexpected response
           logger.debug('Unexpected response from BOSS for user %s', params.number, response);
           logger.debug('Error stack:', e.stack);
@@ -118,7 +115,7 @@ export default class WalletRequest {
 
     Q.ninvoke(this, 'validateQuery', params)
       .then(appendRequestId)
-      .then((params) => {
+      .then(params => {
         return this.sendRequest(params, cb);
       });
   }

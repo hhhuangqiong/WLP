@@ -1,6 +1,4 @@
-'use strict';
-
-var logger = require('winston');
+import logger from 'winston';
 
 /**
  * This mailer is a thin wrapping using the passed transporter combined with
@@ -11,11 +9,8 @@ var logger = require('winston');
  * @constructor
  * @param {Object} transporters 1 of the supported transporter (#sendMail method)
  */
-var Mailer = module.exports = function(transporter) {
-  if (!transporter) {
-    throw new Error('transporter is required');
-  }
-
+const Mailer = module.exports = function(transporter) {
+  if (!transporter) throw new Error('transporter is required');
   this._transporter = transporter;
 };
 
@@ -27,7 +22,7 @@ var Mailer = module.exports = function(transporter) {
  * @param {Function} cb
  */
 Mailer.prototype.sendHtmlContent = function(mailOpts, content, cb) {
-  //TODO validate mailOpts
+  // TODO validate mailOpts
   if (!mailOpts || !content) {
     throw new Error('Invalid number of arguments');
   }

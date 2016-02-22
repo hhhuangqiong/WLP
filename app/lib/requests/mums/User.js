@@ -3,41 +3,39 @@ import Q from 'q';
 import moment from 'moment';
 import qs from 'qs';
 
-var logger  = require('winston');
-var request = require('superagent');
-var util    = require('util');
+import logger from 'winston';
+import request from 'superagent';
+import util from 'util';
 
 import {constructOpts, handleError} from '../helper';
 
 export default class UsersRequest {
-
   constructor(baseUrl, timeout) {
-
-    let opts = {
+    const opts = {
       baseUrl: baseUrl,
       timeout: timeout,
       methods: {
         LIST: {
           URL: '/1.0/carriers/%s/users',
-          METHOD: 'GET'
+          METHOD: 'GET',
         },
         DETAILS: {
           URL: '/1.0/carriers/%s/users/%s',
-          METHOD: 'GET'
+          METHOD: 'GET',
         },
         SUSPENSION: {
           URL: '/1.0/carriers/%s/users/%s/suspension',
-          METHOD: 'POST'
+          METHOD: 'POST',
         },
         REACTIVATE: {
           URL: '/1.0/carriers/%s/users/%s/suspension',
-          METHOD: 'DELETE'
+          METHOD: 'DELETE',
         },
         TERMINATE: {
           URL: '/1.0/carriers/%s/users/%s/',
-          METHOD: 'DELETE'
-        }
-      }
+          METHOD: 'DELETE',
+        },
+      },
     };
 
     this.opts = constructOpts(opts);
@@ -62,23 +60,22 @@ export default class UsersRequest {
 
         return cb(err);
       }
-
-
     });
   }
 
   _morphExportUsers({ userList, hasNextPage, dateRange : { pageNumberIndex }}) {
-    let usersData = {};
-    usersData.contents = _.map(userList, (value)=>{
+    const usersData = {};
+
+    usersData.contents = _.map(userList, value =>{
       // replace username with formed jid to maintain consistency between UI and export data
-      let result = _.merge(value, (value.devices || [])[0]);
+      const result = _.merge(value, (value.devices || [])[0]);
       result.username = result.jid;
       return _.omit(result, ['devices', 'jid']);
     });
     usersData.pageNumber = pageNumberIndex;
     usersData.totalPages = (hasNextPage) ? pageNumberIndex + 2  : pageNumberIndex + 1;
 
-    //override totalPages increment if there's no content, handling end of pagination
+    // override totalPages increment if there's no content, handling end of pagination
     if (usersData.contents.length <= 0) {
       usersData.totalPages = pageNumberIndex;
     }
@@ -93,15 +90,15 @@ export default class UsersRequest {
    * @param cb
    */
   getUsers(carrierId, queries, cb) {
-    var base = this.opts.baseUrl;
-    var url = util.format(this.opts.methods.LIST.URL, carrierId);
+    const base = this.opts.baseUrl;
+    const url = util.format(this.opts.methods.LIST.URL, carrierId);
 
     queries.fromTime = moment(queries.fromTime, 'L').startOf('day').toISOString();
     queries.toTime = moment(queries.toTime, 'L').endOf('day').toISOString();
 
     logger.debug(`End User Server End Point: ${util.format('%s%s', base, url)}?${qs.stringify(queries)}`);
 
-    var currentPageRequest = (queries, cb) => {
+    const currentPageRequest = (queries, cb) => {
       request
         .get(util.format('%s%s', base, url))
         .query(queries)
@@ -114,7 +111,7 @@ export default class UsersRequest {
         });
     };
 
-    var nextPageRequest = (queries, cb)=>{
+    const nextPageRequest = (queries, cb) => {
       request
         .get(util.format('%s%s', base, url))
         .query(_.merge(queries, { pageNumberIndex: +queries.pageNumberIndex + 1 }))
@@ -129,30 +126,30 @@ export default class UsersRequest {
 
     Q.allSettled([
       Q.nfcall(currentPageRequest, queries),
-      Q.nfcall(nextPageRequest, queries)
-    ]).then((results)=>{
-      _.each(results, (result)=>{
+      Q.nfcall(nextPageRequest, queries),
+    ]).then(results => {
+      _.each(results, result => {
         if (result.state !== 'fulfilled') {
           return cb(handleError(new Error('Internal server error'), 500));
         }
       });
 
-      let result = _.first(results).value;
-      let nextPageResult = _.last(results).value;
+      const result = _.first(results).value;
+      const nextPageResult = _.last(results).value;
 
       _.assign(result, {
-        userCount:  nextPageResult.userCount > 0 ? result.userCount ++ : result.userCount,
-        hasNextPage: nextPageResult.userCount > 0
+        userCount: nextPageResult.userCount > 0 ? result.userCount ++ : result.userCount,
+        hasNextPage: nextPageResult.userCount > 0,
       });
 
       // assign jid to each user
-      let carrierId = result.carrierId;
-      result.userList.forEach((user) => {
+      const carrierId = result.carrierId;
+      result.userList.forEach(user => {
         user.jid = `${user.username}@${carrierId}`;
       });
 
       return cb(null, result);
-    }).catch((err)=>{
+    }).catch(err => {
       return cb(handleError(err));
     });
   }
@@ -192,8 +189,8 @@ export default class UsersRequest {
    * @param cb
    */
   suspendUser(carrierId, username, cb) {
-    var base = this.opts.baseUrl;
-    var url = util.format(this.opts.methods.SUSPENSION.URL, carrierId, username);
+    const base = this.opts.baseUrl;
+    const url = util.format(this.opts.methods.SUSPENSION.URL, carrierId, username);
 
     logger.debug('suspend user from %s with username %s', carrierId, username);
 
@@ -215,8 +212,8 @@ export default class UsersRequest {
    * @param cb
    */
   reactivateUser(carrierId, username, cb) {
-    var base = this.opts.baseUrl;
-    var url = util.format(this.opts.methods.REACTIVATE.URL, carrierId, username);
+    const base = this.opts.baseUrl;
+    const url = util.format(this.opts.methods.REACTIVATE.URL, carrierId, username);
 
     logger.debug('reactivate user from %s with username %s', carrierId, username);
 

@@ -24,7 +24,7 @@ export function splitQuery(query, unit = 'day', cb) {
   let { from, to } = query;
 
   if (!from || !to) {
-    let error = new Error('missing time range parameters');
+    const error = new Error('missing time range parameters');
     cb(error);
     return;
   }
@@ -36,18 +36,18 @@ export function splitQuery(query, unit = 'day', cb) {
   to = query.timescale === 'hour' ? moment(to, 'x').subtract(1, 'hour').endOf('hour') : moment(to, 'x');
 
   if (!from.isValid() && !to.isValid()) {
-    let error = new Error('invalid time format');
+    const error = new Error('invalid time format');
     cb(error);
     return;
   }
-  let numberOfUnit = to.diff(from, unit);
-  let outputParams = [];
+
+  const numberOfUnit = to.diff(from, unit);
+  const outputParams = [];
 
   for (let i = 0; i <= numberOfUnit; i++) {
-    let newQuery = _.clone(query);
+    const newQuery = _.clone(query);
 
     if (query.timescale === 'hour') {
-
       // scenario:
       // from 20/01/2016 13:00
       // to   22/01/2016 15:00
@@ -56,19 +56,18 @@ export function splitQuery(query, unit = 'day', cb) {
         // should use the from time for the first request
         // but not the start of unit
         // e.g. from 13:00, but not 00:00
-        if (i == 0) {
+        if (i === 0) {
           newQuery.from = moment(_.clone(query).from, 'x').add(i, unit).format('x');
           newQuery.to = moment(_.clone(query).from, 'x').add(i, unit).endOf(unit).format('x');
 
         // should use the end time for the last request
         // but not the end of unit
         // e.g. to 15:00, but not 23:59:59
-        } else if (i == numberOfUnit) {
+        } else if (i === numberOfUnit) {
           newQuery.from = moment(_.clone(query).from, 'x').add(i, unit).startOf(unit).format('x');
           newQuery.to = moment(_.clone(query).from, 'x').add(i, unit).format('x');
         }
       } else {
-
         // if numberOfUnit = 0
         // simply use the from and to
         newQuery.from = moment(_.clone(query).from, 'x').format('x');

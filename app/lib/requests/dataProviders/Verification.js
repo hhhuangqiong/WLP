@@ -119,16 +119,16 @@ export default class VerificationRequest {
     }
 
     let baseUrl = this.opts.baseUrl;
-    let baseUrlArray = baseUrl.split(',');
+    const baseUrlArray = baseUrl.split(',');
 
     if (baseUrlArray.length > 1) {
-      let index = loadBalanceIndex % baseUrlArray.length;
+      const index = loadBalanceIndex % baseUrlArray.length;
       baseUrl = baseUrlArray[index];
     } else {
       baseUrl = _.first(baseUrlArray);
     }
 
-    let reqUrl = util.format('%s%s', baseUrl, endpoint.PATH);
+    const reqUrl = util.format('%s%s', baseUrl, endpoint.PATH);
 
     logger.debug(`Verification API Endpoint: ${reqUrl}?${qs.stringify(params)}`);
 

@@ -1,5 +1,5 @@
-var nodemailer    = require('nodemailer');
-var smtpTransport = require('nodemailer-smtp-transport');
+import nodemailer from 'nodemailer';
+import smtpTransport from 'nodemailer-smtp-transport';
 
 /**
  * All options are passed through to the SMTP transporter
