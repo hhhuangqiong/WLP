@@ -1,4 +1,7 @@
 {
-  "extends": "eslint-config-airbnb"
+  "extends": "eslint-config-airbnb",
+  "globals": {
+    "If": true,
+    "Else": true,
+  }
 }
-
