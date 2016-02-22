@@ -1,7 +1,8 @@
 /** @module tasks/emailJob */
 
 import _ from 'lodash';
-import kue from 'kue';
+
+export const JOB_TYPE = 'emails';
 
 /**
  * interface
@@ -17,7 +18,6 @@ import kue from 'kue';
  * @see {@link: http://learnboost.github.io/kue}
  */
 export class EmailJob {
-
   /**
    * @param {Queue} queue Job queue
    * @param {function} processFn will receive 2 arguments: job & done
@@ -48,14 +48,12 @@ export class EmailJob {
    * @return {kue.Job}
    */
   create(email, cb) {
-    //TODO any validation on the email object
+    // TODO any validation on the email object
     return this.queue.create(JOB_TYPE, {
       // TODO 'title' property, same as subject + username
       mailOpts: email.get('meta'),
       templateName: email.templateName(),
-      templateData: email.templateData()
+      templateData: email.templateData(),
     }).save(cb);
   }
 }
-
-export const JOB_TYPE = 'emails';

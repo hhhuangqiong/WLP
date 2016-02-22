@@ -7,7 +7,7 @@ import Html from '../main/components/common/Html';
 import fetchData from '../utils/fetchData';
 import routes from '../routes';
 
-let debug = require('debug')('app:server/render');
+const debug = require('debug')('app:server/render');
 
 /**
  * Return a function to render the (React) component matched by url
@@ -20,7 +20,7 @@ let debug = require('debug')('app:server/render');
  */
 export default function(app) {
   return function(context, location, cb) {
-    let router = Router.create({
+    const router = Router.create({
       routes: routes,
       location: location,
       transitionContext: context,
@@ -31,12 +31,12 @@ export default function(app) {
       onError: function(err) {
         debug('Routing Error', err);
         cb(err);
-      }
+      },
     });
 
     router.run(function(Handler, routerState) {
       if (routerState.routes[0].name === 'not-found') {
-        let html = React.renderToStaticMarkup(React.createElement(Handler));
+        const html = React.renderToStaticMarkup(React.createElement(Handler));
         cb({ notFound: true }, html);
         return;
       }
@@ -47,17 +47,17 @@ export default function(app) {
           return cb(err);
         }
 
-        let dehydratedState = 'window.__DATA__=' + serialize(app.dehydrate(context)) + ';';
-        let appMarkup = React.renderToString(React.createElement(
+        const dehydratedState = 'window.__DATA__=' + serialize(app.dehydrate(context)) + ';';
+        const appMarkup = React.renderToString(React.createElement(
           FluxibleComponent, {
             // only expose `getStore()`
-            context: context.getComponentContext()
+            context: context.getComponentContext(),
           },
           React.createElement(Handler)
         ));
-        let html = React.renderToStaticMarkup(React.createElement(Html, {
+        const html = React.renderToStaticMarkup(React.createElement(Html, {
           state: dehydratedState,
-          markup: appMarkup
+          markup: appMarkup,
         }));
 
         cb(null, html);

@@ -1,5 +1,4 @@
 import _ from 'lodash';
-import logger from 'winston';
 
 /**
  * Create a Redis client
@@ -11,17 +10,16 @@ export default function(redisConfig) {
   let client;
 
   if (!_.has(redisConfig, 'sentinels')) {
-    var redis = require('redis');
+    const redis = require('redis');
     client = redis.createClient(redisConfig.port, redisConfig.host, redisConfig);
-  }
-  else {
-    var Redis = require('ioredis');
+  } else {
+    const Redis = require('ioredis');
     client = new Redis(redisConfig);
   }
 
-  if (!client)
+  if (!client) {
     throw new Error('failed to connect to Redis Server');
+  }
 
   return client;
 }
-

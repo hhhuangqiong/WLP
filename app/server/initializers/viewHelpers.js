@@ -1,4 +1,5 @@
-var moment = require('moment');
+import moment from 'moment';
+
 function initialize(app) {
   // monetary formatter,
   // address,

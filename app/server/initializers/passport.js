@@ -1,5 +1,6 @@
 import { Strategy as LocalStrategy } from 'passport-local';
 import PortalUser from '../../collections/portalUser';
+import passport from 'passport';
 
 /**
  * Set up the de-/serializer for passport
@@ -7,8 +8,6 @@ import PortalUser from '../../collections/portalUser';
  * @return {Authenticator}
  */
 export default function setup() {
-  var passport = require('passport');
-
   passport.serializeUser((user, done) => {
     done(null, user.id);
   });

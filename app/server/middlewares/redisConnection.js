@@ -9,18 +9,18 @@ import logger from 'winston';
  * @param {number} failoverAttempts Number of retry
  * @param {string} env Node environment
  */
-export default function(redisStore, session, secret, failoverAttempts, env) {
-  let sessionMiddleware = session({
+export default function(redisStore, session, secret, failoverAttempts) {
+  const sessionMiddleware = session({
     resave: false,
     saveUninitialized: true,
 
     // see https://github.com/expressjs/session#cookie-options
     secret: secret,
-    store: redisStore
+    store: redisStore,
   });
 
   return function(req, res, next) {
-    var tries = failoverAttempts;
+    let tries = failoverAttempts;
 
     function lookupSession(error) {
       if (error) {
@@ -43,6 +43,4 @@ export default function(redisStore, session, secret, failoverAttempts, env) {
 
     lookupSession();
   };
-
 }
-

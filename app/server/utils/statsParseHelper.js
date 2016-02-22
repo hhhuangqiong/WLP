@@ -6,7 +6,7 @@ import moment from 'moment';
  */
 const INTERVAL = {
   day: 24 * 3600 * 1000,
-  hour: 3600 * 1000
+  hour: 3600 * 1000,
 };
 
 /**
@@ -44,6 +44,19 @@ const INTERVAL = {
  * @property {Response~ResultTuple} data  The data value
  */
 
+ /**
+  * Aggregates all value in an {@link Response~ResultTuple} array using summation.
+  *
+  * @method
+  * @param {Response~ResultTuple[]} array  The array to aggregate
+  * @returns {Number} The sum of the values in the array
+  */
+export function sumAllValuesInTuple(array) {
+  return array.reduce((acc, item) => {
+    return acc + item.v;
+  }, 0);
+}
+
 /**
  * Aggregates a result item from the response to a single grouped object.
  *
@@ -56,21 +69,48 @@ const INTERVAL = {
 export function aggregateResultByGroup(result, mapDataName, group) {
   return {
     name: mapDataName(result.segment[group]),
-    value: sumAllValuesInTuple(result.data)
+    value: sumAllValuesInTuple(result.data),
   };
 }
 
 /**
- * Aggregates all value in an {@link Response~ResultTuple} array using summation.
+ * Calculates the number of data item within the specified period of time.
  *
  * @method
- * @param {Response~ResultTuple[]} array  The array to aggregate
- * @returns {Number} The sum of the values in the array
+ * @param {Number} from  The from timestamp
+ * @param {Number} to  The to timestamp
+ * @param {String} [timescale=hour]  The timescale
+ * @returns {Number} The number of data points
  */
-export function sumAllValuesInTuple(array) {
-  return array.reduce((acc, item) => {
-    return acc + item.v;
-  }, 0);
+export function computeDataCount(from, to, timescale = 'hour') {
+  // For a time range of [12:09, 14:27], we want [12:00, 15:00].
+  // For [12:09, 14:00], we want [12:00, 14:00].
+  // For [13:00, 15:00], we want [13:00, 15:00].
+  const offsetFrom = moment(from).startOf(timescale);
+  const offsetTo = moment(to).startOf(timescale);
+
+  if (!offsetTo.isSame(to)) {
+    offsetTo.add(1, timescale);
+  }
+
+  return (offsetTo - offsetFrom) / INTERVAL[timescale];
+}
+
+/**
+ * Generate an array filled with dummy data.
+ *
+ * @method
+ * @param {Number} count  Number of items in the array
+ * @returns {Number[]} The dummy array
+ */
+export function generateDummyArray(count) {
+  const array = [];
+
+  for (let i = 0; i < count; i++) {
+    array.push(0);
+  }
+
+  return array;
 }
 
 
@@ -95,8 +135,8 @@ export function sumAllValuesInTuple(array) {
  * @returns {Verification~StatsByStatusResult} The dummy result object
  */
 export function createDummyResultForByStatusRequest(params) {
-  let dataCount = computeDataCount(params.from, params.to, params.timescale);
-  let dummyData = generateDummyArray(dataCount);
+  const dataCount = computeDataCount(params.from, params.to, params.timescale);
+  const dummyData = generateDummyArray(dataCount);
 
   return {
     from: params.from,
@@ -107,48 +147,8 @@ export function createDummyResultForByStatusRequest(params) {
     accumulatedAttempts: 0,
     accumulatedSuccess: 0,
     accumulatedFailure: 0,
-    averageSuccessRate: 0
+    averageSuccessRate: 0,
   };
-}
-
-/**
- * Calculates the number of data item within the specified period of time.
- *
- * @method
- * @param {Number} from  The from timestamp
- * @param {Number} to  The to timestamp
- * @param {String} [timescale=hour]  The timescale
- * @returns {Number} The number of data points
- */
-export function computeDataCount(from, to, timescale = 'hour') {
-  // For a time range of [12:09, 14:27], we want [12:00, 15:00].
-  // For [12:09, 14:00], we want [12:00, 14:00].
-  // For [13:00, 15:00], we want [13:00, 15:00].
-  let offsetFrom = moment(from).startOf(timescale);
-  let offsetTo = moment(to).startOf(timescale);
-
-  if (!offsetTo.isSame(to)) {
-    offsetTo.add(1, timescale);
-  }
-
-  return (offsetTo - offsetFrom) / INTERVAL[timescale];
-}
-
-/**
- * Generate an array filled with dummy data.
- *
- * @method
- * @param {Number} count  Number of items in the array
- * @returns {Number[]} The dummy array
- */
-export function generateDummyArray(count) {
-  let array = [];
-
-  for (let i = 0; i < count; i++) {
-    array.push(0);
-  }
-
-  return array;
 }
 
 /**
@@ -166,19 +166,40 @@ export function generateDummyArray(count) {
  * @returns {Verification~SimpleTuple[]} The dummy data for the missing item
  */
 export function createDummyForMissingDataItem(completeList, existingItems) {
-  let missingTypes = _.filter(completeList, (type) => {
-    return _.every(existingItems, (item) => {
+  const missingTypes = _.filter(completeList, type => {
+    return _.every(existingItems, item => {
       return item.name !== type;
     });
   });
 
-  return _.map(missingTypes, (missingType) => {
+  return _.map(missingTypes, missingType => {
     return {
       name: missingType,
-      value: 0
+      value: 0,
     };
   });
 }
+
+/**
+ * Generates an array of result tuples.
+ *
+ * @method
+ * @param {Number} size  The size of the array
+ * @returns {Response~ResultTuple[]} The generated array
+ */
+export function generateDummyResultTuple(size) {
+  const array = [];
+
+  for (let i = 0; i < size; i++) {
+    array.push({
+      t: i,
+      v: 0,
+    });
+  }
+
+  return array;
+}
+
 
 /**
  * Standardises the data set of the by-status response.
@@ -192,10 +213,11 @@ export function createDummyForMissingDataItem(completeList, existingItems) {
  * @returns {Object} The result set in { successSet: Response~ResultTuple[], failureSet: Response~ResultTuple[]}
  */
 export function standardiseStatusDataSet(results, params) {
-  let successSet, failureSet;
+  let successSet;
+  let failureSet;
 
   // it may happens that only 1 result object is in the response
-  results.forEach((result) => {
+  results.forEach(result => {
     if (result.segment.success === 'false') {
       failureSet = result.data;
     } else if (result.segment.success === 'true') {
@@ -207,11 +229,12 @@ export function standardiseStatusDataSet(results, params) {
   if (!successSet || !failureSet) {
     // calculate the data count
     // so that we know how many data point we should generate for the missing data set
-    let dataCount = computeDataCount(params.from, params.to, params.timescale);
+    const dataCount = computeDataCount(params.from, params.to, params.timescale);
 
     if (!failureSet) {
       failureSet = generateDummyResultTuple(dataCount);
     }
+
     if (!successSet) {
       successSet = generateDummyResultTuple(dataCount);
     }
@@ -219,26 +242,6 @@ export function standardiseStatusDataSet(results, params) {
 
   return {
     successSet,
-    failureSet
+    failureSet,
   };
-}
-
-/**
- * Generates an array of result tuples.
- *
- * @method
- * @param {Number} size  The size of the array
- * @returns {Response~ResultTuple[]} The generated array
- */
-export function generateDummyResultTuple(size) {
-  let array = [];
-
-  for (let i = 0; i < size; i++) {
-    array.push({
-      t: i,
-      v: 0
-    });
-  }
-
-  return array;
 }

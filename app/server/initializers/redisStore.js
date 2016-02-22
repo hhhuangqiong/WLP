@@ -1,5 +1,4 @@
 import logger from 'winston';
-
 import _ from 'lodash';
 
 /**
@@ -12,23 +11,21 @@ import _ from 'lodash';
  * @return {object} Redis store
  */
 export default function makeRedisStore(session, nconf, env) {
-  var RedisStore = require('connect-redis')(session);
-  var redisStore;
+  const RedisStore = require('connect-redis')(session);
+  let redisStore;
 
-  var redisConfig = nconf.get('redis');
+  const redisConfig = nconf.get('redis');
 
   if (!_.has(redisConfig, 'sentinels')) {
     logger.info('LOCAL REDIS!', redisConfig);
     redisStore = new RedisStore(redisConfig);
-  }
-  else {
-    var Redis = require('ioredis');
+  } else {
+    const Redis = require('ioredis');
 
-    //!! there's no default retryStrategy in from ioredis !!
+    // !! there's no default retryStrategy in from ioredis !!
     redisConfig.retryStrategy = function(times) {
       logger.info(`ioredis: reconnecting for the ${times} time`);
-      var delay = Math.min(times * 2, 2000);
-      return delay;
+      return Math.min(times * 2, 2000);
     };
 
     logger.info('Redis Sentinal opts: %j', redisConfig, {});
@@ -37,4 +34,3 @@ export default function makeRedisStore(session, nconf, env) {
 
   return redisStore;
 }
-

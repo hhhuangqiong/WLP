@@ -18,7 +18,7 @@ const PAGE_SIZE = 1000;
 
 const MISSING_PAGE_DATA_MSG = 'Invalid pageNumber/totalPages';
 
-/***
+/*
  * @constructor ImExport
  * @param {Kue} kueue instance of job queue
  * @param  {object}   param - may contain following
@@ -33,7 +33,7 @@ const MISSING_PAGE_DATA_MSG = 'Invalid pageNumber/totalPages';
  */
 export default class ExportTask {
   constructor(kueue, param, query) {
-    let deferred = Q.defer();
+    const deferred = Q.defer();
 
     this.kueue = kueue;
     this.jobType = param.jobType || query.exportType;
@@ -43,7 +43,7 @@ export default class ExportTask {
 
     param = this.prepareJob(param, query);
 
-    let job = this.kueue.create(this.exportType, param).save((err) => {
+    const job = this.kueue.create(this.exportType, param).save(err => {
       if (err) {
         logger.error(`Unable to create ${this.exportType} job`, err);
         deferred.reject(err);
@@ -75,7 +75,7 @@ export default class ExportTask {
    * @param {query} request query
    */
   prepareJob(params, query) {
-    let job = {};
+    const job = {};
 
     job[IM] = () => {
       return {
@@ -86,7 +86,7 @@ export default class ExportTask {
         destination: query.destination,
         origin: query.origin,
         page: PAGE_START_INDEX,
-        size: PAGE_SIZE
+        size: PAGE_SIZE,
       };
     };
 
@@ -101,7 +101,7 @@ export default class ExportTask {
         caller_country: query.destination,
         page: PAGE_START_INDEX,
         size: PAGE_SIZE,
-        type: query.type
+        type: query.type,
       };
     };
 
@@ -184,14 +184,14 @@ export default class ExportTask {
       row.country = getCountryName(row.country);
 
       switch (row.type) {
-        case 'MobileTerminated':
-          row.type = 'Call-In';
-          break;
+      case 'MobileTerminated':
+        row.type = 'Call-In';
+        break;
 
-        case 'MobileOriginated':
-          row.type = 'Call-Out';
-          break;
-        }
+      case 'MobileOriginated':
+        row.type = 'Call-Out';
+        break;
+      }
 
       break;
 
@@ -259,14 +259,14 @@ export default class ExportTask {
     });
   }
 
-  //job process function
+  // job process function
   exportCSV(job, cb) {
     const EXPORT_KEY = `${this.exportType}:${job.id}`;
+    const param = job.data;
+    const redisClient = fetchDep(nconf.get('containerName'), 'RedisClient');
+    const csvStream = csv.createWriteStream({ headers: true });
 
-    let param = job.data;
     let totalExportElements = 0;
-    let redisClient = fetchDep(nconf.get('containerName'), 'RedisClient');
-    let csvStream = csv.createWriteStream({ headers: true });
 
     csvStream
       .pipe(redisWStream(redisClient, EXPORT_KEY))
@@ -275,27 +275,27 @@ export default class ExportTask {
         return cb(null);
       });
 
-    let next = (param) => {
+    const next = param => {
       // get the job by id to verify that the job is not removed
-      kue.Job.get(job.id, (err, currentJob) => {
+      kue.Job.get(job.id, err => {
         // get job failed, sliently stop the process
         if (err) {
           logger.error(`Could not find job #${job.id}`, err);
           return false;
         }
 
-        let config = this.getExportConfig();
-        let request = fetchDep(nconf.get('containerName'), config.EXPORT_REQUEST);
+        const config = this.getExportConfig();
+        const request = fetchDep(nconf.get('containerName'), config.EXPORT_REQUEST);
 
         Q.ninvoke(request, config.EXPORT_REQUEST_EXECUTION, param)
-          .then((result) => {
+          .then(result => {
             let contentIndex = 0;
 
             // Compatible with different naming fields from end point response
-            let contents = result.contents || result.content;
-            let numberOfContent = contents.length;
-            let totalPages = [result.totalPages, result.total_pages].filter(n => n !== undefined)[0];
-            let pageNumber = [result.pageNumber, result.page_number].filter(n => n !== undefined)[0];
+            const contents = result.contents || result.content;
+            const numberOfContent = contents.length;
+            const totalPages = [result.totalPages, result.total_pages].filter(n => n !== undefined)[0];
+            const pageNumber = [result.pageNumber, result.page_number].filter(n => n !== undefined)[0];
 
             // Record number of elements are being exported
             totalExportElements += numberOfContent;
@@ -310,7 +310,7 @@ export default class ExportTask {
 
             // Extract elements within current page
             while (contentIndex < numberOfContent) {
-              let row = _.pick(contents[contentIndex], config.DATA_FIELDS);
+              const row = _.pick(contents[contentIndex], config.DATA_FIELDS);
               csvStream.write(this.humanizeFields(this.exportType, row));
               contentIndex++;
             }
@@ -324,7 +324,7 @@ export default class ExportTask {
               next(param);
             }
           })
-          .catch((err) => { return cb(err); })
+          .catch(err => cb(err))
           .done();
       });
     };

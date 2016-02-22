@@ -10,9 +10,10 @@ const SESSION_KEY = 'app:sessions';
  * @param redisClient {Object} redis client instance
  */
 
-let SessionHandler = function(redisClient) {
-  if (!redisClient)
+const SessionHandler = function(redisClient) {
+  if (!redisClient) {
     throw new Error('redis client is required');
+  }
 
   this._client = redisClient;
 };
@@ -46,11 +47,12 @@ SessionHandler.prototype.createSession = function(data, cb) {
  * @returns {*|promise}
  */
 SessionHandler.prototype.getSession = function(token) {
-  let deferred = Q.defer();
+  const deferred = Q.defer();
 
   this._client.get(`${SESSION_KEY}:${token}`, (err, result) => {
-    if (err)
+    if (err) {
       return deferred.reject(err);
+    }
 
     let sessionData;
 

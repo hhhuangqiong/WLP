@@ -1,29 +1,40 @@
-let Grid       = require('gridfs-stream');
-let logger     = require('winston');
-let mongoose   = require('mongoose');
-let Q          = require('q');
+import Grid from 'gridfs-stream';
+import logger from 'winston';
+import mongoose from 'mongoose';
+import Q from 'q';
 
-let db         = mongoose.connection.db;
-let GridStore  = mongoose.mongo.GridStore;
-let mongoDrive = mongoose.mongo;
+const db         = mongoose.connection.db;
+const GridStore  = mongoose.mongo.GridStore;
+const mongoDrive = mongoose.mongo;
 
-let getImage = function(req, res, next) {
+const getImage = function(req, res, next) {
   function readImageProperties(imageId, cb) {
-    var gfs = new Grid(db, mongoDrive);
+    const gfs = new Grid(db, mongoDrive);
+
     gfs.findOne({
-      _id: imageId
-    }, function(err, file) {
-      if (err) return cb(err);
+      _id: imageId,
+    }, (err, file) => {
+      if (err) {
+        return cb(err);
+      }
+
       return cb(null, file);
     });
   }
 
   function readImage(file, cb) {
-    var gfs = new GridStore(db, file._id, 'r');
-    gfs.open((err, gs) => {
-      if (err) return next(err);
+    const gfs = new GridStore(db, file._id, 'r');
+
+    gfs.open(err => {
+      if (err) {
+        return next(err);
+      }
+
       gfs.read((err, data) => {
-        if (err) return cb(err);
+        if (err) {
+          return cb(err);
+        }
+
         file.imageData = data;
         return cb(null, file);
       });
@@ -33,21 +44,19 @@ let getImage = function(req, res, next) {
   function renderImage(data) {
     res.writeHead('200', {
       'Content-Type': data.contentType,
-      'Content-Length': data.length
+      'Content-Length': data.length,
     });
+
     res.end(data.imageData, 'binary');
   }
 
   Q.nfcall(readImageProperties, req.params.imageId)
-    .then(function(file) {
-      return Q.nfcall(readImage, file);
-    })
+    .then(file => Q.nfcall(readImage, file))
     .then(renderImage)
-    .catch(function(err) {
+    .catch(err => {
       logger.error(err);
       return next(err);
     });
 };
 
 export { getImage };
-

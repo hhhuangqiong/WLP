@@ -7,12 +7,11 @@ import * as carriers  from '../routes/carriers';
 import * as companies from '../routes/companies';
 import * as authority from '../routes/authority';
 import * as accounts from '../routes/accounts';
-import Authority from '../../main/authority';
+
 import cacheControl from '../middlewares/cacheControl';
 
-let multipart = require('connect-multiparty')();
-
-let router = Router();
+const multipart = require('connect-multiparty')();
+const router = Router();
 
 router
   .use(cacheControl)
@@ -66,8 +65,8 @@ router
     return res.status(400).json({
       error: {
         name: 'Unknown URL',
-        message: `No endpoint for the given URL ${req.originalUrl}`
-      }
+        message: `No endpoint for the given URL ${req.originalUrl}`,
+      },
     });
   });
 

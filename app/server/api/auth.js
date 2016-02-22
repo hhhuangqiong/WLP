@@ -4,8 +4,8 @@ import superagent from 'superagent';
 import { SIGN_IN, SIGN_OUT } from '../paths';
 import * as saUtil from '../../utils/superagent';
 
-let debug = require('debug')('app:server/api/auth');
-let genericHandler = _.partial(saUtil.genericHandler, debug);
+const debug = require('debug')('app:server/api/auth');
+const genericHandler = _.partial(saUtil.genericHandler, debug);
 
 /**
  *
@@ -13,10 +13,10 @@ let genericHandler = _.partial(saUtil.genericHandler, debug);
  * @return {Object} function(s) to be mixed
  */
 export default function(apiPrefix = '') {
-  //NB: 'host' above is not used, need to defer evaluation via function to get the correct 'host'
+  // NB: 'host' above is not used, need to defer evaluation via function to get the correct 'host'
 
   return {
-    signIn: function(username, password, cb) {
+    signIn(username, password, cb) {
       superagent
         .post(`${this._getHost()}${apiPrefix}${SIGN_IN}`)
         .accept('json')
@@ -24,13 +24,12 @@ export default function(apiPrefix = '') {
         .end(genericHandler(cb));
     },
 
-    signOut: function(cb) {
+    signOut(cb) {
       superagent
       .post(`${this._getHost()}${apiPrefix}${SIGN_OUT}`)
       .accept('json')
       .set('Authorization', this._getToken())
       .end(genericHandler(cb));
-    }
+    },
   };
 }
-

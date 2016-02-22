@@ -1,12 +1,11 @@
-'use strict';
-var logger = require('winston');
-var Q = require('q');
-var _ = require('lodash');
-var fs = require('fs');
-var path = require('path');
+import logger from 'winston';
+import Q from 'q';
+import _ from 'lodash';
+import fs from 'fs';
+import path from 'path';
 
-var Company = require('../../collections/company');
-var PortalUser = require('../../collections/portalUser');
+const Company = require('../../collections/company');
+const PortalUser = require('../../collections/portalUser');
 
 /**
  * initialize 'super user' information
@@ -14,45 +13,46 @@ var PortalUser = require('../../collections/portalUser');
  * @param {string} seedFilePath path to the seed file
  */
 function initialize(seedFilePath) {
-  var content;
+  let content;
+
   try {
     content = JSON.parse(fs.readFileSync(seedFilePath, {
-      encoding: 'utf8'
+      encoding: 'utf8',
     }));
   } catch (e) {
     throw new Error('Error parsing data seed file');
   }
 
-  var insertData = function(data) {
+  const insertData = function(data) {
+    let affiliatedCompanyId;
+    const rootUser = data.user;
+    const hashInfo = Q.nbind(PortalUser.hashInfo, PortalUser);
 
-    var affiliatedCompanyId;
-    var rootUser = data.user;
-    var hashInfo = Q.nbind(PortalUser.hashInfo, PortalUser);
-    var seedUser = function() {
-
+    const seedUser = function() {
       return hashInfo(rootUser.password).then(function(hashResult) {
-        var extra = {
-          affiliatedCompany: affiliatedCompanyId
+        const extra = {
+          affiliatedCompany: affiliatedCompanyId,
         };
+
         logger.info('Seeding user ' +  rootUser.username);
         return Q.ninvoke(PortalUser, 'create', _.merge(rootUser, hashResult, extra));
       });
-
     };
 
-    var seedCompany = function(companyInfo) {
-      var condition = {
-        name: companyInfo.name
+    const seedCompany = function(companyInfo) {
+      const condition = {
+        name: companyInfo.name,
       };
-      var opts = {
+
+      const opts = {
         new: true,
-        upsert: true
+        upsert: true,
       };
+
       return Q.ninvoke(Company, 'findOneAndUpdate', condition, companyInfo, opts);
     };
 
     function addLogo(model) {
-
       if (!data.company.logoFile) {
         return Q(true);
       }
@@ -60,11 +60,11 @@ function initialize(seedFilePath) {
       return Q.ninvoke(model, 'addLogo', path.join(__dirname, `../../../public/images/${data.company.logoFile}`), {});
     }
 
-    var infoLogger = function(model) {
+    const infoLogger = function(model) {
       logger.info('Seeded: %j', model, {});
     };
 
-    var putAffiliateIdInScope = function(company) {
+    const putAffiliateIdInScope = function(company) {
       affiliatedCompanyId = company.id;
       logger.info('Put affiliatedCompany in scope ' + affiliatedCompanyId);
       return company;
@@ -85,7 +85,7 @@ function initialize(seedFilePath) {
 
     // assume there can only have 1 and only 1 root user
     PortalUser.findOne({
-      username: data.user.username
+      username: data.user.username,
     }, function(err, user) {
       if (err) {
         throw err;

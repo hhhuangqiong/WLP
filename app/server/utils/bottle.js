@@ -21,9 +21,10 @@ export function fetchContainerInstance(name) {
  * @return {*} The registered dependency
  */
 export function fetchDep(name, depIdentifer) {
-  var ioc = fetchContainerInstance(name);
+  const ioc = fetchContainerInstance(name);
+
   if (ioc) {
-    //TODO prevent the 'identifier.' case
+    // TODO prevent the 'identifier.' case
     return depIdentifer.split('.').reduce((result, key) => {
       return result[key];
     }, ioc.container);

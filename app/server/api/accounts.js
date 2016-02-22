@@ -2,8 +2,8 @@ import _ from 'lodash';
 import superagent from 'superagent';
 import * as saUtil from '../../utils/superagent';
 
-let debug = require('debug')('app:server/api/accounts');
-let genericHandler = _.partial(saUtil.genericHandler, debug);
+const debug = require('debug')('app:server/api/accounts');
+const genericHandler = _.partial(saUtil.genericHandler, debug);
 
 export default function(apiPrefix = '') {
   return {
@@ -83,6 +83,6 @@ export default function(apiPrefix = '') {
         .set('Authorization', this._getToken())
         .query({ userId: params.userId })
         .end(genericHandler(cb));
-    }
+    },
   };
 }

@@ -2,7 +2,7 @@ import { Router } from 'express';
 import * as exportRoutes from '../routes/export';
 import cacheControl from '../middlewares/cacheControl';
 
-let router = Router();
+const router = Router();
 
 router
   .use(cacheControl)

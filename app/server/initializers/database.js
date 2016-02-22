@@ -1,9 +1,6 @@
-/* eslint no-process-exit */
-'use strict';
-
-var _        = require('lodash');
-var logger   = require('winston');
-var mongoose = require('mongoose');
+import _ from 'lodash';
+import logger from 'winston';
+import mongoose from 'mongoose';
 
 /**
  * Initialize database connection
@@ -17,7 +14,7 @@ function initialize(mongodbURI, mongodbOpts, cb) {
     throw new Error('Both uri & options are required');
   }
 
-  //TODO may be exposing sensitive information (e.g., password)
+  // TODO may be exposing sensitive information (e.g., password)
   logger.info('Connecting to Mongo on %s with %j', mongodbURI, mongodbOpts, {});
   mongoose.connect(mongodbURI, mongodbOpts);
 

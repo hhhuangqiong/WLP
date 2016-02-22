@@ -22,7 +22,7 @@ export default function initialize(env, configDir, opts = { envSeparator: '__' }
 
   // TODO
   // - dynamically include files; assume some files (other than 'env-*') are not supposed to be included
-  var files = ['global.json'];
+  const files = ['global.json'];
 
   files.push(envConfigName(env, opts.envConfigFilePrefix  || ENV_CONFIG_FILE_PREFIX));
 
@@ -30,13 +30,14 @@ export default function initialize(env, configDir, opts = { envSeparator: '__' }
     nconf.file(f, {
       file: f,
       dir: configDir,
-      search: true
+      search: true,
     });
   });
+
   logger.debug('loading configuration files %j under "%s"', files, configDir);
 
-  //TODO verify the existence of default config
-  var defaults = require(path.join(configDir, 'defaults.json'));
+  // TODO verify the existence of default config
+  const defaults = require(path.join(configDir, 'defaults.json'));
   nconf.defaults(defaults);
 
   return nconf;

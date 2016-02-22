@@ -1,9 +1,8 @@
-let winston = require('winston');
-
 import _ from 'lodash';
 import moment from 'moment';
 
 // included anyways even it's not specified in the configuration
+const winston = require('winston');
 require('winston-logstash');
 
 /**
@@ -17,8 +16,7 @@ require('winston-logstash');
  * @param {Array} [opts.transports] transport options. e.g, [{ type: ..., options: ... }]
  */
 function initialize(opts = {}) {
-
-  let transports = opts.transports || [];
+  const transports = opts.transports || [];
 
   if (transports.length) {
     // to avoid `Console` transport being added more than once
@@ -36,9 +34,9 @@ function initialize(opts = {}) {
   if (useLogstash) {
     prepareMetaInGlobal(opts.meta);
     return wrapOriginalLevels(winston);
-  } else {
-    return winston;
   }
+
+  return winston;
 }
 
 function hasLogstash(transport) {
@@ -53,13 +51,13 @@ function prepareMetaInGlobal(meta) {
 }
 
 function wrapOriginalLevels(winston) {
-  let _origLevels = {};
+  const _origLevels = {};
 
   Object.keys(winston.levels).forEach(function(level) {
     _origLevels[level] = winston[level];
 
     winston[level] = function() {
-      let args = Array.prototype.slice.call(arguments);
+      const args = Array.prototype.slice.call(arguments);
       return _origLevels[level].apply(winston, args.concat(logstashMeta));
     };
   });

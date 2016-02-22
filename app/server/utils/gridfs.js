@@ -1,13 +1,12 @@
 import fs from 'fs';
 import mongoose from 'mongoose';
-import logger from 'winston';
 import Grid from 'gridfs-stream';
 import mime from 'mime';
 
 module.exports = {
-  getGridFS: function(cb) {
-    let db = mongoose.connection.db;
-    let mongoDriver = mongoose.mongo;
+  getGridFS(cb) {
+    const db = mongoose.connection.db;
+    const mongoDriver = mongoose.mongo;
 
     try {
       return new Grid(db, mongoDriver);
@@ -28,17 +27,18 @@ module.exports = {
    * @param {Function} cb
    * @returns {*} - Returns GridFS document
    */
-  addFile: function(filePath, options, cb) {
-    let gfs = this.getGridFS(cb);
+  addFile(filePath, options, cb) {
+    const gfs = this.getGridFS(cb);
 
-    if (!filePath)
+    if (!filePath) {
       return cb(new Error('missing file path'));
+    }
 
-    let writeStream = gfs.createWriteStream({
+    const writeStream = gfs.createWriteStream({
       filename: options.fileName || filePath.split('/').pop(),
 
       // jscs:disable requireCamelCaseOrUpperCaseIdentifiers
-      content_type: mime.lookup(filePath)
+      content_type: mime.lookup(filePath),
     });
 
     fs.createReadStream(filePath).pipe(writeStream);
@@ -53,5 +53,5 @@ module.exports = {
         return cb(null, gfsFile);
       }
     });
-  }
+  },
 };

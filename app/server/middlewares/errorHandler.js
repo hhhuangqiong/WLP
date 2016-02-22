@@ -22,6 +22,6 @@ export default function errorHandler(err, req, res, next) {
     name: err.name,
     message: filteredMessage(err),
     moduleId: err.moduleId,
-    context: JSON.stringify(err.inner_error, INNER_ERROR_FIELDS)
+    context: JSON.stringify(err.inner_error, INNER_ERROR_FIELDS),
   }});
 }

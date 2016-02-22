@@ -11,8 +11,8 @@ export default class AccountController {
   }
 
   createAccount(req, res, next) {
-    let conditions = req.body;
-    let author = req.user;
+    const conditions = req.body;
+    const author = req.user;
 
     // user hasn't logged in
     if (!req.user) return res.json({ result: {}, message: 'Invalid permission' });

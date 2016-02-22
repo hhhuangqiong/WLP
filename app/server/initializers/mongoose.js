@@ -1,8 +1,7 @@
-'use strict';
+// TODO allow models to be located in different folder, e.g., app/notification/models/
+import _ from 'underscore';
+import fs from 'fs';
 
-//TODO allow models to be located in different folder, e.g., app/notification/models/
-var _ = require('underscore');
-var fs = require('fs');
 /**
 Register the Mongoose models in the path specified
 @method registerModels

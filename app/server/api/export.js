@@ -3,8 +3,8 @@ import superagent from 'superagent';
 
 import * as saUtil from '../../utils/superagent';
 
-let debug = require('debug')('app:server/api/export');
-let genericHandler = _.partial(saUtil.genericHandler, debug);
+const debug = require('debug')('app:server/api/export');
+const genericHandler = _.partial(saUtil.genericHandler, debug);
 
 /**
  * List of routes regarding file export
@@ -57,6 +57,6 @@ export default function(exportPrefix = '') {
             cb(error);
           }
         });
-    }
+    },
   };
 }

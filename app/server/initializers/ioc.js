@@ -1,12 +1,9 @@
 import Bottle from 'bottlejs';
 import path from 'path';
-import _ from 'lodash';
+import NodeAcl from 'acl';
 
 import makeRedisClient from './redis';
 import ensureAuthenticated from '../middlewares/ensureAuthenticated';
-
-import mongoose from 'mongoose';
-import NodeAcl from 'acl';
 
 /**
  * Initialize the IoC container
@@ -16,22 +13,22 @@ import NodeAcl from 'acl';
  */
 export default function init(nconf) {
   // intentionally not calling with `new`; otherwise `fetchContainerInstance` cannot work
-  var ioc = Bottle(nconf.get('containerName'));
+  const ioc = Bottle(nconf.get('containerName'));
 
   // NB: relative to 'node_modules/'
   ioc.constant('MAIL_TMPL_DIR', path.resolve(__dirname, '../../../mail/templates'));
   ioc.constant('MAIL_TMPL_CONFIG', { templatesDir: ioc.container.MAIL_TMPL_DIR });
 
-  ioc.factory('middlewares.ensureAuthenticated', (container) => {
+  ioc.factory('middlewares.ensureAuthenticated', () => {
     return ensureAuthenticated(nconf.get('landing:unauthenticated:path'));
   });
 
-  ioc.factory('middlewares.flash', (container) => {
+  ioc.factory('middlewares.flash', () => {
     return require('../middlewares/flash')();
   });
 
-  ioc.factory('SmtpTransport', container => {
-    var transport = require('../../lib/mailer/transports/smtp');
+  ioc.factory('SmtpTransport', () => {
+    const transport = require('../../lib/mailer/transports/smtp');
     return transport(nconf.get('smtp:transport'));
   });
 
@@ -45,7 +42,7 @@ export default function init(nconf) {
 
   ioc.constant('M800_MAIL_SERVICE_CLIENT_CONFIG', {
     baseUrl: ioc.container.M800_MAIL_SERVICE_URL,
-    basePath: '/emails'
+    basePath: '/emails',
   });
   ioc.service('EmailClient', require('m800-mail-service-client'), 'M800_MAIL_SERVICE_CLIENT_CONFIG');
 
@@ -72,18 +69,19 @@ export default function init(nconf) {
   ioc.service('TopUpRequest', require('../../lib/requests/boss/TopUp'), 'BOSS_API_BASE_URL', 'BOSS_API_TIMEOUT');
   ioc.service('WalletRequest', require('../../lib/requests/boss/Wallet'), 'BOSS_API_BASE_URL', 'BOSS_API_TIMEOUT');
 
-  ioc.service('RedisClient', (container) => {
+  ioc.service('RedisClient', () => {
     return makeRedisClient(nconf.get('redis'));
   });
 
-  ioc.factory('ACL', (container) => {
+  ioc.factory('ACL', () => {
     return new NodeAcl(new NodeAcl.memoryBackend());
   });
 
   ioc.factory('ACLManager', (container) => {
-    var AclManager = require('../../main/acl');
-    var carrierQuerier = require('../../main/acl/carrierQueryService');
-    var nodeAcl = container.ACL;
+    const AclManager = require('../../main/acl');
+    const carrierQuerier = require('../../main/acl/carrierQueryService');
+    const nodeAcl = container.ACL;
+
     return new AclManager(nodeAcl, carrierQuerier);
   });
 

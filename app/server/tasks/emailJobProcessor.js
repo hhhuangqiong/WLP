@@ -18,12 +18,12 @@ export default function processFn(mailer) {
 
   return function(job, done) {
     logger.debug('Email job details %j', job, {});
-    var data = job.data;
+    const data = job.data;
 
     // MAYBE stronger data structure protocol between job & processor
-    var mailOpts     = data.mailOpts;
-    var templateName = data.templateName;
-    var templateData = data.templateData;
+    const mailOpts     = data.mailOpts;
+    const templateName = data.templateName;
+    const templateData = data.templateData;
 
     mailer.send(mailOpts, templateName, templateData, done);
   };

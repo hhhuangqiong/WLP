@@ -18,23 +18,21 @@ import Sentinel from 'redis-sentinel';
  * @see {@link: https://github.com/Automattic/kue#replacing-redis-client-module}
  */
 export default function(redisConnOpts, opts = {}) {
-
-
   logger.info('initializing Kue');
+
   // use non-sentinel configuration
   let kueRedisOpt = redisConnOpts;
 
   if (redisConnOpts.sentinels) {
-
-    let endpoints = [].concat(redisConnOpts.sentinels);
-    let masterName = redisConnOpts.name;
-    let redisOpts = {
-      db: redisConnOpts.db
+    const endpoints = [].concat(redisConnOpts.sentinels);
+    const masterName = redisConnOpts.name;
+    const redisOpts = {
+      db: redisConnOpts.db,
     };
 
     logger.info('initalizing Kue with Sentinel endpoints: %j', redisConnOpts, {});
 
-    let sentinel = Sentinel.Sentinel(endpoints);
+    const sentinel = Sentinel.Sentinel(endpoints);
 
     // use custom redis client
     kueRedisOpt = {
@@ -44,23 +42,22 @@ export default function(redisConnOpts, opts = {}) {
         logger.info(`kue custom redis client creation`);
 
         return sentinel.createClient(masterName, redisOpts);
-      }
+      },
     };
-  }
-  else {
+  } else {
     logger.info('initalizing Kue with non-sentinal endpoints: ', kueRedisOpt);
   }
 
-  let kueue = kue.createQueue({
+  const kueue = kue.createQueue({
     prefix: `${process.env.NODE_ENV}_${opts.prefix}`,
-    redis: kueRedisOpt
+    redis: kueRedisOpt,
   });
 
   // It's a Kue's watchdog to fix stuck inactive jobs when the redis service is unstable
   // Kue will be refactored to fully atomic job state management from version 1.0 and this will happen by lua scripts and/or BRPOPLPUSH combination
   kueue.watchStuckJobs();
 
-  let uiPort = opts.uiPort;
+  const uiPort = opts.uiPort;
 
   if (uiPort) {
     // kue.createQueue must be called before accessing kue.app

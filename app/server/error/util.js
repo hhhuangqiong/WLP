@@ -13,14 +13,13 @@ export default function(err, moduleId, errorCode) {
   Object.defineProperty(err, 'moduleId', {
     enumerable: true,
     configurable: false,
-    value: moduleId
+    value: moduleId,
   });
   Object.defineProperty(err, 'errorCode', {
     enumerable: true,
     configurable: false,
-    value: errorCode
+    value: errorCode,
   });
 
   return err;
 }
-

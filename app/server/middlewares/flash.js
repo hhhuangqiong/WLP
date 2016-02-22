@@ -8,7 +8,7 @@
  *  @param {String} [opts.messageTypeKey='messageType']
  */
 export default function(opts = {}) {
-  var keys = {};
+  const keys = {};
   keys.messages    = opts.messagesKey || 'messages';
   keys.messageType = opts.messageTypeKey || 'messageType';
 
@@ -21,4 +21,3 @@ export default function(opts = {}) {
     next();
   };
 }
-

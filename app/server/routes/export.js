@@ -1,4 +1,3 @@
-import fs from 'fs';
 import kue from 'kue';
 import nconf from 'nconf';
 import redisRStream from 'redis-rstream';
@@ -6,42 +5,44 @@ import redisRStream from 'redis-rstream';
 import { fetchDep } from '../utils/bottle';
 import EXPORTS from '../../config/export';
 import ExportTask from '../tasks/Export';
-import { CALLS, IM, VERIFICATION } from '../../main/file-export/constants/ExportType';
 
 import responseError from '../utils/responseError';
 
 import {
-  JOB_FAILED_ERROR, GET_JOB_ERROR, REQUEST_VALIDATION_ERROR,
-  FILE_STREAM_ERROR, INCOMPELETE_JOB_ERROR
+  JOB_FAILED_ERROR,
+  GET_JOB_ERROR,
+  REQUEST_VALIDATION_ERROR,
+  FILE_STREAM_ERROR,
+  INCOMPELETE_JOB_ERROR,
 } from '../utils/exportErrorTypes';
 
-let getExportConfig = (type) => {
+const getExportConfig = (type) => {
   return EXPORTS[type.toUpperCase()] || {};
 };
 
 // '/:carrierId/export'
-let getCarrierExport = (req, res) => {
+const getCarrierExport = (req, res) => {
   req.checkParams('carrierId').notEmpty();
 
-  let err = req.validationErrors();
+  const err = req.validationErrors();
 
   if (err) return responseError(REQUEST_VALIDATION_ERROR, res, err);
 
-  let task = new ExportTask(fetchDep(nconf.get('containerName'), 'Kue'), req.params, req.query);
+  const task = new ExportTask(fetchDep(nconf.get('containerName'), 'Kue'), req.params, req.query);
 
   task.ready().then((job) => {
     res.status(200).json({ id: job.id });
     task.start();
-  }, (err) => {
+  }, err => {
     return responseError(GET_JOB_ERROR, res, err);
   }).done();
 };
 
 // '/:carrierId/export/cancel'
-let getCarrierExportCancel = (req, res) => {
+const getCarrierExportCancel = (req, res) => {
   req.checkParams('carrierId').notEmpty();
 
-  let err = req.validationErrors();
+  const err = req.validationErrors();
 
   if (err) return responseError(REQUEST_VALIDATION_ERROR, res, err);
 
@@ -56,10 +57,10 @@ let getCarrierExportCancel = (req, res) => {
 };
 
 // '/:carrierId/export/progress'
-let getCarrierExportFileProgress = (req, res) => {
+const getCarrierExportFileProgress = (req, res) => {
   req.checkQuery('exportId').notEmpty();
 
-  let err = req.validationErrors();
+  const err = req.validationErrors();
 
   if (err) return responseError(REQUEST_VALIDATION_ERROR, res, err);
 
@@ -69,41 +70,39 @@ let getCarrierExportFileProgress = (req, res) => {
     // jscs:disable requireCamelCaseOrUpperCaseIdentifiers
     if (job.failed_at) return responseError(JOB_FAILED_ERROR, res, job.failed_at);
 
-    let progress = job._progress || '0';
+    const progress = job._progress || '0';
 
     return res.status(200).json({ progress });
   });
 };
 
 // '/:carrierId/export/file'
-let getCarrierExportFile = (req, res) => {
+const getCarrierExportFile = (req, res) => {
   req.checkQuery('exportId').notEmpty();
 
-  let err = req.validationErrors();
+  const err = req.validationErrors();
   if (err) return responseError(REQUEST_VALIDATION_ERROR, res, err);
 
   kue.Job.get(req.query.exportId, (err, job) => {
     if (err) return responseError(GET_JOB_ERROR, res, err);
 
-    let jobConfig = getExportConfig(job.type);
+    const jobConfig = getExportConfig(job.type);
 
     if (job._progress === '100') {
       res.set('Content-Disposition', 'attachment; filename=' + jobConfig.EXPORT_FILENAME);
       res.set('Content-Type', 'text/csv');
 
-      let redisClient = fetchDep(nconf.get('containerName'), 'RedisClient');
-      let exportFileStream = redisRStream(redisClient, `${job.type}:${job.id}`);
+      const redisClient = fetchDep(nconf.get('containerName'), 'RedisClient');
+      const exportFileStream = redisRStream(redisClient, `${job.type}:${job.id}`);
 
       exportFileStream.pipe(res);
 
-      exportFileStream.on('error', (err) => {
+      exportFileStream.on('error', err => {
         return responseError(FILE_STREAM_ERROR, res, err);
       });
-
     } else {
       return responseError(INCOMPELETE_JOB_ERROR, res, job._progress);
     }
-
   });
 };
 
@@ -111,5 +110,5 @@ export {
   getCarrierExport,
   getCarrierExportCancel,
   getCarrierExportFile,
-  getCarrierExportFileProgress
+  getCarrierExportFileProgress,
 };
