@@ -1,7 +1,5 @@
 import React from 'react';
 import moment from 'moment';
-import classNames from 'classnames';
-import _ from 'lodash';
 
 import DateTimePicker from '../../../main/components/DateTimePicker';
 import ExportCountriesDropdown from '../../../main/file-export/components/ExportCountriesDropdown';
@@ -12,52 +10,11 @@ export default React.createClass({
     fromTime: React.PropTypes.object,
     toTime: React.PropTypes.object,
     handleExport: React.PropTypes.func.isRequired,
-    closeModal: React.PropTypes.func.isRequired
-  },
-
-  defaultState() {
-    return {
-      fromTime: moment(this.props.fromTime),
-      toTime: moment(this.props.toTime).endOf('day'),
-      origin: '',
-      destination: ''
-    };
+    closeModal: React.PropTypes.func.isRequired,
   },
 
   getInitialState() {
     return this.defaultState();
-  },
-
-  clearState() {
-    this.setState(this.defaultState());
-  },
-
-  handleStartDateChange(newDate) {
-    this.setState({ fromTime: moment.isMoment(newDate) ? newDate : moment(newDate) });
-  },
-
-  handleEndDateChange(newDate) {
-    this.setState({ toTime: moment.isMoment(newDate) ? newDate : moment(newDate) });
-  },
-
-  handleOriginChange(event) {
-    this.setState({ origin: event.target.value });
-  },
-
-  handleDestinationChange(event) {
-    this.setState({ destination: event.target.value });
-  },
-
-  handleExport() {
-    let params = {
-      fromTime: this.state.fromTime.format('x'),
-      toTime: this.state.toTime.format('x'),
-      origin: this.state.origin.toLowerCase(),
-      destination: this.state.destination.toLowerCase()
-    };
-
-    this.props.handleExport(params);
-    this.clearState();
   },
 
   render() {
@@ -126,8 +83,48 @@ export default React.createClass({
           closeModal={this.props.closeModal}
           handleExport={this.handleExport}
         />
-
       </form>
     );
-  }
+  },
+
+  defaultState() {
+    return {
+      fromTime: moment(this.props.fromTime),
+      toTime: moment(this.props.toTime).endOf('day'),
+      origin: '',
+      destination: '',
+    };
+  },
+
+  clearState() {
+    this.setState(this.defaultState());
+  },
+
+  handleStartDateChange(newDate) {
+    this.setState({ fromTime: moment.isMoment(newDate) ? newDate : moment(newDate) });
+  },
+
+  handleEndDateChange(newDate) {
+    this.setState({ toTime: moment.isMoment(newDate) ? newDate : moment(newDate) });
+  },
+
+  handleOriginChange(event) {
+    this.setState({ origin: event.target.value });
+  },
+
+  handleDestinationChange(event) {
+    this.setState({ destination: event.target.value });
+  },
+
+  handleExport() {
+    const params = {
+      fromTime: this.state.fromTime.format('x'),
+      toTime: this.state.toTime.format('x'),
+      origin: this.state.origin.toLowerCase(),
+      destination: this.state.destination.toLowerCase(),
+    };
+
+    this.props.handleExport(params);
+    this.clearState();
+  },
 });

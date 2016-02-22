@@ -1,13 +1,10 @@
-import _ from 'lodash';
-import {createStore} from 'fluxible/addons';
-
-const debug = require('debug')('src:modules/overview/components/OverviewStore');
+import { createStore } from 'fluxible/addons';
 
 export default createStore({
   storeName: 'OverviewStore',
 
   handlers: {
-    FETCH_OVERVIEW_WIDGETS_SUCCESS: 'handleLoadWidgetSuccess'
+    FETCH_OVERVIEW_WIDGETS_SUCCESS: 'handleLoadWidgetSuccess',
   },
 
   initialize() {
@@ -28,12 +25,12 @@ export default createStore({
   dehydrate() {
     return {
       widgets: this.widgets,
-      description: this.description
+      description: this.description,
     };
   },
 
   rehydrate(state) {
     this.widgets = state.widgets;
     this.description = state.description;
-  }
+  },
 });

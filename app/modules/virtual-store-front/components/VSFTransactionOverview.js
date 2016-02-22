@@ -11,40 +11,40 @@ import AuthStore    from '../../../main/stores/AuthStore';
 
 const errorMessage = '<div className="widget-not-found">Dashboard is not available</div>';
 
-let VSFTransactionOverview = React.createClass({
-  mixins: [FluxibleMixin, AuthMixin],
-
+const VSFTransactionOverview = React.createClass({
   contextTypes: {
     router: React.PropTypes.func.isRequired,
-    executeAction: React.PropTypes.func.isRequired
+    executeAction: React.PropTypes.func.isRequired,
   },
+
+  mixins: [FluxibleMixin, AuthMixin],
 
   statics: {
     storeListeners: [VSFTransactionStore],
 
-    fetchData: function(context, params, query, done = Function.prototype) {
+    fetchData(context, params, query, done = Function.prototype) {
       context.executeAction(fetchVSFWidgets, {
         carrierId: params.identity,
-        userId: context.getStore(AuthStore).getUserId()
+        userId: context.getStore(AuthStore).getUserId(),
       }, done);
-    }
+    },
   },
 
   getInitialState() {
-    let store = this.getStore(VSFTransactionStore);
+    const store = this.getStore(VSFTransactionStore);
     return { widgets: store.widgets || [] };
   },
 
   onChange() {
-    let store = this.getStore(VSFTransactionStore);
+    const store = this.getStore(VSFTransactionStore);
     this.setState({ widgets: store.widgets });
   },
 
   renderWidgets() {
-    let widgets = this.state.widgets;
+    const widgets = this.state.widgets;
 
     if (!widgets || !widgets.length) {
-      return (<WidgetNotAvailable />);
+      return <WidgetNotAvailable />;
     }
 
     return (
@@ -62,7 +62,7 @@ let VSFTransactionOverview = React.createClass({
   },
 
   render() {
-    let params = this.context.router.getCurrentParams();
+    const params = this.context.router.getCurrentParams();
 
     return (
       <div className="row">
@@ -88,7 +88,7 @@ let VSFTransactionOverview = React.createClass({
 
       </div>
     );
-  }
+  },
 });
 
 export default VSFTransactionOverview;

@@ -64,15 +64,6 @@ const VSFTransactionDetails = createClass({
     return { fromTime, toTime, category, userNumber, transactions };
   },
 
-  syncQueryAndState(newState) {
-    const state = this.getStore(VSFTransactionStore).getQuery();
-    const query = this.context.router.getCurrentQuery();
-
-    const renewedState = newState ? merge(state, query, newState) : merge(state, query);
-
-    return renewedState;
-  },
-
   onChange() {
     const data = this.getStore(VSFTransactionStore).getData();
     this.setState(data);
@@ -139,6 +130,15 @@ const VSFTransactionDetails = createClass({
         </div>
       </div>
     );
+  },
+
+  syncQueryAndState(newState) {
+    const state = this.getStore(VSFTransactionStore).getQuery();
+    const query = this.context.router.getCurrentQuery();
+
+    const renewedState = newState ? merge(state, query, newState) : merge(state, query);
+
+    return renewedState;
   },
 
   handleQueryChange(newQueryChange) {

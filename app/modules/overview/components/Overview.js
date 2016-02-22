@@ -18,16 +18,9 @@ export default React.createClass({
     fetchData: (context, params, query, done) => {
       context.executeAction(fetchOverviewWidgets, {
         carrierId: params.identity,
-        userId: context.getStore(AuthStore).getUserId()
+        userId: context.getStore(AuthStore).getUserId(),
       }, done || (() => {}));
-    }
-  },
-
-  getCurrentState() {
-    return {
-      widgets: this.getStore(OverviewStore).widgets,
-      description: this.getStore(OverviewStore).description
-    };
+    },
   },
 
   getInitialState() {
@@ -38,8 +31,15 @@ export default React.createClass({
     this.setState(this.getCurrentState());
   },
 
+  getCurrentState() {
+    return {
+      widgets: this.getStore(OverviewStore).widgets,
+      description: this.getStore(OverviewStore).description,
+    };
+  },
+
   renderWidgets() {
-    let widgets = this.state.widgets;
+    const widgets = this.state.widgets;
 
     return (
       <table className="widget-table overview-table large-centered columns">
@@ -60,7 +60,7 @@ export default React.createClass({
   },
 
   render() {
-    let widgets = this.state.widgets;
+    const widgets = this.state.widgets;
 
     if (!widgets || !widgets.length) {
       return (<WidgetNotAvailable />);
@@ -75,5 +75,5 @@ export default React.createClass({
         </div>
       </div>
     );
-  }
+  },
 });

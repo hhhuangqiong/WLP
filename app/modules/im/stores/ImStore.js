@@ -1,15 +1,15 @@
 import {createStore} from 'fluxible/addons';
 
-var ImStore = createStore({
+const ImStore = createStore({
   storeName: 'ImStore',
 
   handlers: {
-    FETCH_IM_SUCCESS:         'handleImChange',
+    FETCH_IM_SUCCESS: 'handleImChange',
     FETCH_IM_WIDGETS_SUCCESS: 'handleImWidgetsChange',
-    FETCH_MORE_IM_SUCCESS:    'handleLoadMoreIm'
+    FETCH_MORE_IM_SUCCESS: 'handleLoadMoreIm',
   },
 
-  initialize: function() {
+  initialize() {
     this.widgets = [];
     this.ims = [];
     this.offset = 0;
@@ -19,7 +19,7 @@ var ImStore = createStore({
     this.totalPages = 0;
   },
 
-  handleImChange: function(payload) {
+  handleImChange(payload) {
     this.ims = payload.contents;
     this.offset = payload.offset;
     this.pageNumber = (payload.offset / payload.pageSize) + 1;
@@ -27,11 +27,12 @@ var ImStore = createStore({
     this.imsCount = payload.totalElements;
     this.totalPages = payload.totalPages;
     this.loaded = true;
+
     this.emitChange();
   },
 
-  handleLoadMoreIm: function(payload) {
-    payload.contents.forEach((im) => {
+  handleLoadMoreIm(payload) {
+    payload.contents.forEach(im => {
       this.ims.push(im);
     });
 
@@ -43,7 +44,7 @@ var ImStore = createStore({
     this.emitChange();
   },
 
-  handleImWidgetsChange: function(payload) {
+  handleImWidgetsChange(payload) {
     if (payload && payload.widgets) {
       this.widgets = payload.widgets;
     } else {
@@ -53,27 +54,27 @@ var ImStore = createStore({
     this.emitChange();
   },
 
-  getIMsCount: function() {
+  getIMsCount() {
     return this.imsCount;
   },
 
-  getIMs: function() {
+  getIMs() {
     return this.ims;
   },
 
-  getWidgets: function() {
+  getWidgets() {
     return this.widgets;
   },
 
-  getTotalPages: function() {
+  getTotalPages() {
     return this.totalPages;
   },
 
-  getPageNumber: function() {
+  getPageNumber() {
     return this.pageNumber;
   },
 
-  getState: function() {
+  getState() {
     return {
       ims: this.ims,
       offset: this.offset,
@@ -82,15 +83,15 @@ var ImStore = createStore({
       imsCount: this.imsCount,
       totalPages: this.totalPages,
       widgets: this.widgets,
-      loaded: true
+      loaded: true,
     };
   },
 
-  dehydrate: function() {
+  dehydrate() {
     return this.getState();
   },
 
-  rehydrate: function(state) {
+  rehydrate(state) {
     this.ims = state.ims;
     this.offset = state.offset;
     this.pageNumber = state.pageNumber;
@@ -98,7 +99,7 @@ var ImStore = createStore({
     this.imsCount = state.imsCount;
     this.totalPages = state.totalPages;
     this.widgets = state.widgets;
-  }
+  },
 });
 
 export default ImStore;
