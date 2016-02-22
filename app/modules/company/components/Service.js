@@ -1,11 +1,6 @@
 import _ from 'lodash';
-import classNames from 'classnames';
-import {concurrent} from 'contra';
-
 import React from 'react';
 import FluxibleMixin from 'fluxible/addons/FluxibleMixin';
-
-import Joi from 'joi';
 import ValidationMixin from 'react-validation-mixin';
 
 import updateCompanyService from '../actions/updateCompanyService';
@@ -31,20 +26,20 @@ const defaultState = {
       ios: {
         name: null,
         applicationKey: null,
-        applicationSecret: null
+        applicationSecret: null,
       },
       android: {
         name: null,
         applicationKey: null,
-        applicationSecret: null
-      }
-    }
-  }
+        applicationSecret: null,
+      },
+    },
+  },
 };
 
-let CompanyService = React.createClass({
+const CompanyService = React.createClass({
   contextTypes: {
-    router: React.PropTypes.func.isRequired
+    router: React.PropTypes.func.isRequired,
   },
 
   mixins: [FluxibleMixin, ValidationMixin],
@@ -52,13 +47,13 @@ let CompanyService = React.createClass({
   statics: {
     storeListeners: [CompanyStore],
 
-    fetchData: function(context, params, query, done) {
+    fetchData(context, params) {
       context.executeAction(fetchCompanyService, { carrierId: params.carrierId });
-    }
+    },
   },
 
   // expose from ValidationMixin
-  validatorTypes: function() {
+  validatorTypes() {
     return _.reduce(this.refs, function(rules, component) {
       _.merge(rules, _.isFunction(component.getValidatorTypes) && component.getValidatorTypes());
       return rules;
@@ -66,7 +61,7 @@ let CompanyService = React.createClass({
   },
 
   // expose from ValidationMixin
-  getValidatorData: function() {
+  getValidatorData() {
     return _.reduce(this.refs, function(rules, component) {
       _.merge(rules, _.isFunction(component.getValidatorData) && component.getValidatorData());
       return rules;
@@ -74,59 +69,57 @@ let CompanyService = React.createClass({
   },
 
   // TODO: it should be included in the Company Object returned from MongoDB
-  getServiceType: function(carrierId) {
+  getServiceType(carrierId) {
     return carrierId && carrierId.indexOf('.m800-api.com') > -1 ? 'sdk' : 'wl';
   },
 
-  getStateFromStores: function() {
-    let { carrierId } = this.context.router.getCurrentParams();
-    let { _id, status, serviceConfig } = this.getStore(CompanyStore).getCompanyByCarrierId(carrierId);
+  getStateFromStores() {
+    const { carrierId } = this.context.router.getCurrentParams();
+    const { _id, status, serviceConfig } = this.getStore(CompanyStore).getCompanyByCarrierId(carrierId);
 
     return { _id, status, serviceConfig: _.merge(_.clone(defaultState), serviceConfig) };
   },
 
-  getInitialState: function() {
+  getInitialState() {
     return this.getStateFromStores();
   },
 
-  onChange: function() {
+  onChange() {
     this.setState(this.getStateFromStores());
   },
 
-  _handleInputChange: function(platformName, e) {
+  _handleInputChange(platformName, e) {
     this.setState({
       serviceConfig: {
         applicationId: this.state.serviceConfig.applicationId,
         developerKey: this.state.serviceConfig.developerKey,
         developerSecret: this.state.serviceConfig.developerSecret,
-        applications: _.merge(this.state.serviceConfig.applications, {[platformName]: {name: e.target.value}})
-      }
+        applications: _.merge(this.state.serviceConfig.applications, {[platformName]: {name: e.target.value}}),
+      },
     });
   },
 
-  _handleInputBlur: function(e) {
-    let inputName = e.target.name;
+  _handleInputBlur(e) {
+    const inputName = e.target.name;
     this.validate(inputName);
   },
 
-  _handleSubmit: function() {
-    this.validate((error)=> {
+  _handleSubmit() {
+    this.validate(error => {
       // react-validation-mixin will trigger changes in
       // this.state.errors upon this.validate() is called
       // so no error handling is needed
-      if (error)
-        return;
+      if (error) return;
 
-      let { carrierId } = this.context.router.getCurrentParams();
-
-      let form = React.findDOMNode(this.refs.companyForm);
-      let formData = new FormData(form);
+      const { carrierId } = this.context.router.getCurrentParams();
+      const form = React.findDOMNode(this.refs.companyForm);
+      const formData = new FormData(form);
 
       this.context.executeAction(updateCompanyService, { carrierId, data: formData });
     });
   },
 
-  _renderHelpText: function(message) {
+  _renderHelpText(message) {
     return (
       <Tooltip placement="left" overlay={message}>
         <a href="#" className="field-set--indicator"><span className="icon-error6" /></a>
@@ -134,15 +127,15 @@ let CompanyService = React.createClass({
     );
   },
 
-  render: function() {
+  render() {
     return (
       <div>
         <TopBar
-            _id={this.state._id}
-            status={this.state.status}
-            hasError={!this.isValid()}
-            onSave={this._handleSubmit}
-          />
+          _id={this.state._id}
+          status={this.state.status}
+          hasError={!this.isValid()}
+          onSave={this._handleSubmit}
+        />
         <form ref="companyForm" onSubmit={this._handleSubmit}>
           <If condition={this.state._id}>
             <input type="hidden" name="_id" value={this.state._id} />
@@ -216,7 +209,7 @@ let CompanyService = React.createClass({
         </form>
       </div>
     );
-  }
+  },
 });
 
 export default CompanyService;

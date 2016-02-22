@@ -1,13 +1,6 @@
-var debug = require('debug')('app:Profile');
-
 import _ from 'lodash';
-import classNames from 'classnames';
-import moment from 'moment';
-
 import React from 'react';
 import FluxibleMixin from 'fluxible/addons/FluxibleMixin';
-
-import Joi from 'joi';
 import ValidationMixin from 'react-validation-mixin';
 
 import createProfile from '../actions/createCompany';
@@ -23,22 +16,22 @@ import CompanyStore from '../stores/CompanyStore';
 
 import config from './../../../main/config';
 
-let { inputDateFormat: DATE_FORMAT } = config;
+const { inputDateFormat: DATE_FORMAT } = config;
 
-let CompanyProfile = React.createClass({
+const CompanyProfile = React.createClass({
   contextTypes: {
     router: React.PropTypes.func.isRequired,
-    executeAction: React.PropTypes.func.isRequired
+    executeAction: React.PropTypes.func.isRequired,
   },
 
   mixins: [FluxibleMixin, ValidationMixin],
 
   statics: {
-    storeListeners: [CompanyStore]
+    storeListeners: [CompanyStore],
   },
 
   // expose from ValidationMixin
-  validatorTypes: function() {
+  validatorTypes() {
     return _.reduce(this.refs, function(rules, component) {
       _.merge(rules, _.isFunction(component.getValidatorTypes) && component.getValidatorTypes());
       return rules;
@@ -46,50 +39,50 @@ let CompanyProfile = React.createClass({
   },
 
   // expose from ValidationMixin
-  getValidatorData: function() {
+  getValidatorData() {
     return _.reduce(this.refs, function(rules, component) {
       _.merge(rules, _.isFunction(component.getValidatorData) && component.getValidatorData());
       return rules;
     }, {});
   },
 
-  getInitialState: function() {
+  getInitialState() {
     return this.getStateFromStores();
   },
 
-  getStateFromStores: function() {
-    let { carrierId } = this.context.router.getCurrentParams();
+  getStateFromStores() {
+    const { carrierId } = this.context.router.getCurrentParams();
 
     if (carrierId) {
       return this.getStore(CompanyStore).getCompanyByCarrierId(carrierId);
-    } else {
-      return this.getStore(CompanyStore).getNewCompany();
     }
+
+    return this.getStore(CompanyStore).getNewCompany();
   },
 
-  onChange: function() {
+  onChange() {
     this.setState(this.getStateFromStores());
   },
 
-  componentWillMount: function() {
+  componentWillMount() {
     // too rush to handle lazy loading at this stage
     this.context.executeAction(fetchParentCompanies);
   },
 
-  _handleInputChange: function(stateName, e) {
+  _handleInputChange(stateName, e) {
     this.setState({[stateName]: e.target.value || e.target.selected});
 
     // do validation for SELECT onChange
     // otherwise it would be done onBlur
     if (e.target.tagName === 'SELECT') {
-      let inputName = e.target.name;
+      const inputName = e.target.name;
       this.validate(inputName);
     }
   },
 
-  _handleContactChange: function(stateName, key, e) {
+  _handleContactChange(stateName, key, e) {
     this.setState({
-      [stateName]: _.assign(this.state[stateName], {[key]: e.target.value})
+      [stateName]: _.assign(this.state[stateName], {[key]: e.target.value}),
     });
   },
 
@@ -100,13 +93,13 @@ let CompanyProfile = React.createClass({
    *
    * @param e {Object} target Input DOM
    */
-  _handleLogoChange: function(e) {
+  _handleLogoChange(e) {
     if (!!e.target.files[0]) {
-      var reader = new FileReader();
+      const reader = new FileReader();
 
-      reader.onload = (e) => {
+      reader.onload = () => {
         this.setState({
-          logo: reader.result
+          logo: reader.result,
         });
       };
 
@@ -114,41 +107,39 @@ let CompanyProfile = React.createClass({
     }
   },
 
-  _handleDateChange: function(momentDate) {
+  _handleDateChange(momentDate) {
     this.setState({
-      expectedServiceDate: momentDate.format(DATE_FORMAT)
+      expectedServiceDate: momentDate.format(DATE_FORMAT),
     });
   },
 
-  _handleCountryChange: function(val) {
+  _handleCountryChange(val) {
     this.setState({
-      country: val
+      country: val,
     });
   },
 
-  _handleInputBlur: function(e) {
-    let inputName = e.target.name;
+  _handleInputBlur(e) {
+    const inputName = e.target.name;
     this.validate(inputName);
   },
 
-  _handleSetReseller: function(isReseller) {
+  _handleSetReseller(isReseller) {
     this.setState({
-      reseller: isReseller
+      reseller: isReseller,
     });
   },
 
-  _handleSubmit: function() {
-    this.validate((error)=> {
+  _handleSubmit() {
+    this.validate(error => {
       // react-validation-mixin will trigger changes in
       // this.state.errors upon this.validate() is called
       // so no error handling is needed
-      if (error)
-        return;
+      if (error) return;
 
-      let { carrierId } = this.context.router.getCurrentParams();
-
-      let form = React.findDOMNode(this.refs.companyForm);
-      let formData = new FormData(form);
+      const { carrierId } = this.context.router.getCurrentParams();
+      const form = React.findDOMNode(this.refs.companyForm);
+      const formData = new FormData(form);
 
       if (this.state._id) {
         this.context.executeAction(updateProfile, { carrierId, data: formData });
@@ -158,7 +149,7 @@ let CompanyProfile = React.createClass({
     });
   },
 
-  _renderHelpText: function(message) {
+  _renderHelpText(message) {
     return (
       <Tooltip overlay={message}>
         <a href="#" className="field-set--indicator"><span className="icon-error6" /></a>
@@ -166,15 +157,15 @@ let CompanyProfile = React.createClass({
     );
   },
 
-  render: function() {
+  render() {
     return (
       <div>
         <TopBar
-            _id={this.state._id}
-            status={this.state.status}
-            hasError={!this.isValid()}
-            onSave={this._handleSubmit}
-          />
+          _id={this.state._id}
+          status={this.state.status}
+          hasError={!this.isValid()}
+          onSave={this._handleSubmit}
+        />
         <form ref="companyForm" encType="multipart/form-data" onSubmit={this._handleSubmit}>
           <If condition={this.state._id}>
             <input type="hidden" name="_id" value={this.state._id} />
@@ -207,19 +198,19 @@ let CompanyProfile = React.createClass({
         </form>
       </div>
     );
-  }
+  },
 });
 
-let ProfileTemplate = React.createFactory(CompanyProfile);
+const ProfileTemplate = React.createFactory(CompanyProfile);
 
-export let NewProfile = React.createClass({
-  render: function() {
+export const NewProfile = React.createClass({
+  render() {
     return ProfileTemplate();
-  }
+  },
 });
 
-export let EditProfile = React.createClass({
-  render: function() {
+export const EditProfile = React.createClass({
+  render() {
     return ProfileTemplate();
-  }
+  },
 });

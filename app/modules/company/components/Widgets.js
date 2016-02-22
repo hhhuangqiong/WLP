@@ -1,7 +1,5 @@
 import _ from 'lodash';
-import classNames from 'classnames';
-
-import React, { PropTypes } from 'react';
+import React from 'react';
 import FluxibleMixin from 'fluxible/addons/FluxibleMixin';
 import ValidationMixin from 'react-validation-mixin';
 
@@ -12,100 +10,45 @@ import TopBar from './TopBar';
 import Widget from './Widget';
 import * as Tab from '../../../main/components/Tab';
 import * as Panel from '../../../main/components/Panel';
-import * as InputGroup from '../../../main/components/InputGroup';
-
 import CompanyStore from '../stores/CompanyStore';
-
 import config from '../../../config';
 
-let { WIDGETS: sections } = config;
+const { WIDGETS: sections } = config;
 
-let CompanyWidget = React.createClass({
+const CompanyWidget = React.createClass({
   contextTypes: {
-    router: React.PropTypes.func.isRequired
+    router: React.PropTypes.func.isRequired,
   },
 
   mixins: [FluxibleMixin, ValidationMixin],
 
   statics: {
-    storeListeners: [CompanyStore]
+    storeListeners: [CompanyStore],
   },
 
-  _getDefaultState: function(sections) {
-    return _.reduce(sections, function(result, sectionObj, sectionKey) {
-      let key = sectionKey.toLowerCase();
-      result[key] = [];
-      return result;
-    }, {});
+  getInitialState() {
+    return this.getStateFromStores();
+  },
+
+  onChange() {
+    this.setState(this.getStateFromStores());
+  },
+
+  getStateFromStores() {
+    const { carrierId } = this.context.router.getCurrentParams();
+    const { _id, status, widgets } = this.getStore(CompanyStore).getCompanyByCarrierId(carrierId);
+    return { _id, status, data: _.extend(this._getDefaultState(sections), widgets) };
   },
 
   // expose from ValidationMixin
-  validatorTypes: function() {
-    return _.reduce(this.refs, function(rules, component) {
-      _.merge(rules, _.isFunction(component.getValidatorTypes) && component.getValidatorTypes());
-      return rules;
-    }, {});
-  },
-
-  // expose from ValidationMixin
-  getValidatorData: function() {
-    return _.reduce(this.refs, function(rules, component) {
+  getValidatorData() {
+    return _.reduce(this.refs, (rules, component) => {
       _.merge(rules, _.isFunction(component.getValidatorData) && component.getValidatorData());
       return rules;
     }, {});
   },
 
-  getStateFromStores: function() {
-    let { carrierId } = this.context.router.getCurrentParams();
-    let { _id, status, widgets } = this.getStore(CompanyStore).getCompanyByCarrierId(carrierId);
-    return { _id, status, data: _.extend(this._getDefaultState(sections), widgets) };
-  },
-
-  getInitialState: function() {
-    return this.getStateFromStores();
-  },
-
-  onChange: function() {
-    this.setState(this.getStateFromStores());
-  },
-
-  _handleSubmit: function() {
-    this.validate((error)=> {
-      // react-validation-mixin will trigger changes in
-      // this.state.errors upon this.validate() is called
-      // so no error handling is needed
-      if (error)
-        return;
-
-      let { carrierId } = this.context.router.getCurrentParams();
-
-      let form = React.findDOMNode(this.refs.companyForm);
-      let formData = new FormData(form);
-
-      this.context.executeAction(updateWidget, { data: formData, carrierId });
-    });
-  },
-
-  _handleInputChange: function(widgetName, stateName, e) {
-    this.setState({
-      data: _.assign(this.state.data, { [widgetName]: _.assign(this.state.data[widgetName], {[stateName]: e.target.value}) })
-    });
-  },
-
-  _handleInputBlur: function(e) {
-    let inputName = e.target.name;
-    this.validate(inputName);
-  },
-
-  _renderHelpText: function(message) {
-    return (
-      <Tooltip overlay={message}>
-        <a href="#" className="field-set--indicator"><span className="icon-error6" /></a>
-      </Tooltip>
-    );
-  },
-
-  render: function() {
+  render() {
     return (
       <div>
         <TopBar _id={this.state._id} status={this.state.status} hasError={!this.isValid()} onSave={this._handleSubmit} />
@@ -116,19 +59,20 @@ let CompanyWidget = React.createClass({
               <Panel.Body>
                 <Tab.Wrapper>
                   {_.map(sections, ({ NUMBER_OF_WIDGETS: numberOfWidgets }, key) => {
-                    let section = key.toLowerCase();
+                    const section = key.toLowerCase();
+
                     return (
                       <Tab.Panel title={section}>
                         <Widget
-                            ref={section}
-                            section={section}
-                            widgets={this.state.data[section]}
-                            numberOfWidget={numberOfWidgets}
-                            onDataChange={this._handleInputChange}
-                            onInputBlur={this._handleInputBlur}
-                            getValidationMessages={this.getValidationMessages}
-                            renderHelpText={this._renderHelpText}
-                          />
+                          ref={section}
+                          section={section}
+                          widgets={this.state.data[section]}
+                          numberOfWidget={numberOfWidgets}
+                          onDataChange={this._handleInputChange}
+                          onInputBlur={this._handleInputBlur}
+                          getValidationMessages={this.getValidationMessages}
+                          renderHelpText={this._renderHelpText}
+                        />
                       </Tab.Panel>
                     );
                   })}
@@ -139,7 +83,56 @@ let CompanyWidget = React.createClass({
         </form>
       </div>
     );
-  }
+  },
+
+  // expose from ValidationMixin
+  validatorTypes() {
+    return _.reduce(this.refs, (rules, component) => {
+      _.merge(rules, _.isFunction(component.getValidatorTypes) && component.getValidatorTypes());
+      return rules;
+    }, {});
+  },
+
+  _getDefaultState(sections) {
+    return _.reduce(sections, (result, sectionObj, sectionKey) => {
+      const key = sectionKey.toLowerCase();
+      result[key] = [];
+      return result;
+    }, {});
+  },
+
+  _handleSubmit() {
+    this.validate(error => {
+      // react-validation-mixin will trigger changes in
+      // this.state.errors upon this.validate() is called
+      // so no error handling is needed
+      if (error) return;
+
+      const { carrierId } = this.context.router.getCurrentParams();
+      const form = React.findDOMNode(this.refs.companyForm);
+      const formData = new FormData(form);
+
+      this.context.executeAction(updateWidget, { data: formData, carrierId });
+    });
+  },
+
+  _handleInputChange(widgetName, stateName, e) {
+    this.setState({
+      data: _.assign(this.state.data, { [widgetName]: _.assign(this.state.data[widgetName], {[stateName]: e.target.value}) }),
+    });
+  },
+
+  _handleInputBlur(e) {
+    this.validate(e.target.name);
+  },
+
+  _renderHelpText(message) {
+    return (
+      <Tooltip overlay={message}>
+        <a href="#" className="field-set--indicator"><span className="icon-error6" /></a>
+      </Tooltip>
+    );
+  },
 });
 
 export default CompanyWidget;

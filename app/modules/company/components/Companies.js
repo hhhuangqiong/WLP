@@ -1,7 +1,6 @@
-import {concurrent} from 'contra';
-
 import React from 'react';
-import {RouteHandler} from 'react-router';
+import { concurrent } from 'contra';
+import { RouteHandler } from 'react-router';
 
 import FluxibleMixin from '../../../../node_modules/fluxible/addons/FluxibleMixin';
 import AuthMixin from '../../../utils/AuthMixin';
@@ -11,9 +10,9 @@ import fetchCompanies from '../actions/fetchCompanies';
 import CompanyList from './CompanyList';
 import CompanyStore from '../stores/CompanyStore';
 
-let Companies = React.createClass({
+const Companies = React.createClass({
   contextTypes: {
-    router: React.PropTypes.func.isRequired
+    router: React.PropTypes.func.isRequired,
   },
 
   mixins: [FluxibleMixin, AuthMixin],
@@ -21,28 +20,28 @@ let Companies = React.createClass({
   statics: {
     storeListeners: [CompanyStore],
 
-    fetchData: function(context, params, query, done) {
+    fetchData(context, params, query, done) {
       concurrent([
-        context.executeAction.bind(context, fetchCompanies, { carrierId: params.carrierId })
-      ], done || function() {});
-    }
+        context.executeAction.bind(context, fetchCompanies, { carrierId: params.carrierId }),
+      ], done || () => {});
+    },
   },
 
-  getInitialState: function() {
+  getInitialState() {
     return this.getStateFromStores();
   },
 
-  getStateFromStores: function() {
-    return {
-      companies: this.getStore(CompanyStore).getCompanies()
-    };
-  },
-
-  onChange: function() {
+  onChange() {
     this.setState(this.getStateFromStores());
   },
 
-  render: function() {
+  getStateFromStores() {
+    return {
+      companies: this.getStore(CompanyStore).getCompanies(),
+    };
+  },
+
+  render() {
     return (
       <div className="row" data-equalizer>
         <div className="large-6 columns" data-equalizer-watch>
@@ -55,7 +54,7 @@ let Companies = React.createClass({
         </div>
       </div>
     );
-  }
+  },
 });
 
 export default Companies;

@@ -5,77 +5,38 @@ import classNames from 'classnames';
 
 import { getCountryName } from '../../../utils/StringFormatter';
 
-let CompanyList = React.createClass({
-  PropTypes: {
-    companies: PropTypes.object.isRequired
-  },
-
-  getDefaultProps: function() {
-    return {
-      companies: {}
-    };
+const CompanyList = React.createClass({
+  propTypes: {
+    companies: PropTypes.object.isRequired,
   },
 
   contextTypes: {
-    router: React.PropTypes.func.isRequired
+    router: React.PropTypes.func.isRequired,
   },
 
-  componentDidMount: function() {
-	  // equalise the height of the list and main area
-	      $(document).foundation({
-  equalizer: {
-        equalize_on_stack: true
-      }
-});
-  },
-
-  getInitialState: function() {
+  getDefaultProps() {
     return {
-      searchCompany: ''
+      companies: {},
     };
   },
 
-  _handleSearchChange: function(e) {
-    this.setState({
-      searchCompany: e.target.value.trim()
+  componentDidMount() {
+	  // equalise the height of the list and main area
+    $(document).foundation({
+      equalizer: {
+        equalize_on_stack: true,
+      },
     });
   },
 
-  /**
-   * Filter property of companies with keyword starting from 3 or more characters
-   * supports only company name matching
-   *
-   * @returns {Object} returns companies Object or empty Array
-   */
-  _getFilteredCompanies: function(companies) {
-    if (this.state.searchCompany.length >= 2) {
-      return _.filter(companies, (company) => {
-        return _.contains(company.name.toLowerCase(), this.state.searchCompany.toLowerCase());
-      });
-    }
-
-    return _.values(companies) || [];
+  getInitialState() {
+    return {
+      searchCompany: '',
+    };
   },
 
-  render: function() {
-    return (
-      <div className="company-sidebar">
-        <nav className="top-bar company-sidebar__search" data-topbar role="navigation">
-          <input className="round"
-            type="text" placeholder="search company"
-            onChange={this._handleSearchChange}
-          />
-          <i className="icon-search"/>
-        </nav>
-        <ul className="company-sidebar__list">
-          {this._getFilteredCompanies(this.props.companies).map(this.renderCompanyListItem)}
-        </ul>
-      </div>
-    );
-  },
-
-  renderCompanyListItem: function(company, key) {
-    let { role, identity } = this.context.router.getCurrentParams();
+  renderCompanyListItem(company, key) {
+    const { role, identity } = this.context.router.getCurrentParams();
 
     // TODO add default logo
     // TODO reference status string from Company Collection ?
@@ -103,7 +64,46 @@ let CompanyList = React.createClass({
         </Link>
       </li>
     );
-  }
+  },
+
+  render() {
+    return (
+      <div className="company-sidebar">
+        <nav className="top-bar company-sidebar__search" data-topbar role="navigation">
+          <input className="round"
+            type="text" placeholder="search company"
+            onChange={this._handleSearchChange}
+          />
+          <i className="icon-search"/>
+        </nav>
+        <ul className="company-sidebar__list">
+          {this._getFilteredCompanies(this.props.companies).map(this.renderCompanyListItem)}
+        </ul>
+      </div>
+    );
+  },
+
+  _handleSearchChange(e) {
+    this.setState({
+      searchCompany: e.target.value.trim(),
+    });
+  },
+
+  /**
+   * Filter property of companies with keyword starting from 3 or more characters
+   * supports only company name matching
+   *
+   * @returns {Object} returns companies Object or empty Array
+   */
+  _getFilteredCompanies(companies) {
+    if (this.state.searchCompany.length >= 2) {
+      return _.filter(companies, company => {
+        return _.contains(company.name.toLowerCase(), this.state.searchCompany.toLowerCase());
+      });
+    }
+
+    return _.values(companies) || [];
+  },
 });
 
 export default CompanyList;
