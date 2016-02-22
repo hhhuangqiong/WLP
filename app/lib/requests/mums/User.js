@@ -44,7 +44,7 @@ export default class UsersRequest {
   }
 
 
-  getExportUsers({carrier, from, to, page=0}, cb) {
+  getExportUsers({carrier, from, to, page = 0}, cb) {
     const query = {fromTime: from, toTime: to};
     query.pageNumberIndex = page;
     this.getUsers(carrier, query, (err, res)=> {
@@ -52,7 +52,7 @@ export default class UsersRequest {
 
       try {
         return cb(null, this._morphExportUsers(res));
-      } catch(e) {
+      } catch (e) {
         logger.error('Unexpected response from MUMS %s', res);
         logger.error('Error stack:', e.stack);
 
@@ -73,7 +73,7 @@ export default class UsersRequest {
       // replace username with formed jid to maintain consistency between UI and export data
       let result = _.merge(value, (value.devices || [])[0]);
       result.username = result.jid;
-      return _.omit(result, ['devices','jid']);
+      return _.omit(result, ['devices', 'jid']);
     });
     usersData.pageNumber = pageNumberIndex;
     usersData.totalPages = (hasNextPage) ? pageNumberIndex + 2  : pageNumberIndex + 1;
@@ -148,7 +148,7 @@ export default class UsersRequest {
       // assign jid to each user
       let carrierId = result.carrierId;
       result.userList.forEach((user) => {
-          user.jid = `${user.username}@${carrierId}`;
+        user.jid = `${user.username}@${carrierId}`;
       });
 
       return cb(null, result);

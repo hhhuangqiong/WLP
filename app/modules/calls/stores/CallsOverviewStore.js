@@ -1,30 +1,44 @@
+import { assign, forEach } from 'lodash';
 import {createStore} from 'fluxible/addons';
-import moment from 'moment';
 
-let debug = require('debug')('app:end-user/stores/CallsOverviewStore');
-
-let CallsOverviewStore = createStore({
+const CallsOverviewStore = createStore({
   storeName: 'CallsOverviewStore',
 
   handlers: {
+    FETCH_CALLS_STAT_MONTHLY_START: 'appendPendingRequest',
     FETCH_CALLS_STATS_MONTHLY_SUCCESS: 'handleCallsStatsMonthly',
+    FETCH_CALLS_STATS_MONTHLY_FAILURE: 'handleCallsStatsMonthlyFailure',
+    FETCH_CALLS_STATS_TOTAL_START: 'appendPendingRequest',
     FETCH_CALLS_STATS_TOTAL_SUCCESS: 'handleCallsStatsTotal',
-    CLEAR_CALLS_STATS: 'handleClearCallsStats'
+    FETCH_CALLS_STATS_TOTAL_FAILURE: 'handleCallsStatsTotalFailure',
+    CLEAR_CALLS_STATS: 'handleClearCallsStats',
   },
 
   initialize() {
-    this.thisMonthUser = 0;
-    this.lastMonthUser = 0;
-    this.totalDurationStats = [];
-    this.averageDurationStats = [];
-    this.totalAttemptStats = [];
-    this.successAttemptStats = [];
-    this.successRateStats = [];
+    this.thisMonthUser = null;
+    this.lastMonthUser = null;
+    this.monthlyStatsError = null;
+
+    this.totalDurationStats = null;
+    this.averageDurationStats = null;
+    this.totalAttemptStats = null;
+    this.successAttemptStats = null;
+    this.successRateStats = null;
+    this.totalStatsError = null;
+
+    this.pendingRequests = {};
   },
 
   handleCallsStatsMonthly(payload) {
     this.thisMonthUser = payload.thisMonthCallUser;
     this.lastMonthUser = payload.lastMonthCallUser;
+    this.monthlyStatsError = null;
+
+    this.emitChange();
+  },
+
+  handleCallsStatsMonthlyFailure(payload) {
+    this.monthlyStatsError = payload;
     this.emitChange();
   },
 
@@ -34,12 +48,48 @@ let CallsOverviewStore = createStore({
     this.successRateStats = payload.successRateStats;
     this.totalDurationStats = payload.totalDurationStats;
     this.averageDurationStats = payload.averageDurationStats;
+    this.totalStatsError = null;
+
+    this.emitChange();
+  },
+
+  handleCallsStatsTotalFailure(payload) {
+    this.totalStatsError = payload;
     this.emitChange();
   },
 
   handleClearCallsStats() {
+    this.abortPendingRequests();
     this.initialize();
     this.emitChange();
+  },
+
+  appendPendingRequest(request, key) {
+    if (!!request) {
+      const pendingRequest = this.pendingRequests[key];
+      if (pendingRequest) {
+        pendingRequest.abort();
+      }
+
+      assign(this.pendingRequests, { [key]: request });
+    }
+  },
+
+  abortPendingRequest(key) {
+    if (!key) {
+      this.abortPendingRequests();
+      return;
+    }
+
+    delete this.pendingRequests[key];
+  },
+
+  abortPendingRequests() {
+    forEach(this.pendingRequests, function(request) {
+      if (!!request) {
+        request.abort();
+      }
+    });
   },
 
   getState() {
@@ -50,7 +100,9 @@ let CallsOverviewStore = createStore({
       successAttemptStats: this.successAttemptStats,
       successRateStats: this.successRateStats,
       totalDurationStats: this.totalDurationStats,
-      averageDurationStats: this.averageDurationStats
+      averageDurationStats: this.averageDurationStats,
+      totalStatsError: this.totalStatsError,
+      monthlyStatsError: this.monthlyStatsError,
     };
   },
 
@@ -62,7 +114,10 @@ let CallsOverviewStore = createStore({
       successAttemptStats: this.successAttemptStats,
       successRateStats: this.successRateStats,
       totalDurationStats: this.totalDurationStats,
-      averageDurationStats: this.averageDurationStats
+      averageDurationStats: this.averageDurationStats,
+      pendingRequests: this.pendingRequests,
+      totalStatsError: this.totalStatsError,
+      monthlyStatsError: this.monthlyStatsError,
     };
   },
 
@@ -74,7 +129,10 @@ let CallsOverviewStore = createStore({
     this.successRateStats = state.successRateStats;
     this.totalDurationStats = state.totalDurationStats;
     this.averageDurationStats = state.averageDurationStats;
-  }
+    this.pendingRequests = state.pendingRequests;
+    this.totalStatsError = state.totalStatsError;
+    this.monthlyStatsError = state.monthlyStatsError;
+  },
 });
 
 export default CallsOverviewStore;

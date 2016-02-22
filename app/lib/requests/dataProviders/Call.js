@@ -6,7 +6,8 @@ var Q       = require('q');
 var request = require('superagent');
 var util    = require('util');
 
-import {constructOpts, formatDateString, swapDate, composeResponse, handleError} from '../helper';
+import {buildCallSolrQueryString} from '../queryBuilder/call';
+import {constructOpts, formatDateString, swapDate, composeSolrResponse, handleError} from '../helper';
 import qs from 'qs';
 
 export default class CallsRequest {
@@ -20,8 +21,12 @@ export default class CallsRequest {
       methods: {
         CALLS: {
           URL: '/api/v1/sip/cdr/query',
-          METHOD: 'GET'
-        }
+          METHOD: 'GET',
+        },
+        CALLSOLR: {
+          URL: '/api/v1/sip/cdr/rawQuery',
+          METHOD: 'GET',
+        },
       }
     };
 
@@ -43,7 +48,7 @@ export default class CallsRequest {
     Q.nfcall(swapDate, params)
       .then((params) => {
         var format = nconf.get(util.format('%s:format:timestamp', this.opts.type)) || 'x';
-        return formatDateString(params, format)
+        return formatDateString(params, format);
       })
       .then(normalizeData)
       .fail((err) => {
@@ -89,7 +94,7 @@ export default class CallsRequest {
    * as the index of the api endpoints array
    * @param cb {Function} Callback function from @method getCalls
    */
-  sendRequest(params, loadBalanceIndex=0, cb) {
+  sendRequest(params, loadBalanceIndex = 0, cb) {
     if (!cb && _.isFunction(loadBalanceIndex)) {
       cb = loadBalanceIndex;
       loadBalanceIndex = 0;
@@ -105,7 +110,7 @@ export default class CallsRequest {
       baseUrl = _.first(baseUrlArray);
     }
 
-    let url = util.format('%s%s', baseUrl, this.opts.methods.CALLS.URL);
+    let url = util.format('%s%s', baseUrl, params.q ? this.opts.methods.CALLSOLR.URL : this.opts.methods.CALLS.URL);
 
     logger.debug(`Calls: ${this.opts.methods.CALLS.METHOD} ${url}?${qs.stringify(params)}`, params);
 
@@ -116,7 +121,7 @@ export default class CallsRequest {
       .timeout(this.opts.timeout)
       .end((err, res) => {
         if (err) return cb(handleError(err, err.status || 400));
-        this.filterCalls(res.body, cb);
+        this.filterCalls(res.body, params.rows, cb);
       });
   }
 
@@ -129,18 +134,18 @@ export default class CallsRequest {
    * @param data {Object} result return from API request
    * @param cb {Function} Callback function from @method getCalls
    */
-  filterCalls(data, cb) {
+  filterCalls(data, pageSize, cb) {
     if (data && data.content) {
       data.content = _.filter(data.content, function(call) {
         if (call.type.toLowerCase() === 'offnet') {
-          return call.source == 'GATEWAY';
+          return call.source === 'GATEWAY';
         } else {
           return call;
         }
       });
     }
 
-    cb(null, composeResponse(data));
+    cb(null, composeSolrResponse(data, pageSize));
   }
 
   /**
@@ -153,6 +158,9 @@ export default class CallsRequest {
     logger.debug('get calls from carrier %s', params);
 
     Q.ninvoke(this, 'formatQueryData', params)
+      .then((params) => {
+        return Q.nfcall(buildCallSolrQueryString, params);
+      })
       .then((params) => {
         this.sendRequest(params, cb);
       })

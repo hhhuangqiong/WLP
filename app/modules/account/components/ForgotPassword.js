@@ -1,7 +1,7 @@
 import React, { PropTypes, Component } from 'react';
 import reactMixin from 'react-mixin';
 import FluxibleMixin from 'fluxible/addons/FluxibleMixin';
-import { Link } from 'react-router'
+import { Link } from 'react-router';
 
 import _ from 'lodash';
 import classnames from 'classnames';

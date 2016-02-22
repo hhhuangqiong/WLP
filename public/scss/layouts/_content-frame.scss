@@ -1,9 +1,15 @@
+$transform-distance: $menu-sidebar-width - $menu-sidebar-offcanvas-width;
+
 .content-frame {
     padding-left: $menu-sidebar-offcanvas-width;
-    $transform-distance: $menu-sidebar-width - $menu-sidebar-offcanvas-width;
-    transform: translate($transform-distance, 0);
-    transition: transform 0.28s ease-in-out;
-    &.offcanvas {
-        transform: translate(0px, 0);
+    transform: translate(0px, 0);
+    transition: transform 0.28s linear;
+    transition-delay: -0.02s;
+}
+
+.wrapper--extended {
+    .content-frame {
+        transform: translate($transform-distance, 0);
+        transition-delay: 0.02s;
     }
 }

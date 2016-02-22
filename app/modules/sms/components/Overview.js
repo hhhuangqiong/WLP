@@ -39,7 +39,7 @@ var SMSOverview = React.createClass({
     };
   },
 
-  getInitialState: function () {
+  getInitialState: function() {
     return this.getStateFromStores();
   },
 
@@ -50,7 +50,7 @@ var SMSOverview = React.createClass({
   renderWidgets() {
     let widgets = this.state.widgets;
 
-    if (!widgets || !widgets.length){
+    if (!widgets || !widgets.length) {
       return (<WidgetNotAvailable />);
     }
 

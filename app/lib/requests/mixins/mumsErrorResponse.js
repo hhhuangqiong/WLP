@@ -24,6 +24,6 @@ let mumsErrorResponse = {
 
     return error;
   }
-}
+};
 
 export default mumsErrorResponse;

@@ -39,7 +39,7 @@ var LoadingSpinner = React.createClass({
         <div className={classNames('loading-spinner__overlay', { hide: this.state.loaded })} />
       </div>
       ) : null
-    )
+    );
   }
 });
 

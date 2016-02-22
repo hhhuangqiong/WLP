@@ -25,11 +25,11 @@ export default function makeRedisStore(session, nconf, env) {
     var Redis = require('ioredis');
 
     //!! there's no default retryStrategy in from ioredis !!
-    redisConfig.retryStrategy = function (times) {
+    redisConfig.retryStrategy = function(times) {
       logger.info(`ioredis: reconnecting for the ${times} time`);
       var delay = Math.min(times * 2, 2000);
       return delay;
-    }
+    };
 
     logger.info('Redis Sentinal opts: %j', redisConfig, {});
     redisStore = new RedisStore({ client: new Redis(redisConfig) });

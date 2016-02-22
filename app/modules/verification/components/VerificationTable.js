@@ -1,6 +1,7 @@
 import React, { PropTypes } from 'react';
-
 import VerificationTableRow from './VerificationTableRow';
+import VerificationProfile from './VerificationProfile';
+import CountryFlag from '../../../main/components/CountryFlag';
 
 export default React.createClass({
   propTypes: {
@@ -21,6 +22,12 @@ export default React.createClass({
     onLoadMoreClick: PropTypes.func.isRequired
   },
 
+  getInitialState: function() {
+    return {
+      selectedProfile: null
+    };
+  },
+
   getDefaultProps: function () {
     return {
       verifications: []
@@ -30,7 +37,10 @@ export default React.createClass({
   renderTableRows: function () {
     return this.props.verifications.map(item => {
       return (
-        <VerificationTableRow key={item.id} verification={item} />
+        <VerificationTableRow
+          key={item.id}
+          verification={item}
+          onClickProfile={this.onClickProfile} />
       );
     });
   },
@@ -43,33 +53,50 @@ export default React.createClass({
     }
   },
 
+  onClickProfile: function(selectedProfile) {
+    this.setState({ selectedProfile });
+  },
+
+  onClickBackButton: function() {
+    this.setState({ selectedProfile: null });
+  },
+
   render: function () {
+    let { selectedProfile } = this.state;
+
     return (
-      <table className="data-table small-24 large-22 large-offset-1">
-        <thead>
+      <If condition={!selectedProfile}>
+        <table className="verification-report data-table small-24 large-22 large-offset-1">
+          <thead>
+            <tr>
+              <th>DATE &amp; TIME</th>
+              <th>MOBILE</th>
+              <th>SOURCE IP</th>
+              <th>METHOD</th>
+              <th>OS</th>
+              <th>DEVICE MODEL</th>
+              <th>OPERATOR</th>
+              <th>RESULT</th>
+              <th className="text-center">REMARKS</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody className="verification-table">
+            {this.renderTableRows(this.props.verifications)}
+          </tbody>
+          <tfoot>
           <tr>
-            <th>DATE &amp; TIME</th>
-            <th>MOBILE</th>
-            <th>SOURCE IP</th>
-            <th>METHOD</th>
-            <th>OS</th>
-            <th>DEVICE MODEL</th>
-            <th>OPERATOR</th>
-            <th>RESULT</th>
-            <th className="text-center">REMARKS</th>
-          </tr>
-        </thead>
-        <tbody className="verification-table">
-          {this.renderTableRows(this.props.verifications)}
-        </tbody>
-        <tfoot>
-          <tr>
-            <td colSpan="9" className="pagination">
+            <td colSpan="10" className="pagination">
               {this.renderPaginationFooter()}
             </td>
           </tr>
-        </tfoot>
-      </table>
+          </tfoot>
+        </table>
+      <Else />
+        <VerificationProfile
+          profile={selectedProfile}
+          onClickBack={this.onClickBackButton} />
+      </If>
     );
   }
 });

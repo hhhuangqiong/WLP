@@ -51,7 +51,7 @@ export default class ImRequest {
     Q.nfcall(swapDate, params)
       .then((params) => {
         var format = nconf.get(util.format('%s:format:timestamp', this.opts.type)) || 'x';
-        return formatDateString(params, format)
+        return formatDateString(params, format);
       })
       .then(normalizeData)
       .fail((err) => {
@@ -95,7 +95,7 @@ export default class ImRequest {
    * as the index of the api endpoints array
    * @param cb {Function} Callback function from @method getImStat
    */
-  sendRequest(params, loadBalanceIndex=0, cb) {
+  sendRequest(params, loadBalanceIndex = 0, cb) {
     if (!cb && _.isFunction(loadBalanceIndex)) {
       cb = loadBalanceIndex;
       loadBalanceIndex = 0;

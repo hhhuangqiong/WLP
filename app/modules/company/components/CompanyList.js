@@ -22,11 +22,11 @@ let CompanyList = React.createClass({
 
   componentDidMount: function() {
 	  // equalise the height of the list and main area
-	  $(document).foundation({
-      equalizer: {
+	      $(document).foundation({
+  equalizer: {
         equalize_on_stack: true
       }
-    });
+});
   },
 
   getInitialState: function() {
@@ -102,7 +102,7 @@ let CompanyList = React.createClass({
           </span>
         </Link>
       </li>
-    )
+    );
   }
 });
 

@@ -43,7 +43,7 @@ export function getCarrier(carrierId, cb) {
     }
 
     cb(new Error('internal server error'));
-  })
+  });
 }
 
 /**
@@ -68,5 +68,5 @@ export function getCarrierType(carrierId, cb) {
     }
 
     cb(new Error('internal server error'));
-  })
+  });
 }

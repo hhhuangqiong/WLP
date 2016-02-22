@@ -60,7 +60,7 @@ let VerificationDetails = React.createClass({
       onApplicationStoreChange: ApplicationStore
     },
 
-    fetchData: function (context, params, query, done) {
+    fetchData: function(context, params, query, done) {
       // when no appId was provided, don't have to pre-render
       if (!query.appId) {
         done();
@@ -94,7 +94,7 @@ let VerificationDetails = React.createClass({
    * @property {String} method  The verification method, for remote API
    * @property {String} os  The OS of the end user's mobile device, for remote API
    */
-  getInitialState: function () {
+  getInitialState: function() {
     let query = _.merge(this.getDefaultQuery(), this.context.router.getCurrentQuery());
 
     return _.merge(this.getStateFromStores(), query);
@@ -123,10 +123,10 @@ let VerificationDetails = React.createClass({
       size: config.PAGES.VERIFICATIONS.PAGE_SIZE,
       method: this.state.method && this.state.method.trim(),
       os: this.state.os && this.state.os.trim()
-    }
+    };
   },
 
-  getStateFromStores: function () {
+  getStateFromStores: function() {
     let store = this.getStore(VerificationStore);
 
     return {
@@ -137,7 +137,7 @@ let VerificationDetails = React.createClass({
     };
   },
 
-  handleQueryChange: function (newQuery) {
+  handleQueryChange: function(newQuery) {
     let routeName = _.last(this.context.router.getCurrentRoutes()).name;
     let params = this.context.router.getCurrentParams();
     let query = _.merge(this.context.router.getCurrentQuery(), this.getQueryFromState(), newQuery);
@@ -148,7 +148,7 @@ let VerificationDetails = React.createClass({
     this.context.router.transitionTo(routeName, params, changedQuery);
   },
 
-  componentDidMount: function () {
+  componentDidMount: function() {
     // auto select the default appId from the list
     // TODO: optimize this UX with server side rendering
 
@@ -192,7 +192,7 @@ let VerificationDetails = React.createClass({
    *
    * @method
    */
-  autoSelectAppId: function () {
+  autoSelectAppId: function() {
     this.onAppIdChange(this.context.getStore(ApplicationStore).getDefaultAppId());
   },
 
@@ -201,7 +201,7 @@ let VerificationDetails = React.createClass({
    *
    * @method
    */
-  fetchMore: function () {
+  fetchMore: function() {
     let { identity } = this.context.router.getCurrentParams();
     let nextPage = this.state.page + 1;
 
@@ -222,7 +222,7 @@ let VerificationDetails = React.createClass({
     });
   },
 
-  onChange: function () {
+  onChange: function() {
     let query = _.merge(this.getDefaultQuery(), this.context.router.getCurrentQuery());
     this.setState(_.merge(query, this.getStateFromStores()));
   },
@@ -233,7 +233,7 @@ let VerificationDetails = React.createClass({
    *
    * @method
    */
-  onApplicationStoreChange: function () {
+  onApplicationStoreChange: function() {
     // do nothing if there is a selected appId, otherwise select the default
     if (this.state.appId) {
       return;
@@ -242,7 +242,7 @@ let VerificationDetails = React.createClass({
     this.autoSelectAppId();
   },
 
-  onAppIdChange: function (val) {
+  onAppIdChange: function(val) {
     this.setState({
       appId: val
     });
@@ -273,19 +273,19 @@ let VerificationDetails = React.createClass({
 
   transformVerificationTypes(type) {
     switch (type) {
-      case 'MobileTerminated': return 'call-in';
-      case 'MobileOriginated': return 'call-out';
-      default: return type;
+    case 'MobileTerminated': return 'call-in';
+    case 'MobileOriginated': return 'call-out';
+    default: return type;
     }
   },
 
-  handleSearchInputChange: function (evt) {
+  handleSearchInputChange: function(evt) {
     this.setState({
       number: evt.target.value
     });
   },
 
-  handleSearchInputSubmit: function (evt) {
+  handleSearchInputSubmit: function(evt) {
     if (evt.which === ENTER_KEY) {
       this.handleQueryChange({ number: evt.target.value, page: 0 });
     }
@@ -301,7 +301,7 @@ let VerificationDetails = React.createClass({
     this.handleQueryChange({ os: value === LABEL_OF_ALL ? '' : event.target.value });
   },
 
-  render: function () {
+  render: function() {
     let { role, identity } = this.context.router.getCurrentParams();
 
     let options = [];
@@ -336,7 +336,7 @@ let VerificationDetails = React.createClass({
             />
 
             <DateRangePicker
-              withIcon={true}
+              withIcon
               startDate={this.state.startDate}
               endDate={this.state.endDate}
               handleStartDateChange={this.handleStartDateChange}

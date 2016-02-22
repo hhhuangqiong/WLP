@@ -13,7 +13,7 @@ export default function(context, params, done) {
 
     context.dispatch('FETCH_EXPORT_CANCEL_SUCCESS', result);
     done();
-  };
+  }
 
   context.api.cancelExport(params, exportCallback);
-};
+}

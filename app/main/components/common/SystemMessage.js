@@ -12,7 +12,7 @@ var SystemMessage = React.createClass({
     storeListeners: [SystemMessageStore]
   },
 
-  getInitialState: function () {
+  getInitialState: function() {
     return { systemMessage: {} };
   },
 

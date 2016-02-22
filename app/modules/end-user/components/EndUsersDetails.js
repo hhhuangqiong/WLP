@@ -99,7 +99,7 @@ var EndUsers = React.createClass({
     let nextStartDate = this.getRequestBodyFromQuery().startDate;
     let nextEndDate = this.getRequestBodyFromQuery().endDate;
     if ( nextStartDate && nextEndDate && (prevStartDate !== nextStartDate || prevEndDate !== nextEndDate) ) {
-      this.executeAction(fetchEndUsers, _.merge(_.clone(this.getDefaultQuery()), this.getRequestBodyFromState(), this.getRequestBodyFromQuery()))
+      this.executeAction(fetchEndUsers, _.merge(_.clone(this.getDefaultQuery()), this.getRequestBodyFromState(), this.getRequestBodyFromQuery()));
     }
   },
 
@@ -119,7 +119,7 @@ var EndUsers = React.createClass({
       page: this.getStore(EndUserStore).getPage(),
       hasNextPage: this.getStore(EndUserStore).getHasNextPage(),
       currentUser: this.context.router.getCurrentParams.username ? this.getStore(EndUserStore).getCurrentUser() : null
-    }
+    };
   },
 
   onChange: function() {
@@ -221,7 +221,7 @@ var EndUsers = React.createClass({
 
           <FilterBar.LeftItems>
             <DateRangePicker
-              withIcon={true}
+              withIcon
               startDate={this.state.startDate}
               endDate={this.state.endDate}
               handleStartDateChange={this.handleStartDateChange}

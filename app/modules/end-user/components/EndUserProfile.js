@@ -107,9 +107,9 @@ const EndUserProfile = React.createClass({
     const countryCode = (this.props.user.userDetails.countryCode || '').toLowerCase();
 
     return (
-      <Accordion.Navigation title="Account Info" hasIndicator={true} verified={this.props.user.userDetails.verified}>
+      <Accordion.Navigation title="Account Info" hasIndicator verified={this.props.user.userDetails.verified}>
         <Item label="Created Time">{creationDate}</Item>
-        <Item label="Verified" capitalize={true}>
+        <Item label="Verified" capitalize>
           <If condition={this.props.user.userDetails.verified}>
             <span className="verified">verified</span>
             <Else />
@@ -126,7 +126,7 @@ const EndUserProfile = React.createClass({
         <Item label="Email">{this.props.user.userDetails.email || EMPTY_STRING}</Item>
         <Item label="Pin">{this.props.user.userDetails.pin || EMPTY_STRING}</Item>
         <Item label="Date of Birth">{this.props.user.userDetails.birthDate || EMPTY_STRING}</Item>
-        <Item label="Gender" capitalize={true}>
+        <Item label="Gender" capitalize>
           <span className="gender-label">
             <i
               className={classNames({'icon-male': this.props.user.userDetails.gender === 'male', 'icon-female': this.props.user.userDetails.gender === 'female'})}/>
@@ -163,10 +163,10 @@ const EndUserProfile = React.createClass({
   render() {
     return (
       <If condition={this.props.user && this.props.user.userDetails}>
-        <Panel.Wrapper addOn={true}>
+        <Panel.Wrapper addOn>
           <Panel.Header title={this.props.user.userDetails.displayName}/>
           <Panel.Body>
-            <Accordion.Wrapper offsetMargin={true}>
+            <Accordion.Wrapper offsetMargin>
               {this.renderWalletPanel()}
               {this.renderAccountPanel()}
               {this.renderDevicePanel()}

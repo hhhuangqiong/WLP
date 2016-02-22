@@ -24,7 +24,7 @@ export default function(redisStore, session, secret, failoverAttempts, env) {
 
     function lookupSession(error) {
       if (error) {
-        return next(error)
+        return next(error);
       }
 
       tries -= 1;
@@ -42,7 +42,7 @@ export default function(redisStore, session, secret, failoverAttempts, env) {
     }
 
     lookupSession();
-  }
+  };
 
 }
 

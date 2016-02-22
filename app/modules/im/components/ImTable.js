@@ -127,7 +127,7 @@ const ImTable = React.createClass({
             <If condition={_.isArray(u.recipients)}>
               <div className="recipient_info">
                 <div className="icon-multiuser"></div>
-                <Tooltip placement="right" trigger={['hover']} overlay={u.recipients.map((n)=>{return <span className="recip-info">{n}</span>})}>
+                <Tooltip placement="right" trigger={['hover']} overlay={u.recipients.map((n)=>{return <span className="recip-info">{n}</span>;})}>
                   <span className="recipient-num">{u.recipients.length} Recipients</span>
                 </Tooltip>
               </div>

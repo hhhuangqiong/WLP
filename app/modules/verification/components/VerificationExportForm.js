@@ -107,7 +107,7 @@ export default class VerificationExportForm extends Component {
                 <option key={type} value={type}>
                   {this.props.transformVerificationTypes(type)}
                 </option>
-              )
+              );
             })}
           </select>
         </div>
@@ -126,7 +126,7 @@ export default class VerificationExportForm extends Component {
                 <option key={platform} value={platform}>
                   {platform}
                 </option>
-              )
+              );
             })}
           </select>
         </div>

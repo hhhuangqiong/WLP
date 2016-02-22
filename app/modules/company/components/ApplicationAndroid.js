@@ -41,7 +41,7 @@ let ApplicationAndroid = React.createClass({
     return (
       <section>
         <InputGroup.Row>
-          <InputGroup.Label for="androidApplicationName">application name</InputGroup.Label>
+          <InputGroup.Label htmlFor="androidApplicationName">application name</InputGroup.Label>
           <InputGroup.Input>
             <input
                 className="radius"
@@ -82,7 +82,7 @@ let ApplicationAndroid = React.createClass({
           </InputGroup.Input>
         </InputGroup.Row>
       </section>
-    )
+    );
   }
 });
 

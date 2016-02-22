@@ -20,7 +20,7 @@ export default React.createClass({
     return {
       leftColumns: '7',
       rightColumns: '17'
-    }
+    };
   },
 
   render() {

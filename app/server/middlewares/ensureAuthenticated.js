@@ -9,5 +9,5 @@ export default function ensureAuthenticated(path) {
   return (req, res, next) => {
     if (req.isAuthenticated && req.isAuthenticated()) return next();
     res.redirect(path);
-  }
+  };
 }

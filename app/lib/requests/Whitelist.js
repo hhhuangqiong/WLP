@@ -1,8 +1,8 @@
 /** @module requests/whitelist */
 
-import _ from 'lodash'
+import _ from 'lodash';
 import assign from 'object-assign';
-import logger from 'winston'
+import logger from 'winston';
 import request from 'superagent';
 
 import errorMixin from '../requests/mixins/mumsErrorResponse';
@@ -97,7 +97,7 @@ export class WhitelistRequest {
    */
   get(carrierId, opts, cb) {
     if (!carrierId) throw new Error('`carrierId` is required');
-    if (arguments.length == 2) {
+    if (arguments.length === 2) {
       cb   = opts;
       opts = {};
     }
@@ -108,7 +108,7 @@ export class WhitelistRequest {
     let scope = request.get(path);
 
     // allow 0
-    if (opts.from != undefined) {
+    if (opts.from !== undefined) {
       scope.query({from: opts.from});
     }
 

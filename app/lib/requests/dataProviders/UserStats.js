@@ -77,7 +77,7 @@ export default class UserStatsRequest {
       .done();
   }
 
-  sendRequest(endpoint, params, loadBalanceIndex=0, cb) {
+  sendRequest(endpoint, params, loadBalanceIndex = 0, cb) {
     if (!cb && _.isFunction(loadBalanceIndex)) {
       cb = loadBalanceIndex;
       loadBalanceIndex = 0;

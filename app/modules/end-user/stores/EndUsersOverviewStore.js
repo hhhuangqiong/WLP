@@ -8,21 +8,32 @@ let EndUsersOverviewStore = createStore({
 
   handlers: {
     FETCH_END_USERS_STATS_TOTAL_SUCCESS: 'handleEndUserStatsTotal',
+    FETCH_END_USERS_STATS_TOTAL_FAILURE: 'handleEndUserStatsTotalFailure',
     FETCH_END_USERS_STATS_MONTHLY_SUCCESS: 'handleEndUserStatsMonthly',
-    FETCH_END_USERS_DEVICE_STATS_SUCCESS: 'handleDeviceStats'
+    FETCH_END_USERS_STATS_MONTHLY_FAILURE: 'handleEndUserStatsMonthlyFailure',
+    FETCH_END_USERS_DEVICE_STATS_SUCCESS: 'handleDeviceStats',
   },
 
   initialize() {
-    this.totalRegisteredUser = 0;
-    this.thisMonthRegisteredUser = 0;
-    this.lastMonthRegisteredUser = 0;
-    this.thisMonthActiveUser = 0;
-    this.lastMonthActiveUser = 0;
-    this.deviceStats = [];
+    this.totalRegisteredUser = null;
+    this.thisMonthRegisteredUser = null;
+    this.lastMonthRegisteredUser = null;
+    this.thisMonthActiveUser = null;
+    this.lastMonthActiveUser = null;
+
+    this.totalStatsError = null;
+    this.monthlyStatsError = null;
+
+    this.deviceStats = null;
   },
 
   handleEndUserStatsTotal(payload) {
     this.totalRegisteredUser = payload.totalRegisteredUser;
+    this.emitChange();
+  },
+
+  handleEndUserStatsTotalFailure(payload) {
+    this.totalStatsError = payload;
     this.emitChange();
   },
 
@@ -31,6 +42,11 @@ let EndUsersOverviewStore = createStore({
     this.lastMonthRegisteredUser = payload.lastMonthRegisteredUser;
     this.thisMonthActiveUser = payload.thisMonthActiveUser;
     this.lastMonthActiveUser = payload.lastMonthActiveUser;
+    this.emitChange();
+  },
+
+  handleEndUserStatsMonthlyFailure(payload) {
+    this.monthlyStatsError = payload;
     this.emitChange();
   },
 
@@ -46,7 +62,9 @@ let EndUsersOverviewStore = createStore({
       lastMonthRegistered: this.lastMonthRegisteredUser,
       thisMonthActive: this.thisMonthActiveUser,
       lastMonthActive: this.lastMonthActiveUser,
-      deviceStats: this.deviceStats
+      deviceStats: this.deviceStats,
+      totalStatsError: this.totalStatsError,
+      monthlyStatsError: this.monthlyStatsError,
     };
   },
 
@@ -57,7 +75,9 @@ let EndUsersOverviewStore = createStore({
       lastMonthRegistered: this.lastMonthRegisteredUser,
       thisMonthActive: this.thisMonthActiveUser,
       lastMonthActive: this.lastMonthActiveUser,
-      deviceStats: this.deviceStats
+      deviceStats: this.deviceStats,
+      totalStatsError: this.totalStatsError,
+      monthlyStatsError: this.monthlyStatsError,
     };
   },
 
@@ -68,7 +88,9 @@ let EndUsersOverviewStore = createStore({
     this.thisMonthActiveUser = state.thisMonthActiveUser;
     this.lastMonthActiveUser = state.lastMonthActiveUser;
     this.deviceStats = state.deviceStats;
-  }
+    this.totalStatsError = state.totalStatsError;
+    this.monthlyStatsError = state.monthlyStatsError;
+  },
 });
 
 export default EndUsersOverviewStore;

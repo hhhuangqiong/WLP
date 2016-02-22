@@ -138,72 +138,72 @@ export default class ExportTask {
    */
   humanizeFields(exportType, row) {
     switch (exportType) {
-      case (IM):
+    case (IM):
         /* jscs:disable */
-        row.device_id = stringifyNumbers(row.device_id);
-        row.stanza_id = stringifyNumbers(row.stanza_id);
+      row.device_id = stringifyNumbers(row.device_id);
+      row.stanza_id = stringifyNumbers(row.stanza_id);
         /* jscs: enable */
 
-        row.origin = getCountryName(row.origin);
-        row.destination = getCountryName(row.destination);
+      row.origin = getCountryName(row.origin);
+      row.destination = getCountryName(row.destination);
 
-        row.timestamp = beautifyTime(row.timestamp);
+      row.timestamp = beautifyTime(row.timestamp);
 
-        break;
+      break;
 
-      case (CALLS):
-        row.callee = "'" + row.callee + "'";
-        row.duration = parseDuration(row.duration);
+    case (CALLS):
+      row.callee = "'" + row.callee + "'";
+      row.duration = parseDuration(row.duration);
 
         /* jscs: disable */
-        row.start_time = beautifyTime(row.start_time);
-        row.end_time = beautifyTime(row.end_time);
-        row.answer_time = beautifyTime(row.answer_time);
+      row.start_time = beautifyTime(row.start_time);
+      row.end_time = beautifyTime(row.end_time);
+      row.answer_time = beautifyTime(row.answer_time);
 
-        row.caller_country = getCountryName(row.caller_country);
-        row.callee_country = getCountryName(row.caller_country);
+      row.caller_country = getCountryName(row.caller_country);
+      row.callee_country = getCountryName(row.caller_country);
 
-        row.caller_bundle_id = row.caller_bundle_id || null;
-        row.sip_trunk = row.sip_trunk || null;
+      row.caller_bundle_id = row.caller_bundle_id || null;
+      row.sip_trunk = row.sip_trunk || null;
         /* jscs: enable */
 
-        break;
+      break;
 
-      case (VERIFICATION):
+    case (VERIFICATION):
         /* jscs: disable */
-        row.start_time = beautifyTime(row.start_time);
-        row.end_time = beautifyTime(row.end_time);
+      row.start_time = beautifyTime(row.start_time);
+      row.end_time = beautifyTime(row.end_time);
 
-        row.source_country = getCountryName(row.source_country);
+      row.source_country = getCountryName(row.source_country);
 
-        row.device_id = stringifyNumbers(row.device_id);
-        row.request_id = stringifyNumbers(row.request_id);
-        row.os_version = stringifyNumbers(row.os_version);
+      row.device_id = stringifyNumbers(row.device_id);
+      row.request_id = stringifyNumbers(row.request_id);
+      row.os_version = stringifyNumbers(row.os_version);
         /* jscs: enable */
 
-        row.country = getCountryName(row.country);
+      row.country = getCountryName(row.country);
 
-        switch(row.type){
-          case 'MobileTerminated':
-            row.type = 'Call-In';
-            break;
+      switch (row.type) {
+        case 'MobileTerminated':
+          row.type = 'Call-In';
+          break;
 
-          case 'MobileOriginated':
-            row.type = 'Call-Out';
-            break;
+        case 'MobileOriginated':
+          row.type = 'Call-Out';
+          break;
         }
 
-        break;
+      break;
 
-      case (END_USER):
-        row.username = row.username;
-        row.creationDate = beautifyTime(row.creationDate);
-        row.accountStatus = row.accountStatus;
-        row.platform = row.platform;
-        row.deviceModel = row.deviceModel;
-        row.appBundleId = row.appBundleId;
-        row.appVersionNumber = row.appVersionNumber;
-        break;
+    case (END_USER):
+      row.username = row.username;
+      row.creationDate = beautifyTime(row.creationDate);
+      row.accountStatus = row.accountStatus;
+      row.platform = row.platform;
+      row.deviceModel = row.deviceModel;
+      row.appBundleId = row.appBundleId;
+      row.appVersionNumber = row.appVersionNumber;
+      break;
     }
 
     return sanitizeNull(row);
@@ -215,16 +215,16 @@ export default class ExportTask {
    */
   getExportConfig() {
     switch (this.exportType) {
-      case IM:
-        return EXPORTS.IM;
-      case CALLS:
-        return EXPORTS.CALLS;
-      case VERIFICATION:
-        return EXPORTS.VERIFICATION;
-      case END_USER:
-        return EXPORTS.END_USER;
-      default:
-        return {};
+    case IM:
+      return EXPORTS.IM;
+    case CALLS:
+      return EXPORTS.CALLS;
+    case VERIFICATION:
+      return EXPORTS.VERIFICATION;
+    case END_USER:
+      return EXPORTS.END_USER;
+    default:
+      return {};
     }
   }
 
@@ -327,7 +327,7 @@ export default class ExportTask {
           .catch((err) => { return cb(err); })
           .done();
       });
-    }
+    };
 
     next(param);
   }

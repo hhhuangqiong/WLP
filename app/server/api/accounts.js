@@ -84,5 +84,5 @@ export default function(apiPrefix = '') {
         .query({ userId: params.userId })
         .end(genericHandler(cb));
     }
-  }
+  };
 }

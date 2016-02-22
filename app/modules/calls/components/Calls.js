@@ -21,12 +21,7 @@ import Export from '../../../main/file-export/components/Export';
 import CallsExportForm from './CallsExportForm';
 
 import config from '../../../config';
-
-const CALL_TYPE = {
-  ALL: '',
-  ONNET: 'ONNET',
-  OFFNET: 'OFFNET',
-};
+import CALL_TYPE from '../constants/callType';
 
 const Calls = React.createClass({
   contextTypes: {
@@ -39,7 +34,7 @@ const Calls = React.createClass({
   statics: {
     storeListeners: [CallsStore],
 
-    fetchData: function(context, params, query, done) {
+    fetchData(context, params, query, done) {
       concurrent([
         context.executeAction.bind(context, fetchCalls, {
           carrierId: params.identity,
@@ -59,13 +54,13 @@ const Calls = React.createClass({
   getStateFromStores() {
     const store = this.getStore(CallsStore);
 
-    return {
+  return {
       calls: store.getCalls(),
       callsCount: store.getCallsCount(),
       page: store.getPageNumber(),
       totalPages: store.getTotalPages(),
     };
-  },
+},
 
   getDefaultQuery() {
     return {
@@ -104,7 +99,7 @@ const Calls = React.createClass({
       size: config.PAGES.CALLS.PAGE_SIZE,
       type: this.state.type && this.state.type.trim(),
       searchType: this.state.searchType && this.state.searchType.trim()
-    }
+    };
   },
 
   handleQueryChange: function(newQuery) {
@@ -146,16 +141,26 @@ const Calls = React.createClass({
     this.handleQueryChange({ type: CALL_TYPE.ALL });
   },
 
-  handleOnnetClick() {
-    let type = null;
-    if (this.state.type !== CALL_TYPE.ONNET) type = CALL_TYPE.ONNET;
-    this.handleQueryChange({ type });
+  handleOnnetClick(e) {
+    e.preventDefault();
+    this.handleQueryChange({ type: CALL_TYPE.ONNET });
   },
 
-  handleOffnetClick() {
+  handleOffnetClick(e) {
+    e.preventDefault();
+    this.handleQueryChange({ type: CALL_TYPE.OFFNET });
+  },
+
+  handleMaaiiInClick(e) {
+    e.preventDefault();
+
     let type = null;
-    if (this.state.type !== CALL_TYPE.OFFNET) type = CALL_TYPE.OFFNET;
-    this.handleQueryChange({ type });
+
+    if (this.state.type !== CALL_TYPE.MAAII_IN) {
+      type = CALL_TYPE.MAAII_IN;
+    }
+
+    this.handleQueryChange({ type: type });
   },
 
   handleUsernameChange(e) {
@@ -163,7 +168,7 @@ const Calls = React.createClass({
   },
 
   handleSearchSubmit(e) {
-    if (e.which == 13) {
+    if (e.which === 13) {
       e.preventDefault();
       this.handleQueryChange();
     }
@@ -202,6 +207,7 @@ const Calls = React.createClass({
             <a className={classNames({ active: this.state.type === CALL_TYPE.ALL })} onClick={this.handleAllTypeClick}>All</a>
             <a className={classNames({ active: this.state.type === CALL_TYPE.ONNET })} onClick={this.handleOnnetClick}>On-net</a>
             <a className={classNames({ active: this.state.type === CALL_TYPE.OFFNET })} onClick={this.handleOffnetClick}>Off-net</a>
+            <a className={classNames({ active: this.state.type === CALL_TYPE.MAAII_IN })} onClick={this.handleMaaiiInClick}>Maaii-in</a>
           </FilterBar.LeftItems>
           <FilterBar.RightItems>
             {/* TODO: Move filter control items into DropdownFilter according to new design */}

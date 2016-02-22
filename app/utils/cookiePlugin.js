@@ -25,6 +25,6 @@ module.exports = {
       rehydrate: function(state) {
         maxAge = state.maxAge;
       }
-    }
+    };
   }
 };

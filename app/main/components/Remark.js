@@ -28,7 +28,7 @@ var Remark = React.createClass({
           {this.props.tip}
         </span>
       </span>
-    )
+    );
   }
 });
 

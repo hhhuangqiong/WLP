@@ -62,7 +62,7 @@ var Tooltip = React.createClass({
           {this.props.tip}
         </span>
       </div>
-    )
+    );
   }
 });
 

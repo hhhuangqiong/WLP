@@ -45,7 +45,7 @@ export default function(redisConnOpts, opts = {}) {
 
         return sentinel.createClient(masterName, redisOpts);
       }
-    }
+    };
   }
   else {
     logger.info('initalizing Kue with non-sentinal endpoints: ', kueRedisOpt);

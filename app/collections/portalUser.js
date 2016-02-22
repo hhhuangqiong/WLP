@@ -180,7 +180,7 @@ portalUserSchema.method('isValidPassword', function(password) {
  */
 portalUserSchema.method('tokenOf', function(event) {
   var found = _.filter(this.tokens, (t) => {
-    return t.event === event
+    return t.event === event;
   });
 
   return _.first(found);
@@ -253,7 +253,7 @@ portalUserSchema.static('hashInfo', function(password, cb) {
       hashedPassword: hash
     });
   });
-})
+});
 
 /**
  * Produce the token in the conformed format

@@ -56,12 +56,12 @@ let getApplications = function(req, res) {
 };
 
 // '/companies/:carrierId/applicationIds'
-let getApplicationIds = function (req, res) {
+let getApplicationIds = function(req, res) {
   return controller.getApplicationIds(req, res);
 };
 
 // '/companies/:carrierId/profile'
-let updateProfile = function (req, res) {
+let updateProfile = function(req, res) {
   return controller.saveProfile(req, res);
 };
 
@@ -150,7 +150,7 @@ let getCarrierCompanies = (req, res, next) => {
   carrierCompniesHandler(req, res, next)
     .then(companies => res.json({ result: companies ? companies : [] }))
     .catch(error => next(error));
-}
+};
 
 export {
   getApplicationCompanies,

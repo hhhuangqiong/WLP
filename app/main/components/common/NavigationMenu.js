@@ -26,12 +26,12 @@ var Navigation = React.createClass({
     storeListeners: [AuthStore]
   },
 
-  getInitialState: function(){
+  getInitialState: function() {
     return {
-      modal: "close",
+      modal: 'close',
       isChangePasswordOpened: false,
       displayName: this.context.getStore(AuthStore).getDisplayName()
-    }
+    };
   },
 
   onChange: function() {
@@ -56,7 +56,7 @@ var Navigation = React.createClass({
             create user
           </Link>
         </li>
-      )
+      );
     }
 
     return null;
@@ -73,7 +73,7 @@ var Navigation = React.createClass({
             create new company
           </Link>
         </li>
-      )
+      );
     }
 
     return null;

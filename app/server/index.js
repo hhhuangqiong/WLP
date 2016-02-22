@@ -108,22 +108,22 @@ function initialize(port) {
   server.use(passport.session());
 
   // as API server
+  server.use(require('./routers/hlr'));
   server.use(config.EXPORT_PATH_PREFIX, require('./routers/export'));
   server.use(config.FILE_UPLOAD_PATH_PREFIX, require('./routers/data'));
   server.use(config.API_PATH_PREFIX, require('./routers/api'));
-
   server.use(config.API_PATH_PREFIX, errorHandler);
 
   var renderApp = require('./render')(app);
 
   function handlePermissionError(err, req, res, next) {
     if (err) {
-      err.status == 404 ? res.redirect(ERROR_404) : res.redirect(ERROR_401);
+      err.status === 404 ? res.redirect(ERROR_404) : res.redirect(ERROR_401);
       return;
     }
 
     next();
-  };
+  }
 
   server.use(require('./middlewares/aclMiddleware'), handlePermissionError, function(req, res, next) {
     if (config.DISABLE_ISOMORPHISM) {

@@ -21,19 +21,19 @@ var Verification = React.createClass({
     storeListeners: [ApplicationStore]
   },
 
-  getInitialState: function () {
+  getInitialState: function() {
     return {
       appIds: this.getStore(ApplicationStore).getAppIds() || []
     };
   },
 
-  onChange: function () {
+  onChange: function() {
     this.setState({
       appIds: this.getStore(ApplicationStore).getAppIds()
     });
   },
 
-  render: function () {
+  render: function() {
     return (
       <RouteHandler appIds={this.state.appIds} />
     );

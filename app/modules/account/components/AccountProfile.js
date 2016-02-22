@@ -269,7 +269,7 @@ export default React.createClass({
         />
 
         <div className="account-profile__container">
-          <div class="panel callout radius">
+          <div className="panel callout radius">
             <h4 className="account-profile__header">
               {this.isCreate() ? CREATE_ACCOUNT_TITLE : EDIT_ACCOUNT_TITLE }
             </h4>

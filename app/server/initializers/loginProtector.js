@@ -61,7 +61,7 @@ var Bouncer = (function() {
       fn();
     }
 
-    ;
+    
     var requester = this.addresses[address] || { count: 0, lastAttempt: 0 };
     if (req.isAuthenticated()) {
       this.resetForce(address, requester);

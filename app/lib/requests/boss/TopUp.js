@@ -93,7 +93,7 @@ export default class TopUpRequest {
 
           return cb(null, res.body.result);
         }
-        catch(e) {
+        catch (e) {
           // unexpected response
           logger.debug('Unexpected response from BOSS transactionHistor: ', fullUrl, params);
           logger.debug('Parsing error stack:', e.stack);

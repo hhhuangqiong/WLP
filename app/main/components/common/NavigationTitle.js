@@ -8,7 +8,7 @@ let NavigationTitle = React.createClass({
           <h1>{this.props.title}</h1>
         </li>
       </ul>
-    )
+    );
   }
 });
 

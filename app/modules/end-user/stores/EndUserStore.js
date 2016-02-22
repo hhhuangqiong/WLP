@@ -114,7 +114,7 @@ var EndUserStore = createStore({
   },
 
   getDisplayUsers: function() {
-    return this.displayUsers
+    return this.displayUsers;
   },
 
   getCurrentUser: function() {
@@ -163,7 +163,7 @@ var EndUserStore = createStore({
       page: this.page,
       pageRec: this.pageRec,
       currentPage: this.currentPage
-    }
+    };
   },
 
   rehydrate: function(state) {

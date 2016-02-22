@@ -5,10 +5,10 @@ const INNER_ERROR_FIELDS = ['message', 'arguments', 'type', 'name'];
 
 function filteredMessage(err) {
   switch (err.name) {
-    case 'ArgumentNullError':
-    case 'NotFoundError':
-    case 'AlreadyInUseError':
-      return err.message;
+  case 'ArgumentNullError':
+  case 'NotFoundError':
+  case 'AlreadyInUseError':
+    return err.message;
   }
 
   /* Show only manually typed message instead of the generated one to reduce redundant message */

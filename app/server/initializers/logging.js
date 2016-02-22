@@ -26,14 +26,14 @@ function initialize(opts = {}) {
 
     transports.forEach(function(t) {
       // timestamp option takes either Boolean value or Function that returns value as string
-      if (t.options.timestamp) t.options.timestamp = function() { return moment().format('YYYY-MM-DD HH:mm:ss'); }
+      if (t.options.timestamp) t.options.timestamp = function() { return moment().format('YYYY-MM-DD HH:mm:ss'); };
       winston.add(eval(t.type), t.options);
     });
   }
 
   let useLogstash = _.some(transports, hasLogstash);
 
-  if(useLogstash) {
+  if (useLogstash) {
     prepareMetaInGlobal(opts.meta);
     return wrapOriginalLevels(winston);
   } else {
@@ -42,11 +42,11 @@ function initialize(opts = {}) {
 }
 
 function hasLogstash(transport) {
-  return /logstash/i.test(transport.type)
+  return /logstash/i.test(transport.type);
 }
 
 function prepareMetaInGlobal(meta) {
-  if(!meta || _.isEmpty(meta)) {
+  if (!meta || _.isEmpty(meta)) {
     throw new Error('Must have `meta` object in Winston config');
   }
   global.logstashMeta = meta;
@@ -55,13 +55,13 @@ function prepareMetaInGlobal(meta) {
 function wrapOriginalLevels(winston) {
   let _origLevels = {};
 
-  Object.keys(winston.levels).forEach(function(level){
+  Object.keys(winston.levels).forEach(function(level) {
     _origLevels[level] = winston[level];
 
     winston[level] = function() {
       let args = Array.prototype.slice.call(arguments);
       return _origLevels[level].apply(winston, args.concat(logstashMeta));
-    }
+    };
   });
 
   return winston;

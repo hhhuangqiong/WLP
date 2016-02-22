@@ -7,7 +7,7 @@ import classNames from 'classnames';
  * @property {String} color  The color of the gauge
  */
 export default React.createClass({
-  render: function () {
+  render: function() {
     let width = this.props.percentage + '%';
 
     let style = {

@@ -63,5 +63,5 @@ export default function(app) {
         cb(null, html);
       });
     });
-  }
+  };
 }

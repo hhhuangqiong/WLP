@@ -112,7 +112,7 @@ export default class VerificationRequest {
    * as the index of the api endpoints array
    * @param {Function} cb  Callback function
    */
-  sendRequest(endpoint, params, loadBalanceIndex=0, cb) {
+  sendRequest(endpoint, params, loadBalanceIndex = 0, cb) {
     if (!cb && _.isFunction(loadBalanceIndex)) {
       cb = loadBalanceIndex;
       loadBalanceIndex = 0;

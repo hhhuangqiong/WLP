@@ -3,7 +3,7 @@ import superagent from 'superagent';
 
 const METHODS = ['get', 'post', 'put', 'delete', 'patch'];
 
-METHODS.forEach(function (v) {
+METHODS.forEach(function(v) {
   const name = `${v}JsonSetup`;
 
   /**
@@ -15,7 +15,7 @@ METHODS.forEach(function (v) {
    * @param {Object} opts configuration
    * @return {Object} superagent instance
    */
-  exports[name] = function (url, opts = {}) {
+  exports[name] = function(url, opts = {}) {
     const ret = _superagent(v, url).accept('json');
 
     const headers = opts.headers || {};

@@ -9,7 +9,7 @@ var App = React.createClass({
   getChildContext: function() {
     return {
       getAuthority: this.props.context.getAuthority
-    }
+    };
   },
 
   render: function() {

@@ -73,4 +73,4 @@ let CircleButton = React.createClass({
 
 export {
   CircleButton
-}
+};

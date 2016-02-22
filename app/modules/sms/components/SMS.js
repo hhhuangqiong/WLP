@@ -113,7 +113,7 @@ const SMS = React.createClass({
           </FilterBar.NavigationItems>
           <FilterBar.LeftItems>
             <DateRangePicker
-              withIcon={true}
+              withIcon
               startDate={this.state.startDate}
               endDate={this.state.endDate}
               handleStartDateChange={this.handleStartDateChange}

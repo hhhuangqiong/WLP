@@ -1,0 +1,165 @@
+.verification-details {
+  .data-table {
+    position: absolute;
+  }
+}
+
+.verification-report {
+  &.example-enter {
+    transform: translateX(-110%);
+    transition: transform 0.5s ease-in-out;
+  }
+  &.example-enter.example-enter-active {
+    transform: translateX(0%);
+  }
+  &.example-leave {
+    transform: translateX(0%);
+    transition: transform 0.5s ease-in-out;
+  }
+  &.example-leave.example-leave-active {
+    transform: translateX(-110%);
+  }
+}
+
+.verification-profile {
+  td {
+    font-size: rem-calc(16);
+  }
+
+  h1,h2,h3,h4,h5,h6 {
+    font-weight: 400;
+  }
+
+  h6 {
+    margin: -10px 0;
+  }
+
+  .column-heading-grey {
+    background-color: #e4e4e4;
+  }
+
+  .column-heading td {
+    padding-top: 10px;
+    padding-bottom: 10px;
+  }
+
+  .registered-date {
+    margin-bottom: -20px;
+    padding-bottom: 20px;
+    border-right: 1px solid #E9E9E9;
+
+    p {
+      margin-bottom: rem-calc(5px);
+    }
+
+    span {
+      display: block;
+      width: 100%;
+      font-size: 16px;
+      line-height: 22px;
+    }
+  }
+
+  .heading {
+    color: #6099E0;
+    text-transform: capitalize;
+  }
+
+  .status {
+    .label {
+      width: auto;
+      margin-right: 5px;
+    }
+  }
+
+  .status {
+    .success {
+      background-color: #62D464;
+    }
+
+    .failure {
+      background-color: #FC3940;
+    }
+  }
+
+  tr {
+    .country {
+      .flag__container {
+        float: left;
+        margin-right: 15px;
+      }
+
+      span {
+        display: inline-block;
+        line-height: 35px;
+      }
+    }
+
+    .operator {
+      color: #AFADAE;
+      font-size: 14px;
+      margin-bottom: 0px;
+    }
+  }
+
+  .hlr-country td,
+  .hlr-operator td,
+  .sim-imsi td,
+  .sim-current td,
+  .sim-home td,
+  .sim-mcc td,
+  .sim-mnc td {
+    border-left: 1px solid #E9E9E9;
+
+    &:first-child,
+    & + td.spacer {
+      border-left: 0 none;
+    }
+  }
+
+  .back-button {
+    width: 30px;
+    height: 30px;
+    display: inline-block;
+    border-radius: 30px;
+    background: #DB5858;
+    margin-right: 20px;
+
+    > span {
+      display: block;
+      width: 100%;
+      text-align: center;
+      line-height: 30px;
+      color: white;
+
+      &.icon-arrow {
+        transform: rotate(180deg);
+      }
+    }
+  }
+
+  &.example-enter {
+    transform: translateX(110%);
+    transition: transform 0.5s ease-in-out;
+  }
+  &.example-enter.example-enter-active {
+    transform: translateX(0%);
+  }
+  &.example-leave {
+    transform: translateX(0%);
+    transition: transform 0.5s ease-in-out;
+  }
+  &.example-leave.example-leave-active {
+    transform: translateX(110%);
+  }
+
+  .hlr-operator {
+    font-size: 16px;
+  }
+  .hlr-operator a {
+    text-decoration: underline;
+  }
+  .hlr-operator a:hover {
+    color: #008CBA;
+  }
+}

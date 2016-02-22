@@ -130,7 +130,7 @@ let CompanyWidget = React.createClass({
                             renderHelpText={this._renderHelpText}
                           />
                       </Tab.Panel>
-                    )
+                    );
                   })}
                 </Tab.Wrapper>
               </Panel.Body>
@@ -138,7 +138,7 @@ let CompanyWidget = React.createClass({
           </div>
         </form>
       </div>
-    )
+    );
   }
 });
 

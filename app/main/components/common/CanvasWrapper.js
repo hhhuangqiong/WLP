@@ -7,7 +7,7 @@ let CanvasWrapper = React.createClass({
       <div className={classnames('content-frame', {offcanvas: this.props.isOffCanvas})}>
         {this.props.children}
       </div>
-    )
+    );
   }
 });
 

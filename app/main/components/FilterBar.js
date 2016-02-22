@@ -23,7 +23,7 @@ let FilterBarNavigationItems = React.createClass({
           );
         })}
       </ul>
-    )
+    );
   }
 });
 
@@ -37,7 +37,7 @@ let FilterBarLeftItems = React.createClass({
           );
         })}
       </ul>
-    )
+    );
   }
 });
 
@@ -51,7 +51,7 @@ let FilterBarRightItems = React.createClass({
           );
         })}
       </ul>
-    )
+    );
   }
 });
 

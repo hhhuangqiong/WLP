@@ -62,7 +62,7 @@ export default React.createClass({
   render() {
     let widgets = this.state.widgets;
 
-    if (!widgets || !widgets.length){
+    if (!widgets || !widgets.length) {
       return (<WidgetNotAvailable />);
     }
 

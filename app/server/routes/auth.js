@@ -60,12 +60,12 @@ let signIn = function(req, res, next) {
       return res.json({ token: '__session__', user: authUser });
     });
   })(req, res, next);
-}
+};
 
 let signOut = function(req, res) {
   let token = req.header('Authorization');
 
-  if (token == '__session__') {
+  if (token === '__session__') {
     //from client
     token = req.sessionID;
   }
@@ -79,28 +79,28 @@ let signOut = function(req, res) {
       error: 'signout failed'
     });
   }
-}
+};
 
 // because the app doesn't redirect the user after log in
 // NB: cannot use `req.isAuthenticated` (passport)
 // so there's no 'user' in `req` object
 let ensureAuthenticated = function(req, res) {
   return res.sendStatus(200);
-}
+};
 
 let validateToken = function(req, res, next) {
 
   sessionDebug('Auth Header ', req.header('Authorization'));
   let token = req.header('Authorization');
 
-  if (token == '__session__') {
+  if (token === '__session__') {
     //from client
     token = req.sessionID;
   }
 
   sessionClient.getSession(token)
     .then((user) => {
-      if (!user || ((user && user.token) != token)) {
+      if (!user || ((user && user.token) !== token)) {
         return res.status(401).json({
           error: {
             message: 'Must provide valid auth token in Authorization header'
@@ -119,10 +119,10 @@ let validateToken = function(req, res, next) {
       logger.error(err);
       return res.status(500).json({
         error: err
-      })
+      });
     })
     .done();
-}
+};
 
 export {
   signIn,

@@ -55,7 +55,7 @@ let Widget = React.createClass({
         </div>
         <For each="key" index="index" of={ this._composeWidgetArray() }>
           <InputGroup.Row>
-            <InputGroup.Label for={ this._getInputName(this.props.section, key) }>widget {key}</InputGroup.Label>
+            <InputGroup.Label htmlFor={ this._getInputName(this.props.section, key) }>widget {key}</InputGroup.Label>
             <InputGroup.Input>
               <input
                   className="radius"
@@ -69,7 +69,7 @@ let Widget = React.createClass({
           </InputGroup.Row>
         </For>
       </div>
-    )
+    );
   }
 });
 

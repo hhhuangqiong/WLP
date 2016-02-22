@@ -4,6 +4,7 @@ import classNames from 'classnames';
 
 const ID_MAX = 100000;
 const BACKGROUND_COLOR = '#D8D8D8';
+const EMPTY_CELL_PLACEHOLDER = '-';
 
 /**
  * A configurable donut chart component.
@@ -25,7 +26,7 @@ export default React.createClass({
      */
     width: PropTypes.number,
     /**
-     * The width of the donut border. 
+     * The width of the donut border.
      * This affect the gap between each slice and the actual width of the donut (width + 2 * borderWidth).
      * Default to 5.
      * @type {Number}
@@ -53,13 +54,13 @@ export default React.createClass({
     }))
   },
 
-  getInitialState: function () {
+  getInitialState: function() {
     return {
       containerId: 'donut' + Math.floor(Math.random() * ID_MAX)
     };
   },
 
-  getDefaultProps: function () {
+  getDefaultProps: function() {
     return {
       size: 200,
       width: 7,
@@ -67,7 +68,7 @@ export default React.createClass({
     };
   },
 
-  componentDidMount: function () {
+  componentDidMount: function() {
     let size = this.props.size;
     let width = this.props.width;
     let borderWidth = this.props.borderWidth;
@@ -132,7 +133,7 @@ export default React.createClass({
     });
   },
 
-  componentWillReceiveProps: function (nextProps) {
+  componentWillReceiveProps: function(nextProps) {
     // this function will be called when the user interacts with the sidebar
     // unnecessary redraw will be invoked
     // avoid unnecessary redraw
@@ -144,16 +145,16 @@ export default React.createClass({
     let width = this.props.width || DEFAULT_WIDTH;
     let borderWidth = this.props.borderWidth || DEFAULT_BORDER_WIDTH;
 
-    let total = nextProps.data.reduce(function (acc, d) {
+    let total = nextProps.data.reduce(function(acc, d) {
       return acc + d.value;
     }, 0);
 
-    let chartData = nextProps.data.map(function (d) {
+    let chartData = nextProps.data.map(function(d) {
       return d.value;
     });
 
     // bigger data goes first
-    chartData.sort(function (a, b) {
+    chartData.sort(function(a, b) {
       return a > b;
     });
 
@@ -181,11 +182,11 @@ export default React.createClass({
     }
 
     this.chart.setTitle({
-      text: total || '0'
+      text: total || EMPTY_CELL_PLACEHOLDER,
     });
   },
 
-  render: function () {
+  render: function() {
     let className = classNames(this.props.className, 'donut-chart');
 
     return (

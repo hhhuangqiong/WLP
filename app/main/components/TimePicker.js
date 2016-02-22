@@ -1,5 +1,5 @@
-import Moment from 'moment'
-import React from 'react'
+import Moment from 'moment';
+import React from 'react';
 
 let TimePicker = React.createClass({
   componentDidMount() {
@@ -7,23 +7,23 @@ let TimePicker = React.createClass({
   },
 
   addHour() {
-    this.props.onChange(this.props.datetime.add(1, 'h').format())
+    this.props.onChange(this.props.datetime.add(1, 'h').format());
   },
 
   addMinute() {
-    this.props.onChange(this.props.datetime.add(1, 'm').format())
+    this.props.onChange(this.props.datetime.add(1, 'm').format());
   },
 
   subtractHour() {
-    this.props.onChange(this.props.datetime.subtract(1, 'h').format())
+    this.props.onChange(this.props.datetime.subtract(1, 'h').format());
   },
 
   subtractMinute() {
-    this.props.onChange(this.props.datetime.subtract(1, 'm').format())
+    this.props.onChange(this.props.datetime.subtract(1, 'm').format());
   },
 
   render() {
-    let {datetime, format, timePickerId, className} = this.props
+    let {datetime, format, timePickerId, className} = this.props;
 
     return (
       <div>
@@ -76,8 +76,8 @@ let TimePicker = React.createClass({
 
         </div>
       </div>
-    )
+    );
   }
-})
+});
 
 export default TimePicker;

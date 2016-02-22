@@ -18,9 +18,9 @@ export default {
    * @param {integer} duration - millisecond.
    * @param {string} defaultLabel - display when duration is 0s.
    */
-  parseDuration(duration, defaultLabel=NO_DURATIONS) {
+  parseDuration(duration, defaultLabel = NO_DURATIONS) {
     function getDuration(time, label) {
-      if(time >= 1) return `${time}${label} `;
+      if (time >= 1) return `${time}${label} `;
       return '';
     }
 
@@ -33,11 +33,15 @@ export default {
     let seconds = momentDuration.seconds();
 
     let durationString = `${getDuration(hours, HOUR_LABEL)}${getDuration(minutes, MINUTE_LABEL)}${getDuration(seconds, SECOND_LABEL)}`.trim();
-    if(!durationString.length) return defaultLabel;
+    if (!durationString.length) return defaultLabel;
     return durationString;
   },
 
   getCountryName(countryAlpha2) {
+    if (!countryAlpha2) {
+      return null;
+    }
+
     const country = CountryData.countries[(countryAlpha2 || '').toUpperCase()];
     if(!country) return PLACEHOLDER_FOR_NULL;
 
@@ -55,7 +59,7 @@ export default {
   },
 
 
-  beautifyTime(timestamp, timeformat=OUTPUT_TIME_FORMAT) {
+  beautifyTime(timestamp, timeformat = OUTPUT_TIME_FORMAT) {
     return timestamp ? moment(timestamp).format(timeformat) : PLACEHOLDER_FOR_NULL;
   },
 
@@ -84,13 +88,13 @@ export default {
     return moment().subtract(rangeValue, rangeFormat);
   },
 
-  sanitizeNull(row, label=PLACEHOLDER_FOR_NULL) {
-    for(var exportField in row) {
-      if(!row[exportField]) {
+  sanitizeNull(row, label = PLACEHOLDER_FOR_NULL) {
+    for (var exportField in row) {
+      if (!row[exportField]) {
         row[exportField] = label;
       }
     }
 
-   return row;
+    return row;
   }
-}
+};

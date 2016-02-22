@@ -72,7 +72,7 @@ var CompanyStore = createStore({
   },
 
   handleCompanyUpdated: function({ company, carrierId }) {
-    if (company.carrierId != carrierId) {
+    if (company.carrierId !== carrierId) {
       // if carrierId is changed
       // update the companies object key
       this.companies[company.carrierId] = company;

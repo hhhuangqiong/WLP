@@ -35,7 +35,7 @@ let Label = React.createClass({
       <div className="large-8 columns">
         <label htmlFor={this.props.for}>{this.props.children}</label>
       </div>
-    )
+    );
   }
 });
 
@@ -45,7 +45,7 @@ let Input = React.createClass({
       <div className="large-16 columns">
         {this.props.children}
       </div>
-    )
+    );
   }
 });
 
