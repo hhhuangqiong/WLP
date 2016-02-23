@@ -1,6 +1,6 @@
-let createStore = require('fluxible/addons/createStore');
+const createStore = require('fluxible/addons/createStore');
 
-let AuthStore = createStore({
+const AuthStore = createStore({
   storeName: 'AuthStore',
 
   handlers: {
@@ -10,10 +10,10 @@ let AuthStore = createStore({
     SIGN_IN_SUCCESS: 'signIn',
     SIGN_OUT_START: 'signOutStart',
     SIGN_OUT_FAILURE: 'signOutFailure',
-    SIGN_OUT_SUCCESS: 'signOut'
+    SIGN_OUT_SUCCESS: 'signOut',
   },
 
-  initialize: function() {
+  initialize() {
     this.token = null;
     this.user = null;
     this.signingIn = false;
@@ -21,25 +21,25 @@ let AuthStore = createStore({
     this.signInError = null;
   },
 
-  loadSession: function(auth) {
+  loadSession(auth) {
     this.token = auth.token;
     this.user = auth.user;
     this.emitChange();
   },
 
-  signInStart: function() {
+  signInStart() {
     this.signingIn = true;
     this.signInError = null;
     this.emitChange();
   },
 
-  signInFailure: function(error) {
+  signInFailure(error) {
     this.signingIn = false;
     this.signInError = error;
     this.emitChange();
   },
 
-  signIn: function(auth) {
+  signIn(auth) {
     this.signingIn = false;
     this.signInError = null;
     this.token = auth.token;
@@ -47,77 +47,76 @@ let AuthStore = createStore({
     this.emitChange();
   },
 
-  signOutStart: function() {
+  signOutStart() {
     this.signingOut = true;
     this.emitChange();
   },
 
-  signOutFailure: function() {
+  signOutFailure() {
     this.signingOut = false;
     this.emitChange();
   },
 
-  signOut: function() {
+  signOut() {
     this.signingOut = false;
     this.token = null;
     this.user = null;
     this.emitChange();
   },
 
-  isAuthenticated: function() {
+  isAuthenticated() {
     return Boolean(this.token);
   },
 
-  getToken: function() {
+  getToken() {
     return this.token;
   },
 
-  getDisplayName: function() {
+  getDisplayName() {
     return this.user && this.user.displayName;
   },
 
-  getUserId: function() {
+  getUserId() {
     return this.user && this.user._id;
   },
 
-  getUserRole: function() {
+  getUserRole() {
     return this.user && this.user.role;
   },
 
-  getCarrierId: function() {
+  getCarrierId() {
     return this.user && this.user.carrierId;
   },
 
-  isSigningIn: function() {
+  isSigningIn() {
     return this.signingIn;
   },
 
-  isSigningOut: function() {
+  isSigningOut() {
     return this.signingOut;
   },
 
-  getSignInError: function() {
+  getSignInError() {
     return this.signInError;
   },
 
-  dehydrate: function() {
+  dehydrate() {
     return {
       token: this.token,
       user: this.user,
       signingIn: this.signingIn,
       signingOut: this.signingOut,
-      signInError: this.signInError
+      signInError: this.signInError,
     };
   },
 
-  rehydrate: function(state) {
+  rehydrate(state) {
     this.token = state.token;
     this.user = state.user;
     this.signingIn = state.signingIn;
     this.signingOut = state.signingOut;
     this.signInError = state.signInError;
-  }
+  },
 });
 
 module.exports = AuthStore;
-

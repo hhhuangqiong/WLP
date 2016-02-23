@@ -1,22 +1,19 @@
-'use strict';
-module.exports = function() {
-  var _router = null;
+module.exports = () => {
+  let _router;
 
   return {
     name: 'RouterPlugin',
 
-    plugContext: function() {
+    plugContext() {
       return {
-        plugActionContext: function(actionContext) {
-          actionContext.getRouter = function() {
-            return _router;
-          };
-        }
+        plugActionContext(actionContext) {
+          actionContext.getRouter = () => _router;
+        },
       };
     },
 
-    setRouter: function(router) {
+    setRouter(router) {
       _router = router;
-    }
+    },
   };
 };

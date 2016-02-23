@@ -2,6 +2,33 @@
 import _ from 'lodash';
 
 /**
+ * setDefaultCurrency
+ *
+ * @param {String|Object} defaultCurrency default currency to be set
+ * @returns {Object} return currency object
+ */
+function setDefaultCurrency(defaultCurrency) {
+  let currency;
+
+  if (typeof defaultCurrency === 'string') {
+    currency = this._currencies[defaultCurrency] || _.find(this._currencies, c => c.code === defaultCurrency);
+
+    if (!currency) {
+      throw new Error('invalid default currency code');
+    }
+  } else if (typeof defaultCurrency === 'object') {
+    if (!_.has(defaultCurrency, 'code') || !_.has(defaultCurrency, 'sign')) {
+      throw new Error('invalid format of default currency');
+    }
+
+    currency = _.pick(defaultCurrency, ['code', 'sign']);
+  }
+
+  return currency;
+}
+
+
+/**
  * Converter Class
  *
  * @param currencies {Object} currency data
@@ -30,34 +57,6 @@ function Converter(currencies, options = {}) {
 }
 
 /**
- * setDefaultCurrency
- *
- * @param {String|Object} defaultCurrency default currency to be set
- * @returns {Object} return currency object
- */
-function setDefaultCurrency(defaultCurrency) {
-  let currency;
-
-  if (typeof defaultCurrency === 'string') {
-    currency = this._currencies[defaultCurrency] || _.find(this._currencies, function(c) {
-      return c.code === defaultCurrency;
-    });
-
-    if (!currency) {
-      throw new Error('invalid default currency code');
-    }
-  } else if (typeof defaultCurrency === 'object') {
-    if (!_.has(defaultCurrency, 'code') || !_.has(defaultCurrency, 'sign')) {
-      throw new Error('invalid format of default currency');
-    }
-
-    currency = _.pick(defaultCurrency, ['code', 'sign']);
-  }
-
-  return currency;
-}
-
-/**
  * getCurrentById
  *
  * @param {String} bossCode Key get from BOSS API
@@ -69,7 +68,7 @@ Converter.prototype.getCurrencyById = function(bossCode) {
     throw new Error('currency code from BOSS is required');
   }
 
-  let convertedCurrency = this._currencies[bossCode];
+  const convertedCurrency = this._currencies[bossCode];
 
   if (!convertedCurrency && !this._default) {
     throw new Error('target currency not found');

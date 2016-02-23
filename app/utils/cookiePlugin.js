@@ -1,30 +1,30 @@
-let Cookie = require('./Cookie');
+import Cookie from './Cookie';
 
 module.exports = {
   name: 'CookiePlugin',
 
-  plugContext: function(options) {
+  plugContext(options) {
     // 30 mins (30* 60) as default
     let maxAge = options.config && options.config.COOKIE.MAX_AGE || 60 * 30;
 
     return {
-      plugActionContext: function(actionContext) {
+      plugActionContext(actionContext) {
         actionContext.cookie = new Cookie({
           req: options.req,
           res: options.res,
-          maxAge: maxAge
+          maxAge: maxAge,
         });
       },
 
-      dehydrate: function() {
+      dehydrate() {
         return {
-          maxAge: maxAge
+          maxAge: maxAge,
         };
       },
 
-      rehydrate: function(state) {
+      rehydrate(state) {
         maxAge = state.maxAge;
-      }
+      },
     };
-  }
+  },
 };

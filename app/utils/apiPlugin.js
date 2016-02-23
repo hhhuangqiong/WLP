@@ -1,37 +1,37 @@
-'use strict';
+import Api from '../Api';
+import AuthStore from '../main/stores/AuthStore';
 
-let Api = require('../Api');
-let AuthStore = require('../main/stores/AuthStore');
-let env = require('./env');
-let url = require('./url');
-let sessionDebug = require('debug')('app:sessionFlow');
+const env = require('./env');
+const url = require('./url');
+
+const sessionDebug = require('debug')('app:sessionFlow');
 
 module.exports = {
   name: 'ApiPlugin',
 
-  plugContext: function(options) {
+  plugContext() {
     return {
-      plugActionContext: function(actionContext) {
+      plugActionContext(actionContext) {
         actionContext.api = new Api({
-          getHost: function() {
+          getHost() {
             try {
+              // use root path
               if (env.CLIENT) {
-                //use root path
                 return '';
-              } else {
-                sessionDebug('SERVER ', url.baseUrl(process.env.APP_PORT, '127.0.0.1'));
-                return url.baseUrl(process.env.APP_PORT, '127.0.0.1');
               }
+
+              sessionDebug('SERVER ', url.baseUrl(process.env.APP_PORT, '127.0.0.1'));
+              return url.baseUrl(process.env.APP_PORT, '127.0.0.1');
             } catch (err) {
               sessionDebug(err);
             }
           },
 
-          getToken: function() {
+          getToken() {
             return actionContext.getStore(AuthStore).getToken();
-          }
+          },
         });
-      }
+      },
     };
-  }
+  },
 };

@@ -1,8 +1,7 @@
-var submitForm  = {
-  onSubmit:function(data, callback) {
-    console.log(data);
+const submitForm  = {
+  onSubmit() {
     $('#myModal').foundation('reveal', 'close');
-  }
+  },
 };
-export default submitForm;
 
+export default submitForm;

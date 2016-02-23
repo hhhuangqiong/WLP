@@ -14,7 +14,7 @@ import _ from 'lodash';
  * getType({});     // Object
  */
 function getType(value) {
-  let type = Object.prototype.toString.call(value);
+  const type = Object.prototype.toString.call(value);
 
   // type must be in the form of '[object XXXXXX]' (e.g. [object Number], [object Function])
   // we need the XXXXXX part only
@@ -50,22 +50,23 @@ function getType(value) {
  * }
  */
 function getSimplifiedJsonSchema(json) {
-  let type = getType(json);
+  const type = getType(json);
 
   if (type === 'Array') {
     if (json.length > 0) {
       // e.g. Number[3], Object[7]
       return `${getType(json[0])}[${json.length}]`;
-    } else {
-      return 'EmptyArray';
     }
+
+    return 'EmptyArray';
   }
 
   if (type !== 'Object') {
     return type;
   }
 
-  let schema = {};
+  const schema = {};
+
   _.each(json, (value, key) => {
     schema[key] = getSimplifiedJsonSchema(value);
   });

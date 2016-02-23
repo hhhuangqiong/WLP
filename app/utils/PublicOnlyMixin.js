@@ -1,18 +1,17 @@
 import AuthStore from '../main/stores/AuthStore';
-import config from '../config';
-import {userPath} from '../server/paths';
+import { userPath } from '../server/paths';
 
 module.exports = {
   statics: {
-    willTransitionTo: function(transition) {
-      let authStore       = transition.context.getActionContext().getStore(AuthStore);
+    willTransitionTo(transition) {
+      const authStore       = transition.context.getActionContext().getStore(AuthStore);
 
-      let isAuthenticated = authStore.isAuthenticated();
-      let role            = authStore.getUserRole();
-      let identity        = authStore.getCarrierId();
+      const isAuthenticated = authStore.isAuthenticated();
+      const role            = authStore.getUserRole();
+      const identity        = authStore.getCarrierId();
 
-      let authority = transition.context.getComponentContext().getAuthority();
-      let defaultPath = authority.getDefaultPath();
+      const authority = transition.context.getComponentContext().getAuthority();
+      const defaultPath = authority.getDefaultPath();
 
       if (isAuthenticated) {
         if (defaultPath) {
@@ -21,6 +20,6 @@ module.exports = {
           transition.redirect('/error/not-found');
         }
       }
-    }
-  }
+    },
+  },
 };

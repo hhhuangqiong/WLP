@@ -1,47 +1,47 @@
-'use strict';
+import mongoose from 'mongoose';
 
-var mongoose = require('mongoose');
-var collectionName = 'Email';
-var schema = new mongoose.Schema({
+const collectionName = 'Email';
+
+const schema = new mongoose.Schema({
   meta: {
     from: {
       type: String,
       trim: true,
-      required: true
+      required: true,
     },
     to: {
       type: String,
       trim: true,
-      required: true
+      required: true,
     },
     subject: {
       type: String,
       trim: true,
-      required: true
+      required: true,
     },
     cc: Array,
-    bcc: Array
+    bcc: Array,
   },
   template: {
     name: {
       type: String,
       trim: true,
-      required: true
+      required: true,
     },
     data: {
       default: {},
-      type: mongoose.Schema.Types.Mixed
-    }
+      type: mongoose.Schema.Types.Mixed,
+    },
   },
   createdAt: {
     type: Date,
-    default: Date.now
+    default: Date.now,
   },
   deliveredAt: {
-    type: Date
-  }
+    type: Date,
+  },
 }, {
-  collection: collectionName
+  collection: collectionName,
 });
 
 /**
@@ -52,7 +52,7 @@ var schema = new mongoose.Schema({
  * @chainable
  */
 ['name', 'data'].forEach((m) => {
-  var mn = ['template', m.substring(0, 1).toUpperCase(), m.substring(1)].join('');
+  const mn = ['template', m.substring(0, 1).toUpperCase(), m.substring(1)].join('');
   schema.methods[mn] = function(val) {
     if (!val) {
       return this.template[m];

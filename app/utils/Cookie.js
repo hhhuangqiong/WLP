@@ -1,8 +1,7 @@
-'use strict';
-
 import cookie from 'cookie';
-import {SERVER} from './env';
-var sessionDebug = require('debug')('app:sessionFlow');
+import { SERVER } from './env';
+
+const sessionDebug = require('debug')('app:sessionFlow');
 
 /**
  * Custom cookie object for both client & server sides
@@ -43,7 +42,6 @@ Cookie.prototype.maxAge = function() {
  * @return {string|undefined}
  */
 Cookie.prototype.get = function(name) {
-
   if (SERVER) {
     sessionDebug('Server Cookie ', name, this._req.session.data[name]);
     return this._req.session.data[name];
@@ -55,7 +53,6 @@ Cookie.prototype.get = function(name) {
 };
 
 Cookie.prototype.set = function(name, value) {
-
   if (SERVER) {
     sessionDebug('Service Cookie set', name, value);
 
