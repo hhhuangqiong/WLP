@@ -18,15 +18,15 @@ const noop = Function.prototype;
  * @param {Function} [options.getToken]
  */
 function Api(options = {}) {
-  this._getHost   = options.getHost || noop;
-  this._getToken  = options.getToken || noop;
+  this._getHost = options.getHost || noop;
+  this._getToken = options.getToken || noop;
 }
 
 Api.prototype.getAuthorityList = function getAuthorityList(carrierId, cb) {
   superagent
     .get(`${this._getHost()}/api/carriers/${carrierId}/authority`)
     .set('Authorization', this._getToken())
-    .end(function(err, res) {
+    .end(function (err, res) {
       if (err) {
         cb(err);
         return;
@@ -50,7 +50,7 @@ Api.prototype.getParentCompanies = function getParentCompanies(params, cb) {
     .get(`${this._getHost()}/api/companies/parent`)
     .accept('json')
     .set('Authorization', this._getToken())
-    .end(function(err, res) {
+    .end(function (err, res) {
       if (err) {
         debug('error', err);
       }
@@ -134,7 +134,7 @@ Api.prototype.deactivateCompany = function deactivateCompany(params, cb) {
     .post(`${this._getHost()}/api/companies/${params.carrierId}/suspension`)
     .accept('json')
     .set('Authorization', this._getToken())
-    .end(function(err, res) {
+    .end(function (err, res) {
       if (err) {
         debug('error', err);
       }
@@ -148,7 +148,7 @@ Api.prototype.reactivateCompany = function reactivateCompany(params, cb) {
     .put(`${this._getHost()}/api/companies/${params.carrierId}/suspension`)
     .accept('json')
     .set('Authorization', this._getToken())
-    .end(function(err, res) {
+    .end(function (err, res) {
       if (err) {
         debug('error', err);
       }
@@ -165,7 +165,7 @@ Api.prototype.getEndUserWallet = function getEndUserWallet(params, cb) {
     .end(genericHandler(cb));
 };
 
-Api.prototype.getEndUsers = function(params, cb) {
+Api.prototype.getEndUsers = function (params, cb) {
   superagent
     .get(`${this._getHost()}/api/carriers/${params.carrierId}/users`)
     .query(_.pick(params, ['startDate', 'endDate', 'page']))
@@ -174,7 +174,7 @@ Api.prototype.getEndUsers = function(params, cb) {
     .end(genericHandler(cb));
 };
 
-Api.prototype.getEndUser = function(params, cb) {
+Api.prototype.getEndUser = function (params, cb) {
   superagent
     .get(`${this._getHost()}/api/carriers/${params.carrierId}/users/${params.username}`)
     .accept('json')
@@ -182,7 +182,7 @@ Api.prototype.getEndUser = function(params, cb) {
     .end(genericHandler(cb));
 };
 
-Api.prototype.deactivateEndUser = function(params, cb) {
+Api.prototype.deactivateEndUser = function (params, cb) {
   superagent
     .post(`${this._getHost()}/api/carriers/${params.carrierId}/users/${params.username}/suspension`)
     .accept('json')
@@ -190,7 +190,7 @@ Api.prototype.deactivateEndUser = function(params, cb) {
     .end(genericHandler(cb));
 };
 
-Api.prototype.reactivateEndUser = function(params, cb) {
+Api.prototype.reactivateEndUser = function (params, cb) {
   superagent
     .del(`${this._getHost()}/api/carriers/${params.carrierId}/users/${params.username}/suspension`)
     .accept('json')
@@ -198,7 +198,7 @@ Api.prototype.reactivateEndUser = function(params, cb) {
     .end(genericHandler(cb));
 };
 
-Api.prototype.getSMS = function(params, cb) {
+Api.prototype.getSMS = function (params, cb) {
   superagent
     .get(`${this._getHost()}/api/carriers/${params.carrierId}/sms`)
     .query(params)
@@ -207,7 +207,7 @@ Api.prototype.getSMS = function(params, cb) {
     .end(genericHandler(cb));
 };
 
-Api.prototype.getSMSWidgets = function(params, cb) {
+Api.prototype.getSMSWidgets = function (params, cb) {
   superagent
     .get(`${this._getHost()}/api/carriers/${params.carrierId}/widgets/sms`)
     .accept('json')
@@ -216,7 +216,7 @@ Api.prototype.getSMSWidgets = function(params, cb) {
     .end(genericHandler(cb));
 };
 
-Api.prototype.getCalls = function(params, cb) {
+Api.prototype.getCalls = function (params, cb) {
   superagent
     .get(`${this._getHost()}/api/carriers/${params.carrierId}/calls`)
     .query(params)
@@ -225,7 +225,7 @@ Api.prototype.getCalls = function(params, cb) {
     .end(genericHandler(cb));
 };
 
-Api.prototype.getCallsWidgets = function(params, cb) {
+Api.prototype.getCallsWidgets = function (params, cb) {
   superagent
     .get(`${this._getHost()}/api/carriers/${params.carrierId}/widgets/calls`)
     .accept('json')
@@ -234,7 +234,7 @@ Api.prototype.getCallsWidgets = function(params, cb) {
     .end(genericHandler(cb));
 };
 
-Api.prototype.getImWidgets = function(params, cb) {
+Api.prototype.getImWidgets = function (params, cb) {
   superagent
     .get(`${this._getHost()}/api/carriers/${params.carrierId}/widgets/im`)
     .accept('json')
@@ -243,7 +243,7 @@ Api.prototype.getImWidgets = function(params, cb) {
     .end(genericHandler(cb));
 };
 
-Api.prototype.getOverviewWidgets = function(params, cb) {
+Api.prototype.getOverviewWidgets = function (params, cb) {
   superagent
     .get(`${this._getHost()}/api/carriers/${params.carrierId}/widgets/overview`)
     .accept('json')
@@ -252,7 +252,7 @@ Api.prototype.getOverviewWidgets = function(params, cb) {
     .end(genericHandler(cb));
 };
 
-Api.prototype.getTopUpHistory = function(params, cb) {
+Api.prototype.getTopUpHistory = function (params, cb) {
   superagent
     .get(`${this._getHost()}/api/carriers/${params.carrierId}/topup`)
     .query(params)
@@ -261,7 +261,7 @@ Api.prototype.getTopUpHistory = function(params, cb) {
     .end(genericHandler(cb));
 };
 
-Api.prototype.getImHistory = function(params, cb) {
+Api.prototype.getImHistory = function (params, cb) {
   superagent
     .get(`${this._getHost()}/api/carriers/${params.carrierId}/im`)
     .query(params)
@@ -270,7 +270,7 @@ Api.prototype.getImHistory = function(params, cb) {
     .end(genericHandler(cb));
 };
 
-Api.prototype.getVerifications = function(params, cb) {
+Api.prototype.getVerifications = function (params, cb) {
   superagent
     .get(`${this._getHost()}/api/carriers/${params.carrierId}/verifications`)
     .accept('json')
@@ -279,7 +279,7 @@ Api.prototype.getVerifications = function(params, cb) {
     .end(genericHandler(cb));
 };
 
-Api.prototype.getVerificationStatsByStatus = function(params, cb) {
+Api.prototype.getVerificationStatsByStatus = function (params, cb) {
   superagent
     .get(`${this._getHost()}/api/carriers/${params.carrierId}/verificationStats`)
     .accept('json')
@@ -288,7 +288,7 @@ Api.prototype.getVerificationStatsByStatus = function(params, cb) {
     .end(genericHandler(cb));
 };
 
-Api.prototype.getVerificationStatsByPlatform = function(params, cb) {
+Api.prototype.getVerificationStatsByPlatform = function (params, cb) {
   superagent
     .get(`${this._getHost()}/api/carriers/${params.carrierId}/verificationStats`)
     .accept('json')
@@ -297,7 +297,7 @@ Api.prototype.getVerificationStatsByPlatform = function(params, cb) {
     .end(genericHandler(cb));
 };
 
-Api.prototype.getVerificationStatsByType = function(params, cb) {
+Api.prototype.getVerificationStatsByType = function (params, cb) {
   superagent
     .get(`${this._getHost()}/api/carriers/${params.carrierId}/verificationStats`)
     .accept('json')
@@ -306,7 +306,7 @@ Api.prototype.getVerificationStatsByType = function(params, cb) {
     .end(genericHandler(cb));
 };
 
-Api.prototype.getVerificationStatsByCountry = function(params, cb) {
+Api.prototype.getVerificationStatsByCountry = function (params, cb) {
   superagent
     .get(`${this._getHost()}/api/carriers/${params.carrierId}/verificationStats`)
     .accept('json')
@@ -315,7 +315,7 @@ Api.prototype.getVerificationStatsByCountry = function(params, cb) {
     .end(genericHandler(cb));
 };
 
-Api.prototype.getCurrentCompanyInfo = function(params, cb) {
+Api.prototype.getCurrentCompanyInfo = function (params, cb) {
   superagent
     .get(`${this._getHost()}/api/companies/${params.carrierId}/info`)
     .accept('json')
@@ -323,7 +323,7 @@ Api.prototype.getCurrentCompanyInfo = function(params, cb) {
     .end(genericHandler(cb));
 };
 
-Api.prototype.getEndUsersStatsTotal = function(params, cb) {
+Api.prototype.getEndUsersStatsTotal = function (params, cb) {
   superagent
     .get(`${this._getHost()}/api/carriers/${params.carrierId}/userStatsTotal`)
     .accept('json')
@@ -332,7 +332,7 @@ Api.prototype.getEndUsersStatsTotal = function(params, cb) {
     .end(genericHandler(cb));
 };
 
-Api.prototype.getEndUsersStatsMonthly = function(params, cb) {
+Api.prototype.getEndUsersStatsMonthly = function (params, cb) {
   superagent
     .get(`${this._getHost()}/api/carriers/${params.carrierId}/userStatsMonthly`)
     .accept('json')
@@ -341,7 +341,7 @@ Api.prototype.getEndUsersStatsMonthly = function(params, cb) {
     .end(genericHandler(cb));
 };
 
-Api.prototype.getEndUsersRegistrationStats = function(params, cb) {
+Api.prototype.getEndUsersRegistrationStats = function (params, cb) {
   superagent
     .get(`${this._getHost()}/api/carriers/${params.carrierId}/stat/user/query`)
     .accept('json')
@@ -350,7 +350,7 @@ Api.prototype.getEndUsersRegistrationStats = function(params, cb) {
     .end(genericHandler(cb));
 };
 
-Api.prototype.getEndUsersDeviceStats = function(params, cb) {
+Api.prototype.getEndUsersDeviceStats = function (params, cb) {
   superagent
     .get(`${this._getHost()}/api/carriers/${params.carrierId}/stat/user/query`)
     .accept('json')
@@ -359,7 +359,7 @@ Api.prototype.getEndUsersDeviceStats = function(params, cb) {
     .end(genericHandler(cb));
 };
 
-Api.prototype.getEndUsersGeographicStats = function(params, cb) {
+Api.prototype.getEndUsersGeographicStats = function (params, cb) {
   superagent
     .get(`${this._getHost()}/api/carriers/${params.carrierId}/stat/user/query`)
     .accept('json')
@@ -368,7 +368,7 @@ Api.prototype.getEndUsersGeographicStats = function(params, cb) {
     .end(genericHandler(cb));
 };
 
-Api.prototype.getCallsStatsMonthly = function(params, cb) {
+Api.prototype.getCallsStatsMonthly = function (params, cb) {
   return superagent
     .get(`${this._getHost()}/api/carriers/${params.carrierId}/callUserStatsMonthly`)
     .accept('json')
@@ -377,7 +377,7 @@ Api.prototype.getCallsStatsMonthly = function(params, cb) {
     .end(genericHandler(cb));
 };
 
-Api.prototype.getCallsStatsTotal = function(params, cb) {
+Api.prototype.getCallsStatsTotal = function (params, cb) {
   return superagent
     .get(`${this._getHost()}/api/carriers/${params.carrierId}/callUserStatsTotal`)
     .accept('json')

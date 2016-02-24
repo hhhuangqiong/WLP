@@ -31,7 +31,7 @@ export function decodeAclString(aclString) {
 }
 
 export function getResources() {
-  return _.reduce(navResources, function(result, nav) {
+  return _.reduce(navResources, function (result, nav) {
     result.menus.push(nav.page);
     return result;
   }, { menus: [] });
@@ -46,7 +46,7 @@ export function getResources() {
  * @returns {String} The route name
  */
 export function getRouteByResource(resource) {
-  return _.result(_.find(navResources, function(nav) {
+  return _.result(_.find(navResources, function (nav) {
     return nav.page === resource;
   }), 'routeName');
 }
@@ -60,7 +60,7 @@ export function getRouteByResource(resource) {
  * @returns {String} The route path
  */
 export function getPathByResource(resource) {
-  return _.result(_.find(navResources, function(nav) {
+  return _.result(_.find(navResources, function (nav) {
     return nav.page === resource;
   }), 'path');
 }

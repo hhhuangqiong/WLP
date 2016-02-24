@@ -16,7 +16,7 @@ const InfoItem = React.createClass({
           <div className="accordion__item__label left">{this.props.label}</div>
           <div className={classNames(
             'accordion__item__content',
-            {capitalize: this.props.capitalize},
+            { capitalize: this.props.capitalize },
             'right'
           )}>
             {this.props.children}

@@ -50,7 +50,7 @@ const SMSTable = React.createClass({
                     <CountryFlag className="left" code={sms.country} />
                     <div className="left">
                       <span className="callee">{sms.destination_address_inbound}</span>
-                      <br/>
+                      <br />
                       <span>{getCountryName(sms.country)}</span>
                     </div>
                   </div>

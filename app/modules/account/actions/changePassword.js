@@ -1,4 +1,4 @@
-export default function(context, params, done) {
+export default function (context, params, done) {
   context.api.changePassword(params, (err, payload) => {
     if (err || payload.error) {
       context.dispatch('CHANGE_PASSWORD_FAILURE', payload);

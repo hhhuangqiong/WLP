@@ -10,7 +10,7 @@ const SESSION_KEY = 'app:sessions';
  * @param redisClient {Object} redis client instance
  */
 
-const SessionHandler = function(redisClient) {
+const SessionHandler = function (redisClient) {
   if (!redisClient) {
     throw new Error('redis client is required');
   }
@@ -34,7 +34,7 @@ const SessionHandler = function(redisClient) {
  * @param cb.err {Error} error returned by Redis client
  * @param cb.res {Object} response object returned by Redis client
  */
-SessionHandler.prototype.createSession = function(data, cb) {
+SessionHandler.prototype.createSession = function (data, cb) {
   this._client.set(`${SESSION_KEY}:${data.token}`, JSON.stringify(data), cb);
 };
 
@@ -46,7 +46,7 @@ SessionHandler.prototype.createSession = function(data, cb) {
  * @param token {String}
  * @returns {*|promise}
  */
-SessionHandler.prototype.getSession = function(token) {
+SessionHandler.prototype.getSession = function (token) {
   const deferred = Q.defer();
 
   this._client.get(`${SESSION_KEY}:${token}`, (err, result) => {
@@ -82,7 +82,7 @@ SessionHandler.prototype.getSession = function(token) {
  *
  * @param token {String}
  */
-SessionHandler.prototype.revokeSession = function(token) {
+SessionHandler.prototype.revokeSession = function (token) {
   this._client.set(`${SESSION_KEY}:${token}`, '');
 };
 

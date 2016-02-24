@@ -16,9 +16,9 @@ export default {
     qb.where('timestamp').between(params.from, params.to);
     qb.where('type', 'IncomingMessage');
 
-    if ( _.isArray(params.message_type) ) {
+    if (_.isArray(params.message_type)) {
       qb.where('message_type').in(params.message_type);
-    } else if ( _.isString(params.message_type) ) {
+    } else if (_.isString(params.message_type)) {
       qb.where('message_type', params.message_type);
     }
 
@@ -34,7 +34,7 @@ export default {
       qb.where('sender', params.sender);
     }
 
-    if ( params.recipient ) {
+    if (params.recipient) {
       qb.begin()
         .where('recipient', params.recipient)
         .or()
@@ -42,7 +42,7 @@ export default {
       .end();
     }
 
-    const queryResult = { q: qb.build(), sort: DEFAULT_SORT_ORDER, rows: params.size, start: (+params.page * params.size)};
+    const queryResult = { q: qb.build(), sort: DEFAULT_SORT_ORDER, rows: params.size, start: (+params.page * params.size) };
 
     return cb(null, queryResult);
   },

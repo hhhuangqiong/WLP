@@ -6,7 +6,7 @@ import request from 'superagent';
 import util from 'util';
 
 import qs from 'qs';
-import {constructOpts, appendRequestId, handleError} from '../helper';
+import { constructOpts, appendRequestId, handleError } from '../helper';
 
 export default class TopUpRequest {
   constructor(baseUrl, timeout) {
@@ -38,7 +38,7 @@ export default class TopUpRequest {
 
     function formatDateString() {
       params.startDate = moment(params.startDate, 'L').startOf('day').format('YYYYMMDDHHmmss');
-      params.endDate   = moment(params.endDate, 'L').endOf('day').format('YYYYMMDDHHmmss');
+      params.endDate = moment(params.endDate, 'L').endOf('day').format('YYYYMMDDHHmmss');
       return params;
     }
 
@@ -55,10 +55,10 @@ export default class TopUpRequest {
     Q.fcall(swapDate)
       .then(formatUserNumberField)
       .then(formatDateString)
-      .fail(function(err) {
+      .fail(function (err) {
         return cb(err);
       })
-      .done(function(params) {
+      .done(function (params) {
         return cb(null, params);
       });
   }

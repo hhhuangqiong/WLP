@@ -25,7 +25,7 @@ class Authority {
     const { menus: menuItems } = resources;
 
     // initialize capability list with full resources control
-    this._allowedMenuItems = this._allMenuItems =  menuItems;
+    this._allowedMenuItems = this._allMenuItems = menuItems;
 
     // missing carrierId here will not break the application
     // it will just be unable to find corresponding capability config json
@@ -110,49 +110,49 @@ class Authority {
             // the follows are logic/conditions that
             // would disable the accessibility of the resource
             switch (menuItem) {
-            case OVERVIEW:
-              if (hasFeature('service.sdk')) return removeFeatures();
-              break;
+              case OVERVIEW:
+                if (hasFeature('service.sdk')) return removeFeatures();
+                break;
 
-            case END_USER:
-              if (!hasFeature('end-user')) return removeFeatures();
-              break;
+              case END_USER:
+                if (!hasFeature('end-user')) return removeFeatures();
+                break;
 
-            case ACCOUNT:
-            case COMPANY:
-              if (!this._isRootCompany()) return removeFeatures();
-              break;
+              case ACCOUNT:
+              case COMPANY:
+                if (!this._isRootCompany()) return removeFeatures();
+                break;
 
-            case CALL:
-              if (!hasFeature('call')) return removeFeatures();
-              break;
+              case CALL:
+                if (!hasFeature('call')) return removeFeatures();
+                break;
 
-            case IM:
-              if (!hasFeature('im')) return removeFeatures();
-              break;
+              case IM:
+                if (!hasFeature('im')) return removeFeatures();
+                break;
 
-            case SMS:
-              if (!hasFeature('service.white_label')) return removeFeatures();
-              if (!hasFeature('im.im_to_sms')) return removeFeatures();
-              if (!hasFeature('sms')) return removeFeatures();
-              break;
+              case SMS:
+                if (!hasFeature('service.white_label')) return removeFeatures();
+                if (!hasFeature('im.im_to_sms')) return removeFeatures();
+                if (!hasFeature('sms')) return removeFeatures();
+                break;
 
-            case VSF:
-              if (!hasFeature('service.white_label')) return removeFeatures();
-              if (!hasFeature('vsf')) return removeFeatures();
-              break;
+              case VSF:
+                if (!hasFeature('service.white_label')) return removeFeatures();
+                if (!hasFeature('vsf')) return removeFeatures();
+                break;
 
-            case TOP_UP:
-              if (!hasFeature('service.white_label')) return removeFeatures();
-              if (!hasFeature('wallet')) return removeFeatures();
-              break;
+              case TOP_UP:
+                if (!hasFeature('service.white_label')) return removeFeatures();
+                if (!hasFeature('wallet')) return removeFeatures();
+                break;
 
-            case VERIFICATION_SDK:
-              if (!hasFeature('service.sdk')) return removeFeatures();
-              if (!hasFeature('verification-sdk')) return removeFeatures();
-              break;
+              case VERIFICATION_SDK:
+                if (!hasFeature('service.sdk')) return removeFeatures();
+                if (!hasFeature('verification-sdk')) return removeFeatures();
+                break;
 
-            default: break;
+              default: break;
             }
           });
 

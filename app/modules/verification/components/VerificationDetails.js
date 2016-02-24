@@ -219,8 +219,8 @@ const VerificationDetails = React.createClass({
       <div className="row verification-details">
         <FilterBar.Wrapper>
           <FilterBar.NavigationItems>
-            <Link to="verification" params={{role, identity}}>Overview</Link>
-            <Link to="verification-details" params={{role, identity}}>Details Report</Link>
+            <Link to="verification" params={{ role, identity }}>Overview</Link>
+            <Link to="verification-details" params={{ role, identity }}>Details Report</Link>
           </FilterBar.NavigationItems>
           <FilterBar.LeftItems>
             <VerificationFilter
@@ -297,9 +297,9 @@ const VerificationDetails = React.createClass({
 
   transformVerificationTypes(type) {
     switch (type) {
-    case 'MobileTerminated': return 'call-in';
-    case 'MobileOriginated': return 'call-out';
-    default: return type;
+      case 'MobileTerminated': return 'call-in';
+      case 'MobileOriginated': return 'call-out';
+      default: return type;
     }
   },
 
@@ -365,7 +365,7 @@ const VerificationDetails = React.createClass({
     const routeName = _.last(this.context.router.getCurrentRoutes()).name;
     const params = this.context.router.getCurrentParams();
     const query = _.merge(this.context.router.getCurrentQuery(), this.getQueryFromState(), newQuery);
-    const changedQuery = _.omit(query, function(value) {
+    const changedQuery = _.omit(query, function (value) {
       return !value;
     });
 

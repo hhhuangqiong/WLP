@@ -9,7 +9,7 @@ import logger from 'winston';
  * @param {number} failoverAttempts Number of retry
  * @param {string} env Node environment
  */
-export default function(redisStore, session, secret, failoverAttempts) {
+export default function (redisStore, session, secret, failoverAttempts) {
   const sessionMiddleware = session({
     resave: false,
     saveUninitialized: true,
@@ -19,7 +19,7 @@ export default function(redisStore, session, secret, failoverAttempts) {
     store: redisStore,
   });
 
-  return function(req, res, next) {
+  return function (req, res, next) {
     let tries = failoverAttempts;
 
     function lookupSession(error) {

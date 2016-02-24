@@ -1,5 +1,5 @@
 import _ from 'lodash';
-import {createStore} from 'fluxible/addons';
+import { createStore } from 'fluxible/addons';
 
 const debug = require('debug')('app:modules/file-export/stores/ExportStore');
 const PROGRESS_FAILED_INDICATOR = -1;

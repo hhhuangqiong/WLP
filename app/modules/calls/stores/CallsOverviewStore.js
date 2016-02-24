@@ -1,5 +1,5 @@
 import { assign, forEach } from 'lodash';
-import {createStore} from 'fluxible/addons';
+import { createStore } from 'fluxible/addons';
 
 const CallsOverviewStore = createStore({
   storeName: 'CallsOverviewStore',
@@ -85,7 +85,7 @@ const CallsOverviewStore = createStore({
   },
 
   abortPendingRequests() {
-    forEach(this.pendingRequests, function(request) {
+    forEach(this.pendingRequests, function (request) {
       if (!!request) {
         request.abort();
       }

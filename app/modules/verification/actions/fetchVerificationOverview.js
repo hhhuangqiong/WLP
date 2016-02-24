@@ -115,10 +115,10 @@ export default (context, params, done) => {
 
       const possibleReasons = failureStatusList.map(status => {
         switch (status) {
-        case 504:
-          return 'Request timeout';
-        default:
-          return 'Server error';
+          case 504:
+            return 'Request timeout';
+          default:
+            return 'Server error';
         }
       });
 

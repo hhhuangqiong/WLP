@@ -170,7 +170,7 @@ export default React.createClass({
     // within the updateChart function below
     this.setState({
       isDataChanging: !this.props.lines && nextProps.lines || !nextProps.lines && this.props.lines
-    })
+    });
   },
 
   shouldComponentUpdate(nextProps) {
@@ -274,7 +274,7 @@ export default React.createClass({
         lineColor: AXIS_COLOR,
         crosshair: xAxis.crosshair || null,
         events: {
-          afterSetExtremes: function() {
+          afterSetExtremes: function () {
             // if xAxis crosshair is defined,
             // dynamically set the width as the width of column
             // (highlighting the whole column rather than a thin line)
@@ -358,7 +358,7 @@ export default React.createClass({
             // had an issue that toggling on/off a series makes the charts
             // have no yAxis, so until we have a full solution, we will
             // disable the legend toggle function for Combination Charts
-            legendItemClick: function(e) {
+            legendItemClick: function (e) {
               e.preventDefault();
               return false;
             },
@@ -430,10 +430,10 @@ export default React.createClass({
       tooltipOptions: tooltipOptions,
     };
 
-    switch(type) {
+    switch (type) {
       // TODO: add support to other types if needed
-    case 'line':
-      typeOption = {
+      case 'line':
+        typeOption = {
         lineWidth: lineWidth || DEFAULT_LINE_WIDTH,
         marker: {
           lineWidth: lineWidth || DEFAULT_LINE_WIDTH,
@@ -444,15 +444,15 @@ export default React.createClass({
         pointPadding: 0,
         selected: true,
       };
-      break;
+        break;
 
-    case 'column':
-      typeOption = {
+      case 'column':
+        typeOption = {
         pointPadding: 0.2,
         borderColor: borderColor || opts.color,
         borderWidth: borderWidth || 0,
       };
-      break;
+        break;
     }
 
     this.chart.addSeries(_.merge(series, typeOption));

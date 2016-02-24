@@ -1,8 +1,8 @@
 /** @module initializers/nconf */
 
 import logger from 'winston';
-import nconf  from 'nconf';
-import path   from 'path';
+import nconf from 'nconf';
+import path from 'path';
 
 const ENV_CONFIG_FILE_PREFIX = 'env-';
 
@@ -24,9 +24,9 @@ export default function initialize(env, configDir, opts = { envSeparator: '__' }
   // - dynamically include files; assume some files (other than 'env-*') are not supposed to be included
   const files = ['global.json'];
 
-  files.push(envConfigName(env, opts.envConfigFilePrefix  || ENV_CONFIG_FILE_PREFIX));
+  files.push(envConfigName(env, opts.envConfigFilePrefix || ENV_CONFIG_FILE_PREFIX));
 
-  files.forEach(function(f) {
+  files.forEach(function (f) {
     nconf.file(f, {
       file: f,
       dir: configDir,

@@ -6,7 +6,7 @@
  * @param {String} errorCode Error code
  * @return {Error} the decoreated error object
  */
-export default function(err, moduleId, errorCode) {
+export default function (err, moduleId, errorCode) {
   if (!err) throw new Error('`err` must be passed');
   if (!moduleId || !errorCode) throw new Error('`moduleId` and `errorCode` are required');
 

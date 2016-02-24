@@ -6,8 +6,8 @@ import util from 'util';
 import _ from 'lodash';
 import qs from 'qs';
 
-import {buildImSolrQueryString} from '../queryBuilder/im';
-import {constructOpts, formatDateString, swapDate, composeSolrResponse, handleError} from '../helper';
+import { buildImSolrQueryString } from '../queryBuilder/im';
+import { constructOpts, formatDateString, swapDate, composeSolrResponse, handleError } from '../helper';
 
 const LABEL_FOR_NULL = 'N/A';
 
@@ -50,13 +50,13 @@ export default class ImRequest {
     function normalizeData(params) {
       const query = {};
 
-      query.carrier     = params.carrier;
-      query.from        = params.from;
-      query.to          = params.to;
-      query.page        = params.page || 0;
-      query.size        = params.size || 20;
+      query.carrier = params.carrier;
+      query.from = params.from;
+      query.to = params.to;
+      query.page = params.page || 0;
+      query.size = params.size || 20;
 
-      query.origin      = params.origin;
+      query.origin = params.origin;
       query.destination = params.destination;
 
       // jscs:disable requireCamelCaseOrUpperCaseIdentifiers

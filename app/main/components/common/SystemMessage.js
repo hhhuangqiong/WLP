@@ -1,8 +1,8 @@
-import _                  from 'lodash';
-import classNames         from 'classnames';
-import React              from 'react';
-import FluxibleMixin      from 'fluxible/addons/FluxibleMixin';
-import Crouton            from 'react-crouton';
+import _ from 'lodash';
+import classNames from 'classnames';
+import React from 'react';
+import FluxibleMixin from 'fluxible/addons/FluxibleMixin';
+import Crouton from 'react-crouton';
 import SystemMessageStore from '../../stores/SystemMessageStore';
 
 const SystemMessage = React.createClass({

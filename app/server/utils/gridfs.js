@@ -43,9 +43,9 @@ module.exports = {
 
     fs.createReadStream(filePath).pipe(writeStream);
 
-    writeStream.on('close', function(gfsFile) {
+    writeStream.on('close', function (gfsFile) {
       if (options.unlinkFile) {
-        fs.unlink(filePath, function(err) {
+        fs.unlink(filePath, function (err) {
           if (err) return cb(err);
           return cb(null, gfsFile);
         });

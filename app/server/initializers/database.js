@@ -18,18 +18,18 @@ function initialize(mongodbURI, mongodbOpts, cb) {
   logger.info('Connecting to Mongo on %s with %j', mongodbURI, mongodbOpts, {});
   mongoose.connect(mongodbURI, mongodbOpts);
 
-  ['open', 'connected', 'disconnected', 'close'].forEach(function(evt) {
-    mongoose.connection.on(evt, function() {
+  ['open', 'connected', 'disconnected', 'close'].forEach(function (evt) {
+    mongoose.connection.on(evt, function () {
       logger.info('mongoose connection', evt);
     });
   });
 
-  mongoose.connection.on('error', function(err) {
+  mongoose.connection.on('error', function (err) {
     logger.error(err);
   });
 
-  process.on('SIGINT', function() {
-    mongoose.connection.close(function() {
+  process.on('SIGINT', function () {
+    mongoose.connection.close(function () {
       process.exit(0);
     });
   });

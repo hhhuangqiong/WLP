@@ -1,9 +1,9 @@
-import { Router }   from 'express';
-import nconf        from 'nconf';
-import Controller   from '../controllers/forgotPassword';
+import { Router } from 'express';
+import nconf from 'nconf';
+import Controller from '../controllers/forgotPassword';
 import { fetchDep } from '../utils/bottle';
 
 module.exports = (() => {
-  const controller  = new Controller(fetchDep(nconf.get('containerName'), 'PortalUserManager'));
+  const controller = new Controller(fetchDep(nconf.get('containerName'), 'PortalUserManager'));
   return Router().post('/forgot-password', controller.submit);
 })();

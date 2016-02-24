@@ -1,4 +1,4 @@
-import {createStore} from 'fluxible/addons';
+import { createStore } from 'fluxible/addons';
 
 var debug = require('debug')('ApplicationStore');
 
@@ -12,44 +12,44 @@ var ApplicationStore = createStore({
     FETCH_APP_IDS_SUCCESS: 'handleAppIdsFetched'
   },
 
-  loadedCurrentCompany: function(company) {
+  loadedCurrentCompany: function (company) {
     this.currentCompany = company;
     this.emitChange();
   },
 
-  loadedCompanies: function(companies) {
+  loadedCompanies: function (companies) {
     this.managingCompanies = companies;
     this.emitChange();
   },
 
-  resetCompanies: function() {
+  resetCompanies: function () {
     this.managingCompanies = [];
     this.emitChange();
   },
 
-  getCurrentCompany: function() {
+  getCurrentCompany: function () {
     return this.currentCompany;
   },
 
-  getManagingCompanies: function() {
+  getManagingCompanies: function () {
     return this.managingCompanies;
   },
 
-  handleAppIdsFetched: function(payload) {
+  handleAppIdsFetched: function (payload) {
     this.appIds = payload;
     this.defaultAppId = (this.appIds || [])[0];
     this.emitChange();
   },
 
-  getAppIds: function() {
+  getAppIds: function () {
     return this.appIds;
   },
 
-  getDefaultAppId: function() {
+  getDefaultAppId: function () {
     return this.defaultAppId;
   },
 
-  getState: function() {
+  getState: function () {
     return {
       currentCompany: this.currentCompany,
       managingCompanies: this.managingCompanies,
@@ -58,11 +58,11 @@ var ApplicationStore = createStore({
     };
   },
 
-  dehydrate: function() {
+  dehydrate: function () {
     return this.getState();
   },
 
-  rehydrate: function(state) {
+  rehydrate: function (state) {
     this.currentCompany = state.currentCompany;
     this.managingCompanies = state.managingCompanies;
     this.appIds = state.appIds;

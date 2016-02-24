@@ -118,7 +118,7 @@ const CompanyWidget = React.createClass({
 
   _handleInputChange(widgetName, stateName, e) {
     this.setState({
-      data: _.assign(this.state.data, { [widgetName]: _.assign(this.state.data[widgetName], {[stateName]: e.target.value}) }),
+      data: _.assign(this.state.data, { [widgetName]: _.assign(this.state.data[widgetName], { [stateName]: e.target.value }) }),
     });
   },
 

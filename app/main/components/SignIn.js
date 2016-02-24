@@ -48,7 +48,7 @@ const SignIn = React.createClass({
   handleSignIn(e) {
     e.preventDefault();
 
-    this.validate((error, data)=>{
+    this.validate((error, data) => {
       if (data.username.length > 0) {
         React.findDOMNode(this.refs.username).focus();
         return;
@@ -80,7 +80,7 @@ const SignIn = React.createClass({
   },
 
   handleInputBlur(inputName) {
-    this.validate(inputName, function(error, validationErrors) {});
+    this.validate(inputName, function (error, validationErrors) {});
   },
 
   renderHelpText(message) {

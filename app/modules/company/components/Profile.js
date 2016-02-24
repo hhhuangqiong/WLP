@@ -32,7 +32,7 @@ const CompanyProfile = React.createClass({
 
   // expose from ValidationMixin
   validatorTypes() {
-    return _.reduce(this.refs, function(rules, component) {
+    return _.reduce(this.refs, function (rules, component) {
       _.merge(rules, _.isFunction(component.getValidatorTypes) && component.getValidatorTypes());
       return rules;
     }, {});
@@ -40,7 +40,7 @@ const CompanyProfile = React.createClass({
 
   // expose from ValidationMixin
   getValidatorData() {
-    return _.reduce(this.refs, function(rules, component) {
+    return _.reduce(this.refs, function (rules, component) {
       _.merge(rules, _.isFunction(component.getValidatorData) && component.getValidatorData());
       return rules;
     }, {});
@@ -70,7 +70,7 @@ const CompanyProfile = React.createClass({
   },
 
   _handleInputChange(stateName, e) {
-    this.setState({[stateName]: e.target.value || e.target.selected});
+    this.setState({ [stateName]: e.target.value || e.target.selected });
 
     // do validation for SELECT onChange
     // otherwise it would be done onBlur
@@ -82,7 +82,7 @@ const CompanyProfile = React.createClass({
 
   _handleContactChange(stateName, key, e) {
     this.setState({
-      [stateName]: _.assign(this.state[stateName], {[key]: e.target.value}),
+      [stateName]: _.assign(this.state[stateName], { [key]: e.target.value }),
     });
   },
 

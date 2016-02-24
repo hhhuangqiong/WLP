@@ -41,10 +41,10 @@ const FilterBarLeftItems = React.createClass({
 });
 
 let FilterBarRightItems = React.createClass({
-  render: function() {
+  render: function () {
     return (
       <ul className="right">
-        {React.Children.map(this.props.children, (child)=>{
+        {React.Children.map(this.props.children, (child) => {
           return (
             <li>{child}</li>
           );

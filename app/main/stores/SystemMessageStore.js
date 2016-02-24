@@ -1,5 +1,5 @@
-import {ERROR_MESSAGE} from '../constants/actionTypes';
-import {createStore} from 'fluxible/addons';
+import { ERROR_MESSAGE } from '../constants/actionTypes';
+import { createStore } from 'fluxible/addons';
 
 /**
  * Store for states of System Message Component
@@ -28,7 +28,7 @@ let SystemMessageStore = createStore({
   },
 
   // do not change this
-  initialize: function() {
+  initialize: function () {
     this.id = Date.now();
     this.type = 'error';
     this.message = null;
@@ -37,14 +37,14 @@ let SystemMessageStore = createStore({
     // IMPORTANT
     // onDismiss has to be a function
 
-    this.onDismiss = function() {};
+    this.onDismiss = function () {};
 
     this.buttons = null;
     this.hidden = true;
     this.timeout = 5000;
   },
 
-  handleUpdateCompanySuccess: function(data) {
+  handleUpdateCompanySuccess: function (data) {
     this.id = Date.now();
     this.type = 'success';
     this.message = 'Saved';
@@ -53,7 +53,7 @@ let SystemMessageStore = createStore({
     this.emitChange();
   },
 
-  handleUpdateCompanyFailure: function(err) {
+  handleUpdateCompanyFailure: function (err) {
     this.id = Date.now();
     this.type = 'error';
     this.message = err.message;
@@ -75,7 +75,7 @@ let SystemMessageStore = createStore({
    * @param err.message {String}
    */
 
-  handleReactivateEndUserFailure: function(err) {
+  handleReactivateEndUserFailure: function (err) {
     this.id = Date.now();
     this.type = 'secondary';
     this.message = err.message;
@@ -84,7 +84,7 @@ let SystemMessageStore = createStore({
     this.emitChange();
   },
 
-  handleDeactivateEndUserFailure: function(err) {
+  handleDeactivateEndUserFailure: function (err) {
     this.id = Date.now();
     this.type = 'secondary';
     this.message = err.message;
@@ -93,7 +93,7 @@ let SystemMessageStore = createStore({
     this.emitChange();
   },
 
-  handleDeleteEndUserFailure: function(err) {
+  handleDeleteEndUserFailure: function (err) {
     this.id = Date.now();
     this.type = 'secondary';
     this.message = err.message;
@@ -102,7 +102,7 @@ let SystemMessageStore = createStore({
     this.emitChange();
   },
 
-  handleDeleteEndUserSuccess: function(user) {
+  handleDeleteEndUserSuccess: function (user) {
     this.id = Date.now();
     this.type = 'secondary';
     this.message = `${user.username} is deleted successfully`;
@@ -111,7 +111,7 @@ let SystemMessageStore = createStore({
     this.emitChange();
   },
 
-  handleInfoMessage: function(payload) {
+  handleInfoMessage: function (payload) {
     this.id = Date.now();
     this.type = 'success';
 
@@ -122,7 +122,7 @@ let SystemMessageStore = createStore({
     this.emitChange();
   },
 
-  handleErrorMessage: function(err) {
+  handleErrorMessage: function (err) {
     this.id = Date.now();
     this.type = 'secondary';
     this.message = err.message;
@@ -131,7 +131,7 @@ let SystemMessageStore = createStore({
     this.emitChange();
   },
 
-  getState: function() {
+  getState: function () {
     return {
       id: this.id,
       type: this.type,
@@ -144,12 +144,12 @@ let SystemMessageStore = createStore({
     };
   },
 
-  dehydrate: function() {
+  dehydrate: function () {
     return this.getState();
   },
 
   // follow the design of "react-crouton"
-  rehydrate: function(state) {
+  rehydrate: function (state) {
     this.id = state.id;
     this.type = state.type;
     this.message = state.message;

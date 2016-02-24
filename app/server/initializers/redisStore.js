@@ -23,7 +23,7 @@ export default function makeRedisStore(session, nconf, env) {
     const Redis = require('ioredis');
 
     // !! there's no default retryStrategy in from ioredis !!
-    redisConfig.retryStrategy = function(times) {
+    redisConfig.retryStrategy = function (times) {
       logger.info(`ioredis: reconnecting for the ${times} time`);
       return Math.min(times * 2, 2000);
     };

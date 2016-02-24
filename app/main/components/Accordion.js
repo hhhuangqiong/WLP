@@ -82,7 +82,7 @@ const AccordionNavigation = React.createClass({
         <a className="accordion__item-head" onClick={this._toggleIsCollapsed}>
           <span>{this.props.title}</span>
           <If condition={this.props.withStatusLabel}>
-            <span className={classNames('text-center', 'status-label', {'status-label--success': this.props.status}, {'status-label--alert': !this.props.status})}>
+            <span className={classNames('text-center', 'status-label', { 'status-label--success': this.props.status }, { 'status-label--alert': !this.props.status })}>
               <If condition={this.props.status}>
                 <span className="icon-tick" />
                 <Else />

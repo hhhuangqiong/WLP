@@ -1,4 +1,4 @@
-export default function(context, params, done) {
+export default function (context, params, done) {
   context.api.updateAccount(params, (err, { error, result }) => {
     if (err) {
       context.dispatch('UPDATE_ACCOUNT_FAILURE', err);

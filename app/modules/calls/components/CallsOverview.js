@@ -3,7 +3,7 @@ import moment from 'moment';
 import classNames from 'classnames';
 
 import React from 'react';
-import {Link} from 'react-router';
+import { Link } from 'react-router';
 import Select from 'react-select';
 
 import FluxibleMixin from 'fluxible/addons/FluxibleMixin';
@@ -41,7 +41,7 @@ const TIME_FRAMES = ['24 hours', '7 days'];
 // this should be application-wide variable
 const DECIMAL_PLACE = 1;
 
-const decimalPlaceFormatter = function(data) {
+const decimalPlaceFormatter = function (data) {
   return (data && data.toFixed(DECIMAL_PLACE));
 };
 
@@ -232,7 +232,7 @@ const CallsOverview = React.createClass({
         labels: {
           // it don't have to be rounded
           // as allowDecimal could be configured from HighCharts
-          formatter: function() { return `${this.value / 60}m`; }
+          formatter: function () { return `${this.value / 60}m`; }
         },
       },
       {
@@ -245,7 +245,7 @@ const CallsOverview = React.createClass({
         alignment: 'right',
         visible: false,
       }
-    ]
+    ];
   },
 
   _getAttemptLineChartSelectedLine() {
@@ -281,7 +281,7 @@ const CallsOverview = React.createClass({
   },
 
   _getMonthlyUser() {
-    const { thisMonthUser, lastMonthUser  } = this.state;
+    const { thisMonthUser, lastMonthUser } = this.state;
     const userChange = thisMonthUser - lastMonthUser;
 
     return {
@@ -319,7 +319,7 @@ const CallsOverview = React.createClass({
   _getSuccessfulAttempt() {
     const totalSuccess = reduce(this.state.successAttemptStats, (success, stat) => {
       success += stat.v;
-      return success
+      return success;
     }, 0);
 
     return totalSuccess;
@@ -333,7 +333,7 @@ const CallsOverview = React.createClass({
   },
 
   _getTotalCallDuration() {
-    const totalDurationInMs =  reduce(this.state.totalDurationStats, (total, stat) => {
+    const totalDurationInMs = reduce(this.state.totalDurationStats, (total, stat) => {
       total += stat.v;
       return total;
     }, 0);
@@ -517,8 +517,8 @@ const CallsOverview = React.createClass({
                       alignTicks={false}
                       className="attempt-line"
                       lines={this._getAttemptLineChartData()}
-                      shareTooltip={true}
-                      showLegend={true}
+                      shareTooltip
+                      showLegend
                       xAxis={this._getLineChartXAxis()}
                       yAxis={[
                         {
@@ -552,8 +552,8 @@ const CallsOverview = React.createClass({
                       alignTicks={false}
                       className="attempt-line"
                       lines={this._getDurationLineChartData()}
-                      shareTooltip={true}
-                      showLegend={true}
+                      shareTooltip
+                      showLegend
                       xAxis={this._getLineChartXAxis()}
                       yAxis={this._getDurationLineChartYAxis()} />
                   </div>

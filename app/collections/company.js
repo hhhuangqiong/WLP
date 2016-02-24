@@ -158,7 +158,7 @@ const schema = new mongoose.Schema({
   },
 }, { collection: collectionName });
 
-schema.virtual('role').get(function() {
+schema.virtual('role').get(function () {
   if (this.isRootCompany()) {
     return 'a';
   }
@@ -170,12 +170,12 @@ schema.virtual('role').get(function() {
   return 'w';
 });
 
-schema.virtual('identity').get(function() {
+schema.virtual('identity').get(function () {
   return this.carrierId || null;
 });
 
-schema.method('addLogo', function(filePath, options, cb) {
-  gridfs.addFile(filePath, options, (err, fileDoc)=> {
+schema.method('addLogo', function (filePath, options, cb) {
+  gridfs.addFile(filePath, options, (err, fileDoc) => {
     if (err) return new Error(err);
     this.logo = fileDoc._id;
     return this.save(cb);
@@ -191,9 +191,9 @@ schema.method('addLogo', function(filePath, options, cb) {
  * @param doc.carrierId {String} company carrier id
  * @param doc.status {String} company status
  */
-schema.method('activate', function(cb) {
+schema.method('activate', function (cb) {
   this.status = 'active';
-  return this.save(function(err, company) {
+  return this.save(function (err, company) {
     if (err) throw err;
 
     return cb(null, { carrierId: company.carrierId, status: company.status });
@@ -209,20 +209,20 @@ schema.method('activate', function(cb) {
  * @param doc.carrierId {String} company carrier id
  * @param doc.status {String} company status
  */
-schema.method('deactivate', function(cb) {
+schema.method('deactivate', function (cb) {
   this.status = 'inactive';
-  return this.save(function(err, company) {
+  return this.save(function (err, company) {
     if (err) throw err;
 
     return cb(null, { carrierId: company.carrierId, status: company.status });
   });
 });
 
-schema.method('isRootCompany', function() {
+schema.method('isRootCompany', function () {
   return this.carrierId === ROOT_COMPANY_CARRIER_ID;
 });
 
-schema.method('getCompanyType', function() {
+schema.method('getCompanyType', function () {
   if (this.isRootCompany()) {
     return ROOT_COMPANY_CARRIER_ID;
   } else if (this.reseller) {
@@ -240,7 +240,7 @@ schema.method('getCompanyType', function() {
  *
  * @param carrierId
  */
-schema.static('isValidCarrier', function(carrierId) {
+schema.static('isValidCarrier', function (carrierId) {
   return new Promise((resolve, reject) => {
     this.findOne({ carrierId }, (err, doc) => {
       if (err) return reject(err);
@@ -256,7 +256,7 @@ schema.static('isValidCarrier', function(carrierId) {
  * @param {String} parentCarrierId
  * @param {Function} cb
  */
-schema.static('getManagingCompany', function(parentCarrierId, cb) {
+schema.static('getManagingCompany', function (parentCarrierId, cb) {
   return Q.ninvoke(this, 'findOne', { _id: parentCarrierId })
     .then((company) => {
       if (!company) {
@@ -326,7 +326,7 @@ schema.static('getCompanyByCarrierId', function getCompanyByCarrierId(carrierId,
  * @method getRootCompanyId
  * @param {Function} cb  The node-style callback to be called when the process is done
  */
-schema.static('getRootCompanyId', function(cb) {
+schema.static('getRootCompanyId', function (cb) {
   this.getCompanyByCarrierId(ROOT_COMPANY_CARRIER_ID, (err, company) => {
     if (err) {
       cb(err);
@@ -337,15 +337,15 @@ schema.static('getRootCompanyId', function(cb) {
   });
 });
 
-schema.method('isSDK', function() {
+schema.method('isSDK', function () {
   return this.carrierId.indexOf(SDK_DOMAIN) > -1;
 });
 
-schema.method('getServiceType', function() {
+schema.method('getServiceType', function () {
   return this.isSDK() ? 'SDK' : 'WL';
 });
 
-schema.method('getUrlPrefix', function() {
+schema.method('getUrlPrefix', function () {
   if (this.isRootCompany()) {
     return this.carrierId ? '/a/' + this.carrierId : '/a';
   }

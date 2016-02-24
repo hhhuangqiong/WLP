@@ -14,7 +14,7 @@ let bundlePath;
 if (enabledHotloader()) {
   // use empty root path for client side, rely on relative path resolving
   appUrl = baseUrl(webpackConfig.custom.hotLoadPort);
-  bundleFile =  'bundle.js';
+  bundleFile = 'bundle.js';
   bundlePath = `${appUrl}/${bundleFile}`;
 } else {
   bundlePath = '/javascript/bundle.js';
@@ -37,9 +37,9 @@ const Html = React.createClass({
           <script src="/vendor/foundation/js/vendor/modernizr.js"></script>
         </head>
         <body>
-          <div id="app" dangerouslySetInnerHTML={{__html: this.props.markup}}></div>
+          <div id="app" dangerouslySetInnerHTML={{ __html: this.props.markup }}></div>
           <Version />
-          <script dangerouslySetInnerHTML={{__html: this.props.state}}></script>
+          <script dangerouslySetInnerHTML={{ __html: this.props.state }}></script>
           <script src="/vendor/jquery/dist/jquery.min.js"></script>
           <script src="/vendor/highmaps/adapters/standalone-framework.js"></script>
           <script src="/vendor/highmaps/highcharts.js"></script>

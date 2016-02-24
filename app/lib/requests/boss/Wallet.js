@@ -4,7 +4,7 @@ import request from 'superagent';
 import util from 'util';
 import qs from 'qs';
 
-import {constructOpts, appendRequestId} from '../helper';
+import { constructOpts, appendRequestId } from '../helper';
 
 export default class WalletRequest {
   constructor(baseUrl, timeout) {

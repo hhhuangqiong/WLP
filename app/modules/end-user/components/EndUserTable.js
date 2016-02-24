@@ -49,7 +49,7 @@ const EndUserTable = React.createClass({
             </span>
           </td>
           <td className="device-modal">
-            <i className={classNames({'icon-apple': (platform) ? platform.toLowerCase() === 'ios' : false }, {'icon-android': (platform) ? platform.toLowerCase() === 'android' : false })} />
+            <i className={classNames({ 'icon-apple': (platform) ? platform.toLowerCase() === 'ios' : false }, { 'icon-android': (platform) ? platform.toLowerCase() === 'android' : false })} />
             {device.deviceModel || NOT_FOUND_LABEL}
           </td>
           <td>{device.appBundleId || NOT_FOUND_LABEL}</td>

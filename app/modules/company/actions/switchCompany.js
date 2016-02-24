@@ -1,6 +1,6 @@
 import { userPath } from '../../../server/paths';
 
-export default function(context, params) {
+export default function (context, params) {
   context.api.getAuthorityList(params.identity, (err, { carrierId, capability }) => {
     const authority = context.getAuthority();
 

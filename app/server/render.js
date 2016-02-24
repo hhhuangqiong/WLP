@@ -18,30 +18,30 @@ const debug = require('debug')('app:server/render');
  * @param {Fluxible} app Fluxible instance
  * @return {function}
  */
-export default function(app) {
-  return function(context, location, cb) {
+export default function (app) {
+  return function (context, location, cb) {
     const router = Router.create({
       routes: routes,
       location: location,
       transitionContext: context,
-      onAbort: function(redirect) {
+      onAbort: function (redirect) {
         cb({ redirect: redirect });
       },
 
-      onError: function(err) {
+      onError: function (err) {
         debug('Routing Error', err);
         cb(err);
       },
     });
 
-    router.run(function(Handler, routerState) {
+    router.run(function (Handler, routerState) {
       if (routerState.routes[0].name === 'not-found') {
         const html = React.renderToStaticMarkup(React.createElement(Handler));
         cb({ notFound: true }, html);
         return;
       }
 
-      fetchData(context, routerState, function(err) {
+      fetchData(context, routerState, function (err) {
         if (err) {
           // triggered by `onError` above? recoverable?
           return cb(err);

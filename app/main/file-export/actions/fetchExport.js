@@ -4,7 +4,7 @@ let debug = require('debug')('app:modules/file-export/actions/fetchExport');
 
 const WITHOUT_EXPORT_TYPE_LABEL = 'Please specific export type!';
 
-export default function(context, params, done) {
+export default function (context, params, done) {
   debug('Started');
 
   context.dispatch('FETCH_EXPORT_START');

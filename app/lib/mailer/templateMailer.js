@@ -2,7 +2,7 @@ import emailTemplates from 'email-templates';
 import fs from 'fs';
 import logger from 'winston';
 
-const TemplateMailer = module.exports = function(mailer, opts) {
+const TemplateMailer = module.exports = function (mailer, opts) {
   if (!mailer) throw new Error('mailer is required');
   this.mailer = mailer;
   this._templatesDir = opts.templatesDir;
@@ -19,16 +19,16 @@ const TemplateMailer = module.exports = function(mailer, opts) {
  * @param {Object}
  * @param {Function} cb
  */
-TemplateMailer.prototype.send = function(mailOpts, tmplName, tmplData, cb) {
+TemplateMailer.prototype.send = function (mailOpts, tmplName, tmplData, cb) {
   // TODO validate mailOpts
   if (!mailOpts || !tmplName || !tmplData) throw new Error('Invalid number of arguments');
 
-  this._tmplContent(tmplName, tmplData, function(err, html) {
+  this._tmplContent(tmplName, tmplData, function (err, html) {
     if (err) return cb(err);
     mailOpts.html = html;
 
     // TODO change it to make use of mailer
-    this.mailer.sendHtmlContent(mailOpts, html, function(err, responseStatus) {
+    this.mailer.sendHtmlContent(mailOpts, html, function (err, responseStatus) {
       if (err) return cb(err);
 
       logger.info('Sending email using template %s with %j', tmplName, tmplData, {});
@@ -44,14 +44,14 @@ TemplateMailer.prototype.send = function(mailOpts, tmplName, tmplData, cb) {
  * @param {Object} tmplData
  * @param {Function} cb
  */
-TemplateMailer.prototype._tmplContent = function(tmplName, tmplData, cb) {
-  emailTemplates(this._templatesDir, function(err, template) {
+TemplateMailer.prototype._tmplContent = function (tmplName, tmplData, cb) {
+  emailTemplates(this._templatesDir, function (err, template) {
     if (err) {
       logger.error('Error lookup templates directory, %s', this._templatesDir, err.stack);
       return cb(err);
     }
 
-    template(tmplName, tmplData, function(err, html, text) {
+    template(tmplName, tmplData, function (err, html, text) {
       if (err) {
         logger.error('Error prepare template %s with %j', tmplName, tmplData, err.stack, {});
         return cb(err);

@@ -23,23 +23,23 @@ function initialize(seedFilePath) {
     throw new Error('Error parsing data seed file');
   }
 
-  const insertData = function(data) {
+  const insertData = function (data) {
     let affiliatedCompanyId;
     const rootUser = data.user;
     const hashInfo = Q.nbind(PortalUser.hashInfo, PortalUser);
 
-    const seedUser = function() {
-      return hashInfo(rootUser.password).then(function(hashResult) {
+    const seedUser = function () {
+      return hashInfo(rootUser.password).then(function (hashResult) {
         const extra = {
           affiliatedCompany: affiliatedCompanyId,
         };
 
-        logger.info('Seeding user ' +  rootUser.username);
+        logger.info('Seeding user ' + rootUser.username);
         return Q.ninvoke(PortalUser, 'create', _.merge(rootUser, hashResult, extra));
       });
     };
 
-    const seedCompany = function(companyInfo) {
+    const seedCompany = function (companyInfo) {
       const condition = {
         name: companyInfo.name,
       };
@@ -60,11 +60,11 @@ function initialize(seedFilePath) {
       return Q.ninvoke(model, 'addLogo', path.join(__dirname, `../../../public/images/${data.company.logoFile}`), {});
     }
 
-    const infoLogger = function(model) {
+    const infoLogger = function (model) {
       logger.info('Seeded: %j', model, {});
     };
 
-    const putAffiliateIdInScope = function(company) {
+    const putAffiliateIdInScope = function (company) {
       affiliatedCompanyId = company.id;
       logger.info('Put affiliatedCompany in scope ' + affiliatedCompanyId);
       return company;
@@ -76,17 +76,17 @@ function initialize(seedFilePath) {
       .then(infoLogger)
       .then(seedUser)
       .then(infoLogger)
-      .catch(function(error) {
+      .catch(function (error) {
         logger.error('Error during data seeding', error.stack);
       });
   };
 
-  content.forEach(function(data) {
+  content.forEach(function (data) {
 
     // assume there can only have 1 and only 1 root user
     PortalUser.findOne({
       username: data.user.username,
-    }, function(err, user) {
+    }, function (err, user) {
       if (err) {
         throw err;
       }

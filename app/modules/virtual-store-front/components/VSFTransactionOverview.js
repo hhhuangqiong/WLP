@@ -4,10 +4,10 @@ import FluxibleMixin from 'fluxible/addons/FluxibleMixin';
 import AuthMixin from '../../../utils/AuthMixin';
 
 import WidgetNotAvailable from '../../../main/components/common/WidgetNotAvailable';
-import VSFTransactionStore from  '../stores/VSFTransactionStore';
-import fetchVSFWidgets from  '../actions/fetchVSFWidgets';
+import VSFTransactionStore from '../stores/VSFTransactionStore';
+import fetchVSFWidgets from '../actions/fetchVSFWidgets';
 
-import AuthStore    from '../../../main/stores/AuthStore';
+import AuthStore from '../../../main/stores/AuthStore';
 
 const errorMessage = '<div className="widget-not-found">Dashboard is not available</div>';
 
@@ -50,12 +50,12 @@ const VSFTransactionOverview = React.createClass({
     return (
       <table className="widget-table">
         <tr>
-          <td rowSpan="2" dangerouslySetInnerHTML={{__html: widgets[0] || errorMessage}}></td>
-          <td dangerouslySetInnerHTML={{__html: widgets[1] || errorMessage}}></td>
+          <td rowSpan="2" dangerouslySetInnerHTML={{ __html: widgets[0] || errorMessage }}></td>
+          <td dangerouslySetInnerHTML={{ __html: widgets[1] || errorMessage }}></td>
         </tr>
 
         <tr>
-          <td dangerouslySetInnerHTML={{__html: widgets[2] || errorMessage}}></td>
+          <td dangerouslySetInnerHTML={{ __html: widgets[2] || errorMessage }}></td>
         </tr>
       </table>
     );

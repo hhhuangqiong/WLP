@@ -8,8 +8,8 @@ import logger from 'winston';
 
 import errorMixin from '../requests/mixins/mumsErrorResponse';
 
-export const CONTENT_TYPE_APISERVICE    = 'APISERVICE';
-export const CONTENT_TYPE_APPLICATIONS  = 'APPLICATIONS';
+export const CONTENT_TYPE_APISERVICE = 'APISERVICE';
+export const CONTENT_TYPE_APPLICATIONS = 'APPLICATIONS';
 export const CONTENT_TYPE_CARRIER = 'CARRIER';
 
 /**
@@ -25,30 +25,30 @@ export class ApplicationRequest {
 
   _processPath(contentType, carrierId) {
     switch (contentType) {
-    case CONTENT_TYPE_APISERVICE:
-      return `${this._baseUrl}/1.0/carriers/${carrierId}`;
-    case CONTENT_TYPE_APPLICATIONS:
-      return `${this._baseUrl}/1.0/carriers/${carrierId}/applications`;
-    case CONTENT_TYPE_CARRIER:
-      return `${this._baseUrl}/1.0/carriers/${carrierId}`;
-    default:
-      throw new Error('Content Type requested is not available');
+      case CONTENT_TYPE_APISERVICE:
+        return `${this._baseUrl}/1.0/carriers/${carrierId}`;
+      case CONTENT_TYPE_APPLICATIONS:
+        return `${this._baseUrl}/1.0/carriers/${carrierId}/applications`;
+      case CONTENT_TYPE_CARRIER:
+        return `${this._baseUrl}/1.0/carriers/${carrierId}`;
+      default:
+        throw new Error('Content Type requested is not available');
     }
   }
 
   _trimResponse(contentType, response) {
     switch (contentType) {
-    case CONTENT_TYPE_APISERVICE:
-      return response.services;
-    case CONTENT_TYPE_APPLICATIONS:
-      return {
+      case CONTENT_TYPE_APISERVICE:
+        return response.services;
+      case CONTENT_TYPE_APPLICATIONS:
+        return {
         applicationId: response.applicationDetails.applicationIdentifier,
         applications: response.applicationDetails.applications,
       };
-    case CONTENT_TYPE_CARRIER:
-      return { isValid: !_.has(response.body, 'error') };
-    default:
-      throw new Error('Content Type requested is not available');
+      case CONTENT_TYPE_CARRIER:
+        return { isValid: !_.has(response.body, 'error') };
+      default:
+        throw new Error('Content Type requested is not available');
     }
   }
 
@@ -68,7 +68,7 @@ export class ApplicationRequest {
     if (!carrierId) throw new Error('`carrierId` is required');
     if (!cb || !_.isFunction(cb)) throw new Error('`cb` is required and must be a function');
 
-    const path  = this._processPath(contentType, carrierId);
+    const path = this._processPath(contentType, carrierId);
 
     logger.debug(`Application API Endpoint: ${path}`);
 

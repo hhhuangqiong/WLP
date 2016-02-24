@@ -63,7 +63,7 @@ function Converter(currencies, options = {}) {
  * @returns {*} return converted currency Object
  * @throws Will throw an error if the currency is not found with no default currency is set
  */
-Converter.prototype.getCurrencyById = function(bossCode) {
+Converter.prototype.getCurrencyById = function (bossCode) {
   if (!bossCode) {
     throw new Error('currency code from BOSS is required');
   }
@@ -82,7 +82,7 @@ Converter.prototype.getCurrencyById = function(bossCode) {
  *
  * @returns {currencies}
  */
-Converter.prototype.getCurrencyList = function() {
+Converter.prototype.getCurrencyList = function () {
   return this._currencies;
 };
 

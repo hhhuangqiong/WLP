@@ -22,9 +22,9 @@ function initialize(opts = {}) {
     // to avoid `Console` transport being added more than once
     winston.remove(winston.transports.Console);
 
-    transports.forEach(function(t) {
+    transports.forEach(function (t) {
       // timestamp option takes either Boolean value or Function that returns value as string
-      if (t.options.timestamp) t.options.timestamp = function() { return moment().format('YYYY-MM-DD HH:mm:ss'); };
+      if (t.options.timestamp) t.options.timestamp = function () { return moment().format('YYYY-MM-DD HH:mm:ss'); };
       winston.add(eval(t.type), t.options);
     });
   }
@@ -53,10 +53,10 @@ function prepareMetaInGlobal(meta) {
 function wrapOriginalLevels(winston) {
   const _origLevels = {};
 
-  Object.keys(winston.levels).forEach(function(level) {
+  Object.keys(winston.levels).forEach(function (level) {
     _origLevels[level] = winston[level];
 
-    winston[level] = function() {
+    winston[level] = function () {
       const args = Array.prototype.slice.call(arguments);
       return _origLevels[level].apply(winston, args.concat(logstashMeta));
     };

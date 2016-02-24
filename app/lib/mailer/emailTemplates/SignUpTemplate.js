@@ -15,7 +15,7 @@ export default class SignUp {
 
     // TODO verify if `from` is a valid email address
     if (!(mailOpts.from && mailOpts.subject)) throw new Error('`from` and `subject` are required');
-    this.from    = mailOpts.from;
+    this.from = mailOpts.from;
     this.subject = mailOpts.subject;
 
     // no validation on this piece of data

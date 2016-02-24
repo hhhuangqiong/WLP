@@ -3,21 +3,21 @@ var createStore = require('fluxible/addons/createStore');
 var SignInStore = createStore({
   storeName: 'SignInStore',
 
-  initialize: function() {
+  initialize: function () {
     this.trial = 0;
   },
 
-  getNumberOfTrial: function() {
+  getNumberOfTrial: function () {
     return this.trial;
   },
 
-  dehydrate: function() {
+  dehydrate: function () {
     return {
       trial: this.trial
     };
   },
 
-  rehydrate: function(state) {
+  rehydrate: function (state) {
     this.trial = state.trial;
   }
 });

@@ -73,7 +73,7 @@ describe('CircleIcon', () => {
     expect(mediumIconBox.getDOMNode().style.height).toEqual(`${mediumSizeMockData.height}px`);
   });
 
-  it('change the component icon', function() {
+  it('change the component icon', function () {
     const adminMockData = { icon: 'icon-administrator' };
     const marketerMockData = { icon: 'icon-marketer' };
 

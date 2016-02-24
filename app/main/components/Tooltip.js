@@ -59,7 +59,7 @@ const Tooltip = React.createClass({
     return (
       <div ref="tooltipWrapper" className={classNames('tooltip-wrapper', this.props.cssName)}>
         {this.props.children}
-        <span ref="tooltip" className={classNames('reactTooltip', placement, 'type-dark', this.props.cssName, {hide: !this.state.showTooltip})}>
+        <span ref="tooltip" className={classNames('reactTooltip', placement, 'type-dark', this.props.cssName, { hide: !this.state.showTooltip })}>
           {this.props.tip}
         </span>
       </div>

@@ -5,7 +5,7 @@ import moment from 'moment';
 export default class TimeFramePicker extends Component {
   render() {
     return (
-      <div className={classNames(`time-frame-picker`, this.props.className, this.props.customClass)}>
+      <div className={classNames('time-frame-picker', this.props.className, this.props.customClass)}>
         {
           this.props.frames.map(frame => {
             return (

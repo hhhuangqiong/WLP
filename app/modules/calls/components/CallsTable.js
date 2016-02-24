@@ -51,7 +51,7 @@ const CallsTable = React.createClass({
         <CountryFlag className="left" code={countryCode} />
         <div className="left">
           <span className={callType}>{number}</span>
-          <br/>
+          <br />
           <span>{countryName}</span>
         </div>
       </div>

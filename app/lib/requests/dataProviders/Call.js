@@ -5,8 +5,8 @@ import Q from 'q';
 import request from 'superagent';
 import util from 'util';
 
-import {buildCallSolrQueryString} from '../queryBuilder/call';
-import {constructOpts, formatDateString, swapDate, composeSolrResponse, handleError} from '../helper';
+import { buildCallSolrQueryString } from '../queryBuilder/call';
+import { constructOpts, formatDateString, swapDate, composeSolrResponse, handleError } from '../helper';
 import qs from 'qs';
 
 export default class CallsRequest {
@@ -45,10 +45,10 @@ export default class CallsRequest {
     function normalizeData(params) {
       const query = {};
 
-      query.from    = params.from;
-      query.to      = params.to;
-      query.page    = params.page || 0;
-      query.size    = params.size || 20;
+      query.from = params.from;
+      query.to = params.to;
+      query.page = params.page || 0;
+      query.size = params.size || 20;
 
       // jscs:disable requireCamelCaseOrUpperCaseIdentifiers
       if (params.caller_carrier) {
@@ -127,7 +127,7 @@ export default class CallsRequest {
    */
   filterCalls(data, pageSize, cb) {
     if (data && data.content) {
-      data.content = _.filter(data.content, function(call) {
+      data.content = _.filter(data.content, function (call) {
         if (call.type.toLowerCase() === 'offnet') {
           return call.source === 'GATEWAY';
         }

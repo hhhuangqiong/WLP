@@ -24,7 +24,7 @@ const Remark = React.createClass({
     return (
       <span className="calls-table__remark" onMouseEnter={this._handleMouseEnter} onMouseLeave={this._handleMouseLeave}>
         <i className="icon-error6" />
-        <span ref="tooltip" className={classNames('reactTooltip', 'place-left', 'type-dark', {hide: !this.state.showTooltip})}>
+        <span ref="tooltip" className={classNames('reactTooltip', 'place-left', 'type-dark', { hide: !this.state.showTooltip })}>
           {this.props.tip}
         </span>
       </span>

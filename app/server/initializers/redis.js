@@ -6,7 +6,7 @@ import _ from 'lodash';
  * @param {object} nconf nconf instance
  * @return {object} Redis client
  */
-export default function(redisConfig) {
+export default function (redisConfig) {
   let client;
 
   if (!_.has(redisConfig, 'sentinels')) {

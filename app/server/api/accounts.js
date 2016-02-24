@@ -5,7 +5,7 @@ import * as saUtil from '../../utils/superagent';
 const debug = require('debug')('app:server/api/accounts');
 const genericHandler = _.partial(saUtil.genericHandler, debug);
 
-export default function(apiPrefix = '') {
+export default function (apiPrefix = '') {
   return {
     getAccounts(params, cb) {
       superagent

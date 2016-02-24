@@ -112,14 +112,14 @@ let TabButton = React.createClass({
     onClick: PropTypes.func.isRequired
   },
 
-  getDefaultProps: function() {
+  getDefaultProps: function () {
     return {
       title: 'tab',
       isActive: false
     };
   },
 
-  render: function() {
+  render: function () {
     return (
       <li className="tab__title">
         <a className={classNames({ active: this.props.isActive })} onClick={ this.props.onClick }>
@@ -144,14 +144,14 @@ let TabPanel = React.createClass({
     isActive: PropTypes.bool.isRequired
   },
 
-  getDefaultProps: function() {
+  getDefaultProps: function () {
     return {
       title: 'tab',
       isActive: false
     };
   },
 
-  render: function() {
+  render: function () {
     return (
       <div className={classNames('row', { hide: !this.props.isActive })}>
         { this.props.children }

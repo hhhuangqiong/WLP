@@ -1,9 +1,9 @@
 import { SIGN_IN } from '../../server/paths';
 
-module.exports = function(context, payload, done) {
+module.exports = function (context, payload, done) {
   context.dispatch('SIGN_OUT_START');
 
-  context.api.signOut(function(err) {
+  context.api.signOut(function (err) {
     if (err) {
       context.dispatch('SIGN_OUT_FAILURE', err);
       done();

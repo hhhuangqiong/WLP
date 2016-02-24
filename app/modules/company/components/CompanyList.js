@@ -1,6 +1,6 @@
 import _ from 'lodash';
 import React, { PropTypes } from 'react';
-import {Link} from 'react-router';
+import { Link } from 'react-router';
 import classNames from 'classnames';
 
 import { getCountryName } from '../../../utils/StringFormatter';
@@ -74,7 +74,7 @@ const CompanyList = React.createClass({
             type="text" placeholder="search company"
             onChange={this._handleSearchChange}
           />
-          <i className="icon-search"/>
+          <i className="icon-search" />
         </nav>
         <ul className="company-sidebar__list">
           {this._getFilteredCompanies(this.props.companies).map(this.renderCompanyListItem)}

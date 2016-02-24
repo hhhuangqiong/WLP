@@ -16,12 +16,12 @@ export default function processFn(mailer) {
   // MAYBE define an interface for mailer implementation
   if (!_.isFunction(mailer.send)) throw new Error('mailer should have #send method');
 
-  return function(job, done) {
+  return function (job, done) {
     logger.debug('Email job details %j', job, {});
     const data = job.data;
 
     // MAYBE stronger data structure protocol between job & processor
-    const mailOpts     = data.mailOpts;
+    const mailOpts = data.mailOpts;
     const templateName = data.templateName;
     const templateData = data.templateData;
 

@@ -3,11 +3,11 @@ import logger from 'winston';
 import mongoose from 'mongoose';
 import Q from 'q';
 
-const db         = mongoose.connection.db;
-const GridStore  = mongoose.mongo.GridStore;
+const db = mongoose.connection.db;
+const GridStore = mongoose.mongo.GridStore;
 const mongoDrive = mongoose.mongo;
 
-const getImage = function(req, res, next) {
+const getImage = function (req, res, next) {
   function readImageProperties(imageId, cb) {
     const gfs = new Grid(db, mongoDrive);
 

@@ -14,7 +14,7 @@ const MainContent = React.createClass({
     return (
       <div className="row">
         <div className="large-24 columns">
-          <RouteHandler/>
+          <RouteHandler />
         </div>
       </div>
     );

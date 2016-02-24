@@ -5,7 +5,7 @@ import * as saUtil from '../../utils/superagent';
 const debug = require('debug')('app:server/api/vsf');
 const genericHandler = _.partial(saUtil.genericHandler, debug);
 
-export default function(apiPrefix = '') {
+export default function (apiPrefix = '') {
   const carrierBasePath = `${apiPrefix}/carriers`;
 
   return {

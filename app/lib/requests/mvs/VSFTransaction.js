@@ -1,11 +1,11 @@
-import logger  from 'winston';
-import moment  from 'moment';
-import Q       from 'q';
+import logger from 'winston';
+import moment from 'moment';
+import Q from 'q';
 import request from 'superagent';
-import util    from 'util';
-import qs      from 'qs';
+import util from 'util';
+import qs from 'qs';
 
-import {constructOpts, handleError} from '../helper';
+import { constructOpts, handleError } from '../helper';
 
 const LONG_DATE_FORMAT = 'YYYY-MM-DDTHH:MM:ss[Z]';
 
@@ -32,7 +32,7 @@ export default class VSFTransactionRequest {
 
     // parse the date object and render it as predefined time string
     params.fromTime = moment.utc(fromTime).format(LONG_DATE_FORMAT);
-    params.toTime   = moment.utc(toTime).format(LONG_DATE_FORMAT);
+    params.toTime = moment.utc(toTime).format(LONG_DATE_FORMAT);
 
     return cb(null, params);
   }

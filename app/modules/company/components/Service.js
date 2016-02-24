@@ -54,7 +54,7 @@ const CompanyService = React.createClass({
 
   // expose from ValidationMixin
   validatorTypes() {
-    return _.reduce(this.refs, function(rules, component) {
+    return _.reduce(this.refs, function (rules, component) {
       _.merge(rules, _.isFunction(component.getValidatorTypes) && component.getValidatorTypes());
       return rules;
     }, {});
@@ -62,7 +62,7 @@ const CompanyService = React.createClass({
 
   // expose from ValidationMixin
   getValidatorData() {
-    return _.reduce(this.refs, function(rules, component) {
+    return _.reduce(this.refs, function (rules, component) {
       _.merge(rules, _.isFunction(component.getValidatorData) && component.getValidatorData());
       return rules;
     }, {});
@@ -94,7 +94,7 @@ const CompanyService = React.createClass({
         applicationId: this.state.serviceConfig.applicationId,
         developerKey: this.state.serviceConfig.developerKey,
         developerSecret: this.state.serviceConfig.developerSecret,
-        applications: _.merge(this.state.serviceConfig.applications, {[platformName]: {name: e.target.value}}),
+        applications: _.merge(this.state.serviceConfig.applications, { [platformName]: { name: e.target.value } }),
       },
     });
   },

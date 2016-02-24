@@ -49,7 +49,7 @@ const getCarrierExportCancel = (req, res) => {
   kue.Job.get(req.query.exportId, (err, job) => {
     if (err) return responseError(GET_JOB_ERROR, res, err);
 
-    job.remove(function(err) {
+    job.remove(function (err) {
       if (err) return responseError(GET_JOB_ERROR, res, err);
       return res.status(200).json({ id: job.id });
     });

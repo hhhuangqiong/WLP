@@ -223,7 +223,7 @@ const BasicInformation = React.createClass({
               <ul className="button-group round even-2">
                 <li>
                   <a
-                    className={classNames('button', {active: !this.props.reseller})}
+                    className={classNames('button', { active: !this.props.reseller })}
                     onClick={_.bindKey(this.props, 'onSetReseller', false)}
                     >
                     default
@@ -232,7 +232,7 @@ const BasicInformation = React.createClass({
                 </li>
                 <li>
                   <a
-                    className={classNames('button', {active: this.props.reseller})}
+                    className={classNames('button', { active: this.props.reseller })}
                     onClick={_.bindKey(this.props, 'onSetReseller', true)}
                     >
                     reseller
@@ -257,10 +257,10 @@ const BasicInformation = React.createClass({
             <InputGroup.Input>
               <ul className="button-group round even-2">
                 <li>
-                  <a className={classNames('button', {active: this._isWhiteLabel(this.props.carrierId)})}>whitelabel</a>
+                  <a className={classNames('button', { active: this._isWhiteLabel(this.props.carrierId) })}>whitelabel</a>
                 </li>
                 <li>
-                  <a className={classNames('button', {active: this._isSDK(this.props.carrierId)})}>sdk</a>
+                  <a className={classNames('button', { active: this._isSDK(this.props.carrierId) })}>sdk</a>
                 </li>
               </ul>
             </InputGroup.Input>

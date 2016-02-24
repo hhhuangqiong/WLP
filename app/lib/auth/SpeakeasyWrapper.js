@@ -23,7 +23,7 @@ export default class SpeakeasyWrapper {
     }
 
     this.encoding = encoding || 'ascii';
-    this.name     = opts.name || '';
+    this.name = opts.name || '';
   }
 
   /**

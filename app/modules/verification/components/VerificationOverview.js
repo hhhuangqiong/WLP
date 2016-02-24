@@ -238,8 +238,8 @@ export default React.createClass({
       <div className="row">
         <FilterBar.Wrapper>
           <FilterBar.NavigationItems>
-            <Link to="verification" params={{role, identity}}>Overview</Link>
-            <Link to="verification-details" params={{role, identity}}>Details Report</Link>
+            <Link to="verification" params={{ role, identity }}>Overview</Link>
+            <Link to="verification-details" params={{ role, identity }}>Details Report</Link>
           </FilterBar.NavigationItems>
           <FilterBar.LeftItems>
             {/* Need not to provide selection when there is only one single selected options to avoid confusion */}
@@ -273,7 +273,7 @@ export default React.createClass({
           <div className="large-16 columns">
             <Panel.Wrapper>
               <div className="header narrow"><h5 className="title">Summary</h5></div>
-              <div className={classNames('body', 'verification-overview__summary', {error: this.state.attemptsError || this.state.pastAttemptsError})}>
+              <div className={classNames('body', 'verification-overview__summary', { error: this.state.attemptsError || this.state.pastAttemptsError })}>
                 <SummaryCells
                   isLoading={this.isLoading()}
                   accumulatedAttempts={this.state.accumulatedAttempts}
@@ -290,7 +290,7 @@ export default React.createClass({
 
             <Panel.Wrapper>
               <div className="header narrow"><h5 className="title">Verification Attempt</h5></div>
-              <div className={classNames('body', 'verification-overview__attempt', {error: this.state.attemptsError})}>
+              <div className={classNames('body', 'verification-overview__attempt', { error: this.state.attemptsError })}>
                 {this.renderAttemptInfo()}
                 <div className="large-24 columns verification-overview__attempt__chart">
                   <LineChart
@@ -312,7 +312,7 @@ export default React.createClass({
 
             <Panel.Wrapper>
               <div className="header narrow"><h5 className="title">Top 10 numbers of verification attempts in the world</h5></div>
-              <div className={classNames('body', 'verification-overview__country', {error: this.state.countriesError})}>
+              <div className={classNames('body', 'verification-overview__country', { error: this.state.countriesError })}>
                 <div className="large-10 columns">
                   {this.renderCountryTable()}
                 </div>
@@ -327,7 +327,7 @@ export default React.createClass({
           <div className="large-8 columns">
             <Panel.Wrapper>
               <div className="header narrow"><h5 className="title">Verification by method</h5></div>
-              <div className={classNames('verification-overview__method', {error: this.state.typeError})}>
+              <div className={classNames('verification-overview__method', { error: this.state.typeError })}>
                 <Panel.Body>
                   <DonutChartPanel
                     className="method-donut"
@@ -342,7 +342,7 @@ export default React.createClass({
 
             <Panel.Wrapper>
               <div className="header narrow"><h5 className="title">Verification OS type</h5></div>
-              <div className={classNames('verification-overview__os', {error: this.state.osError})}>
+              <div className={classNames('verification-overview__os', { error: this.state.osError })}>
                 <Panel.Body>
                   <DonutChartPanel
                     className="os-donut"

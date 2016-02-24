@@ -44,16 +44,16 @@ export default React.createClass({
     return (
       <table className="widget-table overview-table large-centered columns">
         <tr>
-          <td rowSpan="2" dangerouslySetInnerHTML={{__html: widgets[6] || errorMessage}}></td>
-          <td dangerouslySetInnerHTML={{__html: widgets[0] || errorMessage}}></td>
-          <td dangerouslySetInnerHTML={{__html: widgets[1] || errorMessage}}></td>
-          <td dangerouslySetInnerHTML={{__html: widgets[2] || errorMessage}}></td>
+          <td rowSpan="2" dangerouslySetInnerHTML={{ __html: widgets[6] || errorMessage }}></td>
+          <td dangerouslySetInnerHTML={{ __html: widgets[0] || errorMessage }}></td>
+          <td dangerouslySetInnerHTML={{ __html: widgets[1] || errorMessage }}></td>
+          <td dangerouslySetInnerHTML={{ __html: widgets[2] || errorMessage }}></td>
         </tr>
 
         <tr>
-          <td dangerouslySetInnerHTML={{__html: widgets[3] || errorMessage}}></td>
-          <td dangerouslySetInnerHTML={{__html: widgets[4] || errorMessage}}></td>
-          <td dangerouslySetInnerHTML={{__html: widgets[5] || errorMessage}}></td>
+          <td dangerouslySetInnerHTML={{ __html: widgets[3] || errorMessage }}></td>
+          <td dangerouslySetInnerHTML={{ __html: widgets[4] || errorMessage }}></td>
+          <td dangerouslySetInnerHTML={{ __html: widgets[5] || errorMessage }}></td>
         </tr>
       </table>
     );

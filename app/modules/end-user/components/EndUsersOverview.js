@@ -508,7 +508,7 @@ const EndUsersOverview = React.createClass({
   },
 
   _getMonthlyRegisteredUserStats() {
-    const { thisMonthRegistered, lastMonthRegistered  } = this.state;
+    const { thisMonthRegistered, lastMonthRegistered } = this.state;
     const registeredUserChange = thisMonthRegistered - lastMonthRegistered;
 
     return {

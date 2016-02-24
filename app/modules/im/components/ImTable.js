@@ -107,7 +107,7 @@ const ImTable = React.createClass({
             <span className={classNames('im-message-type-icon', imType.className, u.message_type)}></span>
             <div className="im-message-type-info">
               <span className={"im-message-type-text dark"}>{imType.title || LABEL_FOR_NULL}</span>
-              <br/>
+              <br />
               <span className={"im-message-type-size"}>{typeSize}</span>
             </div>
           </td>
@@ -115,7 +115,7 @@ const ImTable = React.createClass({
             <CountryFlag className="left" code={u.origin} />
             <div className="sender_info">
               <span className="sender dark">{sender}</span>
-              <br/>
+              <br />
               <span>{getCountryName(u.origin)}</span>
             </div>
           </td>
@@ -127,7 +127,7 @@ const ImTable = React.createClass({
             <If condition={_.isArray(u.recipients)}>
               <div className="recipient_info">
                 <div className="icon-multiuser"></div>
-                <Tooltip placement="right" trigger={['hover']} overlay={u.recipients.map((n)=>{return <span className="recip-info">{n}</span>;})}>
+                <Tooltip placement="right" trigger={['hover']} overlay={u.recipients.map((n) => {return <span className="recip-info">{n}</span>;})}>
                   <span className="recipient-num">{u.recipients.length} Recipients</span>
                 </Tooltip>
               </div>
@@ -136,7 +136,7 @@ const ImTable = React.createClass({
                 <CountryFlag className="left" code={u.destination} />
                 <div className="recipient_info">
                   <span className="recipient">{u.recipient}</span>
-                  <br/>
+                  <br />
                 <span>{getCountryName(u.destination)}</span>
                 </div>
               </div>

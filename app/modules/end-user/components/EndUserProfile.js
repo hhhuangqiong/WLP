@@ -122,7 +122,7 @@ const EndUserProfile = React.createClass({
         <Item label="Gender" capitalize>
           <span className="gender-label">
             <i
-              className={classNames({'icon-male': this.props.user.userDetails.gender === 'male', 'icon-female': this.props.user.userDetails.gender === 'female'})}/>
+              className={classNames({ 'icon-male': this.props.user.userDetails.gender === 'male', 'icon-female': this.props.user.userDetails.gender === 'female' })} />
             {this.props.user.userDetails.gender || EMPTY_STRING}
           </span>
         </Item>
@@ -136,7 +136,7 @@ const EndUserProfile = React.createClass({
         <Accordion.Navigation title="App Info">
           <Item label="Device">
             <span className="device-label">
-              <i className={classNames({'icon-apple': this.checkPlatformOS(device.platform, 'ios') }, {'icon-android': this.checkPlatformOS(device.platform, 'android') })} />
+              <i className={classNames({ 'icon-apple': this.checkPlatformOS(device.platform, 'ios') }, { 'icon-android': this.checkPlatformOS(device.platform, 'android') })} />
               {device.platform}
             </span>
           </Item>
@@ -157,7 +157,7 @@ const EndUserProfile = React.createClass({
     return (
       <If condition={this.props.user && this.props.user.userDetails}>
         <Panel.Wrapper addOn>
-          <Panel.Header title={this.props.user.userDetails.displayName}/>
+          <Panel.Header title={this.props.user.userDetails.displayName} />
           <Panel.Body>
             <Accordion.Wrapper offsetMargin>
               {this.renderWalletPanel()}

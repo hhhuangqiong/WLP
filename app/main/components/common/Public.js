@@ -1,7 +1,7 @@
-import React              from 'react';
-import { RouteHandler }     from 'react-router';
-import SystemMessage      from './SystemMessage';
-import LoadingSpinner     from './LoadingSpinner';
+import React from 'react';
+import { RouteHandler } from 'react-router';
+import SystemMessage from './SystemMessage';
+import LoadingSpinner from './LoadingSpinner';
 
 const Public = React.createClass({
   render() {
@@ -19,7 +19,7 @@ const Public = React.createClass({
             <div className="panel panel--extra">
               <div className="row">
                 <div className="large-24 columns">
-                  <RouteHandler/>
+                  <RouteHandler />
                 </div>
               </div>
             </div>

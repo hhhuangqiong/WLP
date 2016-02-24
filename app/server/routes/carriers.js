@@ -7,23 +7,23 @@ import { fetchDep } from '../utils/bottle';
 import { countries } from 'country-data';
 import { makeCacheKey } from '../utils/apiCache';
 
-const endUserRequest      = fetchDep(nconf.get('containerName'), 'EndUserRequest');
-const walletRequest       = fetchDep(nconf.get('containerName'), 'WalletRequest');
-const callsRequest        = fetchDep(nconf.get('containerName'), 'CallsRequest');
-const topUpRequest        = fetchDep(nconf.get('containerName'), 'TopUpRequest');
-const imRequest           = fetchDep(nconf.get('containerName'), 'ImRequest');
-const vsfRequest          = fetchDep(nconf.get('containerName'), 'VSFTransactionRequest');
+const endUserRequest = fetchDep(nconf.get('containerName'), 'EndUserRequest');
+const walletRequest = fetchDep(nconf.get('containerName'), 'WalletRequest');
+const callsRequest = fetchDep(nconf.get('containerName'), 'CallsRequest');
+const topUpRequest = fetchDep(nconf.get('containerName'), 'TopUpRequest');
+const imRequest = fetchDep(nconf.get('containerName'), 'ImRequest');
+const vsfRequest = fetchDep(nconf.get('containerName'), 'VSFTransactionRequest');
 const verificationRequest = fetchDep(nconf.get('containerName'), 'VerificationRequest');
-const callStatsRequest    = fetchDep(nconf.get('containerName'), 'CallStatsRequest');
-const userStatsRequest    = fetchDep(nconf.get('containerName'), 'UserStatsRequest');
-const redisClient         = fetchDep(nconf.get('containerName'), 'RedisClient');
+const callStatsRequest = fetchDep(nconf.get('containerName'), 'CallStatsRequest');
+const userStatsRequest = fetchDep(nconf.get('containerName'), 'UserStatsRequest');
+const redisClient = fetchDep(nconf.get('containerName'), 'RedisClient');
 
 import SmsRequest from '../../lib/requests/dataProviders/SMS';
 import PortalUser from '../../collections/portalUser';
-import Company    from '../../collections/company';
+import Company from '../../collections/company';
 
-import {parseVerificationStatistic} from '../parser/verificationStats';
-import {parseTotalAtTime, parseMonthlyTotalInTime} from '../parser/userStats';
+import { parseVerificationStatistic } from '../parser/verificationStats';
+import { parseTotalAtTime, parseMonthlyTotalInTime } from '../parser/userStats';
 
 // @NB please suggest where the below array can be moved to as constant
 const DEFAULT_MESSAGE_TYPES = ['text', 'image', 'audio', 'video', 'remote', 'animation', 'sticker', 'voice_sticker', 'ephemeral_image'];
@@ -61,7 +61,7 @@ function prepareValidationMessage(validationErrors) {
 }
 
 // '/carriers/:carrierId/users'
-const getUsers = function(req, res) {
+const getUsers = function (req, res) {
   req.checkParams('carrierId').notEmpty();
   req.checkQuery('fromTime').notEmpty();
   req.checkQuery('toTime').notEmpty();
@@ -75,7 +75,7 @@ const getUsers = function(req, res) {
     pageNumberIndex: req.query.page,
   };
 
-  const DateFormatErrors = function(dateFormat) {
+  const DateFormatErrors = function (dateFormat) {
     return !moment(queries.startDate, dateFormat).isValid() || !moment(queries.endDate, dateFormat).isValid();
   };
 
@@ -97,20 +97,20 @@ const getUsers = function(req, res) {
 };
 
 // '/carriers/:carrierId/users/:username/wallet'
-const getUsername = function(req, res) {
+const getUsername = function (req, res) {
   req.checkParams('carrierId').notEmpty();
   req.checkParams('username').notEmpty();
 
   const user = {};
 
-  const prepareEndUserRequestParams = _.bind(function() {
+  const prepareEndUserRequestParams = _.bind(function () {
     return {
       carrierId: this.carrierId.trim(),
       username: this.username.trim(),
     };
   }, req.params);
 
-  const prepareWalletRequestParams = function(user) {
+  const prepareWalletRequestParams = function (user) {
     const username = user.userDetails.username;
     const firstLetter = username && username.charAt(0);
 
@@ -121,15 +121,15 @@ const getUsername = function(req, res) {
     };
   };
 
-  const sendEndUserRequest = _.bind(function(params) {
+  const sendEndUserRequest = _.bind(function (params) {
     return Q.ninvoke(this, 'getUser', params.carrierId, params.username);
   }, endUserRequest);
 
-  const sendWalletRequest = _.bind(function(params) {
+  const sendWalletRequest = _.bind(function (params) {
     return Q.ninvoke(this, 'getWalletBalance', params);
   }, walletRequest);
 
-  const appendUserData = _.bind(function(user) {
+  const appendUserData = _.bind(function (user) {
     if (user.error) {
       throw new Error('cannot find user.');
     }
@@ -141,7 +141,7 @@ const getUsername = function(req, res) {
     return this;
   }, user);
 
-  const appendWalletData = _.bind(function(wallets) {
+  const appendWalletData = _.bind(function (wallets) {
     if (wallets) {
       this.wallets = wallets;
     }
@@ -180,11 +180,11 @@ const getUsername = function(req, res) {
 };
 
 // '/carriers/:carrierId/users/:username/wallet'
-const getUserWallet = function(req, res) {
+const getUserWallet = function (req, res) {
   req.checkParams('carrierId').notEmpty();
   req.checkParams('username').notEmpty();
 
-  const prepareWalletRequestParams = _.bind(function() {
+  const prepareWalletRequestParams = _.bind(function () {
     return {
       carrier: this.carrierId.trim(),
       number: this.username[0] === '+' ? this.username.substring(1, this.username.length) : this.username,
@@ -192,7 +192,7 @@ const getUserWallet = function(req, res) {
     };
   }, req.params);
 
-  const sendWalletRequest = _.bind(function(params) {
+  const sendWalletRequest = _.bind(function (params) {
     return Q.ninvoke(this, 'getWalletBalance', params);
   }, walletRequest);
 
@@ -215,7 +215,7 @@ const getUserWallet = function(req, res) {
 };
 
 // '/carriers/:carrierId/users/:username/suspension'
-const suspendUser = function(req, res) {
+const suspendUser = function (req, res) {
   req.checkParams('carrierId').notEmpty();
   req.checkParams('username').notEmpty();
 
@@ -240,7 +240,7 @@ const suspendUser = function(req, res) {
 };
 
 // '/carriers/:carrierId/users/:username/suspension'
-const reactivateUser = function(req, res) {
+const reactivateUser = function (req, res) {
   req.checkParams('carrierId').notEmpty();
   req.checkParams('username').notEmpty();
 
@@ -265,7 +265,7 @@ const reactivateUser = function(req, res) {
 };
 
 // '/carriers/:carrierId/calls'
-const getCalls = function(req, res) {
+const getCalls = function (req, res) {
   req.checkParams('carrierId').notEmpty();
   req.checkQuery('startDate').notEmpty();
   req.checkQuery('endDate').notEmpty();
@@ -309,7 +309,7 @@ const getCalls = function(req, res) {
 };
 
 // '/carriers/:carrierId/topup'
-const getTopUp = function(req, res) {
+const getTopUp = function (req, res) {
   req.checkParams('carrierId').notEmpty();
   req.checkQuery('startDate').notEmpty();
   req.checkQuery('endDate').notEmpty();
@@ -347,7 +347,7 @@ const getTopUp = function(req, res) {
 };
 
 // '/carriers/:carrierId/widgets/:type(calls|im|overview|store|sms|vsf)?userId'
-const getWidgets = function(req, res) {
+const getWidgets = function (req, res) {
   req.checkParams('carrierId').notEmpty();
   req.checkParams('type').notEmpty();
   req.checkQuery('userId').notEmpty();
@@ -404,7 +404,7 @@ const getWidgets = function(req, res) {
 };
 
 // '/carriers/:carrierId/sms'
-const getSMS = function(req, res) {
+const getSMS = function (req, res) {
   req.checkParams('carrierId').notEmpty();
   req.checkQuery('page').notEmpty().isInt();
   req.checkQuery('pageRec').notEmpty().isInt();
@@ -442,7 +442,7 @@ const getSMS = function(req, res) {
 };
 
 // '/carriers/:carrierId/im'
-const getIM = function(req, res) {
+const getIM = function (req, res) {
   req.checkParams('carrierId').notEmpty();
   req.checkQuery('fromTime').notEmpty();
   req.checkQuery('toTime').notEmpty();
@@ -496,7 +496,7 @@ const getIM = function(req, res) {
 };
 
 // '/carriers/:carrierId/vsf'
-const getVSF = function(req, res) {
+const getVSF = function (req, res) {
   req.checkParams('carrierId').notEmpty();
   req.checkQuery('fromTime').notEmpty();
   req.checkQuery('toTime').notEmpty();
@@ -544,7 +544,7 @@ const getVSF = function(req, res) {
 };
 
 // '/carriers/:carrierId/verifications'
-const getVerifications = function(req, res) {
+const getVerifications = function (req, res) {
   req.checkParams('carrierId').notEmpty();
   req.checkQuery('application').notEmpty();
   req.checkQuery('from').notEmpty();
@@ -587,7 +587,7 @@ const getVerifications = function(req, res) {
   });
 };
 
-const validateStatisticsRequest = function(req, cb) {
+const validateStatisticsRequest = function (req, cb) {
   req.checkParams('carrierId').notEmpty();
   req.checkQuery('application').notEmpty();
   req.checkQuery('from').notEmpty();
@@ -596,7 +596,7 @@ const validateStatisticsRequest = function(req, cb) {
   cb(req.validationErrors());
 };
 
-const mapVerificationStatsRequestParameters = function(req) {
+const mapVerificationStatsRequestParameters = function (req) {
   return _.omit({
     carrier: req.params.carrierId,
     application: req.query.application,
@@ -609,7 +609,7 @@ const mapVerificationStatsRequestParameters = function(req) {
   });
 };
 
-const getVerificationStatistics = function(req, res) {
+const getVerificationStatistics = function (req, res) {
   validateStatisticsRequest(req, err => {
     if (err) {
       return res.status(400).json({
@@ -643,7 +643,7 @@ const getVerificationStatistics = function(req, res) {
   });
 };
 
-const getEndUsersStatsTotal = function(req, res) {
+const getEndUsersStatsTotal = function (req, res) {
   req.checkParams('carrierId').notEmpty();
   req.checkQuery('fromTime').notEmpty();
   req.checkQuery('toTime').notEmpty();
@@ -688,7 +688,7 @@ const getEndUsersStatsTotal = function(req, res) {
     }).done();
 };
 
-const getEndUsersStatsMonthly = function(req, res) {
+const getEndUsersStatsMonthly = function (req, res) {
   req.checkParams('carrierId').notEmpty();
   req.checkQuery('fromTime').notEmpty();
   req.checkQuery('toTime').notEmpty();
@@ -806,7 +806,7 @@ const getEndUsersStatsMonthly = function(req, res) {
     .done();
 };
 
-const getEndUsersStats = function(req, res) {
+const getEndUsersStats = function (req, res) {
   req.checkParams('carrierId').notEmpty();
   req.checkQuery('fromTime').notEmpty();
   req.checkQuery('toTime').notEmpty();
@@ -832,10 +832,10 @@ const getEndUsersStats = function(req, res) {
   }, val => { return !val; });
 
   switch (type) {
-  case 'registration':
-    params.breakdown = 'carrier';
+    case 'registration':
+      params.breakdown = 'carrier';
 
-    Q.allSettled([
+      Q.allSettled([
       Q.ninvoke(userStatsRequest, 'getNewUserStats', params),
       Q.ninvoke(userStatsRequest, 'getActiveUserStats', params),
     ])
@@ -872,12 +872,12 @@ const getEndUsersStats = function(req, res) {
         });
       })
       .done();
-    break;
+      break;
 
-  case 'device':
-    params.breakdown = 'carrier,platform';
+    case 'device':
+      params.breakdown = 'carrier,platform';
 
-    Q.ninvoke(userStatsRequest, 'getUserStats', params)
+      Q.ninvoke(userStatsRequest, 'getUserStats', params)
         .then(stats => {
           const results = _.get(stats, 'results') || [];
 
@@ -904,12 +904,12 @@ const getEndUsersStats = function(req, res) {
           });
         })
         .done();
-    break;
+      break;
 
-  case 'geographic':
-    params.breakdown = 'country';
+    case 'geographic':
+      params.breakdown = 'country';
 
-    Q.ninvoke(userStatsRequest, 'getNewUserStats', params)
+      Q.ninvoke(userStatsRequest, 'getNewUserStats', params)
         .then(stats => {
           const results = _.get(stats, 'results') || [];
 
@@ -943,11 +943,11 @@ const getEndUsersStats = function(req, res) {
           });
         })
         .done();
-    break;
+      break;
   }
 };
 
-const getCallUserStatsMonthly = function(req, res) {
+const getCallUserStatsMonthly = function (req, res) {
   req.checkParams('carrierId').notEmpty();
   req.checkQuery('fromTime').notEmpty();
   req.checkQuery('toTime').notEmpty();
@@ -1017,11 +1017,11 @@ const getCallUserStatsMonthly = function(req, res) {
       // this is what we originally did:
       // do the query from data provider server
       Q.allSettled([
-          Q.ninvoke(callStatsRequest, 'getCallerStats', thisMonthParams),
-          Q.ninvoke(callStatsRequest, 'getCallerStats', lastMonthParams),
-          Q.ninvoke(callStatsRequest, 'getCalleeStats', thisMonthParams),
-          Q.ninvoke(callStatsRequest, 'getCalleeStats', lastMonthParams),
-        ])
+        Q.ninvoke(callStatsRequest, 'getCallerStats', thisMonthParams),
+        Q.ninvoke(callStatsRequest, 'getCallerStats', lastMonthParams),
+        Q.ninvoke(callStatsRequest, 'getCalleeStats', thisMonthParams),
+        Q.ninvoke(callStatsRequest, 'getCalleeStats', lastMonthParams),
+      ])
         .spread((thisMonthCallerStats, lastMonthCallerStats, thisMonthCalleeStats, lastMonthCalleeStats) => {
           let responses = [thisMonthCallerStats, lastMonthCallerStats, thisMonthCalleeStats, lastMonthCalleeStats];
           let errors = _.reduce(responses, (result, response) => {
@@ -1103,7 +1103,7 @@ const getCallUserStatsMonthly = function(req, res) {
     .done();
 };
 
-const getCallUserStatsTotal = function(req, res) {
+const getCallUserStatsTotal = function (req, res) {
   req.checkParams('carrierId').notEmpty();
   req.checkQuery('fromTime').notEmpty();
   req.checkQuery('toTime').notEmpty();

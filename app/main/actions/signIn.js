@@ -1,11 +1,11 @@
 import { ERROR_MESSAGE } from '../constants/actionTypes';
 import { userPath } from '../../server/paths';
 
-module.exports = function(context, payload, done) {
+module.exports = function (context, payload, done) {
   const { username, password } = payload;
 
   context.dispatch('SIGN_IN_START');
-  context.api.signIn(username, password, function(err, auth) {
+  context.api.signIn(username, password, function (err, auth) {
     if (err) {
       context.dispatch('SIGN_IN_FAILURE', err);
       context.dispatch(ERROR_MESSAGE, err);
@@ -25,7 +25,7 @@ module.exports = function(context, payload, done) {
     // the AuthStore needs to set its state to "authenticated"
     // before the transition
 
-    context.api.getAuthorityList(auth.user.carrierId, function(err, { carrierId, capability }) {
+    context.api.getAuthorityList(auth.user.carrierId, function (err, { carrierId, capability }) {
       const authority = context.getAuthority();
       authority.reset(carrierId, capability);
 

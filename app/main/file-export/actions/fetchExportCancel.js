@@ -1,6 +1,6 @@
 let debug = require('debug')('app:modules/file-export/actions/fetchExportCancel');
 
-export default function(context, params, done) {
+export default function (context, params, done) {
 
   context.dispatch('FETCH_EXPORT_CANCEL_START');
 

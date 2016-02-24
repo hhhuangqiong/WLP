@@ -33,7 +33,7 @@ const SearchBox = React.createClass({
       <div>
         <If condition={this.props.searchTypes}>
           <select className={classNames('top-bar-section__query-select', 'left')} name={this.props.searchTypeInputName} onChange={this.props.onSelectChangeHandler} value={this.props.selectedType}>
-            {this.props.searchTypes.map((type, index)=>{
+            {this.props.searchTypes.map((type, index) => {
               // this will trigger a warning of
               // `Use the `defaultValue` or `value` props on <select> instead of setting `selected` on <option>.`
               // from React, but without doing this,

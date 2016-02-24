@@ -1,7 +1,7 @@
-import _         from 'lodash';
-import bcrypt    from 'bcrypt';
-import moment    from 'moment';
-import mongoose  from 'mongoose';
+import _ from 'lodash';
+import bcrypt from 'bcrypt';
+import moment from 'moment';
+import mongoose from 'mongoose';
 import randtoken from 'rand-token';
 import speakeasy from 'speakeasy';
 
@@ -156,7 +156,7 @@ portalUserSchema.method('getCompany', function getCompany() {
  */
 portalUserSchema.method('googleAuthInfo', function googleAuthInfo(name = '', length = 32) {
   // jscs:disable requireCamelCaseOrUpperCaseIdentifiers
-  const result = speakeasy.generate_key({lenght: length, google_auth_qr: true, name: name});
+  const result = speakeasy.generate_key({ lenght: length, google_auth_qr: true, name: name });
   return this.set('googleAuth', { key: result.base32, encoding: 'base32', qrCodeUrl: result.google_auth_qr });
 });
 

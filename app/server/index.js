@@ -129,7 +129,7 @@ function initialize(port) {
     next();
   }
 
-  server.use(require('./middlewares/aclMiddleware'), handlePermissionError, function(req, res, next) {
+  server.use(require('./middlewares/aclMiddleware'), handlePermissionError, function (req, res, next) {
     if (config.DISABLE_ISOMORPHISM) {
       // Send empty HTML with just the config values
       // all rendering will be done by the client
@@ -150,7 +150,7 @@ function initialize(port) {
     });
 
     function doRenderApp() {
-      renderApp(context, req.url, function(err, html) {
+      renderApp(context, req.url, function (err, html) {
         if (err && err.notFound) {
           return res.status(404).send(html);
         }
@@ -169,7 +169,7 @@ function initialize(port) {
       });
     }
 
-    context.getActionContext().executeAction(loadSession, {}, function(err, session) {
+    context.getActionContext().executeAction(loadSession, {}, function (err, session) {
       if (!session) return doRenderApp();
 
       /* Check if current carrierId is a valid url */

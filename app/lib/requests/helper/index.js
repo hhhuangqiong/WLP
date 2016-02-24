@@ -26,7 +26,7 @@ export function constructOpts(opts) {
 export function formatDateString(params, format) {
   if (moment(params.from, 'L').isValid()) {
     params.from = moment(params.from, 'L').startOf('day').format(format);
-    params.to   = moment(params.to, 'L').endOf('day').format(format);
+    params.to = moment(params.to, 'L').endOf('day').format(format);
   }
 
   return params;
@@ -112,7 +112,7 @@ export function composeSolrResponse(response, pageSize) {
   const pageNumber = response.offset / pageSize;
   const totalPages = Math.ceil(response.total_elements / pageSize);
 
-  if ( !Number.isInteger(pageNumber) || !Number.isInteger(totalPages) ) {
+  if (!Number.isInteger(pageNumber) || !Number.isInteger(totalPages)) {
     throw new TypeError('`pageNumber` or `totalPages` must be integer');
   }
 

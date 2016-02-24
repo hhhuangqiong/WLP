@@ -48,14 +48,14 @@ export default class UserStatsRequest {
         query.from = params.from;
         query.to = params.to;
 
-        if (data.caller_carrier)  query.caller_carrier = data.caller_carrier;
-        if (data.timescale)   query.timescale = data.timescale;
-        if (data.timeWindow)  query.timeWindow = data.timeWindow;
-        if (data.breakdown)   query.breakdown = data.breakdown;
-        if (data.status)      query.status    = data.status;
-        if (data.countries)   query.countries = data.countries;
-        if (data.stat_type)   query.stat_type = data.stat_type;
-        if (data.type)        query.type      = data.type;
+        if (data.caller_carrier) query.caller_carrier = data.caller_carrier;
+        if (data.timescale) query.timescale = data.timescale;
+        if (data.timeWindow) query.timeWindow = data.timeWindow;
+        if (data.breakdown) query.breakdown = data.breakdown;
+        if (data.status) query.status = data.status;
+        if (data.countries) query.countries = data.countries;
+        if (data.stat_type) query.stat_type = data.stat_type;
+        if (data.type) query.type = data.type;
 
         return _.omit(query, (value) => { return !value; });
       })
@@ -151,7 +151,7 @@ export default class UserStatsRequest {
           // assume that the returned results are always with the
           // same order of segment
           output = _.reduce(resultSample, (data, result) => {
-            data.push({segment: _.get(result, 'segment'), data: []});
+            data.push({ segment: _.get(result, 'segment'), data: [] });
             return data;
           }, []);
 
@@ -173,13 +173,13 @@ export default class UserStatsRequest {
                 _.map(value.data, record => {
                   // the manually load balancing invades the correct t value,
                   // so it has to be overwritten here again with the resultIndex
-                  output[segmentIndex].data.push(_.merge(record, {t: resultIndex}));
+                  output[segmentIndex].data.push(_.merge(record, { t: resultIndex }));
                 });
 
               // if no identical segment is found,
               // populate an empty data set as it is unrecognisable
               } else {
-                output[segmentIndex].data.push({t: resultIndex, v: 0});
+                output[segmentIndex].data.push({ t: resultIndex, v: 0 });
               }
             });
           });

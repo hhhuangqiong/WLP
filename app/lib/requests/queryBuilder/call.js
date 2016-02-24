@@ -63,7 +63,7 @@ export default {
       }
     }
 
-    const queryResult = { q: qb.build(), sort: DEFAULT_SORT_ORDER, rows: params.size, start: (+params.page * params.size)};
+    const queryResult = { q: qb.build(), sort: DEFAULT_SORT_ORDER, rows: params.size, start: (+params.page * params.size) };
 
     return cb(null, queryResult);
   },

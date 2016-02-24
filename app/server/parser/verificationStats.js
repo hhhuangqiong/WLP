@@ -132,10 +132,10 @@ function parseStatsByCountry(data, cb) {
 function parseStatsByPlatform(data, cb) {
   const mapDataName = (platform) => {
     switch (platform) {
-    case 'ios':
-      return 'IOS';
-    default:
-      return _.capitalize(platform);
+      case 'ios':
+        return 'IOS';
+      default:
+        return _.capitalize(platform);
     }
   };
   return parseStatsByGroup(data, mapDataName, 'platform', DEFAULT_PLATFORMS, cb);
@@ -144,12 +144,12 @@ function parseStatsByPlatform(data, cb) {
 function parseStatsByType(data, cb) {
   const mapDataName = (type) => {
     switch (type) {
-    case 'MobileTerminated':
-      return 'Call-in';
-    case 'MobileOriginated':
-      return 'Call-out';
-    default:
-      return type;
+      case 'MobileTerminated':
+        return 'Call-in';
+      case 'MobileOriginated':
+        return 'Call-out';
+      default:
+        return type;
     }
   };
   return parseStatsByGroup(data, mapDataName, 'type', DEFAULT_TYPES, cb);
@@ -157,20 +157,20 @@ function parseStatsByType(data, cb) {
 
 export function parseVerificationStatistic(data, params, cb) {
   switch (params.breakdown) {
-  case 'success':
-    parseStatsByStatus(data, params, cb);
-    break;
-  case 'platform':
-    parseStatsByPlatform(data, cb);
-    break;
-  case 'type':
-    parseStatsByType(data, cb);
-    break;
-  case 'country':
-    parseStatsByCountry(data, cb);
-    break;
-  default:
-    cb(new Error('Unknown request type'));
-    break;
+    case 'success':
+      parseStatsByStatus(data, params, cb);
+      break;
+    case 'platform':
+      parseStatsByPlatform(data, cb);
+      break;
+    case 'type':
+      parseStatsByType(data, cb);
+      break;
+    case 'country':
+      parseStatsByCountry(data, cb);
+      break;
+    default:
+      cb(new Error('Unknown request type'));
+      break;
   }
 }

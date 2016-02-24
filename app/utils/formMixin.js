@@ -1,4 +1,4 @@
-const submitForm  = {
+const submitForm = {
   onSubmit() {
     $('#myModal').foundation('reveal', 'close');
   },

@@ -1,10 +1,10 @@
 let debug = require('debug')('app:actions/fetchCurrentCompanyInfo');
 
-export default function(context, params, done) {
+export default function (context, params, done) {
   debug('Started');
   context.dispatch('FETCH_COMPANY_INFO_START');
 
-  context.api.getCurrentCompanyInfo(params, function(err, result) {
+  context.api.getCurrentCompanyInfo(params, function (err, result) {
     if (err) {
       debug('Failed');
       context.dispatch('FETCH_COMPANY_INFO_FAILURE', err);

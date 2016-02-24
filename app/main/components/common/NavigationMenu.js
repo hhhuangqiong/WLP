@@ -1,6 +1,6 @@
 import _ from 'lodash';
 import React, { PropTypes } from 'react';
-import { Link }  from 'react-router';
+import { Link } from 'react-router';
 import FluxibleMixin from 'fluxible/addons/FluxibleMixin';
 
 import CompanySwitcher from './CompanySwitcher';
@@ -108,7 +108,7 @@ const Navigation = React.createClass({
           <li className="has-dropdown not-click navigation-bar__item">
             <a>
               <span>hi, {this.state.displayName}</span>
-              <i className="icon-more"/>
+              <i className="icon-more" />
             </a>
             <ul className="dropdown">
               <li className="navigation-bar__item">

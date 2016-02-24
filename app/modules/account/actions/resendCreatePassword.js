@@ -1,4 +1,4 @@
-export default function(context, params, done) {
+export default function (context, params, done) {
   context.api.resendCreatePassword(params, (err, { error, result }) => {
     if (err) {
       context.dispatch('RESEND_CREATE_PASSWORD_FAILURE', err);

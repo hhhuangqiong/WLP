@@ -4,11 +4,11 @@ import { userPath } from '../server/paths';
 module.exports = {
   statics: {
     willTransitionTo(transition) {
-      const authStore       = transition.context.getActionContext().getStore(AuthStore);
+      const authStore = transition.context.getActionContext().getStore(AuthStore);
 
       const isAuthenticated = authStore.isAuthenticated();
-      const role            = authStore.getUserRole();
-      const identity        = authStore.getCarrierId();
+      const role = authStore.getUserRole();
+      const identity = authStore.getCarrierId();
 
       const authority = transition.context.getComponentContext().getAuthority();
       const defaultPath = authority.getDefaultPath();

@@ -92,11 +92,11 @@ const EndUserStore = createStore({
   },
 
   handleEndUserDelete(payload) {
-    _.remove(this.displayUsers, function(user) {
+    _.remove(this.displayUsers, function (user) {
       return user.username === payload.username;
     });
 
-    _.remove(this.users, function(user) {
+    _.remove(this.users, function (user) {
       return user.username === payload.username;
     });
 

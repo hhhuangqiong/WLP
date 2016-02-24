@@ -1,5 +1,5 @@
 import _ from 'lodash';
-import {createStore} from 'fluxible/addons';
+import { createStore } from 'fluxible/addons';
 
 var TopUpStore = createStore({
   storeName: 'TopUpStore',
@@ -9,17 +9,17 @@ var TopUpStore = createStore({
     CLEAR_TOP_UP: 'handleClearTopUp'
   },
 
-  initialize: function() {
+  initialize: function () {
     this.histories = [];
     this.page = 1;
     this.totalRec = 0;
   },
 
-  handleClearTopUp: function() {
+  handleClearTopUp: function () {
     this.initialize();
   },
 
-  handleLoadTopUp: function(payload) {
+  handleLoadTopUp: function (payload) {
     if (payload) {
       this.histories = this.histories.concat(payload.history);
       this.totalRec = payload.totalRec;
@@ -33,19 +33,19 @@ var TopUpStore = createStore({
     this.emitChange();
   },
 
-  getTotalRec: function() {
+  getTotalRec: function () {
     return this.totalRec;
   },
 
-  getPage: function() {
+  getPage: function () {
     return this.page;
   },
 
-  getHistories: function() {
+  getHistories: function () {
     return this.histories;
   },
 
-  getState: function() {
+  getState: function () {
     return {
       histories: this.histories,
       totalRec: this.totalRec,
@@ -53,11 +53,11 @@ var TopUpStore = createStore({
     };
   },
 
-  dehydrate: function() {
+  dehydrate: function () {
     return this.getState();
   },
 
-  rehydrate: function(state) {
+  rehydrate: function (state) {
     this.histories = state.histories;
     this.totalRec = state.totalRec;
     this.page = state.page;

@@ -47,7 +47,7 @@ export default function apiActionCreator(key, apiMethod, opts = { debugPrefix: '
 
   var debug = require('debug')(`${opts.debugPrefix}:${key}`);
 
-  return function(context, params, done) {
+  return function (context, params, done) {
     debug('Started');
 
     let request;
@@ -64,7 +64,7 @@ export default function apiActionCreator(key, apiMethod, opts = { debugPrefix: '
       });
     } else {
       // default: return the *whole* result to `dispatch()`
-      request = context.api[apiMethod](params, function(err, result) {
+      request = context.api[apiMethod](params, function (err, result) {
         context.dispatch(lifecycle.END);
 
         if (err) {

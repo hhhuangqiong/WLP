@@ -26,7 +26,7 @@ export default class SMSRequest {
     if (!carrierId) throw new Error('`carrierId` is required');
     if (!cb || !_.isFunction(cb)) throw new Error('`cb` is required and must be a function');
 
-    const path  = `${this._baseUrl}/api/v1/sms/master/query`;
+    const path = `${this._baseUrl}/api/v1/sms/master/query`;
     const query = { carrier: carrierId };
 
     if (opts.from && opts.to) {

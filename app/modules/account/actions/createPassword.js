@@ -1,10 +1,10 @@
 import { ERROR_MESSAGE } from '../../../main/constants/actionTypes';
 import { userPath } from '../../../server/paths';
 
-export default function(context, params, done) {
+export default function (context, params, done) {
   context.dispatch('CREATE_PASSWORD_START');
 
-  context.api.setPassword(params, function(err, payload) {
+  context.api.setPassword(params, function (err, payload) {
     if (err || payload.error) {
       context.dispatch('CREATE_PASSWORD_FAILURE', payload);
       done();
@@ -13,7 +13,7 @@ export default function(context, params, done) {
 
     const { username } = payload.result;
 
-    context.api.signIn(username, params.password, function(err, auth) {
+    context.api.signIn(username, params.password, function (err, auth) {
       if (err) {
         context.dispatch('SIGN_IN_FAILURE', err);
         context.dispatch(ERROR_MESSAGE, err);
@@ -33,7 +33,7 @@ export default function(context, params, done) {
       // the AuthStore needs to set its state to "authenticated"
       // before the transition
 
-      context.api.getAuthorityList(auth.user.carrierId, function(err, { carrierId, capability }) {
+      context.api.getAuthorityList(auth.user.carrierId, function (err, { carrierId, capability }) {
         const authority = context.getAuthority();
         authority.reset(carrierId, capability);
 

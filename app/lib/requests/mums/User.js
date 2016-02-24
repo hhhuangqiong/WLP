@@ -7,7 +7,7 @@ import logger from 'winston';
 import request from 'superagent';
 import util from 'util';
 
-import {constructOpts, handleError} from '../helper';
+import { constructOpts, handleError } from '../helper';
 
 export default class UsersRequest {
   constructor(baseUrl, timeout) {
@@ -42,10 +42,10 @@ export default class UsersRequest {
   }
 
 
-  getExportUsers({carrier, from, to, page = 0}, cb) {
-    const query = {fromTime: from, toTime: to};
+  getExportUsers({ carrier, from, to, page = 0 }, cb) {
+    const query = { fromTime: from, toTime: to };
     query.pageNumberIndex = page;
-    this.getUsers(carrier, query, (err, res)=> {
+    this.getUsers(carrier, query, (err, res) => {
       if (err) return cb(err);
 
       try {
@@ -63,17 +63,17 @@ export default class UsersRequest {
     });
   }
 
-  _morphExportUsers({ userList, hasNextPage, dateRange : { pageNumberIndex }}) {
+  _morphExportUsers({ userList, hasNextPage, dateRange : { pageNumberIndex } }) {
     const usersData = {};
 
-    usersData.contents = _.map(userList, value =>{
+    usersData.contents = _.map(userList, value => {
       // replace username with formed jid to maintain consistency between UI and export data
       const result = _.merge(value, (value.devices || [])[0]);
       result.username = result.jid;
       return _.omit(result, ['devices', 'jid']);
     });
     usersData.pageNumber = pageNumberIndex;
-    usersData.totalPages = (hasNextPage) ? pageNumberIndex + 2  : pageNumberIndex + 1;
+    usersData.totalPages = (hasNextPage) ? pageNumberIndex + 2 : pageNumberIndex + 1;
 
     // override totalPages increment if there's no content, handling end of pagination
     if (usersData.contents.length <= 0) {

@@ -3,7 +3,7 @@ import moment from 'moment';
 import classNames from 'classnames';
 
 import currencyData from '../../../data/bossCurrencies.json';
-import Converter from  '../../../utils/bossCurrencyConverter';
+import Converter from '../../../utils/bossCurrencyConverter';
 
 const CurrencyConverter = new Converter(currencyData);
 
@@ -28,7 +28,7 @@ const WalletItem = React.createClass({
       <div className={classNames('wallet-item', 'wallet-item--' + this.props.wallet.walletType.toLowerCase(), 'padding-offset')}>
         <div className="large-24 columns">
           <div className="wallet-item--inner">
-            <div className={classNames('wallet-item__type-label', {hide: this.props.wallet.walletType === 'overview'})}>
+            <div className={classNames('wallet-item__type-label', { hide: this.props.wallet.walletType === 'overview' })}>
               {this.props.wallet.walletType}
             </div>
             <div className="row">

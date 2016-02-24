@@ -12,9 +12,9 @@ function getAuthUser(user) {
   return { _id, username, displayName, carrierId, role };
 }
 
-const signIn = function(req, res, next) {
-  passport.authenticate('local', function(err, user, info) {
-    const signInError = function() {
+const signIn = function (req, res, next) {
+  passport.authenticate('local', function (err, user, info) {
+    const signInError = function () {
       return res.status(401).json({
         error: {
           message: 'Wrong username or password',
@@ -27,7 +27,7 @@ const signIn = function(req, res, next) {
       return signInError();
     }
 
-    req.logIn(user, function(err) {
+    req.logIn(user, function (err) {
       if (err) {
         logger.error('failed during `req.logIn`', err);
         return signInError();
@@ -48,7 +48,7 @@ const signIn = function(req, res, next) {
       req.session.data = data;
       req.session.save();
 
-      sessionClient.createSession(data, function(err) {
+      sessionClient.createSession(data, function (err) {
         if (err) {
           logger.error(err);
           return next(err);
@@ -62,7 +62,7 @@ const signIn = function(req, res, next) {
   })(req, res, next);
 };
 
-const signOut = function(req, res) {
+const signOut = function (req, res) {
   let token = req.header('Authorization');
 
   if (token === '__session__') {
@@ -84,11 +84,11 @@ const signOut = function(req, res) {
 // because the app doesn't redirect the user after log in
 // NB: cannot use `req.isAuthenticated` (passport)
 // so there's no 'user' in `req` object
-const ensureAuthenticated = function(req, res) {
+const ensureAuthenticated = function (req, res) {
   return res.sendStatus(200);
 };
 
-const validateToken = function(req, res, next) {
+const validateToken = function (req, res, next) {
   sessionDebug('Auth Header ', req.header('Authorization'));
   let token = req.header('Authorization');
 

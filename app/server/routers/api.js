@@ -2,8 +2,8 @@ import { Router } from 'express';
 
 import { SIGN_IN, SIGN_OUT } from '../paths';
 
-import * as auth      from '../routes/auth';
-import * as carriers  from '../routes/carriers';
+import * as auth from '../routes/auth';
+import * as carriers from '../routes/carriers';
 import * as companies from '../routes/companies';
 import * as authority from '../routes/authority';
 import * as accounts from '../routes/accounts';
@@ -28,7 +28,7 @@ router
   .get('/carriers/:carrierId/userStatsTotal', carriers.getEndUsersStatsTotal)
   .get('/carriers/:carrierId/userStatsMonthly', carriers.getEndUsersStatsMonthly)
   .get('/carriers/:carrierId/stat/user/query', carriers.getEndUsersStats)
-  .get('/carriers/:carrierId/users/:username',  carriers.getUsername)
+  .get('/carriers/:carrierId/users/:username', carriers.getUsername)
   .get('/carriers/:carrierId/users/:username/wallet', carriers.getUserWallet)
   .post('/carriers/:carrierId/users/:username/suspension', carriers.suspendUser)
   .delete('/carriers/:carrierId/users/:username/suspension', carriers.reactivateUser)
@@ -61,7 +61,7 @@ router
   .get('/companies/parent', companies.getParents)
   .post('/companies/:carrierId/suspension', companies.deactivateCompany)
   .put('/companies/:carrierId/suspension', companies.reactivateCompany)
-  .use('*', function(req, res) {
+  .use('*', function (req, res) {
     return res.status(400).json({
       error: {
         name: 'Unknown URL',

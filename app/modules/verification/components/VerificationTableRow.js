@@ -26,7 +26,7 @@ const mobileOperators = require('../../../data/mobileOperators.json');
  * @param {Number} mnc  The mobile network code of the operator
  * @returns {String} The operator name, or empty string if not found
  */
-const lookupMobileOperator = function(mcc, mnc) {
+const lookupMobileOperator = function (mcc, mnc) {
   // mnc could be 0, so cannot be using `!`
   if (_.isUndefined(mcc) || _.isUndefined(mnc)) {
     return '';
@@ -53,14 +53,14 @@ const lookupMobileOperator = function(mcc, mnc) {
  * @param {String} type  The type of the verification event
  * @returns {String} The verification method
  */
-const getVerificationMethod = function(type) {
+const getVerificationMethod = function (type) {
   switch (type) {
-  case 'MobileTerminated':
-    return 'call-in';
-  case 'MobileOriginated':
-    return 'call-out';
-  default:
-    return type;
+    case 'MobileTerminated':
+      return 'call-in';
+    case 'MobileOriginated':
+      return 'call-out';
+    default:
+      return type;
   }
 };
 
@@ -75,16 +75,16 @@ const getVerificationMethod = function(type) {
  * @param {String} platform  The platform of the mobile phone used during the verification
  * @returns {String} The icon name for the OS
  */
-const getOsIconName = function(platform) {
+const getOsIconName = function (platform) {
   if (!platform) {
     return null;
   }
 
   switch (platform.toUpperCase()) {
-  case 'IOS':
-    return 'apple';
-  default:
-    return platform;
+    case 'IOS':
+      return 'apple';
+    default:
+      return platform;
   }
 };
 

@@ -47,7 +47,7 @@ const Calls = React.createClass({
           search: query.search || '',
           searchType: query.searchType || 'caller',
         }),
-      ], done || function() {});
+      ], done || function () {});
     },
   },
 
@@ -107,7 +107,7 @@ const Calls = React.createClass({
     const params = this.context.router.getCurrentParams();
     const query = _.merge(this.context.router.getCurrentQuery(), this.getQueryFromState(), newQuery);
 
-    this.context.router.transitionTo(routeName, params, _.omit(query, function(value) {
+    this.context.router.transitionTo(routeName, params, _.omit(query, function (value) {
       return !value;
     }));
   },
@@ -194,7 +194,7 @@ const Calls = React.createClass({
 
   render() {
     const params = this.context.router.getCurrentParams();
-    const searchTypes = [{name: 'Caller', value: 'caller'}, {name: 'Callee', value: 'callee'}];
+    const searchTypes = [{ name: 'Caller', value: 'caller' }, { name: 'Callee', value: 'callee' }];
 
     return (
       <div className="row">

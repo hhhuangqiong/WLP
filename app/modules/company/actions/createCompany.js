@@ -1,6 +1,6 @@
-export default function(context, params, done) {
+export default function (context, params, done) {
   context.dispatch('CREATE_COMPANY_START');
-  context.api.createCompany(params, function(err, result) {
+  context.api.createCompany(params, function (err, result) {
     if (err) {
       debug('Failed');
       context.dispatch('CREATE_COMPANY_FAILURE', err);

@@ -6,7 +6,7 @@ import request from 'superagent';
 
 import errorMixin from '../requests/mixins/mumsErrorResponse';
 
-export const OPERATION_TYPE_ADD    = 'ADD';
+export const OPERATION_TYPE_ADD = 'ADD';
 export const OPERATION_TYPE_REMOVE = 'REMOVE';
 
 /**
@@ -49,7 +49,7 @@ export class WhitelistRequest {
     if (!usernames) throw new Error('`usernames` is required');
     if (!cb || !_.isFunction(cb)) throw new Error('`cb` is required and must be a function');
 
-    const path       = this._processPath(carrierId);
+    const path = this._processPath(carrierId);
 
     request.put(path)
       .send({
@@ -96,22 +96,22 @@ export class WhitelistRequest {
   get(carrierId, opts, cb) {
     if (!carrierId) throw new Error('`carrierId` is required');
     if (arguments.length === 2) {
-      cb   = opts;
+      cb = opts;
       opts = {};
     }
 
     if (!cb) throw new Error('`cb` is required');
 
-    const path  = this._processPath(carrierId);
+    const path = this._processPath(carrierId);
     const scope = request.get(path);
 
     // allow 0
     if (opts.from !== undefined) {
-      scope.query({from: opts.from});
+      scope.query({ from: opts.from });
     }
 
     if (opts.to) {
-      scope.query({to: opts.to});
+      scope.query({ to: opts.to });
     }
 
     scope.end((err, res) => {

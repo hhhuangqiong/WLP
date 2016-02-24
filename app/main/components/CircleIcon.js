@@ -27,9 +27,9 @@ export default React.createClass({
    */
   renderFontSize(size) {
     switch (size) {
-    case MEDIUM: return MEDIUM_SIZE;
-    case LARGE: return LARGE_SIZE;
-    default: return SMALL_SIZE;
+      case MEDIUM: return MEDIUM_SIZE;
+      case LARGE: return LARGE_SIZE;
+      default: return SMALL_SIZE;
     }
   },
 

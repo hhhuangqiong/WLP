@@ -21,7 +21,7 @@ export default function setup() {
   // TODO do i18n at this level?
   passport.use('local', new LocalStrategy((username, password, done) => {
     PortalUser
-      .findOne({username: username})
+      .findOne({ username: username })
       .populate('affiliatedCompany')
       .exec((err, user) => {
         // shamelessly copy from 'passport-local' example

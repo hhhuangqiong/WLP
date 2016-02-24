@@ -17,7 +17,7 @@ import Sentinel from 'redis-sentinel';
  * @see {@link: https://github.com/LearnBoost/kue#redis-connection-settings}
  * @see {@link: https://github.com/Automattic/kue#replacing-redis-client-module}
  */
-export default function(redisConnOpts, opts = {}) {
+export default function (redisConnOpts, opts = {}) {
   logger.info('initializing Kue');
 
   // use non-sentinel configuration
@@ -36,10 +36,10 @@ export default function(redisConnOpts, opts = {}) {
 
     // use custom redis client
     kueRedisOpt = {
-      createClientFactory: function() {
+      createClientFactory: function () {
 
         // will be created twice for listen and fetch purpose
-        logger.info(`kue custom redis client creation`);
+        logger.info('kue custom redis client creation');
 
         return sentinel.createClient(masterName, redisOpts);
       },

@@ -24,7 +24,7 @@ export default {
 
     // duration in millisecond, divided by 1000 to get seconds, apply ceiling to round up,
     // times 1000 to transform to milliseconds again for process
-    const momentDuration = moment.duration( Math.ceil(duration / 1000) * 1000 );
+    const momentDuration = moment.duration(Math.ceil(duration / 1000) * 1000);
 
     const hours = momentDuration.hours();
     const minutes = momentDuration.minutes();

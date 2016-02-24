@@ -13,9 +13,9 @@ const defaultCompanyObject = {
   categoryID: null,
   country: null,
   timezone: null,
-  businessContact: {name: '', phone: '', email: ''},
-  technicalContact: {name: '', phone: '', email: ''},
-  supportContact: {name: '', phone: '', email: ''},
+  businessContact: { name: '', phone: '', email: '' },
+  technicalContact: { name: '', phone: '', email: '' },
+  supportContact: { name: '', phone: '', email: '' },
 };
 
 const CompanyStore = createStore({

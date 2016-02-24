@@ -1,1 +1,1 @@
-export default { accountStatus: ['Active', 'Suspended']};
+export default { accountStatus: ['Active', 'Suspended'] };

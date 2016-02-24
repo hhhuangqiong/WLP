@@ -11,7 +11,7 @@ const genericHandler = _.partial(saUtil.genericHandler, debug);
  *
  * @param {string} exportPrefix - URI prefix for export only request, it must include a slash if it is not empty.
  */
-export default function(exportPrefix = '') {
+export default function (exportPrefix = '') {
   return {
     getExport(params, cb) {
       superagent

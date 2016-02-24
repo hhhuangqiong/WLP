@@ -16,7 +16,7 @@ const NOT_FOUND_ERROR = 'resource not found';
  * @param optiosn.errorHandler {Function} error handling function
  * @constructor
  */
-const AclManager = function(acl, carrierQuerier, options = {}) {
+const AclManager = function (acl, carrierQuerier, options = {}) {
   if (!acl) throw new Error('missing node_acl module');
 
   this._acl = acl;
@@ -83,7 +83,7 @@ AclManager.prototype.middleware = function middleware(userId, carrierId, resourc
  *
  * @param string {String}
  */
-AclManager.prototype._escapeString = function(string) {
+AclManager.prototype._escapeString = function (string) {
   return string.replace(/\./g, '');
 };
 

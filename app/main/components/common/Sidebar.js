@@ -31,7 +31,7 @@ class Sidebar extends React.Component {
 
     return (
       <div
-        className={classnames('mainmenu-bar', 'vertical', {offcanvas: this.props.isOffCanvas})}
+        className={classnames('mainmenu-bar', 'vertical', { offcanvas: this.props.isOffCanvas })}
         onMouseLeave={this.props.handleOffCavnas.bind(null, true)}
         onMouseEnter={this.props.handleOffCavnas.bind(null, false)}
       >
@@ -44,12 +44,12 @@ class Sidebar extends React.Component {
               </label>
             </a>
           </li>
-          {navSections.map((section, idx)=>{
+          {navSections.map((section, idx) => {
             return (
               <Permit action="view" resource={section.page}>
                 <li key={idx}>
                   <Link
-                    className={classnames('item', 'mainmenu-bar__item', {active: (path === section.path) })}
+                    className={classnames('item', 'mainmenu-bar__item', { active: (path === section.path) })}
                     to={section.routeName}
                     params={{ role: role, identity: identity }}
                   >

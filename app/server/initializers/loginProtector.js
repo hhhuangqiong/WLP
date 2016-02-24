@@ -1,6 +1,6 @@
 import logger from 'winston';
 
-const Bouncer = (function() {
+const Bouncer = (function () {
   function Bouncer(chance) {
     if (chance === void 0) {
       chance = 3;
@@ -12,7 +12,7 @@ const Bouncer = (function() {
     // this.whitelist = ['127.0.0.1'];
   }
 
-  Bouncer.prototype.getIPAddress = function(req) {
+  Bouncer.prototype.getIPAddress = function (req) {
     let address;
 
     try {
@@ -24,7 +24,7 @@ const Bouncer = (function() {
     return address;
   };
 
-  Bouncer.prototype.inWhitelist = function(address) {
+  Bouncer.prototype.inWhitelist = function (address) {
     if (this.whitelist.indexOf(address) > -1) {
       return true;
     }
@@ -32,7 +32,7 @@ const Bouncer = (function() {
     return false;
   };
 
-  Bouncer.prototype.needCaptcha = function(req) {
+  Bouncer.prototype.needCaptcha = function (req) {
     const address = this.getIPAddress(req);
     const whitelisted = this.inWhitelist(address);
 
@@ -55,7 +55,7 @@ const Bouncer = (function() {
     return false;
   };
 
-  Bouncer.prototype.postRequest = function(req, fn) {
+  Bouncer.prototype.postRequest = function (req, fn) {
     const address = this.getIPAddress(req);
     const whitelisted = this.inWhitelist(address);
 
@@ -74,13 +74,13 @@ const Bouncer = (function() {
     }
   };
 
-  Bouncer.prototype.traceForce = function(address, force) {
+  Bouncer.prototype.traceForce = function (address, force) {
     force.count++;
     force.lastAttempt = Date.now();
     this.addresses[address] = force;
   };
 
-  Bouncer.prototype.resetForce = function(address, force) {
+  Bouncer.prototype.resetForce = function (address, force) {
     force.count = 0;
     force.lastAttempt = Date.now();
     this.addresses[address] = force;

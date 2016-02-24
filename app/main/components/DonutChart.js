@@ -143,11 +143,11 @@ export default React.createClass({
     const width = this.props.width || DEFAULT_WIDTH;
     const borderWidth = this.props.borderWidth || DEFAULT_BORDER_WIDTH;
 
-    const total = nextProps.data.reduce(function(acc, d) {
+    const total = nextProps.data.reduce(function (acc, d) {
       return acc + d.value;
     }, 0);
 
-    const chartData = nextProps.data.map(function(d) {
+    const chartData = nextProps.data.map(function (d) {
       return d.value;
     });
 

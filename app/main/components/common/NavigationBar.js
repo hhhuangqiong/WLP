@@ -9,7 +9,7 @@ const NavigationBar = React.createClass({
     return nextProps.isOffCanvas === this.props.isOffCanvas;
   },
 
-  render: function() {
+  render: function () {
     return (
       <nav className="top-bar app-header" data-topbar role="navigation">
         {this.props.children}

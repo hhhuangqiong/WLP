@@ -35,7 +35,7 @@ const dehydratedState = window.__DATA__;
 function render(context, Handler) {
   React.render(React.createElement(
     FluxibleComponent,
-    {context: context.getComponentContext()},
+    { context: context.getComponentContext() },
     React.createElement(Handler)
   ), mountNode);
 }
@@ -70,22 +70,22 @@ function startApp(firstRender, context, Handler, routerState, toggleFirstRender)
 if (!dehydratedState) {
   bootstrapDebug('Isomorphism disabled, creating new context');
   const config = window.__CONFIG__;
-  const context = app.createContext({config: config});
+  const context = app.createContext({ config: config });
 
   // For debugging
   window.context = context;
   bootstrapDebug('Loading session');
-  context.getActionContext().executeAction(loadSession, {}, function() {
+  context.getActionContext().executeAction(loadSession, {}, function () {
     const router = createAppRouter(context);
     bootstrapDebug('Starting router');
-    router.run(function(Handler, routerState) {
+    router.run(function (Handler, routerState) {
       render(context, Handler);
       fetchData(context, routerState);
     });
   });
 } else {
   bootstrapDebug('Rehydrating app');
-  app.rehydrate(dehydratedState, function(err, context) {
+  app.rehydrate(dehydratedState, function (err, context) {
     if (err) {
       throw err;
     }
@@ -106,18 +106,18 @@ if (!dehydratedState) {
       const authority = context.getComponentContext().getAuthority();
 
       if (isAuthenticated && _.isNull(authority.getCarrierId())) {
-        context.executeAction(getAuthorityList, routerState.params.identity, function(err) {
+        context.executeAction(getAuthorityList, routerState.params.identity, function (err) {
           if (err) {
             router.transitionTo('/error/internal-server-error');
             return;
           }
 
-          startApp(firstRender, context, Handler, routerState, function() {
+          startApp(firstRender, context, Handler, routerState, function () {
             firstRender = false;
           });
         });
       } else {
-        startApp(firstRender, context, Handler, routerState, function() {
+        startApp(firstRender, context, Handler, routerState, function () {
           firstRender = false;
         });
       }

@@ -15,7 +15,7 @@ export default (
 
     // public pages,
     <Route handler={require('./main/components/common/Public')}>
-      <Route name="sign-in" handler={require('./main/components/SignIn')}/>
+      <Route name="sign-in" handler={require('./main/components/SignIn')} />
       <Route name="forgot-password" handler={require('./modules/account/components/ForgotPassword')} />
       <Route name="create-password" path="verify/sign-up" handler={require('./modules/account/components/CreatePassword')} />
     </Route>

@@ -64,7 +64,7 @@ const PanelBody = React.createClass({
 
   render() {
     return (
-      <div className={classNames(`body`, this.props.customClass)}>
+      <div className={classNames('body', this.props.customClass)}>
         {this.props.children}
       </div>
     );

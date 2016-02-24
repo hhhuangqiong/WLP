@@ -61,9 +61,9 @@ export default class VerificationRequest {
    */
   convertVerificationTypes(type) {
     switch (type) {
-    case 'call-in': return 'MobileTerminated';
-    case 'call-out': return 'MobileOriginated';
-    default: return type;
+      case 'call-in': return 'MobileTerminated';
+      case 'call-out': return 'MobileOriginated';
+      default: return type;
     }
   }
 
@@ -96,7 +96,7 @@ export default class VerificationRequest {
       .then(formattedParams => {
         cb(null, formattedParams);
       })
-      .catch(err =>{
+      .catch(err => {
         cb(handleError(err, 500), null);
       })
       .done();

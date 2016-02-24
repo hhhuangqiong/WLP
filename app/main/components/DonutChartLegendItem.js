@@ -43,12 +43,12 @@ export default React.createClass({
           <div className="donut-legend-item__header">
             {this.props.header}
           </div>
-          <div className="donut-legend-item__percentage" style={{color: this.props.color}}>
+          <div className="donut-legend-item__percentage" style={{ color: this.props.color }}>
             {this.props.percentage}%
           </div>
         </div>
 
-        <div style={{clear: 'both'}}>
+        <div style={{ clear: 'both' }}>
           <HorizontalGauge
             className="donut-legend-item__gauge"
             percentage={this.props.percentage}

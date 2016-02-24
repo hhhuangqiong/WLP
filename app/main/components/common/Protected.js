@@ -1,19 +1,19 @@
-import React                   from 'react';
-import { concurrent }          from 'contra';
-import Sidebar                 from './Sidebar';
-import CanvasWrapper           from './CanvasWrapper';
-import Navigation              from './NavigationBar';
-import Title                   from './NavigationTitle';
-import Menu                    from './NavigationMenu';
-import Content                 from './MainContent';
-import SystemMessage           from './SystemMessage';
-import LoadingSpinner          from './LoadingSpinner';
-import classnames              from 'classnames';
+import React from 'react';
+import { concurrent } from 'contra';
+import Sidebar from './Sidebar';
+import CanvasWrapper from './CanvasWrapper';
+import Navigation from './NavigationBar';
+import Title from './NavigationTitle';
+import Menu from './NavigationMenu';
+import Content from './MainContent';
+import SystemMessage from './SystemMessage';
+import LoadingSpinner from './LoadingSpinner';
+import classnames from 'classnames';
 
-import AuthStore               from '../../../main/stores/AuthStore';
+import AuthStore from '../../../main/stores/AuthStore';
 import fetchCurrentCompanyInfo from '../../actions/fetchCurrentCompanyInfo';
-import fetchManagingCompanies  from '../../actions/fetchManagingCompanies';
-import fetchAppIds             from '../../../main/actions/fetchAppIds';
+import fetchManagingCompanies from '../../actions/fetchManagingCompanies';
+import fetchAppIds from '../../../main/actions/fetchAppIds';
 
 const Protected = React.createClass({
   statics: {
@@ -23,7 +23,7 @@ const Protected = React.createClass({
         context.executeAction.bind(context, fetchCurrentCompanyInfo, { carrierId: params.identity }),
         context.executeAction.bind(context, fetchManagingCompanies, {}),
         context.executeAction.bind(context, fetchAppIds, { carrierId: params.identity, userId: context.getStore(AuthStore).getUserId() })
-      ], done || function() {});
+      ], done || function () {});
     }
   },
 

@@ -1,7 +1,7 @@
-export default function(context, params, done) {
+export default function (context, params, done) {
   context.dispatch('FETCH_MANAGING_COMPANIES_START');
 
-  context.api.getManagingCompanies(params, function(err, result) {
+  context.api.getManagingCompanies(params, function (err, result) {
     if (err) {
       context.dispatch('FETCH_MANAGING_COMPANIES_FAILURE', err);
       done();

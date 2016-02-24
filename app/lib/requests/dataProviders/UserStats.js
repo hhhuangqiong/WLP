@@ -59,12 +59,12 @@ export default class UserStatsRequest {
           query.to = params.to;
         }
 
-        if (data.carriers)    query.carriers = data.carriers;
-        if (data.timescale)   query.timescale = data.timescale;
-        if (data.timeWindow)  query.timeWindow = data.timeWindow;
-        if (data.breakdown)   query.breakdown = data.breakdown;
-        if (data.status)      query.status    = data.status;
-        if (data.countries)   query.countries = data.countries;
+        if (data.carriers) query.carriers = data.carriers;
+        if (data.timescale) query.timescale = data.timescale;
+        if (data.timeWindow) query.timeWindow = data.timeWindow;
+        if (data.breakdown) query.breakdown = data.breakdown;
+        if (data.status) query.status = data.status;
+        if (data.countries) query.countries = data.countries;
 
         return _.omit(query, (value) => { return !value; });
       })

@@ -2,7 +2,7 @@ import React, { PropTypes } from 'react';
 import classNames from 'classnames';
 import FluxibleMixin from 'fluxible/addons/FluxibleMixin';
 
-import AuthStore  from '../../../main/stores/AuthStore';
+import AuthStore from '../../../main/stores/AuthStore';
 import ConfirmationDialog from '../../../main/components/ConfirmationDialog';
 
 export default React.createClass({
