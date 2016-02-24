@@ -6,7 +6,7 @@ import FluxibleComponent from 'fluxible/addons/FluxibleComponent';
 
 import * as env from '../utils/env';
 
-let debug = require('debug');
+const debug = require('debug');
 
 // make it disabled in default
 debug.disable();
@@ -19,7 +19,7 @@ if (env.isDev()) {
   debug.enable('*');
 }
 
-let bootstrapDebug = debug('app:client');
+const bootstrapDebug = debug('app:client');
 
 // TODO rename the file as 'app'
 import app from '../index';
@@ -29,8 +29,8 @@ import loadSession from '../main/actions/loadSession';
 
 window.React = React; // For chrome dev tool support
 
-let mountNode = document.getElementById('app');
-let dehydratedState = window.__DATA__;
+const mountNode = document.getElementById('app');
+const dehydratedState = window.__DATA__;
 
 function render(context, Handler) {
   React.render(React.createElement(
@@ -41,10 +41,10 @@ function render(context, Handler) {
 }
 
 function createAppRouter(context) {
-  let router = Router.create({
+  const router = Router.create({
     routes: routes,
     location: Router.HistoryLocation,
-    transitionContext: context
+    transitionContext: context,
   });
   app.getPlugin('RouterPlugin').setRouter(router);
   return router;
@@ -70,13 +70,13 @@ function startApp(firstRender, context, Handler, routerState, toggleFirstRender)
 if (!dehydratedState) {
   bootstrapDebug('Isomorphism disabled, creating new context');
   const config = window.__CONFIG__;
-  let context = app.createContext({config: config});
+  const context = app.createContext({config: config});
 
   // For debugging
   window.context = context;
   bootstrapDebug('Loading session');
   context.getActionContext().executeAction(loadSession, {}, function() {
-    let router = createAppRouter(context);
+    const router = createAppRouter(context);
     bootstrapDebug('Starting router');
     router.run(function(Handler, routerState) {
       render(context, Handler);

@@ -1,13 +1,8 @@
-'use strict';
+import { filter, reduce } from 'lodash';
+import { concurrent } from 'contra';
 
-var concurrent = require('contra').concurrent;
-var filter = require('lodash/collection/filter');
-var reduce = require('lodash/collection/reduce');
-
-function fetchData(context, routerState, cb) {
-  cb = cb || function noop() {};
-
-  var fetchDataRoutes = filter(routerState.routes, function(route) {
+function fetchData(context, routerState, cb = () => {}) {
+  const fetchDataRoutes = filter(routerState.routes, route => {
     return route.handler.fetchData;
   });
 
@@ -15,9 +10,12 @@ function fetchData(context, routerState, cb) {
     return cb();
   }
 
-  var dataFetchers = reduce(fetchDataRoutes, function(result, route) {
-    var fetcher = route.handler.fetchData
-        .bind(null, context, routerState.params, routerState.query);
+  const dataFetchers = reduce(fetchDataRoutes, (result, route) => {
+    const fetcher = route
+      .handler
+      .fetchData
+      .bind(null, context, routerState.params, routerState.query);
+
     result[route.name] = fetcher;
     return result;
   }, {});

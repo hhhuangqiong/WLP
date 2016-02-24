@@ -1,6 +1,5 @@
 import React from 'react';
 import { Route, NotFoundRoute, Redirect, DefaultRoute } from 'react-router';
-import { CLIENT } from './utils/env';
 
 // path strings
 import {

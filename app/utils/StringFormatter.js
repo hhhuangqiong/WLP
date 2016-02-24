@@ -1,6 +1,4 @@
-import _ from 'lodash';
 import moment from 'moment';
-
 import CountryData from 'country-data';
 
 const OUTPUT_TIME_FORMAT = 'YYYY-MM-DD h:mm:ss a';
@@ -26,14 +24,16 @@ export default {
 
     // duration in millisecond, divided by 1000 to get seconds, apply ceiling to round up,
     // times 1000 to transform to milliseconds again for process
-    let momentDuration = moment.duration( Math.ceil(duration / 1000) * 1000 );
+    const momentDuration = moment.duration( Math.ceil(duration / 1000) * 1000 );
 
-    let hours = momentDuration.hours();
-    let minutes = momentDuration.minutes();
-    let seconds = momentDuration.seconds();
+    const hours = momentDuration.hours();
+    const minutes = momentDuration.minutes();
+    const seconds = momentDuration.seconds();
 
-    let durationString = `${getDuration(hours, HOUR_LABEL)}${getDuration(minutes, MINUTE_LABEL)}${getDuration(seconds, SECOND_LABEL)}`.trim();
+    const durationString = `${getDuration(hours, HOUR_LABEL)}${getDuration(minutes, MINUTE_LABEL)}${getDuration(seconds, SECOND_LABEL)}`.trim();
+
     if (!durationString.length) return defaultLabel;
+
     return durationString;
   },
 
@@ -43,7 +43,7 @@ export default {
     }
 
     const country = CountryData.countries[(countryAlpha2 || '').toUpperCase()];
-    if(!country) return PLACEHOLDER_FOR_NULL;
+    if (!country) return PLACEHOLDER_FOR_NULL;
 
     const name = country.name;
 
@@ -75,26 +75,26 @@ export default {
    * @param {string} format - Moment display format.
    */
   subtractTime(time, range, format) {
-    let rangeValue = range.split(' ')[0];
-    let rangeFormat = range.split(' ')[1];
+    const rangeValue = range.split(' ')[0];
+    const rangeFormat = range.split(' ')[1];
 
     return moment(time).subtract(rangeValue, rangeFormat).format(format);
   },
 
   timeFromNow(range) {
-    let rangeValue = range.split(' ')[0];
-    let rangeFormat = range.split(' ')[1];
+    const rangeValue = range.split(' ')[0];
+    const rangeFormat = range.split(' ')[1];
 
     return moment().subtract(rangeValue, rangeFormat);
   },
 
   sanitizeNull(row, label = PLACEHOLDER_FOR_NULL) {
-    for (var exportField in row) {
+    for (const exportField in row) {
       if (!row[exportField]) {
         row[exportField] = label;
       }
     }
 
     return row;
-  }
+  },
 };

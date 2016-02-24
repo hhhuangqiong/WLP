@@ -69,7 +69,9 @@ portalUserSchema.virtual('displayName').get(function getDisplayName() {
 });
 
 portalUserSchema.pre('save', function preSave(next) {
-  if (this.hashedPassword && !this.password) return next();
+  if (this.hashedPassword && !this.password) {
+    return next();
+  }
 
   if (this.password) {
     const hashPasswordCb = (err, hashResult) => {
@@ -104,7 +106,7 @@ portalUserSchema.method('addToken', function addToken(event, val) {
  * @param {string} event
  * @returns {PortalUser}
  */
-portalUserSchema.method('removeToken', function(event) {
+portalUserSchema.method('removeToken', function removeToken(event) {
   const tokens = _.reject(this.tokens, t => t.event === event);
   this.tokens = tokens;
   return this;
@@ -116,7 +118,7 @@ portalUserSchema.method('removeToken', function(event) {
  * @param {string} password
  * @returns {PortalUser}
  */
-portalUserSchema.method('addPassword', function(password) {
+portalUserSchema.method('addPassword', function addPassword(password) {
   this.password = password;
   return this;
 });
@@ -127,11 +129,17 @@ portalUserSchema.method('addPassword', function(password) {
  * @method makeToken
  * @return {Model} Company
  */
-portalUserSchema.method('getCompany', function() {
+portalUserSchema.method('getCompany', function getCompany() {
   return new Promise((resolve, reject) => {
     Company.findOne({ _id: this.affiliatedCompany }, (err, doc) => {
-      if (err) return reject(new MongoDBError(`Fail to find company with id ${this.affiliatedCompany}`, err));
-      if (!doc) return reject(new NotFoundError(`Fail to find company ${this.affiliatedCompany}`));
+      if (err) {
+        return reject(new MongoDBError(`Fail to find company with id ${this.affiliatedCompany}`, err));
+      }
+
+      if (!doc) {
+        return reject(new NotFoundError(`Fail to find company ${this.affiliatedCompany}`));
+      }
+
       resolve(doc);
     });
   });
@@ -146,9 +154,9 @@ portalUserSchema.method('getCompany', function() {
  * @param {Number} [length=32] length of the generated secret key
  * @return this
  */
-portalUserSchema.method('googleAuthInfo', function(name = '', length = 32) {
+portalUserSchema.method('googleAuthInfo', function googleAuthInfo(name = '', length = 32) {
   // jscs:disable requireCamelCaseOrUpperCaseIdentifiers
-  var result = speakeasy.generate_key({lenght: length, google_auth_qr: true, name: name});
+  const result = speakeasy.generate_key({lenght: length, google_auth_qr: true, name: name});
   return this.set('googleAuth', { key: result.base32, encoding: 'base32', qrCodeUrl: result.google_auth_qr });
 });
 
@@ -159,15 +167,15 @@ portalUserSchema.method('googleAuthInfo', function(name = '', length = 32) {
  * @static
  * @return {Object} the token
  */
-portalUserSchema.static('makeToken', function(event, val) {
+portalUserSchema.static('makeToken', function makeToken(event, val) {
   return {
     event: event,
     value: val || randtoken.generate(16),
-    createdAt: new Date()
+    createdAt: new Date(),
   };
 });
 
-portalUserSchema.method('isValidPassword', function(password) {
+portalUserSchema.method('isValidPassword', function isValidPassword(password) {
   return bcrypt.compareSync(password, this.hashedPassword);
 });
 
@@ -178,11 +186,8 @@ portalUserSchema.method('isValidPassword', function(password) {
  * @param {String} event Event name
  * @return {Object|undefined} The event embedded document token itself or undefined
  */
-portalUserSchema.method('tokenOf', function(event) {
-  var found = _.filter(this.tokens, (t) => {
-    return t.event === event;
-  });
-
+portalUserSchema.method('tokenOf', function tokenOf(event) {
+  const found = _.filter(this.tokens, t => t.event === event);
   return _.first(found);
 });
 
@@ -198,19 +203,24 @@ portalUserSchema.method('tokenOf', function(event) {
  *
  * @return {Boolean}
  */
-portalUserSchema.method('isTokenExpired', function(event, n, unit) {
-  var token = this.tokenOf(event);
-  if (!token) throw new Error(`No token of "${event}"`);
+portalUserSchema.method('isTokenExpired', function isTokenExpired(event, n, unit) {
+  const token = this.tokenOf(event);
 
-  var compareTo = moment().subtract(n, unit);
+  if (!token) {
+    throw new Error(`No token of "${event}"`);
+  }
+
+  const compareTo = moment().subtract(n, unit);
   return moment(token.createdAt).isBefore(compareTo);
 });
 
-portalUserSchema.method('hasValidOneTimePassword', function(number) {
+portalUserSchema.method('hasValidOneTimePassword', function hasValidOneTimePassword(number) {
   // assume root user does not need 'googleAuth'
-  if (this.isRoot) return true;
+  if (this.isRoot) {
+    return true;
+  }
 
-  var googleAuth = this.get('googleAuth') || {};
+  const googleAuth = this.get('googleAuth') || {};
   return number === speakeasy.time({ key: googleAuth.key, encoding: googleAuth.encoding });
 });
 
@@ -224,8 +234,13 @@ portalUserSchema.method('validateCarrier', function validateCarrier(carrierId) {
   return new Promise((resolve, reject) => {
     this.getCompany()
       .then(company => {
-        if (!company) return resolve(false);
-        if (company.carrierId === carrierId) return resolve(true);
+        if (!company) {
+          return resolve(false);
+        }
+
+        if (company.carrierId === carrierId) {
+          return resolve(true);
+        }
 
         Company.getManagingCompany(company.carrierId, (err, companies) => {
           return resolve(companies.find(managingCompany => managingCompany.carrierId === carrierId));
@@ -242,15 +257,18 @@ portalUserSchema.method('validateCarrier', function validateCarrier(carrierId) {
  * @param {String} password
  * @param {Function} cb
  */
-portalUserSchema.static('hashInfo', function(password, cb) {
-  //use default rounds for now
-  var salt = bcrypt.genSaltSync(10);
-  bcrypt.hash(password, salt, function(err, hash) {
-    if (err)
+portalUserSchema.static('hashInfo', function hashInfo(password, cb) {
+  // use default rounds for now
+  const salt = bcrypt.genSaltSync(10);
+
+  bcrypt.hash(password, salt, function afterHash(err, hash) {
+    if (err) {
       return cb(err);
+    }
+
     cb(null, {
       salt: salt,
-      hashedPassword: hash
+      hashedPassword: hash,
     });
   });
 });
@@ -261,49 +279,61 @@ portalUserSchema.static('hashInfo', function(password, cb) {
  * @method makeToken
  * @return {Object} the token
  */
-portalUserSchema.static('makeToken', function(event, val) {
+portalUserSchema.static('makeToken', function makeToken(event, val) {
   return {
     event: event,
     value: val || randtoken.generate(16),
-    createdAt: new Date()
+    createdAt: new Date(),
   };
 });
 
 // TODO
 // - make use of existing token features
 // - consider the approach of 'newForgotPasswordRequest'
-portalUserSchema.static('newPortalUser', function(data, cb) {
-  var token = this.makeToken('signup');
+portalUserSchema.static('newPortalUser', function newPortalUser(data, cb) {
+  const token = this.makeToken('signup');
 
   data.tokens = data.tokens || [];
   data.tokens.push(token);
 
   this.create(data, (err, user) => {
-    if (err) return cb(err);
+    if (err) {
+      return cb(err);
+    }
+
     cb(null, user);
   });
 });
 
-portalUserSchema.static('findByEmail', function(email) {
+portalUserSchema.static('findByEmail', function findByEmail(email) {
   return new Promise((resolve, reject) => {
     this.findOne({ username: email }, (err, user) => {
-      if (err) return reject(new MongoDBError(`Encounter error when finding user ${email}`, err));
-      if (!user) return reject(new NotFoundError(`Cannot find user with email: ${email}`));
+      if (err) {
+        return reject(new MongoDBError(`Encounter error when finding user ${email}`, err));
+      }
+
+      if (!user) {
+        return reject(new NotFoundError(`Cannot find user with email: ${email}`));
+      }
+
       resolve(user);
     });
   });
 });
 
-portalUserSchema.static('newForgotPasswordRequest', function(username, cb) {
-  var token = this.makeToken('forgotPassword');
+portalUserSchema.static('newForgotPasswordRequest', function newForgotPasswordRequest(username, cb) {
+  const token = this.makeToken('forgotPassword');
 
   this.findOneAndUpdate({
-    username: username
+    username: username,
   }, {
     // this kinda make '#addToken' redundant
-    $addToSet: { tokens: token }
-  }, function(err, user) {
-    if (err) return cb(err);
+    $addToSet: { tokens: token },
+  }, (err, user) => {
+    if (err) {
+      return cb(err);
+    }
+
     cb(null, user);
   });
 });

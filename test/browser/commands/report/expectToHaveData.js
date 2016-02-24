@@ -14,7 +14,6 @@ export default function expectToHaveData(rowClass) {
       return this
         .getText(rowClass)
         .then(text => {
-          console.log("text", text)
           expect(text).to.not.be.empty;
         });
     });

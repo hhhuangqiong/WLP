@@ -1,4 +1,3 @@
-/*TODO rename this file as 'app'*/
 import Fluxible from 'fluxible';
 
 import ApplicationStore from './main/stores/ApplicationStore';
@@ -24,8 +23,7 @@ import EndUsersOverviewStore from './modules/end-user/stores/EndUsersOverviewSto
 import EndUsersRegistrationStatsStore from './modules/end-user/stores/EndUsersRegistrationStatsStore';
 import EndUsersGeographicStatsStore from './modules/end-user/stores/EndUsersGeographicStatsStore';
 
-// seems not passing anything is okay
-let app = new Fluxible();
+const app = new Fluxible();
 
 app.plug(require('./utils/apiPlugin'));
 app.plug(require('./utils/cookiePlugin'));

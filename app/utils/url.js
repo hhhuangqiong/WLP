@@ -1,5 +1,3 @@
-'use strict';
-
 import url from 'url';
 
 /**
@@ -15,8 +13,6 @@ import url from 'url';
  * @return {string} application URL
  */
 export function baseUrl(port = 3000, hostname = '127.0.0.1', isSecure = false) {
-
-  let protocol = isSecure ? 'https:' : 'http:';
-
+  const protocol = isSecure ? 'https:' : 'http:';
   return url.format({ protocol, hostname, port });
 }
