@@ -14,11 +14,16 @@ function getUserId(req) {
 
 /* Extract and parse the carrierId from current url (when we cannot use req.params) */
 function getCarrierId(req) {
-  const carrierId = req.url.split('/')[2];
+  const carrierId = req
+    .url
+    .split('/')[2];
 
   // m800 is a corner case
   // return null to escape from permission checking
-  return (carrierId === 'm800' || isURL(carrierId, { allow_underscores: true })) && carrierId || null;
+  return (
+    carrierId === 'm800' ||
+    isURL(carrierId, { allow_underscores: true })
+  ) && carrierId || null;
 }
 
 // this middleware is just for carrier access checking for now

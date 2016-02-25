@@ -7,14 +7,20 @@
  * @return {Error} the decoreated error object
  */
 export default function (err, moduleId, errorCode) {
-  if (!err) throw new Error('`err` must be passed');
-  if (!moduleId || !errorCode) throw new Error('`moduleId` and `errorCode` are required');
+  if (!err) {
+    throw new Error('`err` must be passed');
+  }
+
+  if (!moduleId || !errorCode) {
+    throw new Error('`moduleId` and `errorCode` are required');
+  }
 
   Object.defineProperty(err, 'moduleId', {
     enumerable: true,
     configurable: false,
     value: moduleId,
   });
+
   Object.defineProperty(err, 'errorCode', {
     enumerable: true,
     configurable: false,

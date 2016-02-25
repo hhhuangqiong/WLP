@@ -29,7 +29,7 @@ export function makeCacheKey(type, queries) {
 
   let index = 0;
 
-  return reduce(queries, function (result, qVal, qKey) {
+  return reduce(queries, (result, qVal, qKey) => {
     let string = result;
 
     // append an & for multiple queries

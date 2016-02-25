@@ -61,13 +61,11 @@ router
   .get('/companies/parent', companies.getParents)
   .post('/companies/:carrierId/suspension', companies.deactivateCompany)
   .put('/companies/:carrierId/suspension', companies.reactivateCompany)
-  .use('*', function (req, res) {
-    return res.status(400).json({
-      error: {
-        name: 'Unknown URL',
-        message: `No endpoint for the given URL ${req.originalUrl}`,
-      },
-    });
-  });
+  .use('*', (req, res) => res.status(400).json({
+    error: {
+      name: 'Unknown URL',
+      message: `No endpoint for the given URL ${req.originalUrl}`,
+    },
+  }));
 
 export default router;

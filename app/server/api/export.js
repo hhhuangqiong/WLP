@@ -9,7 +9,8 @@ const genericHandler = _.partial(saUtil.genericHandler, debug);
 /**
  * List of routes regarding file export
  *
- * @param {string} exportPrefix - URI prefix for export only request, it must include a slash if it is not empty.
+ * @param {string} exportPrefix -
+ *   URI prefix for export only request, it must include a slash if it is not empty.
  */
 export default function (exportPrefix = '') {
   return {

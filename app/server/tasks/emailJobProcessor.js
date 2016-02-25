@@ -16,7 +16,7 @@ export default function processFn(mailer) {
   // MAYBE define an interface for mailer implementation
   if (!_.isFunction(mailer.send)) throw new Error('mailer should have #send method');
 
-  return function (job, done) {
+  return (job, done) => {
     logger.debug('Email job details %j', job, {});
     const data = job.data;
 

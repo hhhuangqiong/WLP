@@ -17,6 +17,10 @@ import path from 'path';
  * @return {string} generated path
  */
 export function userPath(role, identity, targetPath) {
-  const result = path.normalize([role, identity, targetPath].filter(p => { return !!p; }).join('/'));
+  const result = path
+    .normalize([role, identity, targetPath]
+    .filter(p => !!p)
+    .join('/'));
+
   return path.normalize(`/${result}`);
 }

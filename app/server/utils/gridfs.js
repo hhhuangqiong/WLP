@@ -22,7 +22,8 @@ module.exports = {
    * @param {String} filePath - Path of file to be uploaded
    * @param {Object} options
    * @param {String} options.fileName - Custom file name
-   * @param {Boolean} options.unlinkFile - Set true if you want to remove the file source, happens mostly in uploading
+   * @param {Boolean} options.unlinkFile -
+   *   Set true if you want to remove the file source, happens mostly in uploading
    * file
    * @param {Function} cb
    * @returns {*} - Returns GridFS document
@@ -31,7 +32,8 @@ module.exports = {
     const gfs = this.getGridFS(cb);
 
     if (!filePath) {
-      return cb(new Error('missing file path'));
+      cb(new Error('missing file path'));
+      return;
     }
 
     const writeStream = gfs.createWriteStream({
@@ -43,15 +45,21 @@ module.exports = {
 
     fs.createReadStream(filePath).pipe(writeStream);
 
-    writeStream.on('close', function (gfsFile) {
+    writeStream.on('close', gfsFile => {
       if (options.unlinkFile) {
-        fs.unlink(filePath, function (err) {
-          if (err) return cb(err);
-          return cb(null, gfsFile);
+        fs.unlink(filePath, err => {
+          if (err) {
+            cb(err);
+            return;
+          }
+
+          cb(null, gfsFile);
+          return;
         });
-      } else {
-        return cb(null, gfsFile);
       }
+
+      cb(null, gfsFile);
+      return;
     });
   },
 };

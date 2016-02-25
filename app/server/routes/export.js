@@ -16,9 +16,7 @@ import {
   INCOMPELETE_JOB_ERROR,
 } from '../utils/exportErrorTypes';
 
-const getExportConfig = (type) => {
-  return EXPORTS[type.toUpperCase()] || {};
-};
+const getExportConfig = (type) => EXPORTS[type.toUpperCase()] || {};
 
 // '/:carrierId/export'
 const getCarrierExport = (req, res) => {
@@ -26,16 +24,21 @@ const getCarrierExport = (req, res) => {
 
   const err = req.validationErrors();
 
-  if (err) return responseError(REQUEST_VALIDATION_ERROR, res, err);
+  if (err) {
+    responseError(REQUEST_VALIDATION_ERROR, res, err);
+    return;
+  }
 
   const task = new ExportTask(fetchDep(nconf.get('containerName'), 'Kue'), req.params, req.query);
 
-  task.ready().then((job) => {
-    res.status(200).json({ id: job.id });
-    task.start();
-  }, err => {
-    return responseError(GET_JOB_ERROR, res, err);
-  }).done();
+  task
+    .ready()
+    .then(job => {
+      res.status(200).json({ id: job.id });
+      task.start();
+    }, getJobError => {
+      responseError(GET_JOB_ERROR, res, getJobError);
+    }).done();
 };
 
 // '/:carrierId/export/cancel'
@@ -44,14 +47,24 @@ const getCarrierExportCancel = (req, res) => {
 
   const err = req.validationErrors();
 
-  if (err) return responseError(REQUEST_VALIDATION_ERROR, res, err);
+  if (err) {
+    responseError(REQUEST_VALIDATION_ERROR, res, err);
+    return;
+  }
 
-  kue.Job.get(req.query.exportId, (err, job) => {
-    if (err) return responseError(GET_JOB_ERROR, res, err);
+  kue.Job.get(req.query.exportId, (getJobErr, job) => {
+    if (getJobErr) {
+      responseError(GET_JOB_ERROR, res, getJobErr);
+      return;
+    }
 
-    job.remove(function (err) {
-      if (err) return responseError(GET_JOB_ERROR, res, err);
-      return res.status(200).json({ id: job.id });
+    job.remove(removeErr => {
+      if (removeErr) {
+        responseError(GET_JOB_ERROR, res, removeErr);
+        return;
+      }
+
+      res.status(200).json({ id: job.id });
     });
   });
 };
@@ -62,17 +75,26 @@ const getCarrierExportFileProgress = (req, res) => {
 
   const err = req.validationErrors();
 
-  if (err) return responseError(REQUEST_VALIDATION_ERROR, res, err);
+  if (err) {
+    responseError(REQUEST_VALIDATION_ERROR, res, err);
+    return;
+  }
 
   kue.Job.get(req.query.exportId, (err, job) => {
-    if (err) return responseError(GET_JOB_ERROR, res, err);
+    if (err) {
+      responseError(GET_JOB_ERROR, res, err);
+      return;
+    }
 
     // jscs:disable requireCamelCaseOrUpperCaseIdentifiers
-    if (job.failed_at) return responseError(JOB_FAILED_ERROR, res, job.failed_at);
+    if (job.failed_at) {
+      responseError(JOB_FAILED_ERROR, res, job.failed_at);
+      return;
+    }
 
     const progress = job._progress || '0';
 
-    return res.status(200).json({ progress });
+    res.status(200).json({ progress });
   });
 };
 
@@ -81,15 +103,21 @@ const getCarrierExportFile = (req, res) => {
   req.checkQuery('exportId').notEmpty();
 
   const err = req.validationErrors();
-  if (err) return responseError(REQUEST_VALIDATION_ERROR, res, err);
+  if (err) {
+    responseError(REQUEST_VALIDATION_ERROR, res, err);
+    return;
+  }
 
   kue.Job.get(req.query.exportId, (err, job) => {
-    if (err) return responseError(GET_JOB_ERROR, res, err);
+    if (err) {
+      responseError(GET_JOB_ERROR, res, err);
+      return;
+    }
 
     const jobConfig = getExportConfig(job.type);
 
     if (job._progress === '100') {
-      res.set('Content-Disposition', 'attachment; filename=' + jobConfig.EXPORT_FILENAME);
+      res.set('Content-Disposition', `attachment; filename= ${jobConfig.EXPORT_FILENAME}`);
       res.set('Content-Type', 'text/csv');
 
       const redisClient = fetchDep(nconf.get('containerName'), 'RedisClient');
@@ -97,11 +125,13 @@ const getCarrierExportFile = (req, res) => {
 
       exportFileStream.pipe(res);
 
-      exportFileStream.on('error', err => {
-        return responseError(FILE_STREAM_ERROR, res, err);
-      });
+      exportFileStream.on('error', fileStreamErr => responseError(
+        FILE_STREAM_ERROR,
+        res,
+        fileStreamErr
+      ));
     } else {
-      return responseError(INCOMPELETE_JOB_ERROR, res, job._progress);
+      responseError(INCOMPELETE_JOB_ERROR, res, job._progress);
     }
   });
 };

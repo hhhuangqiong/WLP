@@ -108,10 +108,15 @@ function parseStatsByCountry(data, cb) {
 
 
   // Avoid server endpoint to return country code that confronts the ISO standard
-  countries = countryNames.filter(country => CountryData.countries[country]).map(country => countries[country]);
+  countries = countryNames
+    .filter(country => CountryData.countries[country])
+    .map(country => countries[country]);
 
   const countriesWithValues = _.reduce(countries, (result, country) => {
-    const countryCode = country.segment.country.toUpperCase();
+    const countryCode = country
+      .segment
+      .country
+      .toUpperCase();
 
     const accumulatedValues = _.reduce(country.data, (total, eachData) => {
       total.v = parseInt(total.v, 10) + parseInt(eachData.v, 10);

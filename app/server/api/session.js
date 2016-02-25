@@ -10,7 +10,7 @@ export default function (apiPrefix = '') {
       .get(`${this._getHost()}${apiPrefix}${SESSION}`)
       .accept('json')
       .set('Authorization', token)
-      .end(function (err, res) {
+      .end((err, res) => {
         if (err) {
           debug('error', err);
         }

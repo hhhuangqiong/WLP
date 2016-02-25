@@ -25,8 +25,13 @@ export class EmailJob {
    * @see {@link: https://github.com/LearnBoost/kue#processing-jobs}
    */
   constructor(queue, processFn) {
-    if (!queue) throw new Error('require a Queue object');
-    if (!_.isFunction(processFn)) throw new Error('A function for how to process the job is required');
+    if (!queue) {
+      throw new Error('require a Queue object');
+    }
+
+    if (!_.isFunction(processFn)) {
+      throw new Error('A function for how to process the job is required');
+    }
 
     this.queue = queue;
 
@@ -49,11 +54,14 @@ export class EmailJob {
    */
   create(email, cb) {
     // TODO any validation on the email object
-    return this.queue.create(JOB_TYPE, {
-      // TODO 'title' property, same as subject + username
-      mailOpts: email.get('meta'),
-      templateName: email.templateName(),
-      templateData: email.templateData(),
-    }).save(cb);
+    this
+      .queue
+      .create(JOB_TYPE, {
+        // TODO 'title' property, same as subject + username
+        mailOpts: email.get('meta'),
+        templateName: email.templateName(),
+        templateData: email.templateData(),
+      })
+      .save(cb);
   }
 }

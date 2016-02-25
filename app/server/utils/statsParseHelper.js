@@ -25,7 +25,8 @@ const INTERVAL = {
  * @property {String} country  The country code
  * @property {String} os_version  The OS version
  * @property {String} platform  The device platform (ios, Android, etc.)
- * @property {String} success  The status of the verification in stringified boolean ("true", "false")
+ * @property {String} success
+ *   The status of the verification in stringified boolean ("true", "false")
  * @property {String} type  The verification type/method (ivr, sms, etc.)
  */
 
@@ -52,9 +53,7 @@ const INTERVAL = {
   * @returns {Number} The sum of the values in the array
   */
 export function sumAllValuesInTuple(array) {
-  return array.reduce((acc, item) => {
-    return acc + item.v;
-  }, 0);
+  return array.reduce((acc, item) => acc + item.v, 0);
 }
 
 /**
@@ -166,18 +165,16 @@ export function createDummyResultForByStatusRequest(params) {
  * @returns {Verification~SimpleTuple[]} The dummy data for the missing item
  */
 export function createDummyForMissingDataItem(completeList, existingItems) {
-  const missingTypes = _.filter(completeList, type => {
-    return _.every(existingItems, item => {
-      return item.name !== type;
-    });
-  });
+  const missingTypes = _.filter(completeList, type => (
+    _.every(existingItems, item => item.name !== type)
+  ));
 
-  return _.map(missingTypes, missingType => {
-    return {
+  return _.map(missingTypes, missingType => (
+    {
       name: missingType,
       value: 0,
-    };
-  });
+    }
+  ));
 }
 
 /**
@@ -210,7 +207,8 @@ export function generateDummyResultTuple(size) {
  * @param {Number} params.from  The from parameter
  * @param {Number} params.to  The to parameter
  * @param {String} params.timescale  The timescale parameter
- * @returns {Object} The result set in { successSet: Response~ResultTuple[], failureSet: Response~ResultTuple[]}
+ * @returns {Object} The result set in
+ *   { successSet: Response~ResultTuple[], failureSet: Response~ResultTuple[]}
  */
 export function standardiseStatusDataSet(results, params) {
   let successSet;

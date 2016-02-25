@@ -12,32 +12,33 @@ function getAuthUser(user) {
   return { _id, username, displayName, carrierId, role };
 }
 
-const signIn = function (req, res, next) {
-  passport.authenticate('local', function (err, user, info) {
-    const signInError = function () {
-      return res.status(401).json({
+function signIn(req, res, next) {
+  passport.authenticate('local', (err, user) => {
+    function signInError() {
+      res.status(401).json({
         error: {
           message: 'Wrong username or password',
         },
       });
-    };
+    }
 
     // TODO simplify this
     if (err || !user) {
       return signInError();
     }
 
-    req.logIn(user, function (err) {
+    req.logIn(user, err => {
       if (err) {
         logger.error('failed during `req.logIn`', err);
-        return signInError();
+        signInError();
+        return;
       }
 
       // from 'express-session'
       const token = req.sessionID;
       const authUser = getAuthUser(user);
       const data = {
-        token: token,
+        token,
         user: authUser._id,
         username: authUser.username,
         displayName: authUser.displayName,
@@ -48,21 +49,22 @@ const signIn = function (req, res, next) {
       req.session.data = data;
       req.session.save();
 
-      sessionClient.createSession(data, function (err) {
+      sessionClient.createSession(data, err => {
         if (err) {
           logger.error(err);
-          return next(err);
+          next(err);
+          return;
         }
       });
 
       logger.info('session saved for %s', req.session.username);
 
-      return res.json({ token: '__session__', user: authUser });
+      res.json({ token: '__session__', user: authUser });
     });
   })(req, res, next);
-};
+}
 
-const signOut = function (req, res) {
+function signOut(req, res) {
   let token = req.header('Authorization');
 
   if (token === '__session__') {
@@ -73,22 +75,23 @@ const signOut = function (req, res) {
   if (token) {
     req.logout();
     sessionClient.revokeSession(token);
-    return res.sendStatus(200);
+    res.sendStatus(200);
+    return;
   }
 
-  return res.status(500).json({
+  res.status(500).json({
     error: 'signout failed',
   });
-};
+}
 
 // because the app doesn't redirect the user after log in
 // NB: cannot use `req.isAuthenticated` (passport)
 // so there's no 'user' in `req` object
-const ensureAuthenticated = function (req, res) {
-  return res.sendStatus(200);
-};
+function ensureAuthenticated(req, res) {
+  res.sendStatus(200);
+}
 
-const validateToken = function (req, res, next) {
+function validateToken(req, res, next) {
   sessionDebug('Auth Header ', req.header('Authorization'));
   let token = req.header('Authorization');
 
@@ -97,8 +100,9 @@ const validateToken = function (req, res, next) {
     token = req.sessionID;
   }
 
-  sessionClient.getSession(token)
-    .then((user) => {
+  sessionClient
+    .getSession(token)
+    .then(user => {
       if (!user || ((user && user.token) !== token)) {
         return res.status(401).json({
           error: {
@@ -110,16 +114,16 @@ const validateToken = function (req, res, next) {
       // prepare the user object just like what
       // Passport.js does to req.user
       res.locals.user = user;
-      return next();
+      next();
     })
     .catch(err => {
       logger.error(err);
-      return res.status(500).json({
+      res.status(500).json({
         error: err,
       });
     })
     .done();
-};
+}
 
 export {
   signIn,

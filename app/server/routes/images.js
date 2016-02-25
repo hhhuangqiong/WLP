@@ -7,7 +7,7 @@ const db = mongoose.connection.db;
 const GridStore = mongoose.mongo.GridStore;
 const mongoDrive = mongoose.mongo;
 
-const getImage = function (req, res, next) {
+function getImage(req, res, next) {
   function readImageProperties(imageId, cb) {
     const gfs = new Grid(db, mongoDrive);
 
@@ -15,10 +15,11 @@ const getImage = function (req, res, next) {
       _id: imageId,
     }, (err, file) => {
       if (err) {
-        return cb(err);
+        cb(err);
+        return;
       }
 
-      return cb(null, file);
+      cb(null, file);
     });
   }
 
@@ -27,16 +28,18 @@ const getImage = function (req, res, next) {
 
     gfs.open(err => {
       if (err) {
-        return next(err);
+        next(err);
+        return;
       }
 
-      gfs.read((err, data) => {
-        if (err) {
-          return cb(err);
+      gfs.read((readErr, data) => {
+        if (readErr) {
+          cb(readErr);
+          return;
         }
 
         file.imageData = data;
-        return cb(null, file);
+        cb(null, file);
       });
     });
   }
@@ -50,13 +53,14 @@ const getImage = function (req, res, next) {
     res.end(data.imageData, 'binary');
   }
 
-  Q.nfcall(readImageProperties, req.params.imageId)
+  Q
+    .nfcall(readImageProperties, req.params.imageId)
     .then(file => Q.nfcall(readImage, file))
     .then(renderImage)
     .catch(err => {
       logger.error(err);
-      return next(err);
+      next(err);
     });
-};
+}
 
 export { getImage };

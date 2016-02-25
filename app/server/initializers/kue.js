@@ -36,8 +36,7 @@ export default function (redisConnOpts, opts = {}) {
 
     // use custom redis client
     kueRedisOpt = {
-      createClientFactory: function () {
-
+      createClientFactory() {
         // will be created twice for listen and fetch purpose
         logger.info('kue custom redis client creation');
 
@@ -54,7 +53,8 @@ export default function (redisConnOpts, opts = {}) {
   });
 
   // It's a Kue's watchdog to fix stuck inactive jobs when the redis service is unstable
-  // Kue will be refactored to fully atomic job state management from version 1.0 and this will happen by lua scripts and/or BRPOPLPUSH combination
+  // Kue will be refactored to fully atomic job state management
+  //   from version 1.0 and this will happen by lua scripts and/or BRPOPLPUSH combination
   kueue.watchStuckJobs();
 
   const uiPort = opts.uiPort;

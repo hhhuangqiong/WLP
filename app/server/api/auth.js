@@ -20,7 +20,7 @@ export default function (apiPrefix = '') {
       superagent
         .post(`${this._getHost()}${apiPrefix}${SIGN_IN}`)
         .accept('json')
-        .send({ username: username, password: password })
+        .send({ username, password })
         .end(genericHandler(cb));
     },
 

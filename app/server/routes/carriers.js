@@ -26,7 +26,17 @@ import { parseVerificationStatistic } from '../parser/verificationStats';
 import { parseTotalAtTime, parseMonthlyTotalInTime } from '../parser/userStats';
 
 // @NB please suggest where the below array can be moved to as constant
-const DEFAULT_MESSAGE_TYPES = ['text', 'image', 'audio', 'video', 'remote', 'animation', 'sticker', 'voice_sticker', 'ephemeral_image'];
+const DEFAULT_MESSAGE_TYPES = [
+  'text',
+  'image',
+  'audio',
+  'video',
+  'remote',
+  'animation',
+  'sticker',
+  'voice_sticker',
+  'ephemeral_image',
+];
 
 function prepareWildcard(search) {
   if (!search) {
@@ -44,7 +54,7 @@ function prepareWildcard(search) {
     // return search.trim();
   }
 
-  return '*' + search.trim() + '*';
+  return `*${search.trim()}*`;
 }
 
 /**
@@ -55,17 +65,19 @@ function prepareWildcard(search) {
  * @returns {String} The message
  */
 function prepareValidationMessage(validationErrors) {
-  return validationErrors.map((issue) => {
-    return `${issue.msg}: ${issue.param}`;
-  }).join(', ');
+  return validationErrors.map(issue => `${issue.msg}: ${issue.param}`).join(', ');
 }
 
 // '/carriers/:carrierId/users'
-const getUsers = function (req, res) {
+function getUsers(req, res) {
   req.checkParams('carrierId').notEmpty();
   req.checkQuery('fromTime').notEmpty();
   req.checkQuery('toTime').notEmpty();
-  req.checkQuery('pageNumberIndex').notEmpty().isInt();
+
+  req
+    .checkQuery('pageNumberIndex')
+    .notEmpty()
+    .isInt();
 
   const carrierId = req.params.carrierId;
 
@@ -75,42 +87,40 @@ const getUsers = function (req, res) {
     pageNumberIndex: req.query.page,
   };
 
-  const DateFormatErrors = function (dateFormat) {
-    return !moment(queries.startDate, dateFormat).isValid() || !moment(queries.endDate, dateFormat).isValid();
-  };
-
   endUserRequest.getUsers(carrierId, queries, (err, result) => {
     if (err) {
       const { code, message, timeout, status } = err;
 
-      return res.status(status || 500).json({
+      res.status(status || 500).json({
         error: {
           code,
           message,
           timeout,
         },
       });
+
+      return;
     }
 
-    return res.json(result);
+    res.json(result);
   });
-};
+}
 
 // '/carriers/:carrierId/users/:username/wallet'
-const getUsername = function (req, res) {
+function getUsername(req, res) {
   req.checkParams('carrierId').notEmpty();
   req.checkParams('username').notEmpty();
 
   const user = {};
 
-  const prepareEndUserRequestParams = _.bind(function () {
+  const prepareEndUserRequestParams = _.bind(function bind() {
     return {
       carrierId: this.carrierId.trim(),
       username: this.username.trim(),
     };
   }, req.params);
 
-  const prepareWalletRequestParams = function (user) {
+  function prepareWalletRequestParams(user) {
     const username = user.userDetails.username;
     const firstLetter = username && username.charAt(0);
 
@@ -119,17 +129,17 @@ const getUsername = function (req, res) {
       number: firstLetter === '+' ? username.substring(1, username.length) : username,
       sessionUserName: 'Whitelabel-Portal',
     };
-  };
+  }
 
-  const sendEndUserRequest = _.bind(function (params) {
+  const sendEndUserRequest = _.bind(function bind(params) {
     return Q.ninvoke(this, 'getUser', params.carrierId, params.username);
   }, endUserRequest);
 
-  const sendWalletRequest = _.bind(function (params) {
+  const sendWalletRequest = _.bind(function bind(params) {
     return Q.ninvoke(this, 'getWalletBalance', params);
   }, walletRequest);
 
-  const appendUserData = _.bind(function (user) {
+  const appendUserData = _.bind(function bind(user) {
     if (user.error) {
       throw new Error('cannot find user.');
     }
@@ -141,7 +151,7 @@ const getUsername = function (req, res) {
     return this;
   }, user);
 
-  const appendWalletData = _.bind(function (wallets) {
+  const appendWalletData = _.bind(function bind(wallets) {
     if (wallets) {
       this.wallets = wallets;
     }
@@ -149,19 +159,19 @@ const getUsername = function (req, res) {
     return this;
   }, user);
 
-  Q.fcall(prepareEndUserRequestParams)
+  Q
+    .fcall(prepareEndUserRequestParams)
     .then(sendEndUserRequest)
     .then(appendUserData)
     .then(user => {
       // Fetch the user wallet, which is depending on the user detail call.
       // However, the wallet is not a must for the complete user detail.
       // Therefore, we group and ignore the error for these functions.
-      return Q.fcall(prepareWalletRequestParams, user)
+      return Q
+        .fcall(prepareWalletRequestParams, user)
         .then(sendWalletRequest)
         .then(appendWalletData)
-        .catch(() => {
-          return user;
-        });
+        .catch(() => user);
     })
     .then(user => {
       res.json(user);
@@ -177,34 +187,37 @@ const getUsername = function (req, res) {
         },
       });
     });
-};
+}
 
 // '/carriers/:carrierId/users/:username/wallet'
-const getUserWallet = function (req, res) {
+function getUserWallet(req, res) {
   req.checkParams('carrierId').notEmpty();
   req.checkParams('username').notEmpty();
 
-  const prepareWalletRequestParams = _.bind(function () {
+  const prepareWalletRequestParams = _.bind(function bind() {
+    const number = this.username[0] === '+' ?
+      this.username.substring(1, this.username.length) :
+      this.username;
+
     return {
       carrier: this.carrierId.trim(),
-      number: this.username[0] === '+' ? this.username.substring(1, this.username.length) : this.username,
+      number,
       sessionUserName: 'Whitelabel-Portal',
     };
   }, req.params);
 
-  const sendWalletRequest = _.bind(function (params) {
+  const sendWalletRequest = _.bind(function bind(params) {
     return Q.ninvoke(this, 'getWalletBalance', params);
   }, walletRequest);
 
-  Q.fcall(prepareWalletRequestParams)
+  Q
+    .fcall(prepareWalletRequestParams)
     .then(sendWalletRequest)
-    .then(wallets => {
-      return res.json(wallets);
-    })
+    .then(wallets => res.json(wallets))
     .catch(err => {
       const { code, message, timeout, status } = err;
 
-      return res.status(status || 500).json({
+      res.status(status || 500).json({
         error: {
           code,
           message,
@@ -212,24 +225,23 @@ const getUserWallet = function (req, res) {
         },
       });
     });
-};
+}
 
 // '/carriers/:carrierId/users/:username/suspension'
-const suspendUser = function (req, res) {
+function suspendUser(req, res) {
   req.checkParams('carrierId').notEmpty();
   req.checkParams('username').notEmpty();
 
   const carrierId = req.params.carrierId;
   const username = req.params.username;
 
-  Q.ninvoke(endUserRequest, 'suspendUser', carrierId, username)
-    .then(result => {
-      return res.json(result);
-    })
+  Q
+    .ninvoke(endUserRequest, 'suspendUser', carrierId, username)
+    .then(result => res.json(result))
     .catch(err => {
       const { code, message, timeout, status } = err;
 
-      return res.status(status || 500).json({
+      res.status(status || 500).json({
         error: {
           code,
           message,
@@ -237,24 +249,23 @@ const suspendUser = function (req, res) {
         },
       });
     });
-};
+}
 
 // '/carriers/:carrierId/users/:username/suspension'
-const reactivateUser = function (req, res) {
+function reactivateUser(req, res) {
   req.checkParams('carrierId').notEmpty();
   req.checkParams('username').notEmpty();
 
   const carrierId = req.params.carrierId;
   const username = req.params.username;
 
-  Q.ninvoke(endUserRequest, 'reactivateUser', carrierId, username)
-    .then(result => {
-      return res.json(result);
-    })
+  Q
+    .ninvoke(endUserRequest, 'reactivateUser', carrierId, username)
+    .then(result => res.json(result))
     .catch(err => {
       const { code, message, timeout, status } = err;
 
-      return res.status(status || 500).json({
+      res.status(status || 500).json({
         error: {
           code,
           message,
@@ -262,10 +273,10 @@ const reactivateUser = function (req, res) {
         },
       });
     });
-};
+}
 
 // '/carriers/:carrierId/calls'
-const getCalls = function (req, res) {
+function getCalls(req, res) {
   req.checkParams('carrierId').notEmpty();
   req.checkQuery('startDate').notEmpty();
   req.checkQuery('endDate').notEmpty();
@@ -295,27 +306,37 @@ const getCalls = function (req, res) {
     if (err) {
       const { code, message, timeout, status } = err;
 
-      return res.status(status || 500).json({
+      res.status(status || 500).json({
         error: {
           code,
           message,
           timeout,
         },
       });
+
+      return;
     }
 
-    return res.json(result);
+    res.json(result);
   });
-};
+}
 
 // '/carriers/:carrierId/topup'
-const getTopUp = function (req, res) {
+function getTopUp(req, res) {
   req.checkParams('carrierId').notEmpty();
   req.checkQuery('startDate').notEmpty();
   req.checkQuery('endDate').notEmpty();
   req.checkQuery('number').notEmpty();
-  req.checkQuery('page').notEmpty().isInt();
-  req.checkQuery('pageRec').notEmpty().isInt();
+
+  req
+    .checkQuery('page')
+    .notEmpty()
+    .isInt();
+
+  req
+    .checkQuery('pageRec')
+    .notEmpty()
+    .isInt();
 
   const params = {
     carrier: req.params.carrierId,
@@ -333,21 +354,23 @@ const getTopUp = function (req, res) {
     if (err) {
       const { code, message, timeout, status } = err;
 
-      return res.status(status || 500).json({
+      res.status(status || 500).json({
         error: {
           code,
           message,
           timeout,
         },
       });
+
+      return;
     }
 
-    return res.json(result);
+    res.json(result);
   });
-};
+}
 
 // '/carriers/:carrierId/widgets/:type(calls|im|overview|store|sms|vsf)?userId'
-const getWidgets = function (req, res) {
+function getWidgets(req, res) {
   req.checkParams('carrierId').notEmpty();
   req.checkParams('type').notEmpty();
   req.checkQuery('userId').notEmpty();
@@ -356,35 +379,40 @@ const getWidgets = function (req, res) {
   const type = req.params.type;
   const userId = req.query.userId;
 
-  Q.ninvoke(PortalUser, 'findOne', {
-    _id: userId,
-  })
+  Q
+    .ninvoke(PortalUser, 'findOne', {
+      _id: userId,
+    })
     .then(user => {
       if (!user) {
-        return res.status(401).json({
+        res.status(401).json({
           error: {
             name: 'InvalidUser',
           },
         });
+
+        return;
       }
 
       return Q.ninvoke(Company, 'findOne', {
-        carrierId: carrierId,
+        carrierId,
       }, '', {
         lean: true,
       });
     })
     .then(company => {
       if (!company) {
-        return res.status(404).json({
+        res.status(404).json({
           error: {
             name: 'Invalid Carrier',
           },
         });
+
+        return;
       }
 
-      return res.json({
-        carrierId: carrierId,
+      res.json({
+        carrierId,
         widgets: company.widgets && company.widgets[type],
       });
     })
@@ -392,7 +420,7 @@ const getWidgets = function (req, res) {
       if (err) {
         const { code, message, timeout, status } = err;
 
-        return res.status(status || 500).json({
+        res.status(status || 500).json({
           error: {
             code,
             message,
@@ -401,13 +429,21 @@ const getWidgets = function (req, res) {
         });
       }
     });
-};
+}
 
 // '/carriers/:carrierId/sms'
 const getSMS = function (req, res) {
   req.checkParams('carrierId').notEmpty();
-  req.checkQuery('page').notEmpty().isInt();
-  req.checkQuery('pageRec').notEmpty().isInt();
+
+  req
+    .checkQuery('page')
+    .notEmpty()
+    .isInt();
+
+  req
+    .checkQuery('pageRec')
+    .notEmpty()
+    .isInt();
 
   const carrierId = req.params.carrierId;
 
@@ -428,25 +464,31 @@ const getSMS = function (req, res) {
     if (err) {
       const { code, message, timeout, status } = err;
 
-      return res.status(status || 500).json({
+      res.status(status || 500).json({
         error: {
           code,
           message,
           timeout,
         },
       });
+
+      return;
     }
 
-    return res.json(result);
+    res.json(result);
   });
 };
 
 // '/carriers/:carrierId/im'
-const getIM = function (req, res) {
+function getIM(req, res) {
   req.checkParams('carrierId').notEmpty();
   req.checkQuery('fromTime').notEmpty();
   req.checkQuery('toTime').notEmpty();
-  req.checkQuery('page').notEmpty().isInt();
+
+  req
+    .checkQuery('page')
+    .notEmpty()
+    .isInt();
 
   const errors = req.validationErrors();
 
@@ -476,27 +518,32 @@ const getIM = function (req, res) {
 
   req.query.type = 'IncomingMessage';
 
-  const params = _.pick(req.query, ['carrier', 'message_type', 'from', 'to', 'sender', 'recipient', 'page', 'size']);
+  const params = _.pick(
+    req.query,
+    ['carrier', 'message_type', 'from', 'to', 'sender', 'recipient', 'page', 'size']
+  );
 
   imRequest.getImSolr(params, (err, result) => {
     if (err) {
       const { code, message, timeout, status } = err;
 
-      return res.status(status || 500).json({
+      res.status(status || 500).json({
         error: {
           code,
           message,
           timeout,
         },
       });
+
+      return;
     }
 
-    return res.json(result);
+    res.json(result);
   });
-};
+}
 
 // '/carriers/:carrierId/vsf'
-const getVSF = function (req, res) {
+function getVSF(req, res) {
   req.checkParams('carrierId').notEmpty();
   req.checkQuery('fromTime').notEmpty();
   req.checkQuery('toTime').notEmpty();
@@ -505,11 +552,13 @@ const getVSF = function (req, res) {
   const err = req.validationErrors();
 
   if (err) {
-    return res.status(400).json({
+    res.status(400).json({
       error: {
         message: prepareValidationMessage(err),
       },
     });
+
+    return;
   }
 
   const params = {
@@ -521,17 +570,19 @@ const getVSF = function (req, res) {
     userNumber: req.query.userNumber,
   };
 
-  vsfRequest.getTransactions(req.params.carrierId, params, (err, records) => {
-    if (err) {
-      const { code, message, timeout, status } = err;
+  vsfRequest.getTransactions(req.params.carrierId, params, (transactionErr, records) => {
+    if (transactionErr) {
+      const { code, message, timeout, status } = transactionErr;
 
-      return res.status(status || 500).json({
+      res.status(status || 500).json({
         error: {
           code,
           message,
           timeout,
         },
       });
+
+      return;
     }
 
     const { pageSize, totalNoOfRecords, dateRange: { pageNumberIndex } } = records;
@@ -539,9 +590,9 @@ const getVSF = function (req, res) {
 
     records.hasNextPage = (numberOfPages - 1) > pageNumberIndex;
 
-    return res.json(records);
+    res.json(records);
   });
-};
+}
 
 // '/carriers/:carrierId/verifications'
 const getVerifications = function (req, res) {
@@ -553,11 +604,13 @@ const getVerifications = function (req, res) {
   const err = req.validationErrors();
 
   if (err) {
-    return res.status(400).json({
+    res.status(400).json({
       error: {
         message: prepareValidationMessage(err),
       },
     });
+
+    return;
   }
 
   const params = _.omit({
@@ -570,33 +623,33 @@ const getVerifications = function (req, res) {
     method: req.query.method,
     platform: req.query.platform,
     phone_number: req.query.phone_number,
-  }, val => {
-    return !val;
-  });
+  }, val => !val);
 
   verificationRequest.getVerifications(params, (err, result) => {
     if (err) {
-      return res.status(err.status).json({
+      res.status(err.status).json({
         error: {
           message: err.message,
         },
       });
+
+      return;
     }
 
-    return res.json(result);
+    res.json(result);
   });
 };
 
-const validateStatisticsRequest = function (req, cb) {
+function validateStatisticsRequest(req, cb) {
   req.checkParams('carrierId').notEmpty();
   req.checkQuery('application').notEmpty();
   req.checkQuery('from').notEmpty();
   req.checkQuery('to').notEmpty();
 
   cb(req.validationErrors());
-};
+}
 
-const mapVerificationStatsRequestParameters = function (req) {
+function mapVerificationStatsRequestParameters(req) {
   return _.omit({
     carrier: req.params.carrierId,
     application: req.query.application,
@@ -604,35 +657,32 @@ const mapVerificationStatsRequestParameters = function (req) {
     to: req.query.to,
     timescale: req.query.timescale,
     breakdown: req.query.type,
-  }, val => {
-    return !val;
-  });
-};
+  }, val => !val);
+}
 
-const getVerificationStatistics = function (req, res) {
+function getVerificationStatistics(req, res) {
   validateStatisticsRequest(req, err => {
     if (err) {
-      return res.status(400).json({
+      res.status(400).json({
         error: {
           message: prepareValidationMessage(err),
         },
       });
+
+      return;
     }
 
     const params = mapVerificationStatsRequestParameters(req);
     const breakdownType = req.query.type;
 
-    Q.ninvoke(verificationRequest, 'getVerificationStats', params, breakdownType)
-      .then(response => {
-        return Q.nfcall(parseVerificationStatistic, response, params);
-      })
-      .then(result => {
-        return res.json(result);
-      })
+    Q
+      .ninvoke(verificationRequest, 'getVerificationStats', params, breakdownType)
+      .then(response => Q.nfcall(parseVerificationStatistic, response, params))
+      .then(result => res.json(result))
       .catch(err => {
         const { code, message, timeout, status } = err;
 
-        return res.status(status || 500).json({
+        res.status(status || 500).json({
           error: {
             code,
             message,
@@ -641,9 +691,9 @@ const getVerificationStatistics = function (req, res) {
         });
       }).done();
   });
-};
+}
 
-const getEndUsersStatsTotal = function (req, res) {
+function getEndUsersStatsTotal(req, res) {
   req.checkParams('carrierId').notEmpty();
   req.checkQuery('fromTime').notEmpty();
   req.checkQuery('toTime').notEmpty();
@@ -651,11 +701,13 @@ const getEndUsersStatsTotal = function (req, res) {
   const error = req.validationErrors();
 
   if (error) {
-    return res.status(400).json({
+    res.status(400).json({
       error: {
         message: prepareValidationMessage(error),
       },
     });
+
+    return;
   }
 
   const params = _.omit({
@@ -664,21 +716,16 @@ const getEndUsersStatsTotal = function (req, res) {
     from: req.query.fromTime,
     to: req.query.toTime,
     timescale: 'day',
-  }, val => {
-    return !val;
-  });
+  }, val => !val);
 
-  Q.ninvoke(userStatsRequest, 'getUserStats', params)
-    .then(response => {
-      return Q.nfcall(parseTotalAtTime, response);
-    })
-    .then(result => {
-      return res.json({ totalRegisteredUser: result });
-    })
+  Q
+    .ninvoke(userStatsRequest, 'getUserStats', params)
+    .then(response => Q.nfcall(parseTotalAtTime, response))
+    .then(result => res.json({ totalRegisteredUser: result }))
     .catch(err => {
       const { code, message, timeout, status } = err;
 
-      return res.status(status || 500).json({
+      res.status(status || 500).json({
         error: {
           code,
           message,
@@ -686,9 +733,9 @@ const getEndUsersStatsTotal = function (req, res) {
         },
       });
     }).done();
-};
+}
 
-const getEndUsersStatsMonthly = function (req, res) {
+function getEndUsersStatsMonthly(req, res) {
   req.checkParams('carrierId').notEmpty();
   req.checkQuery('fromTime').notEmpty();
   req.checkQuery('toTime').notEmpty();
@@ -696,11 +743,13 @@ const getEndUsersStatsMonthly = function (req, res) {
   const error = req.validationErrors();
 
   if (error) {
-    return res.status(400).json({
+    res.status(400).json({
       error: {
         message: prepareValidationMessage(error),
       },
     });
+
+    return;
   }
 
   const { fromTime, toTime, timeWindow } = req.query;
@@ -708,8 +757,8 @@ const getEndUsersStatsMonthly = function (req, res) {
   // to check if it's querying for the latest month
   // if yes, make it starting from latest
   const thisMonthTime = (
-  moment(fromTime, 'x').get('month') !== moment().get('month') ||
-  moment(fromTime, 'x').get('year') !== moment().get('year')
+    moment(fromTime, 'x').get('month') !== moment().get('month') ||
+    moment(fromTime, 'x').get('year') !== moment().get('year')
   ) ? moment(fromTime, 'x') : moment().subtract(1, 'day');
 
   const thisMonthActiveParams = _.omit({
@@ -721,13 +770,17 @@ const getEndUsersStatsMonthly = function (req, res) {
     // The active user stats is computed daily
     // so you will only have the number up to yesterday
     // @NOTE the `from` and `to` params in here needs to be at the end of month
-    from: thisMonthTime.endOf('month').startOf('day').format('x'),
-    to: thisMonthTime.endOf('month').endOf('day').format('x'),
+    from: thisMonthTime
+      .endOf('month')
+      .startOf('day')
+      .format('x'),
+    to: thisMonthTime
+      .endOf('month')
+      .endOf('day')
+      .format('x'),
     timescale: 'day',
     timeWindow,
-  }, val => {
-    return !val;
-  });
+  }, val => !val);
 
   const lastMonthActiveParams = _.omit({
     carriers: req.params.carrierId,
@@ -735,13 +788,18 @@ const getEndUsersStatsMonthly = function (req, res) {
 
     // we only need to get the data for the latest day of last month
     // with timeWindow (retrospectively) for a month
-    from: moment(fromTime, 'x').subtract(1, 'months').endOf('month').startOf('day').format('x'),
-    to: moment(toTime, 'x').subtract(1, 'months').endOf('month').format('x'),
+    from: moment(fromTime, 'x')
+      .subtract(1, 'months')
+      .endOf('month')
+      .startOf('day')
+      .format('x'),
+    to: moment(toTime, 'x')
+      .subtract(1, 'months')
+      .endOf('month')
+      .format('x'),
     timescale: 'day',
     timeWindow,
-  }, val => {
-    return !val;
-  });
+  }, val => !val);
 
   const thisMonthRegisteredParams = _.omit({
     carriers: req.params.carrierId,
@@ -749,28 +807,42 @@ const getEndUsersStatsMonthly = function (req, res) {
     from: fromTime,
     to: toTime,
     timescale: 'day',
-  }, val => {
-    return !val;
-  });
+  }, val => !val);
 
   const lastMonthRegisteredParams = _.omit({
     carriers: req.params.carrierId,
     breakdown: 'carrier',
-    from: moment(fromTime, 'x').subtract(1, 'months').startOf('month').format('x'),
-    to: moment(toTime, 'x').subtract(1, 'months').endOf('month').format('x'),
+    from: moment(fromTime, 'x')
+      .subtract(1, 'months')
+      .startOf('month')
+      .format('x'),
+    to: moment(toTime, 'x')
+      .subtract(1, 'months')
+      .endOf('month')
+      .format('x'),
     timescale: 'day',
-  }, val => {
-    return !val;
-  });
+  }, val => !val);
 
-  Q.allSettled([
-    Q.ninvoke(userStatsRequest, 'getNewUserStats', thisMonthRegisteredParams),
-    Q.ninvoke(userStatsRequest, 'getNewUserStats', lastMonthRegisteredParams),
-    Q.ninvoke(userStatsRequest, 'getActiveUserStats', thisMonthActiveParams),
-    Q.ninvoke(userStatsRequest, 'getActiveUserStats', lastMonthActiveParams),
-  ])
-    .spread((thisMonthRegisteredStats, lastMonthRegisteredStats, thisMonthActiveStats, lastMonthActiveStats) => {
-      const responses = [thisMonthRegisteredStats, lastMonthRegisteredStats, thisMonthActiveStats, lastMonthActiveStats];
+  Q
+    .allSettled([
+      Q.ninvoke(userStatsRequest, 'getNewUserStats', thisMonthRegisteredParams),
+      Q.ninvoke(userStatsRequest, 'getNewUserStats', lastMonthRegisteredParams),
+      Q.ninvoke(userStatsRequest, 'getActiveUserStats', thisMonthActiveParams),
+      Q.ninvoke(userStatsRequest, 'getActiveUserStats', lastMonthActiveParams),
+    ])
+    .spread((
+      thisMonthRegisteredStats,
+      lastMonthRegisteredStats,
+      thisMonthActiveStats,
+      lastMonthActiveStats
+    ) => {
+      const responses = [
+        thisMonthRegisteredStats,
+        lastMonthRegisteredStats,
+        thisMonthActiveStats,
+        lastMonthActiveStats,
+      ];
+
       const errors = _.reduce(responses, (result, response) => {
         if (response.state !== 'fulfilled') {
           result.push(response.reason);
@@ -780,12 +852,14 @@ const getEndUsersStatsMonthly = function (req, res) {
       }, []);
 
       if (!_.isEmpty(errors)) {
-        return res.status(500).json({
+        res.status(500).json({
           error: errors,
         });
+
+        return;
       }
 
-      return res.json({
+      res.json({
         thisMonthActiveUser: parseMonthlyTotalInTime(thisMonthActiveStats.value),
         lastMonthActiveUser: parseMonthlyTotalInTime(lastMonthActiveStats.value),
         thisMonthRegisteredUser: parseMonthlyTotalInTime(thisMonthRegisteredStats.value),
@@ -795,7 +869,7 @@ const getEndUsersStatsMonthly = function (req, res) {
     .catch(err => {
       const { code, message, timeout, status } = err;
 
-      return res.status(status || 500).json({
+      res.status(status || 500).json({
         error: {
           code,
           message,
@@ -804,9 +878,9 @@ const getEndUsersStatsMonthly = function (req, res) {
       });
     })
     .done();
-};
+}
 
-const getEndUsersStats = function (req, res) {
+function getEndUsersStats(req, res) {
   req.checkParams('carrierId').notEmpty();
   req.checkQuery('fromTime').notEmpty();
   req.checkQuery('toTime').notEmpty();
@@ -815,11 +889,13 @@ const getEndUsersStats = function (req, res) {
   const error = req.validationErrors();
 
   if (error) {
-    return res.status(400).json({
+    res.status(400).json({
       error: {
         message: prepareValidationMessage(error),
       },
     });
+
+    return;
   }
 
   const { fromTime, toTime, timescale, type } = req.query;
@@ -829,55 +905,59 @@ const getEndUsersStats = function (req, res) {
     from: fromTime,
     to: toTime,
     timescale: timescale || 'day',
-  }, val => { return !val; });
+  }, val => !val);
 
   switch (type) {
     case 'registration':
       params.breakdown = 'carrier';
 
-      Q.allSettled([
-      Q.ninvoke(userStatsRequest, 'getNewUserStats', params),
-      Q.ninvoke(userStatsRequest, 'getActiveUserStats', params),
-    ])
-      .spread((newUserStats, activeUserStats) => {
-        const responses = [newUserStats, activeUserStats];
-        const errors = _.reduce(responses, (result, response) => {
-          if (response.state !== 'fulfilled') {
-            result.push(response.reason);
+      Q
+        .allSettled([
+          Q.ninvoke(userStatsRequest, 'getNewUserStats', params),
+          Q.ninvoke(userStatsRequest, 'getActiveUserStats', params),
+        ])
+        .spread((newUserStats, activeUserStats) => {
+          const responses = [newUserStats, activeUserStats];
+          const errors = _.reduce(responses, (result, response) => {
+            if (response.state !== 'fulfilled') {
+              result.push(response.reason);
+            }
+
+            return result;
+          }, []);
+
+          if (!_.isEmpty(errors)) {
+            res.status(500).json({
+              error: errors,
+            });
+
+            return;
           }
 
-          return result;
-        }, []);
-
-        if (!_.isEmpty(errors)) {
-          return res.status(500).json({
-            error: errors,
+          res.json({
+            activeUserStats: _.get(activeUserStats, 'value.results.0.data'),
+            newUserStats: _.get(newUserStats, 'value.results.0.data'),
           });
-        }
+        })
+        .catch(err => {
+          const { code, message, timeout, status } = err;
 
-        return res.json({
-          activeUserStats: _.get(activeUserStats, 'value.results.0.data'),
-          newUserStats: _.get(newUserStats, 'value.results.0.data'),
-        });
-      })
-      .catch(err => {
-        const { code, message, timeout, status } = err;
-
-        return res.status(status || 500).json({
-          error: {
-            code,
-            message,
-            timeout,
-          },
-        });
-      })
-      .done();
+          res.status(status || 500).json({
+            error: {
+              code,
+              message,
+              timeout,
+            },
+          });
+        })
+        .done();
       break;
 
     case 'device':
       params.breakdown = 'carrier,platform';
 
-      Q.ninvoke(userStatsRequest, 'getUserStats', params)
+      Q
+        .ninvoke(userStatsRequest, 'getUserStats', params)
         .then(stats => {
           const results = _.get(stats, 'results') || [];
 
@@ -890,12 +970,12 @@ const getEndUsersStats = function (req, res) {
             return data;
           }, []);
 
-          return res.json({ deviceStats });
+          res.json({ deviceStats });
         })
         .catch(err => {
           const { code, message, timeout, status } = err;
 
-          return res.status(status || 500).json({
+          res.status(status || 500).json({
             error: {
               code,
               message,
@@ -909,7 +989,8 @@ const getEndUsersStats = function (req, res) {
     case 'geographic':
       params.breakdown = 'country';
 
-      Q.ninvoke(userStatsRequest, 'getNewUserStats', params)
+      Q
+        .ninvoke(userStatsRequest, 'getNewUserStats', params)
         .then(stats => {
           const results = _.get(stats, 'results') || [];
 
@@ -929,12 +1010,12 @@ const getEndUsersStats = function (req, res) {
             return data;
           }, []);
 
-          return res.json({ geographicStats });
+          res.json({ geographicStats });
         })
         .catch(err => {
           const { code, message, timeout, status } = err;
 
-          return res.status(status || 500).json({
+          res.status(status || 500).json({
             error: {
               code,
               message,
@@ -945,9 +1026,9 @@ const getEndUsersStats = function (req, res) {
         .done();
       break;
   }
-};
+}
 
-const getCallUserStatsMonthly = function (req, res) {
+function getCallUserStatsMonthly(req, res) {
   req.checkParams('carrierId').notEmpty();
   req.checkQuery('fromTime').notEmpty();
   req.checkQuery('toTime').notEmpty();
@@ -955,11 +1036,12 @@ const getCallUserStatsMonthly = function (req, res) {
   const error = req.validationErrors();
 
   if (error) {
-    return res.status(400).json({
+    res.status(400).json({
       error: {
         message: prepareValidationMessage(error),
       },
     });
+    return;
   }
 
   const { fromTime, toTime, type } = req.query;
@@ -975,56 +1057,83 @@ const getCallUserStatsMonthly = function (req, res) {
   const thisMonthParams = _.omit({
     caller_carrier: carrierId,
     timescale: 'day',
-    from: thisMonthTime.startOf('month').startOf('day').format('x'),
-    to: thisMonthTime.endOf('month').endOf('day').format('x'),
+    from: thisMonthTime
+      .startOf('month')
+      .startOf('day')
+      .format('x'),
+    to: thisMonthTime
+      .endOf('month')
+      .endOf('day')
+      .format('x'),
     type,
-  }, val => {
-    return !val;
-  });
+  }, val => !val);
 
   const lastMonthParams = _.omit({
     caller_carrier: carrierId,
     timescale: 'day',
-    from: moment(fromTime, 'x').subtract(1, 'months').startOf('month').format('x'),
-    to: moment(toTime, 'x').subtract(1, 'months').endOf('month').format('x'),
+    from: moment(fromTime, 'x')
+      .subtract(1, 'months')
+      .startOf('month')
+      .format('x'),
+    to: moment(toTime, 'x')
+      .subtract(1, 'months')
+      .endOf('month')
+      .format('x'),
     type,
-  }, val => {
-    return !val;
-  });
+  }, val => !val);
 
   const currentMonthStatKey = makeCacheKey('callUserStatsMonthly', thisMonthParams);
   const lastMonthStatKey = makeCacheKey('callUserStatsMonthly', lastMonthParams);
 
-  Q.allSettled([
-    Q.ninvoke(redisClient, 'get', currentMonthStatKey),
-    Q.ninvoke(redisClient, 'get', lastMonthStatKey),
-  ])
+  Q
+    .allSettled([
+      Q.ninvoke(redisClient, 'get', currentMonthStatKey),
+      Q.ninvoke(redisClient, 'get', lastMonthStatKey),
+    ])
     .spread((currentMonthStat, lastMonthStat) => {
       const thisMonthCallUser = _.get(currentMonthStat, 'value');
-      const lastMonthCallUser = _.get(lastMonthStat, 'value');
+      let lastMonthCallUser = _.get(lastMonthStat, 'value');
 
       // prevent from refetching via data provider if and only if
       // both this & last month data could be found in redis
       if (thisMonthCallUser && lastMonthCallUser) {
-        logger.debug('cache data is found on redis with key %s and key %s', currentMonthStatKey, lastMonthStatKey);
+        logger.debug(
+          'cache data is found on redis with key %s and key %s',
+          currentMonthStatKey,
+          lastMonthStatKey
+        );
 
-        return res.json({
-          thisMonthCallUser: parseInt(thisMonthCallUser),
-          lastMonthCallUser: parseInt(lastMonthCallUser),
+        res.json({
+          thisMonthCallUser: parseInt(thisMonthCallUser, 10),
+          lastMonthCallUser: parseInt(lastMonthCallUser, 10),
         });
+
+        return;
       }
 
       // this is what we originally did:
       // do the query from data provider server
-      Q.allSettled([
-        Q.ninvoke(callStatsRequest, 'getCallerStats', thisMonthParams),
-        Q.ninvoke(callStatsRequest, 'getCallerStats', lastMonthParams),
-        Q.ninvoke(callStatsRequest, 'getCalleeStats', thisMonthParams),
-        Q.ninvoke(callStatsRequest, 'getCalleeStats', lastMonthParams),
-      ])
-        .spread((thisMonthCallerStats, lastMonthCallerStats, thisMonthCalleeStats, lastMonthCalleeStats) => {
-          let responses = [thisMonthCallerStats, lastMonthCallerStats, thisMonthCalleeStats, lastMonthCalleeStats];
-          let errors = _.reduce(responses, (result, response) => {
+      Q
+        .allSettled([
+          Q.ninvoke(callStatsRequest, 'getCallerStats', thisMonthParams),
+          Q.ninvoke(callStatsRequest, 'getCallerStats', lastMonthParams),
+          Q.ninvoke(callStatsRequest, 'getCalleeStats', thisMonthParams),
+          Q.ninvoke(callStatsRequest, 'getCalleeStats', lastMonthParams),
+        ])
+        .spread((
+          thisMonthCallerStats,
+          lastMonthCallerStats,
+          thisMonthCalleeStats,
+          lastMonthCalleeStats
+        ) => {
+          const responses = [
+            thisMonthCallerStats,
+            lastMonthCallerStats,
+            thisMonthCalleeStats,
+            lastMonthCalleeStats,
+          ];
+
+          const errors = _.reduce(responses, (result, response) => {
             if (response.state !== 'fulfilled') {
               result.push(response.reason);
             }
@@ -1033,13 +1142,15 @@ const getCallUserStatsMonthly = function (req, res) {
           }, []);
 
           if (!_.isEmpty(errors)) {
-            return res.status(500).json({
-              error: errors
+            res.status(500).json({
+              error: errors,
             });
+
+            return;
           }
 
-          let thisMonthCallers = _.get(thisMonthCallerStats, 'value.0.data');
-          let thisMonthCallees = _.get(thisMonthCalleeStats, 'value.0.data');
+          const thisMonthCallers = _.get(thisMonthCallerStats, 'value.0.data');
+          const thisMonthCallees = _.get(thisMonthCalleeStats, 'value.0.data');
 
           // concat callee with carrierId into caller array
           // as callee contains OFFNET user
@@ -1048,11 +1159,12 @@ const getCallUserStatsMonthly = function (req, res) {
             if (callee.indexOf(carrierId) > 0) {
               result.push(callee);
             }
+
             return result;
           }, thisMonthCallers);
 
-          let lastMonthCallers = _.get(lastMonthCallerStats, 'value.0.data');
-          let lastMonthCallees = _.get(lastMonthCalleeStats, 'value.0.data');
+          const lastMonthCallers = _.get(lastMonthCallerStats, 'value.0.data');
+          const lastMonthCallees = _.get(lastMonthCalleeStats, 'value.0.data');
 
           // concat callee with carrierId into caller array
           // as callee contains OFFNET user
@@ -1072,14 +1184,14 @@ const getCallUserStatsMonthly = function (req, res) {
           redisClient.set(currentMonthStatKey, thisMonthCallUser);
           redisClient.set(lastMonthStatKey, lastMonthCallUser);
 
-          return res.json({
+          res.json({
             thisMonthCallUser, lastMonthCallUser,
           });
         })
         .catch(err => {
           const { code, message, timeout, status } = err;
 
-          return res.status(status || 500).json({
+          res.status(status || 500).json({
             error: {
               code,
               message,
@@ -1092,7 +1204,7 @@ const getCallUserStatsMonthly = function (req, res) {
     .catch(err => {
       const { code, message, timeout, status } = err;
 
-      return res.status(status || 500).json({
+      res.status(status || 500).json({
         error: {
           code,
           message,
@@ -1101,9 +1213,9 @@ const getCallUserStatsMonthly = function (req, res) {
       });
     })
     .done();
-};
+}
 
-const getCallUserStatsTotal = function (req, res) {
+function getCallUserStatsTotal(req, res) {
   req.checkParams('carrierId').notEmpty();
   req.checkQuery('fromTime').notEmpty();
   req.checkQuery('toTime').notEmpty();
@@ -1129,7 +1241,7 @@ const getCallUserStatsTotal = function (req, res) {
     stat_type: 'count',
     breakdown: 'success',
     type,
-  }, val => { return !val; });
+  }, val => !val);
 
   const tcdParams = _.omit({
     caller_carrier: carrierId,
@@ -1138,7 +1250,7 @@ const getCallUserStatsTotal = function (req, res) {
     timescale: timescale || 'day',
     stat_type: 'duration',
     type,
-  }, val => { return !val; });
+  }, val => !val);
 
   const acdParams = _.omit({
     caller_carrier: carrierId,
@@ -1148,13 +1260,14 @@ const getCallUserStatsTotal = function (req, res) {
     stat_type: 'acd',
     breakdown: 'success',
     type,
-  }, val => { return !val; });
+  }, val => !val);
 
-  Q.allSettled([
-    Q.ninvoke(callStatsRequest, 'getCallStats', callAttemptParams),
-    Q.ninvoke(callStatsRequest, 'getCallStats', tcdParams),
-    Q.ninvoke(callStatsRequest, 'getCallStats', acdParams),
-  ])
+  Q
+    .allSettled([
+      Q.ninvoke(callStatsRequest, 'getCallStats', callAttemptParams),
+      Q.ninvoke(callStatsRequest, 'getCallStats', tcdParams),
+      Q.ninvoke(callStatsRequest, 'getCallStats', acdParams),
+    ])
     .spread((callAttemptStats, tcdStats, acdStats) => {
       const responses = [callAttemptStats, tcdStats, acdStats];
       const errors = _.reduce(responses, (result, response) => {
@@ -1166,27 +1279,27 @@ const getCallUserStatsTotal = function (req, res) {
       }, []);
 
       if (!_.isEmpty(errors)) {
-        return res.status(500).json({
+        res.status(500).json({
           error: errors,
         });
+
+        return;
       }
 
       callAttemptStats = _.get(callAttemptStats, 'value');
 
-      const successAttemptStats = _.get(_.find(callAttemptStats, stat => {
-        return stat.segment.success === 'true';
-      }), 'data');
+      const successAttemptStats = _.get(_.find(callAttemptStats, stat => (
+        stat.segment.success === 'true'
+      )), 'data');
 
-      const failureAttemptStats = _.get(_.find(callAttemptStats, stat => {
-        return stat.segment.success === 'false';
-      }), 'data');
+      const failureAttemptStats = _.get(_.find(callAttemptStats, stat => (
+        stat.segment.success === 'false'
+      )), 'data');
 
       const totalAttemptStats = _.reduce(failureAttemptStats, (total, stat) => {
         total.push({
           t: stat.t,
-          v: stat.v + _.result(_.find(successAttemptStats, saStat => {
-            return saStat.t === stat.t;
-          }), 'v'),
+          v: stat.v + _.result(_.find(successAttemptStats, saStat => saStat.t === stat.t), 'v'),
         });
         return total;
       }, []);
@@ -1194,9 +1307,7 @@ const getCallUserStatsTotal = function (req, res) {
       const successRate = _.reduce(totalAttemptStats, (rates, stat) => {
         const total = stat.v;
 
-        const success = _.result(_.find(successAttemptStats, saStat => {
-          return saStat.t === stat.t;
-        }), 'v');
+        const success = _.result(_.find(successAttemptStats, saStat => saStat.t === stat.t), 'v');
 
         rates.push({
           t: stat.t,
@@ -1208,22 +1319,23 @@ const getCallUserStatsTotal = function (req, res) {
 
       acdStats = _.get(acdStats, 'value');
 
-      const averageDurationStats = _.get(_.find(acdStats, stat => {
-        return stat.segment.success === 'true';
-      }), 'data');
+      const averageDurationStats = _.get(_.find(
+        acdStats,
+        stat => stat.segment.success === 'true'
+      ), 'data');
 
-      return res.json({
-        totalAttemptStats: totalAttemptStats,
-        successAttemptStats: successAttemptStats,
+      res.json({
+        totalAttemptStats,
+        successAttemptStats,
         successRateStats: successRate,
         totalDurationStats: _.get(tcdStats, 'value.0.data'),
-        averageDurationStats: averageDurationStats,
+        averageDurationStats,
       });
     })
     .catch(err => {
       const { code, message, timeout, status } = err;
 
-      return res.status(status || 500).json({
+      res.status(status || 500).json({
         error: {
           code,
           message,
@@ -1231,7 +1343,7 @@ const getCallUserStatsTotal = function (req, res) {
         },
       });
     });
-};
+}
 
 export {
   getCalls,

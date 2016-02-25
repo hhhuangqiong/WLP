@@ -6,7 +6,7 @@ const router = Router();
 // Sample Request
 // https://www.hlr-lookups.com/api/?action=submitSyncLookupRequest&msisdn=85295860801&username=gutzeit&password=gutzeit&route=IP1
 
-router.get('/hlr-lookup/:msisdn', function (req, res) {
+router.get('/hlr-lookup/:msisdn', (req, res) => {
   const { msisdn } = req.params;
 
   const params = {
@@ -21,7 +21,7 @@ router.get('/hlr-lookup/:msisdn', function (req, res) {
     .get('https://www.hlr-lookups.com/api/')
     .query(params)
     .accept('json')
-    .end(function (err, qRes) {
+    .end((err, qRes) => {
       if (err) {
         res.json({ success: false });
       }

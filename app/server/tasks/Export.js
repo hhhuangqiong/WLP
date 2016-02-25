@@ -11,7 +11,13 @@ import { fetchDep } from '../utils/bottle';
 import EXPORTS from '../../config/export';
 import { CALLS, IM, VERIFICATION, END_USER } from '../../main/file-export/constants/ExportType';
 
-import { getCountryName, beautifyTime, stringifyNumbers, parseDuration, sanitizeNull } from '../../utils/StringFormatter';
+import {
+  getCountryName,
+  beautifyTime,
+  stringifyNumbers,
+  parseDuration,
+  sanitizeNull,
+} from '../../utils/StringFormatter';
 
 const PAGE_START_INDEX = 0;
 const PAGE_SIZE = 1000;
@@ -27,9 +33,11 @@ const MISSING_PAGE_DATA_MSG = 'Invalid pageNumber/totalPages';
  * @param  {string}   param.to - timestamp in millisecond
  * @param  {number}   param.page - specify starting page, always 0
  * @param  {number}   param.size - specify no. records on each page, always 1000
- * @param  {string}   [param.origin] - specify 2 letter country code for origin, value is referenced in country-data node package
- * @param  {string}   [param.destination] - specify 2 letter country code for origin, value is referenced in country-data node package
-     in /app/lib
+ * @param  {string}   [param.origin] -
+ *   specify 2 letter country code for origin, value is referenced in country-data node package
+ * @param  {string}   [param.destination] -
+ *   specify 2 letter country code for origin, value is referenced in country-data node package
+ *   in /app/lib
  */
 export default class ExportTask {
   constructor(kueue, param, query) {
@@ -43,28 +51,32 @@ export default class ExportTask {
 
     param = this.prepareJob(param, query);
 
-    const job = this.kueue.create(this.exportType, param).save(err => {
-      if (err) {
-        logger.error(`Unable to create ${this.exportType} job`, err);
-        deferred.reject(err);
-      } else {
-        logger.info(`Created ${this.exportType} job successfully. ${job.id}`);
-        deferred.resolve(job);
-      }
-    });
+    const job = this
+      .kueue
+      .create(this.exportType, param)
+      .save(err => {
+        if (err) {
+          logger.error(`Unable to create ${this.exportType} job`, err);
+          deferred.reject(err);
+        } else {
+          logger.info(`Created ${this.exportType} job successfully. ${job.id}`);
+          deferred.resolve(job);
+        }
+      });
 
-    job.on('complete', function (param) {
-      logger.info('Job completed with data ', param);
-
-    }).on('failed attempt', function (errorMessage, doneAttempts) {
-      logger.error('Job failed. Attempt %s', doneAttempts, errorMessage);
-
-    }).on('failed', function (errorMessage) {
-      logger.error('Job failed', errorMessage);
-
-    }).on('progress', function (progress, data) {
-      logger.info('\r  job #%s %s% complete with %s', job.id, progress, JSON.stringify(data));
-    });
+    job
+      .on('complete', completeParam => {
+        logger.info('Job completed with data ', completeParam);
+      })
+      .on('failed attempt', (errorMessage, doneAttempts) => {
+        logger.error('Job failed. Attempt %s', doneAttempts, errorMessage);
+      })
+      .on('failed', errorMessage => {
+        logger.error('Job failed', errorMessage);
+      })
+      .on('progress', (progress, data) => {
+        logger.info('\r  job #%s %s% complete with %s', job.id, progress, JSON.stringify(data));
+      });
   }
 
   /**
@@ -77,36 +89,46 @@ export default class ExportTask {
   prepareJob(params, query) {
     const job = {};
 
-    job[IM] = () => {
-      return {
+    job[IM] = () => (
+      {
         carrier: params.carrierId,
         from: moment(query.fromTime, 'x').toISOString(),
         to: moment(query.toTime, 'x').toISOString(),
-        message_type: ['text', 'image', 'audio', 'video', 'remote', 'animation', 'sticker', 'voice_sticker', 'ephemeral_image'],
+        message_type: [
+          'text',
+          'image',
+          'audio',
+          'video',
+          'remote',
+          'animation',
+          'sticker',
+          'voice_sticker',
+          'ephemeral_image',
+        ],
         destination: query.destination,
         origin: query.origin,
         page: PAGE_START_INDEX,
         size: PAGE_SIZE,
-      };
-    };
+      }
+    );
 
-    job[CALLS] = () => {
-      return {
+    job[CALLS] = () => (
+      {
         // jscs:disable requireCamelCaseOrUpperCaseIdentifiers
         caller_carrier: params.carrierId,
         from: query.startDate,
         to: query.endDate,
-        caller: (_.isEmpty(query.search)) ? '' : '*' + query.search + '*',
-        callee: (_.isEmpty(query.search)) ? '' : '*' + query.search + '*',
+        caller: (_.isEmpty(query.search)) ? '' : `*${query.search}*`,
+        callee: (_.isEmpty(query.search)) ? '' : `*${query.search}*`,
         caller_country: query.destination,
         page: PAGE_START_INDEX,
         size: PAGE_SIZE,
         type: query.type,
-      };
-    };
+      }
+    );
 
-    job[VERIFICATION] = () => {
-      return {
+    job[VERIFICATION] = () => (
+      {
         carrier: params.carrierId,
         from: query.from,
         to: query.to,
@@ -114,18 +136,18 @@ export default class ExportTask {
         platform: query.osType,
         page: PAGE_START_INDEX,
         size: PAGE_SIZE,
-      };
-    };
+      }
+    );
 
-    job[END_USER] = () => {
-      return {
+    job[END_USER] = () => (
+      {
         carrier: params.carrierId,
         from: query.startDate,
         to: query.endDate,
         page: PAGE_START_INDEX,
         size: PAGE_SIZE,
-      };
-    };
+      }
+    );
 
     return job[this.exportType]();
   }
@@ -184,13 +206,13 @@ export default class ExportTask {
         row.country = getCountryName(row.country);
 
         switch (row.type) {
-        case 'MobileTerminated':
-          row.type = 'Call-In';
-          break;
+          case 'MobileTerminated':
+            row.type = 'Call-In';
+            break;
 
-        case 'MobileOriginated':
-          row.type = 'Call-Out';
-          break;
+          case 'MobileOriginated':
+            row.type = 'Call-Out';
+            break;
       }
 
         break;
@@ -244,17 +266,14 @@ export default class ExportTask {
    */
   start() {
     this.kueue.process(this.exportType, (job, done) => {
-      Q.ninvoke(this, 'exportCSV', job)
-        .then(() => {
-          return done(null);
-        })
-        .catch((err) => {
-          /**
-           * Gracefully handle errors to prevent from stuck jobs:
-           * https://github.com/Automattic/kue#prevent-from-stuck-active-jobs
-           */
-          return done(err);
-        })
+      Q
+        .ninvoke(this, 'exportCSV', job)
+        .then(() => done(null))
+        /**
+        * Gracefully handle errors to prevent from stuck jobs:
+        * https://github.com/Automattic/kue#prevent-from-stuck-active-jobs
+        */
+        .catch(err => done(err))
         .done();
     });
   }
@@ -271,8 +290,12 @@ export default class ExportTask {
     csvStream
       .pipe(redisWStream(redisClient, EXPORT_KEY))
       .on('finish', () => {
-        logger.info(`Job #${job.id} finished writing file, ${totalExportElements} records are being exported`);
-        return cb(null);
+        logger.info(
+          `Job #${job.id} finished writing file, ${totalExportElements} records are being exported`
+        );
+
+        cb(null);
+        return;
       });
 
     const next = param => {
@@ -287,26 +310,37 @@ export default class ExportTask {
         const config = this.getExportConfig();
         const request = fetchDep(nconf.get('containerName'), config.EXPORT_REQUEST);
 
-        Q.ninvoke(request, config.EXPORT_REQUEST_EXECUTION, param)
+        Q
+          .ninvoke(request, config.EXPORT_REQUEST_EXECUTION, param)
           .then(result => {
             let contentIndex = 0;
 
             // Compatible with different naming fields from end point response
             const contents = result.contents || result.content;
             const numberOfContent = contents.length;
-            const totalPages = [result.totalPages, result.total_pages].filter(n => n !== undefined)[0];
-            const pageNumber = [result.pageNumber, result.page_number].filter(n => n !== undefined)[0];
+            const totalPages = [
+              result.totalPages,
+              result.total_pages,
+            ].filter(n => n !== undefined)[0];
+
+            const pageNumber = [
+              result.pageNumber,
+              result.page_number,
+            ].filter(n => n !== undefined)[0];
 
             // Record number of elements are being exported
             totalExportElements += numberOfContent;
 
             // Raise error if pageNumber and totalPages are not valid
             if (pageNumber === undefined || totalPages === undefined) {
-              return cb({ message: MISSING_PAGE_DATA_MSG });
+              cb({ message: MISSING_PAGE_DATA_MSG });
+              return;
             }
 
             // Complete export if no content appear
-            if (!numberOfContent) csvStream.end();
+            if (!numberOfContent) {
+              csvStream.end();
+            }
 
             // Extract elements within current page
             while (contentIndex < numberOfContent) {
@@ -319,12 +353,13 @@ export default class ExportTask {
             if (pageNumber < totalPages) {
               param.page++;
 
-              // A hack to prevent progress becomes 100% to avoid job to end before file stream to be ready for download
+              // A hack to prevent progress becomes 100%
+              //   to avoid job to end before file stream to be ready for download
               job.progress(pageNumber, totalPages + 1, { nextRow: pageNumber });
               next(param);
             }
           })
-          .catch(err => cb(err))
+          .catch(error => cb(error))
           .done();
       });
     };

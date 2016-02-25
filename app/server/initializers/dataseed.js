@@ -23,23 +23,23 @@ function initialize(seedFilePath) {
     throw new Error('Error parsing data seed file');
   }
 
-  const insertData = function (data) {
+  function insertData(data) {
     let affiliatedCompanyId;
     const rootUser = data.user;
     const hashInfo = Q.nbind(PortalUser.hashInfo, PortalUser);
 
-    const seedUser = function () {
-      return hashInfo(rootUser.password).then(function (hashResult) {
+    function seedUser() {
+      return hashInfo(rootUser.password).then(hashResult => {
         const extra = {
           affiliatedCompany: affiliatedCompanyId,
         };
 
-        logger.info('Seeding user ' + rootUser.username);
+        logger.info(`Seeding user ${rootUser.username}`);
         return Q.ninvoke(PortalUser, 'create', _.merge(rootUser, hashResult, extra));
       });
-    };
+    }
 
-    const seedCompany = function (companyInfo) {
+    function seedCompany(companyInfo) {
       const condition = {
         name: companyInfo.name,
       };
@@ -50,25 +50,30 @@ function initialize(seedFilePath) {
       };
 
       return Q.ninvoke(Company, 'findOneAndUpdate', condition, companyInfo, opts);
-    };
+    }
 
     function addLogo(model) {
       if (!data.company.logoFile) {
         return Q(true);
       }
 
-      return Q.ninvoke(model, 'addLogo', path.join(__dirname, `../../../public/images/${data.company.logoFile}`), {});
+      return Q.ninvoke(
+        model,
+        'addLogo',
+        path.join(__dirname, `../../../public/images/${data.company.logoFile}`),
+        {}
+      );
     }
 
-    const infoLogger = function (model) {
+    function infoLogger(model) {
       logger.info('Seeded: %j', model, {});
-    };
+    }
 
-    const putAffiliateIdInScope = function (company) {
+    function putAffiliateIdInScope(company) {
       affiliatedCompanyId = company.id;
-      logger.info('Put affiliatedCompany in scope ' + affiliatedCompanyId);
+      logger.info(`Put affiliatedCompany in scope ${affiliatedCompanyId}`);
       return company;
-    };
+    }
 
     seedCompany(data.company)
       .then(putAffiliateIdInScope)
@@ -76,23 +81,22 @@ function initialize(seedFilePath) {
       .then(infoLogger)
       .then(seedUser)
       .then(infoLogger)
-      .catch(function (error) {
+      .catch(error => {
         logger.error('Error during data seeding', error.stack);
       });
-  };
+  }
 
-  content.forEach(function (data) {
-
+  content.forEach(data => {
     // assume there can only have 1 and only 1 root user
     PortalUser.findOne({
       username: data.user.username,
-    }, function (err, user) {
+    }, (err, user) => {
       if (err) {
         throw err;
       }
 
       if (user) {
-        logger.info('`' + data.user.username + '` user already exists; not seeding');
+        logger.info(`${data.user.username} user already exists; not seeding`);
         return;
       }
 
