@@ -13,8 +13,8 @@ export default class CallsRequest {
   constructor(baseUrl, timeout) {
     const opts = {
       type: 'dataProviderApi',
-      baseUrl: baseUrl,
-      timeout: timeout,
+      baseUrl,
+      timeout,
       methods: {
         CALLS: {
           URL: '/api/v1/sip/cdr/query',
@@ -111,7 +111,11 @@ export default class CallsRequest {
       .buffer()
       .timeout(this.opts.timeout)
       .end((err, res) => {
-        if (err) return cb(handleError(err, err.status || 400));
+        if (err) {
+          cb(handleError(err, err.status || 400));
+          return;
+        }
+
         this.filterCalls(res.body, params.rows, cb);
       });
   }
@@ -148,15 +152,14 @@ export default class CallsRequest {
   getCalls(params, cb) {
     logger.debug('get calls from carrier %s', params);
 
-    Q.ninvoke(this, 'formatQueryData', params)
-      .then(params => {
-        return Q.nfcall(buildCallSolrQueryString, params);
-      })
+    Q
+      .ninvoke(this, 'formatQueryData', params)
+      .then(params => Q.nfcall(buildCallSolrQueryString, params))
       .then(params => {
         this.sendRequest(params, cb);
       })
-      .catch((err) => {
-        return cb(handleError(err, err.status || 500));
+      .catch(err => {
+        cb(handleError(err, err.status || 500));
       });
   }
 }

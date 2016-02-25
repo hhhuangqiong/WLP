@@ -33,7 +33,10 @@ export function splitQuery(query, unit = 'day', cb) {
   // for timescale of hour
   // we have a limitation that we only get
   // the latest 1 day of data
-  to = query.timescale === 'hour' ? moment(to, 'x').subtract(1, 'hour').endOf('hour') : moment(to, 'x');
+  to =
+    query.timescale === 'hour' ?
+    moment(to, 'x').subtract(1, 'hour').endOf('hour') :
+    moment(to, 'x');
 
   if (!from.isValid() && !to.isValid()) {
     const error = new Error('invalid time format');
@@ -58,14 +61,23 @@ export function splitQuery(query, unit = 'day', cb) {
         // e.g. from 13:00, but not 00:00
         if (i === 0) {
           newQuery.from = moment(_.clone(query).from, 'x').add(i, unit).format('x');
-          newQuery.to = moment(_.clone(query).from, 'x').add(i, unit).endOf(unit).format('x');
+          newQuery.to = moment(_.clone(query).from, 'x')
+            .add(i, unit)
+            .endOf(unit)
+            .format('x');
 
         // should use the end time for the last request
         // but not the end of unit
         // e.g. to 15:00, but not 23:59:59
         } else if (i === numberOfUnit) {
-          newQuery.from = moment(_.clone(query).from, 'x').add(i, unit).startOf(unit).format('x');
-          newQuery.to = moment(_.clone(query).from, 'x').add(i, unit).format('x');
+          newQuery.from = moment(_.clone(query).from, 'x')
+            .add(i, unit)
+            .startOf(unit)
+            .format('x');
+
+          newQuery.to = moment(_.clone(query).from, 'x')
+            .add(i, unit)
+            .format('x');
         }
       } else {
         // if numberOfUnit = 0
@@ -74,8 +86,15 @@ export function splitQuery(query, unit = 'day', cb) {
         newQuery.to = moment(_.clone(query).to, 'x').format('x');
       }
     } else {
-      newQuery.from = moment(_.clone(query).from, 'x').add(i, unit).startOf(unit).format('x');
-      newQuery.to = moment(_.clone(query).from, 'x').add(i, unit).endOf(unit).format('x');
+      newQuery.from = moment(_.clone(query).from, 'x')
+        .add(i, unit)
+        .startOf(unit)
+        .format('x');
+
+      newQuery.to = moment(_.clone(query).from, 'x')
+        .add(i, unit)
+        .endOf(unit)
+        .format('x');
     }
 
     outputParams.push(newQuery);

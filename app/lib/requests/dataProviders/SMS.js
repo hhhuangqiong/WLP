@@ -13,7 +13,6 @@ import errorMixin from '../mixins/mumsErrorResponse';
  * @mixes mixins/mumsErrorResponse
  */
 export default class SMSRequest {
-
   constructor(opts) {
     if (!opts.baseUrl) throw new Error('`baseUrl is required`');
 
@@ -47,11 +46,11 @@ export default class SMSRequest {
 
     // jscs:disable requireCamelCaseOrUpperCaseIdentifiers
     if (opts.destination_address_inbound) {
-      query.destination_address_inbound = '*' + opts.destination_address_inbound + '*';
+      query.destination_address_inbound = `*${opts.destination_address_inbound}*`;
     }
 
     if (opts.source_address_inbound) {
-      query.source_address_inbound = '*' + opts.source_address_inbound + '*';
+      query.source_address_inbound = `*${opts.source_address_inbound}*`;
     }
 
     // jscs:enable
@@ -65,12 +64,24 @@ export default class SMSRequest {
 
     logger.debug(`SMS API Endpoint: ${path}?${qs.stringify(query)}`);
 
-    request.get(path).timeout(this._timeout).query(query).end((err, res) => {
-      // TODO DRY this
-      if (err) return cb(err);
-      if (res.status >= 400) return cb(this.prepareError(res.body.error));
-      cb(null, res.body);
-    });
+    request
+      .get(path)
+      .timeout(this._timeout)
+      .query(query)
+      .end((err, res) => {
+        // TODO DRY this
+        if (err) {
+          cb(err);
+          return;
+        }
+
+        if (res.status >= 400) {
+          cb(this.prepareError(res.body.error));
+          return;
+        }
+
+        cb(null, res.body);
+      });
   }
 }
 

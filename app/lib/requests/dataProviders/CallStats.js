@@ -18,8 +18,8 @@ export default class UserStatsRequest {
   constructor(baseUrl, timeout) {
     const opts = {
       type: 'dataProviderApi',
-      baseUrl: baseUrl,
-      timeout: timeout,
+      baseUrl,
+      timeout,
       endpoints: {
         CALLERS: {
           PATH: '/stats/1.0/sip/callers',
@@ -41,7 +41,8 @@ export default class UserStatsRequest {
 
   normalizeData(type, params, cb) {
     logger.debug('normalizeData', params);
-    Q.nfcall(swapDate, params)
+    Q
+      .nfcall(swapDate, params)
       .then(data => {
         const query = {};
 
@@ -102,21 +103,20 @@ export default class UserStatsRequest {
   }
 
   getCallStats(params, cb) {
-    Q.ninvoke(this, 'normalizeData', REQUEST_TYPE.CALLS, params)
-      .then(query => {
-        return Q.ninvoke(requestHelper, 'splitQuery', query);
-      })
-      .then(queries => {
-        return Q.allSettled(
-          _.map(queries, (query, index) => {
-            return Q.ninvoke(this, 'sendRequest', this.opts.endpoints.CALLS, query, index);
-          })
-        );
-      })
+    Q
+      .ninvoke(this, 'normalizeData', REQUEST_TYPE.CALLS, params)
+      .then(query => Q.ninvoke(requestHelper, 'splitQuery', query))
+      .then(queries => Q.allSettled(
+        _.map(queries, (query, index) => Q.ninvoke(
+          this,
+          'sendRequest',
+          this.opts.endpoints.CALLS,
+          query,
+          index
+        ))
+      ))
       .then(results => {
-        const error = _.find(results, result => {
-          return result.state !== 'fulfilled';
-        });
+        const error = _.find(results, result => result.state !== 'fulfilled');
 
         if (error) {
           throw new Error('error occurred when querying data');
@@ -141,9 +141,7 @@ export default class UserStatsRequest {
 
           // so, you will have to get the max number of segment and
           // make it as a sample
-          let resultSample = _.max(results, (result) => {
-            return (_.get(result, 'value.results')).length;
-          });
+          let resultSample = _.max(results, result => (_.get(result, 'value.results')).length);
 
           resultSample = _.get(resultSample, 'value.results');
 
@@ -165,9 +163,7 @@ export default class UserStatsRequest {
 
               // if an identical segment is found,
               // populate the data into the segment
-              const value = _.find(values, value => {
-                return equals(sampleSegment, _.get(value, 'segment'));
-              });
+              const value = _.find(values, value => equals(sampleSegment, _.get(value, 'segment')));
 
               if (!_.isEmpty(value) && !_.isUndefined(value)) {
                 _.map(value.data, record => {
@@ -197,10 +193,9 @@ export default class UserStatsRequest {
   }
 
   getCallerStats(params, cb) {
-    Q.ninvoke(this, 'normalizeData', REQUEST_TYPE.CALLERS, params)
-      .then(query => {
-        return Q.ninvoke(requestHelper, 'splitQuery', query);
-      })
+    Q
+      .ninvoke(this, 'normalizeData', REQUEST_TYPE.CALLERS, params)
+      .then(query => Q.ninvoke(requestHelper, 'splitQuery', query))
       .then(queries => {
         return Q.allSettled(
           _.map(queries, (query, index) => {
@@ -217,9 +212,7 @@ export default class UserStatsRequest {
 
         // get the first result as sample for the segment details
         // as the breakdown could be dynamic
-        let resultSample = _.max(results, result => {
-          return (_.get(result, 'value.results')).length;
-        });
+        let resultSample = _.max(results, result => (_.get(result, 'value.results')).length);
 
         resultSample = _.get(resultSample, 'value.results');
 
@@ -237,7 +230,9 @@ export default class UserStatsRequest {
           _.map(values, (value, index) => {
             if (value && value.data) {
               _.map(value.data, record => {
-                output[index].data.push(record);
+                output[index]
+                  .data
+                  .push(record);
               });
             }
           });
@@ -253,10 +248,9 @@ export default class UserStatsRequest {
   }
 
   getCalleeStats(params, cb) {
-    Q.ninvoke(this, 'normalizeData', REQUEST_TYPE.CALLEES, params)
-      .then(query => {
-        return Q.ninvoke(requestHelper, 'splitQuery', query);
-      })
+    Q
+      .ninvoke(this, 'normalizeData', REQUEST_TYPE.CALLEES, params)
+      .then(query => Q.ninvoke(requestHelper, 'splitQuery', query))
       .then(queries => {
         return Q.allSettled(
           _.map(queries, (query, index) => {
@@ -265,9 +259,7 @@ export default class UserStatsRequest {
         );
       })
       .then(results => {
-        const error = _.find(results, result => {
-          return result.state !== 'fulfilled';
-        });
+        const error = _.find(results, result => result.state !== 'fulfilled');
 
         if (error) {
           throw new Error('error occurred when querying data');
@@ -275,9 +267,7 @@ export default class UserStatsRequest {
 
         // get the first result as sample for the segment details
         // as the breakdown could be dynamic
-        let resultSample = _.max(results, result => {
-          return (_.get(result, 'value.results')).length;
-        });
+        let resultSample = _.max(results, result => (_.get(result, 'value.results')).length);
 
         resultSample = _.get(resultSample, 'value.results');
 
@@ -296,7 +286,9 @@ export default class UserStatsRequest {
           _.map(values, (value, index) => {
             if (value && value.data) {
               _.map(value.data, record => {
-                output[index].data.push(record);
+                output[index]
+                  .data
+                  .push(record);
               });
             }
           });

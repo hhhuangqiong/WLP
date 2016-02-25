@@ -158,7 +158,7 @@ const schema = new mongoose.Schema({
   },
 }, { collection: collectionName });
 
-schema.virtual('role').get(function () {
+schema.virtual('role').get(function role() {
   if (this.isRootCompany()) {
     return 'a';
   }
@@ -170,11 +170,11 @@ schema.virtual('role').get(function () {
   return 'w';
 });
 
-schema.virtual('identity').get(function () {
+schema.virtual('identity').get(function identity() {
   return this.carrierId || null;
 });
 
-schema.method('addLogo', function (filePath, options, cb) {
+schema.method('addLogo', function addLogo(filePath, options, cb) {
   gridfs.addFile(filePath, options, (err, fileDoc) => {
     if (err) return new Error(err);
     this.logo = fileDoc._id;
@@ -191,12 +191,14 @@ schema.method('addLogo', function (filePath, options, cb) {
  * @param doc.carrierId {String} company carrier id
  * @param doc.status {String} company status
  */
-schema.method('activate', function (cb) {
+schema.method('activate', function activate(cb) {
   this.status = 'active';
-  return this.save(function (err, company) {
-    if (err) throw err;
+  return this.save((err, company) => {
+    if (err) {
+      throw err;
+    }
 
-    return cb(null, { carrierId: company.carrierId, status: company.status });
+    cb(null, { carrierId: company.carrierId, status: company.status });
   });
 });
 
@@ -209,20 +211,22 @@ schema.method('activate', function (cb) {
  * @param doc.carrierId {String} company carrier id
  * @param doc.status {String} company status
  */
-schema.method('deactivate', function (cb) {
+schema.method('deactivate', function deactivate(cb) {
   this.status = 'inactive';
-  return this.save(function (err, company) {
-    if (err) throw err;
+  return this.save((err, company) => {
+    if (err) {
+      throw err;
+    }
 
-    return cb(null, { carrierId: company.carrierId, status: company.status });
+    cb(null, { carrierId: company.carrierId, status: company.status });
   });
 });
 
-schema.method('isRootCompany', function () {
+schema.method('isRootCompany', function isRootCompany() {
   return this.carrierId === ROOT_COMPANY_CARRIER_ID;
 });
 
-schema.method('getCompanyType', function () {
+schema.method('getCompanyType', function getCompanyType() {
   if (this.isRootCompany()) {
     return ROOT_COMPANY_CARRIER_ID;
   } else if (this.reseller) {
@@ -240,10 +244,14 @@ schema.method('getCompanyType', function () {
  *
  * @param carrierId
  */
-schema.static('isValidCarrier', function (carrierId) {
+schema.static('isValidCarrier', function isValidCarrier(carrierId) {
   return new Promise((resolve, reject) => {
     this.findOne({ carrierId }, (err, doc) => {
-      if (err) return reject(err);
+      if (err) {
+        reject(err);
+        return;
+      }
+
       resolve(!!doc);
     });
   });
@@ -256,9 +264,10 @@ schema.static('isValidCarrier', function (carrierId) {
  * @param {String} parentCarrierId
  * @param {Function} cb
  */
-schema.static('getManagingCompany', function (parentCarrierId, cb) {
-  return Q.ninvoke(this, 'findOne', { _id: parentCarrierId })
-    .then((company) => {
+schema.static('getManagingCompany', function getManagingCompany(parentCarrierId, cb) {
+  return Q
+    .ninvoke(this, 'findOne', { _id: parentCarrierId })
+    .then(company => {
       if (!company) {
         throw new Error({
           name: 'NotFound',
@@ -275,17 +284,14 @@ schema.static('getManagingCompany', function (parentCarrierId, cb) {
         criteria = { carrierId: { $ne: ROOT_COMPANY_CARRIER_ID } };
       }
 
-      return Q.ninvoke(this, 'find', criteria)
+      return Q
+        .ninvoke(this, 'find', criteria)
         .catch((err) => {
           throw err;
         });
     })
-    .then((companies) => {
-      return cb(null, companies);
-    })
-    .catch((err) => {
-      return cb(err);
-    });
+    .then(companies => cb(null, companies))
+    .catch(err => cb(err));
 });
 
 /**
@@ -301,15 +307,22 @@ schema.static('getCompanyByCarrierId', function getCompanyByCarrierId(carrierId,
   if (!cb) {
     return new Promise((resolve, reject) => {
       this.findOne({ carrierId }, (err, doc) => {
-        if (err) return reject(new Error(`Encounter error in getCompanyByCarrierId function with carrierId ${carrierId}`));
+        if (err) {
+          const errorMessage = `Encounter error in getCompanyByCarrierId function
+with carrierId ${carrierId}`;
+          reject(new Error(errorMessage));
+          return;
+        }
+
         resolve(doc);
       });
     });
   }
 
   /* Make most of the current usage to be compatible */
-  Q.ninvoke(this, 'findOne', { carrierId: carrierId })
-    .then((company) => {
+  Q
+    .ninvoke(this, 'findOne', { carrierId })
+    .then(company => {
       if (!company) {
         throw new Error({ name: 'NotFound', message: `Company with carrierId=${carrierId} does not exist` });
       }
@@ -326,7 +339,7 @@ schema.static('getCompanyByCarrierId', function getCompanyByCarrierId(carrierId,
  * @method getRootCompanyId
  * @param {Function} cb  The node-style callback to be called when the process is done
  */
-schema.static('getRootCompanyId', function (cb) {
+schema.static('getRootCompanyId', function getRootCompanyId(cb) {
   this.getCompanyByCarrierId(ROOT_COMPANY_CARRIER_ID, (err, company) => {
     if (err) {
       cb(err);
@@ -337,24 +350,24 @@ schema.static('getRootCompanyId', function (cb) {
   });
 });
 
-schema.method('isSDK', function () {
+schema.method('isSDK', function isSDK() {
   return this.carrierId.indexOf(SDK_DOMAIN) > -1;
 });
 
-schema.method('getServiceType', function () {
+schema.method('getServiceType', function getServiceType() {
   return this.isSDK() ? 'SDK' : 'WL';
 });
 
-schema.method('getUrlPrefix', function () {
+schema.method('getUrlPrefix', function getUrlPrefix() {
   if (this.isRootCompany()) {
-    return this.carrierId ? '/a/' + this.carrierId : '/a';
+    return this.carrierId ? `/a/${this.carrierId}` : '/a';
   }
 
   if (this.reseller) {
-    return '/r/' + this.carrierId;
+    return `/r/${this.carrierId}`;
   }
 
-  return '/w/' + this.carrierId;
+  return `/w/${this.carrierId}`;
 });
 
 module.exports = mongoose.model(collectionName, schema);

@@ -13,7 +13,6 @@ export const OPERATION_TYPE_REMOVE = 'REMOVE';
  * @mixes mixins/mumsErrorResponse
  */
 export class WhitelistRequest {
-
   constructor(opts) {
     if (!opts.baseUrl) throw new Error('`baseUrl is required`');
     this._baseUrl = opts.baseUrl;
@@ -51,15 +50,23 @@ export class WhitelistRequest {
 
     const path = this._processPath(carrierId);
 
-    request.put(path)
+    request
+      .put(path)
       .send({
-        operationType: operationType,
-        usernames: usernames,
+        operationType,
+        usernames,
       })
       .end((err, res) => {
         // other kind of error?
-        if (err) return cb(err);
-        if (res.status >= 400) return cb(this.prepareError(res.body.error));
+        if (err) {
+          cb(err);
+          return;
+        }
+
+        if (res.status >= 400) {
+          cb(this.prepareError(res.body.error));
+          return;
+        }
         cb(null, res.body.usernamesApplied, res.body.usernamesNotApplied);
       });
   }
@@ -95,12 +102,15 @@ export class WhitelistRequest {
    */
   get(carrierId, opts, cb) {
     if (!carrierId) throw new Error('`carrierId` is required');
+
     if (arguments.length === 2) {
       cb = opts;
       opts = {};
     }
 
-    if (!cb) throw new Error('`cb` is required');
+    if (!cb) {
+      throw new Error('`cb` is required');
+    }
 
     const path = this._processPath(carrierId);
     const scope = request.get(path);
@@ -116,8 +126,16 @@ export class WhitelistRequest {
 
     scope.end((err, res) => {
       // TODO DRY this
-      if (err) return cb(err);
-      if (res.status >= 400) return cb(this.prepareError(res.body.error));
+      if (err) {
+        cb(err);
+        return;
+      }
+
+      if (res.status >= 400) {
+        cb(this.prepareError(res.body.error));
+        return;
+      }
+
       cb(null, res.body);
     });
   }

@@ -9,8 +9,8 @@ import { constructOpts, appendRequestId } from '../helper';
 export default class WalletRequest {
   constructor(baseUrl, timeout) {
     const opts = {
-      baseUrl: baseUrl,
-      timeout: timeout,
+      baseUrl,
+      timeout,
       methods: {
         LIST: {
           URL: '/api/walletBalance',
@@ -113,7 +113,8 @@ export default class WalletRequest {
   getWalletBalance(params, cb) {
     logger.debug('get user %s\'s wallet info from BOSS', params.number);
 
-    Q.ninvoke(this, 'validateQuery', params)
+    Q
+      .ninvoke(this, 'validateQuery', params)
       .then(appendRequestId)
       .then(params => {
         return this.sendRequest(params, cb);

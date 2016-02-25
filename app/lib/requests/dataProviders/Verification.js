@@ -14,8 +14,8 @@ export default class VerificationRequest {
   constructor(baseUrl, timeout) {
     const opts = {
       type: 'dataProviderApi',
-      baseUrl: baseUrl,
-      timeout: timeout,
+      baseUrl,
+      timeout,
       endpoints: {
         SEARCH: {
           PATH: '/api/v1/verification/events/query',
@@ -84,7 +84,8 @@ export default class VerificationRequest {
    * @param {Function} cb  Node-style callback function
    */
   formatQueryParameters(params, cb) {
-    Q.nfcall(swapDate, params)
+    Q
+      .nfcall(swapDate, params)
       .then(paramsAfterSwappedDate => {
         const format = nconf.get(util.format('%s:format:timestamp', this.opts.type)) || 'x';
 
@@ -180,7 +181,8 @@ export default class VerificationRequest {
    * @param {Function} cb  Node-style callback function
    */
   getVerifications(params, cb) {
-    Q.ninvoke(this, 'formatQueryParameters', this.convertDateInParamsFromIsoToTimestamp(params))
+    Q
+      .ninvoke(this, 'formatQueryParameters', this.convertDateInParamsFromIsoToTimestamp(params))
       .then(paramsAfterFormatQuery => {
         this.sendRequest(this.opts.endpoints.SEARCH, paramsAfterFormatQuery, cb);
       })
@@ -199,11 +201,12 @@ export default class VerificationRequest {
       breakdown: groupBy,
     }));
 
-    Q.ninvoke(this, 'sendRequest', this.opts.endpoints.STATS, formattedParams)
-    .then(result => {
-      cb(null, result);
-    })
-    .catch(cb)
-    .done();
+    Q
+      .ninvoke(this, 'sendRequest', this.opts.endpoints.STATS, formattedParams)
+      .then(result => {
+        cb(null, result);
+      })
+      .catch(cb)
+      .done();
   }
 }

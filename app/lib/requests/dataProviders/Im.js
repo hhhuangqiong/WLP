@@ -15,8 +15,8 @@ export default class ImRequest {
   constructor(baseUrl, timeout) {
     const opts = {
       type: 'dataProviderApi',
-      baseUrl: baseUrl,
-      timeout: timeout,
+      baseUrl,
+      timeout,
       methods: {
         IMS: {
           URL: '/api/v1/im/tdr/query',
@@ -73,12 +73,8 @@ export default class ImRequest {
         return formatDateString(params, format);
       })
       .then(normalizeData)
-      .fail(err => {
-        return cb(handleError(err, 500), null);
-      })
-      .done(params => {
-        return cb(null, params);
-      });
+      .fail(err => cb(handleError(err, 500), null))
+      .done(params => cb(null, params));
   }
 
   /**
@@ -105,7 +101,8 @@ export default class ImRequest {
       baseUrl = _.first(baseUrlArray);
     }
 
-    const url = util.format('%s%s', baseUrl, params.q ? this.opts.methods.IMSOLR.URL : this.opts.methods.IMS.URL);
+    const url = util
+      .format('%s%s', baseUrl, params.q ? this.opts.methods.IMSOLR.URL : this.opts.methods.IMS.URL);
 
     logger.debug(`IM request: ${url}?${qs.stringify(params)}`);
 
@@ -157,13 +154,12 @@ export default class ImRequest {
    */
   getImStat(params, cb) {
     logger.debug('get im message statistic from BOSS with params', params);
-    Q.ninvoke(this, 'formatQueryData', params)
+    Q
+      .ninvoke(this, 'formatQueryData', params)
       .then(params => {
         this.sendRequest(params, cb);
       })
-      .catch((err) => {
-        return cb(handleError(err, err.status || 500));
-      });
+      .catch(err => cb(handleError(err, err.status || 500)));
   }
 
   /**
@@ -173,12 +169,11 @@ export default class ImRequest {
    */
   getImSolr(params, cb) {
     logger.debug('get IM message history from dataProvider with params', params);
+
     Q.nfcall(buildImSolrQueryString, params)
       .then(params => {
         this.sendRequest(params, cb);
       })
-      .catch((err) => {
-        return cb(handleError(err, err.status || 500));
-      }).done();
+      .catch(err => cb(handleError(err, err.status || 500))).done();
   }
 }

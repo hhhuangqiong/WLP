@@ -9,7 +9,7 @@ import logger from 'winston';
  * @constructor
  * @param {Object} transporters 1 of the supported transporter (#sendMail method)
  */
-const Mailer = module.exports = function (transporter) {
+const Mailer = module.exports = function constructor(transporter) {
   if (!transporter) throw new Error('transporter is required');
   this._transporter = transporter;
 };
@@ -21,16 +21,18 @@ const Mailer = module.exports = function (transporter) {
  * @param {String} content Content in HTML format
  * @param {Function} cb
  */
-Mailer.prototype.sendHtmlContent = function (mailOpts, content, cb) {
+Mailer.prototype.sendHtmlContent = function sendHtmlContent(mailOpts, content, cb) {
   // TODO validate mailOpts
   if (!mailOpts || !content) {
     throw new Error('Invalid number of arguments');
   }
 
   mailOpts.html = content;
-  this._transporter.sendMail(mailOpts, function (err, responseStatus) {
+
+  this._transporter.sendMail(mailOpts, (err, responseStatus) => {
     if (err) {
-      return cb(err);
+      cb(err);
+      return;
     }
 
     logger.info('Sending email with %j', mailOpts, {});

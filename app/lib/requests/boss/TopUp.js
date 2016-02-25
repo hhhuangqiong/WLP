@@ -11,8 +11,8 @@ import { constructOpts, appendRequestId, handleError } from '../helper';
 export default class TopUpRequest {
   constructor(baseUrl, timeout) {
     const opts = {
-      baseUrl: baseUrl,
-      timeout: timeout,
+      baseUrl,
+      timeout,
       methods: {
         LIST: {
           URL: '/api/transactionHistory',
@@ -52,15 +52,12 @@ export default class TopUpRequest {
       return params;
     }
 
-    Q.fcall(swapDate)
+    Q
+      .fcall(swapDate)
       .then(formatUserNumberField)
       .then(formatDateString)
-      .fail(function (err) {
-        return cb(err);
-      })
-      .done(function (params) {
-        return cb(null, params);
-      });
+      .fail(err => cb(err))
+      .done(params => cb(null, params));
   }
 
   sendRequest(params, cb) {
@@ -79,24 +76,33 @@ export default class TopUpRequest {
       .timeout(this.opts.timeout)
       .end((err, res) => {
         // Do we need to distinguish different Errors? Timeout and ENOTFOUND
-        if (err) return cb(handleError(err, err.status || 400));
+        if (err) {
+          cb(handleError(err, err.status || 400));
+          return;
+        }
 
         try {
-          if (res.error) return cb(handleError(res.body.error.description, res.error.code));
+          if (res.error) {
+            cb(handleError(res.body.error.description, res.error.code));
+            return;
+          }
 
           // bossApi does not return page number,
           // in order to keep page state in Top Up Store
           _.assign(res.body.result, { page: params.page });
 
-          return cb(null, res.body.result);
+          cb(null, res.body.result);
+          return;
         } catch (e) {
           // unexpected response
           logger.debug('Unexpected response from BOSS transactionHistor: ', fullUrl, params);
           logger.debug('Parsing error stack:', e.stack);
+
           err = new Error();
           err.message = 'Unexpected response';
           err.status = 500;
-          return cb(err);
+
+          cb(err);
         }
       });
   }
@@ -104,13 +110,14 @@ export default class TopUpRequest {
   getTopUp(params, cb) {
     logger.debug('get transaction history from BOSS with params', params);
 
-    Q.ninvoke(this, 'formatQueryData', params)
+    Q
+      .ninvoke(this, 'formatQueryData', params)
       .then(appendRequestId)
       .then(params => {
         this.sendRequest(params, cb);
       })
-      .catch((err) => {
-        return cb(handleError(err), 500);
+      .catch(err => {
+        cb(handleError(err), 500);
       });
   }
 }

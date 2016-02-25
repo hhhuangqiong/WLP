@@ -35,16 +35,21 @@ export default {
     }
 
     if (params.recipient) {
-      qb.begin()
+      qb
+        .begin()
         .where('recipient', params.recipient)
         .or()
         .where('recipients', params.recipient)
       .end();
     }
 
-    const queryResult = { q: qb.build(), sort: DEFAULT_SORT_ORDER, rows: params.size, start: (+params.page * params.size) };
+    const queryResult = {
+      q: qb.build(),
+      sort: DEFAULT_SORT_ORDER,
+      rows: params.size,
+      start: (+params.page * params.size),
+    };
 
-    return cb(null, queryResult);
+    cb(null, queryResult);
   },
-
 };

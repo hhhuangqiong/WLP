@@ -3,7 +3,6 @@
 import _ from 'lodash';
 import assign from 'object-assign';
 import request from 'superagent';
-import qs from 'qs';
 import logger from 'winston';
 
 import errorMixin from '../requests/mixins/mumsErrorResponse';
@@ -16,7 +15,6 @@ export const CONTENT_TYPE_CARRIER = 'CARRIER';
  * @mixes mixins/mumsErrorResponse
  */
 export class ApplicationRequest {
-
   constructor(opts) {
     if (!opts.baseUrl) throw new Error('`baseUrl is required`');
     this._baseUrl = opts.baseUrl;
@@ -42,9 +40,9 @@ export class ApplicationRequest {
         return response.services;
       case CONTENT_TYPE_APPLICATIONS:
         return {
-        applicationId: response.applicationDetails.applicationIdentifier,
-        applications: response.applicationDetails.applications,
-      };
+          applicationId: response.applicationDetails.applicationIdentifier,
+          applications: response.applicationDetails.applications,
+        };
       case CONTENT_TYPE_CARRIER:
         return { isValid: !_.has(response.body, 'error') };
       default:
@@ -65,8 +63,13 @@ export class ApplicationRequest {
   }
 
   _get(carrierId, contentType, cb) {
-    if (!carrierId) throw new Error('`carrierId` is required');
-    if (!cb || !_.isFunction(cb)) throw new Error('`cb` is required and must be a function');
+    if (!carrierId) {
+      throw new Error('`carrierId` is required');
+    }
+
+    if (!cb || !_.isFunction(cb)) {
+      throw new Error('`cb` is required and must be a function');
+    }
 
     const path = this._processPath(contentType, carrierId);
 
@@ -76,8 +79,16 @@ export class ApplicationRequest {
 
     scope.end((err, res) => {
       // TODO DRY this
-      if (err) return cb(err);
-      if (res.status >= 400) return cb(this.prepareError(res.body.error));
+      if (err) {
+        cb(err);
+        return;
+      }
+
+      if (res.status >= 400) {
+        cb(this.prepareError(res.body.error));
+        return;
+      }
+
       cb(null, this._trimResponse(contentType, res.body));
     });
   }

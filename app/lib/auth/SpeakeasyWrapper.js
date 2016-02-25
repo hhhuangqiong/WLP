@@ -38,7 +38,11 @@ export default class SpeakeasyWrapper {
   qrCodeURL(name = '', length = 32) { // do not care about the length for now
     // jscs:disable requireCamelCaseOrUpperCaseIdentifiers
     // 'qr_codes' are not for Google Authenticator
-    const qrOpts = { qr_codes: true, name: name || this.name, length: length };
+    const qrOpts = {
+      qr_codes: true,
+      name: name || this.name,
+      length,
+    };
 
     // how to use `Object.assign` with babel?
     const result = speakeasy.generate_key(_.assign({}, qrOpts));

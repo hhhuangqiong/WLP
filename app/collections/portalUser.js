@@ -52,25 +52,32 @@ const portalUserSchema = new mongoose.Schema({
   collection: COLLECTION_NAME,
 });
 
-portalUserSchema.virtual('password').get(function getPassword() {
-  return this._password;
-}).set(function setPassword(password) {
-  this._password = password;
-});
+portalUserSchema
+  .virtual('password')
+  .get(function getPassword() {
+    return this._password;
+  })
+  .set(function setPassword(password) {
+    this._password = password;
+  });
 
-portalUserSchema.virtual('email').get(function getEmail() {
-  return this.username;
-}).set(function setEmail(email) {
-  this._email = email;
-});
+portalUserSchema
+  .virtual('email')
+  .get(function getEmail() {
+    return this.username;
+  })
+  .set(function setEmail(email) {
+    this._email = email;
+  });
 
 portalUserSchema.virtual('displayName').get(function getDisplayName() {
-  return this.name.first + ' ' + this.name.last;
+  return `${this.name.first} ${this.name.last}`;
 });
 
 portalUserSchema.pre('save', function preSave(next) {
   if (this.hashedPassword && !this.password) {
-    return next();
+    next();
+    return;
   }
 
   if (this.password) {
@@ -81,7 +88,7 @@ portalUserSchema.pre('save', function preSave(next) {
     };
 
     this.constructor.hashInfo(this.password, hashPasswordCb);
-    return null;
+    return;
   }
 
   next();
@@ -133,11 +140,13 @@ portalUserSchema.method('getCompany', function getCompany() {
   return new Promise((resolve, reject) => {
     Company.findOne({ _id: this.affiliatedCompany }, (err, doc) => {
       if (err) {
-        return reject(new MongoDBError(`Fail to find company with id ${this.affiliatedCompany}`, err));
+        reject(new MongoDBError(`Fail to find company with id ${this.affiliatedCompany}`, err));
+        return;
       }
 
       if (!doc) {
-        return reject(new NotFoundError(`Fail to find company ${this.affiliatedCompany}`));
+        reject(new NotFoundError(`Fail to find company ${this.affiliatedCompany}`));
+        return;
       }
 
       resolve(doc);
@@ -167,13 +176,11 @@ portalUserSchema.method('googleAuthInfo', function googleAuthInfo(name = '', len
  * @static
  * @return {Object} the token
  */
-portalUserSchema.static('makeToken', function makeToken(event, val) {
-  return {
-    event: event,
-    value: val || randtoken.generate(16),
-    createdAt: new Date(),
-  };
-});
+portalUserSchema.static('makeToken', (event, val) => ({
+  event,
+  value: val || randtoken.generate(16),
+  createdAt: new Date(),
+}));
 
 portalUserSchema.method('isValidPassword', function isValidPassword(password) {
   return bcrypt.compareSync(password, this.hashedPassword);
@@ -232,18 +239,22 @@ portalUserSchema.method('hasValidOneTimePassword', function hasValidOneTimePassw
  */
 portalUserSchema.method('validateCarrier', function validateCarrier(carrierId) {
   return new Promise((resolve, reject) => {
-    this.getCompany()
+    this
+      .getCompany()
       .then(company => {
         if (!company) {
-          return resolve(false);
+          resolve(false);
+          return;
         }
 
         if (company.carrierId === carrierId) {
-          return resolve(true);
+          resolve(true);
+          return;
         }
 
         Company.getManagingCompany(company.carrierId, (err, companies) => {
-          return resolve(companies.find(managingCompany => managingCompany.carrierId === carrierId));
+          resolve(companies.find(managingCompany => managingCompany.carrierId === carrierId));
+          return;
         });
       })
       .catch(error => reject(error));
@@ -257,17 +268,18 @@ portalUserSchema.method('validateCarrier', function validateCarrier(carrierId) {
  * @param {String} password
  * @param {Function} cb
  */
-portalUserSchema.static('hashInfo', function hashInfo(password, cb) {
+portalUserSchema.static('hashInfo', (password, cb) => {
   // use default rounds for now
   const salt = bcrypt.genSaltSync(10);
 
-  bcrypt.hash(password, salt, function afterHash(err, hash) {
+  bcrypt.hash(password, salt, (err, hash) => {
     if (err) {
-      return cb(err);
+      cb(err);
+      return;
     }
 
     cb(null, {
-      salt: salt,
+      salt,
       hashedPassword: hash,
     });
   });
@@ -279,13 +291,11 @@ portalUserSchema.static('hashInfo', function hashInfo(password, cb) {
  * @method makeToken
  * @return {Object} the token
  */
-portalUserSchema.static('makeToken', function makeToken(event, val) {
-  return {
-    event: event,
-    value: val || randtoken.generate(16),
-    createdAt: new Date(),
-  };
-});
+portalUserSchema.static('makeToken', (event, val) => ({
+  event,
+  value: val || randtoken.generate(16),
+  createdAt: new Date(),
+}));
 
 // TODO
 // - make use of existing token features
@@ -293,12 +303,12 @@ portalUserSchema.static('makeToken', function makeToken(event, val) {
 portalUserSchema.static('newPortalUser', function newPortalUser(data, cb) {
   const token = this.makeToken('signup');
 
-  data.tokens = data.tokens || [];
   data.tokens.push(token);
 
   this.create(data, (err, user) => {
     if (err) {
-      return cb(err);
+      cb(err);
+      return;
     }
 
     cb(null, user);
@@ -309,11 +319,13 @@ portalUserSchema.static('findByEmail', function findByEmail(email) {
   return new Promise((resolve, reject) => {
     this.findOne({ username: email }, (err, user) => {
       if (err) {
-        return reject(new MongoDBError(`Encounter error when finding user ${email}`, err));
+        reject(new MongoDBError(`Encounter error when finding user ${email}`, err));
+        return;
       }
 
       if (!user) {
-        return reject(new NotFoundError(`Cannot find user with email: ${email}`));
+        reject(new NotFoundError(`Cannot find user with email: ${email}`));
+        return;
       }
 
       resolve(user);
@@ -321,21 +333,25 @@ portalUserSchema.static('findByEmail', function findByEmail(email) {
   });
 });
 
-portalUserSchema.static('newForgotPasswordRequest', function newForgotPasswordRequest(username, cb) {
-  const token = this.makeToken('forgotPassword');
+portalUserSchema.static(
+  'newForgotPasswordRequest',
+  function newForgotPasswordRequest(username, cb) {
+    const token = this.makeToken('forgotPassword');
 
-  this.findOneAndUpdate({
-    username: username,
-  }, {
-    // this kinda make '#addToken' redundant
-    $addToSet: { tokens: token },
-  }, (err, user) => {
-    if (err) {
-      return cb(err);
-    }
+    this.findOneAndUpdate({
+      username,
+    }, {
+      // this kinda make '#addToken' redundant
+      $addToSet: { tokens: token },
+    }, (err, user) => {
+      if (err) {
+        cb(err);
+        return;
+      }
 
-    cb(null, user);
-  });
-});
+      cb(null, user);
+    });
+  }
+);
 
 module.exports = mongoose.model(COLLECTION_NAME, portalUserSchema);

@@ -18,8 +18,8 @@ export default class UserStatsRequest {
   constructor(baseUrl, timeout) {
     const opts = {
       type: 'dataProviderApi',
-      baseUrl: baseUrl,
-      timeout: timeout,
+      baseUrl,
+      timeout,
       endpoints: {
         USER: {
           PATH: '/stats/1.0/user/query',
@@ -41,7 +41,8 @@ export default class UserStatsRequest {
 
   normalizeData(type, params, cb) {
     logger.debug('normalizeData', params);
-    Q.nfcall(swapDate, params)
+    Q
+      .nfcall(swapDate, params)
       .then(data => {
         const query = {};
 
@@ -66,12 +67,12 @@ export default class UserStatsRequest {
         if (data.status) query.status = data.status;
         if (data.countries) query.countries = data.countries;
 
-        return _.omit(query, (value) => { return !value; });
+        return _.omit(query, value => !value);
       })
-      .then((query) => {
+      .then(query => {
         cb(null, query);
       })
-      .catch((err) => {
+      .catch(err => {
         cb(handleError(err, 500), null);
       })
       .done();
@@ -113,7 +114,8 @@ export default class UserStatsRequest {
   }
 
   getUserStats(params, cb) {
-    Q.ninvoke(this, 'normalizeData', REQUEST_TYPE.USER, params)
+    Q
+      .ninvoke(this, 'normalizeData', REQUEST_TYPE.USER, params)
       .then(query => {
         this.sendRequest(this.opts.endpoints.USER, query, cb);
       })
@@ -124,7 +126,8 @@ export default class UserStatsRequest {
   }
 
   getNewUserStats(params, cb) {
-    Q.ninvoke(this, 'normalizeData', REQUEST_TYPE.NEW_USERS, params)
+    Q
+      .ninvoke(this, 'normalizeData', REQUEST_TYPE.NEW_USERS, params)
       .then(query => {
         this.sendRequest(this.opts.endpoints.NEW_USERS, query, cb);
       })
@@ -135,11 +138,12 @@ export default class UserStatsRequest {
   }
 
   getActiveUserStats(params, cb) {
-    Q.ninvoke(this, 'normalizeData', REQUEST_TYPE.USER.ACTIVE_USERS, params)
-      .then((query) => {
+    Q
+      .ninvoke(this, 'normalizeData', REQUEST_TYPE.USER.ACTIVE_USERS, params)
+      .then(query => {
         this.sendRequest(this.opts.endpoints.ACTIVE_USERS, query, cb);
       })
-      .catch((error) => {
+      .catch(error => {
         cb(handleError(error, error.status || 500));
       })
       .done();

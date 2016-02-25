@@ -53,7 +53,8 @@ const schema = new mongoose.Schema({
  */
 ['name', 'data'].forEach((m) => {
   const mn = ['template', m.substring(0, 1).toUpperCase(), m.substring(1)].join('');
-  schema.methods[mn] = function (val) {
+
+  schema.methods[mn] = function assignToTemplate(val) {
     if (!val) {
       return this.template[m];
     }

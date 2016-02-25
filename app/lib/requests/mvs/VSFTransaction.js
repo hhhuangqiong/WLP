@@ -12,8 +12,8 @@ const LONG_DATE_FORMAT = 'YYYY-MM-DDTHH:MM:ss[Z]';
 export default class VSFTransactionRequest {
   constructor(baseUrl, timeout) {
     const opts = {
-      baseUrl: baseUrl,
-      timeout: timeout,
+      baseUrl,
+      timeout,
       methods: {
         LIST: {
           URL: '/1.0/transactions/carriers/%s',
@@ -49,18 +49,25 @@ export default class VSFTransactionRequest {
       .buffer()
       .timeout(this.timeout)
       .end((err, res) => {
-        if (err) return cb(handleError(err, err.status || 400));
-        if (res.status >= 400) return cb(handleError(res.body.error.message, res.body.error.httpStatus));
+        if (err) {
+          cb(handleError(err, err.status || 400));
+          return;
+        }
+
+        if (res.status >= 400) {
+          cb(handleError(res.body.error.message, res.body.error.httpStatus));
+          return;
+        }
+
         cb(null, res.body);
       });
   }
 
   getTransactions(carrierId, params, cb) {
-    Q.ninvoke(this, 'formatQueryData', params)
+    Q
+      .ninvoke(this, 'formatQueryData', params)
       .then(formattedParams => {
         this.sendRequest(carrierId, formattedParams, cb);
-      }).catch((err) => {
-        return handleError(err, 500);
-      });
+      }).catch(err => handleError(err, 500));
   }
 }

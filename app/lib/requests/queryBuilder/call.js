@@ -24,23 +24,29 @@ export default {
   buildCallSolrQueryString(params, cb) {
     const qb = new SolrQueryBuilder();
 
-    qb.begin()
+    qb
+      .begin()
       .where('caller_carrier', params.caller_carrier)
       .or()
       .where('callee_carrier', params.caller_carrier)
       .end();
 
-    qb.where('start_time').between(moment(params.from, 'x').toJSON(), moment(params.to, 'x').toJSON());
+    qb
+      .where('start_time')
+      .between(
+        moment(params.from, 'x').toJSON(),
+        moment(params.to, 'x').toJSON()
+      );
 
     if (params.caller) {
       qb.any({
-        'caller': params.caller,
+        caller: params.caller,
       }, { contains: true });
     }
 
     if (params.callee) {
       qb.any({
-        'callee': params.callee,
+        callee: params.callee,
       }, { contains: true });
     }
 
@@ -63,9 +69,14 @@ export default {
       }
     }
 
-    const queryResult = { q: qb.build(), sort: DEFAULT_SORT_ORDER, rows: params.size, start: (+params.page * params.size) };
+    const queryResult = {
+      q: qb.build(),
+      sort: DEFAULT_SORT_ORDER,
+      rows: params.size,
+      start: (+params.page * params.size),
+    };
 
-    return cb(null, queryResult);
+    cb(null, queryResult);
   },
 
 };

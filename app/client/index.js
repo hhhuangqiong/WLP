@@ -42,7 +42,7 @@ function render(context, Handler) {
 
 function createAppRouter(context) {
   const router = Router.create({
-    routes: routes,
+    routes,
     location: Router.HistoryLocation,
     transitionContext: context,
   });
@@ -70,22 +70,23 @@ function startApp(firstRender, context, Handler, routerState, toggleFirstRender)
 if (!dehydratedState) {
   bootstrapDebug('Isomorphism disabled, creating new context');
   const config = window.__CONFIG__;
-  const context = app.createContext({ config: config });
+  const context = app.createContext({ config });
 
   // For debugging
   window.context = context;
   bootstrapDebug('Loading session');
-  context.getActionContext().executeAction(loadSession, {}, function () {
+
+  context.getActionContext().executeAction(loadSession, {}, () => {
     const router = createAppRouter(context);
     bootstrapDebug('Starting router');
-    router.run(function (Handler, routerState) {
+    router.run((Handler, routerState) => {
       render(context, Handler);
       fetchData(context, routerState);
     });
   });
 } else {
   bootstrapDebug('Rehydrating app');
-  app.rehydrate(dehydratedState, function (err, context) {
+  app.rehydrate(dehydratedState, (err, context) => {
     if (err) {
       throw err;
     }
@@ -100,24 +101,24 @@ if (!dehydratedState) {
 
     bootstrapDebug('Starting router');
 
-    router.run(function routerRun(Handler, routerState) {
+    router.run((Handler, routerState) => {
       // TODO: prepare the authority plugin on server side
       const isAuthenticated = context.getStore(AuthStore).isAuthenticated();
       const authority = context.getComponentContext().getAuthority();
 
       if (isAuthenticated && _.isNull(authority.getCarrierId())) {
-        context.executeAction(getAuthorityList, routerState.params.identity, function (err) {
-          if (err) {
+        context.executeAction(getAuthorityList, routerState.params.identity, getAuthErr => {
+          if (getAuthErr) {
             router.transitionTo('/error/internal-server-error');
             return;
           }
 
-          startApp(firstRender, context, Handler, routerState, function () {
+          startApp(firstRender, context, Handler, routerState, () => {
             firstRender = false;
           });
         });
       } else {
-        startApp(firstRender, context, Handler, routerState, function () {
+        startApp(firstRender, context, Handler, routerState, () => {
           firstRender = false;
         });
       }

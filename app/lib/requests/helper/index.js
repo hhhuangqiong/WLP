@@ -50,17 +50,11 @@ export function formatDateString(params, format) {
 export function swapDate(params, cb) {
   const { from, to } = params;
 
-  const isValid = (target) => {
-    return moment(from, target, true).isValid();
-  };
+  const isValid = (target) => moment(from, target, true).isValid();
 
-  const fromIsAfterTo = (target) => {
-    return moment(from, target).isAfter(moment(to, target));
-  };
+  const fromIsAfterTo = (target) => moment(from, target).isAfter(moment(to, target));
 
-  const needToBeSwapped = (target) => {
-    return isValid(target) && fromIsAfterTo(target);
-  };
+  const needToBeSwapped = (target) => isValid(target) && fromIsAfterTo(target);
 
   if (needToBeSwapped('x') || needToBeSwapped('L')) {
     const tmp = to;
@@ -119,9 +113,9 @@ export function composeSolrResponse(response, pageSize) {
   return {
     offset: response.offset,
     contents: response.content,
-    pageNumber: pageNumber,
+    pageNumber,
+    totalPages,
     pageSize: response.page_size,
-    totalPages: totalPages,
     totalElements: response.total_elements,
   };
 }

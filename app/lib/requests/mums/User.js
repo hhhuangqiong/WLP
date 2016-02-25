@@ -12,8 +12,8 @@ import { constructOpts, handleError } from '../helper';
 export default class UsersRequest {
   constructor(baseUrl, timeout) {
     const opts = {
-      baseUrl: baseUrl,
-      timeout: timeout,
+      baseUrl,
+      timeout,
       methods: {
         LIST: {
           URL: '/1.0/carriers/%s/users',
@@ -58,12 +58,12 @@ export default class UsersRequest {
         err.message = 'Unexpected response';
         err.status = 500;
 
-        return cb(err);
+        cb(err);
       }
     });
   }
 
-  _morphExportUsers({ userList, hasNextPage, dateRange : { pageNumberIndex } }) {
+  _morphExportUsers({ userList, hasNextPage, dateRange: { pageNumberIndex } }) {
     const usersData = {};
 
     usersData.contents = _.map(userList, value => {
@@ -105,9 +105,17 @@ export default class UsersRequest {
         .buffer()
         .timeout(this.opts.timeout)
         .end((err, res) => {
-          if (err) return cb(handleError(err, err.status || 400));
-          if (res.status >= 400) return cb(handleError(res.body.err));
-          return cb(null, res.body);
+          if (err) {
+            cb(handleError(err, err.status || 400));
+            return;
+          }
+
+          if (res.status >= 400) {
+            cb(handleError(res.body.err));
+            return;
+          }
+
+          cb(null, res.body);
         });
     };
 
@@ -118,40 +126,51 @@ export default class UsersRequest {
         .buffer()
         .timeout(this.opts.timeout)
         .end((err, res) => {
-          if (err) return cb(handleError(err, err.status || 400));
-          if (res.status >= 400) return cb(handleError(res.body.err));
-          return cb(null, res.body);
+          if (err) {
+            cb(handleError(err, err.status || 400));
+            return;
+          }
+
+          if (res.status >= 400) {
+            cb(handleError(res.body.err));
+            return;
+          }
+
+          cb(null, res.body);
         });
     };
 
-    Q.allSettled([
-      Q.nfcall(currentPageRequest, queries),
-      Q.nfcall(nextPageRequest, queries),
-    ]).then(results => {
-      _.each(results, result => {
-        if (result.state !== 'fulfilled') {
-          return cb(handleError(new Error('Internal server error'), 500));
-        }
-      });
+    Q
+      .allSettled([
+        Q.nfcall(currentPageRequest, queries),
+        Q.nfcall(nextPageRequest, queries),
+      ])
+      .then(results => {
+        _.each(results, result => {
+          if (result.state !== 'fulfilled') {
+            cb(handleError(new Error('Internal server error'), 500));
+            return;
+          }
+        });
 
-      const result = _.first(results).value;
-      const nextPageResult = _.last(results).value;
+        const result = _.first(results).value;
+        const nextPageResult = _.last(results).value;
 
-      _.assign(result, {
-        userCount: nextPageResult.userCount > 0 ? result.userCount ++ : result.userCount,
-        hasNextPage: nextPageResult.userCount > 0,
-      });
+        _.assign(result, {
+          userCount: nextPageResult.userCount > 0 ? result.userCount ++ : result.userCount,
+          hasNextPage: nextPageResult.userCount > 0,
+        });
 
-      // assign jid to each user
-      const carrierId = result.carrierId;
-      result.userList.forEach(user => {
-        user.jid = `${user.username}@${carrierId}`;
-      });
+        // assign jid to each user
+        const carrierId = result.carrierId;
 
-      return cb(null, result);
-    }).catch(err => {
-      return cb(handleError(err));
-    });
+        result.userList.forEach(user => {
+          user.jid = `${user.username}@${carrierId}`;
+        });
+
+        cb(null, result);
+      })
+      .catch(err => cb(handleError(err)));
   }
 
   /**
@@ -172,8 +191,15 @@ export default class UsersRequest {
       .get(reqUrl)
       .timeout(this.opts.timeout)
       .end((err, res) => {
-        if (err) return cb(handleError(err));
-        if (res.status >= 400) return cb(handleError(res.body.err));
+        if (err) {
+          cb(handleError(err));
+          return;
+        }
+
+        if (res.status >= 400) {
+          cb(handleError(res.body.err));
+          return;
+        }
 
         // assign jid to the user
         res.body.userDetails.jid = `${res.body.userDetails.username}@${res.body.carrierId}`;
@@ -198,8 +224,16 @@ export default class UsersRequest {
       .post(util.format('%s%s', base, url))
       .timeout(this.opts.timeout)
       .end((err, res) => {
-        if (err) return cb(err);
-        if (res.status >= 400) return cb(handleError(res.body.err));
+        if (err) {
+          cb(err);
+          return;
+        }
+
+        if (res.status >= 400) {
+          cb(handleError(res.body.err));
+          return;
+        }
+
         cb(null, res.body);
       });
   }
@@ -221,8 +255,16 @@ export default class UsersRequest {
       .del(util.format('%s%s', base, url))
       .timeout(this.opts.timeout)
       .end((err, res) => {
-        if (err) return cb(err);
-        if (res.status >= 400) return cb(handleError(res.body.err));
+        if (err) {
+          cb(err);
+          return;
+        }
+
+        if (res.status >= 400) {
+          cb(handleError(res.body.err));
+          return;
+        }
+
         cb(null, res.body);
       });
   }
