@@ -2,7 +2,6 @@ import { isEmpty } from 'lodash';
 import React, { PropTypes } from 'react';
 import VerificationTableRow from './VerificationTableRow';
 import VerificationProfile from './VerificationProfile';
-import CountryFlag from '../../../main/components/CountryFlag';
 import EmptyRow from '../../../main/components/data-table/EmptyRow';
 
 import Pagination from '../../../main/components/Pagination';

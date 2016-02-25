@@ -3,8 +3,9 @@ import classNames from 'classnames';
 import moment from 'moment';
 import _ from 'lodash';
 
-import { parseDuration } from '../../../utils/StringFormatter';
 import Pagination from '../../../main/components/Pagination';
+import { parseDuration } from '../../../utils/StringFormatter';
+
 // TODO: Replace it with country-data
 import { getCountryName } from '../../../utils/StringFormatter';
 import CountryFlag from '../../../main/components/CountryFlag';
@@ -89,13 +90,20 @@ const CallsTable = React.createClass({
                 <span className="call_time">{callStartTime} - {callEndTime}</span>
               </td>
 
-            <td><span className={classNames('call_status', u.success ? 'success' : 'alert')}>{u.success ? 'Success' : 'Failure'}</span></td>
-            <td><span className="last_response_code">{u.last_response_code || EMPTY_STRING}</span></td>
-            <td><div className="call_by_reason">{u.bye_reason || EMPTY_STRING}</div></td>
-            <td><span>{u.release_party || EMPTY_STRING}</span></td>
-          </tr>
-        );
-      });
+              <td>
+                <span
+                  className={classNames('call_status', u.success ? 'success' : 'alert')}
+                >{u.success ? 'Success' : 'Failure'}
+                </span>
+              </td>
+              <td>
+                <span className="last_response_code">{u.last_response_code || EMPTY_STRING}</span>
+              </td>
+              <td><div className="call_by_reason">{u.bye_reason || EMPTY_STRING}</div></td>
+              <td><span>{u.release_party || EMPTY_STRING}</span></td>
+            </tr>
+          );
+        });
     } else {
       rows = <EmptyRow colSpan={TABLE_TITLES.length} />;
     }
