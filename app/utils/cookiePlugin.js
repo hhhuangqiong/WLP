@@ -12,13 +12,13 @@ module.exports = {
         actionContext.cookie = new Cookie({
           req: options.req,
           res: options.res,
-          maxAge: maxAge,
+          maxAge,
         });
       },
 
       dehydrate() {
         return {
-          maxAge: maxAge,
+          maxAge,
         };
       },
 

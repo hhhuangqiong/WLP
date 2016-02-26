@@ -2,12 +2,11 @@ import { filter, reduce } from 'lodash';
 import { concurrent } from 'contra';
 
 function fetchData(context, routerState, cb = () => {}) {
-  const fetchDataRoutes = filter(routerState.routes, route => {
-    return route.handler.fetchData;
-  });
+  const fetchDataRoutes = filter(routerState.routes, route => route.handler.fetchData);
 
   if (fetchDataRoutes.length === 0) {
-    return cb();
+    cb();
+    return;
   }
 
   const dataFetchers = reduce(fetchDataRoutes, (result, route) => {

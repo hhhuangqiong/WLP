@@ -31,7 +31,7 @@ function Cookie(options) {
  *
  * @return {number} number of seconds
  */
-Cookie.prototype.maxAge = function () {
+Cookie.prototype.maxAge = function maxAge() {
   return this._maxAge;
 };
 
@@ -41,7 +41,7 @@ Cookie.prototype.maxAge = function () {
  * @param {string} name name of the cookie
  * @return {string|undefined}
  */
-Cookie.prototype.get = function (name) {
+Cookie.prototype.get = function get(name) {
   if (SERVER) {
     sessionDebug('Server Cookie ', name, this._req.session.data[name]);
     return this._req.session.data[name];
@@ -52,7 +52,7 @@ Cookie.prototype.get = function (name) {
   return cookie.parse(document.cookie)[name];
 };
 
-Cookie.prototype.set = function (name, value) {
+Cookie.prototype.set = function set(name, value) {
   if (SERVER) {
     sessionDebug('Service Cookie set', name, value);
 
@@ -67,7 +67,7 @@ Cookie.prototype.set = function (name, value) {
   document.cookie = cookie.serialize(name, value, { maxAge: this.maxAge(), path: '/' });
 };
 
-Cookie.prototype.clear = function (name) {
+Cookie.prototype.clear = function clear(name) {
   if (SERVER) {
     delete this._req.session.cookie[name];
   }
