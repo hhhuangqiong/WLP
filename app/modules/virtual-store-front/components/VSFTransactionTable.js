@@ -3,6 +3,8 @@ import Moment from 'moment';
 import classNames from 'classnames';
 import _ from 'lodash';
 
+import EmptyRow from '../../../main/components/data-table/EmptyRow';
+
 const NO_VALUE_LABEL = 'N/A';
 const IOS_PLATFORM = 'com.maaii.platform.ios';
 const ANDROID_PLATFORM = 'com.maaii.platform.android';
@@ -118,6 +120,12 @@ const VSFTransactionTable = React.createClass({
     );
   },
 
+  renderEmptyRow() {
+    if (!this.props.transactions || this.props.transactions.length === 0) {
+      return <EmptyRow colSpan={7} />;
+    }
+  },
+
   render() {
     return (
       <table className="large-24 clickable vsf-table" key="vsf-table">
@@ -132,7 +140,7 @@ const VSFTransactionTable = React.createClass({
             <th className="vsf-table--cell">TRANSACTION ID</th>
           </tr>
         </thead>
-        <tbody className="vsf-table--body" key="vsf-table--body">{this.renderRows()}</tbody>
+        <tbody className="vsf-table--body" key="vsf-table--body">{_.isEmpty(this.renderRows()) ? this.renderEmptyRow() : this.renderRows()}</tbody>
         <tfoot className="vsf-table--foot" key="vsf-table--foot">{this.renderFooter()}</tfoot>
       </table>
     );

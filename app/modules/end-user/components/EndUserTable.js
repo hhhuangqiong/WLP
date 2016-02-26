@@ -3,6 +3,8 @@ import _ from 'lodash';
 import React, { PropTypes } from 'react';
 import classNames from 'classnames';
 
+import EmptyRow from '../../../main/components/data-table/EmptyRow';
+
 const { displayDateFormat: DATE_FORMAT } = require('./../../../main/config');
 
 const NOT_FOUND_LABEL = 'N/A';
@@ -26,6 +28,28 @@ const EndUserTable = React.createClass({
       users: [],
       hasNext: false,
     };
+  },
+
+  renderEmptyRow() {
+    if (!this.props.users || this.props.users.length === 0) {
+      return <EmptyRow colSpan={7} />;
+    }
+  },
+
+  renderTableFooterContent() {
+    if (this.props.hasNext) {
+      return (
+        <div className="text-center">
+          <span className="pagination__button" onClick={this.props.onPageChange}>Load More</span>
+        </div>
+      );
+    } else {
+      return (
+        <div className="text-center">
+          <span className="pagination__button pagination__button--inactive">No more</span>
+        </div>
+      );
+    }
   },
 
   render() {
@@ -91,7 +115,7 @@ const EndUserTable = React.createClass({
           </tr>
         </thead>
         <tbody>
-          {rows}
+          {_.isEmpty(rows) ? this.renderEmptyRow() : rows}
         </tbody>
         <tfoot>
           <tr>

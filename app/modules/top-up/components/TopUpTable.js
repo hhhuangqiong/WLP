@@ -4,6 +4,7 @@ import classNames from 'classnames';
 import React, { PropTypes } from 'react';
 import Tooltip from 'rc-tooltip';
 
+import EmptyRow from '../../../main/components/data-table/EmptyRow';
 import currencyData from '../../../data/bossCurrencies.json';
 import Converter from '../../../utils/bossCurrencyConverter';
 import config from './../../../main/config';
@@ -59,6 +60,12 @@ ${(!currency.code ? '' : currency.code)}`;
     }
 
     return null;
+  },
+
+  renderEmptyRow() {
+    if (!this.props.histories || this.props.histories.length === 0) {
+      return <EmptyRow colSpan={7} />;
+    }
   },
 
   render() {
@@ -126,7 +133,7 @@ ${(!currency.code ? '' : currency.code)}`;
           </tr>
         </thead>
         <tbody>
-          {rows}
+          {_.isEmpty(rows) ? this.renderEmptyRow() : rows}
         </tbody>
         {this.renderFooter()}
       </table>
