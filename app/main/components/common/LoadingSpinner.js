@@ -1,21 +1,15 @@
 import React from 'react';
 import Spinner from 'react-loader';
-import FluxibleMixin from 'fluxible/addons/FluxibleMixin';
-import LoadingSpinnerStore from '../../stores/LoadingSpinnerStore';
 import classNames from 'classnames';
+import FluxibleMixin from 'fluxible/addons/FluxibleMixin';
+
+import LoadingSpinnerStore from '../../stores/LoadingSpinnerStore';
 
 const LoadingSpinner = React.createClass({
   mixins: [FluxibleMixin],
 
   statics: {
     storeListeners: [LoadingSpinnerStore],
-  },
-
-  getStateFromStore() {
-    return {
-      loaded: this.getStore(LoadingSpinnerStore).getLoaded(),
-      options: this.getStore(LoadingSpinnerStore).getOptions(),
-    };
   },
 
   getInitialState() {
@@ -27,6 +21,13 @@ const LoadingSpinner = React.createClass({
 
   onChange() {
     this.setState(this.getStateFromStore());
+  },
+
+  getStateFromStore() {
+    return {
+      loaded: this.getStore(LoadingSpinnerStore).getLoaded(),
+      options: this.getStore(LoadingSpinnerStore).getOptions(),
+    };
   },
 
   render() {

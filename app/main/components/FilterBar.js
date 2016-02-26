@@ -1,6 +1,13 @@
-import React from 'react';
+import React, { createClass, PropTypes, Children } from 'react';
 
-const FilterBar = React.createClass({
+const FilterBar = createClass({
+  propTypes: {
+    children: PropTypes.oneOfType([
+      PropTypes.element,
+      PropTypes.array,
+    ]),
+  },
+
   render() {
     return (
       <nav className="top-bar top-bar--inner" data-topbar role="navigation">
@@ -12,11 +19,18 @@ const FilterBar = React.createClass({
   },
 });
 
-const FilterBarNavigationItems = React.createClass({
+const FilterBarNavigationItems = createClass({
+  propTypes: {
+    children: PropTypes.oneOfType([
+      PropTypes.element,
+      PropTypes.array,
+    ]),
+  },
+
   render() {
     return (
       <ul className="left top-bar--inner tab--inverted">
-        {React.Children.map(this.props.children, child => {
+        {Children.map(this.props.children, child => {
           return (
             <li className="top-bar--inner tab--inverted__title">{child}</li>
           );
@@ -26,37 +40,43 @@ const FilterBarNavigationItems = React.createClass({
   },
 });
 
-const FilterBarLeftItems = React.createClass({
+const FilterBarLeftItems = createClass({
+  propTypes: {
+    children: PropTypes.oneOfType([
+      PropTypes.element,
+      PropTypes.array,
+    ]),
+  },
+
   render() {
     return (
       <ul className="left">
-        {React.Children.map(this.props.children, child => {
-          return (
-            <li>{child}</li>
-          );
-        })}
+        {Children.map(this.props.children, child => <li>{child}</li>)}
       </ul>
     );
   },
 });
 
-let FilterBarRightItems = React.createClass({
-  render: function () {
+const FilterBarRightItems = createClass({
+  propTypes: {
+    children: PropTypes.oneOfType([
+      PropTypes.element,
+      PropTypes.array,
+    ]),
+  },
+
+  render() {
     return (
       <ul className="right">
-        {React.Children.map(this.props.children, (child) => {
-          return (
-            <li>{child}</li>
-          );
-        })}
+        {Children.map(this.props.children, child => <li>{child}</li>)}
       </ul>
     );
-  }
+  },
 });
 
 export {
   FilterBar as Wrapper,
   FilterBarLeftItems as LeftItems,
   FilterBarRightItems as RightItems,
-  FilterBarNavigationItems as NavigationItems
+  FilterBarNavigationItems as NavigationItems,
 };

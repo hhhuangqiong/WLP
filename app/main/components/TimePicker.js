@@ -1,24 +1,51 @@
-import React from 'react';
+import React, { PropTypes } from 'react';
 
 const TimePicker = React.createClass({
+  propTypes: {
+    onChange: PropTypes.func.isRequired,
+    datetime: PropTypes.func.isRequired,
+    format: PropTypes.string.isRequired,
+    timePickerId: PropTypes.string.isRequired,
+    className: PropTypes.string.isRequired,
+  },
+
   componentDidMount() {
     $(document).foundation('dropdown', 'reflow');
   },
 
   addHour() {
-    this.props.onChange(this.props.datetime.add(1, 'h').format());
+    this.props.onChange(this
+      .props
+      .datetime
+      .add(1, 'h')
+      .format()
+    );
   },
 
   addMinute() {
-    this.props.onChange(this.props.datetime.add(1, 'm').format());
+    this.props.onChange(this
+      .props
+      .datetime
+      .add(1, 'm')
+      .format()
+    );
   },
 
   subtractHour() {
-    this.props.onChange(this.props.datetime.subtract(1, 'h').format());
+    this.props.onChange(this
+      .props
+      .datetime
+      .subtract(1, 'h')
+      .format());
   },
 
   subtractMinute() {
-    this.props.onChange(this.props.datetime.subtract(1, 'm').format());
+    this.props.onChange(this
+      .props
+      .datetime
+      .subtract(1, 'm')
+      .format()
+    );
   },
 
   render() {

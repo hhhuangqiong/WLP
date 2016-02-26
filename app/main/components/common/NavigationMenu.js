@@ -10,7 +10,14 @@ import ChangePasswordForm from '../../../modules/account/components/ChangePasswo
 
 import AuthStore from '../../stores/AuthStore';
 
-const companyPages = ['companies', 'company-create', 'company-profile', 'company-widget', 'company-service'];
+const companyPages = [
+  'companies',
+  'company-create',
+  'company-profile',
+  'company-widget',
+  'company-service',
+];
+
 const accountPages = ['account', 'account-create', 'account-profile'];
 
 const Navigation = React.createClass({
@@ -28,53 +35,25 @@ const Navigation = React.createClass({
     return {
       modal: 'close',
       isChangePasswordOpened: false,
-      displayName: this.context.getStore(AuthStore).getDisplayName(),
+      displayName: this
+        .context
+        .getStore(AuthStore)
+        .getDisplayName(),
     };
   },
 
   onChange() {
     this.setState({
-      displayName: this.context.getStore(AuthStore).getDisplayName(),
+      displayName: this
+        .context
+        .getStore(AuthStore)
+        .getDisplayName(),
     });
   },
 
   handleSignOut(e) {
     e.preventDefault();
     this.context.executeAction(signOut, {});
-  },
-
-  renderCreateUser() {
-    const currentRoute = _.last(this.context.router.getCurrentRoutes());
-    const { role, identity } = this.context.router.getCurrentParams();
-
-    if (_.includes(accountPages, currentRoute.name)) {
-      return (
-        <li className="navigation-bar__item no-border">
-          <Link to="account-create" params={{ role: role, identity: identity }}>
-            create user
-          </Link>
-        </li>
-      );
-    }
-
-    return null;
-  },
-
-  renderCreateCompany() {
-    const currentRoute = _.last(this.context.router.getCurrentRoutes());
-    const { role, identity } = this.context.router.getCurrentParams();
-
-    if (_.includes(companyPages, currentRoute.name)) {
-      return (
-        <li className="navigation-bar__item no-border">
-          <Link to="company-create" params={{ role: role, identity: identity }}>
-            create new company
-          </Link>
-        </li>
-      );
-    }
-
-    return null;
   },
 
   handleOpenChangePasswordDialog() {
@@ -84,6 +63,56 @@ const Navigation = React.createClass({
   handleCloseChangePasswordDialog(e) {
     if (e) e.preventDefault();
     this.setState({ isChangePasswordOpened: false });
+  },
+
+  renderCreateCompany() {
+    const currentRoute = _.last(this
+      .context
+      .router
+      .getCurrentRoutes()
+    );
+
+    const { role, identity } = this
+      .context
+      .router
+      .getCurrentParams();
+
+    if (_.includes(companyPages, currentRoute.name)) {
+      return (
+        <li className="navigation-bar__item no-border">
+          <Link to="company-create" params={{ role, identity }}>
+            create new company
+          </Link>
+        </li>
+      );
+    }
+
+    return null;
+  },
+
+  renderCreateUser() {
+    const currentRoute = _.last(this
+      .context
+      .router
+      .getCurrentRoutes()
+    );
+
+    const { role, identity } = this
+      .context
+      .router
+      .getCurrentParams();
+
+    if (_.includes(accountPages, currentRoute.name)) {
+      return (
+        <li className="navigation-bar__item no-border">
+          <Link to="account-create" params={{ role, identity }}>
+            create user
+          </Link>
+        </li>
+      );
+    }
+
+    return null;
   },
 
   render() {
@@ -130,9 +159,9 @@ const Navigation = React.createClass({
 });
 
 Navigation.contextTypes = {
-  getStore: React.PropTypes.func.isRequired,
-  executeAction: React.PropTypes.func.isRequired,
-  router: React.PropTypes.func.isRequired,
+  getStore: PropTypes.func.isRequired,
+  executeAction: PropTypes.func.isRequired,
+  router: PropTypes.func.isRequired,
 };
 
 export default Navigation;

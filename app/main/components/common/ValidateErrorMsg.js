@@ -1,6 +1,10 @@
-import React from 'react';
+import React, { PropTypes } from 'react';
 
 const Message = React.createClass({
+  propTypes: {
+    message: PropTypes.string.isRequired,
+  },
+
   render() {
     return (
       <div className="error-message-box">

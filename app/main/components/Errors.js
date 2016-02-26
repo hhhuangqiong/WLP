@@ -30,7 +30,16 @@ const ErrorTemplate = React.createClass({
             <div className="large-10 columns large-centered">
               <div className="system-error">
                 <div className="large-6 columns text-center">
-                  <i className={classNames('system-error__icon', { 'icon-error': this.props.code === 401, 'icon-error3': this.props.code === 404, 'icon-error4': this.props.code === 500 })} />
+                  <i className={
+                    classNames(
+                      'system-error__icon',
+                      {
+                        'icon-error': this.props.code === 401,
+                        'icon-error3': this.props.code === 404,
+                        'icon-error4': this.props.code === 500,
+                      }
+                    )}
+                  />
                 </div>
                 <div className="system-error__message large-18 columns">
                   <ul>
@@ -41,7 +50,10 @@ const ErrorTemplate = React.createClass({
                       {this.props.name}
                     </li>
                     <li className="error-message">
-                      {this.props.message}, click <Link to={HOME}>here</Link> to go back to dashboard
+                      {this.props.message},
+                      click
+                      <Link to={HOME}>here</Link>
+                      to go back to dashboard
                     </li>
                   </ul>
                 </div>

@@ -1,20 +1,28 @@
-import React from 'react';
+import React, { PropTypes } from 'react';
 import classNames from 'classnames';
 
 const Remark = React.createClass({
+  propTypes: {
+    children: PropTypes.oneOfType([
+      PropTypes.element,
+      PropTypes.array,
+    ]),
+    tip: PropTypes.string,
+  },
+
   getInitialState() {
     return {
       showTooltip: false,
     };
   },
 
-  _handleMouseEnter(e) {
+  _handleMouseEnter() {
     this.setState({
       showTooltip: true,
     });
   },
 
-  _handleMouseLeave(e) {
+  _handleMouseLeave() {
     this.setState({
       showTooltip: false,
     });
@@ -22,9 +30,21 @@ const Remark = React.createClass({
 
   render() {
     return (
-      <span className="calls-table__remark" onMouseEnter={this._handleMouseEnter} onMouseLeave={this._handleMouseLeave}>
+      <span
+        className="calls-table__remark"
+        onMouseEnter={this._handleMouseEnter}
+        onMouseLeave={this._handleMouseLeave}
+      >
         <i className="icon-error6" />
-        <span ref="tooltip" className={classNames('reactTooltip', 'place-left', 'type-dark', { hide: !this.state.showTooltip })}>
+        <span
+          ref="tooltip"
+          className={classNames(
+            'reactTooltip',
+            'place-left',
+            'type-dark',
+            { hide: !this.state.showTooltip }
+          )}
+        >
           {this.props.tip}
         </span>
       </span>

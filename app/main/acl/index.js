@@ -16,8 +16,10 @@ const NOT_FOUND_ERROR = 'resource not found';
  * @param optiosn.errorHandler {Function} error handling function
  * @constructor
  */
-const AclManager = function (acl, carrierQuerier, options = {}) {
-  if (!acl) throw new Error('missing node_acl module');
+function AclManager(acl, carrierQuerier, options = {}) {
+  if (!acl) {
+    throw new Error('missing node_acl module');
+  }
 
   this._acl = acl;
 
@@ -29,7 +31,7 @@ const AclManager = function (acl, carrierQuerier, options = {}) {
 
   // overridable error handler, e.g. for restful api
   this._errorHandler = options.errorHandler;
-};
+}
 
 /**
  * @method middle
@@ -41,7 +43,7 @@ const AclManager = function (acl, carrierQuerier, options = {}) {
  * @param action {String} action name
  * @returns {Function} express middleware
  */
-AclManager.prototype.middleware = function middleware(userId, carrierId, resource, action) {
+AclManager.prototype.middleware = function middleware(userId, carrierId, resource) {
   return (req, res, next) => {
     const errorHandler = (error) => next(error);
 
@@ -52,22 +54,39 @@ AclManager.prototype.middleware = function middleware(userId, carrierId, resourc
     const _resource = typeof _resource === 'function' ? resource(req) : resource;
 
     // what alternatives to escape from public resources?
-    if (_carrierId === null) return next();
+    if (_carrierId === null) {
+      next();
+      return;
+    }
 
-    Company.isValidCarrier(_carrierId)
+    Company
+      .isValidCarrier(_carrierId)
       .then(isValid => {
-        if (!isValid) throw new HttpError(404, NOT_FOUND_ERROR);
+        if (!isValid) {
+          throw new HttpError(404, NOT_FOUND_ERROR);
+        }
+
         return User.findByEmail(_userId);
       })
       .then(user => {
-        if (!user) return next(new NotFoundError(`Cannot find user with id ${_userId}`));
+        if (!user) {
+          next(new NotFoundError(`Cannot find user with id ${_userId}`));
+          return;
+        }
 
         /* Skip checking for root user */
-        if (user.isRoot) return next();
+        if (user.isRoot) {
+          next();
+          return;
+        }
 
-        user.validateCarrier(_carrierId)
+        user
+          .validateCarrier(_carrierId)
           .then(isValidCarrier => {
-            if (!isValidCarrier) throw new HttpError(404, NOT_FOUND_ERROR);
+            if (!isValidCarrier) {
+              throw new HttpError(404, NOT_FOUND_ERROR);
+            }
+
             next();
           })
           .catch(handleError);
@@ -83,7 +102,7 @@ AclManager.prototype.middleware = function middleware(userId, carrierId, resourc
  *
  * @param string {String}
  */
-AclManager.prototype._escapeString = function (string) {
+AclManager.prototype._escapeString = function _escapeString(string) {
   return string.replace(/\./g, '');
 };
 

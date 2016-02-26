@@ -3,10 +3,6 @@ import DropdownContent from './DropdownContent';
 import DropdownTrigger from './DropdownTrigger';
 
 export default class Dropdown extends Component {
-  static propTypes = {
-    children: PropTypes.element.isRequired,
-  };
-
   render() {
     const children = this.props.children;
 
@@ -17,6 +13,11 @@ export default class Dropdown extends Component {
     );
   }
 
-  static Trigger = DropdownTrigger;
-  static Content = DropdownContent;
 }
+
+Dropdown.Trigger = DropdownTrigger;
+Dropdown.Content = DropdownContent;
+
+Dropdown.propTypes = {
+  children: PropTypes.element.isRequired,
+};

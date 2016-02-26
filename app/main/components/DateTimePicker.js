@@ -19,6 +19,12 @@ export default React.createClass({
     dateOnChange: PropTypes.func.isRequired,
   },
 
+  _handleFocus() {
+    this
+      .refs[this.props.dataPickerRef]
+      .handleFocus();
+  },
+
   render() {
     const {
       name,
@@ -65,9 +71,5 @@ export default React.createClass({
         />
       </div>
     );
-  },
-
-  _handleFocus() {
-    this.refs[this.props.dataPickerRef].handleFocus();
   },
 });

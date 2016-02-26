@@ -14,6 +14,13 @@ import React, { PropTypes } from 'react';
  * @classdesc to create an input row
  */
 const InputGroup = React.createClass({
+  propTypes: {
+    children: PropTypes.oneOfType([
+      PropTypes.element,
+      PropTypes.array,
+    ]),
+  },
+
   render() {
     return (
       <div className="row">
@@ -27,6 +34,10 @@ const Label = React.createClass({
   propTypes: {
     // for attribute for html `label` tag
     for: PropTypes.string,
+    children: PropTypes.oneOfType([
+      PropTypes.element,
+      PropTypes.array,
+    ]),
   },
 
   render() {
@@ -39,6 +50,13 @@ const Label = React.createClass({
 });
 
 const Input = React.createClass({
+  propTypes: {
+    children: PropTypes.oneOfType([
+      PropTypes.element,
+      PropTypes.array,
+    ]),
+  },
+
   render() {
     return (
       <div className="large-16 columns">

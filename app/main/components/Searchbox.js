@@ -32,26 +32,43 @@ const SearchBox = React.createClass({
     return (
       <div>
         <If condition={this.props.searchTypes}>
-          <select className={classNames('top-bar-section__query-select', 'left')} name={this.props.searchTypeInputName} onChange={this.props.onSelectChangeHandler} value={this.props.selectedType}>
-            {this.props.searchTypes.map((type, index) => {
-              // this will trigger a warning of
-              // `Use the `defaultValue` or `value` props on <select> instead of setting `selected` on <option>.`
-              // from React, but without doing this,
-              // the selected value will be jumpy,
-              // e.g. the value changes again on client side rendering
-              return type.value === this.props.selectedType ? <option key={index} value={type.value} selected>{type.name}</option> : <option key={index} value={type.value}>{type.name}</option>;
-            })}
+          <select
+            className={classNames('top-bar-section__query-select', 'left')}
+            name={this.props.searchTypeInputName}
+            onChange={this.props.onSelectChangeHandler}
+            value={this.props.selectedType}
+          >
+            {
+              this
+                .props
+                .searchTypes
+                .map((type, index) => (
+                  // this will trigger a warning of
+                  // `Use the `defaultValue` or `value` props on <select> instead of
+                  // setting `selected` on <option>.`
+                  // from React, but without doing this,
+                  // the selected value will be jumpy,
+                  // e.g. the value changes again on client side rendering
+                  type.value === this.props.selectedType ?
+                    <option key={index} value={type.value} selected>{type.name}</option> :
+                    <option key={index} value={type.value}>{type.name}</option>
+                ))
+            }
           </select>
         </If>
         <input
-          className={classNames('top-bar-section__query-input', { 'with-select': this.props.searchTypes }, { 'right': this.props.searchTypes })}
+          className={classNames(
+            'top-bar-section__query-input',
+            { 'with-select': this.props.searchTypes },
+            { right: this.props.searchTypes }
+          )}
           type="text"
           name={this.props.searchInputName}
           value={this.props.value}
           placeholder={this.props.placeHolder}
           onChange={this.props.onInputChangeHandler}
           onKeyPress={this.props.onKeyPressHandler}
-          />
+        />
       </div>
     );
   },

@@ -31,10 +31,29 @@ const DatePicker = React.createClass({
     };
   },
 
+  _handleFocus() {
+    this
+      .refs
+      .datepicker
+      .handleFocus();
+  },
+
   render() {
     return (
-      <div className={classNames('date-picker', { 'date-picker-button': this.props.type === 'button' }, 'left')}>
-        <div className={classNames('date-input-wrap', 'left', { 'data-input-button-wrap': this.props.type === 'button' })} onClick={this._handleFocus}>
+      <div className={
+        classNames(
+          'date-picker',
+          { 'date-picker-button': this.props.type === 'button' },
+          'left'
+        )}
+      >
+        <div onClick={this._handleFocus} className={
+          classNames(
+            'date-input-wrap',
+            'left',
+            { 'data-input-button-wrap': this.props.type === 'button' }
+          )}
+        >
           <If condition={this.props.type === 'button'}>
             <span className="date-range-picker__icon icon-calendar left"></span>
           </If>
@@ -53,10 +72,6 @@ const DatePicker = React.createClass({
         </div>
       </div>
     );
-  },
-
-  _handleFocus() {
-    this.refs.datepicker.handleFocus();
   },
 });
 

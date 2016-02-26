@@ -1,4 +1,3 @@
-import _ from 'lodash';
 import { createStore } from 'fluxible/addons';
 
 const debug = require('debug')('app:modules/file-export/stores/ExportStore');
@@ -11,7 +10,7 @@ export default createStore({
     FETCH_EXPORT_SUCCESS: 'handleFetchExport',
     FETCH_EXPORT_CANCEL_SUCCESS: 'handleExportCancelled',
     FETCH_EXPORT_PROGRESS_FAILURE: 'handleProgressFailure',
-    FETCH_EXPORT_PROGRESS_SUCCESS: 'handleProgressSuccess'
+    FETCH_EXPORT_PROGRESS_SUCCESS: 'handleProgressSuccess',
   },
 
   initialize() {
@@ -24,31 +23,34 @@ export default createStore({
     // there is only one export job at this moment
     this.exportJobs[payload.exportType] = [];
 
-    this.exportJobs[payload.exportType].push({
-      exportId: payload.id,
-      exportTriggered: true,
-      /** To determine whether a progress is failed or not. */
-      progress: !payload.id ? PROGRESS_FAILED_INDICATOR : 0
-    });
+    this
+      .exportJobs[payload.exportType]
+      .push({
+        exportId: payload.id,
+        exportTriggered: true,
+        /** To determine whether a progress is failed or not. */
+        progress: !payload.id ? PROGRESS_FAILED_INDICATOR : 0,
+      });
 
     this.emitChange();
   },
 
-  handleExportCancelled(payload) {
+  handleExportCancelled() {
     this.initialize();
     this.emitChange();
   },
 
   handleProgressSuccess(payload) {
-    let currentJob = this.getExportJobs(payload.exportType)[0];
-
-    currentJob.progress = payload && payload.progress ? parseInt(payload.progress) : PROGRESS_FAILED_INDICATOR;
+    const currentJob = this.getExportJobs(payload.exportType)[0];
+    currentJob.progress = payload && payload.progress ?
+      parseInt(payload.progress, 10) :
+      PROGRESS_FAILED_INDICATOR;
 
     this.emitChange();
   },
 
   handleProgressFailure(payload) {
-    let currentJob = this.getExportJobs(payload.exportType)[0];
+    const currentJob = this.getExportJobs(payload.exportType)[0];
 
     currentJob.progress = PROGRESS_FAILED_INDICATOR;
     currentJob.exportTriggered = false;
@@ -64,7 +66,7 @@ export default createStore({
 
   getState() {
     return {
-      exportJobs: this.exportJobs
+      exportJobs: this.exportJobs,
     };
   },
 
@@ -74,6 +76,5 @@ export default createStore({
 
   rehydrate(state) {
     this.exportJobs = state.exportJobs;
-  }
-
+  },
 });

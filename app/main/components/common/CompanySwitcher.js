@@ -28,18 +28,25 @@ const CompanySwitcher = React.createClass({
     };
   },
 
-  render() {
-    const buttons = this.state.companies.map(({ name, carrierId, logo, role, identity }) => {
-      const logoSrc = logo ? `/data/${logo}` : DEFAULT_LOGO_SRC;
+  switchCompany(params) {
+    this.context.executeAction(switchCompany, params);
+  },
 
-      return (
-        <li className="navigation-bar__item" title={name} key={carrierId}>
-          <a href="#" onClick={this.switchCompany.bind(this, { role, identity })}>
-            <img src={logoSrc} alt={name} />
-          </a>
-        </li>
-      );
-    });
+  render() {
+    const buttons = this
+      .state
+      .companies
+      .map(({ name, carrierId, logo, role, identity }) => {
+        const logoSrc = logo ? `/data/${logo}` : DEFAULT_LOGO_SRC;
+
+        return (
+          <li className="navigation-bar__item" title={name} key={carrierId}>
+            <a href="#" onClick={this.switchCompany.bind(this, { role, identity })}>
+              <img src={logoSrc} alt={name} />
+            </a>
+          </li>
+        );
+      });
 
     return (
       <If condition={!_.isEmpty(this.state.companies)}>
@@ -55,10 +62,6 @@ const CompanySwitcher = React.createClass({
         { null }
       </If>
     );
-  },
-
-  switchCompany(params) {
-    this.context.executeAction(switchCompany, params);
   },
 });
 

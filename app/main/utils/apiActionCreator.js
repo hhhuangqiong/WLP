@@ -1,7 +1,8 @@
 /**
  * Use this helper object when you:
  *
- * - are going to pass the whole payload as the only (besides the action type) parameter to `context.dispatch()`
+ * - are going to pass the whole payload
+ * - as the only (besides the action type) parameter to `context.dispatch()`
  * - do not care about the logic in the callback
  * - think generic error handling is enough
  */
@@ -33,9 +34,9 @@ function prefix_(prefix, str) {
  * export default actionCreator('FETCH_DATA', 'getCallsExportProgress', function(err, result) { ... });
  */
 export default function apiActionCreator(key, apiMethod, opts = { debugPrefix: 'app' }) {
-  var transform = prefix_.bind(null, key);
+  const transform = prefix_.bind(null, key);
 
-  var lifecycle = EVENT_KEYS.reduce((o, k) => {
+  const lifecycle = EVENT_KEYS.reduce((o, k) => {
     o[k] = transform(k);
     return o;
   }, {});
@@ -45,7 +46,7 @@ export default function apiActionCreator(key, apiMethod, opts = { debugPrefix: '
     opts.debugPrefix = 'app';
   }
 
-  var debug = require('debug')(`${opts.debugPrefix}:${key}`);
+  const debug = require('debug')(`${opts.debugPrefix}:${key}`);
 
   return function (context, params, done) {
     debug('Started');
@@ -88,4 +89,3 @@ export default function apiActionCreator(key, apiMethod, opts = { debugPrefix: '
     context.dispatch(lifecycle.START, request);
   };
 }
-

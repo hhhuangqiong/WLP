@@ -1,9 +1,15 @@
-import React from 'react';
+import React, { PropTypes } from 'react';
 import { RouteHandler } from 'react-router';
 
 const App = React.createClass({
+  propTypes: {
+    context: PropTypes.shape({
+      getAuthority: PropTypes.func.isRequired,
+    }),
+  },
+
   childContextTypes: {
-    getAuthority: React.PropTypes.func.isRequired,
+    getAuthority: PropTypes.func.isRequired,
   },
 
   getChildContext() {

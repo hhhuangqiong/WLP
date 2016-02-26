@@ -16,7 +16,8 @@ const MIN_Y_RANGE = 50;
  * @typedef {Function} LineChart~TooltipFormatter
  * @param {Number} x  The x-value of the data point (usually a timestamp)
  * @param {Number} y  The y-value of the data point
- * @param {Number} xIndex  The 0 based index of the data point in the x-dimension (i.e. 0 represents the first point)
+ * @param {Number} xIndex
+ * The 0 based index of the data point in the x-dimension (i.e. 0 represents the first point)
  * @returns {String} The string representation of the tooltip
  */
 
@@ -31,7 +32,8 @@ const MIN_Y_RANGE = 50;
 /**
  * @typedef {Object} LineChart~YAxisOpts
  * @property {String} [title]  The title of the y-axis
- * @property {String} [unit]  The unit of the values. This will be appended to the labels on the axis.
+ * @property {String} [unit]
+ * The unit of the values. This will be appended to the labels on the axis.
  * @property {String} [alignment=left]  The alignment of the y-axis. Can be "left" or "right".
  * @property {Number} max  The maximum value of the y-axis
  */
@@ -41,8 +43,10 @@ const MIN_Y_RANGE = 50;
  * @property {String} name  The name of the data set. This will be used to identify the line.
  * @property {Number[]} data  The data set
  * @property {String} color  The color of the line
- * @property {Boolean} [selected=false]  Whether the line is selected by default. A selected line is thicker.
- * @property {LineChart~TooltipFormatter} [tooltipFormatter]  The callback for formatting the tooltip of a data point
+ * @property {Boolean} [selected=false]
+ * Whether the line is selected by default. A selected line is thicker.
+ * @property {LineChart~TooltipFormatter} [tooltipFormatter]
+ * The callback for formatting the tooltip of a data point
  */
 
 /**
@@ -123,7 +127,7 @@ export default React.createClass({
 
   getInitialState() {
     return {
-      containerId: 'line' + Math.floor(Math.random() * ID_MAX),
+      containerId: `line${Math.floor(Math.random() * ID_MAX)}`,
     };
   },
 
@@ -135,16 +139,22 @@ export default React.createClass({
 
       // if the lines are ready at the didMount time, draw them directly
       if (this.props.lines) {
-        this.props.lines.forEach((lineOpts) => {
-          this.addLine(lineOpts);
-        });
+        this
+          .props
+          .lines
+          .forEach(lineOpts => {
+            this.addLine(lineOpts);
+          });
       }
 
       // if the points are ready at the didMount time, draw them directly
       if (this.props.points) {
-        this.props.points.forEach((pointOpts) => {
-          this.addPoint(pointOpts);
-        });
+        this
+          .props
+          .points
+          .forEach(pointOpts => {
+            this.addPoint(pointOpts);
+          });
       }
     }
   },
@@ -171,11 +181,6 @@ export default React.createClass({
     if (this.chart) this.chart.reflow();
   },
 
-  render() {
-    this.updateChart();
-    return <div id={this.state.containerId} className={this.props.className}></div>;
-  },
-
   drawChart(props) {
     const xAxis = props.xAxis;
     const yAxis = props.yAxis;
@@ -190,7 +195,9 @@ export default React.createClass({
     }
 
     // append the unit to the axis label when available
-    const yAxisLabelFormatter = function yAxisLabelFormatter(unit) { return !unit ? `${this.value}` : `${this.value}${unit}`; };
+    const yAxisLabelFormatter = function yAxisLabelFormatter(unit) {
+      return !unit ? `${this.value}` : `${this.value}${unit}`;
+    };
 
     Highcharts.dateFormats = {
       // return the day of month in 1st, 2nd, 23rd, 25th format
@@ -253,7 +260,8 @@ export default React.createClass({
             },
             // do not allow decimal labels (e.g. 12.5)
             allowDecimals: false,
-            // set min to 0, avoiding the labels for smaller values being skipped when all data are big
+            // set min to 0, avoiding the labels for smaller values being skipped
+            // when all data are big
             min: 0,
             max: axis.max,
             // minRange controls the minimum range of the y axis
@@ -309,14 +317,18 @@ export default React.createClass({
    * @param {LineChart~LineOpts} opts  The line drawing options
    */
   addLine(opts) {
-    const tooltipOptions = opts.tooltipFormatter ? this.createCustomTooltipOptions(opts.tooltipFormatter) : {};
+    const tooltipOptions =
+      opts.tooltipFormatter ?
+      this.createCustomTooltipOptions(opts.tooltipFormatter) :
+      {};
+
     const lineWidth = opts.selected ? SELECTED_LINE_WIDTH : DEFAULT_LINE_WIDTH;
 
     this.chart.addSeries({
       name: opts.name,
       data: opts.data,
       color: opts.color,
-      lineWidth: lineWidth,
+      lineWidth,
       enableMouseTracking: opts.selected,
       tooltip: tooltipOptions,
       // use the first yAxis by default
@@ -350,7 +362,7 @@ export default React.createClass({
     if (existingPoint) return;
 
     this.chart.addSeries({
-      name: name,
+      name,
       data: [[opts.x, opts.y]],
       marker: {
         enabled: true,
@@ -417,21 +429,24 @@ export default React.createClass({
     // the lines are ready
     // TODO: add the line removal logic
     if (this.props.lines) {
-      this.props.lines.forEach((lineOpts) => {
-        const selected = this.props.selectedLine && lineOpts.name === this.props.selectedLine;
+      this
+        .props
+        .lines
+        .forEach(lineOpts => {
+          const selected = this.props.selectedLine && lineOpts.name === this.props.selectedLine;
 
-        const existingLine = _.find(this.chart.series, series => series.name === lineOpts.name);
+          const existingLine = _.find(this.chart.series, series => series.name === lineOpts.name);
 
-        // update the line if it exists
-        if (existingLine) {
-          (selected ? this.selectLine : this.unselectLine).call(this, existingLine);
-          return;
-        }
+          // update the line if it exists
+          if (existingLine) {
+            (selected ? this.selectLine : this.unselectLine).call(this, existingLine);
+            return;
+          }
 
-        // or add a new line if it does not
-        lineOpts.selected = lineOpts.selected || selected;
-        this.addLine(lineOpts);
-      });
+          // or add a new line if it does not
+          lineOpts.selected = lineOpts.selected || selected;
+          this.addLine(lineOpts);
+        });
     } else {
       // TODO: add the individual line removal logic
       // remove all lines except the dummy (series[0])
@@ -442,9 +457,17 @@ export default React.createClass({
     // do not support point update
     // TODO: add the point removal logic
     if (this.props.points) {
-      this.props.points.forEach((pointOpts) => {
-        this.addPoint(_.extend({ name }, pointOpts));
-      });
+      this
+        .props
+        .points
+        .forEach(pointOpts => {
+          this.addPoint(_.extend({ name }, pointOpts));
+        });
     }
+  },
+
+  render() {
+    this.updateChart();
+    return <div id={this.state.containerId} className={this.props.className}></div>;
   },
 });

@@ -3,10 +3,10 @@ module.exports = {
   displayDateFormat: process.env.DISPLAY_DATE_FORMAT || 'MMMM DD YYYY, hh:mm:ss a',
   pages: {
     topUp: {
-      pageRec: 50
+      pageRec: 50,
     },
     endUser: {
-      pageRec: 10
-    }
-  }
+      pageRec: 10,
+    },
+  },
 };

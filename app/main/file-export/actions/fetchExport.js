@@ -1,15 +1,11 @@
-import { CALLS, IM, VERIFICATION, END_USER } from '../constants/ExportType';
-
-let debug = require('debug')('app:modules/file-export/actions/fetchExport');
-
-const WITHOUT_EXPORT_TYPE_LABEL = 'Please specific export type!';
+const debug = require('debug')('app:modules/file-export/actions/fetchExport');
 
 export default function (context, params, done) {
   debug('Started');
 
   context.dispatch('FETCH_EXPORT_START');
 
-  var exportType = params.exportType;
+  const exportType = params.exportType;
 
   function exportCallback(err, result) {
     result.exportType = exportType;

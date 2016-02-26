@@ -21,16 +21,15 @@ const SignIn = React.createClass({
     storeListeners: [AuthStore, SignInStore],
   },
 
-  validatorTypes:  {
-    username: Joi.string().email().required().label('Username'),
-    password: Joi.string().min(8).max(30).required().label('Password'),
-  },
-
   getInitialState() {
     return _.merge({
       username: null,
       password: null,
     }, this.getStateFromStores());
+  },
+
+  onChange() {
+    this.setState(this.getStateFromStores());
   },
 
   getStateFromStores() {
@@ -41,8 +40,18 @@ const SignIn = React.createClass({
     };
   },
 
-  onChange() {
-    this.setState(this.getStateFromStores());
+  validatorTypes: {
+    username: Joi
+      .string()
+      .email()
+      .required()
+      .label('Username'),
+    password: Joi
+      .string()
+      .min(8)
+      .max(30)
+      .required()
+      .label('Password'),
   },
 
   handleSignIn(e) {
@@ -60,13 +69,24 @@ const SignIn = React.createClass({
       }
 
       if (!error) {
-        const username = this.refs.username.getDOMNode().value.trim();
-        const password = this.refs.password.getDOMNode().value.trim();
+        const username = this
+          .refs
+          .username
+          .getDOMNode()
+          .value
+          .trim();
+
+        const password = this
+          .refs
+          .password
+          .getDOMNode()
+          .value
+          .trim();
         // let rememberMe = this.refs.rememberMe.getDOMNode().checked;
 
         this.context.executeAction(signInAction, {
-          username: username,
-          password: password,
+          username,
+          password,
           // rememberMe: rememberMe
         });
       }
@@ -80,7 +100,7 @@ const SignIn = React.createClass({
   },
 
   handleInputBlur(inputName) {
-    this.validate(inputName, function (error, validationErrors) {});
+    this.validate(inputName, () => {});
   },
 
   renderHelpText(message) {
@@ -144,7 +164,10 @@ const SignIn = React.createClass({
                 </label>
               </div>
               <div className="large-8 columns">
-                <button className="button--primary right" onClick={this.handleSignIn}>Sign In</button>
+                <button
+                  className="button--primary right"
+                  onClick={this.handleSignIn}
+                >Sign In</button>
               </div>
             </div>
           </div>

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { PropTypes } from 'react';
 import classNames from 'classnames';
 
 /**
@@ -7,12 +7,22 @@ import classNames from 'classnames';
  * @property {String} color  The color of the gauge
  */
 export default React.createClass({
+  propTypes: {
+    color: PropTypes.string.isRequired,
+    percentage: PropTypes.string.isRequired,
+    children: PropTypes.oneOfType([
+      PropTypes.element,
+      PropTypes.array,
+    ]),
+    className: PropTypes.string,
+  },
+
   render() {
-    const width = this.props.percentage + '%';
+    const width = `${this.props.percentage}%`;
 
     const style = {
       backgroundColor: this.props.color,
-      width: width,
+      width,
     };
 
     return (

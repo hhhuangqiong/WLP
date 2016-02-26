@@ -10,12 +10,12 @@ import AuthStore from '../../stores/AuthStore';
 import navSections from '../../constants/navSection';
 
 class Sidebar extends React.Component {
-  constructor(props, context) {
-    super(props, context);
-  }
-
   render() {
-    const navParams = this.context.router.getCurrentParams();
+    const navParams = this
+      .context
+      .router
+      .getCurrentParams();
+
     const role = navParams.role || this.props.role;
     const identity = navParams.identity || this.props.carrierId;
 
@@ -25,7 +25,11 @@ class Sidebar extends React.Component {
       logoSrc = `/data/${this.props.currentCompany && this.props.currentCompany.logo}`;
     }
 
-    const currentPath = this.context.router.getCurrentPath();
+    const currentPath = this
+      .context
+      .router
+      .getCurrentPath();
+
     // assumes all paths' structure would be `/:role/:identity/[path]/[sub-page]`
     const path = currentPath.split('/')[3];
 
@@ -44,24 +48,27 @@ class Sidebar extends React.Component {
               </label>
             </a>
           </li>
-          {navSections.map((section, idx) => {
-            return (
-              <Permit action="view" resource={section.page}>
-                <li key={idx}>
-                  <Link
-                    className={classnames('item', 'mainmenu-bar__item', { active: (path === section.path) })}
-                    to={section.routeName}
-                    params={{ role: role, identity: identity }}
-                  >
-                    <label>
-                      <i className={section.icon} />
-                      {section.name}
-                    </label>
-                  </Link>
-                </li>
-              </Permit>
-            );
-          })}
+          {navSections.map((section, idx) => (
+            <Permit action="view" resource={section.page}>
+              <li key={idx}>
+                <Link
+                  className={classnames(
+                    'item',
+                    'mainmenu-bar__item',
+                    { active: (path === section.path) }
+                  )}
+                  to={section.routeName}
+                  params={{ role, identity }}
+                >
+                  <label>
+                    <i className={section.icon} />
+                    {section.name}
+                  </label>
+                </Link>
+              </li>
+            </Permit>
+          )
+          )}
         </ul>
       </div>
     );
@@ -84,12 +91,10 @@ Sidebar.contextTypes = {
 
 // TODO: we can get navSections in NavStore
 // with fetchData method to acquire accessible sections from server
-Sidebar = connectToStores(Sidebar, [AuthStore, ApplicationStore], stores => {
-  return {
-    role: stores.AuthStore.getUserRole(),
-    carrierId: stores.AuthStore.getCarrierId(),
-    currentCompany: stores.ApplicationStore.getCurrentCompany(),
-  };
-});
+Sidebar = connectToStores(Sidebar, [AuthStore, ApplicationStore], stores => ({
+  role: stores.AuthStore.getUserRole(),
+  carrierId: stores.AuthStore.getCarrierId(),
+  currentCompany: stores.ApplicationStore.getCurrentCompany(),
+}));
 
 export default Sidebar;

@@ -1,16 +1,18 @@
-import React, { Component } from 'react';
+import React, { PropTypes, Component } from 'react';
 import ReactModal from 'react-modal';
 import { CLIENT } from '../../utils/env';
 
 export default class Modal extends Component {
-  componentWillMount() {
-    if (CLIENT) ReactModal.setAppElement(document.getElementById('app'));
-  }
-
   getDefaultProps() {
     return {
       isOpened: false,
     };
+  }
+
+  componentWillMount() {
+    if (CLIENT) {
+      ReactModal.setAppElement(document.getElementById('app'));
+    }
   }
 
   render() {
@@ -27,3 +29,13 @@ export default class Modal extends Component {
     );
   }
 }
+
+Modal.propTypes = {
+  isOpen: PropTypes.bool.isRequired,
+  title: PropTypes.string,
+  children: PropTypes.oneOfType([
+    PropTypes.element,
+    PropTypes.array,
+  ]),
+  className: PropTypes.string,
+};

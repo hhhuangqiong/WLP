@@ -27,7 +27,8 @@ export default React.createClass({
     width: PropTypes.number,
     /**
      * The width of the donut border.
-     * This affect the gap between each slice and the actual width of the donut (width + 2 * borderWidth).
+     * This affect the gap between each slice
+     * and the actual width of the donut (width + 2 * borderWidth).
      * Default to 5.
      * @type {Number}
      */
@@ -52,12 +53,8 @@ export default React.createClass({
       name: PropTypes.string,
       value: PropTypes.number,
     })),
-  },
 
-  getInitialState() {
-    return {
-      containerId: 'donut' + Math.floor(Math.random() * ID_MAX),
-    };
+    className: PropTypes.string,
   },
 
   getDefaultProps() {
@@ -65,6 +62,12 @@ export default React.createClass({
       size: 200,
       width: 7,
       borderWidth: 5,
+    };
+  },
+
+  getInitialState() {
+    return {
+      containerId: `donut${Math.floor(Math.random() * ID_MAX)}`,
     };
   },
 
@@ -90,7 +93,7 @@ export default React.createClass({
         verticalAlign: 'middle',
         y: 5,
         style: {
-          'fontSize': '1.5rem',
+          fontSize: '1.5rem',
         },
       },
       subtitle: {
@@ -99,8 +102,8 @@ export default React.createClass({
         verticalAlign: 'middle',
         y: 22,
         style: {
-          'color': '#888',
-          'fontSize': '0.7rem',
+          color: '#888',
+          fontSize: '0.7rem',
         },
       },
       tooltip: {
@@ -125,7 +128,7 @@ export default React.createClass({
         type: 'pie',
         enableMouseTracking: false,
         innerSize: size - width - borderWidth,
-        size: size,
+        size,
         borderWidth: 0,
         colors: [BACKGROUND_COLOR],
         data: [1],
@@ -139,24 +142,24 @@ export default React.createClass({
     // avoid unnecessary redraw
     if (_.eq(nextProps, this.props)) return;
 
-    const size = this.props.size || DEFAULT_SIZE;
-    const width = this.props.width || DEFAULT_WIDTH;
-    const borderWidth = this.props.borderWidth || DEFAULT_BORDER_WIDTH;
+    const size = this.props.size;
+    const width = this.props.width;
+    const borderWidth = this.props.borderWidth;
 
-    const total = nextProps.data.reduce(function (acc, d) {
-      return acc + d.value;
-    }, 0);
+    const total = nextProps.data.reduce((acc, d) => acc + d.value, 0);
 
-    const chartData = nextProps.data.map(function (d) {
-      return d.value;
-    });
+    const chartData = nextProps.data.map(d => d.value);
 
     // bigger data goes first
     chartData.sort((a, b) => a > b);
 
     // the chart goes anti-clockwise, but the colors go clockwise
     // therefore we extract the colors we need then reverse them
-    const colors = this.props.colors.slice(0, chartData.length).reverse();
+    const colors = this
+      .props
+      .colors
+      .slice(0, chartData.length)
+      .reverse();
 
     // if the actual data hasn't been set yet,
     // add a new series to display the data set
@@ -167,13 +170,16 @@ export default React.createClass({
         enableMouseTracking: false,
         innerSize: size - width - borderWidth * 2,
         size: size + borderWidth,
-        borderWidth: borderWidth,
-        colors: colors,
+        borderWidth,
+        colors,
         data: chartData,
       });
     } else {
       // otherwise, update the existing data set
-      this.chart.series[1].setData(chartData);
+      this
+        .chart
+        .series[1]
+        .setData(chartData);
     }
 
     this.chart.setTitle({

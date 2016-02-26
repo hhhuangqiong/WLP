@@ -12,12 +12,28 @@ const DateRangePicker = React.createClass({
     handleEndDateChange: PropTypes.func,
   },
 
+  handleStartDateClick() {
+    this
+      .refs
+      .startDatePicker
+      .handleFocus();
+  },
+
+  handleEndDateClick() {
+    this
+      .refs
+      .endDatePicker
+      .handleFocus();
+  },
+
   render() {
     return (
       <div className="date-range-picker left">
         <i className="date-range-picker__icon icon-calendar left" />
         <div className="date-input-wrap left" onClick={this.handleStartDateClick}>
-          <span className="interactive-button left date-range-picker__date-span">{this.props.startDate}</span>
+          <span
+            className="interactive-button left date-range-picker__date-span"
+          >{this.props.startDate}</span>
           <DatePicker
             ref="startDatePicker"
             key="start-date"
@@ -29,7 +45,9 @@ const DateRangePicker = React.createClass({
         </div>
         <i className="date-range-picker__separator left">-</i>
         <div className="date-input-wrap left" onClick={this.handleEndDateClick}>
-          <span className="interactive-button left date-range-picker__date-span">{this.props.endDate}</span>
+          <span
+            className="interactive-button left date-range-picker__date-span"
+          >{this.props.endDate}</span>
           <DatePicker
             ref="endDatePicker"
             key="end-date"
@@ -42,14 +60,6 @@ const DateRangePicker = React.createClass({
         </div>
       </div>
     );
-  },
-
-  handleStartDateClick() {
-    this.refs.startDatePicker.handleFocus();
-  },
-
-  handleEndDateClick() {
-    this.refs.endDatePicker.handleFocus();
   },
 });
 

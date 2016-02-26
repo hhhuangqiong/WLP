@@ -46,9 +46,10 @@ export function getResources() {
  * @returns {String} The route name
  */
 export function getRouteByResource(resource) {
-  return _.result(_.find(navResources, function (nav) {
-    return nav.page === resource;
-  }), 'routeName');
+  return _.result(_.find(
+    navResources,
+    nav => nav.page === resource
+  ), 'routeName');
 }
 
 /**
@@ -60,7 +61,8 @@ export function getRouteByResource(resource) {
  * @returns {String} The route path
  */
 export function getPathByResource(resource) {
-  return _.result(_.find(navResources, function (nav) {
-    return nav.page === resource;
-  }), 'path');
+  return _.result(_.find(
+    navResources,
+    nav => nav.page === resource
+  ), 'path');
 }

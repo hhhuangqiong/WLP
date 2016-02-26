@@ -5,19 +5,6 @@ const EMPTY_DATA_LABEL = '0';
 const DATA_FETCHING_LABEL = '-';
 
 class DataCellWrapper extends Component {
-  static propTypes = {
-    totalColumns: PropTypes.number,
-    children: PropTypes.arrayOf(PropTypes.element),
-  };
-
-  static defaultProps = {
-    totalColumns: 24,
-  };
-
-  constructor(props) {
-    super(props);
-  }
-
   render() {
     const { children, totalColumns } = this.props;
 
@@ -26,7 +13,7 @@ class DataCellWrapper extends Component {
         {
           React.Children.map(children, (child) => {
             return (
-              <div className={classNames(`large-${ totalColumns / children.length }`, `columns`)}>
+              <div className={classNames(`large-${totalColumns / children.length}`, 'columns')}>
                 { child }
               </div>
             );
@@ -37,39 +24,45 @@ class DataCellWrapper extends Component {
   }
 }
 
+DataCellWrapper.propTypes = {
+  totalColumns: PropTypes.number,
+  children: PropTypes.arrayOf(PropTypes.element),
+};
+
+DataCellWrapper.defaultProps = {
+  totalColumns: 24,
+};
+
 class DataCell extends Component {
-  static propTypes = {
-    title: PropTypes.string.isRequired,
-    data: PropTypes.string.isRequired,
-    unit: PropTypes.string,
-    decimalPlace: PropTypes.number,
-    changeDir: PropTypes.string,
-    changeAmount: PropTypes.string,
-    isLoading: PropTypes.bool,
-    changeEffect: PropTypes.oneOf([
-      'positive', 'negative',
-    ]),
-    changePercentage: PropTypes.string,
-    formatter: PropTypes.func,
-  };
+  isEmpty() {
+    const { data } = this.props;
+    return !data || isNaN(data) || data === 'Infinity';
+  }
 
-  static defaultProps = {
-    formatter: (data) => {
-      if (!data || isNaN(data) || data === 'Infinity') {
-        return EMPTY_DATA_LABEL;
-      }
+  _localiseData(data) {
+    if (this.props.isLoading) {
+      return DATA_FETCHING_LABEL;
+    }
 
-      return data;
-    },
-    isLoading: false,
-  };
+    if (!data || isNaN(data) || data === 'Infinity') {
+      return EMPTY_DATA_LABEL;
+    }
 
-  constructor(props) {
-    super(props);
+    return (data && data.toLocaleString());
   }
 
   render() {
-    const { isLoading, title, data, unit, changeDir, changeEffect, changeAmount, changePercentage, formatter } = this.props;
+    const {
+      isLoading,
+      title,
+      data,
+      unit,
+      changeDir,
+      changeEffect,
+      changeAmount,
+      changePercentage,
+      formatter,
+    } = this.props;
 
     return (
       <div className="data-cell">
@@ -81,7 +74,7 @@ class DataCell extends Component {
           <div className="data-cell__unit">{ unit }</div>
         </If>
         <If condition={!this.isEmpty() && !isLoading && (!!changeAmount || !!changePercentage)}>
-          <div className={classNames(`data-cell__trend`, changeEffect, changeDir)}>
+          <div className={classNames('data-cell__trend', changeEffect, changeDir)}>
             <If condition={!!changeDir}>
               <span className="arrow" />
             </If>
@@ -96,22 +89,33 @@ class DataCell extends Component {
       </div>
     );
   }
+}
 
-  isEmpty() {
-    const { data } = this.props;
-    return !data || isNaN(data) || data === 'Infinity';
-  }
+DataCell.propTypes = {
+  title: PropTypes.string.isRequired,
+  data: PropTypes.string.isRequired,
+  unit: PropTypes.string,
+  decimalPlace: PropTypes.number,
+  changeDir: PropTypes.string,
+  changeAmount: PropTypes.string,
+  isLoading: PropTypes.bool,
+  changeEffect: PropTypes.oneOf([
+    'positive', 'negative',
+  ]),
+  changePercentage: PropTypes.string,
+  formatter: PropTypes.func,
+};
 
-  _localiseData(data) {
-    if (this.props.isLoading) return DATA_FETCHING_LABEL;
-
+DataCell.defaultProps = {
+  formatter: (data) => {
     if (!data || isNaN(data) || data === 'Infinity') {
       return EMPTY_DATA_LABEL;
     }
 
-    return (data && data.toLocaleString());
-  }
-}
+    return data;
+  },
+  isLoading: false,
+};
 
 export {
   DataCellWrapper as Wrapper,

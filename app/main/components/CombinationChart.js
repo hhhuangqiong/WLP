@@ -1,7 +1,6 @@
 import _ from 'lodash';
 import React, { PropTypes } from 'react';
 import moment from 'moment';
-import equals from 'shallow-equals';
 
 const ID_MAX = 100000;
 const DEFAULT_LINE_WIDTH = 1;
@@ -17,7 +16,9 @@ const MIN_Y_RANGE = 50;
  * @typedef {Function} LineChart~TooltipFormatter
  * @param {Number} x  The x-value of the data point (usually a timestamp)
  * @param {Number} y  The y-value of the data point
- * @param {Number} xIndex  The 0 based index of the data point in the x-dimension (i.e. 0 represents the first point)
+ * @param {Number}
+ *   xIndex  The 0 based index of the data point in the x-dimension
+ *   (i.e. 0 represents the first point)
  * @returns {String} The string representation of the tooltip
  */
 
@@ -32,7 +33,8 @@ const MIN_Y_RANGE = 50;
 /**
  * @typedef {Object} LineChart~YAxisOpts
  * @property {String} [title]  The title of the y-axis
- * @property {String} [unit]  The unit of the values. This will be appended to the labels on the axis.
+ * @property {String} [unit]
+ *   The unit of the values. This will be appended to the labels on the axis.
  * @property {String} [alignment=left]  The alignment of the y-axis. Can be "left" or "right".
  * @property {Number} max  The maximum value of the y-axis
  */
@@ -42,8 +44,10 @@ const MIN_Y_RANGE = 50;
  * @property {String} name  The name of the data set. This will be used to identify the line.
  * @property {Number[]} data  The data set
  * @property {String} color  The color of the line
- * @property {Boolean} [selected=false]  Whether the line is selected by default. A selected line is thicker.
- * @property {LineChart~TooltipFormatter} [tooltipFormatter]  The callback for formatting the tooltip of a data point
+ * @property {Boolean} [selected=false]
+ *   Whether the line is selected by default. A selected line is thicker.
+ * @property {LineChart~TooltipFormatter} [tooltipFormatter]
+ *   The callback for formatting the tooltip of a data point
  */
 
 /**
@@ -136,7 +140,7 @@ export default React.createClass({
 
   getInitialState() {
     return {
-      containerId: 'line' + Math.floor(Math.random() * ID_MAX),
+      containerId: `line${Math.floor(Math.random() * ID_MAX)}`,
     };
   },
 
@@ -148,16 +152,22 @@ export default React.createClass({
 
       // if the lines are ready at the didMount time, draw them directly
       if (this.props.lines) {
-        this.props.lines.forEach((lineOpts) => {
-          this.addSeries(lineOpts);
-        });
+        this
+          .props
+          .lines
+          .forEach(lineOpts => {
+            this.addSeries(lineOpts);
+          });
       }
 
       // if the points are ready at the didMount time, draw them directly
       if (this.props.points) {
-        this.props.points.forEach((pointOpts) => {
-          this.addPoint(pointOpts);
-        });
+        this
+          .props
+          .points
+          .forEach(pointOpts => {
+            this.addPoint(pointOpts);
+          });
       }
     }
   },
@@ -169,7 +179,7 @@ export default React.createClass({
     // this state will be used to determine whether the chart should be redraw
     // within the updateChart function below
     this.setState({
-      isDataChanging: !this.props.lines && nextProps.lines || !nextProps.lines && this.props.lines
+      isDataChanging: !this.props.lines && nextProps.lines || !nextProps.lines && this.props.lines,
     });
   },
 
@@ -195,11 +205,6 @@ export default React.createClass({
     if (this.chart) this.chart.reflow();
   },
 
-  render() {
-    this.updateChart();
-    return <div id={this.state.containerId} className={this.props.className}></div>;
-  },
-
   drawChart(props) {
     const xAxis = props.xAxis;
     const yAxis = props.yAxis;
@@ -214,7 +219,9 @@ export default React.createClass({
     }
 
     // append the unit to the axis label when available
-    const yAxisLabelFormatter = function yAxisLabelFormatter(unit) { return !unit ? `${this.value}` : `${this.value}${unit}`; };
+    const yAxisLabelFormatter = function yAxisLabelFormatter(unit) {
+      return !unit ? `${this.value}` : `${this.value}${unit}`;
+    };
 
     Highcharts.dateFormats = {
       // return the day of month in 1st, 2nd, 23rd, 25th format
@@ -274,7 +281,7 @@ export default React.createClass({
         lineColor: AXIS_COLOR,
         crosshair: xAxis.crosshair || null,
         events: {
-          afterSetExtremes: function () {
+          afterSetExtremes() {
             // if xAxis crosshair is defined,
             // dynamically set the width as the width of column
             // (highlighting the whole column rather than a thin line)
@@ -298,11 +305,14 @@ export default React.createClass({
               // allow to use custom formatter
               // while global label formatter assumes that
               // the yAxis unit is always the same as data unit
-              formatter: _.get(axis, 'labels.formatter') || _.partial(yAxisLabelFormatter, axis.unit),
+              formatter:
+                _.get(axis, 'labels.formatter') ||
+                _.partial(yAxisLabelFormatter, axis.unit),
             },
             // do not allow decimal labels (e.g. 12.5)
             allowDecimals: false,
-            // set min to 0, avoiding the labels for smaller values being skipped when all data are big
+            // set min to 0,
+            // avoiding the labels for smaller values being skipped when all data are big
             min: 0,
             max: axis.max,
             // minRange controls the minimum range of the y axis
@@ -358,7 +368,7 @@ export default React.createClass({
             // had an issue that toggling on/off a series makes the charts
             // have no yAxis, so until we have a full solution, we will
             // disable the legend toggle function for Combination Charts
-            legendItemClick: function (e) {
+            legendItemClick(e) {
               e.preventDefault();
               return false;
             },
@@ -392,7 +402,11 @@ export default React.createClass({
    * @param {LineChart~LineOpts} opts  The line drawing options
    */
   addSeries(opts) {
-    const tooltipOptions = opts.tooltipFormatter ? this.createCustomTooltipOptions(opts.tooltipFormatter) : {};
+    const tooltipOptions =
+      opts.tooltipFormatter ?
+      this.createCustomTooltipOptions(opts.tooltipFormatter) :
+      {};
+
     const {
       borderColor,
       borderWidth,
@@ -426,33 +440,35 @@ export default React.createClass({
       // and let this to be overwritten by the type option below
       selected: false,
       enableMouseTracking: selected,
-      tooltip: tooltip,
-      tooltipOptions: tooltipOptions,
+      tooltip,
+      tooltipOptions,
     };
 
     switch (type) {
       // TODO: add support to other types if needed
       case 'line':
         typeOption = {
-        lineWidth: lineWidth || DEFAULT_LINE_WIDTH,
-        marker: {
           lineWidth: lineWidth || DEFAULT_LINE_WIDTH,
-          lineColor: color,
-          fillColor: 'white',
-          symbol: symbol,
-        },
-        pointPadding: 0,
-        selected: true,
-      };
+          marker: {
+            lineWidth: lineWidth || DEFAULT_LINE_WIDTH,
+            lineColor: color,
+            fillColor: 'white',
+            symbol,
+          },
+          pointPadding: 0,
+          selected: true,
+        };
         break;
 
       case 'column':
         typeOption = {
-        pointPadding: 0.2,
-        borderColor: borderColor || opts.color,
-        borderWidth: borderWidth || 0,
-      };
+          pointPadding: 0.2,
+          borderColor: borderColor || opts.color,
+          borderWidth: borderWidth || 0,
+        };
         break;
+
+      default: break;
     }
 
     this.chart.addSeries(_.merge(series, typeOption));
@@ -484,7 +500,7 @@ export default React.createClass({
     if (existingPoint) return;
 
     this.chart.addSeries({
-      name: name,
+      name,
       data: [[opts.x, opts.y]],
       marker: {
         enabled: true,
@@ -551,20 +567,23 @@ export default React.createClass({
     // the lines are ready
     // TODO: add the line removal logic
     if (this.props.lines) {
-      this.props.lines.forEach(lineOpts => {
-        const selected = this.props.selectedLine && lineOpts.name === this.props.selectedLine;
+      this
+        .props
+        .lines
+        .forEach(lineOpts => {
+          const selected = this.props.selectedLine && lineOpts.name === this.props.selectedLine;
 
-        const existingLine = _.find(this.chart.series, series => series.name === lineOpts.name);
+          const existingLine = _.find(this.chart.series, series => series.name === lineOpts.name);
 
-        // remove the line if it exists
-        if (existingLine) {
-          this.removeSeries(existingLine);
-        }
+          // remove the line if it exists
+          if (existingLine) {
+            this.removeSeries(existingLine);
+          }
 
-        // and add the lines with updated options
-        lineOpts.selected = lineOpts.selected || selected;
-        this.addSeries(lineOpts);
-      });
+          // and add the lines with updated options
+          lineOpts.selected = lineOpts.selected || selected;
+          this.addSeries(lineOpts);
+        });
     } else {
       // TODO: add the individual line removal logic
       // remove all lines except the dummy (series[0])
@@ -575,9 +594,17 @@ export default React.createClass({
     // do not support point update
     // TODO: add the point removal logic
     if (this.props.points) {
-      this.props.points.forEach((pointOpts) => {
-        this.addPoint(_.extend({ name }, pointOpts));
-      });
+      this
+        .props
+        .points
+        .forEach(pointOpts => {
+          this.addPoint(_.extend({ name }, pointOpts));
+        });
     }
+  },
+
+  render() {
+    this.updateChart();
+    return <div id={this.state.containerId} className={this.props.className}></div>;
   },
 });

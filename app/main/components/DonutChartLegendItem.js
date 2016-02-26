@@ -52,7 +52,8 @@ export default React.createClass({
           <HorizontalGauge
             className="donut-legend-item__gauge"
             percentage={this.props.percentage}
-            color={this.props.color} />
+            color={this.props.color}
+          />
 
           <div className="donut-legend-item__value">
             {this.props.value} {this.props.unit}

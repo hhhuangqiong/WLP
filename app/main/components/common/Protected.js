@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { PropTypes } from 'react';
 import { concurrent } from 'contra';
 import Sidebar from './Sidebar';
 import CanvasWrapper from './CanvasWrapper';
@@ -16,15 +16,31 @@ import fetchManagingCompanies from '../../actions/fetchManagingCompanies';
 import fetchAppIds from '../../../main/actions/fetchAppIds';
 
 const Protected = React.createClass({
+  propTypes: {
+    pageTitle: PropTypes.string.isRequired,
+  },
+
   statics: {
     // `context` is prepared by server's `renderApp()`
     fetchData(context, params, query, done) {
       concurrent([
-        context.executeAction.bind(context, fetchCurrentCompanyInfo, { carrierId: params.identity }),
-        context.executeAction.bind(context, fetchManagingCompanies, {}),
-        context.executeAction.bind(context, fetchAppIds, { carrierId: params.identity, userId: context.getStore(AuthStore).getUserId() })
-      ], done || function () {});
-    }
+        context.executeAction.bind(
+          context,
+          fetchCurrentCompanyInfo,
+          { carrierId: params.identity }
+        ),
+        context.executeAction.bind(
+          context,
+          fetchManagingCompanies,
+          {}
+        ),
+        context.executeAction.bind(
+          context,
+          fetchAppIds,
+          { carrierId: params.identity, userId: context.getStore(AuthStore).getUserId() }
+        ),
+      ], done || function callback() {});
+    },
   },
 
   getInitialState() {
@@ -35,7 +51,7 @@ const Protected = React.createClass({
 
   _setOffCanvas(isOffCanvas) {
     this.setState({
-      isOffCanvas: isOffCanvas,
+      isOffCanvas,
     });
   },
 

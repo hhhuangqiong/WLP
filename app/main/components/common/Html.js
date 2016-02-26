@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { PropTypes } from 'react';
 
 import Version from './Version';
 
@@ -7,20 +7,24 @@ import webpackConfig from '../../../../webpack.config.js';
 import { baseUrl } from '../../../utils/url';
 import { enabledHotloader } from '../../../utils/env';
 
-let appUrl;
-let bundleFile;
 let bundlePath;
 
 if (enabledHotloader()) {
   // use empty root path for client side, rely on relative path resolving
-  appUrl = baseUrl(webpackConfig.custom.hotLoadPort);
-  bundleFile = 'bundle.js';
+  const appUrl = baseUrl(webpackConfig.custom.hotLoadPort);
+  const bundleFile = 'bundle.js';
   bundlePath = `${appUrl}/${bundleFile}`;
 } else {
   bundlePath = '/javascript/bundle.js';
 }
 
 const Html = React.createClass({
+  propTypes: {
+    title: PropTypes.string.isRequired,
+    markup: PropTypes.element.isRequired,
+    state: PropTypes.object,
+  },
+
   render() {
     return (
       <html lang="en">
@@ -29,7 +33,11 @@ const Html = React.createClass({
           <meta name="viewport" content="width=device-width, initial-scale=1" />
           <meta httpEquiv="X-UA-Compatible" content="IE=edge" />
           <title>{this.props.title}</title>
-          <link href="//fonts.googleapis.com/css?family=Roboto:500,300,700,400" rel="stylesheet" type="text/css" />
+          <link
+            href="//fonts.googleapis.com/css?family=Roboto:500,300,700,400"
+            rel="stylesheet"
+            type="text/css"
+          />
           <link rel="stylesheet" href="/stylesheets/iconic-fonts.css" />
           <link rel="stylesheet" href="/stylesheets/main.css" />
           <link rel="stylesheet" href="/vendor/react-date-picker/dist/react-datepicker.min.css" />

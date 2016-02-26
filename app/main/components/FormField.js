@@ -7,6 +7,10 @@ export default React.createClass({
     label: PropTypes.string,
     leftColumns: PropTypes.string,
     rightColumns: PropTypes.string,
+    children: PropTypes.oneOfType([
+      PropTypes.element,
+      PropTypes.array,
+    ]),
   },
 
   contextTypes: {

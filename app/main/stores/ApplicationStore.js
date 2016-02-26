@@ -1,73 +1,71 @@
 import { createStore } from 'fluxible/addons';
 
-var debug = require('debug')('ApplicationStore');
-
-var ApplicationStore = createStore({
+const ApplicationStore = createStore({
   storeName: 'ApplicationStore',
 
   handlers: {
-    FETCH_MANGAING_COMPANIES_SUCCESS:  'loadedCompanies',
+    FETCH_MANGAING_COMPANIES_SUCCESS: 'loadedCompanies',
     SIGN_OUT_SUCCESS: 'resetCompanies',
     FETCH_COMPANY_INFO_SUCCESS: 'loadedCurrentCompany',
-    FETCH_APP_IDS_SUCCESS: 'handleAppIdsFetched'
+    FETCH_APP_IDS_SUCCESS: 'handleAppIdsFetched',
   },
 
-  loadedCurrentCompany: function (company) {
+  loadedCurrentCompany(company) {
     this.currentCompany = company;
     this.emitChange();
   },
 
-  loadedCompanies: function (companies) {
+  loadedCompanies(companies) {
     this.managingCompanies = companies;
     this.emitChange();
   },
 
-  resetCompanies: function () {
+  resetCompanies() {
     this.managingCompanies = [];
     this.emitChange();
   },
 
-  getCurrentCompany: function () {
+  getCurrentCompany() {
     return this.currentCompany;
   },
 
-  getManagingCompanies: function () {
+  getManagingCompanies() {
     return this.managingCompanies;
   },
 
-  handleAppIdsFetched: function (payload) {
+  handleAppIdsFetched(payload) {
     this.appIds = payload;
     this.defaultAppId = (this.appIds || [])[0];
     this.emitChange();
   },
 
-  getAppIds: function () {
+  getAppIds() {
     return this.appIds;
   },
 
-  getDefaultAppId: function () {
+  getDefaultAppId() {
     return this.defaultAppId;
   },
 
-  getState: function () {
+  getState() {
     return {
       currentCompany: this.currentCompany,
       managingCompanies: this.managingCompanies,
       appIds: this.appIds,
-      defaultAppId: this.defaultAppId
+      defaultAppId: this.defaultAppId,
     };
   },
 
-  dehydrate: function () {
+  dehydrate() {
     return this.getState();
   },
 
-  rehydrate: function (state) {
+  rehydrate(state) {
     this.currentCompany = state.currentCompany;
     this.managingCompanies = state.managingCompanies;
     this.appIds = state.appIds;
     this.defaultAppId = state.defaultAppId;
-  }
+  },
 });
 
 export default ApplicationStore;

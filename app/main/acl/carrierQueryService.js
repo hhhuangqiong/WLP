@@ -37,7 +37,7 @@ export function getCarrier(carrierId, cb) {
     cb(new Error('missing parameters'));
   }
 
-  Company.findOne({ carrierId: carrierId }, (err, carrier) => {
+  Company.findOne({ carrierId }, (err, carrier) => {
     if (!err) {
       cb(null, !!carrier);
     }
@@ -62,7 +62,7 @@ export function getCarrierType(carrierId, cb) {
     cb(new Error('missing parameters'));
   }
 
-  Company.findOne({ carrierId: carrierId }, (err, carrier) => {
+  Company.findOne({ carrierId }, (err, carrier) => {
     if (!err) {
       cb(null, carrier.getCompanyType());
     }

@@ -1,26 +1,25 @@
-var createStore = require('fluxible/addons/createStore');
+const createStore = require('fluxible/addons/createStore');
 
-var SignInStore = createStore({
+const SignInStore = createStore({
   storeName: 'SignInStore',
 
-  initialize: function () {
+  initialize() {
     this.trial = 0;
   },
 
-  getNumberOfTrial: function () {
+  getNumberOfTrial() {
     return this.trial;
   },
 
-  dehydrate: function () {
+  dehydrate() {
     return {
-      trial: this.trial
+      trial: this.trial,
     };
   },
 
-  rehydrate: function (state) {
+  rehydrate(state) {
     this.trial = state.trial;
-  }
+  },
 });
 
 module.exports = SignInStore;
-

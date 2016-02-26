@@ -22,7 +22,7 @@ export default [
     icon: 'icon-menuenduser',
     page: END_USER,
     routeName: 'end-users-overview',
-    path: 'end-users'
+    path: 'end-users',
   },
   {
     name: 'company',

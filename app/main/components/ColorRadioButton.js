@@ -2,20 +2,9 @@ import React, { Component, PropTypes } from 'react';
 import classNames from 'classnames';
 
 export default class ColorRadioButton extends Component {
-  static propTypes = {
-    onChange: PropTypes.func.isRequired,
-    label: PropTypes.string.isRequired,
-    color: PropTypes.string.isRequired,
-    checked: PropTypes.bool.isRequired,
-    group: PropTypes.string.isRequired,
-    location: PropTypes.string.isRequired,
-    value: PropTypes.string.isRequired,
-  };
-
-  static defaultProps = {
-    color: 'black',
-    location: 'left',
-  };
+  clickRadio() {
+    this.props.onChange(this.props.value);
+  }
 
   renderLabel() {
     return (<label htmlFor={this.props.value}>{this.props.label}</label>);
@@ -23,7 +12,13 @@ export default class ColorRadioButton extends Component {
 
   renderButton() {
     return (
-      <span className={classNames(this.props.color, 'color-radio-button', { 'is-checked': this.props.checked })}></span>
+      <span className={
+        classNames(
+          this.props.color,
+          'color-radio-button',
+          { 'is-checked': this.props.checked }
+        )}
+      ></span>
     );
   }
 
@@ -52,8 +47,19 @@ export default class ColorRadioButton extends Component {
       </div>
     );
   }
-
-  clickRadio() {
-    this.props.onChange(this.props.value);
-  }
 }
+
+ColorRadioButton.propTypes = {
+  onChange: PropTypes.func.isRequired,
+  label: PropTypes.string.isRequired,
+  color: PropTypes.string.isRequired,
+  checked: PropTypes.bool.isRequired,
+  group: PropTypes.string.isRequired,
+  location: PropTypes.string.isRequired,
+  value: PropTypes.string.isRequired,
+};
+
+ColorRadioButton.defaultProps = {
+  color: 'black',
+  location: 'left',
+};

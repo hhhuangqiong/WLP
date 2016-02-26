@@ -19,6 +19,13 @@ export default React.createClass({
     );
   },
 
+  _hasAuthority() {
+    const { action, resource } = this.props;
+
+    const authority = this.context.getAuthority();
+    authority.scan(action, resource);
+  },
+
   render() {
     return (
       <If condition={!this._hasAuthority()}>
@@ -27,12 +34,5 @@ export default React.createClass({
         { this.props.children }
       </If>
     );
-  },
-
-  _hasAuthority() {
-    const { action, resource } = this.props;
-
-    const authority = this.context.getAuthority();
-    return authority.scan(action, resource);
   },
 });

@@ -1,6 +1,10 @@
-import React from 'react';
+import React, { PropTypes } from 'react';
 
 const NavigationTitle = React.createClass({
+  propTypes: {
+    title: PropTypes.string.isRequired,
+  },
+
   render() {
     return (
       <ul className="title-area app-header__title-area">

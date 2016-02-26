@@ -20,7 +20,9 @@ const ROOT_COMPANY_CARRIER = 'm800';
  */
 class Authority {
   constructor(resources, options) {
-    if (!resources) throw new Error('missing resources');
+    if (!resources) {
+      throw new Error('missing resources');
+    }
 
     const { menus: menuItems } = resources;
 
@@ -58,8 +60,19 @@ class Authority {
   _getCapabilities() {
     return new Promise((resolve, reject) => {
       Company.getCompanyByCarrierId(this._carrierId, (err, company) => {
-        if (err) return reject(new Error(`Encounter error when finding company by carrierId ${this._carrierId}`, err));
-        if (!company) return reject(new NotFoundError('company'));
+        if (err) {
+          reject(new Error(
+            `Encounter error when finding company by carrierId ${this._carrierId}`,
+            err
+          ));
+
+          return;
+        }
+
+        if (!company) {
+          reject(new NotFoundError('company'));
+          return;
+        }
 
         const { capabilities } = company;
 
@@ -97,12 +110,16 @@ class Authority {
    */
   _filterMenuItemsByCarrier() {
     return new Promise((resolve, reject) => {
-      this._getCapabilities()
+      this
+        ._getCapabilities()
         .then(accessibleResources => {
           const hasFeature = _.bindKey(this, '_hasFeature', accessibleResources);
 
           /* Stop filtering any permission it is root company */
-          if (this._isRootCompany()) return resolve();
+          if (this._isRootCompany()) {
+            resolve();
+            return;
+          }
 
           this._allMenuItems.forEach(menuItem => {
             const removeFeatures = _.bindKey(this, '_removeFeatures', menuItem);
@@ -170,8 +187,11 @@ class Authority {
    */
   getMenuItems() {
     return new Promise((resolve, reject) => {
-      this._filterMenuItemsByCarrier()
-        .then(() => resolve(this._allowedMenuItems.map(menuItem => this._getAclString('view', menuItem))))
+      this
+        ._filterMenuItemsByCarrier()
+        .then(() => resolve(this._allowedMenuItems.map(
+          menuItem => this._getAclString('view', menuItem)
+        )))
         .catch(err => {
           logger.error(err.message, err.stack);
           reject(err);

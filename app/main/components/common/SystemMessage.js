@@ -27,7 +27,7 @@ const SystemMessage = React.createClass({
     };
 
     this.setState({
-      systemMessage: _.merge(message, { onDismiss: onDismiss }),
+      systemMessage: _.merge(message, { onDismiss }),
     });
   },
 
@@ -46,7 +46,8 @@ const SystemMessage = React.createClass({
                   buttons={this.state.systemMessage.buttons}
                   hidden={this.state.systemMessage.hidden}
                   timeout={this.state.systemMessage.timeout}
-                  autoMiss={this.state.systemMessage.autoMiss} />
+                  autoMiss={this.state.systemMessage.autoMiss}
+                />
               </div>
             ) : null
         }

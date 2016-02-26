@@ -44,6 +44,12 @@ const ConfirmationDialog = React.createClass({
      * @type {String}
      */
     cancelLabel: PropTypes.string,
+    onCancel: PropTypes.func.isRequired,
+    onConfirm: PropTypes.func.isRequired,
+    children: PropTypes.oneOfType([
+      PropTypes.element,
+      PropTypes.array,
+    ]),
   },
 
   getDefaultProps() {
@@ -71,10 +77,18 @@ const ConfirmationDialog = React.createClass({
         </div>
 
         <div className="confirmation__footer">
-          <button className="confirmation__footer__button cancel button--secondary" role="cancel" onClick={this.props.onCancel}>
+          <button
+            className="confirmation__footer__button cancel button--secondary"
+            role="cancel"
+            onClick={this.props.onCancel}
+          >
             {this.props.cancelLabel}
           </button>
-          <button className="confirmation__footer__button confirm button--primary" role="confirm" onClick={this.props.onConfirm}>
+          <button
+            className="confirmation__footer__button confirm button--primary"
+            role="confirm"
+            onClick={this.props.onConfirm}
+          >
             {this.props.confirmLabel}
           </button>
         </div>

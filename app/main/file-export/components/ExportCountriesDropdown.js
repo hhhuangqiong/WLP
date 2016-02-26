@@ -7,7 +7,7 @@ export default React.createClass({
     displayName: React.PropTypes.string,
     defaultOption: React.PropTypes.string,
     value: React.PropTypes.string,
-    onChange: React.PropTypes.func
+    onChange: React.PropTypes.func,
   },
 
   render() {
@@ -24,17 +24,15 @@ export default React.createClass({
             onChange={this.props.onChange}
           >
             <option>{this.props.defaultOption}</option>
-            {countries.all.map(country => {
-              return (
-                <option
-                  key={country.alpha2}
-                  value={country.alpha2}
-                >{country.name}</option>
-              );
-            })}
+            {countries.all.map(country => (
+              <option
+                key={country.alpha2}
+                value={country.alpha2}
+              >{country.name}</option>
+            ))}
           </select>
         </div>
       </div>
     );
-  }
+  },
 });

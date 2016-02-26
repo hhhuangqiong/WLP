@@ -45,7 +45,15 @@ const CircleButton = React.createClass({
   render() {
     return (
       <If condition={!!this.props.to}>
-        <div role="button" className={classNames('button', 'button--circle', { 'button--circle--text': !!this.props.title })} onClick={this.props.onClick}>
+        <div
+          role="button"
+          className={classNames(
+            'button',
+            'button--circle',
+            { 'button--circle--text': !!this.props.title }
+          )}
+          onClick={this.props.onClick}
+        >
           <Link to={this.props.to} params={this.props.params} query={this.props.query}>
             <If condition={!!this.props.title}>
               <span>{this.props.title}</span>
@@ -57,7 +65,15 @@ const CircleButton = React.createClass({
           </Link>
         </div>
       <Else />
-        <div role="button" className={classNames('button', 'button--circle', { 'button--circle--text': !!this.props.title })} onClick={this.props.onClick}>
+        <div
+          role="button"
+          className={classNames(
+            'button',
+            'button--circle',
+            { 'button--circle--text': !!this.props.title }
+          )}
+          onClick={this.props.onClick}
+        >
           <If condition={!!this.props.title}>
             <span>{this.props.title}</span>
           <Else />

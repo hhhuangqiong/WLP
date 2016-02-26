@@ -9,24 +9,8 @@ import DateSelectorArrow from './DateSelectorArrow';
 const YEARS_BACKWARD = 5;
 
 export default class DateSelector extends Component {
-  static propTypes = {
-    date: PropTypes.string.isRequired,
-    onChange: PropTypes.func.isRequired,
-    minDate: PropTypes.string,
-    maxDate: PropTypes.string,
-    monthFormat: PropTypes.string,
-    yearFormat: PropTypes.string,
-    className: PropTypes.string,
-  };
-
-  static defaultProps = {
-    monthFormat: 'MMMM',
-    yearFormat: 'YYYY',
-    maxDate: moment().endOf('month').format('L'),
-  };
-
   getMonths() {
-    const monthArray = Array.apply(0, Array(12)).map((_, i ) => i);
+    const monthArray = Array.apply(0, Array(12)).map((_, i) => i);
 
     return reduce(monthArray, (result, n) => {
       const option = { value: n, label: moment().month(n).format('MMMM') };
@@ -49,11 +33,34 @@ export default class DateSelector extends Component {
   }
 
   getSelectableMonths() {
-    return this.filterByDateRange(this.getMonths(), 'month', this.props.minDate, this.props.maxDate, this.props.date);
+    return this.filterByDateRange(
+      this.getMonths(),
+      'month',
+      this.props.minDate, this.props.maxDate, this.props.date
+    );
   }
 
   getSelectableYears() {
-    return this.filterByDateRange(this.getYears(), 'year', this.props.minDate, this.props.maxDate, this.props.date);
+    return this.filterByDateRange(
+      this.getYears(),
+      'year',
+      this.props.minDate,
+      this.props.maxDate,
+      this.props.date
+    );
+  }
+
+  filterByDateRange(dates, timescale, minDate, maxDate, currentDate) {
+    return dates.filter(option => {
+      const optionTime = moment(currentDate, 'L').set(timescale, +option.value);
+
+      // Avoid using isBetween since it is used exclusively
+      const isBetween =
+        optionTime.isSameOrAfter(minDate, timescale) &&
+        optionTime.isSameOrBefore(maxDate, timescale);
+
+      return isBetween;
+    });
   }
 
   render() {
@@ -107,15 +114,20 @@ export default class DateSelector extends Component {
       </div>
     );
   }
-
-  filterByDateRange(dates, timescale, minDate, maxDate, currentDate) {
-    return dates.filter(option => {
-      const optionTime = moment(currentDate, 'L').set(timescale, +option.value);
-
-      // Avoid using isBetween since it is used exclusively
-      const isBetween = optionTime.isSameOrAfter(minDate, timescale) && optionTime.isSameOrBefore(maxDate, timescale);
-
-      return isBetween;
-    });
-  }
 }
+
+DateSelector.propTypes = {
+  date: PropTypes.string.isRequired,
+  onChange: PropTypes.func.isRequired,
+  minDate: PropTypes.string,
+  maxDate: PropTypes.string,
+  monthFormat: PropTypes.string,
+  yearFormat: PropTypes.string,
+  className: PropTypes.string,
+};
+
+DateSelector.defaultProps = {
+  monthFormat: 'MMMM',
+  yearFormat: 'YYYY',
+  maxDate: moment().endOf('month').format('L'),
+};

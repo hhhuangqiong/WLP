@@ -1,7 +1,7 @@
 const debug = require('debug')('app:actions/loadSession');
 const sessionDebug = require('debug')('app:sessionFlow');
 
-module.exports = function (context, payload, done) {
+module.exports = (context, payload, done) => {
   debug('Started');
 
   const token = context.cookie.get('token');
@@ -19,7 +19,7 @@ module.exports = function (context, payload, done) {
   }
 
   // shadow token in parameter
-  context.api.getSession(token, function (err, token) {
+  context.api.getSession(token, (err, token) => {
     if (err) {
       debug('Failed');
       done();
@@ -43,13 +43,13 @@ module.exports = function (context, payload, done) {
     }
 
     const session = {
-      token: token,
+      token,
       user: {
         _id: user,
-        username: username,
-        displayName: displayName,
-        carrierId: carrierId,
-        role: role,
+        username,
+        displayName,
+        carrierId,
+        role,
       },
     };
 

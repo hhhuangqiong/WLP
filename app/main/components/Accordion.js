@@ -28,7 +28,13 @@ const Accordion = React.createClass({
 
   render() {
     return (
-      <ul className={classNames('accordion', { 'margin-offset': this.props.offsetMargin })} data-accordion>
+      <ul className={
+        classNames(
+          'accordion',
+          { 'margin-offset': this.props.offsetMargin }
+        )}
+        data-accordion
+      >
         {this.props.children}
       </ul>
     );
@@ -54,6 +60,10 @@ const AccordionNavigation = React.createClass({
 
     // a determinant of the status label
     status: PropTypes.bool,
+    children: PropTypes.oneOfType([
+      PropTypes.element,
+      PropTypes.array,
+    ]),
   },
 
   getDefaultProps() {
@@ -78,11 +88,24 @@ const AccordionNavigation = React.createClass({
 
   render() {
     return (
-      <li ref="accordionItem" className={classNames('accordion__item', { collapsed: this.state.isCollapsed })}>
+      <li
+        ref="accordionItem"
+        className={classNames(
+          'accordion__item',
+          { collapsed: this.state.isCollapsed }
+        )}
+      >
         <a className="accordion__item-head" onClick={this._toggleIsCollapsed}>
           <span>{this.props.title}</span>
           <If condition={this.props.withStatusLabel}>
-            <span className={classNames('text-center', 'status-label', { 'status-label--success': this.props.status }, { 'status-label--alert': !this.props.status })}>
+            <span
+              className={classNames(
+                'text-center',
+                'status-label',
+                { 'status-label--success': this.props.status },
+                { 'status-label--alert': !this.props.status }
+              )}
+            >
               <If condition={this.props.status}>
                 <span className="icon-tick" />
                 <Else />

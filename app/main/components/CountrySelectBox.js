@@ -83,32 +83,35 @@ const CountrySelectBox = React.createClass({
 
   _handleOnBlur(e) {
     if (this.props.searchable && !_.isEmpty(e.target.value)) {
-      this.refs.countrySelectBox.resetValue();
+      this
+        .refs
+        .countrySelectBox
+        .resetValue();
     }
   },
 
   render() {
     return (
       <Select
-          ref="countrySelectBox"
-          className="country-select-box"
-          name={this.props.name}
-          value={this.props.value}
-          placeholder={this.props.placeholder}
-          matchProp="any"
-          searchable={this.props.searchable}
-          clearable={false}
-          options={this.props.options || countries.all.map(country => {
-            return {
-              value: country.alpha2,
-              label: country.name,
-            };
-          })}
-          optionRenderer={this._renderOption}
-          valueRenderer={this._renderValue}
-          onChange={this.props.onChange}
-          onBlur={this._handleOnBlur}
-        />
+        ref="countrySelectBox"
+        className="country-select-box"
+        name={this.props.name}
+        value={this.props.value}
+        placeholder={this.props.placeholder}
+        matchProp="any"
+        searchable={this.props.searchable}
+        clearable={false}
+        options={this.props.options || countries.all.map(country => (
+          {
+            value: country.alpha2,
+            label: country.name,
+          }
+        ))}
+        optionRenderer={this._renderOption}
+        valueRenderer={this._renderValue}
+        onChange={this.props.onChange}
+        onBlur={this._handleOnBlur}
+      />
     );
   },
 });

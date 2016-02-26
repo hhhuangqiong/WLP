@@ -3,17 +3,6 @@ import React, { Component, PropTypes } from 'react';
 import Dropdown from '../dropdown';
 
 export default class DropdownFilter extends Component {
-  static propTypes = {
-    children: PropTypes.element.isRequired,
-    filterLabel: PropTypes.string,
-    icon: PropTypes.string,
-  };
-
-  static defaultProps = {
-    filterLabel: 'Filter',
-    icon: 'icon-dropdown',
-  };
-
   render() {
     return (
       <Dropdown>
@@ -31,3 +20,14 @@ export default class DropdownFilter extends Component {
     );
   }
 }
+
+DropdownFilter.propTypes = {
+  children: PropTypes.element.isRequired,
+  filterLabel: PropTypes.string,
+  icon: PropTypes.string,
+};
+
+DropdownFilter.defaultProps = {
+  filterLabel: 'Filter',
+  icon: 'icon-dropdown',
+};

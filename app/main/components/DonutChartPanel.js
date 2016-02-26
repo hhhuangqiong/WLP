@@ -49,18 +49,20 @@ export default React.createClass({
      * @type String[]
      */
     colors: PropTypes.arrayOf(PropTypes.string),
+    bars: PropTypes.array,
+    className: PropTypes.string,
+  },
+
+  getDefaultProps() {
+    return {
+      bars: 4,
+    };
   },
 
   getInitialState() {
     return {
       // create empty legend item as place holder
       useDummy: true,
-    };
-  },
-
-  getDefaultProps() {
-    return {
-      bars: 4,
     };
   },
 
@@ -90,7 +92,8 @@ export default React.createClass({
           value={value}
           percentage={percentage}
           unit={this.props.unit}
-          color={colors[index]} />
+          color={colors[index]}
+        />
       );
     });
   },
@@ -122,7 +125,8 @@ export default React.createClass({
           unit={this.props.unit}
           size={this.props.size}
           borderWidth={this.props.gapSize}
-          colors={colors} />
+          colors={colors}
+        />
 
         <div className="donut-chart-panel__legend">
           {this.renderLegendItems(data, colors)}

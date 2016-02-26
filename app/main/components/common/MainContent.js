@@ -3,7 +3,7 @@ import { RouteHandler } from 'react-router';
 
 const MainContent = React.createClass({
   propTypes: {
-    isOffCanvas: PropTypes.bool
+    isOffCanvas: PropTypes.bool,
   },
 
   shouldComponentUpdate(nextProps) {
