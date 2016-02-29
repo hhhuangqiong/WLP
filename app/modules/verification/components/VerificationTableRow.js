@@ -40,7 +40,7 @@ const lookupMobileOperator = function (mcc, mnc) {
 
   const operatorObject = _.find(operatorsInCountry, obj => {
     // no `===`, try to compare string and number
-    return obj.mnc === mnc;
+    return obj.mnc == mnc;
   });
 
   return operatorObject ? operatorObject.operator : '';
@@ -281,7 +281,7 @@ const VerificationTableRow = React.createClass({
           </div>
         </td>
         <td>{method}</td>
-        <td><span className={'icon-' + os} /></td>
+        <td><span className={`icon-${os}`} /></td>
         <td>{deviceModel || '-'}</td>
         <td>{operator || '-'}</td>
         <td><span className={statusFlagClasses}>{_.capitalize(status)}</span></td>

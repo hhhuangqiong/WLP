@@ -34,17 +34,26 @@ const VSFTransactionTable = React.createClass({
   renderRows() {
     const transactions = this.props.transactions;
 
-    return (transactions || []).map((transaction, i) => {
-      return (
+    return (transactions || []).map((transaction, i) =>
+      (
         <tr className="vsf-table--row" key={i}>
           <td className="text-center vsf-table--cell">
-            <span className={classNames('label', 'status', (transaction.transactionStatus) ? 'success' : 'alert')}></span>
+            <span className={classNames(
+              'label',
+              'status',
+              (transaction.transactionStatus) ? 'success' : 'alert')}
+            ></span>
           </td>
 
           <td className="vsf-table--cell">
             <div className="left timestamp">
               {/* parse purchaseDate as it is in UTC time and display it as local time */}
-              <span className="call_date">{Moment.utc(transaction.purchaseDate).local().format('MMMM Do YYYY, h:mm:ss a')}</span>
+              <span className="call_date">{
+                Moment
+                  .utc(transaction.purchaseDate)
+                  .local()
+                  .format('MMMM Do YYYY, h:mm:ss a')
+              }</span>
             </div>
           </td>
 
@@ -85,8 +94,8 @@ const VSFTransactionTable = React.createClass({
             <span>{transaction.transactionId || NO_VALUE_LABEL}</span>
           </td>
         </tr>
-      );
-    });
+      )
+    );
   },
 
   renderFooter() {
@@ -98,7 +107,9 @@ const VSFTransactionTable = React.createClass({
               <If condition={this.props.hasNextPage}>
                 <span className="pagination__button" onClick={this.props.loadPage}>Load More</span>
               <Else />
-                <span className="pagination__button pagination__button--inactive">No more result</span>
+                <span
+                  className="pagination__button pagination__button--inactive"
+                >No more result</span>
               </If>
             </div>
           </td>

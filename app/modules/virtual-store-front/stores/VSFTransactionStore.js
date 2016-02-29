@@ -15,7 +15,10 @@ const VSFTransactionStore = createStore({
     this.hasNextPage = false;
     this.pageSize = 100;
     this.pageIndex = 0;
-    this.fromTime = moment().subtract(2, 'day').startOf('day').format('L');
+    this.fromTime = moment()
+      .subtract(2, 'day')
+      .startOf('day')
+      .format('L');
     this.toTime = moment().endOf('day').format('L');
     this.category = '';
     this.userNumber = '';

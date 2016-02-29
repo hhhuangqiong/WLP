@@ -52,6 +52,9 @@ const MESSAGE_TYPES = {
 const ImTable = React.createClass({
   propTypes: {
     ims: PropTypes.array.isRequired,
+    totalPages: PropTypes.number.isRequired,
+    page: PropTypes.number.isRequired,
+    onDataLoad: PropTypes.func.isRequired,
   },
 
   contextTypes: {
@@ -61,9 +64,9 @@ const ImTable = React.createClass({
   getTypeSize(item, typeText) {
     function calculateSize(itemSize) {
       if (itemSize > 1024) {
-        return (Math.round((itemSize / 1024))) + 'kb';
+        return `${(Math.round((itemSize / 1024)))}kb`;
       } else if (itemSize > 0 && itemSize < 1024) {
-        return itemSize + 'b';
+        return `${itemSize}b`;
       }
 
       return '';
@@ -84,7 +87,11 @@ const ImTable = React.createClass({
   },
 
   render() {
-    const rows = this.props.ims.map((u, key) => {
+    const {
+      ims,
+    } = this.props;
+
+    const rows = ims.map((u, key) => {
       const imDate = moment(u.timestamp).format(IM_DATETIME_FORMAT);
       const imType = MESSAGE_TYPES[u.message_type] || LABEL_FOR_NULL;
       const typeSize = this.getTypeSize(u, imType.title);
@@ -104,7 +111,9 @@ const ImTable = React.createClass({
             </div>
           </td>
           <td className="im-table--cell">
-            <span className={classNames('im-message-type-icon', imType.className, u.message_type)}></span>
+            <span
+              className={classNames('im-message-type-icon', imType.className, u.message_type)}
+            ></span>
             <div className="im-message-type-info">
               <span className={"im-message-type-text dark"}>{imType.title || LABEL_FOR_NULL}</span>
               <br />
@@ -127,7 +136,11 @@ const ImTable = React.createClass({
             <If condition={_.isArray(u.recipients)}>
               <div className="recipient_info">
                 <div className="icon-multiuser"></div>
-                <Tooltip placement="right" trigger={['hover']} overlay={u.recipients.map((n) => {return <span className="recip-info">{n}</span>;})}>
+                <Tooltip
+                  placement="right"
+                  trigger={['hover']}
+                  overlay={u.recipients.map(n => <span className="recip-info">{n}</span>)}
+                >
                   <span className="recipient-num">{u.recipients.length} Recipients</span>
                 </Tooltip>
               </div>
@@ -166,9 +179,14 @@ const ImTable = React.createClass({
               <td colSpan="5">
                 <div className="text-center">
                   <If condition={(this.props.totalPages - 1) > this.props.page}>
-                    <span className="pagination__button" onClick={this.props.onDataLoad}>Load More</span>
+                    <span
+                      className="pagination__button"
+                      onClick={this.props.onDataLoad}
+                    >Load More</span>
                     <Else />
-                    <span className="pagination__button pagination__button--inactive">no more result</span>
+                    <span
+                      className="pagination__button pagination__button--inactive"
+                    >no more result</span>
                   </If>
                 </div>
               </td>

@@ -1,25 +1,24 @@
-import _ from 'lodash';
 import { createStore } from 'fluxible/addons';
 
-var TopUpStore = createStore({
+const TopUpStore = createStore({
   storeName: 'TopUpStore',
 
   handlers: {
     FETCH_TOP_UP_SUCCESS: 'handleLoadTopUp',
-    CLEAR_TOP_UP: 'handleClearTopUp'
+    CLEAR_TOP_UP: 'handleClearTopUp',
   },
 
-  initialize: function () {
+  initialize() {
     this.histories = [];
     this.page = 1;
     this.totalRec = 0;
   },
 
-  handleClearTopUp: function () {
+  handleClearTopUp() {
     this.initialize();
   },
 
-  handleLoadTopUp: function (payload) {
+  handleLoadTopUp(payload) {
     if (payload) {
       this.histories = this.histories.concat(payload.history);
       this.totalRec = payload.totalRec;
@@ -33,35 +32,35 @@ var TopUpStore = createStore({
     this.emitChange();
   },
 
-  getTotalRec: function () {
+  getTotalRec() {
     return this.totalRec;
   },
 
-  getPage: function () {
+  getPage() {
     return this.page;
   },
 
-  getHistories: function () {
+  getHistories() {
     return this.histories;
   },
 
-  getState: function () {
+  getState() {
     return {
       histories: this.histories,
       totalRec: this.totalRec,
-      page: this.page
+      page: this.page,
     };
   },
 
-  dehydrate: function () {
+  dehydrate() {
     return this.getState();
   },
 
-  rehydrate: function (state) {
+  rehydrate(state) {
     this.histories = state.histories;
     this.totalRec = state.totalRec;
     this.page = state.page;
-  }
+  },
 });
 
 export default TopUpStore;

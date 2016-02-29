@@ -19,12 +19,47 @@ const SMSTable = React.createClass({
     onPageLoad: PropTypes.func,
   },
 
+  _renderCaller(sms) {
+    if (sms.source_address_inbound) {
+      return sms.source_address_inbound;
+    }
+
+    if (sms.origin_interface === 'PLATFORM') {
+      return SYSTEM_MESSAGE_LABEL;
+    }
+
+    return sms.destination_address_inbound;
+  },
+
+  _renderStatusLabel(status) {
+    if (status.toLowerCase() === 'submitted') {
+      return <span className="status-label label radius success">submitted</span>;
+    }
+
+    return <span className="status-label label radius alert">rejected</span>;
+  },
+
+  _renderTypeIcon(type) {
+    return (
+      <Tooltip placement="right" trigger={['hover']} overlay={<span>{type}</span>}>
+        <i className={`icon-${type.toLowerCase()}`}></i>
+      </Tooltip>
+    );
+  },
+
   render() {
-    const rows = this.props.records.map(sms => {
-      return (
+    const { records } = this.props;
+
+    const rows = records.map(sms =>
+      (
         <tr>
           <td className="text-center">
-            <span className={classNames('label', 'status', { success: sms.status.toLowerCase() === 'submitted' }, { alert: sms.status.toLowerCase() === 'rejected' })} />
+            <span className={classNames(
+              'label',
+              'status',
+              { success: sms.status.toLowerCase() === 'submitted' },
+              { alert: sms.status.toLowerCase() === 'rejected' })}
+            />
           </td>
           <td>{moment(sms.request_date).format(DATE_FORMAT)}</td>
           <td>
@@ -62,14 +97,18 @@ const SMSTable = React.createClass({
           <td>{sms.charged_amount}</td>
           <td>
             <If condition={sms.status.toLowerCase() !== 'submitted' && sms.errorDescription}>
-              <Tooltip placement="left" trigger={['hover']} overlay={<span>{sms.errorDescription}</span>}>
+              <Tooltip
+                placement="left"
+                trigger={['hover']}
+                overlay={<span>{sms.errorDescription}</span>}
+              >
                 <i className="icon-error6" />
               </Tooltip>
             </If>
           </td>
         </tr>
-      );
-    });
+      )
+    );
 
     return (
       <table className="data-table large-24 clickable">
@@ -93,9 +132,14 @@ const SMSTable = React.createClass({
               <If condition={!_.isEmpty(this.props.records)}>
                 <div className="text-center">
                   <If condition={(this.props.totalPage - 1) > this.props.page}>
-                    <span className="pagination__button" onClick={this.props.onPageLoad}>Load More</span>
+                    <span
+                      className="pagination__button"
+                      onClick={this.props.onPageLoad}
+                    >Load More</span>
                     <Else />
-                    <span className="pagination__button pagination__button--inactive">no more result</span>
+                    <span
+                      className="pagination__button pagination__button--inactive"
+                    >no more result</span>
                   </If>
                 </div>
               </If>
@@ -103,34 +147,6 @@ const SMSTable = React.createClass({
           </tr>
         </tfoot>
       </table>
-    );
-  },
-
-  _renderCaller(sms) {
-    if (sms.source_address_inbound) {
-      return sms.source_address_inbound;
-    }
-
-    if (sms.origin_interface === 'PLATFORM') {
-      return SYSTEM_MESSAGE_LABEL;
-    }
-
-    return sms.destination_address_inbound;
-  },
-
-  _renderStatusLabel(status) {
-    if (status.toLowerCase() === 'submitted') {
-      return <span className="status-label label radius success">submitted</span>;
-    }
-
-    return <span className="status-label label radius alert">rejected</span>;
-  },
-
-  _renderTypeIcon(type) {
-    return (
-      <Tooltip placement="right" trigger={['hover']} overlay={<span>{type}</span>}>
-        <i className={'icon-' + type.toLowerCase()}></i>
-      </Tooltip>
     );
   },
 });

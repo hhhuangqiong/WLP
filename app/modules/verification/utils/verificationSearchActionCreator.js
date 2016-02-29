@@ -42,7 +42,7 @@ function createVerificationSearchApiCallback(actionName, context) {
 
   const debug = require('debug')(`app:${actionName}`);
 
-  return function (err, response) {
+  return (err, response) => {
     if (err) {
       debug(`Failed: ${err.message}`);
       context.dispatch(lifecycle.FAILURE, err);
@@ -94,15 +94,13 @@ function transformParameters(params) {
     method,
     phone_number,
     platform,
-  }, function (value) {
-    return !value;
-  });
+  }, value => !value);
 
   return query;
 }
 
 export default function (actionName, apiMethod) {
-  return function (context, params, done) {
+  return (context, params, done) => {
     // create the API function object, pass in the custom callback
     const api = actionCreator(actionName, apiMethod, {
       cb: createVerificationSearchApiCallback(actionName, context),
