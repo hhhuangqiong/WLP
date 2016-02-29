@@ -9,7 +9,8 @@ import { createStore } from 'fluxible/addons';
  * @property {string} selectedAccount.name.first - Account first name.
  * @property {string} selectedAccount.name.last - Account last name.
  * @property {string} selectedAccount.username - Account's email.
- * @property {string} selectedAccount.assignedGroup - Account's group (Administrator, Technical, Marketer).
+ * @property {string} selectedAccount.assignedGroup -
+ * Account's group (Administrator, Technical, Marketer).
  * @property {array} selectedAccount.assignedCompanies - Account's current managing companies.
  */
 

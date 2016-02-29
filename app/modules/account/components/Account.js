@@ -26,12 +26,12 @@ export default React.createClass({
     },
   },
 
-  onChange() {
-    this.setState(this.getStateFromStores());
-  },
-
   getInitialState() {
     return this.getStateFromStores();
+  },
+
+  onChange() {
+    this.setState(this.getStateFromStores());
   },
 
   getStateFromStores() {

@@ -22,9 +22,7 @@ export default React.createClass({
   },
 
   getGroups() {
-    return _.groupBy(this.props.accounts, account => {
-      return account.assignedGroup;
-    });
+    return _.groupBy(this.props.accounts, account => account.assignedGroup);
   },
 
   getFilteredGroups() {

@@ -62,31 +62,45 @@ const CallsTable = React.createClass({
     let rows;
 
     if (!_.isEmpty(this.props.calls)) {
-      rows = this.props.calls.map(u => {
-        const callStartDate = moment(u.start_time).format(DATE_FORMAT);
-        const callEndDate = (u.end_time > 0) ? moment(u.end_time).format(DATE_FORMAT) : callStartDate;
+      rows = this
+        .props
+        .calls
+        .map(u => {
+          const callStartDate = moment(u.start_time).format(DATE_FORMAT);
+          const callEndDate = (u.end_time > 0) ?
+            moment(u.end_time).format(DATE_FORMAT) :
+            callStartDate;
 
-        const callStartTime = moment(u.start_time).format(TIME_FORMAT);
-        const callEndTime = (u.end_time > 0) ? moment(u.end_time).format(TIME_FORMAT) : callStartTime;
+          const callStartTime = moment(u.start_time).format(TIME_FORMAT);
+          const callEndTime = (u.end_time > 0) ?
+            moment(u.end_time).format(TIME_FORMAT) :
+            callStartTime;
 
-        return (
-          <tr key={u.record_id}>
-            <td>{this.renderCountryField(u.caller, u.source_country_tel_code)}</td>
-            <td>{this.renderCountryField(u.callee, u.target_country_tel_code, 'callee')}</td>
-            <td><span className="left duration">{parseDuration(u.duration)}</span></td>
+          return (
+            <tr key={u.record_id}>
+              <td>{this.renderCountryField(u.caller, u.source_country_tel_code)}</td>
+              <td>{this.renderCountryField(u.callee, u.target_country_tel_code, 'callee')}</td>
+              <td><span className="left duration">{parseDuration(u.duration)}</span></td>
 
-            <td>
-              <div>{callEndDate},</div>
-              <span className="call_time">{callStartTime} - {callEndTime}</span>
-            </td>
+              <td>
+                <div>{callEndDate},</div>
+                <span className="call_time">{callStartTime} - {callEndTime}</span>
+              </td>
 
-            <td><span className={classNames('call_status', u.success ? 'success' : 'alert')}>{u.success ? 'Success' : 'Failure'}</span></td>
-            <td><span className="last_response_code">{u.last_response_code || EMPTY_STRING}</span></td>
-            <td><div className="call_by_reason">{u.bye_reason || EMPTY_STRING}</div></td>
-            <td><span>{u.release_party || EMPTY_STRING}</span></td>
-          </tr>
-        );
-      });
+              <td>
+                <span
+                  className={classNames('call_status', u.success ? 'success' : 'alert')}
+                >{u.success ? 'Success' : 'Failure'}
+                </span>
+              </td>
+              <td>
+                <span className="last_response_code">{u.last_response_code || EMPTY_STRING}</span>
+              </td>
+              <td><div className="call_by_reason">{u.bye_reason || EMPTY_STRING}</div></td>
+              <td><span>{u.release_party || EMPTY_STRING}</span></td>
+            </tr>
+          );
+        });
     }
 
     let footer = null;

@@ -4,7 +4,7 @@ import { userPath } from '../../../server/paths';
 export default function (context, params, done) {
   context.dispatch('CREATE_PASSWORD_START');
 
-  context.api.setPassword(params, function (err, payload) {
+  context.api.setPassword(params, (err, payload) => {
     if (err || payload.error) {
       context.dispatch('CREATE_PASSWORD_FAILURE', payload);
       done();
@@ -13,10 +13,10 @@ export default function (context, params, done) {
 
     const { username } = payload.result;
 
-    context.api.signIn(username, params.password, function (err, auth) {
-      if (err) {
-        context.dispatch('SIGN_IN_FAILURE', err);
-        context.dispatch(ERROR_MESSAGE, err);
+    context.api.signIn(username, params.password, (signInErr, auth) => {
+      if (signInErr) {
+        context.dispatch('SIGN_IN_FAILURE', signInErr);
+        context.dispatch(ERROR_MESSAGE, signInErr);
         return;
       }
 
@@ -33,14 +33,22 @@ export default function (context, params, done) {
       // the AuthStore needs to set its state to "authenticated"
       // before the transition
 
-      context.api.getAuthorityList(auth.user.carrierId, function (err, { carrierId, capability }) {
+      context.api.getAuthorityList(auth.user.carrierId, (getAuthorityErr, { carrierId, capability }) => {
+        if (getAuthorityErr) {
+          context.dispatch('SIGN_IN_FAILURE', getAuthorityErr);
+          context.dispatch(ERROR_MESSAGE, getAuthorityErr);
+          return;
+        }
+
         const authority = context.getAuthority();
         authority.reset(carrierId, capability);
 
         const defaultPath = authority.getDefaultPath();
 
         if (defaultPath) {
-          context.getRouter().transitionTo(userPath(auth.user.role, auth.user.carrierId, defaultPath));
+          context.getRouter().transitionTo(userPath(
+            auth.user.role, auth.user.carrierId, defaultPath
+          ));
         } else {
           context.getRouter().transitionTo('/error/not-found');
         }

@@ -8,12 +8,21 @@ import PublicOnlyMixin from '../../../utils/PublicOnlyMixin';
 import validator from '../../../main/components/ValidateDecorator';
 import forgotPassword from '../actions/forgotPassword';
 
-@validator({ email: Joi.string().email().required() })
+@validator({ email: Joi
+  .string()
+  .email()
+  .required(),
+})
 @reactMixin.decorate(PublicOnlyMixin)
 export default class ForgotPassword extends Component {
   static contextTypes = {
     executeAction: PropTypes.func.isRequired,
     router: PropTypes.func.isRequired,
+  };
+
+  static propTypes = {
+    isError: PropTypes.func.isRequired,
+    validate: PropTypes.func.isRequired,
   };
 
   constructor() {
@@ -34,7 +43,10 @@ export default class ForgotPassword extends Component {
   }
 
   emailOnChange = (event) => {
-    if (this.props.isError()) this.props.validate(event);
+    if (this.props.isError()) {
+      this.props.validate(event);
+    }
+
     this.setState({ email: event.target.value });
   }
 
@@ -80,7 +92,11 @@ export default class ForgotPassword extends Component {
               </div>
               <div className="large-8 columns">
                 <button
-                  className={classnames('button--primary', 'right', { 'disabled': !this.state.email.length || this.props.isError() })}
+                  className={classnames(
+                    'button--primary',
+                    'right',
+                    { disabled: !this.state.email.length || this.props.isError() }
+                  )}
                   onClick={this.handleResetPassword}
                 >Continue</button>
               </div>

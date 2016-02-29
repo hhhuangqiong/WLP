@@ -8,7 +8,10 @@ export default function (context, params) {
 
     const defaultPath = authority.getDefaultPath();
 
-    if (!defaultPath) return context.getRouter().transitionTo('/error/not-found');
+    if (!defaultPath) {
+      context.getRouter().transitionTo('/error/not-found');
+      return;
+    }
 
     context.getRouter().transitionTo(userPath(params.role, params.identity, defaultPath));
   });

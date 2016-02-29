@@ -1,3 +1,5 @@
+import { merge } from 'lodash';
+
 export default function (context, params, done) {
   context.api.createAccount(params, (err, { error, result }) => {
     if (err) {
@@ -19,7 +21,7 @@ export default function (context, params, done) {
     const router = context.getRouter();
     const routerParams = router.getCurrentParams();
 
-    router.transitionTo('account-profile', _.merge(routerParams, {
+    router.transitionTo('account-profile', merge(routerParams, {
       accountId: result._id,
     }));
 

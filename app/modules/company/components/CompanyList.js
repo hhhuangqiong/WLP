@@ -20,8 +20,14 @@ const CompanyList = React.createClass({
     };
   },
 
+  getInitialState() {
+    return {
+      searchCompany: '',
+    };
+  },
+
   componentDidMount() {
-	  // equalise the height of the list and main area
+    // equalise the height of the list and main area
     $(document).foundation({
       equalizer: {
         equalize_on_stack: true,
@@ -29,14 +35,40 @@ const CompanyList = React.createClass({
     });
   },
 
-  getInitialState() {
-    return {
-      searchCompany: '',
-    };
+  _handleSearchChange(e) {
+    this.setState({
+      searchCompany: e
+        .target
+        .value
+        .trim(),
+    });
+  },
+
+  /**
+   * Filter property of companies with keyword starting from 3 or more characters
+   * supports only company name matching
+   *
+   * @returns {Object} returns companies Object or empty Array
+   */
+  _getFilteredCompanies(companies) {
+    if (this.state.searchCompany.length >= 2) {
+      return _.filter(companies, company => (
+        _.contains(company.name.toLowerCase(), this
+          .state
+          .searchCompany
+          .toLowerCase()
+        )
+      ));
+    }
+
+    return _.values(companies) || [];
   },
 
   renderCompanyListItem(company, key) {
-    const { role, identity } = this.context.router.getCurrentParams();
+    const { role, identity } = this
+      .context
+      .router
+      .getCurrentParams();
 
     // TODO add default logo
     // TODO reference status string from Company Collection ?
@@ -59,7 +91,13 @@ const CompanyList = React.createClass({
             </span>
           </span>
           <span className="company-sidebar__list__item__status left">
-            <span className={classNames('status', 'label', 'radius', { success: company.status === 'active' }, { alert: company.status === 'inactive' })} />
+            <span className={classNames(
+              'status',
+              'label',
+              'radius',
+              { success: company.status === 'active' },
+              { alert: company.status === 'inactive' })}
+            />
           </span>
         </Link>
       </li>
@@ -81,28 +119,6 @@ const CompanyList = React.createClass({
         </ul>
       </div>
     );
-  },
-
-  _handleSearchChange(e) {
-    this.setState({
-      searchCompany: e.target.value.trim(),
-    });
-  },
-
-  /**
-   * Filter property of companies with keyword starting from 3 or more characters
-   * supports only company name matching
-   *
-   * @returns {Object} returns companies Object or empty Array
-   */
-  _getFilteredCompanies(companies) {
-    if (this.state.searchCompany.length >= 2) {
-      return _.filter(companies, company => {
-        return _.contains(company.name.toLowerCase(), this.state.searchCompany.toLowerCase());
-      });
-    }
-
-    return _.values(companies) || [];
   },
 });
 

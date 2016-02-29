@@ -13,6 +13,8 @@ export default actionCreator('RESEND_CREATE_PASSWORD', 'resendCreatePassword', {
     }
 
     context.getRouter().transitionTo('sign-in');
-    context.dispatch('INFO_MESSAGE', { message: 'Successfully sent an email of recreate password' });
+    context.dispatch('INFO_MESSAGE', {
+      message: 'Successfully sent an email of recreate password'
+    });
   },
 });
