@@ -32,6 +32,17 @@ export default class VerificationRequest {
   }
 
   /**
+   * Formats phone number field for verification API.
+   *
+   * @method
+   * @param {String} phoneNumber  The phone number for searching
+   * @returns {String} The modified phone number
+   */
+  normalizePhoneNumberForVerificationSolr(phoneNumber) {
+    return phoneNumber.replace('+', '');
+  }
+
+  /**
    * Formats the `from` and `to` fields from ISO format to timestamp.
    * This method will modify the original object.
    *
@@ -91,6 +102,8 @@ export default class VerificationRequest {
 
         paramsAfterSwappedDate.type = this.convertVerificationTypes(paramsAfterSwappedDate.method);
         delete paramsAfterSwappedDate.method;
+
+        paramsAfterSwappedDate.phone_number = this.normalizePhoneNumberForVerificationSolr(paramsAfterSwappedDate.phone_number);
 
         return formatDateString(paramsAfterSwappedDate, format);
       })
