@@ -21,15 +21,15 @@ export default React.createClass({
     onLoadMoreClick: PropTypes.func.isRequired,
   },
 
-  getInitialState() {
-    return {
-      selectedProfile: null,
-    };
-  },
-
   getDefaultProps() {
     return {
       verifications: [],
+    };
+  },
+
+  getInitialState() {
+    return {
+      selectedProfile: null,
     };
   },
 
@@ -42,22 +42,34 @@ export default React.createClass({
   },
 
   renderTableRows() {
-    return this.props.verifications.map(item => {
-      return (
+    const { verifications } = this.props;
+
+    return verifications.map(item =>
+      (
         <VerificationTableRow
           key={item.id}
           verification={item}
-          onClickProfile={this.onClickProfile} />
-      );
-    });
+          onClickProfile={this.onClickProfile}
+        />
+      )
+    );
   },
 
   renderPaginationFooter() {
     if (this.props.verifications.length < this.props.total) {
-      return (<div className="pagination__button text-center" onClick={this.props.onLoadMoreClick}>Load More</div>);
+      return (
+        <div
+          className="pagination__button text-center"
+          onClick={this.props.onLoadMoreClick}
+        >Load More</div>
+      );
     }
 
-    return (<div className="pagination__button pagination__button--inactive text-center">no more result</div>);
+    return (
+      <div
+        className="pagination__button pagination__button--inactive text-center"
+      >no more result</div>
+    );
   },
 
   render() {
@@ -94,7 +106,8 @@ export default React.createClass({
       <Else />
         <VerificationProfile
           profile={selectedProfile}
-          onClickBack={this.onClickBackButton} />
+          onClickBack={this.onClickBackButton}
+        />
       </If>
     );
   },

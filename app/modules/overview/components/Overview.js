@@ -69,7 +69,12 @@ export default React.createClass({
     return (
       <div className="overview-background row">
         <div className="large-24 large-centered columns text-center">
-          <h2>Welcome {this.getStore(AuthStore).user.displayName}</h2>
+          <h2>Welcome {
+            this
+              .getStore(AuthStore)
+              .user
+              .displayName
+          }</h2>
           <div className="large-12 large-centered columns">{this.state.description}</div>
           {this.renderWidgets()}
         </div>

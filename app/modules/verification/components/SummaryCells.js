@@ -2,8 +2,6 @@ import React, { PropTypes } from 'react';
 import classNames from 'classnames';
 
 const TOTAL_COLUMNS = 24;
-const EMPTY_DATA_LABEL = '0';
-const DATA_FETCHING_LABEL = '-';
 
 export default React.createClass({
   displayName: 'SummaryCells',
@@ -34,29 +32,6 @@ export default React.createClass({
     }
 
     return (change > 0 && isPositiveGood) ? 'positive' : 'negative';
-  },
-
-  renderCells(cellMetadataList) {
-    return cellMetadataList.map((cell, index) => {
-      return (
-        <section key={index} className={classNames(`large-${Math.floor(TOTAL_COLUMNS / cellMetadataList.length)}`, 'columns', index !== 0 ? 'left-border' : '')}>
-          <div className="verification-overview__title">{cell.title}</div>
-          <div className="verification-overview__value">{cell.value}</div>
-          <div className={classNames('verification-overview__changes', cell.changes.status, cell.changes.direction, { hide: !cell.changes.status })}>
-            <span className="arrow"></span>
-            <span>{cell.changes.text}</span>
-          </div>
-        </section>
-      );
-    });
-  },
-
-  render() {
-    return (
-      <div>
-        {this.renderCells(this.prepareCellsMetadata())}
-      </div>
-    );
   },
 
   /**
@@ -169,5 +144,40 @@ export default React.createClass({
     });
 
     return cellMetadataList;
+  },
+
+  renderCells(cellMetadataList) {
+    return cellMetadataList.map((cell, index) =>
+      (
+        <section
+          key={index}
+          className={classNames(
+            `large-${Math.floor(TOTAL_COLUMNS / cellMetadataList.length)}`,
+            'columns',
+            index !== 0 ? 'left-border' : ''
+          )}
+        >
+          <div className="verification-overview__title">{cell.title}</div>
+          <div className="verification-overview__value">{cell.value}</div>
+          <div className={classNames(
+            'verification-overview__changes',
+            cell.changes.status,
+            cell.changes.direction,
+            { hide: !cell.changes.status })}
+          >
+            <span className="arrow"></span>
+            <span>{cell.changes.text}</span>
+          </div>
+        </section>
+      )
+    );
+  },
+
+  render() {
+    return (
+      <div>
+        {this.renderCells(this.prepareCellsMetadata())}
+      </div>
+    );
   },
 });

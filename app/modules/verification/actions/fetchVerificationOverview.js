@@ -51,7 +51,7 @@ export default (context, params, done) => {
 
   const timeRangeForCurrentPeriod = getIsoTimeRangeFromNow(quantity, timescale);
   const paramsForCurrentPeriod = _.merge({
-    timescale: timescale,
+    timescale,
     application: params.application,
     carrierId: params.carrierId,
   }, timeRangeForCurrentPeriod);
@@ -79,9 +79,11 @@ export default (context, params, done) => {
   }];
 
   const runningActions = actions.map(action => {
-    return action.bindedApi()
+    return action
+      .bindedApi()
       .then(result => {
-        // Prepare all data from endpoint first and dispatch once afterward to ensure the data update problem of Line Chart
+        // Prepare all data from endpoint first and
+        // dispatch once afterward to ensure the data update problem of Line Chart
         if (action.name === 'FETCH_VERIFICATION_COUNTRIES_DATA') {
           fetchedData.countriesData = result;
         } else if (action.name === 'FETCH_VERIFICATION_OS_TYPE') {
@@ -95,14 +97,15 @@ export default (context, params, done) => {
         }
       })
       .catch(err => {
-        context.dispatch(action.name + '_FAILURE', err);
+        context.dispatch(`${action.name}_FAILURE`, err);
         // we don't want to handle the error here
         throw err;
       })
       .finally(() => {});
   });
 
-  Q.allSettled(runningActions)
+  Q
+    .allSettled(runningActions)
     .then(promises => {
       const failureStatusList = [];
 
@@ -124,7 +127,8 @@ export default (context, params, done) => {
 
       if (failureStatusList.length > 0) {
         context.dispatch('ERROR_MESSAGE', {
-          message: `Sorry. Some data cannot be retrieved. Possible reason(s): ${_.unique(possibleReasons).join(', ')}`,
+          message: `Sorry. Some data cannot be retrieved. Possible reason(s):
+${_.unique(possibleReasons).join(', ')}`,
         });
       } else {
         context.dispatch('FETCH_VERIFICATION_OVERVIEW_SUCCESS', fetchedData);
