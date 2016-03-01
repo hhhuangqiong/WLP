@@ -23,7 +23,7 @@ export default React.createClass({
     const { action, resource } = this.props;
 
     const authority = this.context.getAuthority();
-    authority.scan(action, resource);
+    return authority.scan(action, resource);
   },
 
   render() {
