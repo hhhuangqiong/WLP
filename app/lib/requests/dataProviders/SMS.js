@@ -47,10 +47,18 @@ export default class SMSRequest {
     // jscs:disable requireCamelCaseOrUpperCaseIdentifiers
     if (opts.destination_address_inbound) {
       query.destination_address_inbound = `*${opts.destination_address_inbound}*`;
+
+      if (query.destination_address_inbound.indexOf(' ') >= 0) {
+        query.destination_address_inbound = `"${query.destination_address_inbound}"`;
+      }
     }
 
     if (opts.source_address_inbound) {
       query.source_address_inbound = `*${opts.source_address_inbound}*`;
+
+      if (query.source_address_inbound.indexOf(' ') >= 0) {
+        query.source_address_inbound = `"${query.source_address_inbound}"`;
+      }
     }
 
     // jscs:enable
