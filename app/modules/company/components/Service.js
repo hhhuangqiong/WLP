@@ -52,17 +52,32 @@ const CompanyService = React.createClass({
     },
   },
 
-  // expose from ValidationMixin
-  validatorTypes() {
-    return _.reduce(this.refs, function (rules, component) {
-      _.merge(rules, _.isFunction(component.getValidatorTypes) && component.getValidatorTypes());
-      return rules;
-    }, {});
+  getInitialState() {
+    return this.getStateFromStores();
+  },
+
+  onChange() {
+    this.setState(this.getStateFromStores());
+  },
+
+  getStateFromStores() {
+    const { carrierId } = this
+      .context
+      .router
+      .getCurrentParams();
+
+    const {
+      _id,
+      status,
+      serviceConfig,
+    } = this.getStore(CompanyStore).getCompanyByCarrierId(carrierId);
+
+    return { _id, status, serviceConfig: _.merge(_.clone(defaultState), serviceConfig) };
   },
 
   // expose from ValidationMixin
   getValidatorData() {
-    return _.reduce(this.refs, function (rules, component) {
+    return _.reduce(this.refs, (rules, component) => {
       _.merge(rules, _.isFunction(component.getValidatorData) && component.getValidatorData());
       return rules;
     }, {});
@@ -73,19 +88,12 @@ const CompanyService = React.createClass({
     return carrierId && carrierId.indexOf('.m800-api.com') > -1 ? 'sdk' : 'wl';
   },
 
-  getStateFromStores() {
-    const { carrierId } = this.context.router.getCurrentParams();
-    const { _id, status, serviceConfig } = this.getStore(CompanyStore).getCompanyByCarrierId(carrierId);
-
-    return { _id, status, serviceConfig: _.merge(_.clone(defaultState), serviceConfig) };
-  },
-
-  getInitialState() {
-    return this.getStateFromStores();
-  },
-
-  onChange() {
-    this.setState(this.getStateFromStores());
+  // expose from ValidationMixin
+  validatorTypes() {
+    return _.reduce(this.refs, (rules, component) => {
+      _.merge(rules, _.isFunction(component.getValidatorTypes) && component.getValidatorTypes());
+      return rules;
+    }, {});
   },
 
   _handleInputChange(platformName, e) {
@@ -94,7 +102,10 @@ const CompanyService = React.createClass({
         applicationId: this.state.serviceConfig.applicationId,
         developerKey: this.state.serviceConfig.developerKey,
         developerSecret: this.state.serviceConfig.developerSecret,
-        applications: _.merge(this.state.serviceConfig.applications, { [platformName]: { name: e.target.value } }),
+        applications: _.merge(
+          this.state.serviceConfig.applications,
+          { [platformName]: { name: e.target.value } }
+        ),
       },
     });
   },
@@ -111,7 +122,11 @@ const CompanyService = React.createClass({
       // so no error handling is needed
       if (error) return;
 
-      const { carrierId } = this.context.router.getCurrentParams();
+      const { carrierId } = this
+        .context
+        .router
+        .getCurrentParams();
+
       const form = React.findDOMNode(this.refs.companyForm);
       const formData = new FormData(form);
 
@@ -148,35 +163,35 @@ const CompanyService = React.createClass({
                   <InputGroup.Label htmlFor="applicationId">application ID</InputGroup.Label>
                   <InputGroup.Input>
                     <input
-                        className="radius"
-                        type="text" name="applicationId"
-                        value={this.state.serviceConfig.applicationId}
-                        readOnly
-                      />
+                      className="radius"
+                      type="text" name="applicationId"
+                      value={this.state.serviceConfig.applicationId}
+                      readOnly
+                    />
                   </InputGroup.Input>
                 </InputGroup.Row>
                 <InputGroup.Row>
                   <InputGroup.Label htmlFor="developerKey">developer key</InputGroup.Label>
                   <InputGroup.Input>
                     <input
-                        className="radius"
-                        type="text"
-                        name="developerKey"
-                        value={this.state.serviceConfig.developerKey}
-                        readOnly
-                      />
+                      className="radius"
+                      type="text"
+                      name="developerKey"
+                      value={this.state.serviceConfig.developerKey}
+                      readOnly
+                    />
                   </InputGroup.Input>
                 </InputGroup.Row>
                 <InputGroup.Row>
                   <InputGroup.Label htmlFor="developerSecret">developer secret</InputGroup.Label>
                   <InputGroup.Input>
                     <input
-                        className="radius"
-                        type="text"
-                        name="developerSecret"
-                        value={this.state.serviceConfig.developerSecret}
-                        readOnly
-                      />
+                      className="radius"
+                      type="text"
+                      name="developerSecret"
+                      value={this.state.serviceConfig.developerSecret}
+                      readOnly
+                    />
                   </InputGroup.Input>
                 </InputGroup.Row>
               </Panel.Body>
@@ -184,23 +199,42 @@ const CompanyService = React.createClass({
                 <Tab.Wrapper>
                   <Tab.Panel title="iOS">
                     <IOSApplication
-                        ref="iosApplication"
-                        application={this.state.serviceConfig.applications && this.state.serviceConfig.applications.ios}
-                        onDataChange={_.bindKey(this, '_handleInputChange', 'ios')}
-                        onInputBlur={this._handleInputBlur}
-                        getValidationMessages={this.getValidationMessages}
-                        renderHelpText={this._renderHelpText}
-                      />
+                      ref="iosApplication"
+                      application={
+                        this
+                          .state
+                          .serviceConfig
+                          .applications &&
+                        this
+                          .state
+                          .serviceConfig
+                          .applications
+                          .ios
+                      }
+                      onDataChange={_.bindKey(this, '_handleInputChange', 'ios')}
+                      onInputBlur={this._handleInputBlur}
+                      getValidationMessages={this.getValidationMessages}
+                      renderHelpText={this._renderHelpText}
+                    />
                   </Tab.Panel>
                   <Tab.Panel title="Android">
                     <AndroidApplication
-                        ref="androidApplication"
-                        application={this.state.serviceConfig.applications && this.state.serviceConfig.applications.android}
-                        onDataChange={_.bindKey(this, '_handleInputChange', 'android')}
-                        onInputBlur={this._handleInputBlur}
-                        getValidationMessages={this.getValidationMessages}
-                        renderHelpText={this._renderHelpText}
-                      />
+                      ref="androidApplication"
+                      application={
+                        this
+                          .state
+                          .serviceConfig
+                          .applications &&
+                        this
+                          .state
+                          .serviceConfig
+                          .applications.android
+                      }
+                      onDataChange={_.bindKey(this, '_handleInputChange', 'android')}
+                      onInputBlur={this._handleInputBlur}
+                      getValidationMessages={this.getValidationMessages}
+                      renderHelpText={this._renderHelpText}
+                    />
                   </Tab.Panel>
                 </Tab.Wrapper>
               </Panel.Body>

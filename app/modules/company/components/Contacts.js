@@ -29,6 +29,8 @@ const Contacts = React.createClass({
     }),
   },
 
+  // For readably of Joi chain
+  /* eslint-disable newline-per-chained-call */
   // intend to expose this function to parent
   getValidatorTypes() {
     return {
@@ -43,6 +45,7 @@ const Contacts = React.createClass({
       scEmail: Joi.string().allow('').email().label('support contact email'),
     };
   },
+  /* eslint-enable newline-per-chained-call */
 
   // intend to expose this function to parent
   getValidatorData() {
@@ -70,41 +73,56 @@ const Contacts = React.createClass({
                 <InputGroup.Label htmlFor="bcName">name</InputGroup.Label>
                 <InputGroup.Input>
                   <input
-                      className="radius"
-                      type="text"
-                      name="bcName"
-                      value={this.props.businessContact.name}
-                      onChange={_.bindKey(this.props, 'onDataChange', 'businessContact', 'name')}
-                      onBlur={this.props.onInputBlur}
-                    />
-                  {this.props.getValidationMessages('bcName').map(this.props.renderHelpText)}
+                    className="radius"
+                    type="text"
+                    name="bcName"
+                    value={this.props.businessContact.name}
+                    onChange={_.bindKey(this.props, 'onDataChange', 'businessContact', 'name')}
+                    onBlur={this.props.onInputBlur}
+                  />
+                  {
+                    this
+                    .props
+                    .getValidationMessages('bcName')
+                    .map(this.props.renderHelpText)
+                  }
                 </InputGroup.Input>
               </InputGroup.Row>
               <InputGroup.Row>
                 <InputGroup.Label htmlFor="bcPhone">phone</InputGroup.Label>
                 <InputGroup.Input>
                   <input
-                      className="radius"
-                      type="text" name="bcPhone"
-                      value={this.props.businessContact.phone}
-                      onChange={_.bindKey(this.props, 'onDataChange', 'businessContact', 'phone')}
-                      onBlur={this.props.onInputBlur}
-                    />
-                  {this.props.getValidationMessages('bcPhone').map(this.props.renderHelpText)}
+                    className="radius"
+                    type="text" name="bcPhone"
+                    value={this.props.businessContact.phone}
+                    onChange={_.bindKey(this.props, 'onDataChange', 'businessContact', 'phone')}
+                    onBlur={this.props.onInputBlur}
+                  />
+                  {
+                    this
+                      .props
+                      .getValidationMessages('bcPhone')
+                      .map(this.props.renderHelpText)
+                  }
                 </InputGroup.Input>
               </InputGroup.Row>
               <InputGroup.Row>
                 <InputGroup.Label htmlFor="bcEmail">email</InputGroup.Label>
                 <InputGroup.Input>
                   <input
-                      className="radius"
-                      type="text"
-                      name="bcEmail"
-                      value={this.props.businessContact.email}
-                      onChange={_.bindKey(this.props, 'onDataChange', 'businessContact', 'email')}
-                      onBlur={this.props.onInputBlur}
-                    />
-                  {this.props.getValidationMessages('bcEmail').map(this.props.renderHelpText)}
+                    className="radius"
+                    type="text"
+                    name="bcEmail"
+                    value={this.props.businessContact.email}
+                    onChange={_.bindKey(this.props, 'onDataChange', 'businessContact', 'email')}
+                    onBlur={this.props.onInputBlur}
+                  />
+                  {
+                    this
+                      .props
+                      .getValidationMessages('bcEmail')
+                      .map(this.props.renderHelpText)
+                  }
                 </InputGroup.Input>
               </InputGroup.Row>
             </Accordion.Navigation>
@@ -113,42 +131,57 @@ const Contacts = React.createClass({
                 <InputGroup.Label htmlFor="tcName">name</InputGroup.Label>
                 <InputGroup.Input>
                   <input
-                      className="radius"
-                      type="text"
-                      name="tcName"
-                      value={this.props.technicalContact.name}
-                      onChange={_.bindKey(this.props, 'onDataChange', 'technicalContact', 'name')}
-                      onBlur={this.props.onInputBlur}
-                    />
-                  {this.props.getValidationMessages('tcName').map(this.props.renderHelpText)}
+                    className="radius"
+                    type="text"
+                    name="tcName"
+                    value={this.props.technicalContact.name}
+                    onChange={_.bindKey(this.props, 'onDataChange', 'technicalContact', 'name')}
+                    onBlur={this.props.onInputBlur}
+                  />
+                  {
+                    this
+                      .props
+                      .getValidationMessages('tcName')
+                      .map(this.props.renderHelpText)
+                  }
                 </InputGroup.Input>
               </InputGroup.Row>
               <InputGroup.Row>
                 <InputGroup.Label htmlFor="tcPhone">phone</InputGroup.Label>
                 <InputGroup.Input>
                   <input
-                      className="radius"
-                      type="text"
-                      name="tcPhone"
-                      value={this.props.technicalContact.phone}
-                      onChange={_.bindKey(this.props, 'onDataChange', 'technicalContact', 'phone')}
-                      onBlur={this.props.onInputBlur}
-                    />
-                  {this.props.getValidationMessages('tcPhone').map(this.props.renderHelpText)}
+                    className="radius"
+                    type="text"
+                    name="tcPhone"
+                    value={this.props.technicalContact.phone}
+                    onChange={_.bindKey(this.props, 'onDataChange', 'technicalContact', 'phone')}
+                    onBlur={this.props.onInputBlur}
+                  />
+                  {
+                    this
+                      .props
+                      .getValidationMessages('tcPhone')
+                      .map(this.props.renderHelpText)
+                  }
                 </InputGroup.Input>
               </InputGroup.Row>
               <InputGroup.Row>
                 <InputGroup.Label htmlFor="tcEmail">email</InputGroup.Label>
                 <InputGroup.Input>
                   <input
-                      className="radius"
-                      type="text"
-                      name="tcEmail"
-                      value={this.props.technicalContact.email}
-                      onChange={_.bindKey(this.props, 'onDataChange', 'technicalContact', 'email')}
-                      onBlur={this.props.onInputBlur}
-                    />
-                  {this.props.getValidationMessages('tcEmail').map(this.props.renderHelpText)}
+                    className="radius"
+                    type="text"
+                    name="tcEmail"
+                    value={this.props.technicalContact.email}
+                    onChange={_.bindKey(this.props, 'onDataChange', 'technicalContact', 'email')}
+                    onBlur={this.props.onInputBlur}
+                  />
+                  {
+                    this
+                      .props
+                      .getValidationMessages('tcEmail')
+                      .map(this.props.renderHelpText)
+                  }
                 </InputGroup.Input>
               </InputGroup.Row>
             </Accordion.Navigation>
@@ -157,42 +190,57 @@ const Contacts = React.createClass({
                 <InputGroup.Label htmlFor="scName">name</InputGroup.Label>
                 <InputGroup.Input>
                   <input
-                      className="radius"
-                      type="text"
-                      name="scName"
-                      value={this.props.supportContact.name}
-                      onChange={_.bindKey(this.props, 'onDataChange', 'supportContact', 'name')}
-                      onBlur={this.props.onInputBlur}
-                    />
-                  {this.props.getValidationMessages('scName').map(this.props.renderHelpText)}
+                    className="radius"
+                    type="text"
+                    name="scName"
+                    value={this.props.supportContact.name}
+                    onChange={_.bindKey(this.props, 'onDataChange', 'supportContact', 'name')}
+                    onBlur={this.props.onInputBlur}
+                  />
+                  {
+                    this
+                      .props
+                      .getValidationMessages('scName')
+                      .map(this.props.renderHelpText)
+                  }
                 </InputGroup.Input>
               </InputGroup.Row>
               <InputGroup.Row>
                 <InputGroup.Label htmlFor="scPhone">phone</InputGroup.Label>
                 <InputGroup.Input>
                   <input
-                      className="radius"
-                      type="text"
-                      name="scPhone"
-                      value={this.props.supportContact.phone}
-                      onChange={_.bindKey(this.props, 'onDataChange', 'supportContact', 'phone')}
-                      onBlur={this.props.onInputBlur}
-                    />
-                  {this.props.getValidationMessages('scPhone').map(this.props.renderHelpText)}
+                    className="radius"
+                    type="text"
+                    name="scPhone"
+                    value={this.props.supportContact.phone}
+                    onChange={_.bindKey(this.props, 'onDataChange', 'supportContact', 'phone')}
+                    onBlur={this.props.onInputBlur}
+                  />
+                  {
+                    this
+                      .props
+                      .getValidationMessages('scPhone')
+                      .map(this.props.renderHelpText)
+                  }
                 </InputGroup.Input>
               </InputGroup.Row>
               <InputGroup.Row>
                 <InputGroup.Label htmlFor="scEmail">email</InputGroup.Label>
                 <InputGroup.Input>
                   <input
-                      className="radius"
-                      type="text"
-                      name="scEmail"
-                      value={this.props.supportContact.email}
-                      onChange={_.bindKey(this.props, 'onDataChange', 'supportContact', 'email')}
-                      onBlur={this.props.onInputBlur}
-                    />
-                  {this.props.getValidationMessages('scEmail').map(this.props.renderHelpText)}
+                    className="radius"
+                    type="text"
+                    name="scEmail"
+                    value={this.props.supportContact.email}
+                    onChange={_.bindKey(this.props, 'onDataChange', 'supportContact', 'email')}
+                    onBlur={this.props.onInputBlur}
+                  />
+                  {
+                    this
+                      .props
+                      .getValidationMessages('scEmail')
+                      .map(this.props.renderHelpText)
+                  }
                 </InputGroup.Input>
               </InputGroup.Row>
             </Accordion.Navigation>

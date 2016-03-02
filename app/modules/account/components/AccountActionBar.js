@@ -11,6 +11,7 @@ export default React.createClass({
     handleDiscard: PropTypes.func.isRequired,
     handleDelete: PropTypes.func.isRequired,
     isEnabled: PropTypes.bool.isRequired,
+    isCreate: PropTypes.bool.isRequired,
     deleteDialogOpened: PropTypes.bool.isRequired,
     handleOpenDeleteDialog: PropTypes.func.isRequired,
     handleCloseDeleteDialog: PropTypes.func.isRequired,
@@ -20,7 +21,10 @@ export default React.createClass({
   mixins: [FluxibleMixin],
 
   render() {
-    const loggedInUserId = this.context.getStore(AuthStore).getUserId();
+    const loggedInUserId = this
+      .context
+      .getStore(AuthStore)
+      .getUserId();
 
     return (
       <nav className="account-top-bar top-bar top-bar--inner">
@@ -54,7 +58,13 @@ export default React.createClass({
                 <div
                   role="button"
                   tabIndex="1"
-                  className={classNames('account-top-bar__button-secondary', 'button', 'round', 'item', { disabled: !this.props.isEnabled })}
+                  className={classNames(
+                    'account-top-bar__button-secondary',
+                    'button',
+                    'round',
+                    'item',
+                    { disabled: !this.props.isEnabled })
+                  }
                   onClick={this.props.handleDiscard}
                 >Discard</div>
               </If>
@@ -63,7 +73,14 @@ export default React.createClass({
               <div
                 role="button"
                 tabIndex="0"
-                className={classNames('account-top-bar__button-primary', 'button', 'round', 'large', 'item', { disabled: !this.props.isEnabled })}
+                className={classNames(
+                  'account-top-bar__button-primary',
+                  'button',
+                  'round',
+                  'large',
+                  'item',
+                  { disabled: !this.props.isEnabled })
+                }
                 onClick={this.props.handleSave}
               >Save</div>
             </li>

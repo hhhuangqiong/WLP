@@ -14,29 +14,48 @@ const WalletItem = React.createClass({
       expiryDate: PropTypes.string.isRequired,
       lastTopupDate: PropTypes.string.isRequired,
       walletType: PropTypes.string.isRequired,
+      balance: PropTypes.string.isRequired,
     }),
   },
 
   render() {
     const currency = CurrencyConverter.getCurrencyById(this.props.wallet.currency);
     const expiryDate = moment(this.props.wallet.expiryDate, 'yyyymmddhh24miss').isValid() ?
-      moment(this.props.wallet.expiryDate, 'yyyymmddhh24miss').format('MMMM DD, YYYY h:mm:ss a') : 'N/A';
+      moment(this.props.wallet.expiryDate, 'yyyymmddhh24miss')
+        .format('MMMM DD, YYYY h:mm:ss a') :
+      'N/A';
+
     const lastTopUpDate = moment(this.props.wallet.lastTopupDate, 'yyyymmddhh24miss').isValid() ?
-      moment(this.props.wallet.lastTopupDate, 'yyyymmddhh24miss').format('MMMM DD,YYYY h:mm:ss a') : 'N/A';
+      moment(this.props.wallet.lastTopupDate, 'yyyymmddhh24miss')
+        .format('MMMM DD,YYYY h:mm:ss a') :
+      'N/A';
 
     return (
-      <div className={classNames('wallet-item', 'wallet-item--' + this.props.wallet.walletType.toLowerCase(), 'padding-offset')}>
+      <div className={
+        classNames(
+          'wallet-item',
+          `wallet-item--${this
+            .props
+            .wallet
+            .walletType
+            .toLowerCase()}`,
+          'padding-offset')
+        }
+      >
         <div className="large-24 columns">
           <div className="wallet-item--inner">
-            <div className={classNames('wallet-item__type-label', { hide: this.props.wallet.walletType === 'overview' })}>
+            <div className={classNames('wallet-item__type-label', {
+              hide: this.props.wallet.walletType === 'overview',
+            })}
+            >
               {this.props.wallet.walletType}
             </div>
             <div className="row">
-                <div className="wallet-item__balance">
-                  <span className="wallet-item__balance--sign">{currency.sign}</span>
-                  <span className="wallet-item__balance--value">{this.props.wallet.balance}</span>
-                  <span className="wallet-item__balance--code">{currency.code}</span>
-                </div>
+              <div className="wallet-item__balance">
+                <span className="wallet-item__balance--sign">{currency.sign}</span>
+                <span className="wallet-item__balance--value">{this.props.wallet.balance}</span>
+                <span className="wallet-item__balance--code">{currency.code}</span>
+              </div>
             </div>
             {
               this.props.wallet.walletType === 'overview' ? (

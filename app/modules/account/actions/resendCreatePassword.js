@@ -13,7 +13,9 @@ export default function (context, params, done) {
     }
 
     context.dispatch('RESEND_CREATE_PASSWORD_SUCCESS', result);
-    context.dispatch('INFO_MESSAGE', { message: `Successfully resend reverify link to ${result.username}` });
+    context.dispatch('INFO_MESSAGE', {
+      message: `Successfully resend reverify link to ${result.username}`,
+    });
 
     done();
   });

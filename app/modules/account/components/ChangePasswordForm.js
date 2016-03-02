@@ -6,7 +6,11 @@ import Joi from 'joi';
 import changePassword from '../actions/changePassword';
 import ChangePasswordStore from '../stores/ChangePasswordStore';
 
-const PASSWORD_VALIDATION = Joi.string().min(8).max(30).required();
+const PASSWORD_VALIDATION = Joi
+  .string()
+  .min(8)
+  .max(30)
+  .required();
 
 class ChangePasswordForm extends Component {
   static contextTypes = {
@@ -31,42 +35,11 @@ class ChangePasswordForm extends Component {
     this.setState({ currentPasswordIncorrectError });
   }
 
-  resetState() {
-    return {
-      currentPassword: '',
-      password: '',
-      passwordConfirm: '',
-      currentPasswordIncorrectError: '',
-    };
-  }
-
-  validateCurrentPassword = (e) => {
-    e.preventDefault();
-    const result = PASSWORD_VALIDATION.validate(this.state.currentPassword);
-    this.setState({ currentPasswordError: result.error ? result.error.message : null });
-  }
-
-  validateNewPassword = (e) => {
-    e.preventDefault();
-    const result = PASSWORD_VALIDATION.validate(this.state.password);
-    this.setState({ newPasswordError: result.error ? result.error.message : null });
-  }
-
-  validateNewPasswordConfirm = (e) => {
-    e.preventDefault();
-    const result = this.state.password !== this.state.passwordConfirm;
-    this.setState({ newPasswordConfirmError: result ? 'Password is not the same' : null });
-  }
-
-  containErrors = () => {
-    const {
-      currentPasswordError,
-      currentPasswordIncorrectError,
-      newPasswordError,
-      newPasswordConfirmError,
-    } = this.state;
-
-    return currentPasswordError || currentPasswordIncorrectError || newPasswordError || newPasswordConfirmError;
+  onSubmit = (e) => {
+    if (e.which === 13) {
+      e.preventDefault();
+      this.changePassword(e);
+    }
   }
 
   setCurrentPassword = (e) => {
@@ -95,11 +68,45 @@ class ChangePasswordForm extends Component {
     this.setState({ passwordConfirm: e.target.value });
   }
 
-  onSubmit = (e) => {
-    if (e.which === 13) {
-      e.preventDefault();
-      this.changePassword(e);
-    }
+  containErrors = () => {
+    const {
+      currentPasswordError,
+      currentPasswordIncorrectError,
+      newPasswordError,
+      newPasswordConfirmError,
+    } = this.state;
+
+    return currentPasswordError ||
+      currentPasswordIncorrectError ||
+      newPasswordError ||
+      newPasswordConfirmError;
+  }
+
+  validateCurrentPassword = (e) => {
+    e.preventDefault();
+    const result = PASSWORD_VALIDATION.validate(this.state.currentPassword);
+    this.setState({ currentPasswordError: result.error ? result.error.message : null });
+  }
+
+  validateNewPassword = (e) => {
+    e.preventDefault();
+    const result = PASSWORD_VALIDATION.validate(this.state.password);
+    this.setState({ newPasswordError: result.error ? result.error.message : null });
+  }
+
+  validateNewPasswordConfirm = (e) => {
+    e.preventDefault();
+    const result = this.state.password !== this.state.passwordConfirm;
+    this.setState({ newPasswordConfirmError: result ? 'Password is not the same' : null });
+  }
+
+  resetState() {
+    return {
+      currentPassword: '',
+      password: '',
+      passwordConfirm: '',
+      currentPasswordIncorrectError: '',
+    };
   }
 
   changePassword = (e) => {
@@ -136,7 +143,10 @@ class ChangePasswordForm extends Component {
             ref="currentPassword"
             name="currentPassword"
             placeholder="Current password"
-            className={classnames('radius', { error: currentPasswordIncorrectError || currentPasswordError })}
+            className={classnames(
+              'radius',
+              { error: currentPasswordIncorrectError || currentPasswordError },
+            )}
             type="password"
             value={this.state.currentPassword}
             onBlur={this.validateCurrentPassword}
@@ -144,7 +154,11 @@ class ChangePasswordForm extends Component {
             onKeyPress={this.onSubmit}
           />
 
-          <label className={classnames({ hide: !currentPasswordIncorrectError && !currentPasswordError })}>
+          <label className={
+            classnames({
+              hide: !currentPasswordIncorrectError && !currentPasswordError,
+            })}
+          >
             {currentPasswordError || currentPasswordIncorrectError}
           </label>
         </div>
@@ -208,6 +222,10 @@ class ChangePasswordForm extends Component {
     );
   }
 }
+
+ChangePasswordForm.propTypes = {
+  handleClose: PropTypes.func,
+};
 
 ChangePasswordForm = connectToStores(ChangePasswordForm, [ChangePasswordStore], stores => ({
   currentPasswordIncorrectError: stores.ChangePasswordStore.getCurrentPasswordIncorrectError(),

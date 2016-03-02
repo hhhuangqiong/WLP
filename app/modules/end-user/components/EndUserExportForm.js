@@ -20,40 +20,6 @@ export default React.createClass({
     };
   },
 
-  render() {
-    return (
-      <form onSubmit={this.handleExport} noValidate>
-        <h4 id="modalTitle">DOWNLOAD REPORT</h4>
-
-        <hr />
-
-        <div className="row export-form-row-padding">
-          <div className="large-5 columns">
-            <label className="left bold">Period</label>
-          </div>
-
-          <div className="large-11 columns">
-            <DateRangePicker
-              withIcon
-              startDate={this.state.startDate.format('L')}
-              endDate={this.state.endDate.format('L')}
-              handleStartDateChange={this.handleStartDateChange}
-              handleEndDateChange={this.handleEndDateChange}
-            />
-          </div>
-        </div>
-
-        <hr />
-
-        <ExportSubmitControls
-          closeModal={this.props.closeModal}
-          handleExport={this.handleExport}
-        />
-
-      </form>
-    );
-  },
-
   clearState() {
     this.setState(this.getInitialState());
   },
@@ -69,12 +35,60 @@ export default React.createClass({
   handleExport() {
     const params = {
       carrierId: this.props.carrierId,
-      startDate: this.state.startDate.format('L'),
-      endDate: this.state.endDate.format('L'),
+      startDate: this
+        .state
+        .startDate
+        .format('L'),
+      endDate: this
+        .state
+        .endDate
+        .format('L'),
       pageNumberIndex: 0,
     };
 
     this.props.handleExport(params);
     this.clearState();
+  },
+
+  render() {
+    return (
+      <form onSubmit={this.handleExport} noValidate>
+        <h4 id="modalTitle">DOWNLOAD REPORT</h4>
+
+        <hr />
+
+        <div className="row export-form-row-padding">
+          <div className="large-5 columns">
+            <label className="left bold">Period</label>
+          </div>
+
+          <div className="large-11 columns">
+            <DateRangePicker
+              withIcon
+              startDate={this
+                .state
+                .startDate
+                .format('L')
+              }
+              endDate={this
+                .state
+                .endDate
+                .format('L')
+              }
+              handleStartDateChange={this.handleStartDateChange}
+              handleEndDateChange={this.handleEndDateChange}
+            />
+          </div>
+        </div>
+
+        <hr />
+
+        <ExportSubmitControls
+          closeModal={this.props.closeModal}
+          handleExport={this.handleExport}
+        />
+
+      </form>
+    );
   },
 });

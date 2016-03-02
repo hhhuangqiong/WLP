@@ -15,6 +15,12 @@ const InfoBlock = React.createClass({
     };
   },
 
+  _toggleIsCollapsed() {
+    this.setState({
+      isCollapsed: !this.state.isCollapsed,
+    });
+  },
+
   render() {
     return (
       <li className="accordion__item">
@@ -22,7 +28,13 @@ const InfoBlock = React.createClass({
           <a className="accordion__item__head" onClick={this._toggleIsCollapsed}>
             <span>{this.props.title}</span>
             <If condition={this.props.hasIndicator}>
-              <span className={classNames('text-center', 'accordion__item__head__indicator', { 'accordion__item__head__indicator--success': this.props.verified }, { 'accordion__item__head__indicator--alert': !this.props.verified })}>
+              <span className={classNames(
+                'text-center',
+                'accordion__item__head__indicator',
+                { 'accordion__item__head__indicator--success': this.props.verified },
+                { 'accordion__item__head__indicator--alert': !this.props.verified }
+              )}
+              >
                 <If condition={this.props.verified}>
                   <i className="icon-tick" />
                 <Else />
@@ -37,12 +49,6 @@ const InfoBlock = React.createClass({
         </div>
       </li>
     );
-  },
-
-  _toggleIsCollapsed() {
-    this.setState({
-      isCollapsed: !this.state.isCollapsed,
-    });
   },
 });
 

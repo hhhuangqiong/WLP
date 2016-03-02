@@ -35,7 +35,11 @@ const CompanyWidget = React.createClass({
   },
 
   getStateFromStores() {
-    const { carrierId } = this.context.router.getCurrentParams();
+    const { carrierId } = this
+      .context
+      .router
+      .getCurrentParams();
+
     const { _id, status, widgets } = this.getStore(CompanyStore).getCompanyByCarrierId(carrierId);
     return { _id, status, data: _.extend(this._getDefaultState(sections), widgets) };
   },
@@ -51,7 +55,13 @@ const CompanyWidget = React.createClass({
   render() {
     return (
       <div>
-        <TopBar _id={this.state._id} status={this.state.status} hasError={!this.isValid()} onSave={this._handleSubmit} />
+        <TopBar
+          _id={this.state._id}
+          status={this.state.status}
+          hasError={!this.isValid()}
+          onSave={this._handleSubmit}
+        />
+
         <form ref="companyForm" onSubmit={this._handleSubmit}>
           <input type="hidden" name="_id" value={this.state._id} />
           <div className="large-18 large-centered columns">
@@ -108,7 +118,11 @@ const CompanyWidget = React.createClass({
       // so no error handling is needed
       if (error) return;
 
-      const { carrierId } = this.context.router.getCurrentParams();
+      const { carrierId } = this
+        .context
+        .router
+        .getCurrentParams();
+
       const form = React.findDOMNode(this.refs.companyForm);
       const formData = new FormData(form);
 
@@ -118,7 +132,10 @@ const CompanyWidget = React.createClass({
 
   _handleInputChange(widgetName, stateName, e) {
     this.setState({
-      data: _.assign(this.state.data, { [widgetName]: _.assign(this.state.data[widgetName], { [stateName]: e.target.value }) }),
+      data: _.assign(
+        this.state.data,
+        { [widgetName]: _.assign(this.state.data[widgetName], { [stateName]: e.target.value }) }
+      ),
     });
   },
 

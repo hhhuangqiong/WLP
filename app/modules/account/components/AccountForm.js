@@ -38,8 +38,11 @@ export default class AccountForm extends Component {
     handleCompanyChange: PropTypes.func.isRequired,
   };
 
-  constructor() {
-    super();
+  onSubmit = (e) => {
+    if (e.which === 13) {
+      e.preventDefault();
+      this.props.handleSave(e);
+    }
   }
 
   renderUserGroupDisplay(data) {
@@ -58,20 +61,17 @@ export default class AccountForm extends Component {
   renderCompanyValueDisplay = ({ label, value }) => {
     const { carrierManagingCompanies } = this.props;
 
-    if (_.isEmpty(carrierManagingCompanies)) return;
+    if (_.isEmpty(carrierManagingCompanies)) {
+      return null;
+    }
 
     const selectedCompany = carrierManagingCompanies.find(company => company._id === value);
 
-    if (!selectedCompany) return;
+    if (!selectedCompany) {
+      return null;
+    }
 
     return <div>{selectedCompany.name}</div>;
-  }
-
-  onSubmit = (e) => {
-    if (e.which === 13) {
-      e.preventDefault();
-      this.props.handleSave(e);
-    }
   }
 
   render() {
@@ -82,7 +82,9 @@ export default class AccountForm extends Component {
       handleCompanyChange,
     } = this.props;
 
-    const companyOptions = _.isEmpty(carrierManagingCompanies) ? [{ label: currentCompany.name, value: currentCompany._id }] : carrierManagingCompanies.map(company => ({ label: company.name, value: company._id }));
+    const companyOptions = _.isEmpty(carrierManagingCompanies) ?
+      [{ label: currentCompany.name, value: currentCompany._id }] :
+      carrierManagingCompanies.map(company => ({ label: company.name, value: company._id }));
 
     return (
       <form className="account-form" onSubmit={this.props.handleSave}>
@@ -192,14 +194,17 @@ export default class AccountForm extends Component {
 
                 <ul className="medium-block-grid-2 large-block-grid-3 account-form__company-management">
                   {
-                    carrierManagingCompanies.map(company => {
-                      return (
-                        <li key={company._id}>
-                          <input id={company._id} type="checkbox" checked={assignedCompanies.indexOf(company._id) >= 0} onChange={this.props.handleAssignedCompanyChange} />
-                          <label htmlFor={company._id}>{company.name}</label>
-                        </li>
-                      );
-                    })
+                    carrierManagingCompanies.map(company => (
+                      <li key={company._id}>
+                        <input
+                          id={company._id}
+                          type="checkbox"
+                          checked={assignedCompanies.indexOf(company._id) >= 0}
+                          onChange={this.props.handleAssignedCompanyChange}
+                        />
+                        <label htmlFor={company._id}>{company.name}</label>
+                      </li>
+                    ))
                   }
                 </ul>
               </div>

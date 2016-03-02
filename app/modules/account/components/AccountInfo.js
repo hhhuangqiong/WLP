@@ -31,9 +31,20 @@ export default createClass({
       <div className="profile-info">
 
         <div className="profile-info__status right">
-          <span className={classNames('label', 'status', this.props.isVerified ? 'success' : 'alert')}></span>
+          <span className={
+            classNames(
+              'label',
+              'status',
+              this.props.isVerified ? 'success' : 'alert'
+            )}
+          ></span>
 
-          <span className={classNames('profile-info__status__message', this.props.isVerified ? 'success' : 'alert')}>{status}</span>
+          <span className={
+            classNames(
+              'profile-info__status__message',
+              this.props.isVerified ? 'success' : 'alert'
+            )}
+          >{status}</span>
         </div>
 
         <div className="profile-info__icon">
