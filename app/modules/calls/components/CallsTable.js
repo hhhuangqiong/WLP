@@ -4,7 +4,7 @@ import moment from 'moment';
 import _ from 'lodash';
 
 import { parseDuration } from '../../../utils/StringFormatter';
-
+import Pagination from '../../../main/components/Pagination';
 // TODO: Replace it with country-data
 import { getCountryName } from '../../../utils/StringFormatter';
 import CountryFlag from '../../../main/components/CountryFlag';
@@ -32,6 +32,7 @@ const CallsTable = React.createClass({
     totalPages: PropTypes.number.isRequired,
     page: PropTypes.number.isRequired,
     onDataLoad: PropTypes.func.isRequired,
+    isLoadingMore: PropTypes.bool,
   },
 
   contextTypes: {
@@ -100,31 +101,15 @@ const CallsTable = React.createClass({
     }
 
     let footer = null;
-    let pagination = null;
-
-    if ((this.props.totalPages - 1) > this.props.page) {
-      pagination = (
-        <div className="pagination text-center">
-          <span className="pagination__button" onClick={this.props.onDataLoad}>Load More</span>
-        </div>
-      );
-    } else {
-      pagination = (
-        <div className="text-center">
-          <span className="pagination__button pagination__button--inactive">no more result</span>
-        </div>
-      );
-    }
 
     if (!_.isEmpty(this.props.calls)) {
       footer = (
-        <tfoot>
-          <tr>
-            <td colSpan={TABLE_TITLES.length}>
-              {pagination}
-            </td>
-          </tr>
-        </tfoot>
+        <Pagination
+          colSpan={TABLE_TITLES.length + 1}
+          hasMoreData={(this.props.totalPages - 1) > this.props.page}
+          onLoadMore={this.props.onDataLoad}
+          isLoading={this.props.isLoadingMore}
+        />
       );
     }
 
@@ -136,7 +121,7 @@ const CallsTable = React.createClass({
           </tr>
         </thead>
         <tbody key="calls-table--body">{rows}</tbody>
-        {footer}
+        <tfoot>{footer}</tfoot>
       </table>
     );
   },

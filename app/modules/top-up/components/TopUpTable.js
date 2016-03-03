@@ -5,12 +5,24 @@ import React, { PropTypes } from 'react';
 import Tooltip from 'rc-tooltip';
 
 import EmptyRow from '../../../main/components/data-table/EmptyRow';
+import Pagination from '../../../main/components/Pagination';
+
 import currencyData from '../../../data/bossCurrencies.json';
 import Converter from '../../../utils/bossCurrencyConverter';
 import config from './../../../main/config';
 
 const { displayDateFormat: DATE_FORMAT } = config;
 const converter = new Converter(currencyData, { default: '840' });
+
+const TABLE_TITLES = [
+  '',
+  'Date / Time',
+  'Mobile',
+  'Wallet',
+  'Type',
+  'Amount',
+  'Remark',
+];
 
 const TopUpTable = React.createClass({
   propTypes: {
@@ -20,6 +32,7 @@ const TopUpTable = React.createClass({
     pageRec: PropTypes.number,
     totalRec: PropTypes.number,
     onPageLoad: PropTypes.func,
+    isLoadingMore: PropTypes.bool,
   },
 
   _isFreeWallet(type) {
@@ -123,19 +136,20 @@ ${(!currency.code ? '' : currency.code)}`;
       <table className="data-table large-24 clickable">
         <thead>
           <tr>
-            <th></th>
-            <th>Date &amp; Time</th>
-            <th>Mobile</th>
-            <th>Wallet</th>
-            <th>Type</th>
-            <th>Amount</th>
-            <th>Remark</th>
+            {
+              TABLE_TITLES.map(title => <th className="im-table--cell">{title}</th>)
+            }
           </tr>
         </thead>
         <tbody>
           {_.isEmpty(rows) ? this.renderEmptyRow() : rows}
         </tbody>
-        {this.renderFooter()}
+        <Pagination
+          colSpan={TABLE_TITLES.length + 1}
+          hasMoreData={this.props.totalRec > this.props.page * this.props.pageRec}
+          onLoadMore={this.props.onPageLoad}
+          isLoading={this.props.isLoadingMore}
+        />
       </table>
     );
   },

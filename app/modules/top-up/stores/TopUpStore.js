@@ -5,6 +5,7 @@ const TopUpStore = createStore({
   storeName: 'TopUpStore',
 
   handlers: {
+    FETCH_TOP_UP_START: 'handleLoadTopUpFetching',
     FETCH_TOP_UP_SUCCESS: 'handleLoadTopUp',
     CLEAR_TOP_UP: 'handleClearTopUp',
 
@@ -15,8 +16,18 @@ const TopUpStore = createStore({
     this.histories = [];
     this.page = 1;
     this.totalRec = 0;
-
+    this.isLoadingMore = false;
     this.pendingRequests = {};
+  },
+
+
+  handleLoadTopUpFetching() {
+    this.isLoadingMore = true;
+    this.emitChange();
+  },
+
+  handleClearTopUp: function() {
+    this.initialize();
   },
 
   handleLoadTopUp(payload) {
@@ -24,6 +35,7 @@ const TopUpStore = createStore({
       this.histories = this.histories.concat(payload.history);
       this.totalRec = payload.totalRec;
       this.page = payload.page;
+      this.isLoadingMore = false;
     } else {
       this.histories = [];
       this.totalRec = 0;
@@ -50,6 +62,7 @@ const TopUpStore = createStore({
       histories: this.histories,
       totalRec: this.totalRec,
       page: this.page,
+      isLoadingMore: this.isLoadingMore,
     };
   },
 
@@ -95,7 +108,8 @@ const TopUpStore = createStore({
     this.histories = state.histories;
     this.totalRec = state.totalRec;
     this.page = state.page;
-  },
+    this.isLoadingMore = state.isLoadingMore;
+  }
 });
 
 export default TopUpStore;

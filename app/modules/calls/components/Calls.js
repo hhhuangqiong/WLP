@@ -60,6 +60,7 @@ const Calls = React.createClass({
       callsCount: store.getCallsCount(),
       page: store.getPageNumber(),
       totalPages: store.getTotalPages(),
+      isLoadingMore: store.isLoadingMore,
     };
   },
 
@@ -274,6 +275,7 @@ const Calls = React.createClass({
             pageRec={this.state.size}
             totalPages={this.state.totalPages}
             onDataLoad={this.handlePageChange}
+            isLoadingMore={this.state.isLoadingMore}
           />
         </div>
       </div>

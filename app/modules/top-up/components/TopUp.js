@@ -85,6 +85,7 @@ const TopUp = React.createClass({
     return {
       totalRec: this.getStore(TopUpStore).getTotalRec(),
       page: this.getStore(TopUpStore).getPage(),
+      isLoadingMore: this.getStore(TopUpStore).isLoadingMore,
     };
   },
 
@@ -151,6 +152,7 @@ const TopUp = React.createClass({
             page={this.state.page}
             pageRec={this.state.pageRec}
             onPageLoad={this.handlePageLoad}
+            isLoadingMore={this.state.isLoadingMore}
           />
         </div>
       </div>
@@ -176,7 +178,10 @@ const TopUp = React.createClass({
   // so properties in state will domainate
   handlePageLoad() {
     const targetPage = +this.state.page + 1;
-    this.setState({ page: targetPage });
+
+    this.setState({
+      page: targetPage,
+    });
 
     this.context.executeAction(loadTransactions, merge(this.getRequestBodyFromState(), { page: targetPage }));
   },

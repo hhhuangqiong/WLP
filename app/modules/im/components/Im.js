@@ -72,6 +72,7 @@ const Im = React.createClass({
       imsCount: this.getStore(ImStore).getIMsCount(),
       page: this.getStore(ImStore).getPageNumber(),
       totalPages: this.getStore(ImStore).getTotalPages(),
+      isLoadingMore: this.getStore(ImStore).isLoadingMore,
     };
   },
 
@@ -207,7 +208,8 @@ const Im = React.createClass({
             pageRec={this.state.size}
             totalPages={this.state.totalPages}
             onDataLoad={this.handlePageChange}
-            />
+            isLoadingMore={this.state.isLoadingMore}
+          />
         </div>
       </div>
     );

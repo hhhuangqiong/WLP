@@ -5,10 +5,21 @@ import classNames from 'classnames';
 
 import EmptyRow from '../../../main/components/data-table/EmptyRow';
 
+import Pagination from '../../../main/components/Pagination';
+
 const { displayDateFormat: DATE_FORMAT } = require('./../../../main/config');
 
 const NOT_FOUND_LABEL = 'N/A';
 const INACTIVE_ACCOUNT_LABEL = 'Inactive';
+
+const TABLE_TITLES = [
+  'Username',
+  'Registration Date',
+  'Account Status',
+  'Latest Device Model',
+  'Bundle ID',
+  'App Version no.',
+];
 
 const EndUserTable = React.createClass({
   propTypes: {
@@ -106,32 +117,22 @@ const EndUserTable = React.createClass({
       <table className="data-table large-24 clickable">
         <thead>
           <tr>
-            <th>Username</th>
-            <th>Registration Date</th>
-            <th>Account Status</th>
-            <th>Latest Device Model</th>
-            <th>Bundle ID</th>
-            <th>App Version no.</th>
+            {
+              TABLE_TITLES.map(title => <th className="im-table--cell">{title}</th>)
+            }
           </tr>
         </thead>
         <tbody>
           {_.isEmpty(rows) ? this.renderEmptyRow() : rows}
         </tbody>
         <tfoot>
-          <tr>
-            <td colSpan="7">
-              <div className="text-center">
-                <If condition={this.props.hasNext}>
-                  <span
-                    className="pagination__button"
-                    onClick={this.props.onPageChange}
-                  >Load More</span>
-                <Else />
-                  <span className="pagination__button pagination__button--inactive">No more</span>
-                </If>
-              </div>
-            </td>
-          </tr>
+          <If condition={!_.isEmpty(this.props.users)}>
+            <Pagination
+              colSpan={TABLE_TITLES.length + 1}
+              hasMoreData={this.props.hasNext}
+              onLoadMore={this.props.onPageChange}
+            />
+          </If>
         </tfoot>
       </table>
     );

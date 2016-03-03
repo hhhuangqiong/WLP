@@ -102,6 +102,7 @@ const SMS = React.createClass({
     return {
       page: this.getStore(SMSStore).getPage(),
       totalPage: this.getStore(SMSStore).getTotalPage(),
+      isLoadingMore: this.getStore(SMSStore).isLoadingMore,
     };
   },
 
@@ -139,6 +140,7 @@ const SMS = React.createClass({
             records={this.getStore(SMSStore).getSMS()}
             page={this.state.page}
             onPageLoad={this.handlePageLoad}
+            isLoadingMore={this.state.isLoadingMore}
           />
         </div>
       </div>
@@ -157,7 +159,10 @@ const SMS = React.createClass({
   // so properties in state will domainate
   handlePageLoad() {
     const targetPage = +this.state.page + 1;
-    this.setState({ page: targetPage });
+
+    this.setState({
+      page: targetPage,
+    });
 
     this.context.executeAction(loadSMS, _.merge(this.getRequestBodyFromState(), { page: targetPage }));
   },

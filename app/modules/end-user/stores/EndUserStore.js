@@ -10,11 +10,11 @@ const EndUserStore = createStore({
   handlers: {
     CLEAR_END_USERS: 'handleClearEndUsers',
     FETCH_END_USERS_SUCCESS: 'handleEndUsersChange',
+    FETCH_END_USERS_FAILURE: 'handleFetchEndUsersFailure',
     FETCH_END_USER_SUCCESS: 'handleEndUserChange',
     REACTIVATE_END_USER_SUCCESS: 'handleEndUserReactivate',
     DEACTIVATE_END_USER_SUCCESS: 'handleEndUserDeactivate',
     DELETE_END_USER_SUCCESS: 'handleEndUserDelete',
-    FETCH_END_USERS_FAILURE: 'handleFetchEndUsersFailure',
     FETCH_END_USER_WALLET_SUCCESS: 'handleFetchEndUserWallet',
     FETCH_END_USER_WALLET_FAILURE: 'handleFetchEndUserWalletFailure',
     SHOW_NEXT_PAGE: 'handleShowNextPage',

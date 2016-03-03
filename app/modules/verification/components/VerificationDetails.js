@@ -109,7 +109,56 @@ const VerificationDetails = React.createClass({
     return _.merge(this.getStateFromStores(), query);
   },
 
-  componentDidMount() {
+  getDefaultQuery: function() {
+    return {
+      // The page number, starting from 0, defaults to 0 if not specified.
+      page: 0,
+      size: config.PAGES.VERIFICATIONS.PAGE_SIZE,
+      startDate: moment().subtract(2, 'month').startOf('day').format(DATE_FORMAT),
+      endDate: moment().endOf('day').format(DATE_FORMAT),
+      number: '',
+      method: '',
+      os: ''
+    };
+  },
+
+  getQueryFromState: function() {
+    return {
+      appId: this.state.appId,
+      startDate: this.state.startDate && this.state.startDate.trim(),
+      endDate: this.state.endDate && this.state.endDate.trim(),
+      number: this.state.number && this.state.number.trim(),
+      page: 0,
+      size: config.PAGES.VERIFICATIONS.PAGE_SIZE,
+      method: this.state.method && this.state.method.trim(),
+      os: this.state.os && this.state.os.trim()
+    };
+  },
+
+  getStateFromStores: function() {
+    let store = this.getStore(VerificationStore);
+
+    return {
+      verifications: store.getVerifications(),
+      page: store.getPageNumber(),
+      maxPage: store.getPageCount(),
+      count: store.getVerificationCount(),
+      isLoadingMore: store.isLoadingMore,
+    };
+  },
+
+  handleQueryChange: function(newQuery) {
+    let routeName = _.last(this.context.router.getCurrentRoutes()).name;
+    let params = this.context.router.getCurrentParams();
+    let query = _.merge(this.context.router.getCurrentQuery(), this.getQueryFromState(), newQuery);
+    let changedQuery = _.omit(query, function(value) {
+      return !value;
+    });
+
+    this.context.router.transitionTo(routeName, params, changedQuery);
+  },
+
+  componentDidMount: function() {
     // auto select the default appId from the list
     // TODO: optimize this UX with server side rendering
 
@@ -150,15 +199,34 @@ const VerificationDetails = React.createClass({
     });
   },
 
-  onChange() {
-    const query = _.merge(
-      this.getDefaultQuery(),
-      this
-        .context
-        .router
-        .getCurrentQuery()
-    );
+  /**
+   * Fetch the verification events by advancing the page number.
+   *
+   * @method
+   */
+  fetchMore: function() {
+    let { identity } = this.context.router.getCurrentParams();
+    let nextPage = this.state.page + 1;
 
+    this.setState({
+      page: nextPage,
+    });
+
+    this.context.executeAction(fetchMoreVerifications, {
+      carrierId: identity,
+      appId: this.state.appId,
+      page: nextPage,
+      pageSize: this.state.pageSize,
+      startDate: this.state.startDate,
+      endDate: this.state.endDate,
+      number: this.state.number,
+      os: this.state.os,
+      method: this.state.method
+    });
+  },
+
+  onChange: function() {
+    let query = _.merge(this.getDefaultQuery(), this.context.router.getCurrentQuery());
     this.setState(_.merge(query, this.getStateFromStores()));
   },
 
@@ -188,48 +256,8 @@ const VerificationDetails = React.createClass({
     });
   },
 
-  getStateFromStores() {
-    const store = this.getStore(VerificationStore);
-
-    return {
-      verifications: store.getVerifications(),
-      page: store.getPageNumber(),
-      maxPage: store.getPageCount(),
-      count: store.getVerificationCount(),
-    };
-  },
-
-  getQueryFromState() {
-    return {
-      appId: this.state.appId,
-      startDate: this.state.startDate && this.state.startDate.trim(),
-      endDate: this.state.endDate && this.state.endDate.trim(),
-      number: this.state.number && this.state.number.trim(),
-      page: 0,
-      size: config.PAGES.VERIFICATIONS.PAGE_SIZE,
-      method: this.state.method && this.state.method.trim(),
-      os: this.state.os && this.state.os.trim(),
-    };
-  },
-
-  getDefaultQuery() {
-    return {
-      // The page number, starting from 0, defaults to 0 if not specified.
-      page: 0,
-      size: config.PAGES.VERIFICATIONS.PAGE_SIZE,
-      startDate: moment()
-        .subtract(2, 'month')
-        .startOf('day')
-        .format(DATE_FORMAT),
-      endDate: moment().endOf('day').format(DATE_FORMAT),
-      number: '',
-      method: '',
-      os: '',
-    };
-  },
-
-  handleStartDateChange(dateString) {
-    const date = moment(dateString).format(DATE_FORMAT);
+  handleStartDateChange: function(dateString) {
+    let date = moment(dateString).format(DATE_FORMAT);
     this.handleQueryChange({ startDate: date, page: 0 });
   },
 
@@ -430,6 +458,7 @@ const VerificationDetails = React.createClass({
           verifications={this.state.verifications}
           total={this.state.count}
           onLoadMoreClick={this.fetchMore}
+          isLoadingMore={this.state.isLoadingMore}
         />
       </div>
     );

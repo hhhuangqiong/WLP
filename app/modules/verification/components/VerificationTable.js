@@ -1,8 +1,24 @@
+import { isEmpty } from 'lodash';
 import React, { PropTypes } from 'react';
 import VerificationTableRow from './VerificationTableRow';
 import VerificationProfile from './VerificationProfile';
 import CountryFlag from '../../../main/components/CountryFlag';
 import EmptyRow from '../../../main/components/data-table/EmptyRow';
+
+import Pagination from '../../../main/components/Pagination';
+
+const TABLE_TITLES = [
+  'DATE &amp; TIME',
+  'MOBILE',
+  'SOURCE IP',
+  'METHOD',
+  'OS',
+  'DEVICE MODEL',
+  'OPERATOR',
+  'RESULT',
+  'REMARKS',
+  '',
+];
 
 export default React.createClass({
   propTypes: {
@@ -21,6 +37,7 @@ export default React.createClass({
      * @type {Function}
      */
     onLoadMoreClick: PropTypes.func.isRequired,
+    isLoadingMore: PropTypes.bool,
   },
 
   getDefaultProps() {
@@ -88,27 +105,23 @@ export default React.createClass({
         <table className="verification-report data-table small-24 large-22 large-offset-1">
           <thead>
             <tr>
-              <th>DATE &amp; TIME</th>
-              <th>MOBILE</th>
-              <th>SOURCE IP</th>
-              <th>METHOD</th>
-              <th>OS</th>
-              <th>DEVICE MODEL</th>
-              <th>OPERATOR</th>
-              <th>RESULT</th>
-              <th className="text-center">REMARKS</th>
-              <th></th>
+              {
+                TABLE_TITLES.map(title => <th className="im-table--cell">{title}</th>)
+              }
             </tr>
           </thead>
           <tbody className="verification-table">
             {_.isEmpty(this.renderTableRows()) ? this.renderEmptyRow() : this.renderTableRows()}
           </tbody>
           <tfoot>
-          <tr>
-            <td colSpan="10" className="pagination">
-              {this.renderPaginationFooter()}
-            </td>
-          </tr>
+            <If condition={!isEmpty(this.props.verifications)}>
+              <Pagination
+                colSpan={TABLE_TITLES.length + 1}
+                hasMoreData={this.props.verifications.length < this.props.total}
+                onLoadMore={this.props.onLoadMoreClick}
+                isLoading={this.props.isLoadingMore}
+              />
+            </If>
           </tfoot>
         </table>
       <Else />

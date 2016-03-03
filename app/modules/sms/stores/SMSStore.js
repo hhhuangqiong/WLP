@@ -5,6 +5,7 @@ const SMSStore = createStore({
   storeName: 'SMSStore',
 
   handlers: {
+    FETCH_SMS_START: 'handleLoadSMSFetching',
     FETCH_SMS_SUCCESS: 'handleLoadSMS',
     CLEAR_SMS: 'handleClearSMS',
     LOAD_SMS_WIDGETS_SUCCESS: 'handleLoadSMSWidgets',
@@ -17,8 +18,18 @@ const SMSStore = createStore({
     this.records = [];
     this.page = 1;
     this.totalPage = 0;
-
+    this.isLoadingMore = false;
     this.pendingRequests = {};
+  },
+
+
+  handleLoadSMSFetching() {
+    this.isLoadingMore = true;
+    this.emitChange();
+  },
+
+  handleClearSMS: function() {
+    this.initialize();
   },
 
   handleLoadSMS(payload) {
@@ -29,6 +40,8 @@ const SMSStore = createStore({
       this.page = payload.page_number;
       this.totalPage = payload.total_pages;
       // jscs:enable
+
+      this.isLoadingMore = false;
     } else {
       this.records = [];
       this.page = 1;
@@ -70,6 +83,7 @@ const SMSStore = createStore({
       records: this.records,
       page: this.page,
       totalPage: this.totalPage,
+      isLoadingMore: this.isLoadingMore,
     };
   },
 
@@ -116,7 +130,8 @@ const SMSStore = createStore({
     this.records = state.records;
     this.page = state.page;
     this.totalPage = state.totalPage;
-  },
+    this.isLoadingMore = state.isLoadingMore;
+  }
 });
 
 export default SMSStore;

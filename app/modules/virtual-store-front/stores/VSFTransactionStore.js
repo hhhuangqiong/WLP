@@ -7,6 +7,7 @@ const VSFTransactionStore = createStore({
 
   handlers: {
     FETCH_VSF_SUCCESS: 'handleTransactionsFetch',
+    FETCH_VSF_START: 'handleTransactionsFetching',
     FETCH_VSF_WIDGETS_SUCCESS: 'handleWidgetsFetch',
     CLEAR_VSF: 'handleClearTransaction',
 
@@ -26,8 +27,19 @@ const VSFTransactionStore = createStore({
     this.category = '';
     this.userNumber = '';
     this.widgets = [];
-
+    this.isLoadingMore = false;
     this.pendingRequests = {};
+  },
+
+
+  handleTransactionsFetching() {
+    this.isLoadingMore = true;
+    this.emitChange();
+  },
+
+  handleClearTransaction() {
+    this.initialize();
+    this.emitChange();
   },
 
   handleTransactionsFetch(payload) {
@@ -35,6 +47,7 @@ const VSFTransactionStore = createStore({
     this.hasNextPage = payload.hasNextPage;
     this.pageSize = +payload.pageSize;
     this.pageIndex = +payload.dateRange.pageNumberIndex;
+    this.isLoadingMore = false;
 
     this.emitChange();
   },
@@ -60,6 +73,7 @@ const VSFTransactionStore = createStore({
       hasNextPage: this.hasNextPage,
       widgets: this.widgets,
       transactions: this.transactions,
+      isLoadingMore: this.isLoadingMore,
     };
   },
 
@@ -69,6 +83,7 @@ const VSFTransactionStore = createStore({
       pageIndex: +this.pageIndex,
       pageSize: +this.pageSize,
       hasNextPage: this.hasNextPage,
+      isLoadingMore: this.isLoadingMore,
     };
   },
 
@@ -81,6 +96,7 @@ const VSFTransactionStore = createStore({
       pageIndex: +this.pageIndex,
       pageSize: +this.pageSize,
       hasNextPage: this.hasNextPage,
+      isLoadingMore: this.isLoadingMore,
     };
   },
 
@@ -132,6 +148,7 @@ const VSFTransactionStore = createStore({
     this.userNumber = state.userNumber;
     this.widgets = state.widgets;
     this.transactions = state.transactions;
+    this.isLoadingMore = state.isLoadingMore;
   },
 
 });

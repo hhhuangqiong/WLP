@@ -1,19 +1,32 @@
-import React from 'react';
+import React, { PropTypes } from 'react';
 import Moment from 'moment';
 import classNames from 'classnames';
 import _ from 'lodash';
 
 import EmptyRow from '../../../main/components/data-table/EmptyRow';
 
+import Pagination from '../../../main/components/Pagination';
+
 const NO_VALUE_LABEL = 'N/A';
 const IOS_PLATFORM = 'com.maaii.platform.ios';
 const ANDROID_PLATFORM = 'com.maaii.platform.android';
+
+const TABLE_TITLES = [
+  '',
+  'DATE & TIME',
+  'MOBILE',
+  'PLATFORM',
+  'VIRTUAL ITEM',
+  'AMOUNT',
+  'TRANSACTION ID',
+];
 
 const VSFTransactionTable = React.createClass({
   propTypes: {
     transactions: React.PropTypes.array.isRequired,
     hasNextPage: React.PropTypes.bool.isRequired,
     loadPage: React.PropTypes.func.isRequired,
+    isLoadingMore: PropTypes.bool,
   },
 
   getStyleByStoreType(platform) {
@@ -131,17 +144,22 @@ const VSFTransactionTable = React.createClass({
       <table className="large-24 clickable vsf-table" key="vsf-table">
         <thead className="vsf-table--head">
           <tr>
-            <th className="vsf-table--cell"></th>
-            <th className="vsf-table--cell">DATE & TIME</th>
-            <th className="vsf-table--cell">MOBILE</th>
-            <th className="vsf-table--cell text-center">PLATFORM</th>
-            <th className="vsf-table--cell text-center">VIRTUAL ITEM</th>
-            <th className="vsf-table--cell">AMOUNT</th>
-            <th className="vsf-table--cell">TRANSACTION ID</th>
+            {
+              TABLE_TITLES.map(title => <th className="im-table--cell">{title}</th>)
+            }
           </tr>
         </thead>
         <tbody className="vsf-table--body" key="vsf-table--body">{_.isEmpty(this.renderRows()) ? this.renderEmptyRow() : this.renderRows()}</tbody>
-        <tfoot className="vsf-table--foot" key="vsf-table--foot">{this.renderFooter()}</tfoot>
+        <tfoot>
+          <If condition={!_.isEmpty(this.props.transactions)}>
+            <Pagination
+              colSpan={TABLE_TITLES.length + 1}
+              hasMoreData={this.props.hasNextPage}
+              onLoadMore={this.props.loadPage}
+              isLoading={this.props.isLoadingMore}
+            />
+          </If>
+        </tfoot>
       </table>
     );
   },

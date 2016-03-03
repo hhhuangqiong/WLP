@@ -9,8 +9,20 @@ import config from './../../../main/config';
 import CountryFlag from '../../../main/components/CountryFlag';
 import EmptyRow from '../../../main/components/data-table/EmptyRow';
 
+import Pagination from '../../../main/components/Pagination';
+
 const { displayDateFormat: DATE_FORMAT } = config;
 const SYSTEM_MESSAGE_LABEL = 'System Message';
+
+const TABLE_TITLES = [
+  '',
+  'Date & Time',
+  'Type',
+  'Mobile/Destination',
+  'Status',
+  'Amount',
+  'Remark',
+];
 
 const SMSTable = React.createClass({
   propTypes: {
@@ -18,6 +30,7 @@ const SMSTable = React.createClass({
     page: PropTypes.number,
     totalPage: PropTypes.number,
     onPageLoad: PropTypes.func,
+    isLoadingMore: PropTypes.bool,
   },
 
   _renderCaller(sms) {
@@ -121,37 +134,23 @@ const SMSTable = React.createClass({
       <table className="data-table large-24 clickable">
         <thead>
           <tr>
-            <th></th>
-            <th>Date &amp; Time</th>
-            <th>Type</th>
-            <th>Mobile &amp; Destination</th>
-            <th>Status</th>
-            <th>Amount</th>
-            <th>Remark</th>
+            {
+              TABLE_TITLES.map(title => <th className="im-table--cell">{title}</th>)
+            }
           </tr>
         </thead>
         <tbody>
           {_.isEmpty(rows) ? this.renderEmptyRow() : rows}
         </tbody>
         <tfoot>
-          <tr>
-            <td colSpan="7" className="pagination">
-              <If condition={!_.isEmpty(this.props.records)}>
-                <div className="text-center">
-                  <If condition={(this.props.totalPage - 1) > this.props.page}>
-                    <span
-                      className="pagination__button"
-                      onClick={this.props.onPageLoad}
-                    >Load More</span>
-                    <Else />
-                    <span
-                      className="pagination__button pagination__button--inactive"
-                    >no more result</span>
-                  </If>
-                </div>
-              </If>
-            </td>
-          </tr>
+          <If condition={!_.isEmpty(this.props.records)}>
+            <Pagination
+              colSpan={TABLE_TITLES.length + 1}
+              hasMoreData={(this.props.totalPages - 1) > this.props.page}
+              onLoadMore={this.props.onDataLoad}
+              isLoading={this.props.isLoadingMore}
+            />
+          </If>
         </tfoot>
       </table>
     );

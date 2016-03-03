@@ -6,6 +6,8 @@ import { merge, last, omit, clone } from 'lodash';
 import FluxibleMixin from 'fluxible/addons/FluxibleMixin';
 import AuthMixin from '../../../utils/AuthMixin';
 
+import Pagination from '../../../main/components/Pagination';
+
 import VSFTransactionTable from './VSFTransactionTable';
 import CategoryFilter from '../../../main/components/CategoryFilter';
 import DateRangePicker from '../../../main/components/DateRangePicker';
@@ -58,10 +60,17 @@ const VSFTransactionDetails = createClass({
   },
 
   getInitialState() {
-    const { fromTime, toTime, category, userNumber } = this.syncQueryAndState();
+    const { fromTime, toTime, category, userNumber, isLoadingMore } = this.syncQueryAndState();
     const { transactions } = this.getStore(VSFTransactionStore).getData();
+    return { fromTime, toTime, category, userNumber, transactions, isLoadingMore };
+  },
 
-    return { fromTime, toTime, category, userNumber, transactions };
+  syncQueryAndState(newState) {
+    const state = this.getStore(VSFTransactionStore).getQuery();
+    const query = this.context.router.getCurrentQuery();
+
+    const renewedState = newState ? merge(state, query, newState) : merge(state, query);
+    return renewedState;
   },
 
   onChange() {
@@ -130,19 +139,11 @@ const VSFTransactionDetails = createClass({
             transactions={this.state.transactions}
             hasNextPage={this.state.hasNextPage}
             loadPage={this.handlePageChange}
+            isLoadingMore={this.state.isLoadingMore}
           />
         </div>
       </div>
     );
-  },
-
-  syncQueryAndState(newState) {
-    const state = this.getStore(VSFTransactionStore).getQuery();
-    const query = this.context.router.getCurrentQuery();
-
-    const renewedState = newState ? merge(state, query, newState) : merge(state, query);
-
-    return renewedState;
   },
 
   handleQueryChange(newQueryChange) {

@@ -8,8 +8,18 @@ import { getCountryName } from '../../../utils/StringFormatter';
 import CountryFlag from '../../../main/components/CountryFlag';
 import EmptyRow from '../../../main/components/data-table/EmptyRow';
 
+import Pagination from '../../../main/components/Pagination';
+
 const IM_DATETIME_FORMAT = 'MMMM DD YYYY, hh:mm:ss a';
 const LABEL_FOR_NULL = 'N/A';
+
+const TABLE_TITLES = [
+  'Date &amp; Time',
+  'Type / Filesize',
+  'Mobile &amp; Destination',
+  '',
+  '',
+];
 
 const MESSAGE_TYPES = {
   text: {
@@ -56,6 +66,7 @@ const ImTable = React.createClass({
     totalPages: PropTypes.number.isRequired,
     page: PropTypes.number.isRequired,
     onDataLoad: PropTypes.func.isRequired,
+    isLoadingMore: PropTypes.bool,
   },
 
   contextTypes: {
@@ -170,11 +181,9 @@ const ImTable = React.createClass({
       <table className="large-24 clickable im-table" key="im-table">
         <thead className="im-table--head">
         <tr className="im-table--row">
-          <th className="im-table--cell">Date &amp; Time</th>
-          <th className="im-table--cell">Type / Filesize</th>
-          <th className="im-table--cell">Mobile &amp; Destination</th>
-          <th className="im-table--cell"></th>
-          <th className="im-table--cell"></th>
+          {
+            TABLE_TITLES.map(title => <th className="im-table--cell">{title}</th>)
+          }
         </tr>
         </thead>
         <tbody className="im-table--body" key="im-table--body">
@@ -182,22 +191,12 @@ const ImTable = React.createClass({
         </tbody>
         <tfoot>
           <If condition={!_.isEmpty(this.props.ims)}>
-            <tr>
-              <td colSpan="5">
-                <div className="text-center">
-                  <If condition={(this.props.totalPages - 1) > this.props.page}>
-                    <span
-                      className="pagination__button"
-                      onClick={this.props.onDataLoad}
-                    >Load More</span>
-                    <Else />
-                    <span
-                      className="pagination__button pagination__button--inactive"
-                    >no more result</span>
-                  </If>
-                </div>
-              </td>
-            </tr>
+            <Pagination
+              colSpan={TABLE_TITLES.length + 1}
+              hasMoreData={(this.props.totalPages - 1) > this.props.page}
+              onLoadMore={this.props.onDataLoad}
+              isLoading={this.props.isLoadingMore}
+            />
           </If>
         </tfoot>
       </table>

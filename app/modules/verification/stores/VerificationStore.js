@@ -5,6 +5,7 @@ export default createStore({
 
   handlers: {
     FETCH_VERIFICATIONS_SUCCESS: 'handleVerificationsFetched',
+    FETCH_MORE_VERIFICATIONS_START: 'handleMoreVerificationsFetching',
     FETCH_MORE_VERIFICATIONS_SUCCESS: 'handleMoreVerificationsFetched',
   },
 
@@ -13,9 +14,15 @@ export default createStore({
     this.verifications = [];
     this.page = 0;
     this.count = 0;
+    this.isLoadingMore = false;
   },
 
-  handleVerificationsFetched(payload) {
+  handleMoreVerificationsFetching() {
+    this.isLoadingMore = true;
+    this.emitChange();
+  },
+
+  handleVerificationsFetched: function(payload) {
     this.page = payload.page;
     this.count = payload.count;
     this.verifications = payload.items;
@@ -30,6 +37,8 @@ export default createStore({
     payload.items.forEach(item => {
       this.verifications.push(item);
     });
+
+    this.isLoadingMore = false;
 
     this.emitChange();
   },
@@ -61,6 +70,7 @@ export default createStore({
       page: this.page,
       maxPage: this.getPageCount(),
       count: this.count,
+      isLoadingMore: this.isLoadingMore,
     };
   },
 
@@ -69,5 +79,6 @@ export default createStore({
     this.page = state.page;
     this.pageSize = state.pageSize;
     this.count = state.count;
-  },
+    this.isLoadingMore = state.isLoadingMore;
+  }
 });

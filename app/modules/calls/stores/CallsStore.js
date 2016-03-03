@@ -13,6 +13,7 @@ const CallsStore = createStore({
     // For Cancellable Request
     FETCH_MORE_CALLS_START: 'appendPendingRequest',
     FETCH_CALLS_START: 'appendPendingRequest',
+    FETCH_MORE_CALLS_START: 'handleLoadMoreCallsStart',
   },
 
   initialize() {
@@ -27,10 +28,16 @@ const CallsStore = createStore({
 
     // For Cancellable Request
     this.pendingRequests = {};
+    this.isLoadingMore = false;
   },
 
-  handleLoadMoreCalls(payload) {
-    payload.contents.forEach(call => {
+  handleLoadMoreCallsStart() {
+    this.isLoadingMore = true;
+    this.emitChange();
+  },
+
+  handleLoadMoreCalls: function(payload) {
+    payload.contents.forEach((call) => {
       this.calls.push(call);
     });
 
@@ -39,6 +46,8 @@ const CallsStore = createStore({
     this.size = payload.pageSize;
     this.callsCount = payload.totalElements;
     this.totalPages = payload.totalPages;
+
+    this.isLoadingMore = false;
 
     this.emitChange();
   },
@@ -94,6 +103,7 @@ const CallsStore = createStore({
       totalPages: this.totalPages,
       params: this.params,
       widgets: this.widgets,
+      isLoadingMore: this.isLoadingMore,
     };
   },
 
@@ -148,7 +158,8 @@ const CallsStore = createStore({
     this.totalPages = state.totalPages;
     this.params = state.params;
     this.widgets = state.widgets;
-  },
+    this.isLoadingMore = state.isLoadingMore;
+  }
 });
 
 export default CallsStore;

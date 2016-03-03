@@ -38,6 +38,11 @@
     cursor: initial;
   }
 
+  .pagination__button--disabled {
+    filter: opacity(.3);
+    pointer-events: none !important;
+  }
+
   .device-modal {
     .icon-apple {
       font-size: rem-calc(16);
