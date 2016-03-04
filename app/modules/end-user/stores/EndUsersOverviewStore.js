@@ -1,3 +1,4 @@
+import { assign, forEach } from 'lodash';
 import { createStore } from 'fluxible/addons';
 
 const EndUsersOverviewStore = createStore({
@@ -9,6 +10,12 @@ const EndUsersOverviewStore = createStore({
     FETCH_END_USERS_STATS_MONTHLY_SUCCESS: 'handleEndUserStatsMonthly',
     FETCH_END_USERS_STATS_MONTHLY_FAILURE: 'handleEndUserStatsMonthlyFailure',
     FETCH_END_USERS_DEVICE_STATS_SUCCESS: 'handleDeviceStats',
+    CLEAR_END_USERS_STATS: 'handleClearEndUserStats',
+
+    // For Cancellable Request
+    FETCH_END_USERS_STATS_TOTAL_START: 'appendPendingRequest',
+    FETCH_END_USERS_STATS_MONTHLY_START: 'appendPendingRequest',
+    FETCH_END_USERS_DEVICE_STATS_START: 'appendPendingRequest',
   },
 
   initialize() {
@@ -22,6 +29,8 @@ const EndUsersOverviewStore = createStore({
     this.monthlyStatsError = null;
 
     this.deviceStats = null;
+
+    this.pendingRequests = {};
   },
 
   handleEndUserStatsTotal(payload) {
@@ -63,6 +72,40 @@ const EndUsersOverviewStore = createStore({
       totalStatsError: this.totalStatsError,
       monthlyStatsError: this.monthlyStatsError,
     };
+  },
+
+  handleClearEndUserStats() {
+    this.abortPendingRequests();
+    this.initialize();
+    this.emitChange();
+  },
+
+  appendPendingRequest(request, key) {
+    if (!!request) {
+      const pendingRequest = this.pendingRequests[key];
+      if (pendingRequest) {
+        pendingRequest.abort();
+      }
+
+      assign(this.pendingRequests, { [key]: request });
+    }
+  },
+
+  abortPendingRequest(key) {
+    if (!key) {
+      this.abortPendingRequests();
+      return;
+    }
+
+    delete this.pendingRequests[key];
+  },
+
+  abortPendingRequests() {
+    forEach(this.pendingRequests, function(request) {
+      if (!!request) {
+        request.abort();
+      }
+    });
   },
 
   dehydrate() {

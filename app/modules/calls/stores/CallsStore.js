@@ -1,3 +1,4 @@
+import { assign, forEach } from 'lodash';
 import { createStore } from 'fluxible/addons';
 
 const CallsStore = createStore({
@@ -7,6 +8,11 @@ const CallsStore = createStore({
     FETCH_CALLS_SUCCESS: 'handleCallsFetch',
     FETCH_CALLS_WIDGETS_SUCCESS: 'handleCallsWidgetsChange',
     FETCH_MORE_CALLS_SUCCESS: 'handleLoadMoreCalls',
+    CLEAR_CALLS_REPORT: 'handleClearCallsReport',
+
+    // For Cancellable Request
+    FETCH_MORE_CALLS_START: 'appendPendingRequest',
+    FETCH_CALLS_START: 'appendPendingRequest',
   },
 
   initialize() {
@@ -18,6 +24,9 @@ const CallsStore = createStore({
     this.callsCount = 0;
     this.totalPages = 0;
     this.params = {};
+
+    // For Cancellable Request
+    this.pendingRequests = {};
   },
 
   handleLoadMoreCalls(payload) {
@@ -86,6 +95,44 @@ const CallsStore = createStore({
       params: this.params,
       widgets: this.widgets,
     };
+  },
+
+  handleClearCallsReport() {
+    // For Cancellable Request
+    this.abortPendingRequests();
+    //
+
+    this.initialize();
+    this.emitChange();
+  },
+
+  // For Cancellable Request
+  appendPendingRequest(request, key) {
+    if (!!request) {
+      const pendingRequest = this.pendingRequests[key];
+      if (pendingRequest) {
+        pendingRequest.abort();
+      }
+
+      assign(this.pendingRequests, { [key]: request });
+    }
+  },
+
+  abortPendingRequest(key) {
+    if (!key) {
+      this.abortPendingRequests();
+      return;
+    }
+
+    delete this.pendingRequests[key];
+  },
+
+  abortPendingRequests() {
+    forEach(this.pendingRequests, function(request) {
+      if (!!request) {
+        request.abort();
+      }
+    });
   },
 
   dehydrate() {

@@ -69,6 +69,10 @@ const VSFTransactionDetails = createClass({
     this.setState(data);
   },
 
+  componentWillUnmount() {
+    this.context.executeAction(clearVSFTransaction);
+  },
+
   render() {
     const params = this.context.router.getCurrentParams();
 

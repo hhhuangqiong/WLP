@@ -1,6 +1,5 @@
-import _ from 'lodash';
+import _, { assign, forEach } from 'lodash';
 import { createStore } from 'fluxible/addons';
-
 import config from './../../../main/config';
 
 const { pages: { topUp: { pageRec: PAGE_REC } } } = config;

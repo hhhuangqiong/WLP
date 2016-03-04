@@ -158,7 +158,7 @@ Api.prototype.reactivateCompany = function reactivateCompany(params, cb) {
 };
 
 Api.prototype.getEndUserWallet = function getEndUserWallet(params, cb) {
-  superagent
+  return superagent
     .get(`${this._getHost()}/api/carriers/${params.carrierId}/users/${params.username}/wallet`)
     .accept('json')
     .set('Authorization', this._getToken())
@@ -166,7 +166,7 @@ Api.prototype.getEndUserWallet = function getEndUserWallet(params, cb) {
 };
 
 Api.prototype.getEndUsers = function getEndUsers(params, cb) {
-  superagent
+  return superagent
     .get(`${this._getHost()}/api/carriers/${params.carrierId}/users`)
     .query(_.pick(params, ['startDate', 'endDate', 'page']))
     .accept('json')
@@ -175,7 +175,7 @@ Api.prototype.getEndUsers = function getEndUsers(params, cb) {
 };
 
 Api.prototype.getEndUser = function getEndUser(params, cb) {
-  superagent
+  return superagent
     .get(`${this._getHost()}/api/carriers/${params.carrierId}/users/${params.username}`)
     .accept('json')
     .set('Authorization', this._getToken())
@@ -199,7 +199,7 @@ Api.prototype.reactivateEndUser = function reactivateEndUser(params, cb) {
 };
 
 Api.prototype.getSMS = function getSMS(params, cb) {
-  superagent
+  return superagent
     .get(`${this._getHost()}/api/carriers/${params.carrierId}/sms`)
     .query(params)
     .accept('json')
@@ -208,7 +208,7 @@ Api.prototype.getSMS = function getSMS(params, cb) {
 };
 
 Api.prototype.getSMSWidgets = function getSMSWidgets(params, cb) {
-  superagent
+  return superagent
     .get(`${this._getHost()}/api/carriers/${params.carrierId}/widgets/sms`)
     .accept('json')
     .set('Authorization', this._getToken())
@@ -217,7 +217,7 @@ Api.prototype.getSMSWidgets = function getSMSWidgets(params, cb) {
 };
 
 Api.prototype.getCalls = function getCalls(params, cb) {
-  superagent
+  return superagent
     .get(`${this._getHost()}/api/carriers/${params.carrierId}/calls`)
     .query(params)
     .accept('json')
@@ -235,7 +235,7 @@ Api.prototype.getCallsWidgets = function getCallsWidgets(params, cb) {
 };
 
 Api.prototype.getImWidgets = function getImWidgets(params, cb) {
-  superagent
+  return superagent
     .get(`${this._getHost()}/api/carriers/${params.carrierId}/widgets/im`)
     .accept('json')
     .set('Authorization', this._getToken())
@@ -253,7 +253,7 @@ Api.prototype.getOverviewWidgets = function getOverviewWidgets(params, cb) {
 };
 
 Api.prototype.getTopUpHistory = function getTopUpHistory(params, cb) {
-  superagent
+  return superagent
     .get(`${this._getHost()}/api/carriers/${params.carrierId}/topup`)
     .query(params)
     .accept('json')
@@ -262,7 +262,7 @@ Api.prototype.getTopUpHistory = function getTopUpHistory(params, cb) {
 };
 
 Api.prototype.getImHistory = function getImHistory(params, cb) {
-  superagent
+  return superagent
     .get(`${this._getHost()}/api/carriers/${params.carrierId}/im`)
     .query(params)
     .accept('json')
@@ -271,7 +271,7 @@ Api.prototype.getImHistory = function getImHistory(params, cb) {
 };
 
 Api.prototype.getVerifications = function getVerifications(params, cb) {
-  superagent
+  return superagent
     .get(`${this._getHost()}/api/carriers/${params.carrierId}/verifications`)
     .accept('json')
     .set('Authorization', this._getToken())
@@ -280,7 +280,7 @@ Api.prototype.getVerifications = function getVerifications(params, cb) {
 };
 
 Api.prototype.getVerificationStatsByStatus = function getVerificationStatsByStatus(params, cb) {
-  superagent
+  return superagent
     .get(`${this._getHost()}/api/carriers/${params.carrierId}/verificationStats`)
     .accept('json')
     .set('Authorization', this._getToken())
@@ -289,7 +289,7 @@ Api.prototype.getVerificationStatsByStatus = function getVerificationStatsByStat
 };
 
 Api.prototype.getVerificationStatsByPlatform = function getVerificationStatsByPlatform(params, cb) {
-  superagent
+  return superagent
     .get(`${this._getHost()}/api/carriers/${params.carrierId}/verificationStats`)
     .accept('json')
     .set('Authorization', this._getToken())
@@ -298,7 +298,7 @@ Api.prototype.getVerificationStatsByPlatform = function getVerificationStatsByPl
 };
 
 Api.prototype.getVerificationStatsByType = function getVerificationStatsByType(params, cb) {
-  superagent
+  return superagent
     .get(`${this._getHost()}/api/carriers/${params.carrierId}/verificationStats`)
     .accept('json')
     .set('Authorization', this._getToken())
@@ -307,7 +307,7 @@ Api.prototype.getVerificationStatsByType = function getVerificationStatsByType(p
 };
 
 Api.prototype.getVerificationStatsByCountry = function getVerificationStatsByCountry(params, cb) {
-  superagent
+  return superagent
     .get(`${this._getHost()}/api/carriers/${params.carrierId}/verificationStats`)
     .accept('json')
     .set('Authorization', this._getToken())
@@ -316,7 +316,7 @@ Api.prototype.getVerificationStatsByCountry = function getVerificationStatsByCou
 };
 
 Api.prototype.getCurrentCompanyInfo = function getCurrentCompanyInfo(params, cb) {
-  superagent
+  return superagent
     .get(`${this._getHost()}/api/companies/${params.carrierId}/info`)
     .accept('json')
     .set('Authorization', this._getToken())
@@ -324,7 +324,7 @@ Api.prototype.getCurrentCompanyInfo = function getCurrentCompanyInfo(params, cb)
 };
 
 Api.prototype.getEndUsersStatsTotal = function getEndUsersStatsTotal(params, cb) {
-  superagent
+  return superagent
     .get(`${this._getHost()}/api/carriers/${params.carrierId}/userStatsTotal`)
     .accept('json')
     .set('Authorization', this._getToken())
@@ -333,7 +333,7 @@ Api.prototype.getEndUsersStatsTotal = function getEndUsersStatsTotal(params, cb)
 };
 
 Api.prototype.getEndUsersStatsMonthly = function getEndUsersStatsMonthly(params, cb) {
-  superagent
+  return superagent
     .get(`${this._getHost()}/api/carriers/${params.carrierId}/userStatsMonthly`)
     .accept('json')
     .set('Authorization', this._getToken())
@@ -342,7 +342,7 @@ Api.prototype.getEndUsersStatsMonthly = function getEndUsersStatsMonthly(params,
 };
 
 Api.prototype.getEndUsersRegistrationStats = function getEndUsersRegistrationStats(params, cb) {
-  superagent
+  return superagent
     .get(`${this._getHost()}/api/carriers/${params.carrierId}/stat/user/query`)
     .accept('json')
     .set('Authorization', this._getToken())
@@ -351,7 +351,7 @@ Api.prototype.getEndUsersRegistrationStats = function getEndUsersRegistrationSta
 };
 
 Api.prototype.getEndUsersDeviceStats = function getEndUsersDeviceStats(params, cb) {
-  superagent
+  return superagent
     .get(`${this._getHost()}/api/carriers/${params.carrierId}/stat/user/query`)
     .accept('json')
     .set('Authorization', this._getToken())
@@ -360,7 +360,7 @@ Api.prototype.getEndUsersDeviceStats = function getEndUsersDeviceStats(params, c
 };
 
 Api.prototype.getEndUsersGeographicStats = function getEndUsersGeographicStats(params, cb) {
-  superagent
+  return superagent
     .get(`${this._getHost()}/api/carriers/${params.carrierId}/stat/user/query`)
     .accept('json')
     .set('Authorization', this._getToken())

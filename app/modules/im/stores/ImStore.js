@@ -1,3 +1,4 @@
+import { assign, forEach } from 'lodash';
 import { createStore } from 'fluxible/addons';
 
 const ImStore = createStore({
@@ -7,6 +8,10 @@ const ImStore = createStore({
     FETCH_IM_SUCCESS: 'handleImChange',
     FETCH_IM_WIDGETS_SUCCESS: 'handleImWidgetsChange',
     FETCH_MORE_IM_SUCCESS: 'handleLoadMoreIm',
+    CLEAR_IM_STORE: 'handleClearStore',
+
+    FETCH_IM_START: 'appendPendingRequest',
+    FETCH_MORE_IM_START: 'appendPendingRequest',
   },
 
   initialize() {
@@ -17,6 +22,8 @@ const ImStore = createStore({
     this.pageSize = 0;
     this.imsCount = 0;
     this.totalPages = 0;
+
+    this.pendingRequests = {};
   },
 
   handleImChange(payload) {
@@ -85,6 +92,42 @@ const ImStore = createStore({
       widgets: this.widgets,
       loaded: true,
     };
+  },
+
+  handleClearStore() {
+    this.abortPendingRequests();
+    this.initialize();
+    this.emitChange();
+  },
+
+  appendPendingRequest(request, key) {
+    console.log(this.pendingRequests, request, key);
+
+    if (!!request) {
+      const pendingRequest = this.pendingRequests[key];
+      if (pendingRequest) {
+        pendingRequest.abort();
+      }
+
+      assign(this.pendingRequests, { [key]: request });
+    }
+  },
+
+  abortPendingRequest(key) {
+    if (!key) {
+      this.abortPendingRequests();
+      return;
+    }
+
+    delete this.pendingRequests[key];
+  },
+
+  abortPendingRequests() {
+    forEach(this.pendingRequests, function(request) {
+      if (!!request) {
+        request.abort();
+      }
+    });
   },
 
   dehydrate() {

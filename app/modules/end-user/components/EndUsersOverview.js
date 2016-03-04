@@ -29,6 +29,7 @@ import fetchEndUsersStatsTotal from '../actions/fetchEndUsersStatsTotal';
 import fetchRegistrationStats from '../actions/fetchEndUsersRegistrationStats';
 import fetchDeviceStats from '../actions/fetchDeviceStats';
 import fetchGeographicStats from '../actions/fetchGeographicStats';
+import clearEndUsersStats from '../actions/clearEndUsersStats';
 
 const TIME_FRAMES = ['7 days', '30 days', '60 days', '90 days'];
 const gChartContainerId = 'registrationByCountry';
@@ -104,6 +105,10 @@ const EndUsersOverview = React.createClass({
     // Disable Country Table field as SDK does not support country data at this moment
     // and the capability settings for features are pending implementation
     // this._getGeographicStats();
+  },
+
+  componentWillUnmount() {
+    this.context.executeAction(clearEndUsersStats);
   },
 
   onEndUsersOverviewChange() {

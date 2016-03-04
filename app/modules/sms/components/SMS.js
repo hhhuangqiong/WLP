@@ -72,6 +72,10 @@ const SMS = React.createClass({
     this.setState(this.getStateFromStores());
   },
 
+  componentWillUnmount() {
+    this.context.executeAction(clearSMS);
+  },
+
   getDefaultQuery() {
     return {
       carrierId: null,
