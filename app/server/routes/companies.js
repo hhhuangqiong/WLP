@@ -2,7 +2,7 @@ import Q from 'q';
 import _ from 'lodash';
 
 import Controller from '../controllers/company';
-import Company    from '../../collections/company';
+import Company from '../../collections/company';
 import PortalUser from '../../collections/portalUser';
 
 import {
@@ -14,67 +14,67 @@ import {
 const controller = new Controller();
 
 // '/companies'
-const list = function(req, res) {
+const list = function (req, res) {
   return controller.getCompanies(req, res);
 };
 
 // '/companies'
-const createProfile = function(req, res) {
+const createProfile = function (req, res) {
   return controller.saveProfile(req, res);
 };
 
 // '/companies/parent'
-const getParents = function(req, res) {
+const getParents = function (req, res) {
   return controller.getParentCompanies(req, res);
 };
 
 // '/companies/:carrierId/suspension'
-const deactivateCompany = function(req, res) {
+const deactivateCompany = function (req, res) {
   return controller.deactivateCompany(req, res);
 };
 
 // .put('/companies/:carrierId/suspension',
-const reactivateCompany = function(req, res) {
+const reactivateCompany = function (req, res) {
   return controller.reactivateCompany(req, res);
 };
 
 // '/companies/:carrierId/info'
-const getInfo = function(req, res) {
+const getInfo = function (req, res) {
   return controller.getInfo(req, res);
 };
 
 // '/companies/:carrierId/service'
-const getService = function(req, res) {
+const getService = function (req, res) {
   return controller.getApplications(req, res);
 };
 
 // '/companies/:carrierId/applications'
-const getApplications = function(req, res) {
+const getApplications = function (req, res) {
   return controller.getApplications(req, res);
 };
 
 // '/companies/:carrierId/applicationIds'
-const getApplicationIds = function(req, res) {
+const getApplicationIds = function (req, res) {
   return controller.getApplicationIds(req, res);
 };
 
 // '/companies/:carrierId/profile'
-const updateProfile = function(req, res) {
+const updateProfile = function (req, res) {
   return controller.saveProfile(req, res);
 };
 
 // '/companies/:carrierId/service'
-const saveService = function(req, res) {
+const saveService = function (req, res) {
   return controller.saveService(req, res);
 };
 
 // '/companies/:carrierId/widget'
-const saveWidget = function(req, res) {
+const saveWidget = function (req, res) {
   return controller.saveWidget(req, res);
 };
 
 // '/application/companies'
-const getApplicationCompanies = function(req, res) {
+const getApplicationCompanies = function (req, res) {
   const { user } = res.locals.user;
 
   if (!user) {

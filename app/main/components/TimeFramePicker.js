@@ -64,7 +64,7 @@ export function parseTimeRange(timeRange) {
       .endOf(timescale)
       .valueOf();
 
-    const from = timescale === 'hour' ?
+  const from = timescale === 'hour' ?
       moment(to)
         .subtract(quantity, timescale)
         .startOf(timescale)

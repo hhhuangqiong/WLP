@@ -213,7 +213,7 @@ export default class ExportTask {
           case 'MobileOriginated':
             row.type = 'Call-Out';
             break;
-      }
+        }
 
         break;
 

@@ -47,7 +47,7 @@ export function hasError(event) {
 }
 
 function withValidator(validator = {}) {
-  return function(ComposedComponent) {
+  return function (ComposedComponent) {
     class ValidatorComponent extends Component {
       constructor() {
         super();

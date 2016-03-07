@@ -35,7 +35,7 @@ export default class DateSelectorLabel extends Component {
 
     return (
       <div className="date-selector-label">
-        <div className="date-selector-label__item date-dropdown-select" style={{textAlign: 'center'}}>
+        <div className="date-selector-label__item date-dropdown-select" style={{ textAlign: 'center' }}>
           <div className="date-dropdown-label">{currentDate}</div>
           <select className="date-dropdown-element" onChange={this.handleSelect}>
             {this.props.options.map(option => {
