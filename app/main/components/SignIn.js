@@ -157,11 +157,14 @@ const SignIn = React.createClass({
             <div className="row"><br /></div>
             <div className="row">
               <div className="large-16 columns">
+                {/*
+                  * Disable Forgot Password temporary until Account module is being used
                 <label className="secondary">
                   <Link to="forgot-password">
                     Forgot password?
                   </Link>
                 </label>
+                */}
               </div>
               <div className="large-8 columns">
                 <button
