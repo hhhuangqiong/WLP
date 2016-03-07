@@ -39,6 +39,10 @@ const Navigation = React.createClass({
         .context
         .getStore(AuthStore)
         .getDisplayName(),
+	  isAuthenticated: this
+        .context
+		.getStore(AuthStore)
+		.isAuthenticated(),
     };
   },
 
@@ -115,7 +119,20 @@ const Navigation = React.createClass({
     return null;
   },
 
-  render() {
+  handleOpenChangePasswordDialog() {
+    this.setState({ isChangePasswordOpened: true });
+  },
+
+  handleCloseChangePasswordDialog(e) {
+    if (e) e.preventDefault();
+    this.setState({ isChangePasswordOpened: false });
+  },
+
+  render: function() {
+    if (!this.state.isAuthenticated) {
+      return null;
+    }
+
     return (
       <section className="top-bar-section navigation-bar">
         <Modal

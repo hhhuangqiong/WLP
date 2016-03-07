@@ -4,6 +4,8 @@ import classNames from 'classnames';
 import { HOME } from '../../server/paths';
 import errors from '../../config/errors.json';
 
+import Menu from './common/NavigationMenu';
+
 const ErrorTemplate = React.createClass({
   propTypes: {
     code: PropTypes.number.isRequired,
@@ -24,6 +26,7 @@ const ErrorTemplate = React.createClass({
               <img className="logo" src="/images/logo-default-m800.png" />
             </li>
           </ul>
+          <Menu />
         </nav>
         <div className="public-container large-24 columns">
           <div className="row">
@@ -66,22 +69,22 @@ const ErrorTemplate = React.createClass({
   },
 });
 
-const Error = React.createFactory(ErrorTemplate);
+const errorFactory = React.createFactory(ErrorTemplate);
 
-export const Error401 = React.createClass({
+export let Error401 = React.createClass({
   render() {
-    return Error(errors['401']);
-  },
+    return errorFactory(errors['401']);
+  }
 });
 
-export const Error404 = React.createClass({
+export let Error404 = React.createClass({
   render() {
-    return Error(errors['404']);
-  },
+    return errorFactory(errors['404']);
+  }
 });
 
-export const Error500 = React.createClass({
+export let Error500 = React.createClass({
   render() {
-    return Error(errors['500']);
-  },
+    return errorFactory(errors['500']);
+  }
 });
