@@ -40,9 +40,15 @@ const TIME_FRAMES = ['24 hours', '7 days'];
 
 // this should be application-wide variable
 const DECIMAL_PLACE = 1;
+const PRECISION = 3;
 
+// TODO: externalise this as a common util
 const decimalPlaceFormatter = function (data) {
-  return (data && data.toFixed(DECIMAL_PLACE));
+  if (data > 10) {
+    return data.toFixed(DECIMAL_PLACE);
+  }
+
+  return data.toPrecision(PRECISION);
 };
 
 const CallsOverview = React.createClass({
@@ -160,6 +166,14 @@ const CallsOverview = React.createClass({
         lineWidth: 2,
         tooltip: {
           valueSuffix: ' %',
+          // TODO: make it as a default props for CombinationChart as the value presentation will be shared
+          pointFormatter: function pointFormatter() {
+            const color = this.color;
+            const seriesName = this.series.name;
+            const value = decimalPlaceFormatter(this.y);
+            const unit = this.series.tooltipOptions.valueSuffix;
+            return `<span style="color:${color}">\u25CF</span> ${seriesName}: <b>${value}${unit}</b><br/>`;
+          },
         },
       },
       {
@@ -182,7 +196,11 @@ const CallsOverview = React.createClass({
   },
 
   _getDurationLineChartData() {
-    const totalDurationData = reduce(this.state.totalDurationStats, (result, stat) => { result.push(round((stat.v / 1000 / 60), DECIMAL_PLACE)); return result; }, []);
+    const totalDurationData = reduce(this.state.totalDurationStats, (result, stat) => {
+      let value = stat.v / 1000 / 60;
+      result.push(value);
+      return result;
+    }, []);
     const averageDurationData = reduce(this.state.averageDurationStats, (result, stat) => { result.push(round((stat.v / 1000), DECIMAL_PLACE)); return result; }, []);
     const successAttemptData = reduce(this.state.successAttemptStats, (result, stat) => { result.push(stat.v); return result; }, []);
 
@@ -210,6 +228,14 @@ const CallsOverview = React.createClass({
         yAxis: 1,
         tooltip: {
           valueSuffix: ' mins',
+          // TODO: make it as a default props for CombinationChart as the value presentation will be shared
+          pointFormatter: function pointFormatter() {
+            const color = this.color;
+            const seriesName = this.series.name;
+            const value = decimalPlaceFormatter(this.y);
+            const unit = this.series.tooltipOptions.valueSuffix;
+            return `<span style="color:${color}">\u25CF</span> ${seriesName}: <b>${value}${unit}</b><br/>`;
+          },
         },
       },
       {
@@ -244,7 +270,7 @@ const CallsOverview = React.createClass({
         unit: '',
         alignment: 'right',
         visible: false,
-      }
+      },
     ];
   },
 
