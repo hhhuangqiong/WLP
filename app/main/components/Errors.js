@@ -55,7 +55,7 @@ const ErrorTemplate = React.createClass({
                     <li className="error-message">
                       {this.props.message},
                       click
-                      <Link to={HOME}>here</Link>
+                      <a href={`${HOME}`}>here</a>
                       to go back to dashboard
                     </li>
                   </ul>
