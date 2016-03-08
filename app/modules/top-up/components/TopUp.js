@@ -73,9 +73,12 @@ const TopUp = React.createClass({
     return merge(clone(this.getDefaultQuery()), this.getRequestBodyFromQuery(), this.getStateFromStores());
   },
 
-
   onChange() {
     this.setState(this.getStateFromStores());
+  },
+
+  componentWillUnmount() {
+    this.context.executeAction(clearTopUp);
   },
 
   getStateFromStores() {

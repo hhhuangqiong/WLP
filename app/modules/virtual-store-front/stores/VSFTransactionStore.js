@@ -1,3 +1,4 @@
+import { assign, forEach } from 'lodash';
 import moment from 'moment';
 import { createStore } from 'fluxible/addons';
 
@@ -8,6 +9,8 @@ const VSFTransactionStore = createStore({
     FETCH_VSF_SUCCESS: 'handleTransactionsFetch',
     FETCH_VSF_WIDGETS_SUCCESS: 'handleWidgetsFetch',
     CLEAR_VSF: 'handleClearTransaction',
+
+    FETCH_VSF_START: 'appendPendingRequest',
   },
 
   initialize() {
@@ -23,11 +26,8 @@ const VSFTransactionStore = createStore({
     this.category = '';
     this.userNumber = '';
     this.widgets = [];
-  },
 
-  handleClearTransaction() {
-    this.initialize();
-    this.emitChange();
+    this.pendingRequests = {};
   },
 
   handleTransactionsFetch(payload) {
@@ -82,6 +82,40 @@ const VSFTransactionStore = createStore({
       pageSize: +this.pageSize,
       hasNextPage: this.hasNextPage,
     };
+  },
+
+  handleClearTransaction() {
+    this.abortPendingRequests();
+    this.initialize();
+    this.emitChange();
+  },
+
+  appendPendingRequest(request, key) {
+    if (!!request) {
+      const pendingRequest = this.pendingRequests[key];
+      if (pendingRequest) {
+        pendingRequest.abort();
+      }
+
+      assign(this.pendingRequests, { [key]: request });
+    }
+  },
+
+  abortPendingRequest(key) {
+    if (!key) {
+      this.abortPendingRequests();
+      return;
+    }
+
+    delete this.pendingRequests[key];
+  },
+
+  abortPendingRequests() {
+    forEach(this.pendingRequests, function(request) {
+      if (!!request) {
+        request.abort();
+      }
+    });
   },
 
   dehydrate() {

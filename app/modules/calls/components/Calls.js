@@ -12,6 +12,7 @@ import DatePicker from '../../../main/components/DatePicker';
 import AuthMixin from '../../../utils/AuthMixin';
 import fetchCalls from '../actions/fetchCalls';
 import fetchMoreCalls from '../actions/fetchMoreCalls';
+import clearCallsReport from '../actions/clearCallsReport';
 
 import CallsTable from './CallsTable';
 import CallsStore from '../stores/CallsStore';
@@ -83,6 +84,10 @@ const Calls = React.createClass({
 
   componentDidMount() {
     $(document).foundation('reveal', 'reflow');
+  },
+
+  componentWillUnmount() {
+    this.context.executeAction(clearCallsReport);
   },
 
   onChange() {

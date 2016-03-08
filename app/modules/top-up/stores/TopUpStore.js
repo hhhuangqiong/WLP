@@ -1,3 +1,4 @@
+import _, { assign, forEach } from 'lodash';
 import { createStore } from 'fluxible/addons';
 
 const TopUpStore = createStore({
@@ -6,16 +7,16 @@ const TopUpStore = createStore({
   handlers: {
     FETCH_TOP_UP_SUCCESS: 'handleLoadTopUp',
     CLEAR_TOP_UP: 'handleClearTopUp',
+
+    FETCH_TOP_UP_START: 'appendPendingRequest',
   },
 
   initialize() {
     this.histories = [];
     this.page = 1;
     this.totalRec = 0;
-  },
 
-  handleClearTopUp() {
-    this.initialize();
+    this.pendingRequests = {};
   },
 
   handleLoadTopUp(payload) {
@@ -50,6 +51,40 @@ const TopUpStore = createStore({
       totalRec: this.totalRec,
       page: this.page,
     };
+  },
+
+  handleClearTopUp() {
+    this.abortPendingRequests();
+    this.initialize();
+    this.emitChange();
+  },
+
+  appendPendingRequest(request, key) {
+    if (!!request) {
+      const pendingRequest = this.pendingRequests[key];
+      if (pendingRequest) {
+        pendingRequest.abort();
+      }
+
+      assign(this.pendingRequests, { [key]: request });
+    }
+  },
+
+  abortPendingRequest(key) {
+    if (!key) {
+      this.abortPendingRequests();
+      return;
+    }
+
+    delete this.pendingRequests[key];
+  },
+
+  abortPendingRequests() {
+    forEach(this.pendingRequests, function(request) {
+      if (!!request) {
+        request.abort();
+      }
+    });
   },
 
   dehydrate() {

@@ -10,7 +10,7 @@ export default function (apiPrefix = '') {
 
   return {
     getVSFTransactions(params, cb) {
-      superagent
+      return superagent
         .get(`${this._getHost()}${carrierBasePath}/${params.carrierId}/vsf`)
         .query(params)
         .accept('json')
@@ -19,7 +19,7 @@ export default function (apiPrefix = '') {
     },
 
     getVSFWidgets(params, cb) {
-      superagent
+      return superagent
         .get(`${this._getHost()}${carrierBasePath}/${params.carrierId}/widgets/vsf`)
         .query(params)
         .accept('json')
