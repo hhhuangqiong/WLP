@@ -6,6 +6,7 @@ import Tooltip from 'rc-tooltip';
 
 import { getCountryName } from '../../../utils/StringFormatter';
 import CountryFlag from '../../../main/components/CountryFlag';
+import EmptyRow from '../../../main/components/data-table/EmptyRow';
 
 const IM_DATETIME_FORMAT = 'MMMM DD YYYY, hh:mm:ss a';
 const LABEL_FOR_NULL = 'N/A';
@@ -84,6 +85,12 @@ const ImTable = React.createClass({
     }
 
     return typeSize;
+  },
+
+  renderEmptyRow() {
+    if (!this.props.ims || this.props.ims.length === 0) {
+      return <EmptyRow colSpan={5} />;
+    }
   },
 
   render() {
@@ -171,7 +178,7 @@ const ImTable = React.createClass({
         </tr>
         </thead>
         <tbody className="im-table--body" key="im-table--body">
-        {rows}
+        {_.isEmpty(rows) ? this.renderEmptyRow() : rows}
         </tbody>
         <tfoot>
           <If condition={!_.isEmpty(this.props.ims)}>

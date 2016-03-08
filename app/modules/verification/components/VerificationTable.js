@@ -1,6 +1,8 @@
 import React, { PropTypes } from 'react';
 import VerificationTableRow from './VerificationTableRow';
 import VerificationProfile from './VerificationProfile';
+import CountryFlag from '../../../main/components/CountryFlag';
+import EmptyRow from '../../../main/components/data-table/EmptyRow';
 
 export default React.createClass({
   propTypes: {
@@ -55,7 +57,13 @@ export default React.createClass({
     );
   },
 
-  renderPaginationFooter() {
+  renderEmptyRow() {
+    if (!this.props.verifications || this.props.verifications.length === 0) {
+      return <EmptyRow colSpan={10} />;
+    }
+  },
+
+  renderPaginationFooter: function () {
     if (this.props.verifications.length < this.props.total) {
       return (
         <div
@@ -93,7 +101,7 @@ export default React.createClass({
             </tr>
           </thead>
           <tbody className="verification-table">
-            {this.renderTableRows(this.props.verifications)}
+            {_.isEmpty(this.renderTableRows()) ? this.renderEmptyRow() : this.renderTableRows()}
           </tbody>
           <tfoot>
           <tr>

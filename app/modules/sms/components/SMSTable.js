@@ -7,6 +7,7 @@ import Tooltip from 'rc-tooltip';
 import { getCountryName } from '../../../utils/StringFormatter';
 import config from './../../../main/config';
 import CountryFlag from '../../../main/components/CountryFlag';
+import EmptyRow from '../../../main/components/data-table/EmptyRow';
 
 const { displayDateFormat: DATE_FORMAT } = config;
 const SYSTEM_MESSAGE_LABEL = 'System Message';
@@ -45,6 +46,12 @@ const SMSTable = React.createClass({
         <i className={`icon-${type.toLowerCase()}`}></i>
       </Tooltip>
     );
+  },
+
+  renderEmptyRow() {
+    if (!this.props.records || this.props.records.length === 0) {
+      return <EmptyRow colSpan={7} />;
+    }
   },
 
   render() {
@@ -124,7 +131,7 @@ const SMSTable = React.createClass({
           </tr>
         </thead>
         <tbody>
-          {rows}
+          {_.isEmpty(rows) ? this.renderEmptyRow() : rows}
         </tbody>
         <tfoot>
           <tr>
