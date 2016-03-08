@@ -1,8 +1,8 @@
-import _          from 'lodash';
-import moment     from 'moment';
-import nconf      from 'nconf';
-import url        from 'url';
-import request    from 'superagent';
+import _ from 'lodash';
+import moment from 'moment';
+import nconf from 'nconf';
+import url from 'url';
+import request from 'superagent';
 
 import {
   MongoDBError,
@@ -14,8 +14,8 @@ import {
 } from 'common-errors';
 
 import { fetchDep } from '../../server/utils/bottle';
-import PortalUser   from '../../collections/portalUser';
-import Company      from '../../collections/company';
+import PortalUser from '../../collections/portalUser';
+import Company from '../../collections/company';
 
 const emailClient = fetchDep(nconf.get('containerName'), 'EmailClient');
 const emailUrl = fetchDep(nconf.get('containerName'), 'M800_MAIL_SERVICE_URL');
@@ -100,7 +100,7 @@ export default class PortalUserManager {
       if (!carrierId) return reject(new ArgumentNullError('carrierId'));
 
       Company.findOne({ carrierId }, (err, company) => {
-        if (err) return reject(new MongoDBError(`Encounter error when finding company by carrierId`, err));
+        if (err) return reject(new MongoDBError('Encounter error when finding company by carrierId', err));
         if (!company) return reject(new NotFoundError(`Cannot find company with carrierId: ${carrierId}`));
 
         resolve(company);
@@ -119,7 +119,7 @@ export default class PortalUserManager {
         .populate('affiliatedCompany', 'carrierId')
         .populate({
           path: 'carrierDomain',
-          match: {domain: {$in: ['m800.maaii.com']}},
+          match: { domain: { $in: ['m800.maaii.com'] } },
           select: 'name',
         })
         .exec((err, users) => {
@@ -304,26 +304,26 @@ export default class PortalUserManager {
    * @param {Object} params
    * @param {Function} cb
    */
-   async updateUser(params) {
-     const userBeforeUpdate = await PortalUser.findOne({ _id: params.userId }).exec();
-     if (!userBeforeUpdate) return Promise.reject(new NotFoundError('Cannot find user when updating user'));
+  async updateUser(params) {
+    const userBeforeUpdate = await PortalUser.findOne({ _id: params.userId }).exec();
+    if (!userBeforeUpdate) return Promise.reject(new NotFoundError('Cannot find user when updating user'));
 
-     const emailChanged = userBeforeUpdate.username !== params.username;
+    const emailChanged = userBeforeUpdate.username !== params.username;
 
-     const toFind = { _id: params.userId };
-     const toModify = { $set: params };
-     const options = { 'new': true };
+    const toFind = { _id: params.userId };
+    const toModify = { $set: params };
+    const options = { 'new': true };
 
-     let user = await PortalUser.findOneAndUpdate(toFind, toModify, options).exec();
+    let user = await PortalUser.findOneAndUpdate(toFind, toModify, options).exec();
 
-     if (emailChanged) {
-       const token = await this.sendCreatePasswordConfirmation(params.username);
-       user = await this.addChangePasswordToken(user, token);
-       user = await this.saveUser(user);
-     }
+    if (emailChanged) {
+      const token = await this.sendCreatePasswordConfirmation(params.username);
+      user = await this.addChangePasswordToken(user, token);
+      user = await this.saveUser(user);
+    }
 
-     return this.formatUserResponse(user);
-   }
+    return this.formatUserResponse(user);
+  }
 
    /**
     * Save existing portal user
@@ -331,16 +331,16 @@ export default class PortalUserManager {
     * @method
     * @param {Object} user
     */
-    saveUser(user) {
-      return new Promise((resolve, reject) => {
-        if (!user) return reject(new NotFoundError('User does not exist when saving user'));
+  saveUser(user) {
+    return new Promise((resolve, reject) => {
+      if (!user) return reject(new NotFoundError('User does not exist when saving user'));
 
-        user.save((err, user) => {
+      user.save((err, user) => {
           if (err) return reject(new MongoDBError('Fail to save user', err));
           resolve(user);
         });
-      });
-    }
+    });
+  }
 
    /**
     * Delete existing portal user
@@ -349,16 +349,16 @@ export default class PortalUserManager {
     * @param {Object} params
     * @param {Function} cb
     */
-    deleteUser(params) {
-      const user = { _id: params.userId };
+  deleteUser(params) {
+    const user = { _id: params.userId };
 
-      return new Promise((resolve, reject) => {
-        PortalUser.findOneAndRemove(user).exec(err => {
+    return new Promise((resolve, reject) => {
+      PortalUser.findOneAndRemove(user).exec(err => {
           if (err) return reject(err);
           resolve();
         });
-      });
-    }
+    });
+  }
 
   /**
    * Verify PortalUser Sign Up Token
