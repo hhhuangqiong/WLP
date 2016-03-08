@@ -11,7 +11,7 @@ var config =  {
   entry: [
     './app/client/index.js'
   ],
-  devtool: 'eval',
+  devtool: 'source-map',
   module: {
     loaders: [
       { test: /\.js$/, exclude: /node_modules/, loaders: ['react-hot', 'babel?cacheDirectory']},
