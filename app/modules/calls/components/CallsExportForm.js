@@ -5,6 +5,8 @@ import classNames from 'classnames';
 import DateTimePicker from '../../../main/components/DateTimePicker';
 import ExportSubmitControls from '../../../main/file-export/components/ExportSubmitControls';
 
+import CALL_TYPE from '../constants/callType';
+
 export default React.createClass({
   propTypes: {
     startDate: PropTypes.string,
@@ -41,12 +43,17 @@ export default React.createClass({
 
   handleToggleOnnet(e) {
     e.preventDefault();
-    this.setState({ netType: this.state.netType !== 'ONNET' ? 'ONNET' : '' });
+    this.setState({ netType: this.state.netType !== CALL_TYPE.ONNET ? CALL_TYPE.ONNET : '' });
   },
 
   handleToggleOffnet(e) {
     e.preventDefault();
-    this.setState({ netType: this.state.netType !== 'OFFNET' ? 'OFFNET' : '' });
+    this.setState({ netType: this.state.netType !== CALL_TYPE.OFFNET ? CALL_TYPE.OFFNET : '' });
+  },
+
+  handleToggleMaaiiIn(e) {
+    e.preventDefault();
+    this.setState({ netType: this.state.netType !== CALL_TYPE.MAAII_IN ? CALL_TYPE.MAAII_IN : '' });
   },
 
   handleDestinationChange(event) {
@@ -118,18 +125,24 @@ export default React.createClass({
           </div>
 
           <div className="large-7 columns">
-            <ul className="button-group round even-2 export-type-buttons">
+            <ul className="button-group round even-3 export-type-buttons">
               <li>
                 <a
-                  className={classNames('button', { active: this.state.netType === 'ONNET' })}
+                  className={classNames('button', { active: this.state.netType === CALL_TYPE.ONNET })}
                   onClick={this.handleToggleOnnet}
                 >Onnet</a>
               </li>
               <li>
                 <a
-                  className={classNames('button', { active: this.state.netType === 'OFFNET' })}
+                  className={classNames('button', { active: this.state.netType === CALL_TYPE.OFFNET })}
                   onClick={this.handleToggleOffnet}
                 >Offnet</a>
+              </li>
+              <li>
+                <a
+                  className={classNames('button', { active: this.state.netType === CALL_TYPE.MAAII_IN })}
+                  onClick={this.handleToggleMaaiiIn}
+                >Maaii-in</a>
               </li>
             </ul>
           </div>
