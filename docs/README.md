@@ -1,49 +1,11 @@
 # M800 White Label Portal
 
-## Branch
+## Change Log
 
-```
-# To checkout based on the remote branch
-git checkout -t origin/<branch> -b <topic-branch-name>
-# e.g.,
-git checkout -t origin/bolt -b my-task
+### 1.7.1
+- Gitbook first launch
 
-# To update *existing* topic branch to track new remote branch
-git branch -u origin/<branch>
-# e.g.,
-git branch -u origin/bolt
 
-# To push for code review
-git push origin @:refs/for/<branch>
-# e.g.,
-git push origin @:refs/for/bolt
-
-# To rebase after fetch, `git fetch`
-git rebase -p origin/<branch>
-# e.g.,
-git rebase -p origin/bolt
-```
-
-## Deployment
-
-Tools:
-
-- [PM2](https://github.com/Unitech/pm2)
-
-```
-npm i -g pm2
-
-pm2 start bin/www -i 0
-
-pm2 stop all
-
-pm2 logs
-
-pm2 status
-
-# for 'bind EADDRINUSE'
-pm2 kill
-```
 
 ## Debug
 

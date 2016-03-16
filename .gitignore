@@ -75,3 +75,6 @@ docker/envfile
 # Browse test related results
 test/browser/reports
 test/browser/screenshots
+
+# gitbook
+_book
