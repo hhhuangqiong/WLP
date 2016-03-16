@@ -18,10 +18,12 @@ function filteredMessage(err) {
 export default function errorHandler(err, req, res) {
   logger.error(err.stack);
 
-  res.json({ [ERROR_LABEL]: {
-    name: err.name,
-    message: filteredMessage(err),
-    moduleId: err.moduleId,
-    context: JSON.stringify(err.inner_error, INNER_ERROR_FIELDS),
-  } });
+  res
+    .status(err.status || 500)
+    .json({ [ERROR_LABEL]: {
+      name: err.name,
+      message: filteredMessage(err),
+      moduleId: err.moduleId,
+      context: JSON.stringify(err.inner_error, INNER_ERROR_FIELDS),
+    } });
 }

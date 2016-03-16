@@ -1,11 +1,14 @@
+import moment from 'moment';
 import logger from 'winston';
 import Q from 'q';
 import request from 'superagent';
 import util from 'util';
 import _ from 'lodash';
 import qs from 'qs';
+import { ConnectionError } from 'common-errors';
+
+import calculateBufferedTime from '../../../utils/calculateBufferedTime';
 import { constructOpts, swapDate, handleError } from '../helper';
-import * as requestHelper from '../utils/requestHelper';
 import equals from 'shallow-equals';
 
 const REQUEST_TYPE = {
@@ -14,7 +17,7 @@ const REQUEST_TYPE = {
   CALLEES: 'CALLEES',
 };
 
-export default class UserStatsRequest {
+export default class CallStatsRequest {
   constructor(baseUrl, timeout) {
     const opts = {
       type: 'dataProviderApi',
@@ -39,15 +42,52 @@ export default class UserStatsRequest {
     this.opts = constructOpts(opts);
   }
 
+  normalizeBufferDateRange(from, to) {
+    const momentNow = moment();
+
+    const dayDiffs = Math.abs(moment(from, 'x').diff(moment(to, 'x'), 'days'));
+
+    // Condition: daily fetch
+    if (dayDiffs > 1) {
+      return calculateBufferedTime(
+        'days',
+        from,
+        to,
+        momentNow,
+      );
+    }
+
+    // Condition: hourly fetch
+    return calculateBufferedTime(
+      'hours',
+      from,
+      to,
+      momentNow,
+    );
+  }
+
+
   normalizeData(type, params, cb) {
     logger.debug('normalizeData', params);
+
     Q
       .nfcall(swapDate, params)
       .then(data => {
         const query = {};
 
-        query.from = params.from;
-        query.to = params.to;
+        logger.debug(`Before normalizing date range by buffer:
+from: ${moment(params.from, 'x').format('LLL')}, to: ${moment(params.to, 'x').format('LLL')}`);
+
+        const {
+          from,
+          to,
+        } = this.normalizeBufferDateRange(params.from, params.to);
+
+        logger.debug(`After normalizing date range by buffer:
+from: ${moment(from, 'x').format('LLL')}, to: ${moment(to, 'x').format('LLL')}`);
+
+        query.from = from;
+        query.to = to;
 
         if (data.caller_carrier) query.caller_carrier = data.caller_carrier;
         if (data.timescale) query.timescale = data.timescale;
@@ -105,21 +145,14 @@ export default class UserStatsRequest {
   getCallStats(params, cb) {
     Q
       .ninvoke(this, 'normalizeData', REQUEST_TYPE.CALLS, params)
-      .then(query => Q.ninvoke(requestHelper, 'splitQuery', query))
-      .then(queries => Q.allSettled(
-        _.map(queries, (query, index) => Q.ninvoke(
-          this,
-          'sendRequest',
-          this.opts.endpoints.CALLS,
-          query,
-          index
-        ))
-      ))
+      .then(query => Q.allSettled([
+        Q.ninvoke(this, 'sendRequest', this.opts.endpoints.CALLS, query),
+      ]))
       .then(results => {
         const error = _.find(results, result => result.state !== 'fulfilled');
 
         if (error) {
-          throw new Error('error occurred when querying data');
+          throw new ConnectionError(error.reason.message || error.message, error);
         }
 
         let output = [];
@@ -195,19 +228,14 @@ export default class UserStatsRequest {
   getCallerStats(params, cb) {
     Q
       .ninvoke(this, 'normalizeData', REQUEST_TYPE.CALLERS, params)
-      .then(query => Q.ninvoke(requestHelper, 'splitQuery', query))
-      .then(queries => {
-        return Q.allSettled(
-          _.map(queries, (query, index) => {
-            return Q.ninvoke(this, 'sendRequest', this.opts.endpoints.CALLERS, query, index);
-          })
-        );
-      })
+      .then(query => Q.allSettled([
+        Q.ninvoke(this, 'sendRequest', this.opts.endpoints.CALLERS, query),
+      ]))
       .then(results => {
         const error = _.find(results, result => result.state !== 'fulfilled');
 
         if (error) {
-          throw new Error('error occurred when querying data');
+          throw new ConnectionError(error.reason.message || error.message, error);
         }
 
         // get the first result as sample for the segment details
@@ -250,19 +278,14 @@ export default class UserStatsRequest {
   getCalleeStats(params, cb) {
     Q
       .ninvoke(this, 'normalizeData', REQUEST_TYPE.CALLEES, params)
-      .then(query => Q.ninvoke(requestHelper, 'splitQuery', query))
-      .then(queries => {
-        return Q.allSettled(
-          _.map(queries, (query, index) => {
-            return Q.ninvoke(this, 'sendRequest', this.opts.endpoints.CALLEES, query, index);
-          })
-        );
-      })
+      .then(query => Q.allSettled([
+        Q.ninvoke(this, 'sendRequest', this.opts.endpoints.CALLEES, query),
+      ]))
       .then(results => {
         const error = _.find(results, result => result.state !== 'fulfilled');
 
         if (error) {
-          throw new Error('error occurred when querying data');
+          throw new ConnectionError(error.reason.message || error.message, error);
         }
 
         // get the first result as sample for the segment details

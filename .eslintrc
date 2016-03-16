@@ -4,6 +4,9 @@
   "globals": {
     "If": true,
     "Else": true,
-    "$": true,
+    "$": true
+  },
+  "env": {
+    "mocha": true
   }
 }

@@ -36,7 +36,7 @@ const STATS_TYPE = {
 
 import CALL_TYPE from '../constants/callType';
 
-const TIME_FRAMES = ['24 hours', '7 days'];
+const TIME_FRAMES = ['24 hours', '7 days', '30 days', '60 days', '90 days'];
 
 // this should be application-wide variable
 const DECIMAL_PLACE = 1;

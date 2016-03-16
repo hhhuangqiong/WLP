@@ -6,6 +6,7 @@ import moment from 'moment';
 import { fetchDep } from '../utils/bottle';
 import { countries } from 'country-data';
 import { makeCacheKey } from '../utils/apiCache';
+import { ValidationError, data as dataError } from 'common-errors';
 
 const endUserRequest = fetchDep(nconf.get('containerName'), 'EndUserRequest');
 const walletRequest = fetchDep(nconf.get('containerName'), 'WalletRequest');
@@ -18,6 +19,7 @@ const callStatsRequest = fetchDep(nconf.get('containerName'), 'CallStatsRequest'
 const userStatsRequest = fetchDep(nconf.get('containerName'), 'UserStatsRequest');
 const redisClient = fetchDep(nconf.get('containerName'), 'RedisClient');
 
+import errorHandler from '../middlewares/errorHandler';
 import SmsRequest from '../../lib/requests/dataProviders/SMS';
 import PortalUser from '../../collections/portalUser';
 import Company from '../../collections/company';
@@ -1028,7 +1030,7 @@ function getEndUsersStats(req, res) {
   }
 }
 
-function getCallUserStatsMonthly(req, res) {
+function getCallUserStatsMonthly(req, res, next) {
   req.checkParams('carrierId').notEmpty();
   req.checkQuery('fromTime').notEmpty();
   req.checkQuery('toTime').notEmpty();
@@ -1036,11 +1038,7 @@ function getCallUserStatsMonthly(req, res) {
   const error = req.validationErrors();
 
   if (error) {
-    res.status(400).json({
-      error: {
-        message: prepareValidationMessage(error),
-      },
-    });
+    next(new ValidationError(prepareValidationMessage(error)));
     return;
   }
 
@@ -1215,7 +1213,7 @@ function getCallUserStatsMonthly(req, res) {
     .done();
 }
 
-function getCallUserStatsTotal(req, res) {
+function getCallUserStatsTotal(req, res, next) {
   req.checkParams('carrierId').notEmpty();
   req.checkQuery('fromTime').notEmpty();
   req.checkQuery('toTime').notEmpty();
@@ -1223,11 +1221,8 @@ function getCallUserStatsTotal(req, res) {
   const error = req.validationErrors();
 
   if (error) {
-    return res.status(400).json({
-      error: {
-        message: prepareValidationMessage(error),
-      },
-    });
+    next(new ValidationError(prepareValidationMessage(error)));
+    return;
   }
 
   const { carrierId } = req.params;
@@ -1279,9 +1274,13 @@ function getCallUserStatsTotal(req, res) {
       }, []);
 
       if (!_.isEmpty(errors)) {
-        res.status(500).json({
-          error: errors,
-        });
+        // always return the first error
+        res
+          .status(errors[0].status || 500)
+          .json({ error: {
+            name: errors[0].name,
+            message: errors[0].message,
+          } });
 
         return;
       }
@@ -1333,15 +1332,7 @@ function getCallUserStatsTotal(req, res) {
       });
     })
     .catch(err => {
-      const { code, message, timeout, status } = err;
-
-      res.status(status || 500).json({
-        error: {
-          code,
-          message,
-          timeout,
-        },
-      });
+      next(new dataError.TransactionError(err.message, err));
     });
 }
 
