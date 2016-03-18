@@ -535,11 +535,11 @@ const EndUsersOverview = React.createClass({
   },
 
   _getLineChartData() {
-    const tooltipFormatter = (x, y) => {
+    function tooltipFormatter (label, x, y) {
       return `
               <div style="text-align: center">
                 <div>${moment(x).local().format(TOOLTIP_TIME_FORMAT)}</div>
-                <div>Success Attempts: ${y}</div>
+                <div>${label}: ${y}</div>
               </div>
             `;
     };
@@ -549,13 +549,13 @@ const EndUsersOverview = React.createClass({
         name: STATS_TYPE.REGISTERED_USER,
         data: reduce(this.state.lastXDaysRegisteredUser, (result, stat) => { result.push(Math.round(stat.v)); return result; }, []),
         color: '#FB3940',
-        tooltipFormatter: tooltipFormatter,
+        tooltipFormatter: _.partial(tooltipFormatter, 'New Registered Users'),
       },
       {
         name: STATS_TYPE.ACTIVE_USER,
         data: reduce(this.state.lastXDaysActiveUser, (result, stat) => { result.push(Math.round(stat.v)); return result; }, []),
         color: '#21C031',
-        tooltipFormatter: tooltipFormatter,
+        tooltipFormatter: _.partial(tooltipFormatter, 'Active Users'),
       },
     ] : null;
   },
