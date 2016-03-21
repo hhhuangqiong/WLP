@@ -54,6 +54,12 @@ const CallsOverviewStore = createStore({
   },
 
   handleCallsStatsTotalFailure(payload) {
+    this.totalAttemptStats = null;
+    this.successAttemptStats = null;
+    this.successRateStats = null;
+    this.totalDurationStats = null;
+    this.averageDurationStats = null;
+
     this.totalStatsError = payload;
     this.emitChange();
   },

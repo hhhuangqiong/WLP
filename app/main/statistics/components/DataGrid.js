@@ -40,11 +40,13 @@ class DataCell extends Component {
   }
 
   _localiseData(data) {
-    if (this.props.isLoading) {
+    const { isLoading } = this.props;
+
+    if (isLoading || data === null) {
       return DATA_FETCHING_LABEL;
     }
 
-    if (!data || isNaN(data) || data === 'Infinity') {
+    if (isNaN(data) || data === 'Infinity') {
       return EMPTY_DATA_LABEL;
     }
 
@@ -107,8 +109,12 @@ DataCell.propTypes = {
 };
 
 DataCell.defaultProps = {
-  formatter: (data) => {
-    if (!data || isNaN(data) || data === 'Infinity') {
+  formatter: data => {
+    if (data === null) {
+      return DATA_FETCHING_LABEL;
+    }
+
+    if (isNaN(data) || data === 'Infinity') {
       return EMPTY_DATA_LABEL;
     }
 
