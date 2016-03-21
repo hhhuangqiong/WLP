@@ -166,7 +166,7 @@ const ImTable = React.createClass({
               <div>
                 <CountryFlag className="left" code={u.destination} />
                 <div className="recipient_info">
-                  <span className="recipient">{u.recipient}</span>
+                  <span className="recipient dark">{u.recipient}</span>
                   <br />
                 <span>{getCountryName(u.destination)}</span>
                 </div>
