@@ -42,6 +42,8 @@ const PLATFORM_NAME = {
   ios: 'IOS',
   android: 'Android',
   phone: 'Windows Phone',
+  // eslint-disable-next-line
+  'windows.phone': 'Windows Phone',
 };
 
 const STATS_TYPE = {
