@@ -457,11 +457,8 @@ const EndUsersOverview = React.createClass({
     this.setState({
       selectedMonth,
       selectedYear,
-      thisMonthRegisteredUser: null,
-      lastMonthRegisteredUser: null,
-      thisMonthActiveUser: null,
-      lastMonthActiveUser: null,
     });
+
     this._getMonthlyStats(selectedMonth, selectedYear);
   },
 
