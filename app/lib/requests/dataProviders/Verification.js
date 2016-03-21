@@ -39,6 +39,10 @@ export default class VerificationRequest {
    * @returns {String} The modified phone number
    */
   normalizePhoneNumberForVerificationSolr(phoneNumber) {
+    if (!phoneNumber) {
+      return '';
+    }
+    
     return phoneNumber.replace('+', '');
   }
 
@@ -103,7 +107,9 @@ export default class VerificationRequest {
         paramsAfterSwappedDate.type = this.convertVerificationTypes(paramsAfterSwappedDate.method);
         delete paramsAfterSwappedDate.method;
 
-        paramsAfterSwappedDate.phone_number = this.normalizePhoneNumberForVerificationSolr(paramsAfterSwappedDate.phone_number);
+        if (paramsAfterSwappedDate.phone_number) {
+          paramsAfterSwappedDate.phone_number = this.normalizePhoneNumberForVerificationSolr(paramsAfterSwappedDate.phone_number);
+        }
 
         return formatDateString(paramsAfterSwappedDate, format);
       })
