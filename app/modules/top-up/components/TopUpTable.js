@@ -1,4 +1,4 @@
-import { first } from 'lodash';
+import { first, isEmpty } from 'lodash';
 import moment from 'moment';
 import classNames from 'classnames';
 import React, { PropTypes } from 'react';
@@ -142,7 +142,7 @@ ${(!currency.code ? '' : currency.code)}`;
           </tr>
         </thead>
         <tbody>
-          {_.isEmpty(rows) ? this.renderEmptyRow() : rows}
+          {isEmpty(rows) ? this.renderEmptyRow() : rows}
         </tbody>
         <Pagination
           colSpan={TABLE_TITLES.length + 1}
