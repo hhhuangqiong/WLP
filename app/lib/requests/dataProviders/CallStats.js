@@ -7,7 +7,6 @@ import _ from 'lodash';
 import qs from 'qs';
 import { ConnectionError } from 'common-errors';
 
-import calculateBufferedTime from '../../../utils/calculateBufferedTime';
 import { constructOpts, swapDate, handleError } from '../helper';
 import equals from 'shallow-equals';
 
@@ -42,31 +41,6 @@ export default class CallStatsRequest {
     this.opts = constructOpts(opts);
   }
 
-  normalizeBufferDateRange(from, to) {
-    const momentNow = moment();
-
-    const dayDiffs = Math.abs(moment(from, 'x').diff(moment(to, 'x'), 'days'));
-
-    // Condition: daily fetch
-    if (dayDiffs > 1) {
-      return calculateBufferedTime(
-        'days',
-        from,
-        to,
-        momentNow,
-      );
-    }
-
-    // Condition: hourly fetch
-    return calculateBufferedTime(
-      'hours',
-      from,
-      to,
-      momentNow,
-    );
-  }
-
-
   normalizeData(type, params, cb) {
     logger.debug('normalizeData', params);
 
@@ -75,19 +49,8 @@ export default class CallStatsRequest {
       .then(data => {
         const query = {};
 
-        logger.debug(`Before normalizing date range by buffer:
-from: ${moment(params.from, 'x').format('LLL')}, to: ${moment(params.to, 'x').format('LLL')}`);
-
-        const {
-          from,
-          to,
-        } = this.normalizeBufferDateRange(params.from, params.to);
-
-        logger.debug(`After normalizing date range by buffer:
-from: ${moment(from, 'x').format('LLL')}, to: ${moment(to, 'x').format('LLL')}`);
-
-        query.from = from;
-        query.to = to;
+        query.from = params.from;
+        query.to = params.to;
 
         if (data.caller_carrier) query.caller_carrier = data.caller_carrier;
         if (data.timescale) query.timescale = data.timescale;
