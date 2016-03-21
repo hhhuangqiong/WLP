@@ -14,9 +14,9 @@ const IM_DATETIME_FORMAT = 'MMMM DD YYYY, hh:mm:ss a';
 const LABEL_FOR_NULL = 'N/A';
 
 const TABLE_TITLES = [
-  'Date &amp; Time',
+  'Date & Time',
   'Type / Filesize',
-  'Mobile &amp; Destination',
+  'Mobile & Destination',
   '',
   '',
 ];
