@@ -13,8 +13,6 @@ ENV NODE_ENV=production
 # Rebuilding necessary node modules in iojs runtime
 RUN npm rebuild node-sass bcrypt
 
-RUN ["npm", "run", "dist"]
-
 EXPOSE 3000 3100
 
 COPY docker/hacks/env.js  /src/node_modules/nconf/lib/nconf/stores/
