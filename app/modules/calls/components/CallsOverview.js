@@ -23,6 +23,8 @@ import fetchCallsStatsMonthly from '../actions/fetchCallsStatsMonthly';
 import fetchCallsStatsTotal from '../actions/fetchCallsStatsTotal';
 import clearCallsStats from '../actions/clearCallsStats';
 
+import { normalizeDurationInMS } from '../../../utils/StringFormatter';
+
 const LAST_UPDATE_TIME_FORMAT = 'MMM DD, YYYY H:mm';
 const defaultQueryMonth = moment().subtract(1, 'month');
 
@@ -40,16 +42,6 @@ const TIME_FRAMES = ['24 hours', '7 days', '30 days', '60 days', '90 days'];
 
 // this should be application-wide variable
 const DECIMAL_PLACE = 1;
-const PRECISION = 3;
-
-// TODO: externalise this as a common util
-const decimalPlaceFormatter = function (data) {
-  if (data > 10) {
-    return data.toFixed(DECIMAL_PLACE);
-  }
-
-  return data.toPrecision(PRECISION);
-};
 
 const CallsOverview = React.createClass({
   contextTypes: {
@@ -170,7 +162,7 @@ const CallsOverview = React.createClass({
           pointFormatter: function pointFormatter() {
             const color = this.color;
             const seriesName = this.series.name;
-            const value = decimalPlaceFormatter(this.y);
+            const value = normalizeDurationInMS(this.y);
             const unit = this.series.tooltipOptions.valueSuffix;
             return `<span style="color:${color}">\u25CF</span> ${seriesName}: <b>${value}${unit}</b><br/>`;
           },
@@ -232,7 +224,7 @@ const CallsOverview = React.createClass({
           pointFormatter: function pointFormatter() {
             const color = this.color;
             const seriesName = this.series.name;
-            const value = decimalPlaceFormatter(this.y);
+            const value = normalizeDurationInMS(this.y);
             const unit = this.series.tooltipOptions.valueSuffix;
             return `<span style="color:${color}">\u25CF</span> ${seriesName}: <b>${value}${unit}</b><br/>`;
           },
@@ -502,21 +494,21 @@ const CallsOverview = React.createClass({
                       <DataGrid.Cell
                         title="ASR (%)"
                         data={this._getAverageSuccessfulRate()}
-                        formatter={decimalPlaceFormatter}
+                        formatter={normalizeDurationInMS}
                         unit="%"
                         isLoading={this.isTotalStatsLoading()}
                       />
                       <DataGrid.Cell
                         title="Total Call Duration"
                         data={this._getTotalCallDuration()}
-                        formatter={decimalPlaceFormatter}
+                        formatter={normalizeDurationInMS}
                         unit="minutes"
                         isLoading={this.isTotalStatsLoading()}
                       />
                       <DataGrid.Cell
                         title="Average Call Duration"
                         data={this._getAverageCallDuration()}
-                        formatter={decimalPlaceFormatter}
+                        formatter={normalizeDurationInMS}
                         unit="seconds"
                         isLoading={this.isTotalStatsLoading()}
                       />

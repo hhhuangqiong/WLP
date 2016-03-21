@@ -9,7 +9,30 @@ const MINUTE_LABEL = 'm';
 const SECOND_LABEL = 's';
 const NO_DURATIONS = '0s';
 
+const DECIMAL_PLACE = 1;
+const PRECISION = 3;
+
 export default {
+  /**
+   * @method parseDecimalData
+   * to give data accuracy to duration data in millisecond.
+   * when data > 10 milliseconds, it will be in significant figures,
+   * otherwise, it will give data in decimal places
+   *
+   * @param {integer} data - data in millisecond
+   * return {integer}
+   */
+  normalizeDurationInMS(data) {
+    // if data > 10ms (0.01s)
+    // use decimal place
+    if (data > 10) {
+      return data.toFixed(DECIMAL_PLACE);
+    }
+
+    // otherwise, use significant figures
+    return data.toPrecision(PRECISION);
+  },
+
   /**
    * @method parseDuration
    * return millisecond to human readable time format

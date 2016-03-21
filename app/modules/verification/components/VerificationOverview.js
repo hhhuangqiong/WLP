@@ -21,7 +21,7 @@ import fetchVerificationOverview from '../actions/fetchVerificationOverview';
 import resetVerificationData from '../actions/resetVerificationData';
 import VerificationOverviewStore from '../stores/VerificationOverviewStore';
 import ApplicationStore from '../../../main/stores/ApplicationStore';
-import { timeFromNow } from '../../../utils/StringFormatter';
+import { normalizeDurationInMS, timeFromNow } from '../../../utils/StringFormatter';
 import MAP_DATA from '../constants/mapData.js';
 import changeTimeRange from '../actions/changeTimeRange';
 
@@ -433,7 +433,7 @@ export default React.createClass({
               <div style="text-align: center">
                 <div>${moment(x).local().format(TOOLTIP_TIME_FORMAT)}</div>
                 <div>${this.state.successAttempts[xIndex]}/${this.state.totalAttempts[xIndex]} success</div>
-                <div>Success Rate: ${y}%</div>
+                <div>Success Rate: ${normalizeDurationInMS(y)}%</div>
               </div>
             `;
           },
