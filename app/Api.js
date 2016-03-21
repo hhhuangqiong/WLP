@@ -280,7 +280,7 @@ Api.prototype.getVerifications = function getVerifications(params, cb) {
 };
 
 Api.prototype.getVerificationStatsByStatus = function getVerificationStatsByStatus(params, cb) {
-  return superagent
+  superagent
     .get(`${this._getHost()}/api/carriers/${params.carrierId}/verificationStats`)
     .accept('json')
     .set('Authorization', this._getToken())
@@ -289,7 +289,7 @@ Api.prototype.getVerificationStatsByStatus = function getVerificationStatsByStat
 };
 
 Api.prototype.getVerificationStatsByPlatform = function getVerificationStatsByPlatform(params, cb) {
-  return superagent
+  superagent
     .get(`${this._getHost()}/api/carriers/${params.carrierId}/verificationStats`)
     .accept('json')
     .set('Authorization', this._getToken())
@@ -298,7 +298,7 @@ Api.prototype.getVerificationStatsByPlatform = function getVerificationStatsByPl
 };
 
 Api.prototype.getVerificationStatsByType = function getVerificationStatsByType(params, cb) {
-  return superagent
+  superagent
     .get(`${this._getHost()}/api/carriers/${params.carrierId}/verificationStats`)
     .accept('json')
     .set('Authorization', this._getToken())
@@ -307,7 +307,7 @@ Api.prototype.getVerificationStatsByType = function getVerificationStatsByType(p
 };
 
 Api.prototype.getVerificationStatsByCountry = function getVerificationStatsByCountry(params, cb) {
-  return superagent
+  superagent
     .get(`${this._getHost()}/api/carriers/${params.carrierId}/verificationStats`)
     .accept('json')
     .set('Authorization', this._getToken())
