@@ -7,6 +7,7 @@ const EndUsersOverviewStore = createStore({
   handlers: {
     FETCH_END_USERS_STATS_TOTAL_SUCCESS: 'handleEndUserStatsTotal',
     FETCH_END_USERS_STATS_TOTAL_FAILURE: 'handleEndUserStatsTotalFailure',
+    FETCH_END_USERS_STATS_MONTHLY_START: 'resetEndUserStatsMonthly',
     FETCH_END_USERS_STATS_MONTHLY_SUCCESS: 'handleEndUserStatsMonthly',
     FETCH_END_USERS_STATS_MONTHLY_FAILURE: 'handleEndUserStatsMonthlyFailure',
     FETCH_END_USERS_DEVICE_STATS_SUCCESS: 'handleDeviceStats',
@@ -14,7 +15,6 @@ const EndUsersOverviewStore = createStore({
 
     // For Cancellable Request
     FETCH_END_USERS_STATS_TOTAL_START: 'appendPendingRequest',
-    FETCH_END_USERS_STATS_MONTHLY_START: 'appendPendingRequest',
     FETCH_END_USERS_DEVICE_STATS_START: 'appendPendingRequest',
   },
 
@@ -53,6 +53,16 @@ const EndUsersOverviewStore = createStore({
 
   handleEndUserStatsMonthlyFailure(payload) {
     this.monthlyStatsError = payload;
+    this.emitChange();
+  },
+
+  resetEndUserStatsMonthly(request, key) {
+    this.thisMonthRegisteredUser = null;
+    this.lastMonthRegisteredUser = null;
+    this.thisMonthActiveUser = null;
+    this.lastMonthActiveUser = null;
+
+    this.appendPendingRequest(request, key);
     this.emitChange();
   },
 
