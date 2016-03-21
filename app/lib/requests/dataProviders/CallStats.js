@@ -171,10 +171,17 @@ from: ${moment(from, 'x').format('LLL')}, to: ${moment(to, 'x').format('LLL')}`)
           // e.g. breakdown success should return two array of results
           // which has the value of 'false' and 'true' for key of 'success'
           // when it returns no data, the value of key of 'success' will become 'all'
+          // also, when there is empty data set for a segment,
+          // the whole segment will not be returned
 
-          // so, you will have to get the max number of segment and
-          // make it as a sample
-          let resultSample = _.max(results, result => (_.get(result, 'value.results')).length);
+          // so, you will have to get the segment which have value greater than zero
+          // and make it as a sample
+          let resultSample = _.find(results, (result) => {
+            const _result = _.get(result, 'value.results');
+            return (_.find(_result, ({ segment, data }) => {
+              return _.find(data, ({ t, v }) => v > 0);
+            }));
+          });
 
           resultSample = _.get(resultSample, 'value.results');
 

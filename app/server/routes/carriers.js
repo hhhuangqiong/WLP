@@ -1287,13 +1287,29 @@ function getCallUserStatsTotal(req, res, next) {
 
       callAttemptStats = _.get(callAttemptStats, 'value');
 
-      const successAttemptStats = _.get(_.find(callAttemptStats, stat => (
+      let successAttemptStats = _.get(_.find(callAttemptStats, stat => (
         stat.segment.success === 'true'
       )), 'data');
 
-      const failureAttemptStats = _.get(_.find(callAttemptStats, stat => (
+      let failureAttemptStats = _.get(_.find(callAttemptStats, stat => (
         stat.segment.success === 'false'
       )), 'data');
+
+      function makeEmptyStats(reference) {
+        return _.reduce(reference, (total, stat) => {
+          total.push({
+            t: stat.t,
+            v: 0
+          });
+          return total;
+        }, []);
+      }
+
+      if (_.isUndefined(successAttemptStats) && !_.isUndefined(failureAttemptStats)) {
+        successAttemptStats = makeEmptyStats(failureAttemptStats);
+      } else if (!_.isUndefined(successAttemptStats) && _.isUndefined(failureAttemptStats)) {
+        failureAttemptStats = makeEmptyStats(successAttemptStats);
+      }
 
       const totalAttemptStats = _.reduce(failureAttemptStats, (total, stat) => {
         total.push({
