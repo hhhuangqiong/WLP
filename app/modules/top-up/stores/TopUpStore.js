@@ -24,10 +24,6 @@ const TopUpStore = createStore({
     this.emitChange();
   },
 
-  handleClearTopUp: function() {
-    this.initialize();
-  },
-
   handleLoadTopUp(payload) {
     if (payload) {
       this.histories = this.histories.concat(payload.history);

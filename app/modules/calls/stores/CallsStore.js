@@ -110,7 +110,6 @@ const CallsStore = createStore({
   handleClearCallsReport() {
     // For Cancellable Request
     this.abortPendingRequests();
-    //
 
     this.initialize();
     this.emitChange();

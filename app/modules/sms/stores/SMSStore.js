@@ -27,10 +27,6 @@ const SMSStore = createStore({
     this.emitChange();
   },
 
-  handleClearSMS: function() {
-    this.initialize();
-  },
-
   handleLoadSMS(payload) {
     if (payload) {
       this.records = this.records.concat(payload.content);
