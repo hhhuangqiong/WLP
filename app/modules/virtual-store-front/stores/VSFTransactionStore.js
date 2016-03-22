@@ -35,11 +35,6 @@ const VSFTransactionStore = createStore({
     this.emitChange();
   },
 
-  handleClearTransaction() {
-    this.initialize();
-    this.emitChange();
-  },
-
   handleTransactionsFetch(payload) {
     this.transactions = this.transactions.concat(payload.transactionRecords);
     this.hasNextPage = payload.hasNextPage;
