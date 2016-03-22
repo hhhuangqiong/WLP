@@ -8,8 +8,6 @@ const TopUpStore = createStore({
     FETCH_TOP_UP_START: 'handleLoadTopUpFetching',
     FETCH_TOP_UP_SUCCESS: 'handleLoadTopUp',
     CLEAR_TOP_UP: 'handleClearTopUp',
-
-    FETCH_TOP_UP_START: 'appendPendingRequest',
   },
 
   initialize() {
@@ -20,9 +18,9 @@ const TopUpStore = createStore({
     this.pendingRequests = {};
   },
 
-
-  handleLoadTopUpFetching() {
+  handleLoadTopUpFetching(request, key) {
     this.isLoadingMore = true;
+    this.appendPendingRequest(request, key);
     this.emitChange();
   },
 

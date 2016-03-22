@@ -10,8 +10,6 @@ const VSFTransactionStore = createStore({
     FETCH_VSF_START: 'handleTransactionsFetching',
     FETCH_VSF_WIDGETS_SUCCESS: 'handleWidgetsFetch',
     CLEAR_VSF: 'handleClearTransaction',
-
-    FETCH_VSF_START: 'appendPendingRequest',
   },
 
   initialize() {
@@ -31,9 +29,9 @@ const VSFTransactionStore = createStore({
     this.pendingRequests = {};
   },
 
-
-  handleTransactionsFetching() {
+  handleTransactionsFetching(request, key) {
     this.isLoadingMore = true;
+    this.appendPendingRequest(request, key);
     this.emitChange();
   },
 

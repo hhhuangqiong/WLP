@@ -11,7 +11,6 @@ const CallsStore = createStore({
     CLEAR_CALLS_REPORT: 'handleClearCallsReport',
 
     // For Cancellable Request
-    FETCH_MORE_CALLS_START: 'appendPendingRequest',
     FETCH_CALLS_START: 'appendPendingRequest',
     FETCH_MORE_CALLS_START: 'handleLoadMoreCallsStart',
   },
@@ -31,8 +30,9 @@ const CallsStore = createStore({
     this.isLoadingMore = false;
   },
 
-  handleLoadMoreCallsStart() {
+  handleLoadMoreCallsStart(request, key) {
     this.isLoadingMore = true;
+    this.appendPendingRequest(request, key);
     this.emitChange();
   },
 

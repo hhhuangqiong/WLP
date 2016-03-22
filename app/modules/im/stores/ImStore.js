@@ -10,9 +10,8 @@ const ImStore = createStore({
     CLEAR_IM_STORE: 'handleClearStore',
 
     FETCH_IM_START: 'appendPendingRequest',
-    FETCH_MORE_IM_START: 'appendPendingRequest',
-    FETCH_MORE_IM_SUCCESS:    'handleLoadMoreIm',
     FETCH_MORE_IM_START: 'handleLoadMoreImFetching',
+    FETCH_MORE_IM_SUCCESS: 'handleLoadMoreIm',
   },
 
   initialize() {
@@ -28,8 +27,9 @@ const ImStore = createStore({
     this.isLoadingMore = false;
   },
 
-  handleLoadMoreImFetching() {
+  handleLoadMoreImFetching(request, key) {
     this.isLoadingMore = true;
+    this.appendPendingRequest(request, key);
     this.emitChange();
   },
 

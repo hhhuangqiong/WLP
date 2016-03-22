@@ -9,8 +9,6 @@ const SMSStore = createStore({
     FETCH_SMS_SUCCESS: 'handleLoadSMS',
     CLEAR_SMS: 'handleClearSMS',
     LOAD_SMS_WIDGETS_SUCCESS: 'handleLoadSMSWidgets',
-
-    FETCH_SMS_START: 'appendPendingRequest',
   },
 
   initialize() {
@@ -23,8 +21,9 @@ const SMSStore = createStore({
   },
 
 
-  handleLoadSMSFetching() {
+  handleLoadSMSFetching(request, key) {
     this.isLoadingMore = true;
+    this.appendPendingRequest(request, key);
     this.emitChange();
   },
 
