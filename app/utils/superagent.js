@@ -44,10 +44,12 @@ export function genericHandler(debugFn, cb) {
   return (err, res) => {
     let error;
 
-    if (err) {
+    if (err && !res) {
       debugFn('`err` happened', err);
       // default generic error message, not to be confused with 'Interal Server Error'
       error = new Error('Internal system error', err.stack);
+      cb(error);
+      return;
     }
 
     if (!res.ok || (res.body && res.body.error)) {
@@ -57,6 +59,6 @@ export function genericHandler(debugFn, cb) {
       };
     }
 
-    cb(error, res.body);
+    cb(error, res && res.body);
   };
 }
