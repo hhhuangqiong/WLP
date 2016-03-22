@@ -147,17 +147,6 @@ const VerificationDetails = React.createClass({
     };
   },
 
-  handleQueryChange: function(newQuery) {
-    let routeName = _.last(this.context.router.getCurrentRoutes()).name;
-    let params = this.context.router.getCurrentParams();
-    let query = _.merge(this.context.router.getCurrentQuery(), this.getQueryFromState(), newQuery);
-    let changedQuery = _.omit(query, function(value) {
-      return !value;
-    });
-
-    this.context.router.transitionTo(routeName, params, changedQuery);
-  },
-
   componentDidMount: function() {
     // auto select the default appId from the list
     // TODO: optimize this UX with server side rendering
@@ -196,32 +185,6 @@ const VerificationDetails = React.createClass({
       number: this.state.number,
       os: this.state.os,
       method: this.state.method,
-    });
-  },
-
-  /**
-   * Fetch the verification events by advancing the page number.
-   *
-   * @method
-   */
-  fetchMore: function() {
-    let { identity } = this.context.router.getCurrentParams();
-    let nextPage = this.state.page + 1;
-
-    this.setState({
-      page: nextPage,
-    });
-
-    this.context.executeAction(fetchMoreVerifications, {
-      carrierId: identity,
-      appId: this.state.appId,
-      page: nextPage,
-      pageSize: this.state.pageSize,
-      startDate: this.state.startDate,
-      endDate: this.state.endDate,
-      number: this.state.number,
-      os: this.state.os,
-      method: this.state.method
     });
   },
 

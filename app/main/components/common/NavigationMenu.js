@@ -39,10 +39,10 @@ const Navigation = React.createClass({
         .context
         .getStore(AuthStore)
         .getDisplayName(),
-	  isAuthenticated: this
+      isAuthenticated: this
         .context
-		.getStore(AuthStore)
-		.isAuthenticated(),
+        .getStore(AuthStore)
+        .isAuthenticated(),
     };
   },
 
@@ -119,16 +119,7 @@ const Navigation = React.createClass({
     return null;
   },
 
-  handleOpenChangePasswordDialog() {
-    this.setState({ isChangePasswordOpened: true });
-  },
-
-  handleCloseChangePasswordDialog(e) {
-    if (e) e.preventDefault();
-    this.setState({ isChangePasswordOpened: false });
-  },
-
-  render: function() {
+  render() {
     if (!this.state.isAuthenticated) {
       return null;
     }
