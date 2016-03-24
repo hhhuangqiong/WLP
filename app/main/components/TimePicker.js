@@ -1,3 +1,4 @@
+import moment from 'moment';
 import React, { PropTypes } from 'react';
 
 const TimePicker = React.createClass({
@@ -6,7 +7,8 @@ const TimePicker = React.createClass({
     datetime: PropTypes.func.isRequired,
     format: PropTypes.string.isRequired,
     timePickerId: PropTypes.string.isRequired,
-    className: PropTypes.string.isRequired,
+    className: PropTypes.string,
+    minDate: PropTypes.object,
   },
 
   componentDidMount() {
@@ -46,6 +48,21 @@ const TimePicker = React.createClass({
       .subtract(1, 'm')
       .format()
     );
+  },
+
+  isActive(timescale) {
+    const {
+      minDate,
+      datetime,
+    } = this.props;
+
+    if (!minDate) {
+      return true;
+    }
+
+    const previousTime = datetime.clone().subtract(1, timescale);
+
+    return previousTime > minDate;
   },
 
   render() {
@@ -90,13 +107,21 @@ const TimePicker = React.createClass({
             </tr>
 
             <tr>
-              <td onClick={this.subtractHour} className="cursor-pointer">
-                <strong>-</strong>
-              </td>
+              <If condition={this.isActive('hours')}>
+                <td onClick={this.subtractHour} className="cursor-pointer">
+                  <strong>-</strong>
+                </td>
+              <Else />
+                <td></td>
+              </If>
               <td></td>
-              <td onClick={this.subtractMinute} className="cursor-pointer">
-                <strong>-</strong>
-              </td>
+              <If condition={this.isActive('mintues')}>
+                <td onClick={this.subtractMinute} className="cursor-pointer">
+                  <strong>-</strong>
+                </td>
+              <Else />
+                <td></td>
+              </If>
             </tr>
           </table>
 

@@ -57,6 +57,7 @@ export default React.createClass({
               dataPickerkey="endExportDatePicker"
               dataPickerRef="endExportDatePicker"
               dateOnChange={this.handleEndDateChange}
+              minDate={this.state.fromTime}
               dateFormat="MM/DD/YYYY"
               timeFormat="h:mm a"
             />

@@ -114,6 +114,7 @@ export default React.createClass({
               dataPickerRef="endExportDatePicker"
               dateOnChange={this.handleEndDateChange}
               dateFormat="MM/DD/YYYY"
+              minDate={this.state.startDate}
               timeFormat="h:mm a"
             />
           </div>

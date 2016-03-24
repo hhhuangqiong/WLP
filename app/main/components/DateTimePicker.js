@@ -51,7 +51,7 @@ export default React.createClass({
             dateFormat={dateFormat}
             selected={date}
             onChange={dateOnChange}
-            minDate={minDate ? moment(minDate) : ''}
+            minDate={minDate}
             maxDate={moment()}
           />
         </div>
@@ -66,6 +66,7 @@ export default React.createClass({
           timePickerId={name}
           datetime={date}
           format={timeFormat}
+          minDate={minDate}
           className="date-input-wrap left"
           onChange={dateOnChange}
         />

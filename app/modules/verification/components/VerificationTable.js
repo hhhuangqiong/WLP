@@ -110,7 +110,7 @@ export default React.createClass({
             </tr>
           </thead>
           <tbody className="verification-table">
-            {_.isEmpty(this.renderTableRows()) ? this.renderEmptyRow() : this.renderTableRows()}
+            {isEmpty(this.renderTableRows()) ? this.renderEmptyRow() : this.renderTableRows()}
           </tbody>
           <tfoot>
             <If condition={!isEmpty(this.props.verifications)}>

@@ -63,6 +63,7 @@ export default class VerificationExportForm extends Component {
             dataPickerkey="endExportDatePicker"
             dataPickerRef="endExportDatePicker"
             dateOnChange={this._handleEndDateChange}
+            minDate={this.state.fromTime}
             dateFormat="MM/DD/YYYY"
             timeFormat="h:mm a"
           />
