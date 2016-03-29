@@ -60,7 +60,7 @@ function initialize(port) {
   const ioc = require('./initializers/ioc')(nconf);
 
   // initialize the Kue instance to share through the entire process
-  const kueue = require('./initializers/kue')(nconf.get('redis'), {
+  const kueue = require('./initializers/kue')(nconf.get('redisUri'), {
     uiPort: nconf.get('queue:uiPort'),
     prefix: nconf.get('queue:prefix'),
   });
@@ -98,7 +98,7 @@ function initialize(port) {
   // static resources
   server.use(express.static(path.join(PROJ_ROOT, 'public')));
 
-  const redisStore = require('./initializers/redisStore')(session, nconf, env);
+  const redisStore = require('./initializers/redisStore')(session, nconf.get('redisUri'), env);
 
   server.use(require('./middlewares/redisConnection')(
     redisStore, session, nconf.get('secret:session'), nconf.get('redisFailoverAttempts'), env));

@@ -5,12 +5,7 @@
   "email": {
     "from": "noreply@m800.com"
   },
-  "redis": {
-    "host": "localhost",
-    "port": 6379,
-    "ttl": 1800,
-    "db": 11
-  },
+  "redisUri": "redis://localhost:6379/11",
   "mvsApi": {
     "baseUrl": "http://192.168.118.13:9125",
     "timeout": 15000
