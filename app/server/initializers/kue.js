@@ -2,12 +2,13 @@
 import kue from 'kue';
 import logger from 'winston';
 import Sentinel from 'redis-sentinel';
+import {ioredisUri} from 'm800-util';
 
 /**
  * Provider a queue creator factory method that encapsulates redis connection
  * handling
  *
- * @param {Object} redisConnOpts
+ * @param {String} redisUri Uri of redis connection point. See m800-util.
  * @param {Object} opts kue configuration
  * @param {Number} opts.uiPort Port number for the Kue UI
  *
@@ -17,20 +18,20 @@ import Sentinel from 'redis-sentinel';
  * @see {@link: https://github.com/LearnBoost/kue#redis-connection-settings}
  * @see {@link: https://github.com/Automattic/kue#replacing-redis-client-module}
  */
-export default function (redisConnOpts, opts = {}) {
+export default function (redisUri, opts = {}) {
   logger.info('initializing Kue');
 
   // use non-sentinel configuration
-  let kueRedisOpt = redisConnOpts;
+  let kueRedisOpt = ioredisUri(redisUri);
 
-  if (redisConnOpts.sentinels) {
-    const endpoints = [].concat(redisConnOpts.sentinels);
-    const masterName = redisConnOpts.name;
+  if (kueRedisOpt.sentinels) {
+    const endpoints = [].concat(kueRedisOpt.sentinels);
+    const masterName = kueRedisOpt.name;
     const redisOpts = {
-      db: redisConnOpts.db,
+      db: kueRedisOpt.db,
     };
 
-    logger.info('initalizing Kue with Sentinel endpoints: %j', redisConnOpts, {});
+    logger.info('initalizing Kue with Sentinel endpoints: %j', kueRedisOpt, {});
 
     const sentinel = Sentinel.Sentinel(endpoints);
 

@@ -1,5 +1,6 @@
 import logger from 'winston';
 import _ from 'lodash';
+import {ioredisUri} from 'm800-util';
 
 /**
  * Create a Redis store
@@ -7,14 +8,14 @@ import _ from 'lodash';
  * Assume sentinal configuration is used for non-development env
  *
  * @param {object} session Express session middleware
- * @param {object} nconf nconf instance
+ * @param {String} redisUri redis uri instance
  * @return {object} Redis store
  */
-export default function makeRedisStore(session, nconf, env) {
+export default function makeRedisStore(session, redisUri, env) {
   const RedisStore = require('connect-redis')(session);
   let redisStore;
 
-  const redisConfig = nconf.get('redis');
+  const redisConfig = ioredisUri(redisUri);
 
   if (!_.has(redisConfig, 'sentinels')) {
     logger.info('LOCAL REDIS!', redisConfig);

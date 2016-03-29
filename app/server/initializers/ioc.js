@@ -79,7 +79,7 @@ export default function init(nconf) {
   ioc.service('WalletRequest', require('../../lib/requests/boss/Wallet'), 'BOSS_API_BASE_URL', 'BOSS_API_TIMEOUT');
 
   ioc.service('RedisClient', () => {
-    return makeRedisClient(nconf.get('redis'));
+    return makeRedisClient(nconf.get('redisUri'));
   });
 
   ioc.factory('ACL', () => {

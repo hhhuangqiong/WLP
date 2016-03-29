@@ -18,10 +18,7 @@ docker.dev.maaii.com/m800/white-label-portal
 |`mongodb__options__user`|Mongo access username|wlp-testbed-user|
 |`mongodb__options__pass`|Mongo access password|tb-wlp-user|
 |`mongodb__options__mongos`|Whether to should mongos, secure connection|false|
-|`redis__sentinels`|Json array of redis sentinels endpoint|`[{"host":"192.168.119.25","port":26379},{"host":"192.168.119.26","port":26379}]`|
-|`redis__name`|Redis username|wlp-testbed-user|
-|`redis__role`|Redis client role|master|
-|`redis__db`|Redis db number|11|
+|`redisUri`| Connection String in [redisUri](https://github.com/mp911de/lettuce/wiki/Redis-URI-and-connection-details) format | `redis-sentinel://192.168.119.25:26378,192.168.119.26:26379` |
 |`bossApi__baseUrl`|BOSS API Endpoint|`http://192.168.135.167:10080`|
 |`bossApi__timeout`|BOSS API Timeout|15000|
 |`mumsApi__baseUrl`|MUMS API Endpoint|`http://192.168.119.12:8080`|
