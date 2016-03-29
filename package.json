@@ -3,9 +3,9 @@
   "version": "1.7.1",
   "private": true,
   "scripts": {
-    "build": "npm run clean && npm run transpile && npm run test:report",
+    "jenkins": "npm prune && npm i && npm run build && npm run docs",
+    "build": "npm run clean && npm run transpile && npm run test:report && gulp scss:production",
     "clean": "gulp clean",
-    "dist": "npm run clean && npm run transpile && gulp scss:production",
     "docs:api": "npm run transpile && jsdoc -r node_modules/app -d build/docs",
     "docs": "gitbook build",
     "lint": "eslint app",
