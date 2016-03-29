@@ -43,7 +43,7 @@ TimeFramePicker.propTypes = {
 };
 
 // Buffer time in minutes
-const BUFFER_TIME_FOR_PROXY_HOURLY = 25;
+const BUFFER_TIME_FOR_PROXY_HOURLY = 60;
 const BUFFER_TIME_FOR_PROXY_DAILY = 480;
 
 export function parseTimeRange(timeRange) {
