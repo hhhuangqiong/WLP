@@ -5,7 +5,7 @@ import {concurrent} from 'contra';
 import React from 'react';
 import { Link } from 'react-router';
 import AuthMixin from '../../../utils/AuthMixin';
-import FluxibleMixin from 'fluxible/addons/FluxibleMixin';
+import { FluxibleMixin } from 'fluxible-addons-react';
 
 import loadSMS from '../actions/loadSMS';
 import clearSMS from '../actions/clearSMS';

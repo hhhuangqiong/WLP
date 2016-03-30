@@ -1,7 +1,7 @@
 import React, { PropTypes } from 'react';
 import { RouteHandler } from 'react-router';
 
-import FluxibleMixin from 'fluxible/addons/FluxibleMixin';
+import { FluxibleMixin } from 'fluxible-addons-react';
 import AuthMixin from '../../../utils/AuthMixin';
 
 import fetchAccounts from '../actions/fetchAccounts';

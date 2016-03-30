@@ -1,6 +1,6 @@
 import React, { PropTypes } from 'react';
 import classNames from 'classnames';
-import FluxibleMixin from 'fluxible/addons/FluxibleMixin';
+import { FluxibleMixin } from 'fluxible-addons-react';
 
 import AuthStore from '../../../main/stores/AuthStore';
 import ConfirmationDialog from '../../../main/components/ConfirmationDialog';

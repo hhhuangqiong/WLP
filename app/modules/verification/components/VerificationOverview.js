@@ -5,7 +5,7 @@ import classNames from 'classnames';
 import moment from 'moment';
 import { isNull, max, last, merge, sortByOrder, some, values } from 'lodash';
 
-import FluxibleMixin from 'fluxible/addons/FluxibleMixin';
+import { FluxibleMixin } from 'fluxible-addons-react';
 import AuthMixin from '../../../utils/AuthMixin';
 
 import * as FilterBar from './../../../main/components/FilterBar';

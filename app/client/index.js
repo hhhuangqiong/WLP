@@ -2,7 +2,7 @@ import _ from 'lodash';
 import React from 'react';
 import Router from 'react-router';
 
-import FluxibleComponent from 'fluxible/addons/FluxibleComponent';
+import { FluxibleComponent } from 'fluxible-addons-react';
 
 import * as env from '../utils/env';
 

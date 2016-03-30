@@ -1,5 +1,5 @@
 import React from 'react';
-import FluxibleMixin from 'fluxible/addons/FluxibleMixin';
+import { FluxibleMixin } from 'fluxible-addons-react';
 import { RouteHandler } from 'react-router';
 
 import AuthMixin from '../../../utils/AuthMixin';

@@ -1,5 +1,5 @@
 import React, { createClass, PropTypes } from 'react';
-import FluxibleMixin from 'fluxible/addons/FluxibleMixin';
+import { FluxibleMixin } from 'fluxible-addons-react';
 
 export default createClass({
   propTypes: {

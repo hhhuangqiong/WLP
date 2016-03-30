@@ -3,7 +3,7 @@ import moment from 'moment';
 import { concurrent } from 'contra';
 import classNames from 'classnames';
 import React from 'react';
-import FluxibleMixin from 'fluxible/addons/FluxibleMixin';
+import { FluxibleMixin } from 'fluxible-addons-react';
 import { Link } from 'react-router';
 
 import * as FilterBar from '../../../main/components/FilterBar';

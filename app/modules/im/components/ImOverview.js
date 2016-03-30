@@ -1,7 +1,7 @@
 import React from 'react';
 import {Link} from 'react-router';
 
-import FluxibleMixin from 'fluxible/addons/FluxibleMixin';
+import { FluxibleMixin } from 'fluxible-addons-react';
 import AuthMixin from '../../../utils/AuthMixin';
 
 import WidgetNotAvailable from '../../../main/components/common/WidgetNotAvailable';

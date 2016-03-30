@@ -1,4 +1,4 @@
-import { createStore } from 'fluxible/addons';
+import createStore from 'fluxible/addons/createStore';
 
 const ApplicationStore = createStore({
   storeName: 'ApplicationStore',

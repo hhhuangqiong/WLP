@@ -1,7 +1,7 @@
 import React, { PropTypes } from 'react';
 import classnames from 'classnames';
 import { Link } from 'react-router';
-import { connectToStores } from 'fluxible/addons';
+import { connectToStores } from 'fluxible-addons-react';
 
 import Permit from './Permit';
 import ApplicationStore from '../../stores/ApplicationStore';

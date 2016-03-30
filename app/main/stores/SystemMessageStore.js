@@ -1,4 +1,4 @@
-import { createStore } from 'fluxible/addons';
+import createStore from 'fluxible/addons/createStore';
 
 /**
  * Store for states of System Message Component

@@ -1,4 +1,4 @@
-import { createStore } from 'fluxible/addons';
+import createStore from 'fluxible/addons/createStore';
 
 const debug = require('debug')('app:modules/file-export/stores/ExportStore');
 const PROGRESS_FAILED_INDICATOR = -1;

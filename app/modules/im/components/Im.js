@@ -5,7 +5,7 @@ import classNames from 'classnames';
 
 import React from 'react';
 import { Link } from 'react-router';
-import FluxibleMixin from 'fluxible/addons/FluxibleMixin';
+import { FluxibleMixin } from 'fluxible-addons-react';
 import DatePicker from 'react-datepicker';
 
 import AuthMixin from '../../../utils/AuthMixin';

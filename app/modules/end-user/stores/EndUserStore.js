@@ -1,4 +1,4 @@
-import { remove, get, max } from 'lodash';
+import { remove, get, max, assign, forEach } from 'lodash';
 import { createStore } from 'fluxible/addons';
 import config from './../../../main/config';
 
@@ -21,8 +21,8 @@ const EndUserStore = createStore({
   },
 
   initialize() {
-    this.users = null;
-    this.displayUsers = null;
+    this.users = [];
+    this.displayUsers = [];
     this.currentUser = null;
     this.hasNextPage = false;
     this.page = 0;

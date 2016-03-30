@@ -3,7 +3,7 @@ import { Link } from 'react-router';
 import moment from 'moment';
 import { concurrent } from 'contra';
 import { merge, last, omit, clone } from 'lodash';
-import FluxibleMixin from 'fluxible/addons/FluxibleMixin';
+import { FluxibleMixin } from 'fluxible-addons-react';
 import AuthMixin from '../../../utils/AuthMixin';
 
 import Pagination from '../../../main/components/Pagination';

@@ -2,7 +2,7 @@ import React from 'react';
 import { concurrent } from 'contra';
 import { RouteHandler } from 'react-router';
 
-import FluxibleMixin from '../../../../node_modules/fluxible/addons/FluxibleMixin';
+import { FluxibleMixin } from 'fluxible-addons-react';
 import AuthMixin from '../../../utils/AuthMixin';
 
 import fetchCompanies from '../actions/fetchCompanies';

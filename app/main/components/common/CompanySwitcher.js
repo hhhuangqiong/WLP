@@ -1,6 +1,6 @@
 import _ from 'lodash';
 import React from 'react';
-import FluxibleMixin from 'fluxible/addons/FluxibleMixin';
+import { FluxibleMixin } from 'fluxible-addons-react';
 
 import ApplicationStore from '../../stores/ApplicationStore';
 import switchCompany from '../../../modules/company/actions/switchCompany';

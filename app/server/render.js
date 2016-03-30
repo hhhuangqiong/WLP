@@ -1,7 +1,7 @@
 import React from 'react';
 import Router from 'react-router';
 import serialize from 'serialize-javascript';
-import FluxibleComponent from 'fluxible/addons/FluxibleComponent';
+import { FluxibleComponent } from 'fluxible-addons-react';
 
 import Html from '../main/components/common/Html';
 import fetchData from '../utils/fetchData';

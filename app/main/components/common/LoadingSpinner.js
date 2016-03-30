@@ -1,7 +1,7 @@
 import React from 'react';
 import Spinner from 'react-loader';
 import classNames from 'classnames';
-import FluxibleMixin from 'fluxible/addons/FluxibleMixin';
+import { FluxibleMixin } from 'fluxible-addons-react';
 
 import LoadingSpinnerStore from '../../stores/LoadingSpinnerStore';
 

@@ -5,7 +5,7 @@ import classnames from 'classnames';
 import _ from 'lodash';
 import Joi from 'joi';
 
-import { connectToStores } from 'fluxible/addons';
+import { connectToStores } from 'fluxible-addons-react';
 import PublicOnlyMixin from '../../../utils/PublicOnlyMixin';
 
 import createPassword from '../actions/createPassword';

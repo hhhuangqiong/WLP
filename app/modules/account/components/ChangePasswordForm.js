@@ -1,6 +1,6 @@
 import React, { PropTypes, Component } from 'react';
 import classnames from 'classnames';
-import { connectToStores } from 'fluxible/addons';
+import { connectToStores } from 'fluxible-addons-react';
 import Joi from 'joi';
 
 import changePassword from '../actions/changePassword';

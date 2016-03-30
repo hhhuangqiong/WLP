@@ -1,7 +1,7 @@
 import _ from 'lodash';
 import React, { PropTypes } from 'react';
 import { Link } from 'react-router';
-import FluxibleMixin from 'fluxible/addons/FluxibleMixin';
+import { FluxibleMixin } from 'fluxible-addons-react';
 
 import CompanySwitcher from './CompanySwitcher';
 import signOut from '../../actions/signOut';

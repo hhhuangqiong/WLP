@@ -6,7 +6,7 @@ import React from 'react';
 import { Link } from 'react-router';
 import Select from 'react-select';
 
-import FluxibleMixin from 'fluxible/addons/FluxibleMixin';
+import { FluxibleMixin } from 'fluxible-addons-react';
 import AuthMixin from '../../../utils/AuthMixin';
 
 import * as FilterBar from '../../../main/components/FilterBar';

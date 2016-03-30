@@ -1,6 +1,6 @@
 import React, { createClass, PropTypes, cloneElement } from 'react';
 import { first } from 'lodash';
-import FluxibleMixin from 'fluxible/addons/FluxibleMixin';
+import { FluxibleMixin } from 'fluxible-addons-react';
 import Modal from 'react-modal';
 
 import { CLIENT } from '../../../utils/env';

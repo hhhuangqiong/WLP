@@ -1,5 +1,5 @@
 import { assign, forEach } from 'lodash';
-import { createStore } from 'fluxible/addons';
+import createStore from 'fluxible/addons/createStore';
 
 const CallsOverviewStore = createStore({
   storeName: 'CallsOverviewStore',

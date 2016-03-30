@@ -2,7 +2,7 @@ import _ from 'lodash';
 import moment from 'moment';
 
 import React, { PropTypes } from 'react';
-import FluxibleMixin from 'fluxible/addons/FluxibleMixin';
+import { FluxibleMixin } from 'fluxible-addons-react';
 import { Link } from 'react-router';
 
 import AuthMixin from '../../../utils/AuthMixin';

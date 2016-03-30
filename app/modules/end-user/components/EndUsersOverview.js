@@ -7,7 +7,7 @@ import { isNull, merge, max, clone, reduce, isEmpty } from 'lodash';
 import getMapConfig from '../utils/getMapConfig';
 import MAP_DATA from '../constants/mapData';
 
-import FluxibleMixin from 'fluxible/addons/FluxibleMixin';
+import { FluxibleMixin } from 'fluxible-addons-react';
 import AuthMixin from '../../../utils/AuthMixin';
 
 import * as FilterBar from '../../../main/components/FilterBar';

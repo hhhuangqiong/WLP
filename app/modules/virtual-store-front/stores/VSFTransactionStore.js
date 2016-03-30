@@ -1,6 +1,6 @@
 import { assign, forEach } from 'lodash';
 import moment from 'moment';
-import { createStore } from 'fluxible/addons';
+import createStore from 'fluxible/addons/createStore';
 
 const VSFTransactionStore = createStore({
   storeName: 'VSFTransactionStore',
