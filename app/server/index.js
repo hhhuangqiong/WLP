@@ -25,8 +25,7 @@ import session from 'express-session';
 const PROJ_ROOT = path.join(__dirname, '../..');
 import { ERROR_401, ERROR_404 } from './paths';
 
-// TODO rename the file as 'app'
-import app from '../index';
+import app from '../app';
 
 // access via `context`
 import config from '../config';

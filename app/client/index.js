@@ -22,7 +22,7 @@ if (env.isDev()) {
 const bootstrapDebug = debug('app:client');
 
 // TODO rename the file as 'app'
-import app from '../index';
+import app from '../app';
 import routes from '../routes';
 import fetchData from '../utils/fetchData';
 import loadSession from '../main/actions/loadSession';

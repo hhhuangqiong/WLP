@@ -23,7 +23,13 @@ import EndUsersOverviewStore from './modules/end-user/stores/EndUsersOverviewSto
 import EndUsersRegistrationStatsStore from './modules/end-user/stores/EndUsersRegistrationStatsStore';
 import EndUsersGeographicStatsStore from './modules/end-user/stores/EndUsersGeographicStatsStore';
 
-const app = new Fluxible();
+import routes from './routes';
+
+const app = new Fluxible({
+  // doing this so that in app/client/index.js
+  // context.getComponent() will be available
+  component: routes
+});
 
 app.plug(require('./utils/apiPlugin'));
 app.plug(require('./utils/cookiePlugin'));
