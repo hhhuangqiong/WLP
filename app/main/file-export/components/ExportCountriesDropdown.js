@@ -12,26 +12,22 @@ export default React.createClass({
 
   render() {
     return (
-      <div className="row">
-        <div className="large-5 columns">
-          <label className="left bold">{this.props.displayName}</label>
-        </div>
+      <div className="export-row">
+        <label className="left bold">{this.props.displayName}</label>
 
-        <div className="large-7 columns">
-          <select
-            className="large export-countries-dropdown radius"
-            value={this.props.value}
-            onChange={this.props.onChange}
-          >
-            <option>{this.props.defaultOption}</option>
-            {countries.all.map(country => (
-              <option
-                key={country.alpha2}
-                value={country.alpha2}
-              >{country.name}</option>
-            ))}
-          </select>
-        </div>
+        <select
+          className="large export-countries-dropdown radius"
+          value={this.props.value}
+          onChange={this.props.onChange}
+        >
+          <option>{this.props.defaultOption}</option>
+          {countries.all.map(country => (
+            <option
+              key={country.alpha2}
+              value={country.alpha2}
+            >{country.name}</option>
+          ))}
+        </select>
       </div>
     );
   },

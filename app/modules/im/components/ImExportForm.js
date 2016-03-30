@@ -24,44 +24,35 @@ export default React.createClass({
 
         <hr />
 
-        <div className="row export-form-row-padding">
-          <div className="large-5 columns">
-            <label className="left bold">Start time</label>
-          </div>
+        <div className="export-row">
+          <label className="left bold">Start time</label>
 
-          <div className="large-7 columns">
-            <DateTimePicker
-              className="export-datetime-picker export-from-time"
-              name="startPicker"
-              date={this.state.fromTime}
-              dataPickerkey="startExportDatePicker"
-              dataPickerRef="startExportDatePicker"
-              dateOnChange={this.handleStartDateChange}
-              dateFormat="MM/DD/YYYY"
-              timeFormat="h:mm a"
-            />
-
-          </div>
+          <DateTimePicker
+            className="export-datetime-picker export-from-time"
+            name="startPicker"
+            date={this.state.fromTime}
+            dataPickerkey="startExportDatePicker"
+            dataPickerRef="startExportDatePicker"
+            dateOnChange={this.handleStartDateChange}
+            dateFormat="MM/DD/YYYY"
+            timeFormat="h:mm a"
+          />
         </div>
 
-        <div className="row export-form-row-padding">
-          <div className="large-5 columns">
-            <label className="left bold">End time</label>
-          </div>
+        <div className="export-row">
+          <label className="left bold">End time</label>
 
-          <div className="large-7 columns">
-            <DateTimePicker
-              className="export-datetime-picker export-to-time"
-              name="endPicker"
-              date={this.state.toTime}
-              dataPickerkey="endExportDatePicker"
-              dataPickerRef="endExportDatePicker"
-              dateOnChange={this.handleEndDateChange}
-              minDate={this.state.fromTime}
-              dateFormat="MM/DD/YYYY"
-              timeFormat="h:mm a"
-            />
-          </div>
+          <DateTimePicker
+            className="export-datetime-picker export-to-time"
+            name="endPicker"
+            date={this.state.toTime}
+            dataPickerkey="endExportDatePicker"
+            dataPickerRef="endExportDatePicker"
+            dateOnChange={this.handleEndDateChange}
+            minDate={this.state.fromTime}
+            dateFormat="MM/DD/YYYY"
+            timeFormat="h:mm a"
+          />
         </div>
 
         <ExportCountriesDropdown

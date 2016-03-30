@@ -57,28 +57,24 @@ export default React.createClass({
 
         <hr />
 
-        <div className="row export-form-row-padding">
-          <div className="large-5 columns">
-            <label className="left bold">Period</label>
-          </div>
+        <div className="export-row">
+          <label className="left bold">Period</label>
 
-          <div className="large-11 columns">
-            <DateRangePicker
-              withIcon
-              startDate={this
-                .state
-                .startDate
-                .format('L')
-              }
-              endDate={this
-                .state
-                .endDate
-                .format('L')
-              }
-              handleStartDateChange={this.handleStartDateChange}
-              handleEndDateChange={this.handleEndDateChange}
-            />
-          </div>
+          <DateRangePicker
+            withIcon
+            startDate={this
+              .state
+              .startDate
+              .format('L')
+            }
+            endDate={this
+              .state
+              .endDate
+              .format('L')
+            }
+            handleStartDateChange={this.handleStartDateChange}
+            handleEndDateChange={this.handleEndDateChange}
+          />
         </div>
 
         <hr />

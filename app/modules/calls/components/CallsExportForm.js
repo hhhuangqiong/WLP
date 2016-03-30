@@ -80,73 +80,60 @@ export default React.createClass({
 
         <hr />
 
-        <div className="row export-form-row-padding">
-          <div className="large-5 columns">
-            <label className="left bold">Start time</label>
-          </div>
+        <div className="export-row">
+          <label className="left bold">Start time</label>
 
-          <div className="large-7 columns">
-            <DateTimePicker
-              className="export-datetime-picker export-from-time"
-              name="startPicker"
-              date={this.state.startDate}
-              dataPickerkey="startExportDatePicker"
-              dataPickerRef="startExportDatePicker"
-              dateOnChange={this.handleStartDateChange}
-              dateFormat="MM/DD/YYYY"
-              timeFormat="h:mm a"
-            />
-
-          </div>
+          <DateTimePicker
+            className="export-datetime-picker export-from-time"
+            name="startPicker"
+            date={this.state.startDate}
+            dataPickerkey="startExportDatePicker"
+            dataPickerRef="startExportDatePicker"
+            dateOnChange={this.handleStartDateChange}
+            dateFormat="MM/DD/YYYY"
+            timeFormat="h:mm a"
+          />
         </div>
 
-        <div className="row export-form-row-padding">
-          <div className="large-5 columns">
-            <label className="left bold">End time</label>
-          </div>
+        <div className="export-row">
+          <label className="left bold">End time</label>
 
-          <div className="large-7 columns">
-            <DateTimePicker
-              className="export-datetime-picker export-to-time"
-              name="endPicker"
-              date={this.state.endDate}
-              dataPickerkey="endExportDatePicker"
-              dataPickerRef="endExportDatePicker"
-              dateOnChange={this.handleEndDateChange}
-              dateFormat="MM/DD/YYYY"
-              minDate={this.state.startDate}
-              timeFormat="h:mm a"
-            />
-          </div>
+          <DateTimePicker
+            className="export-datetime-picker export-to-time"
+            name="endPicker"
+            date={this.state.endDate}
+            dataPickerkey="endExportDatePicker"
+            dataPickerRef="endExportDatePicker"
+            dateOnChange={this.handleEndDateChange}
+            dateFormat="MM/DD/YYYY"
+            minDate={this.state.startDate}
+            timeFormat="h:mm a"
+          />
         </div>
 
-        <div className="row export-form-row-padding">
-          <div className="large-5 columns">
-            <label className="left bold">Type</label>
-          </div>
+        <div className="export-row">
+          <label className="left bold">Type</label>
 
-          <div className="large-7 columns">
-            <ul className="button-group round even-3 export-type-buttons">
-              <li>
-                <a
-                  className={classNames('button', { active: this.state.netType === CALL_TYPE.ONNET })}
-                  onClick={this.handleToggleOnnet}
-                >Onnet</a>
-              </li>
-              <li>
-                <a
-                  className={classNames('button', { active: this.state.netType === CALL_TYPE.OFFNET })}
-                  onClick={this.handleToggleOffnet}
-                >Offnet</a>
-              </li>
-              <li>
-                <a
-                  className={classNames('button', { active: this.state.netType === CALL_TYPE.MAAII_IN })}
-                  onClick={this.handleToggleMaaiiIn}
-                >Maaii-in</a>
-              </li>
-            </ul>
-          </div>
+          <ul className="button-group round even-3 export-type-buttons">
+            <li>
+              <a
+                className={classNames('button', { active: this.state.netType === CALL_TYPE.ONNET })}
+                onClick={this.handleToggleOnnet}
+              >Onnet</a>
+            </li>
+            <li>
+              <a
+                className={classNames('button', { active: this.state.netType === CALL_TYPE.OFFNET })}
+                onClick={this.handleToggleOffnet}
+              >Offnet</a>
+            </li>
+            <li>
+              <a
+                className={classNames('button', { active: this.state.netType === CALL_TYPE.MAAII_IN })}
+                onClick={this.handleToggleMaaiiIn}
+              >Maaii-in</a>
+            </li>
+          </ul>
         </div>
 
         <hr />
