@@ -1,5 +1,5 @@
 import React from 'react';
-import { Route, NotFoundRoute, Redirect, DefaultRoute } from 'react-router';
+import { Route, NotFoundRoute, IndexRoute, IndexRedirect } from 'react-router';
 
 import App from './main/components/common/App';
 import Public from './main/components/common/Public';
@@ -44,79 +44,65 @@ import {
 
 // path strings
 import {
-  ERROR_401 as pathToError401,
-  ERROR500 as pathToError500,
+  ERROR_401 as path401,
+  ERROR_404 as path404,
+  ERROR_500 as path500,
 } from './server/paths';
 
 // convention: separate path by "-" following the component name
 
 export default (
-  <Route handler={App}>
-    <Redirect from="/" to="sign-in" />
+  <Route path="/" component={App}>
+    <IndexRedirect from="/" to="sign-in" />
 
-    // public pages,
-    <Route handler={Public}>
-      <Route name="sign-in" handler={SignIn} />
-      <Route name="forgot-password" handler={ForgotPassword} />
-      <Route name="create-password" path="verify/sign-up" handler={CreatePassword} />
+    <Route component={Public}>
+      <Route path="sign-in" component={SignIn} />
+      <Route path="forgot-password" component={ForgotPassword} />
+      <Route path="create-password" path="verify/sign-up" component={CreatePassword} />
     </Route>
 
-    <Route handler={Protected}>
-      <Route name="companies" path="/:role/:identity?/companies" handler={Companies}>
-        <Route name="company-create" path="create" handler={NewProfile} />
-        <Route name="company-profile" path=":carrierId/profile" handler={EditProfile} />
-        <Route name="company-service" path=":carrierId/service" handler={Service} />
-        <Route name="company-widget" path=":carrierId/widget" handler={Widgets} />
-      </Route>
-      <Route name="account" path="/:role/:identity?/account" handler={Account}>
-        <Route name="account-create" path="create" handler={AccountProfile} />
-        <Route name="account-profile" path=":accountId" handler={AccountProfile} />
-      </Route>
-      <Route path="/:role/:identity?/verification" handler={Verification}>
-        <DefaultRoute name="verification" handler={VerificationOverview} />
-        <Route name="verification-details" path="details" handler={VerificationDetails} />
+    <Route component={Protected}>
+      <Route path=":role/:identity/overview" component={Overview} />
+
+      <Route path=":role/:identity/companies" component={Companies}>
+        <Route name="company-create" path="create" component={NewProfile} />
+        <Route name="company-profile" path=":carrierId/profile" component={EditProfile} />
+        <Route name="company-service" path=":carrierId/service" component={Service} />
+        <Route name="company-widget" path=":carrierId/widget" component={Widgets} />
       </Route>
 
-      <Route
-        name="vsf-transaction-overview"
-        path="/:role/:identity?/vsf"
-        handler={VSFTransactionOverview}
-      />
+      <Route path=":role/:identity/account" component={Account}>
+        <Route name="account-create" path="create" component={AccountProfile} />
+        <Route name="account-profile" path=":accountId" component={AccountProfile} />
+      </Route>
 
-      <Route
-        name="vsf-transaction-details"
-        path="/:role/:identity?/vsf/details"
-        handler={VSFTransactionDetails}
-      />
+      <Route path=":role/:identity/verification" component={Verification}>
+        <Route path="/overview" component={VerificationOverview} />
+        <Route path="/details" component={VerificationDetails} />
+      </Route>
 
-      <Route name="overview" path="/:role/:identity?/overview" handler={Overview} />
+      <Route path=":role/:identity/vsf/overview" component={VSFTransactionOverview} />
+      <Route path=":role/:identity/vsf/details" component={VSFTransactionDetails} />
 
-      <Route name="calls-overview" path="/:role/:identity?/calls" handler={CallsOverview} />
-      <Route name="calls-details" path="/:role/:identity?/calls/details" handler={Calls} />
+      <Route path=":role/:identity/calls/overview" component={CallsOverview} />
+      <Route path=":role/:identity/calls/details" component={Calls} />
 
-      <Route
-        name="end-users-overview" path="/:role/:identity?/end-users" handler={EndUsersOverview}
-      />
+      <Route path=":role/:identity/end-users/overview" component={EndUsersOverview} />
+      <Route path=":role/:identity/end-users/details" component={EndUsersDetails} />
 
-      <Route
-        name="end-users-details"
-        path="/:role/:identity?/end-users/details"
-        handler={EndUsersDetails}
-      />
+      <Route path=":role/:identity/im/overview" component={ImOverview} />
+      <Route path=":role/:identity/im/details" component={Im} />
 
-      <Route name="im-overview" path="/:role/:identity?/im" handler={ImOverview} />
-      <Route name="im" path="/:role/:identity?/im/details" handler={Im} />
+      <Route path=":role/:identity/sms/overview" component={SmsOverview} />
+      <Route path=":role/:identity/sms/details" component={SMS} />
 
-      <Route name="sms-overview" path="/:role/:identity?/sms" handler={SmsOverview} />
-      <Route name="sms-details" path="/:role/:identity?/sms/details" handler={SMS} />
-
-      <Route name="top-up-details" path="/:role/:identity?/top-up/details" handler={TopUp} />
+      <Route path=":role/:identity/top-up/details" component={TopUp} />
     </Route>
 
-    // shared by both "public" &amp; "protected"
-    <Route name="access-denied" path={pathToError401} handler={Error401} />
-    <Route name="internal-server-error" path={pathToError500} handler={Error500} />
+    <Route path={path401} component={Error401} />
+    <Route path={path404} component={Error404} />
+    <Route path={path500} component={Error500} />
 
-    <NotFoundRoute name="not-found" handler={Error404} />
+    <Route path="*" component={Error404} />
   </Route>
 );

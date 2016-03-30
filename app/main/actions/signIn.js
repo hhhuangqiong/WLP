@@ -1,3 +1,4 @@
+import { browserHistory } from 'react-router';
 import { ERROR_MESSAGE } from '../constants/actionTypes';
 import { userPath } from '../../server/paths';
 
@@ -32,13 +33,13 @@ module.exports = (context, payload) => {
       const defaultPath = authority.getDefaultPath();
 
       if (defaultPath) {
-        context.getRouter().transitionTo(userPath(
+        browserHistory.push(userPath(
           auth.user.role,
           auth.user.carrierId,
           defaultPath
         ));
       } else {
-        context.getRouter().transitionTo('/error/not-found');
+        browserHistory.push('/error/not-found');
       }
     });
   });

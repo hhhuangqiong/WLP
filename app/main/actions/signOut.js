@@ -1,3 +1,4 @@
+import { browserHistory } from 'react-router';
 import { SIGN_IN } from '../../server/paths';
 
 module.exports = (context, payload, done) => {
@@ -22,7 +23,7 @@ module.exports = (context, payload, done) => {
     // NOTE: possible race condition here
     // the AuthStore needs to set its state to "not authenticated"
     // before the transition
-    context.getRouter().transitionTo(SIGN_IN);
+    browserHistory.push(SIGN_IN);
     done();
   });
 };

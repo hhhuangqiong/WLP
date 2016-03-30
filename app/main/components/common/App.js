@@ -1,5 +1,4 @@
 import React, { PropTypes } from 'react';
-import { RouteHandler } from 'react-router';
 
 const App = React.createClass({
   propTypes: {
@@ -21,7 +20,7 @@ const App = React.createClass({
   render() {
     return (
       <div>
-        <RouteHandler {...this.props} />
+        { this.props.children }
       </div>
     );
   },

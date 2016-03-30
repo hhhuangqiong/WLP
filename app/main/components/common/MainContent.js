@@ -1,5 +1,4 @@
 import React, { PropTypes } from 'react';
-import { RouteHandler } from 'react-router';
 
 const MainContent = React.createClass({
   propTypes: {
@@ -14,7 +13,7 @@ const MainContent = React.createClass({
     return (
       <div className="row">
         <div className="large-24 columns">
-          <RouteHandler />
+          { this.props.children }
         </div>
       </div>
     );

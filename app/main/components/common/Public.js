@@ -1,9 +1,9 @@
-import React from 'react';
+import React, { Component } from 'react';
 import { RouteHandler } from 'react-router';
 import SystemMessage from './SystemMessage';
 import LoadingSpinner from './LoadingSpinner';
 
-const Public = React.createClass({
+class Public extends Component {
   render() {
     return (
       <div>
@@ -19,7 +19,7 @@ const Public = React.createClass({
             <div className="panel panel--extra">
               <div className="row">
                 <div className="large-24 columns">
-                  <RouteHandler />
+                  { this.props.children }
                 </div>
               </div>
             </div>
@@ -29,7 +29,7 @@ const Public = React.createClass({
         <LoadingSpinner />
       </div>
     );
-  },
-});
+  }
+}
 
 export default Public;

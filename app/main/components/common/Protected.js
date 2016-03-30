@@ -64,7 +64,9 @@ const Protected = React.createClass({
             <Title title={this.props.pageTitle} />
             <Menu />
           </Navigation>
-          <Content isOffCanvas={this.state.isOffCanvas} />
+          <Content isOffCanvas={this.state.isOffCanvas}>
+            { this.props.children }
+          </Content>
         </CanvasWrapper>
         <SystemMessage />
         <LoadingSpinner />
