@@ -1,3 +1,4 @@
+import _ from 'lodash';
 import cookie from 'cookie';
 import { SERVER } from './env';
 
@@ -43,8 +44,9 @@ Cookie.prototype.maxAge = function maxAge() {
  */
 Cookie.prototype.get = function get(name) {
   if (SERVER) {
-    sessionDebug('Server Cookie ', name, this._req.session.data[name]);
-    return this._req.session.data[name];
+    const value = _.get(this._req, `session.data.${name}`)
+    sessionDebug('Server Cookie ', name, value);
+    return value;
   }
 
   sessionDebug('Client Cookie ', cookie.parse(document.cookie)[name]);

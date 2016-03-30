@@ -1,3 +1,4 @@
+import { get } from 'lodash';
 const createStore = require('fluxible/addons/createStore');
 
 const AuthStore = createStore({
@@ -22,8 +23,8 @@ const AuthStore = createStore({
   },
 
   loadSession(auth) {
-    this.token = auth.token;
-    this.user = auth.user;
+    this.token = get(auth, 'token');
+    this.user = get(auth, 'user');
     this.emitChange();
   },
 
@@ -42,8 +43,8 @@ const AuthStore = createStore({
   signIn(auth) {
     this.signingIn = false;
     this.signInError = null;
-    this.token = auth.token;
-    this.user = auth.user;
+    this.token = get(auth, 'token');
+    this.user = get(auth, 'user');
     this.emitChange();
   },
 

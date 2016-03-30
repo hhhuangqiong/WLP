@@ -22,7 +22,7 @@ module.exports = (context, payload, done) => {
   context.api.getSession(token, (err, token) => {
     if (err) {
       debug('Failed');
-      done();
+      done(err);
       return;
     }
 
