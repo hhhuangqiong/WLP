@@ -1,8 +1,9 @@
 import _ from 'lodash';
 import React from 'react';
-import FluxibleMixin from 'fluxible/addons/FluxibleMixin';
+import { FluxibleMixin } from 'fluxible-addons-react';
 import { Link } from 'react-router';
 import ValidationMixin from 'react-validation-mixin';
+import LinkedStateMixin from 'react-addons-linked-state-mixin';
 import Joi from 'joi';
 
 import AuthStore from '../stores/AuthStore';
@@ -15,7 +16,7 @@ import signInAction from '../actions/signIn';
 import PublicOnlyMixin from '../../utils/PublicOnlyMixin';
 
 const SignIn = React.createClass({
-  mixins: [FluxibleMixin, PublicOnlyMixin, ValidationMixin, React.addons.LinkedStateMixin],
+  mixins: [FluxibleMixin, PublicOnlyMixin, ValidationMixin, LinkedStateMixin],
 
   statics: {
     storeListeners: [AuthStore, SignInStore],

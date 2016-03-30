@@ -1,5 +1,5 @@
 import React, { PropTypes } from 'react';
-import Invariant from 'react/lib/invariant';
+import Invariant from 'invariant';
 import classNames from 'classnames';
 
 /**

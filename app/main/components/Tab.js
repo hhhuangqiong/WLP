@@ -1,7 +1,7 @@
 import _ from 'lodash';
 import classNames from 'classnames';
 import React, { PropTypes } from 'react';
-import Invariant from 'react/lib/invariant';
+import Invariant from 'invariant';
 
 /**
  * @class Tab
