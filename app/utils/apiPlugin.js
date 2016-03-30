@@ -26,10 +26,6 @@ module.exports = {
               sessionDebug(err);
             }
           },
-
-          getToken() {
-            return actionContext.getStore(AuthStore).getToken();
-          },
         });
       },
     };

@@ -8,8 +8,6 @@ import { Link } from 'react-router';
 import { FluxibleMixin } from 'fluxible-addons-react';
 import DatePicker from 'react-datepicker';
 
-import AuthMixin from '../../../utils/AuthMixin';
-
 import ImStore from '../stores/ImStore';
 
 import clearIm from '../actions/clearIm';
@@ -34,7 +32,7 @@ const Im = React.createClass({
     router: React.PropTypes.func.isRequired,
   },
 
-  mixins: [FluxibleMixin, AuthMixin],
+  mixins: [FluxibleMixin],
 
   statics: {
     storeListeners: [ImStore],

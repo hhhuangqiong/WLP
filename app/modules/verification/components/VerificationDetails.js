@@ -5,8 +5,6 @@ import React, { PropTypes } from 'react';
 import { FluxibleMixin } from 'fluxible-addons-react';
 import { Link } from 'react-router';
 
-import AuthMixin from '../../../utils/AuthMixin';
-
 import * as FilterBar from './../../../main/components/FilterBar';
 import DateRangePicker from './../../../main/components/DateRangePicker';
 
@@ -50,7 +48,7 @@ const VerificationDetails = React.createClass({
     executeAction: React.PropTypes.func.isRequired,
   },
 
-  mixins: [FluxibleMixin, AuthMixin],
+  mixins: [FluxibleMixin],
 
   statics: {
     storeListeners: {

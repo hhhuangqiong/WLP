@@ -16,12 +16,10 @@ const router = Router();
 router
   .use(cacheControl)
   .post(SIGN_IN, auth.signIn)
-  .post(SIGN_OUT, auth.signOut)
+  .get(SIGN_OUT, auth.signOut)
   .get('/accounts/verify/:token', accounts.verifyToken)
   .put('/accounts/verify/:token', accounts.createPassword)
   .put('/accounts/reverify/:username', accounts.reverifyAccount)
-  .use(auth.validateToken)
-  .get('/session', auth.ensureAuthenticated)
   .get('/carriers/:carrierId/authority', authority.getCapabilityList)
   .get('/carriers/:carrierId/users', carriers.getUsers)
   // TODO: change userStatsTotal and userStatsMonthly

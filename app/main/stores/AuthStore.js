@@ -1,4 +1,4 @@
-import { get } from 'lodash';
+import { get, isEmpty } from 'lodash';
 const createStore = require('fluxible/addons/createStore');
 
 const AuthStore = createStore({
@@ -15,7 +15,6 @@ const AuthStore = createStore({
   },
 
   initialize() {
-    this.token = null;
     this.user = null;
     this.signingIn = false;
     this.signingOut = false;
@@ -23,7 +22,6 @@ const AuthStore = createStore({
   },
 
   loadSession(auth) {
-    this.token = get(auth, 'token');
     this.user = get(auth, 'user');
     this.emitChange();
   },
@@ -43,7 +41,6 @@ const AuthStore = createStore({
   signIn(auth) {
     this.signingIn = false;
     this.signInError = null;
-    this.token = get(auth, 'token');
     this.user = get(auth, 'user');
     this.emitChange();
   },
@@ -60,17 +57,12 @@ const AuthStore = createStore({
 
   signOut() {
     this.signingOut = false;
-    this.token = null;
     this.user = null;
     this.emitChange();
   },
 
   isAuthenticated() {
-    return Boolean(this.token);
-  },
-
-  getToken() {
-    return this.token;
+    return !isEmpty(this.user);
   },
 
   getDisplayName() {
@@ -103,7 +95,6 @@ const AuthStore = createStore({
 
   dehydrate() {
     return {
-      token: this.token,
       user: this.user,
       signingIn: this.signingIn,
       signingOut: this.signingOut,
@@ -112,7 +103,6 @@ const AuthStore = createStore({
   },
 
   rehydrate(state) {
-    this.token = state.token;
     this.user = state.user;
     this.signingIn = state.signingIn;
     this.signingOut = state.signingOut;

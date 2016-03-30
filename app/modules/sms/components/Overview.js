@@ -2,7 +2,6 @@ import React, { PropTypes } from 'react';
 import { Link } from 'react-router';
 
 import { FluxibleMixin } from 'fluxible-addons-react';
-import AuthMixin from '../../../utils/AuthMixin';
 
 import WidgetNotAvailable from '../../../main/components/common/WidgetNotAvailable';
 import loadSMSWidgets from '../actions/loadSMSWidgets';
@@ -17,7 +16,7 @@ const SMSOverview = React.createClass({
     router: PropTypes.func.isRequired,
   },
 
-  mixins: [FluxibleMixin, AuthMixin],
+  mixins: [FluxibleMixin],
 
   statics: {
     storeListeners: [SMSStore],

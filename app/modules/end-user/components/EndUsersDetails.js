@@ -5,7 +5,6 @@ import React, { PropTypes } from 'react';
 import { Link } from 'react-router';
 
 import { FluxibleMixin } from 'fluxible-addons-react';
-import AuthMixin from '../../../utils/AuthMixin';
 
 import EndUserStore from '../stores/EndUserStore';
 

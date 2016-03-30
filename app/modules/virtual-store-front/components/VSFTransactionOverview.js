@@ -1,7 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router';
 import { FluxibleMixin } from 'fluxible-addons-react';
-import AuthMixin from '../../../utils/AuthMixin';
 
 import WidgetNotAvailable from '../../../main/components/common/WidgetNotAvailable';
 import VSFTransactionStore from '../stores/VSFTransactionStore';
@@ -17,7 +16,7 @@ const VSFTransactionOverview = React.createClass({
     executeAction: React.PropTypes.func.isRequired,
   },
 
-  mixins: [FluxibleMixin, AuthMixin],
+  mixins: [FluxibleMixin],
 
   statics: {
     storeListeners: [VSFTransactionStore],

@@ -4,7 +4,6 @@ import {concurrent} from 'contra';
 
 import React from 'react';
 import { Link } from 'react-router';
-import AuthMixin from '../../../utils/AuthMixin';
 import { FluxibleMixin } from 'fluxible-addons-react';
 
 import loadSMS from '../actions/loadSMS';
@@ -42,7 +41,7 @@ const SMS = React.createClass({
     router: React.PropTypes.func.isRequired,
   },
 
-  mixins: [FluxibleMixin, AuthMixin],
+  mixins: [FluxibleMixin],
 
   statics: {
     storeListeners: [SMSStore],

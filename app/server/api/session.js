@@ -9,7 +9,6 @@ export default function (apiPrefix = '') {
       superagent
       .get(`${this._getHost()}${apiPrefix}${SESSION}`)
       .accept('json')
-      .set('Authorization', token)
       .end((err, res) => {
         if (err) {
           debug('error', err);

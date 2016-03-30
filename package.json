@@ -95,7 +95,6 @@
     "react-datepicker": "^0.24.0",
     "react-dom": "^0.14.7",
     "react-loader": "^1.2.0",
-    "react-mixin": "^3.0.1",
     "react-modal": "^0.6.1",
     "react-router": "^2.0.1",
     "react-select": "^1.0.0-beta11",

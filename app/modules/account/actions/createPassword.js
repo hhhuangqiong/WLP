@@ -1,3 +1,4 @@
+import { browserHistory } from 'react-router';
 import { ERROR_MESSAGE } from '../../../main/constants/actionTypes';
 import { userPath } from '../../../server/paths';
 
@@ -13,27 +14,18 @@ export default function (context, params, done) {
 
     const { username } = payload.result;
 
-    context.api.signIn(username, params.password, (signInErr, auth) => {
+    context.api.signIn(username, params.password, (signInErr, session) => {
       if (signInErr) {
         context.dispatch('SIGN_IN_FAILURE', signInErr);
         context.dispatch(ERROR_MESSAGE, signInErr);
         return;
       }
 
-      context.dispatch('SIGN_IN_SUCCESS', auth);
+      context.dispatch('SIGN_IN_SUCCESS', session);
 
-      context.cookie.set('token', auth.token);
-      context.cookie.set('user', auth.user._id);
-      context.cookie.set('username', auth.user.username);
-      context.cookie.set('displayName', auth.user.displayName);
-      context.cookie.set('carrierId', auth.user.carrierId);
-      context.cookie.set('role', auth.user.role);
+      const { role, carrierId: identity } = session;
 
-      // NOTE: possible race condition here
-      // the AuthStore needs to set its state to "authenticated"
-      // before the transition
-
-      context.api.getAuthorityList(auth.user.carrierId, (getAuthorityErr, { carrierId, capability }) => {
+      context.api.getAuthorityList(identity, (getAuthorityErr, { carrierId, capability }) => {
         if (getAuthorityErr) {
           context.dispatch('SIGN_IN_FAILURE', getAuthorityErr);
           context.dispatch(ERROR_MESSAGE, getAuthorityErr);
@@ -46,11 +38,9 @@ export default function (context, params, done) {
         const defaultPath = authority.getDefaultPath();
 
         if (defaultPath) {
-          context.getRouter().transitionTo(userPath(
-            auth.user.role, auth.user.carrierId, defaultPath
-          ));
+          browserHistory.push(userPath(role, carrierId, defaultPath));
         } else {
-          context.getRouter().transitionTo('/error/not-found');
+          browserHistory.push('/error/not-found');
         }
       });
     });

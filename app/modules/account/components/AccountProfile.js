@@ -3,7 +3,6 @@ import React, { PropTypes } from 'react';
 import Joi from 'joi';
 
 import { FluxibleMixin } from 'fluxible-addons-react';
-import AuthMixin from '../../../utils/AuthMixin';
 
 import ApplicationStore from '../../../main/stores/ApplicationStore';
 import AccountStore from '../stores/AccountStore';
@@ -32,7 +31,7 @@ export default React.createClass({
     router: PropTypes.func.isRequired,
   },
 
-  mixins: [FluxibleMixin, AuthMixin],
+  mixins: [FluxibleMixin],
 
   statics: {
     storeListeners: [ApplicationStore, AccountStore],

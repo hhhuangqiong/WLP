@@ -4,8 +4,6 @@ import moment from 'moment';
 import React, { PropTypes } from 'react';
 import classNames from 'classnames';
 
-import AuthMixin from '../../../utils/AuthMixin';
-
 import fetchWallet from '../actions/fetchWallet';
 import deactivateEndUser from '../actions/deactivateEndUser';
 import reactivateEndUser from '../actions/reactivateEndUser';
@@ -35,8 +33,6 @@ const EndUserProfile = React.createClass({
     executeAction: React.PropTypes.func.isRequired,
     router: React.PropTypes.func.isRequired,
   },
-
-  mixins: [AuthMixin],
 
   getParams() {
     const { identity: carrierId } = this.context.router.getCurrentParams();

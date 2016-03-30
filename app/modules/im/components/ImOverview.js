@@ -2,7 +2,6 @@ import React from 'react';
 import {Link} from 'react-router';
 
 import { FluxibleMixin } from 'fluxible-addons-react';
-import AuthMixin from '../../../utils/AuthMixin';
 
 import WidgetNotAvailable from '../../../main/components/common/WidgetNotAvailable';
 
@@ -18,7 +17,7 @@ const ImOverview = React.createClass({
     router: React.PropTypes.func.isRequired,
   },
 
-  mixins: [FluxibleMixin, AuthMixin],
+  mixins: [FluxibleMixin],
 
   statics: {
     storeListeners: [ImStore],

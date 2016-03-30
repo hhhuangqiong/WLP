@@ -7,7 +7,6 @@ import { Link } from 'react-router';
 import Select from 'react-select';
 
 import { FluxibleMixin } from 'fluxible-addons-react';
-import AuthMixin from '../../../utils/AuthMixin';
 
 import * as FilterBar from '../../../main/components/FilterBar';
 import * as Panel from './../../../main/components/Panel';
@@ -50,7 +49,7 @@ const CallsOverview = React.createClass({
     router: PropTypes.object,
   },
 
-  mixins: [FluxibleMixin, AuthMixin],
+  mixins: [FluxibleMixin],
 
   statics: {
     storeListeners: {

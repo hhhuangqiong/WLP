@@ -2,7 +2,6 @@ import React, { PropTypes } from 'react';
 import { RouteHandler } from 'react-router';
 
 import { FluxibleMixin } from 'fluxible-addons-react';
-import AuthMixin from '../../../utils/AuthMixin';
 
 import fetchAccounts from '../actions/fetchAccounts';
 import AccountStore from '../stores/AccountStore';
@@ -16,7 +15,7 @@ export default React.createClass({
     router: PropTypes.func.isRequired,
   },
 
-  mixins: [FluxibleMixin, AuthMixin],
+  mixins: [FluxibleMixin],
 
   statics: {
     storeListeners: [AccountStore],

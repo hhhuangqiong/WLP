@@ -9,7 +9,6 @@ import { Link } from 'react-router';
 import * as FilterBar from '../../../main/components/FilterBar';
 import DatePicker from '../../../main/components/DatePicker';
 
-import AuthMixin from '../../../utils/AuthMixin';
 import fetchCalls from '../actions/fetchCalls';
 import fetchMoreCalls from '../actions/fetchMoreCalls';
 import clearCallsReport from '../actions/clearCallsReport';

@@ -14,7 +14,6 @@ export default function (apiPrefix = '') {
         .get(`${this._getHost()}${carrierBasePath}/${params.carrierId}/vsf`)
         .query(params)
         .accept('json')
-        .set('Authorization', this._getToken())
         .end(genericHandler(cb));
     },
 
@@ -23,7 +22,6 @@ export default function (apiPrefix = '') {
         .get(`${this._getHost()}${carrierBasePath}/${params.carrierId}/widgets/vsf`)
         .query(params)
         .accept('json')
-        .set('Authorization', this._getToken())
         .end(genericHandler(cb));
     },
   };

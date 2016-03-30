@@ -1,10 +1,8 @@
 import React, { PropTypes, Component } from 'react';
-import reactMixin from 'react-mixin';
 import { Link } from 'react-router';
 import classnames from 'classnames';
 import Joi from 'joi';
 
-import PublicOnlyMixin from '../../../utils/PublicOnlyMixin';
 import validator from '../../../main/components/ValidateDecorator';
 import forgotPassword from '../actions/forgotPassword';
 
@@ -13,7 +11,6 @@ import forgotPassword from '../actions/forgotPassword';
   .email()
   .required(),
 })
-@reactMixin.decorate(PublicOnlyMixin)
 export default class ForgotPassword extends Component {
   static contextTypes = {
     executeAction: PropTypes.func.isRequired,

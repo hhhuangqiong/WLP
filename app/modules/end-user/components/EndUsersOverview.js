@@ -8,7 +8,6 @@ import getMapConfig from '../utils/getMapConfig';
 import MAP_DATA from '../constants/mapData';
 
 import { FluxibleMixin } from 'fluxible-addons-react';
-import AuthMixin from '../../../utils/AuthMixin';
 
 import * as FilterBar from '../../../main/components/FilterBar';
 import * as Panel from './../../../main/components/Panel';
@@ -74,7 +73,7 @@ const EndUsersOverview = React.createClass({
     executeAction: React.PropTypes.func.isRequired,
   },
 
-  mixins: [FluxibleMixin, AuthMixin],
+  mixins: [FluxibleMixin],
 
   statics: {
     storeListeners: {

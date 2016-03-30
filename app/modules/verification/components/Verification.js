@@ -2,8 +2,6 @@ import React from 'react';
 import { FluxibleMixin } from 'fluxible-addons-react';
 import { RouteHandler } from 'react-router';
 
-import AuthMixin from '../../../utils/AuthMixin';
-
 import ApplicationStore from '../../../main/stores/ApplicationStore';
 
 const Verification = React.createClass({
@@ -12,7 +10,7 @@ const Verification = React.createClass({
     executeAction: React.PropTypes.func.isRequired,
   },
 
-  mixins: [FluxibleMixin, AuthMixin],
+  mixins: [FluxibleMixin],
 
   statics: {
     storeListeners: [ApplicationStore],

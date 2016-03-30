@@ -4,25 +4,24 @@ import { SIGN_IN } from '../../server/paths';
 module.exports = (context, payload, done) => {
   context.dispatch('SIGN_OUT_START');
 
-  context.api.signOut(err => {
+  context.api.signOut((err, result) => {
     if (err) {
       context.dispatch('SIGN_OUT_FAILURE', err);
       done();
       return;
     }
 
+    if (!result.success) {
+      context.dispatch('SIGN_OUT_FAILURE', result.error);
+      done();
+      return;
+    }
+
     context.dispatch('SIGN_OUT_SUCCESS');
-    context.cookie.clear('token');
-    context.cookie.clear('user');
-    context.cookie.clear('carrierId');
-    context.cookie.clear('urlPrefix');
 
     const authority = context.getAuthority();
     authority.reset();
 
-    // NOTE: possible race condition here
-    // the AuthStore needs to set its state to "not authenticated"
-    // before the transition
     browserHistory.push(SIGN_IN);
     done();
   });

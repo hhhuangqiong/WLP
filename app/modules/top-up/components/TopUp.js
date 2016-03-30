@@ -4,7 +4,6 @@ import { concurrent } from 'contra';
 
 import React from 'react';
 import { Link } from 'react-router';
-import AuthMixin from '../../../utils/AuthMixin';
 import { FluxibleMixin } from 'fluxible-addons-react';
 
 import loadTransactions from '../actions/loadTransactions';
@@ -46,7 +45,7 @@ const TopUp = React.createClass({
     router: React.PropTypes.func.isRequired,
   },
 
-  mixins: [FluxibleMixin, AuthMixin],
+  mixins: [FluxibleMixin],
 
   statics: {
     storeListeners: [TopUpStore],

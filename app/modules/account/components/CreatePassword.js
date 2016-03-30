@@ -1,12 +1,10 @@
 import React, { PropTypes, Component } from 'react';
-import reactMixin from 'react-mixin';
 import classnames from 'classnames';
 
 import _ from 'lodash';
 import Joi from 'joi';
 
 import { connectToStores } from 'fluxible-addons-react';
-import PublicOnlyMixin from '../../../utils/PublicOnlyMixin';
 
 import createPassword from '../actions/createPassword';
 import verifyAccountToken from '../actions/verifyAccountToken';
@@ -22,7 +20,6 @@ import validator from '../../../main/components/ValidateDecorator';
     .required(),
   passwordConfirm: 'password',
 })
-@reactMixin.decorate(PublicOnlyMixin)
 class CreatePassword extends Component {
   static contextTypes = {
     executeAction: PropTypes.func.isRequired,

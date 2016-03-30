@@ -26,9 +26,8 @@ export default function (apiPrefix = '') {
 
     signOut(cb) {
       superagent
-      .post(`${this._getHost()}${apiPrefix}${SIGN_OUT}`)
+      .get(`${this._getHost()}${apiPrefix}${SIGN_OUT}`)
       .accept('json')
-      .set('Authorization', this._getToken())
       .end(genericHandler(cb));
     },
   };

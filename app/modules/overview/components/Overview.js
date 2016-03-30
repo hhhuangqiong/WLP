@@ -1,6 +1,5 @@
 import React from 'react';
 import { FluxibleMixin } from 'fluxible-addons-react';
-import AuthMixin from '../../../utils/AuthMixin';
 
 import WidgetNotAvailable from '../../../main/components/common/WidgetNotAvailable';
 import fetchOverviewWidgets from '../actions/fetchOverviewWidgets';
@@ -10,7 +9,7 @@ import AuthStore from '../../../main/stores/AuthStore';
 const errorMessage = '<div className="widget-not-found">Dashboard is not available</div>';
 
 export default React.createClass({
-  mixins: [FluxibleMixin, AuthMixin],
+  mixins: [FluxibleMixin],
 
   statics: {
     storeListeners: [OverviewStore],

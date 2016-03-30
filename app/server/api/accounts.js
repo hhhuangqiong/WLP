@@ -12,7 +12,6 @@ export default function (apiPrefix = '') {
         .get(`${this._getHost()}${apiPrefix}/accounts`)
         .query(params)
         .accept('json')
-        .set('Authorization', this._getToken())
         .end(genericHandler(cb));
     },
 
@@ -21,7 +20,6 @@ export default function (apiPrefix = '') {
         .post(`${this._getHost()}${apiPrefix}/accounts`)
         .accept('json')
         .send(params.data)
-        .set('Authorization', this._getToken())
         .end(genericHandler(cb));
     },
 
@@ -30,7 +28,6 @@ export default function (apiPrefix = '') {
         .put(`${this._getHost()}${apiPrefix}/accounts/${params.data.userId}`)
         .accept('json')
         .send(params)
-        .set('Authorization', this._getToken())
         .end(genericHandler(cb));
     },
 
@@ -38,7 +35,6 @@ export default function (apiPrefix = '') {
       superagent
         .del(`${this._getHost()}${apiPrefix}/accounts/${params.accountId}`)
         .accept('json')
-        .set('Authorization', this._getToken())
         .end(genericHandler(cb));
     },
 
@@ -46,7 +42,6 @@ export default function (apiPrefix = '') {
       superagent
         .get(`${this._getHost()}${apiPrefix}/accounts/verify/${params.token}`)
         .accept('json')
-        .set('Authorization', this._getToken())
         .end(genericHandler(cb));
     },
 
@@ -55,7 +50,6 @@ export default function (apiPrefix = '') {
         .put(`${this._getHost()}${apiPrefix}/accounts/verify/${params.token}`)
         .accept('json')
         .send(params)
-        .set('Authorization', this._getToken())
         .end(genericHandler(cb));
     },
 
@@ -64,7 +58,6 @@ export default function (apiPrefix = '') {
         .post(`${this._getHost()}${apiPrefix}/accounts/change-password`)
         .accept('json')
         .send(params)
-        .set('Authorization', this._getToken())
         .end(genericHandler(cb));
     },
 
@@ -72,7 +65,6 @@ export default function (apiPrefix = '') {
       superagent
         .put(`${this._getHost()}${apiPrefix}/accounts/reverify/${params.data.username}`)
         .accept('json')
-        .set('Authorization', this._getToken())
         .end(genericHandler(cb));
     },
 
@@ -80,7 +72,6 @@ export default function (apiPrefix = '') {
       superagent
         .get(`${this._getHost()}${apiPrefix}/accounts/managingCompanies`)
         .accept('json')
-        .set('Authorization', this._getToken())
         .query({ userId: params.userId })
         .end(genericHandler(cb));
     },

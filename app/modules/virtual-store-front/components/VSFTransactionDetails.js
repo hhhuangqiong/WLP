@@ -4,7 +4,6 @@ import moment from 'moment';
 import { concurrent } from 'contra';
 import { merge, last, omit, clone } from 'lodash';
 import { FluxibleMixin } from 'fluxible-addons-react';
-import AuthMixin from '../../../utils/AuthMixin';
 
 import Pagination from '../../../main/components/Pagination';
 
@@ -27,7 +26,7 @@ const VSFTransactionDetails = createClass({
     getStore: PropTypes.func.isRequired,
   },
 
-  mixins: [FluxibleMixin, AuthMixin],
+  mixins: [FluxibleMixin],
 
   statics: {
     storeListeners: [VSFTransactionStore],

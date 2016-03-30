@@ -1,6 +1,5 @@
 import Q from 'q';
 import path from 'path';
-import { isURL } from 'validator';
 
 // react & flux -related
 import React from 'react';
@@ -32,8 +31,6 @@ import app from '../app';
 
 // access via `context`
 import config from '../config';
-import loadSession from '../main/actions/loadSession';
-import getAuthorityList from '../main/authority/actions/getAuthorityList';
 
 const debug = require('debug');
 debug.enable('app:*');
@@ -119,20 +116,10 @@ function initialize(port) {
   server.use(config.API_PATH_PREFIX, require('./routers/api'));
   server.use(config.API_PATH_PREFIX, errorHandler);
 
-  // TODO: put it into error handlings middleware
-  function handlePermissionError(err, req, res, next) {
-    if (err) {
-      err.status === 404 ? res.redirect(ERROR_404) : res.redirect(ERROR_401);
-      return;
-    }
-
-    next();
-  }
-
   // IMPORTANT:
   // using redirect in this middleware will lead to
   // redirect loop if the process are with errors
-  server.use(require('./middlewares/aclMiddleware'), handlePermissionError, function (req, res, next) {
+  server.use(function (req, res, next) {
     const serializedConfig = `window.${config.GLOBAL_CONFIG_VARIABLE}=${serialize(config)};`;
 
     /**
@@ -151,11 +138,12 @@ function initialize(port) {
      * @method sendInternalServerError
      * to response a redirection to internal-server-error page
      */
-    function sendInternalServerError() {
+    function sendInternalServerError(err) {
       // TODO: ideally, it should response the internal-server-page,
       // render Error element to string and send
       // React.createElement(Error500, { message })
-      res.redirect('/error/internal-server-error');
+      logger.error(err);
+      res.redirect(302, '/error/internal-server-error');
       return;
     }
 
@@ -172,11 +160,10 @@ function initialize(port) {
       routes: app.getComponent(),
       location: req.url,
     }, (matchingErr, redirectLocation, renderProps) => {
-      logger.debug('matching error', matchingErr);
       if (matchingErr) {
         // if error occurred during matching url with react-router,
         // it should response with internal server error
-        sendInternalServerError();
+        sendInternalServerError(matchingErr);
         return;
       } else if (redirectLocation) {
         // if redirection is detected by react-router,
@@ -186,75 +173,26 @@ function initialize(port) {
         res.redirect(302, redirectTo);
         return;
       } else if (renderProps) {
-        logger.debug(renderProps);
-
         // if renderProps is returned by react-router,
         // that means react-router hit a route
-        const { identity } = renderProps.params;
         const context = app.createContext({ req, res, config });
 
-        context.getActionContext().executeAction(loadSession, {}, (err, userSession) => {
-          logger.debug(err, userSession);
+        Q.nfcall(fetchData, context, renderProps)
+          .then(() => {
+            const dehydratedContext = app.dehydrate(context);
+            const dehydratedState = `window.${config.GLOBAL_DATA_VARIABLE}=${serialize(dehydratedContext)};`;
+            const children = React.createElement(RouterContext, renderProps);
+            const markupElement = createMarkupElement(context, children);
+            const htmlElement = createHtmlElement(serializedConfig, dehydratedState, markupElement);
+            const html = ReactDomServer.renderToStaticMarkup(htmlElement);
+            const htmlWithDocType = prependDocType(html);
 
-          if (err) {
-            sendInternalServerError();
+            res.send(htmlWithDocType);
             return;
-          }
-
-          if (!userSession) {
-            logger.info('user session not found');
-
-            // TODO: the state is indeterminable here
-            // if the user identity is not presented in the url
-            // by application structure, does it mean it is public page???
-            // when user is in public page, the status should be 200
-            // when user is in private page, the status should be 401
-            if (!identity) {
-              logger.info('public page, return 200 status');
-              res.status(200);
-            } else {
-              logger.info('private page, return 401 status');
-              res.status(401);
-            }
-
-            sendPureHtml();
-            return;
-          }
-
-          // if identity exists in the url but it is with invalid format
-          if (!!identity && !isURL(identity, { allow_underscores: true })) {
-            logger.info('invalid identity is found in the url');
-
-            // we cannot let the client-side application to determine
-            // which page should be shown, as it actually hits a correct url,
-            // but just the domain logic is wrong (invalid carrierId)
-            // TODO: UNCERTAIN with either access-denied or not-found
-            res.redirect('/error/access-denied');
-            return;
-          }
-
-          // to let you know carrierId is indeed the identity params in url
-          const carrierId = identity;
-
-          Q.ninvoke(context.getActionContext(), 'executeAction', getAuthorityList, carrierId)
-            .then(() => Q.nfcall(fetchData, context, renderProps))
-            .then(() => {
-              const dehydratedContext = app.dehydrate(context);
-              const dehydratedState = `window.${config.GLOBAL_DATA_VARIABLE}=${serialize(dehydratedContext)};`;
-              const children = React.createElement(RouterContext, renderProps);
-              const markupElement = createMarkupElement(context, children);
-              const htmlElement = createHtmlElement(serializedConfig, dehydratedState, markupElement);
-              const html = ReactDomServer.renderToStaticMarkup(htmlElement);
-              const htmlWithDocType = prependDocType(html);
-
-              res.send(htmlWithDocType);
-              return;
-            })
-            .catch(error => {
-              logger.error(error);
-              sendInternalServerError();
-            });
-        });
+          })
+          .catch(error => {
+            sendInternalServerError(error);
+          });
       } else {
         // if nothing matched, the page resource is not found in
         res.status(404);

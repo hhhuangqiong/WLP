@@ -6,7 +6,6 @@ import moment from 'moment';
 import { isNull, max, last, merge, sortByOrder, some, values } from 'lodash';
 
 import { FluxibleMixin } from 'fluxible-addons-react';
-import AuthMixin from '../../../utils/AuthMixin';
 
 import * as FilterBar from './../../../main/components/FilterBar';
 import * as Panel from './../../../main/components/Panel';
@@ -57,7 +56,7 @@ export default React.createClass({
     executeAction: PropTypes.func.isRequired,
   },
 
-  mixins: [FluxibleMixin, AuthMixin],
+  mixins: [FluxibleMixin],
 
   statics: {
     storeListeners: {

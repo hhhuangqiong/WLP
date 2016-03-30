@@ -35,10 +35,8 @@ function signIn(req, res, next) {
       }
 
       // from 'express-session'
-      const token = req.sessionID;
       const authUser = getAuthUser(user);
       const data = {
-        token,
         user: authUser._id,
         username: authUser.username,
         displayName: authUser.displayName,
@@ -59,75 +57,31 @@ function signIn(req, res, next) {
 
       logger.info('session saved for %s', req.session.username);
 
-      res.json({ token: '__session__', user: authUser });
+      res.json({ user: authUser });
     });
   })(req, res, next);
 }
 
 function signOut(req, res) {
-  let token = req.header('Authorization');
+  const { user } = req;
 
-  if (token === '__session__') {
-    // from client
-    token = req.sessionID;
-  }
-
-  if (token) {
+  try {
     req.logout();
-    sessionClient.revokeSession(token);
-    res.sendStatus(200);
+  } catch (err) {
+    res.status(500).json({
+      success: false,
+      error: err.message,
+    });
     return;
   }
 
-  res.status(500).json({
-    error: 'signout failed',
+  res.status(200).json({
+    success: true,
+    user,
   });
-}
-
-// because the app doesn't redirect the user after log in
-// NB: cannot use `req.isAuthenticated` (passport)
-// so there's no 'user' in `req` object
-function ensureAuthenticated(req, res) {
-  res.sendStatus(200);
-}
-
-function validateToken(req, res, next) {
-  sessionDebug('Auth Header ', req.header('Authorization'));
-  let token = req.header('Authorization');
-
-  if (token === '__session__') {
-    // from client
-    token = req.sessionID;
-  }
-
-  sessionClient
-    .getSession(token)
-    .then(user => {
-      if (!user || ((user && user.token) !== token)) {
-        return res.status(401).json({
-          error: {
-            message: 'Must provide valid auth token in Authorization header',
-          },
-        });
-      }
-
-      // prepare the user object just like what
-      // Passport.js does to req.user
-      res.locals.user = user;
-      next();
-    })
-    .catch(err => {
-      logger.error(err);
-      res.status(500).json({
-        error: err,
-      });
-    })
-    .done();
 }
 
 export {
   signIn,
   signOut,
-  ensureAuthenticated,
-  validateToken,
 };

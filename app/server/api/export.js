@@ -19,7 +19,6 @@ export default function (exportPrefix = '') {
         .get(`${this._getHost()}${exportPrefix}/${params.carrierId}`)
         .query(params)
         .accept('json')
-        .set('Authorization', this._getToken())
         .end(genericHandler(cb));
     },
 
@@ -28,7 +27,6 @@ export default function (exportPrefix = '') {
         .get(`${this._getHost()}${exportPrefix}/${params.carrierId}/progress`)
         .query(params)
         .accept('json')
-        .set('Authorization', this._getToken())
         .end((err, res) => {
           if (err) {
             cb(err);
@@ -45,7 +43,6 @@ export default function (exportPrefix = '') {
         .get(`${this._getHost()}${exportPrefix}/${params.carrierId}/cancel`)
         .query(params)
         .accept('json')
-        .set('Authorization', this._getToken())
         .end((err, res) => {
           if (err) {
             cb(err);
