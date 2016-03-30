@@ -1,29 +1,35 @@
-import React, { PropTypes } from 'react';
+import React, { PropTypes, Component } from 'react';
 
-const App = React.createClass({
-  propTypes: {
-    context: PropTypes.shape({
-      getAuthority: PropTypes.func.isRequired,
-    }),
-  },
+/**
+ * this is the entry point of the whole React application,
+ * all the child context should be injected in order to provide
+ * a more manageable position
+ */
 
-  childContextTypes: {
-    getAuthority: PropTypes.func.isRequired,
-  },
+export default class App extends Component {
+  static childContextTypes = {
+    location: PropTypes.object.isRequired,
+    params: PropTypes.object.isRequired,
+    route: PropTypes.object.isRequired,
+  };
 
   getChildContext() {
     return {
-      getAuthority: this.props.context.getAuthority,
+      location: this.props.location,
+      params: this.props.params,
+      route: this.props.route,
     };
-  },
+  }
+
+  constructor(props, context) {
+    super(props, context);
+  }
 
   render() {
     return (
       <div>
         { this.props.children }
       </div>
-    );
-  },
-});
-
-module.exports = App;
+    )
+  }
+}

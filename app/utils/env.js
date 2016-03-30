@@ -9,3 +9,5 @@ export function isDev() {
 export function enabledHotloader() {
   return process.env.ENABLE_WEBPACK_HOTLOADER === 'true';
 }
+
+export const hotloadPort = process.env.HOT_LOAD_PORT || 8888;

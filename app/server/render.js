@@ -1,4 +1,5 @@
 import React from 'react';
+import ReactDomServer from 'react-dom/server'
 import Router from 'react-router';
 import serialize from 'serialize-javascript';
 import { FluxibleComponent } from 'fluxible-addons-react';
@@ -55,7 +56,7 @@ export default function (app) {
           },
           React.createElement(Handler)
         ));
-        const html = React.renderToStaticMarkup(React.createElement(Html, {
+        const html = ReactDomServer.renderToStaticMarkup(React.createElement(Html, {
           state: dehydratedState,
           markup: appMarkup,
         }));

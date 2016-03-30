@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { PropTypes } from 'react';
 import { Link } from 'react-router';
 import Select from 'react-select';
 import moment from 'moment';
@@ -70,7 +70,7 @@ const EndUsersOverview = React.createClass({
   displayName: 'EndUsersOverview',
 
   contextTypes: {
-    router: React.PropTypes.func.isRequired,
+    params: PropTypes.object,
     executeAction: React.PropTypes.func.isRequired,
   },
 
@@ -238,7 +238,7 @@ const EndUsersOverview = React.createClass({
   },
 
   render() {
-    const { role, identity } = this.context.router.getCurrentParams();
+    const { role, identity } = this.context.params;
     const totalRegisteredUser = this._getTotalRegisteredUser();
     const monthlyRegisteredUserStats = this._getMonthlyRegisteredUserStats();
     const monthlyActiveUserStats = this._getMonthlyActiveUserStats();
@@ -248,8 +248,8 @@ const EndUsersOverview = React.createClass({
       <div className="row">
         <FilterBar.Wrapper>
           <FilterBar.NavigationItems>
-            <Link to="end-users-overview" params={{ role, identity }}>Overview</Link>
-            <Link to="end-users-details" params={{ role, identity }}>Details Report</Link>
+            <Link to={`/${role}/${identity}/end-users/overview`} activeClassName="active">Overview</Link>
+            <Link to={`/${role}/${identity}/end-users/details`} activeClassName="active">Details Report</Link>
           </FilterBar.NavigationItems>
           <FilterBar.LeftItems>
 
@@ -477,7 +477,7 @@ const EndUsersOverview = React.createClass({
   },
 
   _getStats() {
-    const { identity } = this.context.router.getCurrentParams();
+    const { identity } = this.context.params;
 
     this.context.executeAction(fetchEndUsersStatsTotal, {
       fromTime: moment().startOf('day').format('x'),
@@ -578,7 +578,7 @@ const EndUsersOverview = React.createClass({
   },
 
   _getMonthlyStats(month, year) {
-    const { identity } = this.context.router.getCurrentParams();
+    const { identity } = this.context.params;
 
     const selectedMonth = (month || month === 0) ? month : this.state.selectedMonth;
     const selectedYear = year || this.state.selectedYear;
@@ -594,7 +594,7 @@ const EndUsersOverview = React.createClass({
   },
 
   _getLastXDaysStats(lastXDays) {
-    const { identity } = this.context.router.getCurrentParams();
+    const { identity } = this.context.params;
     const timeRange = lastXDays || this.state.selectedLastXDays;
 
     const { from, to, timescale } = parseTimeRange(timeRange);
@@ -608,7 +608,7 @@ const EndUsersOverview = React.createClass({
   },
 
   _getGeographicStats(lastXDays) {
-    const { identity } = this.context.router.getCurrentParams();
+    const { identity } = this.context.params;
     const timeRange = lastXDays || this.state.selectedLastXDays;
 
     const { from, to, timescale } = parseTimeRange(timeRange);
@@ -622,7 +622,7 @@ const EndUsersOverview = React.createClass({
   },
 
   _getDeviceStats() {
-    const { identity } = this.context.router.getCurrentParams();
+    const { identity } = this.context.params;
 
     this.context.executeAction(fetchDeviceStats, {
       fromTime: moment().startOf('day').format('x'),

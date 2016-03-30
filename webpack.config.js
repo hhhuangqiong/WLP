@@ -3,7 +3,7 @@ var webpack     = require('webpack');
 var nodeEnv     = process.env.NODE_ENV;
 var appHostname = process.env.APP_HOSTNAME || 'localhost';
 var hotLoadPort = process.env.HOT_LOAD_PORT || 8888;
-var enableHotloader = process.env.ENABLE_WEBPACK_HOTLOADER==="true" || false;
+var enableHotloader = process.env.ENABLE_WEBPACK_HOTLOADER === "true" || false;
 
 // common
 var config =  {

@@ -23,6 +23,9 @@ const accountPages = ['account', 'account-create', 'account-profile'];
 const Navigation = React.createClass({
   contextTypes: {
     getStore: PropTypes.func.isRequired,
+    location: PropTypes.object,
+    params: PropTypes.object,
+    router: PropTypes.object,
   },
 
   mixins: [FluxibleMixin],
@@ -136,8 +139,6 @@ const Navigation = React.createClass({
         </Modal>
 
         <ul className="right">
-          {this.renderCreateUser()}
-          {this.renderCreateCompany()}
           <li className="navigation-bar__item">
             <a href="https://support.maaii.com" target="_new">report issue</a>
           </li>
@@ -165,11 +166,5 @@ const Navigation = React.createClass({
     );
   },
 });
-
-Navigation.contextTypes = {
-  getStore: PropTypes.func.isRequired,
-  executeAction: PropTypes.func.isRequired,
-  router: PropTypes.func.isRequired,
-};
 
 export default Navigation;

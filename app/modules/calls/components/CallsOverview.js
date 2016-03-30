@@ -2,7 +2,7 @@ import { isNull, bindKey, get, reduce, isEmpty, isUndefined, round, max } from '
 import moment from 'moment';
 import classNames from 'classnames';
 
-import React from 'react';
+import React, { PropTypes } from 'react';
 import { Link } from 'react-router';
 import Select from 'react-select';
 
@@ -45,7 +45,9 @@ const DECIMAL_PLACE = 1;
 
 const CallsOverview = React.createClass({
   contextTypes: {
-    router: React.PropTypes.func.isRequired,
+    location: PropTypes.object,
+    params: PropTypes.object,
+    router: PropTypes.object,
   },
 
   mixins: [FluxibleMixin, AuthMixin],
@@ -283,7 +285,7 @@ const CallsOverview = React.createClass({
   },
 
   _getMonthlyStats(type, month, year) {
-    const { identity } = this.context.router.getCurrentParams();
+    const { identity } = this.context.params;
 
     const selectedMonth = (month || month === 0) ? month : this.state.selectedMonth;
     const selectedYear = year || this.state.selectedYear;
@@ -311,7 +313,7 @@ const CallsOverview = React.createClass({
   },
 
   _getLastXDaysStats(type, lastXDays) {
-    const { identity } = this.context.router.getCurrentParams();
+    const { identity } = this.context.params;
     const timeRange = lastXDays || this.state.selectedLastXDays;
 
     const { from, to, quantity: selectedLastXDays, timescale } = parseTimeRange(timeRange);
@@ -402,7 +404,7 @@ const CallsOverview = React.createClass({
   },
 
   render() {
-    const { role, identity } = this.context.router.getCurrentParams();
+    const { role, identity } = this.context.params;
     const monthlyUserStats = this._getMonthlyUser();
     const appIds = this._getAppIdSelectOptions();
 
@@ -410,8 +412,8 @@ const CallsOverview = React.createClass({
       <div className="row">
         <FilterBar.Wrapper>
           <FilterBar.NavigationItems>
-            <Link to="calls-overview" params={{ role, identity }}>Overview</Link>
-            <Link to="calls-details" params={{ role, identity }}>Details Report</Link>
+            <Link to={`/${role}/${identity}/calls/overview`} activeClassName="active">Overview</Link>
+            <Link to={`/${role}/${identity}/calls/details`} activeClassName="active">Details Report</Link>
           </FilterBar.NavigationItems>
           <FilterBar.LeftItems>
             <a className={classNames({ active: this.state.type === CALL_TYPE.ALL })} onClick={ bindKey(this, 'changeCallType', CALL_TYPE.ALL) }>All</a>

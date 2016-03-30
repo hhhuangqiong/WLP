@@ -1,6 +1,8 @@
 /* should not include *sensitive* information here */
 
 module.exports = {
+  GLOBAL_DATA_VARIABLE: '__DATA__',
+  GLOBAL_CONFIG_VARIABLE: '__CONFIG__',
   DEFAULT_POST_LOGIN_PATH: '/calls',
   EXPORT_PATH_PREFIX: '/export',
   API_PATH_PREFIX: '/api',

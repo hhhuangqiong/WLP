@@ -22,7 +22,7 @@ export default [
     icon: 'icon-menuenduser',
     page: END_USER,
     routeName: 'end-users-overview',
-    path: 'end-users',
+    path: 'end-users/overview',
   },
   {
     name: 'company',
@@ -36,7 +36,7 @@ export default [
     icon: 'icon-menucalls',
     page: CALL,
     routeName: 'calls-overview',
-    path: 'calls',
+    path: 'calls/overview',
   },
   {
     name: 'IM',

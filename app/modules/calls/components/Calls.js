@@ -2,7 +2,7 @@ import _ from 'lodash';
 import moment from 'moment';
 import { concurrent } from 'contra';
 import classNames from 'classnames';
-import React from 'react';
+import React, { PropTypes } from 'react';
 import { FluxibleMixin } from 'fluxible-addons-react';
 import { Link } from 'react-router';
 
@@ -26,11 +26,14 @@ import CALL_TYPE from '../constants/callType';
 
 const Calls = React.createClass({
   contextTypes: {
-    router: React.PropTypes.func.isRequired,
     executeAction: React.PropTypes.func.isRequired,
+    location: PropTypes.object,
+    params: PropTypes.object,
+    route: PropTypes.object,
+    router: React.PropTypes.object.isRequired,
   },
 
-  mixins: [FluxibleMixin, AuthMixin],
+  mixins: [FluxibleMixin],
 
   statics: {
     storeListeners: [CallsStore],
@@ -79,7 +82,7 @@ const Calls = React.createClass({
   },
 
   getInitialState() {
-    const query = _.merge(this.getDefaultQuery(), this.context.router.getCurrentQuery());
+    const query = _.merge(this.getDefaultQuery(), this.context.location.query);
     const queryAndStore = _.merge(this.getStateFromStores(), query);
     return queryAndStore;
   },
@@ -93,7 +96,7 @@ const Calls = React.createClass({
   },
 
   onChange() {
-    const query = _.merge(this.getDefaultQuery(), this.context.router.getCurrentQuery());
+    const query = _.merge(this.getDefaultQuery(), this.context.location.query);
     this.setState(_.merge(query, this.getStateFromStores()));
   },
 
@@ -110,9 +113,9 @@ const Calls = React.createClass({
   },
 
   handleQueryChange(newQuery) {
-    const routeName = _.last(this.context.router.getCurrentRoutes()).name;
-    const params = this.context.router.getCurrentParams();
-    const query = _.merge(this.context.router.getCurrentQuery(), this.getQueryFromState(), newQuery);
+    const routeName = _.last(this.context.routes).name;
+    const params = this.context.params;
+    const query = _.merge(this.context.location.query, this.getQueryFromState(), newQuery);
 
     this.context.router.transitionTo(routeName, params, _.omit(query, function (value) {
       return !value;
@@ -120,7 +123,7 @@ const Calls = React.createClass({
   },
 
   handlePageChange(e) {
-    const { identity } = this.context.router.getCurrentParams();
+    const { identity } = this.context.params;
 
     this.context.executeAction(fetchMoreCalls, {
       carrierId: identity,
@@ -200,15 +203,15 @@ const Calls = React.createClass({
   },
 
   render() {
-    const params = this.context.router.getCurrentParams();
+    const { role, identity } = this.context.params;
     const searchTypes = [{ name: 'Caller', value: 'caller' }, { name: 'Callee', value: 'callee' }];
 
     return (
       <div className="row">
         <FilterBar.Wrapper>
           <FilterBar.NavigationItems>
-            <Link to="calls-overview" params={params}>Overview</Link>
-            <Link to="calls-details" params={params}>Details Report</Link>
+            <Link to={`/${role}/${identity}/calls/overview`} activeClassName="active">Overview</Link>
+            <Link to={`/${role}/${identity}/calls/details`} activeClassName="active">Details Report</Link>
           </FilterBar.NavigationItems>
           <FilterBar.LeftItems>
             <a className={classNames({ active: this.state.type === CALL_TYPE.ALL })} onClick={this.handleAllTypeClick}>All</a>

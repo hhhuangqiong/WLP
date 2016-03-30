@@ -1,7 +1,7 @@
 import _, { isNull } from 'lodash';
 import moment from 'moment';
 import { concurrent } from 'contra';
-import React from 'react';
+import React, { PropTypes } from 'react';
 import { Link } from 'react-router';
 
 import { FluxibleMixin } from 'fluxible-addons-react';
@@ -34,10 +34,13 @@ const MONTHS_BEFORE_TODAY = 1;
 const EndUsers = React.createClass({
   contextTypes: {
     executeAction: React.PropTypes.func.isRequired,
-    router: React.PropTypes.func.isRequired,
+    location: PropTypes.object,
+    params: PropTypes.object,
+    route: PropTypes.object,
+    router: React.PropTypes.object,
   },
 
-  mixins: [FluxibleMixin, AuthMixin],
+  mixins: [FluxibleMixin],
 
   statics: {
     storeListeners: [EndUserStore],
@@ -77,14 +80,14 @@ const EndUsers = React.createClass({
   },
 
   render() {
-    const { role, identity } = this.context.router.getCurrentParams();
+    const { role, identity } = this.context.params;
 
     return (
       <div className="row">
         <FilterBar.Wrapper>
           <FilterBar.NavigationItems>
-            <Link to="end-users-overview" params={{ role, identity }}>Overview</Link>
-            <Link to="end-users-details" params={{ role, identity }}>Details Report</Link>
+            <Link to={`/${role}/${identity}/end-users/overview`} activeClassName="active">Overview</Link>
+            <Link to={`/${role}/${identity}/end-users/details`} activeClassName="active">Details Report</Link>
           </FilterBar.NavigationItems>
 
           <FilterBar.LeftItems>
@@ -112,7 +115,7 @@ const EndUsers = React.createClass({
             <li className="top-bar--inner">
               <Export exportType="End_User">
                 <EndUserExportForm
-                  carrierId={this.context.router.getCurrentParams().identity}
+                  carrierId={this.context.params.identity}
                   startDate={this.state.startDate}
                   endDate={this.state.endDate}
                 />
@@ -164,12 +167,12 @@ const EndUsers = React.createClass({
   },
 
   getRequestBodyFromQuery(query) {
-    const { startDate, endDate, page } = query || this.context.router.getCurrentQuery();
+    const { startDate, endDate, page } = query || this.context.location.query;
     return { startDate, endDate, page };
   },
 
   getRequestBodyFromState() {
-    const { identity } = this.context.router.getCurrentParams();
+    const { identity } = this.context.params;
     const { startDate, endDate, page } = this.state;
     return { carrierId: identity, startDate, endDate, page };
   },
@@ -178,7 +181,7 @@ const EndUsers = React.createClass({
     return {
       page: this.getStore(EndUserStore).getPage(),
       hasNextPage: this.getStore(EndUserStore).getHasNextPage(),
-      currentUser: this.context.router.getCurrentParams.username ? this.getStore(EndUserStore).getCurrentUser() : null,
+      currentUser: this.context.params.username ? this.getStore(EndUserStore).getCurrentUser() : null,
     };
   },
 
@@ -190,8 +193,8 @@ const EndUsers = React.createClass({
    * @param newQuery Object
    */
   handleQueryChange(newQuery) {
-    const routeName = _.last(this.context.router.getCurrentRoutes()).name;
-    const params = this.context.router.getCurrentParams();
+    const routeName = _.last(this.context.routes).name;
+    const params = this.context.params;
     const query = _.merge(this.getRequestBodyFromQuery(), this.getRequestBodyFromState(), newQuery);
 
     this.context.router.transitionTo(routeName, params, _.omit(query, function(value) {
@@ -215,7 +218,7 @@ const EndUsers = React.createClass({
     this.context.executeAction(showNextPage);
 
     if (this.getStore(EndUserStore).getNeedMoreData()) {
-      const params = this.context.router.getCurrentParams();
+      const params = this.context.location.query;
 
       this.context.executeAction(fetchEndUsers, {
         carrierId: params.identity,
@@ -227,7 +230,7 @@ const EndUsers = React.createClass({
   },
 
   handleUserClick(username) {
-    const { identity: carrierId } = this.context.router.getCurrentParams();
+    const { identity: carrierId } = this.context.params;
 
     this.context.executeAction(fetchEndUser, {
       carrierId,

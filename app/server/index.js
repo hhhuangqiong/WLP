@@ -1,11 +1,14 @@
-import _ from 'lodash';
+import Q from 'q';
 import path from 'path';
 import { isURL } from 'validator';
 
 // react & flux -related
 import React from 'react';
+import ReactDomServer from 'react-dom/server';
+import { RouterContext, match } from 'react-router';
+import fetchData from '../utils/fetchData';
 import serialize from 'serialize-javascript';
-import Html from '../main/components/common/Html';
+import { createHtmlElement, createMarkupElement, getRedirectPath, prependDocType } from '../utils/fluxible';
 import errorHandler from './middlewares/errorHandler';
 // express-related
 import express from 'express';
@@ -23,7 +26,7 @@ import session from 'express-session';
 // import csrf from 'csurf';
 
 const PROJ_ROOT = path.join(__dirname, '../..');
-import { ERROR_401, ERROR_404 } from './paths';
+import { ERROR_401, ERROR_404, ERROR_500 } from './paths';
 
 import app from '../app';
 
@@ -32,9 +35,8 @@ import config from '../config';
 import loadSession from '../main/actions/loadSession';
 import getAuthorityList from '../main/authority/actions/getAuthorityList';
 
-function prependDocType(html) {
-  return '<!DOCTYPE html>' + html;
-}
+const debug = require('debug');
+debug.enable('app:*');
 
 function initialize(port) {
   if (!port) throw new Error('Please specify port');
@@ -49,7 +51,7 @@ function initialize(port) {
   const nconf = require('./initializers/nconf')(env, path.resolve(__dirname, '../config'));
 
   // NB: intentionally put 'logging' initializers before the others
-  require('./initializers/logging')(nconf.get('logging:winston'));
+  const logger = require('./initializers/logging')(nconf.get('logging:winston'));
 
   // database initialization + data seeding
   const postDBInit = require('./initializers/dataseed')(path.resolve(__dirname, `../data/users.${env}.json`));
@@ -117,8 +119,7 @@ function initialize(port) {
   server.use(config.API_PATH_PREFIX, require('./routers/api'));
   server.use(config.API_PATH_PREFIX, errorHandler);
 
-  const renderApp = require('./render')(app);
-
+  // TODO: put it into error handlings middleware
   function handlePermissionError(err, req, res, next) {
     if (err) {
       err.status === 404 ? res.redirect(ERROR_404) : res.redirect(ERROR_401);
@@ -128,59 +129,138 @@ function initialize(port) {
     next();
   }
 
+  // IMPORTANT:
+  // using redirect in this middleware will lead to
+  // redirect loop if the process are with errors
   server.use(require('./middlewares/aclMiddleware'), handlePermissionError, function (req, res, next) {
-    if (config.DISABLE_ISOMORPHISM) {
-      // Send empty HTML with just the config values
-      // all rendering will be done by the client
-      const serializedConfig = 'window.__CONFIG__=' + serialize(config) + ';';
-      const html = React.renderToStaticMarkup(React.createElement(Html, {
-        config: serializedConfig,
-      }));
+    const serializedConfig = `window.${config.GLOBAL_CONFIG_VARIABLE}=${serialize(config)};`;
 
-      res.send(prependDocType(html));
+    /**
+     * @method sendPureHtml
+     * to send pure(not hydrated) html markup as response so that
+     * the it will do client-side-rending
+     */
+    function sendPureHtml() {
+      const htmlElement = createHtmlElement(serializedConfig);
+      const html = ReactDomServer.renderToStaticMarkup(htmlElement);
+      const htmlWithDocType = prependDocType(html);
+      res.send(htmlWithDocType);
+    }
 
+    /**
+     * @method sendInternalServerError
+     * to response a redirection to internal-server-error page
+     */
+    function sendInternalServerError() {
+      // TODO: ideally, it should response the internal-server-page,
+      // render Error element to string and send
+      // React.createElement(Error500, { message })
+      res.redirect('/error/internal-server-error');
       return;
     }
 
-    const context = app.createContext({
-      req: req,
-      res: res,
-      config: config,
-    });
-
-    function doRenderApp() {
-      renderApp(context, req.url, function (err, html) {
-        if (err && err.notFound) {
-          return res.status(404).send(html);
-        }
-
-        // `onAbort` in `Router.create`
-        if (err && err.redirect) {
-          return res.redirect(303, err.redirect.to);
-        }
-
-        if (err) {
-          // TODO not handled at the moment, maybe render '500' component using express controller
-          return next(err);
-        }
-
-        res.send(prependDocType(html));
-      });
+    if (config.DISABLE_ISOMORPHISM) {
+      // if universal javascript is disabled,
+      // the react-router route matching process should not be done
+      // on server-side, so it responses the basic html markup
+      // and let the application launched on the client-side
+      sendPureHtml();
+      return;
     }
 
-    context.getActionContext().executeAction(loadSession, {}, function (err, session) {
-      if (!session) return doRenderApp();
+    match({
+      routes: app.getComponent(),
+      location: req.url,
+    }, (matchingErr, redirectLocation, renderProps) => {
+      logger.debug('matching error', matchingErr);
+      if (matchingErr) {
+        // if error occurred during matching url with react-router,
+        // it should response with internal server error
+        sendInternalServerError();
+        return;
+      } else if (redirectLocation) {
+        // if redirection is detected by react-router,
+        // it should response with redirection
+        const redirectTo = getRedirectPath(redirectLocation);
+        logger.debug(`redirection is detected, to: ${redirectTo}`);
+        res.redirect(302, redirectTo);
+        return;
+      } else if (renderProps) {
+        logger.debug(renderProps);
 
-      /* Check if current carrierId is a valid url */
-      let carrierId = req.url.split('/')[2];
+        // if renderProps is returned by react-router,
+        // that means react-router hit a route
+        const { identity } = renderProps.params;
+        const context = app.createContext({ req, res, config });
 
-      /* Get user carrierId by session to redirect correctly to default path */
-      if (!isURL(carrierId, { allow_underscores: true })) {
-        carrierId = _.get(session, 'user.carrierId');
+        context.getActionContext().executeAction(loadSession, {}, (err, userSession) => {
+          logger.debug(err, userSession);
+
+          if (err) {
+            sendInternalServerError();
+            return;
+          }
+
+          if (!userSession) {
+            logger.info('user session not found');
+
+            // TODO: the state is indeterminable here
+            // if the user identity is not presented in the url
+            // by application structure, does it mean it is public page???
+            // when user is in public page, the status should be 200
+            // when user is in private page, the status should be 401
+            if (!identity) {
+              logger.info('public page, return 200 status');
+              res.status(200);
+            } else {
+              logger.info('private page, return 401 status');
+              res.status(401);
+            }
+
+            sendPureHtml();
+            return;
+          }
+
+          // if identity exists in the url but it is with invalid format
+          if (!!identity && !isURL(identity, { allow_underscores: true })) {
+            logger.info('invalid identity is found in the url');
+
+            // we cannot let the client-side application to determine
+            // which page should be shown, as it actually hits a correct url,
+            // but just the domain logic is wrong (invalid carrierId)
+            // TODO: UNCERTAIN with either access-denied or not-found
+            res.redirect('/error/access-denied');
+            return;
+          }
+
+          // to let you know carrierId is indeed the identity params in url
+          const carrierId = identity;
+
+          Q.ninvoke(context.getActionContext(), 'executeAction', getAuthorityList, carrierId)
+            .then(() => Q.nfcall(fetchData, context, renderProps))
+            .then(() => {
+              const dehydratedContext = app.dehydrate(context);
+              const dehydratedState = `window.${config.GLOBAL_DATA_VARIABLE}=${serialize(dehydratedContext)};`;
+              const children = React.createElement(RouterContext, renderProps);
+              const markupElement = createMarkupElement(context, children);
+              const htmlElement = createHtmlElement(serializedConfig, dehydratedState, markupElement);
+              const html = ReactDomServer.renderToStaticMarkup(htmlElement);
+              const htmlWithDocType = prependDocType(html);
+
+              res.send(htmlWithDocType);
+              return;
+            })
+            .catch(error => {
+              logger.error(error);
+              sendInternalServerError();
+            });
+        });
+      } else {
+        // if nothing matched, the page resource is not found in
+        res.status(404);
+        sendPureHtml();
+        return;
       }
-
-      /* Always check for carrierId by url instead of current user */
-      context.getActionContext().executeAction(getAuthorityList, carrierId, err => doRenderApp());
     });
   });
 
