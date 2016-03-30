@@ -22,7 +22,12 @@ module.exports = (context, payload, done) => {
     const authority = context.getAuthority();
     authority.reset();
 
-    browserHistory.push(SIGN_IN);
+    try {
+      window.location.assign('/');
+    } catch (error) {
+      throw error;
+    }
+
     done();
   });
 };

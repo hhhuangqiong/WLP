@@ -34,7 +34,11 @@ module.exports = (context, payload) => {
       const defaultPath = authority.getDefaultPath();
 
       if (defaultPath) {
-        browserHistory.push(userPath(role, carrierId, defaultPath));
+        try {
+          window.location.assign(userPath(role, carrierId, defaultPath));
+        } catch (error) {
+          throw error;
+        }
       } else {
         browserHistory.push('/error/not-found');
       }

@@ -38,7 +38,11 @@ export default function (context, params, done) {
         const defaultPath = authority.getDefaultPath();
 
         if (defaultPath) {
-          browserHistory.push(userPath(role, carrierId, defaultPath));
+          try {
+            window.location.assign(userPath(role, carrierId, defaultPath));
+          } catch (error) {
+            throw error;
+          }
         } else {
           browserHistory.push('/error/not-found');
         }
