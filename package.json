@@ -1,6 +1,6 @@
 {
   "name": "m800-whitelabel-portal",
-  "version": "1.7.1",
+  "version": "1.7.2",
   "private": true,
   "scripts": {
     "jenkins": "npm prune && npm i && npm run build && npm run docs",
