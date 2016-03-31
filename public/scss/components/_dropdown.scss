@@ -18,7 +18,7 @@
   background-color: white;
 
   @include border-radius($global-radius $global-radius);
-  @include box-shadow(0 30px 40px rgba(0, 0, 0, 0.2));
+  @include box-shadow('0 30px 40px rgba(0, 0, 0, 0.2)');
 
   div {
     margin-bottom: rem-calc(10);

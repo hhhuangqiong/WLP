@@ -53,11 +53,11 @@
 }
 
 .horizontal-gauge {
-  @include border-radius(10px);
+  @include border-radius('10px');
   background-color: #D8D8D8;
 
   &__bar {
-    @include border-radius(10px);
+    @include border-radius('10px');
     @include transition('width 0.5s');
     background-color: #F00;
     height: 100%;

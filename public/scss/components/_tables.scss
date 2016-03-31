@@ -2,7 +2,7 @@ table {
     margin-top: rem-calc(20);
     overflow: hidden;
     @include border-radius($panels-border-radius);
-    @include box-shadow(0 2px 3px rgba(0, 0, 0, 0.1));
+    @include box-shadow('0 2px 3px rgba(0, 0, 0, 0.1)');
     &.clickable {
         tbody > tr {
             > td {

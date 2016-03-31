@@ -267,7 +267,7 @@
     min-width: rem-calc(200);
 
     .Select-control {
-      @include border-radius(20px);
+      @include border-radius('20px');
 
       background-color: #FAFAFA;
       border-color: rgba(199, 199, 199, 0.8);
@@ -319,7 +319,7 @@
   }
 
   &__result-tag {
-    @include border-radius(4px);
+    @include border-radius('4px');
     color: #FFF;
     display: block;
     font-size: 0.7rem;

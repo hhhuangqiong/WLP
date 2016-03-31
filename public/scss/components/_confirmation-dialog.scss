@@ -8,7 +8,7 @@
   $dialog-width: rem-calc(500);
   $button-width: rem-calc(120);
 
-  @include border-radius(4px);
+  @include border-radius('4px');
   background-color: #fff;
 
   margin-left: auto;
