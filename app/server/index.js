@@ -5,7 +5,6 @@ import path from 'path';
 import React from 'react';
 import ReactDomServer from 'react-dom/server';
 import { RouterContext, match } from 'react-router';
-import fetchData from '../utils/fetchData';
 import serialize from 'serialize-javascript';
 import { createHtmlElement, createMarkupElement, getRedirectPath, prependDocType } from '../utils/fluxible';
 import errorHandler from './middlewares/errorHandler';
@@ -176,23 +175,15 @@ function initialize(port) {
         // if renderProps is returned by react-router,
         // that means react-router hit a route
         const context = app.createContext({ req, res, config });
+        const dehydratedContext = app.dehydrate(context);
+        const dehydratedState = `window.${config.GLOBAL_DATA_VARIABLE}=${serialize(dehydratedContext)};`;
+        const children = React.createElement(RouterContext, renderProps);
+        const markupElement = createMarkupElement(context, children);
+        const htmlElement = createHtmlElement(serializedConfig, dehydratedState, markupElement);
+        const html = ReactDomServer.renderToStaticMarkup(htmlElement);
+        const htmlWithDocType = prependDocType(html);
 
-        Q.nfcall(fetchData, context, renderProps)
-          .then(() => {
-            const dehydratedContext = app.dehydrate(context);
-            const dehydratedState = `window.${config.GLOBAL_DATA_VARIABLE}=${serialize(dehydratedContext)};`;
-            const children = React.createElement(RouterContext, renderProps);
-            const markupElement = createMarkupElement(context, children);
-            const htmlElement = createHtmlElement(serializedConfig, dehydratedState, markupElement);
-            const html = ReactDomServer.renderToStaticMarkup(htmlElement);
-            const htmlWithDocType = prependDocType(html);
-
-            res.send(htmlWithDocType);
-            return;
-          })
-          .catch(error => {
-            sendInternalServerError(error);
-          });
+        res.send(htmlWithDocType);
       } else {
         // if nothing matched, the page resource is not found in
         res.status(404);
