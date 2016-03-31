@@ -1,5 +1,4 @@
 import React, { PropTypes } from 'react';
-import { Link } from 'react-router';
 import classNames from 'classnames';
 import { HOME } from '../../server/paths';
 import errors from '../../config/errors.json';
@@ -55,7 +54,7 @@ const ErrorTemplate = React.createClass({
                     <li className="error-message">
                       {this.props.message},
                       click
-                      <a href={`${HOME}`}>here</a>
+                      <a href={HOME}>here</a>
                       to go back to dashboard
                     </li>
                   </ul>
