@@ -367,10 +367,10 @@ const CallsOverview = React.createClass({
    *
    **/
   _getAverageCallDuration() {
-    const totalAttempt = this._getTotalCallAttempt();
+    const totalSuccess = this._getSuccessfulAttempt();
     const totalDuration = this._getTotalCallDuration();
 
-    return (totalDuration / totalAttempt) * 60;
+    return (totalDuration / totalSuccess) * 60;
   },
 
   _getLastUpdate(date) {
