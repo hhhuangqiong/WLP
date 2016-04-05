@@ -1,4 +1,5 @@
-FROM node:4.2
+FROM mhart/alpine-node:4
+MAINTAINER "Andy Hui" <andyhui@maaii.com>
 
 # This dockerfile is designed to run from the jenkins build server, i.e. please
 # run 'npm install' and 'gulp' to prepare all dependencies and build the project.
@@ -10,11 +11,6 @@ WORKDIR /src
 
 ENV NODE_ENV=production
 
-# Rebuilding necessary node modules in iojs runtime
-RUN npm rebuild node-sass bcrypt
-
 EXPOSE 3000 3100
-
-COPY docker/hacks/env.js  /src/node_modules/nconf/lib/nconf/stores/
 
 CMD ["node", "bin/www.js"]
