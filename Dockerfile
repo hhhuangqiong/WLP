@@ -11,9 +11,6 @@ WORKDIR /src
 
 ENV NODE_ENV=production
 
-# remove dev dependencies, prune in docker build for jenkins modules cache
-RUN npm prune
-
 # 1. application listen port
 # 2. kue UI
 # 3. expose for debug purpose
