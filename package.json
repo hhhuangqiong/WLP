@@ -92,6 +92,7 @@
     "react-router": "bobpace/react-router#a805f919c6deaa50e2a1f4a5a69a18f8de77f8b1",
     "react-select": "^0.6.3",
     "react-validation-mixin": "^4.0.3",
+    "redis": "~2.5.3",
     "redis-rstream": "^0.1.2",
     "redis-sentinel": "^0.3.2",
     "redis-wstream": "^0.2.5",
