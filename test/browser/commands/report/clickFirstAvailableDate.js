@@ -1,17 +1,13 @@
-import {
-  PAGE_TRANSITION_TIMEOUT,
-} from '../../lib/constants';
-
 export default function clickFirstAvailableDate() {
-  return this
-    .getText('.datepicker__day')
-    .then(text => {
-      if (!text) return this;
+  const text = this.getText('.datepicker__day');
 
-      const firstAvailableDate = text.find(el => el.match(/\d+/g));
+  if (!text) {
+    return this;
+  }
 
-      return this
-        .click(`div.datepicker__day=${firstAvailableDate}`)
-        .pause(PAGE_TRANSITION_TIMEOUT);
-    });
+  const firstAvailableDate = text.find(el => el.match(/\d+/g));
+
+  this.click(`div.datepicker__day=${firstAvailableDate}`);
+
+  return this;
 }

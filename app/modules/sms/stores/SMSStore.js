@@ -1,4 +1,4 @@
-import _, { assign, forEach } from 'lodash';
+import { assign, forEach } from 'lodash';
 import { createStore } from 'fluxible/addons';
 
 const SMSStore = createStore({
@@ -12,14 +12,13 @@ const SMSStore = createStore({
   },
 
   initialize() {
-    this.widgets = [];
-    this.records = [];
+    this.widgets = null;
+    this.records = null;
     this.page = 1;
     this.totalPage = 0;
     this.isLoadingMore = false;
     this.pendingRequests = {};
   },
-
 
   handleLoadSMSFetching(request, key) {
     this.isLoadingMore = true;
@@ -29,7 +28,7 @@ const SMSStore = createStore({
 
   handleLoadSMS(payload) {
     if (payload) {
-      this.records = this.records.concat(payload.content);
+      this.records = (this.records || []).concat(payload.content);
 
       // jscs:disable
       this.page = payload.page_number;
@@ -109,7 +108,7 @@ const SMSStore = createStore({
   },
 
   abortPendingRequests() {
-    forEach(this.pendingRequests, function(request) {
+    forEach(this.pendingRequests, request => {
       if (!!request) {
         request.abort();
       }
@@ -126,7 +125,7 @@ const SMSStore = createStore({
     this.page = state.page;
     this.totalPage = state.totalPage;
     this.isLoadingMore = state.isLoadingMore;
-  }
+  },
 });
 
 export default SMSStore;

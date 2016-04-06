@@ -6,7 +6,7 @@ class EmptyRow extends Component {
   };
 
   static defaultProps = {
-    colSpan: 1
+    colSpan: 1,
   };
 
   render() {

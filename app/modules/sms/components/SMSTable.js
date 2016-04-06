@@ -1,4 +1,4 @@
-import _ from 'lodash';
+import { isNull, isEmpty } from 'lodash';
 import moment from 'moment';
 import classNames from 'classnames';
 import React, { PropTypes } from 'react';
@@ -14,6 +14,12 @@ import Pagination from '../../../main/components/Pagination';
 const { displayDateFormat: DATE_FORMAT } = config;
 const SYSTEM_MESSAGE_LABEL = 'System Message';
 
+import {
+  UI_STATE_LOADING,
+  UI_STATE_EMPTY,
+  UI_STATE_NORMAL,
+} from '../../../main/constants/uiState';
+
 const TABLE_TITLES = [
   '',
   'Date & Time',
@@ -28,8 +34,8 @@ const SMSTable = React.createClass({
   propTypes: {
     records: PropTypes.object,
     page: PropTypes.number,
-    totalPage: PropTypes.number,
-    onPageLoad: PropTypes.func,
+    totalPages: PropTypes.number,
+    onDataLoad: PropTypes.func,
     isLoadingMore: PropTypes.bool,
   },
 
@@ -62,15 +68,11 @@ const SMSTable = React.createClass({
   },
 
   renderEmptyRow() {
-    if (!this.props.records || this.props.records.length === 0) {
-      return <EmptyRow colSpan={7} />;
-    }
+    return <EmptyRow colSpan={TABLE_TITLES.length} />;
   },
 
-  render() {
-    const { records } = this.props;
-
-    const rows = records.map(sms =>
+  renderRows(records = []) {
+    return records.map(sms =>
       (
         <tr>
           <td className="text-center">
@@ -81,7 +83,7 @@ const SMSTable = React.createClass({
               { alert: sms.status.toLowerCase() === 'rejected' })}
             />
           </td>
-          <td>{moment(sms.request_date).format(DATE_FORMAT)}</td>
+          <td className="data-table__datetime">{moment(sms.request_date).format(DATE_FORMAT)}</td>
           <td>
           {this._renderTypeIcon(sms.type2)}
           </td>
@@ -129,7 +131,33 @@ const SMSTable = React.createClass({
         </tr>
       )
     );
+  },
 
+  renderTableBody() {
+    const { records } = this.props;
+
+    if (isNull(records)) {
+      return (
+        <tbody className={UI_STATE_LOADING}>
+          <tr>
+            <td colSpan={TABLE_TITLES.length}>
+              <div className="text-center">
+                <span>Loading...</span>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      );
+    }
+
+    if (isEmpty(records)) {
+      return <tbody className={UI_STATE_EMPTY}>{this.renderEmptyRow()}</tbody>;
+    }
+
+    return <tbody className={UI_STATE_NORMAL}>this.renderRows(records)</tbody>;
+  },
+
+  render() {
     return (
       <table className="data-table large-24 clickable">
         <thead>
@@ -139,11 +167,9 @@ const SMSTable = React.createClass({
             }
           </tr>
         </thead>
-        <tbody>
-          {_.isEmpty(rows) ? this.renderEmptyRow() : rows}
-        </tbody>
+        {this.renderTableBody()}
         <tfoot>
-          <If condition={!_.isEmpty(this.props.records)}>
+          <If condition={!isEmpty(this.props.records)}>
             <Pagination
               colSpan={TABLE_TITLES.length + 1}
               hasMoreData={(this.props.totalPages - 1) > this.props.page}
