@@ -2,4 +2,6 @@
 .editorconfig
 .js*
 .git*
+_book
+_docs
 test/

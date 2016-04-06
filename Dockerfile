@@ -11,6 +11,11 @@ WORKDIR /src
 
 ENV NODE_ENV=production
 
-EXPOSE 3000 3100
+# 1. application listen port
+# 2. kue UI
+# 3. expose for debug purpose
+EXPOSE 3000 3100 5858
+
+USER nobody
 
 CMD ["node", "bin/www.js"]
