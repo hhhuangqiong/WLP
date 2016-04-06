@@ -4,6 +4,7 @@
   "private": true,
   "scripts": {
     "jenkins": "bower -f install && npm prune && npm i && npm run build && gitbook install && npm run docs",
+    "jenkins:merge": "npm run jenkins && npm prune --production",
     "build": "npm run clean && npm run transpile && npm run test:report && gulp scss:production",
     "clean": "gulp clean",
     "docs:api": "npm run transpile && jsdoc -r node_modules/app -d build/docs",
