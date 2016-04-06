@@ -3,7 +3,7 @@
   "version": "1.7.2",
   "private": true,
   "scripts": {
-    "jenkins": "npm prune && npm i && npm run build && gitbook install && npm run docs",
+    "jenkins": "bower -f install && npm prune && npm i && npm run build && gitbook install && npm run docs",
     "build": "npm run clean && npm run transpile && npm run test:report && gulp scss:production",
     "clean": "gulp clean",
     "docs:api": "npm run transpile && jsdoc -r node_modules/app -d build/docs",
@@ -112,6 +112,7 @@
     "babel-eslint": "^6.0.0",
     "babel-jest": "^5.3.0",
     "babel-loader": "^5.0.0",
+    "bower": "~1.7.7",
     "browser-sync": "^2.0.1",
     "chai": "^3.0.0",
     "coffee-script": "^1.8.0",
