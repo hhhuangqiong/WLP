@@ -168,6 +168,7 @@ const SignIn = React.createClass({
               </div>
               <div className="large-8 columns">
                 <button
+                  id="sign-in-button"
                   className="button--primary right"
                   onClick={this.handleSignIn}
                 >Sign In</button>

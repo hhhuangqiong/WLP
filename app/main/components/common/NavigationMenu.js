@@ -144,7 +144,7 @@ const Navigation = React.createClass({
           <CompanySwitcher />
           <li className="has-dropdown not-click navigation-bar__item">
             <a>
-              <span>hi, {this.state.displayName}</span>
+              <span className="navigation-bar__display-name">hi, {this.state.displayName}</span>
               <i className="icon-more" />
             </a>
             <ul className="dropdown">

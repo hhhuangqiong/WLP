@@ -13,13 +13,13 @@
     "debug": "npm run build && node-debug bin/www.js",
     "dev": "gulp",
     "server": "node bin/www.js",
+    "server:selenium": "selenium-standalone install --silent && selenium-standalone start",
     "transpile": "gulp babel webpack",
     "pretest": "npm run transpile",
     "test": "gulp test",
     "test:report": "NODE_PATH=app mocha --compilers js:babel/register --recursive test/unit --reporter xunit > build/reports.xml",
     "test:browser": "wdio wdio.conf.js",
-    "jest": "jest",
-    "wdio": "wdio",
+    "test:component": "jest",
     "seed:capabilities": "babel-node bin/capabilitiesSeeding.js"
   },
   "jest": {
@@ -145,12 +145,13 @@
     "react-hot-loader": "^1.2.7",
     "react-tools": "^0.13.3",
     "sassaby": "^2.1.0",
-    "selenium-standalone": "^4.8.0",
+    "selenium-standalone": "^5.1.0",
     "sinon": "^1.12.2",
     "supertest": "^1.0.1",
     "vinyl-buffer": "^1.0.0",
     "vinyl-source-stream": "^1.0.0",
-    "webdriverio": "^3.3.0",
+    "wdio-mocha-framework": "^0.2.12",
+    "webdriverio": "^4.0.5",
     "webpack-dev-server": "^1.9.0",
     "yargs": "^3.0.4"
   }

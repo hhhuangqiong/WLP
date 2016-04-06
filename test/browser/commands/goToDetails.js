@@ -1,12 +1,13 @@
-import { WAIT_FOR_FETCHING_TIMEOUT } from '../lib/constants';
+import { expect } from 'chai';
 
-export default function goToDetails(section) {
-  return this
-    .waitUntil(function waitUntil() {
-      return this
-        .isVisible('a=Details Report')
-        .then(isVisible => isVisible);
-    })
-    .click('a=Details Report')
-    .pause(WAIT_FOR_FETCHING_TIMEOUT);
+export default function goToDetails() {
+  this.waitForVisible('a=Details Report');
+  this.click('a=Details Report');
+
+  const className = this.getAttribute('a=Details Report', 'class');
+  expect(className).to.contain('active');
+
+  this.waitForVisible('.data-table');
+
+  return this;
 }

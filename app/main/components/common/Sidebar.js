@@ -44,7 +44,7 @@ class Sidebar extends React.Component {
             <a className="item mainmenu-bar__item" href="#">
               <label>
                 <i><img src={logoSrc} /></i>
-                <span>{companyName}</span>
+                <span id="company-name">{companyName}</span>
               </label>
             </a>
           </li>
@@ -62,7 +62,7 @@ class Sidebar extends React.Component {
                 >
                   <label>
                     <i className={section.icon} />
-                    {section.name}
+                    <span className="mainmenu-section-name">{section.name}</span>
                   </label>
                 </Link>
               </li>

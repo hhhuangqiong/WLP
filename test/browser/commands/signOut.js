@@ -1,11 +1,8 @@
-import {
-  PAGE_TRANSITION_TIMEOUT,
-} from '../lib/constants';
-
 export default function signOut() {
-  return this
-    .moveToObject('span=hi,')
-    .click('span=hi,')
-    .click('.icon-logout')
-    .waitForVisible('h1=Sign In', PAGE_TRANSITION_TIMEOUT);
+  this.moveToObject('.navigation-bar__display-name');
+  this.click('.navigation-bar__display-name');
+  this.click('.icon-logout');
+  this.waitForVisible('h1=Sign In');
+
+  return this;
 }
