@@ -16,7 +16,6 @@ import TopUpStore from '../stores/TopUpStore';
 import * as FilterBar from './../../../main/components/FilterBar';
 import DateRangePicker from './../../../main/components/DateRangePicker';
 import SearchBox from './../../../main/components/Searchbox';
-import Tooltip from './../../../main/components/Tooltip';
 
 const { inputDateFormat: DATE_FORMAT } = require('./../../../main/config');
 const { pages: { topUp: { pageRec: PAGE_REC } } } = require('./../../../main/config');
@@ -130,19 +129,12 @@ const TopUp = React.createClass({
             />
           </FilterBar.LeftItems>
           <FilterBar.RightItems>
-            <Tooltip
-              showTooltip={this.state.tooltipShow}
-              mouseActive={false}
-              cssName="top-up"
-              tip={ONLY_NUMBER_MESSAGE}
-              placement="left">
-              <SearchBox
-                value={this.state.number}
-                placeHolder="Mobile"
-                onInputChangeHandler={this.handleSearchInputChange}
-                onKeyPressHandler={this.handleSearchInputSubmit}
-              />
-            </Tooltip>
+            <SearchBox
+              value={this.state.number}
+              placeHolder="Mobile"
+              onInputChangeHandler={this.handleSearchInputChange}
+              onKeyPressHandler={this.handleSearchInputSubmit}
+            />
           </FilterBar.RightItems>
         </FilterBar.Wrapper>
         <div className="large-24 columns">
@@ -218,34 +210,15 @@ const TopUp = React.createClass({
   },
 
   handleSearchInputChange(e) {
-    if (!this.validateSearchInput(e.target.value)) {
-      this.showTooltip();
-      return;
-    }
-
-    this.hideTooltip();
     this.setState({ number: e.target.value });
   },
 
   handleSearchInputSubmit(e) {
-    if ( e.which === 13 && this.validateSearchInput(e.target.value) ) {
-      this.handleQueryChange({ number: e.target.value, page: INITIAL_PAGE_NUMBER });
+    if (e.which !== 13) {
+      return;
     }
-  },
 
-  validateSearchInput(number) {
-    if (!number) return true;
-
-    const regex = /^\d+$/;
-    return regex.test(number);
-  },
-
-  showTooltip() {
-    this.setState({tooltipShow: true});
-  },
-
-  hideTooltip() {
-    this.setState({tooltipShow: false});
+    this.handleQueryChange({ number: e.target.value, page: INITIAL_PAGE_NUMBER });
   },
 });
 

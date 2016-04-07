@@ -48,9 +48,8 @@ const COMMANDS = {
   changeDateRange: './test/browser/commands/report/changeDateRange',
   clickFirstAvailableDate: './test/browser/commands/report/clickFirstAvailableDate',
   expectToHaveData: './test/browser/commands/report/expectToHaveData',
-  searchMobile: './test/browser/commands/report/searchMobile',
+  validateSearch: './test/browser/commands/report/validateSearch',
   clearSearch: './test/browser/commands/report/clearSearch',
-  searchAndValidate: './test/browser/commands/report/searchAndValidate',
   exportCsv: './test/browser/commands/report/exportCsv',
 
   // section specific
