@@ -1,22 +1,8 @@
 import { expect } from 'chai';
 import moment from 'moment';
 
-import {
-  WAIT_FOR_FETCHING_TIMEOUT,
-} from '../../lib/constants';
-
-import {
-  UI_STATE_LOADING,
-  UI_STATE_NORMAL,
-} from '../../../app/main/constants/uiState';
-
 export default function validateDateRange() {
-  const tbodyClass = this.getAttribute('.data-table tbody', 'class');
-
-  // continue the progress when the data has been fetched
-  if (tbodyClass.indexOf(UI_STATE_LOADING) > -1) {
-    this.waitForVisible(UI_STATE_NORMAL, WAIT_FOR_FETCHING_TIMEOUT);
-  }
+  this.waitForTableFetching();
 
   // get dateranges from the datepicker
   const dateRanges = this.getText('.date-input-wrap');

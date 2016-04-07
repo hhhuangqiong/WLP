@@ -44,6 +44,7 @@ const COMMANDS = {
   switchCompany: './test/browser/commands/switchCompany',
 
   // details report related commands
+  waitForTableFetching: './test/browser/commands/report/waitForTableFetching',
   validateDateRange: './test/browser/commands/report/validateDateRange',
   changeDateRange: './test/browser/commands/report/changeDateRange',
   clickFirstAvailableDate: './test/browser/commands/report/clickFirstAvailableDate',

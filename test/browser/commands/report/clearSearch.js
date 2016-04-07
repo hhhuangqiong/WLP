@@ -1,10 +1,13 @@
-import {
-  WAIT_FOR_FETCHING_TIMEOUT,
-} from '../../lib/constants';
-
 export default function clearSearch() {
-  return this
-    .clearElement('.top-bar-section__query-input')
-    .keys('Enter')
-    .pause(WAIT_FOR_FETCHING_TIMEOUT);
+  this.clearElement('.top-bar-section__query-input');
+
+  // workaround to solve cleared data that appears again.
+  // https://github.com/webdriverio/webdriverio/issues/530
+  this.setValue('.top-bar-section__query-input', ' ');
+
+  this.keys('Enter');
+
+  this.waitForTableFetching();
+
+  return this;
 }
