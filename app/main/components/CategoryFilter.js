@@ -19,7 +19,7 @@ const CategoryFilter = React.createClass({
               classNames(
                 'icon-audio',
                 'vsf-type-filtering',
-                { 'icon-white': this.props.category === 'voice_sticker' }
+                { 'vsf-type-filtering--active': this.props.category === 'voice_sticker' }
               )}
             ></i>
           </a>
@@ -30,7 +30,7 @@ const CategoryFilter = React.createClass({
               classNames(
                 'icon-animation',
                 'vsf-type-filtering',
-                { 'icon-white': this.props.category === 'animation' }
+                { 'vsf-type-filtering--active': this.props.category === 'animation' }
               )}
             ></i>
           </a>
@@ -41,7 +41,7 @@ const CategoryFilter = React.createClass({
               classNames(
                 'icon-sticker',
                 'vsf-type-filtering',
-                { 'icon-white': this.props.category === 'sticker' }
+                { 'vsf-type-filtering--active': this.props.category === 'sticker' }
               )}
             ></i>
           </a>
@@ -52,7 +52,7 @@ const CategoryFilter = React.createClass({
               classNames(
                 'icon-credit',
                 'vsf-type-filtering',
-                { 'icon-white': this.props.category === 'credit' }
+                { 'vsf-type-filtering--active': this.props.category === 'credit' }
               )}
             ></i>
           </a>

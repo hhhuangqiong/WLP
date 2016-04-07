@@ -1,26 +1,26 @@
 import { expect } from 'chai';
 
-import {
-  PAGE_TRANSITION_TIMEOUT,
-} from '../../../lib/constants';
-
 export default function filterVisualItem(itemType) {
-  let originLength = 0;
+  // click the button by item type
+  this.click(`.icon-${itemType}.vsf-type-filtering`);
+  this.waitForTableFetching();
 
-  return this
-    .pause(PAGE_TRANSITION_TIMEOUT) /* Wait until data to be injected to the view before click */
-    .click(`.icon-${itemType}.vsf-type-filtering`)
-    .pause(PAGE_TRANSITION_TIMEOUT) /* Wait until data to be updated after certain selection */
-    .getHTML(`.icon-${itemType}.icon-virtual-item`)
-    .then(elementBeforeClick => {
-      originLength = elementBeforeClick.length;
+  expect(this.isVisible(`.icon-${itemType}.vsf-type-filtering--active`)).to.be.true;
 
-      return this
-        .click(`.icon-${itemType}.vsf-type-filtering`)
-        .pause(PAGE_TRANSITION_TIMEOUT)
-        .getHTML(`.icon-${itemType}.icon-virtual-item`)
-        .then(elementAfterClick => {
-          expect(elementAfterClick.length <= originLength).to.be.true;
-        });
+  // validate items that should align with selected item type
+  const virtualItemsClasses = this.getAttribute('.data-table__virtual-item', 'class');
+
+  if (Array.isArray(virtualItemsClasses)) {
+    virtualItemsClasses.forEach(vistualItemClasses => {
+      expect(vistualItemClasses.indexOf(`icon-${itemType}`) > -1).to.be.true;
     });
+  }
+
+  // unclick the button
+  this.click(`.icon-${itemType}.vsf-type-filtering--active`);
+  this.waitForTableFetching();
+
+  expect(this.isVisible(`.icon-${itemType}.vsf-type-filtering--active`)).to.be.false;
+
+  return this;
 }

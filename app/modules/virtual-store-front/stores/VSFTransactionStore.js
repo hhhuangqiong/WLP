@@ -13,7 +13,7 @@ const VSFTransactionStore = createStore({
   },
 
   initialize() {
-    this.transactions = [];
+    this.transactions = null;
     this.hasNextPage = false;
     this.pageSize = 100;
     this.pageIndex = 0;
@@ -36,7 +36,7 @@ const VSFTransactionStore = createStore({
   },
 
   handleTransactionsFetch(payload) {
-    this.transactions = this.transactions.concat(payload.transactionRecords);
+    this.transactions = (this.transactions || []).concat(payload.transactionRecords);
     this.hasNextPage = payload.hasNextPage;
     this.pageSize = +payload.pageSize;
     this.pageIndex = +payload.dateRange.pageNumberIndex;
@@ -120,7 +120,7 @@ const VSFTransactionStore = createStore({
   },
 
   abortPendingRequests() {
-    forEach(this.pendingRequests, function(request) {
+    forEach(this.pendingRequests, request => {
       if (!!request) {
         request.abort();
       }
@@ -143,7 +143,6 @@ const VSFTransactionStore = createStore({
     this.transactions = state.transactions;
     this.isLoadingMore = state.isLoadingMore;
   },
-
 });
 
 export default VSFTransactionStore;

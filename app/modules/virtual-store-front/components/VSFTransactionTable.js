@@ -1,7 +1,7 @@
 import React, { PropTypes } from 'react';
 import Moment from 'moment';
 import classNames from 'classnames';
-import _ from 'lodash';
+import { isNull, isEmpty } from 'lodash';
 
 import EmptyRow from '../../../main/components/data-table/EmptyRow';
 
@@ -20,6 +20,12 @@ const TABLE_TITLES = [
   'AMOUNT',
   'TRANSACTION ID',
 ];
+
+import {
+  UI_STATE_LOADING,
+  UI_STATE_EMPTY,
+  UI_STATE_NORMAL,
+} from '../../../main/constants/uiState';
 
 const VSFTransactionTable = React.createClass({
   propTypes: {
@@ -63,7 +69,7 @@ const VSFTransactionTable = React.createClass({
           <td className="vsf-table--cell">
             <div className="left timestamp">
               {/* parse purchaseDate as it is in UTC time and display it as local time */}
-              <span className="call_date">{
+              <span className="call_date data-table__datetime">{
                 Moment
                   .utc(transaction.purchaseDate)
                   .local()
@@ -72,7 +78,7 @@ const VSFTransactionTable = React.createClass({
             </div>
           </td>
 
-          <td className="vsf-table--cell">
+          <td className="vsf-table--cell data-table__mobile">
             <span>{transaction.userNumber}</span>
           </td>
 
@@ -82,16 +88,16 @@ const VSFTransactionTable = React.createClass({
 
           <td className="vsf-table--cell text-center">
             <If condition={transaction.categories.indexOf('voice_sticker') >= 0}>
-              <span className="icon-audio icon-virtual-item"></span>
+              <span className="data-table__virtual-item icon-audio icon-virtual-item"></span>
             </If>
             <If condition={transaction.categories.indexOf('animation') >= 0}>
-              <span className="icon-animation icon-virtual-item"></span>
+              <span className="data-table__virtual-item icon-animation icon-virtual-item"></span>
             </If>
             <If condition={transaction.categories.indexOf('sticker') >= 0}>
-              <span className="icon-sticker icon-virtual-item"></span>
+              <span className="data-table__virtual-item icon-sticker icon-virtual-item"></span>
             </If>
             <If condition={transaction.categories.indexOf('credit') >= 0}>
-              <span className="icon-credit icon-virtual-item"></span>
+              <span className="data-table__virtual-item icon-credit icon-virtual-item"></span>
             </If>
              id: {transaction.virtualItemId}
           </td>
@@ -113,35 +119,41 @@ const VSFTransactionTable = React.createClass({
     );
   },
 
-  renderFooter() {
-    return (
-      <If condition={!_.isEmpty(this.props.transactions)}>
-        <tr className="vsf-table--row">
-          <td className="vsf-table--cell" colSpan="7">
-            <div className="text-center">
-              <If condition={this.props.hasNextPage}>
-                <span className="pagination__button" onClick={this.props.loadPage}>Load More</span>
-              <Else />
-                <span
-                  className="pagination__button pagination__button--inactive"
-                >No more result</span>
-              </If>
-            </div>
-          </td>
-        </tr>
-      </If>
-    );
+  renderEmptyRow() {
+    return <EmptyRow colSpan={TABLE_TITLES.length} />;
   },
 
-  renderEmptyRow() {
-    if (!this.props.transactions || this.props.transactions.length === 0) {
-      return <EmptyRow colSpan={7} />;
+  renderTableBody() {
+    const { transactions } = this.props;
+
+    if (isNull(transactions)) {
+      return (
+        <tbody className={UI_STATE_LOADING}>
+          <tr>
+            <td colSpan={TABLE_TITLES.length}>
+              <div className="text-center">
+                <span>Loading...</span>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      );
     }
+
+    if (isEmpty(transactions)) {
+      return (
+        <tbody className={UI_STATE_EMPTY}>{this.renderEmptyRow()}</tbody>
+      );
+    }
+
+    return (
+      <tbody className={UI_STATE_NORMAL}>{this.renderRows()}</tbody>
+    );
   },
 
   render() {
     return (
-      <table className="large-24 clickable vsf-table" key="vsf-table">
+      <table className="large-24 clickable data-table" key="vsf-table">
         <thead className="vsf-table--head">
           <tr>
             {
@@ -149,9 +161,9 @@ const VSFTransactionTable = React.createClass({
             }
           </tr>
         </thead>
-        <tbody className="vsf-table--body" key="vsf-table--body">{_.isEmpty(this.renderRows()) ? this.renderEmptyRow() : this.renderRows()}</tbody>
+        {this.renderTableBody()}
         <tfoot>
-          <If condition={!_.isEmpty(this.props.transactions)}>
+          <If condition={!isEmpty(this.props.transactions)}>
             <Pagination
               colSpan={TABLE_TITLES.length + 1}
               hasMoreData={this.props.hasNextPage}
