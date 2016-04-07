@@ -1,63 +1,39 @@
-import { expect } from 'chai';
-
 import {
-  PAGE_TRANSITION_TIMEOUT,
   DEFAULT_URL,
   ROOT_LOGIN,
 } from '../../lib/constants';
 
 describe('Top Up', () => {
-  describe('#basic', () => {
-    before(done => {
-      browser
-        .url(DEFAULT_URL)
-        .signIn(ROOT_LOGIN.name, ROOT_LOGIN.password)
-        .switchCompany('Maaii')
-        .goTo('Top Up')
-        .goToDetails()
-        .call(done);
+  describe('#details', () => {
+    before(() => {
+      browser.url(DEFAULT_URL);
+      browser.signIn(ROOT_LOGIN.name, ROOT_LOGIN.password);
+
+      // Maaii is the only company that contains Top Up section
+      browser.switchCompany('Maaii');
+
+      browser.goTo('Top Up');
+      browser.goToDetails();
     });
 
-    after(done => {
-      browser.signOut().call(done);
+    after(() => {
+      browser.signOut();
     });
 
-    // NOTE: WLP-525
-    it('should search mobile correctly', done => {
-      browser
-        .pause(PAGE_TRANSITION_TIMEOUT) /* wait until onChange function call */
-        .getText('tr')
-        .then(trs => {
-          const tr = trs[1];
-          const mobileNumber = (tr.match(/\+\d+/g) || [])[0];
-
-          expect(mobileNumber).to.not.be.empty;
-
-          return browser
-            .setValue('.top-bar-section__query-input', mobileNumber)
-            .keys('Enter')
-            .pause(PAGE_TRANSITION_TIMEOUT) /* wait until the search result update */
-            .getText('tr')
-            .then(newTrs => {
-              const newMobileNumbers = newTrs.map(newTr => (newTr.match(/\+\d+/g) || [])[0]).filter(Boolean);
-
-              /* Expect all results match with the search phone number */
-              newMobileNumbers.forEach(newMobileNumber => {
-                expect(newMobileNumber).to.be.equal(mobileNumber);
-              });
-            });
-        })
-        .call(done);
+    it('should display data correctly', () => {
+      browser.validateDateRange();
     });
 
-    it('should display data correctly', done => {
-      browser.validateDate().call(done);
+    it('should display data correctly after changing date', () => {
+      browser.changeDateRange();
+      browser.validateDateRange();
     });
 
-    it('should display data correctly after changing date', done => {
-      browser.changeAndValidateDate().call(done);
+    // clear search does not work as expected due to webdriverio's limitation
+    // therefore it is necessary to put this case at the end
+    it('should search mobile correctly', () => {
+      browser.validateSearch('.data-table__mobile');
+      browser.clearSearch();
     });
-
-    // TODO: Implement test for 'Load More' button after the release of v4 of webdriver.io
   });
 });

@@ -1,4 +1,4 @@
-import { first, isEmpty } from 'lodash';
+import { first, isEmpty, isNull } from 'lodash';
 import moment from 'moment';
 import classNames from 'classnames';
 import React, { PropTypes } from 'react';
@@ -23,6 +23,12 @@ const TABLE_TITLES = [
   'Amount',
   'Remark',
 ];
+
+import {
+  UI_STATE_LOADING,
+  UI_STATE_EMPTY,
+  UI_STATE_NORMAL,
+} from '../../../main/constants/uiState';
 
 const TopUpTable = React.createClass({
   propTypes: {
@@ -76,15 +82,39 @@ ${(!currency.code ? '' : currency.code)}`;
   },
 
   renderEmptyRow() {
-    if (!this.props.histories || this.props.histories.length === 0) {
-      return <EmptyRow colSpan={7} />;
-    }
+    return <EmptyRow colSpan={TABLE_TITLES.length} />;
   },
 
-  render() {
+  renderTableBody() {
     const { histories } = this.props;
 
-    const rows = histories.map(history =>
+    if (isNull(histories)) {
+      return (
+        <tbody className={UI_STATE_LOADING}>
+          <tr>
+            <td colSpan={TABLE_TITLES.length}>
+              <div className="text-center">
+                <span>Loading...</span>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      );
+    }
+
+    if (isEmpty(histories)) {
+      return (
+        <tbody className={UI_STATE_EMPTY}>{this.renderEmptyRow()}</tbody>
+      );
+    }
+
+    return (
+      <tbody className={UI_STATE_NORMAL}>{this.renderRows()}</tbody>
+    );
+  },
+
+  renderRows() {
+    return this.props.histories.map(history =>
       (
         <tr>
           <td className="text-center">
@@ -102,8 +132,8 @@ ${(!currency.code ? '' : currency.code)}`;
               }
             />
           </td>
-          <td>{this._getDisplayTimestamp(history.rechargeDate)}</td>
-          <td>{this._getDisplayUsername(history.username)}</td>
+          <td className="data-table__datetime">{this._getDisplayTimestamp(history.rechargeDate)}</td>
+          <td className="data-table__mobile">{this._getDisplayUsername(history.username)}</td>
           <td>
             <span className={
               classNames(
@@ -131,7 +161,9 @@ ${(!currency.code ? '' : currency.code)}`;
         </tr>
       )
     );
+  },
 
+  render() {
     return (
       <table className="data-table large-24 clickable">
         <thead>
@@ -141,9 +173,7 @@ ${(!currency.code ? '' : currency.code)}`;
             }
           </tr>
         </thead>
-        <tbody>
-          {isEmpty(rows) ? this.renderEmptyRow() : rows}
-        </tbody>
+        {this.renderTableBody()}
         <Pagination
           colSpan={TABLE_TITLES.length + 1}
           hasMoreData={this.props.totalRec > this.props.page * this.props.pageRec}

@@ -11,7 +11,7 @@ const TopUpStore = createStore({
   },
 
   initialize() {
-    this.histories = [];
+    this.histories = null;
     this.page = 1;
     this.totalRec = 0;
     this.isLoadingMore = false;
@@ -26,7 +26,7 @@ const TopUpStore = createStore({
 
   handleLoadTopUp(payload) {
     if (payload) {
-      this.histories = this.histories.concat(payload.history);
+      this.histories = (this.histories || []).concat(payload.history);
       this.totalRec = payload.totalRec;
       this.page = payload.page;
       this.isLoadingMore = false;
@@ -87,7 +87,7 @@ const TopUpStore = createStore({
   },
 
   abortPendingRequests() {
-    forEach(this.pendingRequests, function(request) {
+    forEach(this.pendingRequests, request => {
       if (!!request) {
         request.abort();
       }
@@ -103,7 +103,7 @@ const TopUpStore = createStore({
     this.totalRec = state.totalRec;
     this.page = state.page;
     this.isLoadingMore = state.isLoadingMore;
-  }
+  },
 });
 
 export default TopUpStore;
