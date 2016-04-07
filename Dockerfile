@@ -21,4 +21,4 @@ EXPOSE 3000 3100 5858
 
 USER nobody
 
-CMD ["node", "bin/www.js"]
+CMD ["node", "bin/www"]

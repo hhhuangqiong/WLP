@@ -34,7 +34,7 @@ import config from '../config';
 const debug = require('debug');
 debug.enable('app:*');
 
-function initialize(port) {
+export default function (port) {
   if (!port) throw new Error('Please specify port');
 
   const server = express();
@@ -195,5 +195,3 @@ function initialize(port) {
 
   return server;
 }
-
-exports.initialize = initialize;
