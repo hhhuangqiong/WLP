@@ -12,6 +12,7 @@ import AuthMixin from '../../../utils/AuthMixin';
 
 import ImStore from '../stores/ImStore';
 
+import clearIm from '../actions/clearIm';
 import fetchIm from '../actions/fetchIm';
 import fetchMoreIms from '../actions/fetchMoreIms';
 
@@ -40,6 +41,7 @@ const Im = React.createClass({
 
     fetchData(context, params, query, done) {
       concurrent([
+        context.executeAction.bind(context, clearIm, {}),
         context.executeAction.bind(context, fetchIm, {
           carrierId: params.identity,
           fromTime: query.fromTime || moment().subtract(2, 'month').startOf('day').format('L'),
@@ -59,6 +61,10 @@ const Im = React.createClass({
     const defaultSearchType = _.first(searchTypes);
     const query = _.merge(this.getDefaultQuery(), this.context.router.getCurrentQuery(), { searchType: defaultSearchType.value });
     return _.merge(this.getStateFromStores(), query);
+  },
+
+  componentWillUnmount() {
+    this.context.executeAction(clearIm);
   },
 
   onChange() {

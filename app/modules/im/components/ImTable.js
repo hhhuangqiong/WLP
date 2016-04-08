@@ -1,6 +1,6 @@
 import React, { PropTypes } from 'react';
 import moment from 'moment';
-import _ from 'lodash';
+import { isNull, isEmpty, capitalize } from 'lodash';
 import classNames from 'classnames';
 import Tooltip from 'rc-tooltip';
 
@@ -92,24 +92,18 @@ const ImTable = React.createClass({
 
     if (typeText === 'Sharing') {
       typeSize = item.resource_id;
-      if (typeSize !== 'itunes') typeSize = _.capitalize(typeSize);
+      if (typeSize !== 'itunes') typeSize = capitalize(typeSize);
     }
 
     return typeSize;
   },
 
   renderEmptyRow() {
-    if (!this.props.ims || this.props.ims.length === 0) {
-      return <EmptyRow colSpan={5} />;
-    }
+    return <EmptyRow colSpan={TABLE_TITLES.length} />;
   },
 
-  render() {
-    const {
-      ims,
-    } = this.props;
-
-    const rows = ims.map((u, key) => {
+  renderRows() {
+    return this.props.ims.map((u, key) => {
       const imDate = moment(u.timestamp).format(IM_DATETIME_FORMAT);
       const imType = MESSAGE_TYPES[u.message_type] || LABEL_FOR_NULL;
       const typeSize = this.getTypeSize(u, imType.title);
@@ -125,7 +119,7 @@ const ImTable = React.createClass({
         <tr className="im-table--row" key={key}>
           <td className="im-table--cell">
             <div className="left timestamp">
-              <span className="call_date dark">{imDate}</span>
+              <span className="data-table__datetime call_date dark">{imDate}</span>
             </div>
           </td>
           <td className="im-table--cell">
@@ -141,7 +135,7 @@ const ImTable = React.createClass({
           <td className="im-table--cell">
             <CountryFlag className="left" code={u.origin} />
             <div className="sender_info">
-              <span className="sender dark">{sender}</span>
+              <span className="data-table__sender sender dark">{sender}</span>
               <br />
               <span>{getCountryName(u.origin)}</span>
             </div>
@@ -151,7 +145,7 @@ const ImTable = React.createClass({
             </div>
           </td>
           <td className="im-table--cell">
-            <If condition={_.isArray(u.recipients)}>
+            <If condition={Array.isArray(u.recipients)}>
               <div className="recipient_info">
                 <div className="icon-multiuser"></div>
                 <Tooltip
@@ -166,7 +160,7 @@ const ImTable = React.createClass({
               <div>
                 <CountryFlag className="left" code={u.destination} />
                 <div className="recipient_info">
-                  <span className="recipient dark">{u.recipient}</span>
+                  <span className="data-table__recipient recipient dark">{u.recipient}</span>
                   <br />
                 <span>{getCountryName(u.destination)}</span>
                 </div>
@@ -176,9 +170,37 @@ const ImTable = React.createClass({
         </tr>
       );
     });
+  },
+
+  renderTableBody(content) {
+    if (isNull(content)) {
+      return (
+        <tbody className="ui-state-loading">
+          <tr>
+            <td colSpan={TABLE_TITLES.length}>
+              <div className="text-center">
+                <span>Loading...</span>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      );
+    }
+
+    if (isEmpty(content)) {
+      return (
+        <tbody className="ui-state-empty">{this.renderEmptyRow()}</tbody>
+      );
+    }
 
     return (
-      <table className="large-24 clickable im-table" key="im-table">
+      <tbody className="ui-state-normal">{this.renderRows()}</tbody>
+    );
+  },
+
+  render() {
+    return (
+      <table className="data-table large-24 clickable im-table" key="im-table">
         <thead className="im-table--head">
         <tr className="im-table--row">
           {
@@ -186,11 +208,9 @@ const ImTable = React.createClass({
           }
         </tr>
         </thead>
-        <tbody className="im-table--body" key="im-table--body">
-        {_.isEmpty(rows) ? this.renderEmptyRow() : rows}
-        </tbody>
+        {this.renderTableBody(this.props.ims)}
         <tfoot>
-          <If condition={!_.isEmpty(this.props.ims)}>
+          <If condition={!isEmpty(this.props.ims)}>
             <Pagination
               colSpan={TABLE_TITLES.length + 1}
               hasMoreData={(this.props.totalPages - 1) > this.props.page}

@@ -1,102 +1,80 @@
-import { expect } from 'chai';
-
 import {
   DEFAULT_URL,
   ROOT_LOGIN,
 } from '../../lib/constants';
 
 describe('IM', () => {
-  describe('#basic', () => {
-    before(done => {
-      browser
-        .url(DEFAULT_URL)
-        .signIn(ROOT_LOGIN.name, ROOT_LOGIN.password)
-        .switchCompany('Maaii')
-        .goTo('IM')
-        .goToDetails()
-        .call(done);
-    });
+  before(() => {
+    browser.url(DEFAULT_URL);
+    browser.signIn(ROOT_LOGIN.name, ROOT_LOGIN.password);
+    browser.switchCompany('Maaii');
+    browser.goTo('IM');
+    browser.goToDetails();
+  });
 
-    after(done => {
-      browser.signOut().call(done);
-    });
+  it('should display data correctly', () => {
+    browser.validateDateRange();
+  });
 
-    it('should display data correctly', done => {
-      browser.validateDate().call(done);
-    });
+  it('should display data correctly after changing date', () => {
+    browser.changeDateRange();
+    browser.validateDateRange();
+  });
 
-    it('should display data correctly after changing date', done => {
-      browser.changeAndValidateDate().call(done);
-    });
+  it('should search sender correctly', () => {
+    browser.selectByValue('.top-bar-section__query-select', 'sender');
+    browser.validateSearch('.data-table__sender');
+  });
 
-    it('should search sender correctly', done => {
-      browser.searchAndValidate('.sender', 'sender').call(done);
-    });
+  it('should search recipient correctly', () => {
+    browser.selectByValue('.top-bar-section__query-select', 'recipient');
+    browser.validateSearch('.data-table__recipient');
+  });
 
-    it('should search recipient correctly', done => {
-      browser.searchAndValidate('.recipient', 'recipient').call(done);
-    });
+  it('should clear search and show results', () => {
+    browser.clearSearch();
+  });
 
-    it('should clear search and show results', done => {
-      browser
-        .clearSearch()
-        .getText('.im-table--row')
-        .then(result => {
-          if (typeof result === 'string') {
-            expect(result).to.not.be.empty;
-            return;
-          }
+  it('should filter text data correctly', () => {
+    browser.filterChatItem('text');
+  });
 
-          expect(result).to.have.length.above(0);
-        })
-        .call(done);
-    });
+  it('should filter image data correctly', () => {
+    browser.filterChatItem('image');
+  });
 
-    it('should filter text data correctly', done => {
-      browser.filterChatItem('text').call(done);
-    });
+  it('should filter audio data correctly', () => {
+    browser.filterChatItem('audio');
+  });
 
-    it('should filter image data correctly', done => {
-      browser.filterChatItem('image').call(done);
-    });
+  it('should filter video data correctly', () => {
+    browser.filterChatItem('video');
+  });
 
-    it('should filter audio data correctly', done => {
-      browser.filterChatItem('audio').call(done);
-    });
+  it('should filter remote data correctly', () => {
+    browser.filterChatItem('remote', 'sharing');
+  });
 
-    it('should filter video data correctly', done => {
-      browser.filterChatItem('video').call(done);
-    });
+  it('should filter animation data correctly', () => {
+    browser.filterChatItem('animation');
+  });
 
-    it('should filter remote data correctly', done => {
-      browser.filterChatItem('remote', 'sharing').call(done);
-    });
+  it('should filter voice sticker data correctly', () => {
+    browser.filterChatItem('voice_sticker', 'voice sticker');
+  });
 
-    it('should filter animation data correctly', done => {
-      browser.filterChatItem('animation').call(done);
-    });
+  it('should filter ephemeral image data correctly', () => {
+    browser.filterChatItem('ephemeral_image', 'ephemeral image');
+  });
 
-    it('should filter voice sticker data correctly', done => {
-      browser.filterChatItem('voice_sticker', 'voice sticker').call(done);
-    });
+  it('should filter with text and sender', () => {
+    browser.filterChatItem('text');
 
-    it('should filter ephemeral image data correctly', done => {
-      browser.filterChatItem('ephemeral_image', 'ephemeral image').call(done);
-    });
+    browser.selectByValue('.top-bar-section__query-select', 'sender');
+    browser.validateSearch('.data-table__sender');
+  });
 
-    it('should filter with text and sender', done => {
-      browser
-        .filterChatItem('text')
-        .searchAndValidate('.sender', 'sender')
-        .call(done);
-    });
-    
-    /*
-     * Disable export function due to unclickable modal button
-     * that raise selenium error under this modal implementation
-     */
-    xit('should be able to export data', done => {
-      browser.exportCsv().call(done);
-    });
+  after(() => {
+    browser.signOut();
   });
 });

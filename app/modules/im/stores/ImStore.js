@@ -16,7 +16,7 @@ const ImStore = createStore({
 
   initialize() {
     this.widgets = [];
-    this.ims = [];
+    this.ims = null;
     this.offset = 0;
     this.pageNumber = 0;
     this.pageSize = 0;
@@ -33,7 +33,7 @@ const ImStore = createStore({
     this.emitChange();
   },
 
-  handleImChange: function(payload) {
+  handleImChange(payload) {
     this.ims = payload.contents;
     this.offset = payload.offset;
     this.pageNumber = (payload.offset / payload.pageSize) + 1;
@@ -110,8 +110,6 @@ const ImStore = createStore({
   },
 
   appendPendingRequest(request, key) {
-    console.log(this.pendingRequests, request, key);
-
     if (!!request) {
       const pendingRequest = this.pendingRequests[key];
       if (pendingRequest) {
@@ -132,7 +130,7 @@ const ImStore = createStore({
   },
 
   abortPendingRequests() {
-    forEach(this.pendingRequests, function(request) {
+    forEach(this.pendingRequests, request => {
       if (!!request) {
         request.abort();
       }
@@ -152,7 +150,7 @@ const ImStore = createStore({
     this.totalPages = state.totalPages;
     this.widgets = state.widgets;
     this.isLoadingMore = state.isLoadingMore;
-  }
+  },
 });
 
 export default ImStore;
