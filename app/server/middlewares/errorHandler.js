@@ -15,7 +15,7 @@ function filteredMessage(err) {
   return err.args['0'];
 }
 
-export default function errorHandler(err, req, res) {
+export function apiErrorHandler(err, req, res) {
   logger.error(err.stack);
 
   res
@@ -27,3 +27,5 @@ export default function errorHandler(err, req, res) {
       context: JSON.stringify(err.inner_error, INNER_ERROR_FIELDS),
     } });
 }
+
+// TODO: add viewErrorHandler

@@ -7,7 +7,7 @@ import ReactDomServer from 'react-dom/server';
 import { RouterContext, match } from 'react-router';
 import serialize from 'serialize-javascript';
 import { createHtmlElement, createMarkupElement, getRedirectPath, prependDocType } from '../utils/fluxible';
-import errorHandler from './middlewares/errorHandler';
+import { apiErrorHandler } from './middlewares/errorHandler';
 // express-related
 import express from 'express';
 
@@ -113,7 +113,7 @@ export default function (port) {
   server.use(config.EXPORT_PATH_PREFIX, require('./routers/export'));
   server.use(config.FILE_UPLOAD_PATH_PREFIX, require('./routers/data'));
   server.use(config.API_PATH_PREFIX, require('./routers/api'));
-  server.use(config.API_PATH_PREFIX, errorHandler);
+  server.use(config.API_PATH_PREFIX, apiErrorHandler);
 
   // IMPORTANT:
   // using redirect in this middleware will lead to
