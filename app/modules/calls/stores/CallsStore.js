@@ -17,7 +17,7 @@ const CallsStore = createStore({
 
   initialize() {
     this.widgets = [];
-    this.calls = [];
+    this.calls = null;
     this.offset = 0;
     this.page = 0;
     this.size = 0;
@@ -36,8 +36,8 @@ const CallsStore = createStore({
     this.emitChange();
   },
 
-  handleLoadMoreCalls: function(payload) {
-    payload.contents.forEach((call) => {
+  handleLoadMoreCalls(payload) {
+    payload.contents.forEach(call => {
       this.calls.push(call);
     });
 
@@ -137,7 +137,7 @@ const CallsStore = createStore({
   },
 
   abortPendingRequests() {
-    forEach(this.pendingRequests, function(request) {
+    forEach(this.pendingRequests, request => {
       if (!!request) {
         request.abort();
       }
@@ -158,7 +158,7 @@ const CallsStore = createStore({
     this.params = state.params;
     this.widgets = state.widgets;
     this.isLoadingMore = state.isLoadingMore;
-  }
+  },
 });
 
 export default CallsStore;

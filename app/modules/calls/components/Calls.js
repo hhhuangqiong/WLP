@@ -37,6 +37,7 @@ const Calls = React.createClass({
 
     fetchData(context, params, query, done) {
       concurrent([
+        context.executeAction.bind(context, clearCallsReport),
         context.executeAction.bind(context, fetchCalls, {
           carrierId: params.identity,
           startDate: query.startDate || moment().subtract(2, 'day').startOf('day').format('L'),
@@ -221,7 +222,7 @@ const Calls = React.createClass({
 
             <div className="date-range-picker left">
               <i className="date-range-picker__icon icon-calendar left" />
-              <div className="date-input-wrap left" onClick={this._handleStartDateClick}>
+              <div className="date-input-wrap date-range-picker__start left" onClick={this._handleStartDateClick}>
                 <span className="interactive-button left date-range-picker__date-span">{this.state.startDate}</span>
                 <DatePicker
                   ref="startDatePicker"
@@ -233,7 +234,7 @@ const Calls = React.createClass({
                 />
               </div>
               <i className="date-range-picker__separator left">-</i>
-              <div className="date-input-wrap left" onClick={this._handleEndDateClick}>
+              <div className="date-input-wrap date-range-picker__end left" onClick={this._handleEndDateClick}>
                 <span className="interactive-button left date-range-picker__date-span">{this.state.endDate}</span>
                 <DatePicker
                   ref="endDatePicker"

@@ -4,13 +4,8 @@ import moment from 'moment';
 export default function validateDateRange() {
   this.waitForTableFetching();
 
-  // get dateranges from the datepicker
-  const dateRanges = this.getText('.date-input-wrap');
-
-  expect(dateRanges).to.not.be.empty;
-
-  const fromDate = moment(dateRanges[0], 'MM-DD-YYYY');
-  const toDate = moment(dateRanges[1], 'MM-DD-YYYY');
+  const fromDate = moment(this.getText('.date-range-picker__start'), 'MM-DD-YYYY');
+  const toDate = moment(this.getText('.date-range-picker__end'), 'MM-DD-YYYY');
 
   expect(fromDate.isValid()).to.be.true;
   expect(toDate.isValid()).to.be.true;
