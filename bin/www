@@ -7,7 +7,7 @@ const port = process.env.PORT || 3000;
 const server = require('../app/server')(port);
 const debug = require('debug')('app');
 
-// eslint-disable-next-line prefer-arrow-callback, prefer-arrow-callback
+// eslint-disable-next-line prefer-arrow-callback
 http.createServer(server).listen(port, function callback() {
   debug('Express server listening on port %s (env: %s)', port, process.env.NODE_ENV);
 });

@@ -1,17 +1,5 @@
-import Q from 'q';
 import path from 'path';
-
-// react & flux -related
-import React from 'react';
-import ReactDomServer from 'react-dom/server';
-import { RouterContext, match } from 'react-router';
-import serialize from 'serialize-javascript';
-import { createHtmlElement, createMarkupElement, getRedirectPath, prependDocType } from '../utils/fluxible';
-import { apiErrorHandler } from './middlewares/errorHandler';
-// express-related
 import express from 'express';
-
-// the following 2 are sure to be included in this isomorphic setup
 import bodyParser from 'body-parser';
 import compression from 'compression';
 import expressValidator from 'express-validator';
@@ -20,16 +8,12 @@ import methodOverride from 'method-override';
 import morgan from 'morgan';
 import session from 'express-session';
 
-// TODO restore csrf protection
-// import csrf from 'csurf';
+import app from '../app';
+import config from '../config';
+import render from './render';
+import { apiErrorHandler } from './middlewares/errorHandler';
 
 const PROJ_ROOT = path.join(__dirname, '../..');
-import { ERROR_401, ERROR_404, ERROR_500 } from './paths';
-
-import app from '../app';
-
-// access via `context`
-import config from '../config';
 
 const debug = require('debug');
 debug.enable('app:*');
@@ -47,11 +31,14 @@ export default function (port) {
   const nconf = require('./initializers/nconf')(env, path.resolve(__dirname, '../config'));
 
   // NB: intentionally put 'logging' initializers before the others
+  // eslint-disable-next-line no-unused-vars
   const logger = require('./initializers/logging')(nconf.get('logging:winston'));
 
   // database initialization + data seeding
+  // eslint-disable-next-line max-len
   const postDBInit = require('./initializers/dataseed')(path.resolve(__dirname, `../data/users.${env}.json`));
 
+  // eslint-disable-next-line max-len
   require('./initializers/database')(nconf.get('mongodb:uri'), nconf.get('mongodb:options'), postDBInit);
 
   const ioc = require('./initializers/ioc')(nconf);
@@ -63,9 +50,7 @@ export default function (port) {
   });
 
   // a shared Kue instance for file exporting job queue
-  ioc.factory('Kue', () => {
-    return kueue;
-  });
+  ioc.factory('Kue', () => kueue);
 
   require('./initializers/viewHelpers')(server);
 
@@ -115,83 +100,12 @@ export default function (port) {
   server.use(config.API_PATH_PREFIX, require('./routers/api'));
   server.use(config.API_PATH_PREFIX, apiErrorHandler);
 
-  // IMPORTANT:
-  // using redirect in this middleware will lead to
-  // redirect loop if the process are with errors
+  // eslint-disable-next-line prefer-arrow-callback, func-names
   server.use(function (req, res, next) {
-    const serializedConfig = `window.${config.GLOBAL_CONFIG_VARIABLE}=${serialize(config)};`;
-
-    /**
-     * @method sendPureHtml
-     * to send pure(not hydrated) html markup as response so that
-     * the it will do client-side-rending
-     */
-    function sendPureHtml() {
-      const htmlElement = createHtmlElement(serializedConfig);
-      const html = ReactDomServer.renderToStaticMarkup(htmlElement);
-      const htmlWithDocType = prependDocType(html);
-      res.send(htmlWithDocType);
-    }
-
-    /**
-     * @method sendInternalServerError
-     * to response a redirection to internal-server-error page
-     */
-    function sendInternalServerError(err) {
-      // TODO: ideally, it should response the internal-server-page,
-      // render Error element to string and send
-      // React.createElement(Error500, { message })
-      logger.error(err);
-      res.redirect(302, '/error/internal-server-error');
-      return;
-    }
-
-    if (config.DISABLE_ISOMORPHISM) {
-      // if universal javascript is disabled,
-      // the react-router route matching process should not be done
-      // on server-side, so it responses the basic html markup
-      // and let the application launched on the client-side
-      sendPureHtml();
-      return;
-    }
-
-    match({
-      routes: app.getComponent(),
-      location: req.url,
-    }, (matchingErr, redirectLocation, renderProps) => {
-      if (matchingErr) {
-        // if error occurred during matching url with react-router,
-        // it should response with internal server error
-        sendInternalServerError(matchingErr);
-        return;
-      } else if (redirectLocation) {
-        // if redirection is detected by react-router,
-        // it should response with redirection
-        const redirectTo = getRedirectPath(redirectLocation);
-        logger.debug(`redirection is detected, to: ${redirectTo}`);
-        res.redirect(302, redirectTo);
-        return;
-      } else if (renderProps) {
-        // if renderProps is returned by react-router,
-        // that means react-router hit a route
-        const context = app.createContext({ req, res, config });
-        const dehydratedContext = app.dehydrate(context);
-        const dehydratedState = `window.${config.GLOBAL_DATA_VARIABLE}=${serialize(dehydratedContext)};`;
-        const children = React.createElement(RouterContext, renderProps);
-        const markupElement = createMarkupElement(context, children);
-        const htmlElement = createHtmlElement(serializedConfig, dehydratedState, markupElement);
-        const html = ReactDomServer.renderToStaticMarkup(htmlElement);
-        const htmlWithDocType = prependDocType(html);
-
-        res.send(htmlWithDocType);
-      } else {
-        // if nothing matched, the page resource is not found in
-        res.status(404);
-        sendPureHtml();
-        return;
-      }
-    });
+    render(app, config)(req, res, next);
   });
+
+  // TODO: add viewErrorHandler
 
   return server;
 }
