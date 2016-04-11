@@ -18,6 +18,17 @@ describe('Account', () => {
     });
 
     it('should log out successfully', () => {
+      // action to close the opened menu sidemenu
+      // in order to show the signOut button at anytime
+      browser.click('.top-bar.app-header');
+
+      // wait until the the signOut selector to be visible to the page during silding animation
+      browser.waitUntil(function waitUntil() {
+        return this
+          .isVisible('.navigation-bar__display-name')
+          .then(isVisible => isVisible);
+      });
+
       browser.signOut();
     });
 
