@@ -154,7 +154,7 @@ const SMSTable = React.createClass({
       return <tbody className={UI_STATE_EMPTY}>{this.renderEmptyRow()}</tbody>;
     }
 
-    return <tbody className={UI_STATE_NORMAL}>this.renderRows(records)</tbody>;
+    return <tbody className={UI_STATE_NORMAL}>{this.renderRows(records)}</tbody>;
   },
 
   render() {
