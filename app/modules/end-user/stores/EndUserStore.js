@@ -1,4 +1,4 @@
-import _, { assign, forEach } from 'lodash';
+import { remove, get, max } from 'lodash';
 import { createStore } from 'fluxible/addons';
 import config from './../../../main/config';
 
@@ -21,8 +21,8 @@ const EndUserStore = createStore({
   },
 
   initialize() {
-    this.users = [];
-    this.displayUsers = [];
+    this.users = null;
+    this.displayUsers = null;
     this.currentUser = null;
     this.hasNextPage = false;
     this.page = 0;
@@ -31,7 +31,7 @@ const EndUserStore = createStore({
   },
 
   _getStartIndex() {
-    return _.max([(+this.currentPage - 1), 0]) * +this.pageRec;
+    return max([(+this.currentPage - 1), 0]) * +this.pageRec;
   },
 
   _getLastIndex() {
@@ -48,18 +48,19 @@ const EndUserStore = createStore({
     // in case we need more data,
     // let handleEndUsersChange to emit change
     if (this.getTotalDisplayUsers() < this.getTotalUsers()) {
-      this.displayUsers = this.displayUsers.concat(this._getDisplayUsers());
+      this.displayUsers = (this.displayUsers || []).concat(this._getDisplayUsers());
       this.emitChange();
     }
   },
 
   handleClearEndUsers() {
     this.initialize();
+    this.emitChange();
   },
 
   handleEndUsersChange(payload) {
-    this.users = this.users.concat(payload.userList);
-    this.displayUsers = this.displayUsers.concat(this._getDisplayUsers());
+    this.users = (this.users || []).concat(payload.userList);
+    this.displayUsers = (this.displayUsers || []).concat(this._getDisplayUsers());
     this.hasNextPage = payload.hasNextPage;
     this.page = payload.dateRange.pageNumberIndex;
     this.emitChange();
@@ -91,13 +92,8 @@ const EndUserStore = createStore({
   },
 
   handleEndUserDelete(payload) {
-    _.remove(this.displayUsers, function (user) {
-      return user.username === payload.username;
-    });
-
-    _.remove(this.users, function (user) {
-      return user.username === payload.username;
-    });
+    remove(this.displayUsers, user => user.username === payload.username);
+    remove(this.users, user => user.username === payload.username);
 
     this.currentUser = null;
     this.emitChange();
@@ -133,15 +129,15 @@ const EndUserStore = createStore({
   },
 
   getTotalUsers() {
-    return this.users.length;
+    return (this.users || []).length;
   },
 
   getTotalDisplayUsers() {
-    return this.displayUsers.length;
+    return (this.displayUsers || []).length;
   },
 
   getBundleIds() {
-    const usersWithBundleId = this.users.filter(u => _.get(u, 'devices[0].appBundleId'));
+    const usersWithBundleId = this.users.filter(u => get(u, 'devices[0].appBundleId'));
     return usersWithBundleId.map(u => u.appBundleId);
   },
 

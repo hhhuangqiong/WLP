@@ -101,7 +101,7 @@ const EndUserProfile = React.createClass({
 
     return (
       <Accordion.Navigation title="Account Info" hasIndicator verified={this.props.user.userDetails.verified}>
-        <Item label="Created Time">{creationDate}</Item>
+        <Item label="Created Time" className="end-user-info__created-time">{creationDate}</Item>
         <Item label="Verified" capitalize>
           <If condition={this.props.user.userDetails.verified}>
             <span className="verified">verified</span>

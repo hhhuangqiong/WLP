@@ -11,18 +11,24 @@
 
   &:not(.verification-profile) {
     tbody {
-      tr:not(.empty):nth-child(odd) {
-        background: #f1f1f1;
-      }
-
-      tr.empty {
-        > td {
-          cursor: default;
+      tr {
+        &:not(.empty):nth-child(odd) {
+          background: #f1f1f1;
         }
 
-        div {
-          font-weight: 500;
-          color: $table-foot-font-color;
+        &.selected {
+          background: scale-color($brand-primary, $lightness: 90%) !important;
+        }
+
+        &.empty {
+          > td {
+            cursor: default;
+          }
+
+          div {
+            font-weight: 500;
+            color: $table-foot-font-color;
+          }
         }
       }
     }

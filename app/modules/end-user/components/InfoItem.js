@@ -7,6 +7,7 @@ const InfoItem = React.createClass({
     capitalze: PropTypes.bool,
     capitalize: PropTypes.bool,
     children: PropTypes.element.isRequired,
+    className: PropTypes.string,
   },
 
   render() {
@@ -18,7 +19,8 @@ const InfoItem = React.createClass({
             classNames(
               'accordion__item__content',
               { capitalize: this.props.capitalize },
-              'right'
+              'right',
+              this.props.className
             )}
           >
             {this.props.children}

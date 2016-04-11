@@ -1,27 +1,19 @@
 import { expect } from 'chai';
 
-import {
-  WAIT_FOR_FETCHING_TIMEOUT,
-} from '../../../lib/constants';
-
 export default function validateAccountInfo(className, index = 0) {
-  return this
-    .getText(className)
-    .then(dates => {
-      const date = dates[index];
+  // pick a date from the table
+  const dates = this.getText(className);
+  const date = Array.isArray(dates) ? dates[index] : dates;
 
-      return this
-        .elements('.end-user-table-row')
-        .then(({ value: elements }) => {
-          const firstElement = elements[index].ELEMENT;
+  // click the row by index
+  const elements = this.elements('.end-user-table-row').value;
+  const firstElement = Array.isArray(elements) ? elements[index].ELEMENT : elements.ELEMENT;
 
-          return this
-            .elementIdClick(firstElement)
-            .pause(WAIT_FOR_FETCHING_TIMEOUT)
-            .getText('.accordion__item__content')
-            .then(accountDetails => {
-              expect(accountDetails).to.include(date);
-            });
-        });
-    })
+  this.elementIdClick(firstElement);
+
+  // expect the sidebar contain the same date as selected above
+  const createdTime = this.getText('.end-user-info__created-time');
+  expect(createdTime).to.include(date);
+
+  return this;
 }

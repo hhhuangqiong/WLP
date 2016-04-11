@@ -1,4 +1,4 @@
-import _ from 'lodash';
+import _, { isNull } from 'lodash';
 import moment from 'moment';
 import { concurrent } from 'contra';
 import React from 'react';
@@ -230,8 +230,8 @@ const EndUsers = React.createClass({
     const { identity: carrierId } = this.context.router.getCurrentParams();
 
     this.context.executeAction(fetchEndUser, {
-      carrierId: carrierId,
-      username: username,
+      carrierId,
+      username,
     });
   },
 
@@ -244,6 +244,10 @@ const EndUsers = React.createClass({
   },
 
   applyFilters(users) {
+    if (isNull(users)) {
+      return users;
+    }
+
     if (this.state.bundleId) {
       users = _.filter(users, user => {
         const device = _.get(user, 'devices.0') || {};
@@ -256,6 +260,7 @@ const EndUsers = React.createClass({
         return user.accountStatus === this.state.status;
       });
     }
+
     return users;
   },
 
