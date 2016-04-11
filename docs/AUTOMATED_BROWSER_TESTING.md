@@ -2,10 +2,10 @@
 
 ## 1. Begin
 
-### To start
+### Before start
 
-1. npm i
-2. gulp
+1. Start the application: `gulp`
+2. Start selenium server if you are at local: `npm run server:selenium`
 
 ### Running test case
 
@@ -24,6 +24,9 @@ FEATURE=call npm run test:browser
 
 // Specifying both
 BROWSER=firefox FEATURE=sms npm run test:browser
+
+// FEATURE AND BROWSER can be multiple
+BROWSER=chrome,firefox FEATURE=sms,call npm run test:browser
 
 // Running on remote with selenium server config (e.g. Jenkins)
 REMOTE=true npm run test:browser
@@ -62,16 +65,6 @@ browser.pause(5000)
 browser.saveScreenshot(<path>)
 ```
 
-### Element Chain
-
-```
-browser
-  .element('#someElem') // intial element
-  .element('..') // parent of #someElem
-  .element('#someElem2') // children of the parent element
-
-```
-
 ## 3. Example
 
 ### About Scrolling
@@ -103,27 +96,30 @@ const page = webdriverio.remote({ desiredCapabilities: { browserName: 'chrome' }
 #### Sign In
 
 ```
-page.url('https://partner.m800.com/')
-  .setValue('[name="username"]', 'admin@maaii.com')
-  .setValue('[name="password"]', 'whitelabel2014')
-  .click('button=sign in');
+browser.url('https://partner.m800.com/')
+browser.setValue('[name="username"]', 'admin@maaii.com')
+browser.setValue('[name="password"]', 'whitelabel2014')
+browser.click('button=sign in');
 ```
 
-#### Go to top up page
+#### Entering section with hover menu
+
+It is necessary to use moveToObject to avoid the unclickable problem
 
 ```
-page.moveToObject('a=Top Up')
-page.click('a=Top Up')
+browser.moveToObject('a=Top Up')
+browser.click('a=Top Up')
 ```
 
 #### Get Text by selector
 
 ```
-page.getText('tr').then(text => console.log(text))
+browser.getText('tr')
 ```
 
 #### Move to load More
 
 ```
-page.moveToObject('a=Details Report').moveToObject('span=Load More')
+browser.moveToObject('a=Details Report')
+browser.moveToObject('span=Load More')
 ```

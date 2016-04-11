@@ -1,31 +1,31 @@
-import selenium from 'selenium-standalone';
 import log from 'winston';
 import fs from 'fs-extra';
 
-function getCapabilities(customBrowser) {
-  if (customBrowser) {
-    return [{
-      browserName: customBrowser,
-    }];
-  }
+const BROWSERS = {
+  CHROME: 'chrome',
+  FIREFOX: 'firefox',
+  PHANTOMJS: 'phantomjs',
+};
 
-  // the following options can be specified
-  // specs: [],
-  // exclude: [],
-
-  return [
-    {
-      browserName: 'chrome',
-    },
-    {
-      maxInstances: 5,
-      browserName: 'firefox',
-    },
-    {
-      browserName: 'phantomjs',
+function getCapabilities(selectedBrowsers = Object.values(BROWSERS).join(',')) {
+  return selectedBrowsers
+    .split(',')
+    .map(browserName => browserName.trim())
+    .map(browserName => ({
+      browserName,
       'phantomjs.binary.path': 'node_modules/phantomjs/bin/phantomjs',
-    },
-  ];
+      // the following options can be specified
+      // maxInstances: 5,
+      // specs: [],
+      // exclude: [],
+    }));
+}
+
+function getSpecs(selectedFeatures = '**') {
+  return selectedFeatures
+    .split(',')
+    .map(feature => feature.trim())
+    .map(feature => `./test/browser/specs/${feature}/*.js`);
 }
 
 function addCommand(browser, commands) {
@@ -62,9 +62,7 @@ const COMMANDS = {
 export default {
   // Adding FEATURE=<feature name> for the running script
   // allows to run single feature test instead of running all tests
-  specs: [
-    `./test/browser/specs/${process.env.FEATURE ? process.env.FEATURE : '**'}/*.js`,
-  ],
+  specs: getSpecs(process.env.FEATURE),
 
   exclude: [],
 
@@ -169,16 +167,6 @@ export default {
   //
   // Gets executed before all workers get launched.
   onPrepare() {
-    // Start selenium server automatically when start for local running instance
-    // if (!process.env.REMOTE) {
-    //   selenium.install(function install() {
-    //     selenium.start(function start(err, child) {
-    //       if (err) log.error(err);
-    //       selenium.child = child;
-    //     });
-    //   });
-    // }
-
     log.info('Start running browser test');
 
     /* Ensure no previous result left inside reports dir */
