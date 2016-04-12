@@ -13,7 +13,7 @@ export default function switchCompany(companyName) {
   // TODO: there is no identifier of switching company at this moment
   // and there are refactoring works on going
   // therefore it is necessary to keep a pause to avoid the test is too fast before the UI changes
-  this.pause(1000);
+  this.pause(2000);
 
   expect(this.getText('#company-name')).to.be.equal(companyName);
 
