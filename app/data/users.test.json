@@ -285,4 +285,26 @@
     "logoFile": "logo-m800.png",
     "widgets": {}
   }
+}, {
+  "user": {
+    "username": "admin@ecarx.maaiii-api.org",
+    "password": "ecarxWLP2016",
+    "name": {
+      "first": "Admin",
+      "last": "Ecarx"
+    },
+    "assignedGroup": "root",
+    "status": "active"
+  },
+  "company": {
+    "parentCompany": null,
+    "carrierId": "ecarx.maaiii-api.org",
+    "name": "Ecarx",
+    "reseller": false,
+    "status": "active",
+    "timezone": "UTC+8",
+    "country": "Hong Kong",
+    "logoFile": "logo-m800.png",
+    "widgets": {}
+  }
 }]
