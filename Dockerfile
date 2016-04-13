@@ -16,6 +16,7 @@ ENV NODE_ENV=production
 # 3. expose for debug purpose
 EXPOSE 3000 3100 5858
 
-USER nobody
+# mask temporary workaround permission problem of babel/register
+# USER nobody
 
 CMD ["node", "bin/www.js"]
