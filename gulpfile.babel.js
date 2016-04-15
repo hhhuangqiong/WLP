@@ -1,8 +1,6 @@
-
 import autoprefixer from 'gulp-autoprefixer';
 import babel from 'gulp-babel';
 import del from 'del';
-import extend from 'gulp-extend';
 import gulp from 'gulp';
 import gutil from 'gulp-util';
 import istanbul from 'gulp-istanbul';
@@ -19,7 +17,7 @@ import { argv } from 'yargs';
 import browserSync from 'browser-sync';
 
 
-const defaultTasks = ['clean', 'nodemon', 'watch', 'scss', 'webpack'];
+const defaultTasks = ['nodemon', 'watch', 'scss', 'webpack', 'browser-sync'];
 const webpackConfig = require('./webpack.config');
 
 if (webpackConfig.custom.hotLoadPort) {
@@ -76,10 +74,6 @@ gulp.task('sprite', () => {
 
 gulp.task('watch', () => {
   gulp.watch('public/scss/**/*.scss', ['scss']);
-});
-
-gulp.task('watch:js', ['babel'], () => {
-  gulp.watch(src.allJS, ['babel']);
 });
 
 gulp.task('clean', () => del([`${dest.app}`, `${dest.build}/**/*`]));
@@ -182,7 +176,7 @@ gulp.task('nodemon', () =>
 gulp.task('browser-sync', () => {
   browserSync({
     proxy: 'localhost:3000',
-    startPath: '/login',
+    startPath: '/',
     port: 3333,
   });
 });
