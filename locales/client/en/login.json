@@ -1,6 +1,0 @@
-{
-  "login": {
-    "title": "sign in",
-    "failure": "invalid username or password"
-  }
-}

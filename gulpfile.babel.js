@@ -186,10 +186,3 @@ gulp.task('browser-sync', () => {
     port: 3333,
   });
 });
-
-gulp.task('locale', () =>
-  gulp.src('locales/client/en/*.json')
-    .pipe(extend('en.json'))
-    .pipe(gulp.dest('public/locales'))
-);
-
