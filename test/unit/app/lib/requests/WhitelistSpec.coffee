@@ -134,7 +134,7 @@ describe 'Whitelist Request', ->
 
           # to make sure not mistakenly getting another payload
           expect( result.userCount ).to.eql 5
-          found = result.whitelist 
+          found = result.whitelist
           expect(found).to.be.not.empty
           expect(found).to.have.length.of 5
 

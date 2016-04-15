@@ -2,6 +2,7 @@
 
 # object under test
 SpeakeasyWrapper = require 'app/lib/auth/SpeakeasyWrapper'
+SpeakeasyWrapper = SpeakeasyWrapper.default
 
 describe 'Speakeasy Wrapper', ->
   ga = null

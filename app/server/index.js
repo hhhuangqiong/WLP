@@ -28,7 +28,7 @@ export default function (port) {
   const env = server.get('env');
 
   // let 'nconf' be the first initializer so configuration is accessed thru it
-  const nconf = require('./initializers/nconf')(env, path.resolve(__dirname, '../config'));
+  const nconf = (require('./initializers/nconf').default)(env, path.resolve(__dirname, '../config'));
 
   // NB: intentionally put 'logging' initializers before the others
   // eslint-disable-next-line no-unused-vars
@@ -41,10 +41,10 @@ export default function (port) {
   // eslint-disable-next-line max-len
   require('./initializers/database')(nconf.get('mongodb:uri'), nconf.get('mongodb:options'), postDBInit);
 
-  const ioc = require('./initializers/ioc')(nconf);
+  const ioc = (require('./initializers/ioc').default)(nconf);
 
   // initialize the Kue instance to share through the entire process
-  const kueue = require('./initializers/kue')(nconf.get('redisUri'), {
+  const kueue = (require('./initializers/kue').default)(nconf.get('redisUri'), {
     uiPort: nconf.get('queue:uiPort'),
     prefix: nconf.get('queue:prefix'),
   });
@@ -80,24 +80,24 @@ export default function (port) {
   // static resources
   server.use(express.static(path.join(PROJ_ROOT, 'public')));
 
-  const redisStore = require('./initializers/redisStore')(session, nconf.get('redisUri'), env);
+  const redisStore = (require('./initializers/redisStore').default)(session, nconf.get('redisUri'), env);
 
-  server.use(require('./middlewares/redisConnection')(
+  server.use((require('./middlewares/redisConnection').default)(
     redisStore, session, nconf.get('secret:session'), nconf.get('redisFailoverAttempts'), env));
 
   server.use(morgan('dev'));
 
-  const passport = require('./initializers/passport')();
+  const passport = (require('./initializers/passport').default)();
   server.use(passport.initialize());
 
   // ensure express.session() is before passport.session()
   server.use(passport.session());
 
   // as API server
-  server.use(require('./routers/hlr'));
-  server.use(config.EXPORT_PATH_PREFIX, require('./routers/export'));
-  server.use(config.FILE_UPLOAD_PATH_PREFIX, require('./routers/data'));
-  server.use(config.API_PATH_PREFIX, require('./routers/api'));
+  server.use(require('./routers/hlr').default);
+  server.use(config.EXPORT_PATH_PREFIX, require('./routers/export').default);
+  server.use(config.FILE_UPLOAD_PATH_PREFIX, require('./routers/data').default);
+  server.use(config.API_PATH_PREFIX, require('./routers/api').default);
   server.use(config.API_PATH_PREFIX, apiErrorHandler);
 
   // eslint-disable-next-line prefer-arrow-callback, func-names

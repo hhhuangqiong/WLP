@@ -4,6 +4,7 @@ sinon             = require 'sinon'
 Mailer            = require 'app/lib/mailer/templateMailer'
 # object under test
 emailJobProcessor = require 'app/server/tasks/emailJobProcessor'
+emailJobProcessor = emailJobProcessor.default
 
 describe 'Email job processor', ->
   mailerStub = sinon.createStubInstance Mailer

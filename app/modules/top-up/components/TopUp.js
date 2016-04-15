@@ -63,7 +63,7 @@ const TopUp = React.createClass({
       concurrent([
         context.executeAction.bind(context, clearTopUp, {}),
         context.executeAction.bind(context, loadTransactions, merge(clone(defaultQuery), getInitialQueryFromURL(params, query), { reload: true })),
-      ], done || () => {});
+      ], done || (() => {}));
     },
   },
 

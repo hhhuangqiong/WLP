@@ -6,7 +6,8 @@ util       = require 'util'
 Qs         = require 'qs'
 
 # object under test
-mvsRequest = require 'app/lib/requests/mvs/VSFTransaction'
+MvsRequest = require 'app/lib/requests/mvs/VSFTransaction'
+MvsRequest = MvsRequest.default
 
 describe 'mvsRequest', ->
   request = null
@@ -21,7 +22,7 @@ describe 'mvsRequest', ->
 
     beforeEach ->
       timeout = 100
-      request = new mvsRequest(baseUrl, timeout)
+      request = new MvsRequest(baseUrl, timeout)
       params  = {
         fromTime: '12/30/2014',
         toTime: '6/29/2015',

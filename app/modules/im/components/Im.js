@@ -51,7 +51,7 @@ const Im = React.createClass({
           // The page number, starting from 0, defaults to 0 if not specified.
           page: query.page || 0,
         }),
-      ], done || () => {});
+      ], done || (() => {}));
     },
   },
 

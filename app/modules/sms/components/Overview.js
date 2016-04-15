@@ -25,7 +25,7 @@ const SMSOverview = React.createClass({
       context.executeAction(loadSMSWidgets, {
         carrierId: params.identity,
         userId: context.getStore(AuthStore).getUserId(),
-      }, done || () => {});
+      }, done || (() => {}));
     },
   },
 

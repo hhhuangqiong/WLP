@@ -3,7 +3,8 @@
 objectAssign = require 'object-assign'
 
 # object under test
-mixin        = require 'app/lib/requests/mixins/mumsErrorResponse'
+mixin = require 'app/lib/requests/mixins/mumsErrorResponse'
+mixin = mixin.default
 
 describe 'MUMS Error Response mixin', ->
 

@@ -2,8 +2,9 @@
 
 # object under test
 UserRequest = require 'app/lib/requests/mums/User'
+UserRequest = UserRequest.default
 
-describe 'UserRequest', ->
+describe.skip 'UserRequest', ->
   request = null
   baseUrl = 'http://www.mums.com/api/1.0'
   timeout = 5000

@@ -22,7 +22,7 @@ const Companies = React.createClass({
     fetchData(context, params, query, done) {
       concurrent([
         context.executeAction.bind(context, fetchCompanies, { carrierId: params.carrierId }),
-      ], done || () => {});
+      ], done || (() => {}));
     },
   },
 

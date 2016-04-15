@@ -7,6 +7,7 @@ util       = require 'util'
 
 # object under test
 CallRequest = require 'app/lib/requests/dataProviders/Call'
+CallRequest = CallRequest.default
 callResponse = require './responses/call.json'
 
 describe 'CallRequest', ->

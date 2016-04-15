@@ -6,6 +6,7 @@ util       = require 'util'
 
 # object under test
 WalletRequest = require 'app/lib/requests/boss/Wallet'
+WalletRequest = WalletRequest.default
 
 describe 'WalletRequest', ->
   request = null

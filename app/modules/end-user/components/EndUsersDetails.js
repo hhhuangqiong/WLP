@@ -47,7 +47,7 @@ const EndUsers = React.createClass({
     fetchData(context, params, query, done) {
       concurrent([
         context.executeAction.bind(context, clearEndUsers),
-      ], done || () => {});
+      ], done || (() => {}));
     },
   },
 

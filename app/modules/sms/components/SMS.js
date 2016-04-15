@@ -59,7 +59,7 @@ const SMS = React.createClass({
       concurrent([
         context.executeAction.bind(context, clearSMS, {}),
         context.executeAction.bind(context, loadSMS, _.merge(_.clone(defaultQuery), getInitialQueryFromURL(params, query))),
-      ], done || () => {});
+      ], done || (() => {}));
     },
   },
 

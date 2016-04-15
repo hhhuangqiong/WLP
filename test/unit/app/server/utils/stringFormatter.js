@@ -1,5 +1,5 @@
 var expect = require('chai').expect;
-var StringFormatter = require('app/utils/StringFormatter');
+var StringFormatter = require('app/utils/StringFormatter').default;
 
 /**
  * Design for a more readable test case

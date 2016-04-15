@@ -26,7 +26,7 @@ const ImOverview = React.createClass({
       context.executeAction(fetchImWidgets, {
         carrierId: params.identity,
         userId: context.getStore(AuthStore).getUserId(),
-      }, done || () => {});
+      }, done || (() => {}));
     },
   },
 

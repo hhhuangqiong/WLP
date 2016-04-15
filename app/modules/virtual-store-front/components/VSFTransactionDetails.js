@@ -54,7 +54,7 @@ const VSFTransactionDetails = createClass({
       concurrent([
         context.executeAction.bind(context, clearVSFTransaction, {}),
         context.executeAction.bind(context, fetchVSFTransactions, merge(clone(defaultQuery), queryAndParams)),
-      ], done || () => {});
+      ], done || (() => {}));
     },
   },
 

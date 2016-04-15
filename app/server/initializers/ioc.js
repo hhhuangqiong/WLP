@@ -5,6 +5,8 @@ import NodeAcl from 'acl';
 import makeRedisClient from './redis';
 import ensureAuthenticated from '../middlewares/ensureAuthenticated';
 
+import CallsRequest from '../../lib/requests/dataProviders/Call';
+
 /**
  * Initialize the IoC container
  * The registered factory(s) seems to be lazied loaded.
@@ -26,11 +28,11 @@ export default function init(nconf) {
   });
 
   ioc.factory('middlewares.flash', () => {
-    return require('../middlewares/flash')();
+    return (require('../middlewares/flash').default)();
   });
 
   ioc.factory('SmtpTransport', () => {
-    const transport = require('../../lib/mailer/transports/smtp');
+    const transport = require('../../lib/mailer/transports/smtp').default;
     return transport(nconf.get('smtp:transport'));
   });
 
@@ -48,47 +50,43 @@ export default function init(nconf) {
   });
   ioc.service('EmailClient', require('m800-mail-service-client'), 'M800_MAIL_SERVICE_CLIENT_CONFIG');
 
-  ioc.service('PortalUserManager', require('../../lib/portal/UserManager'));
+  ioc.service('PortalUserManager', require('../../lib/portal/UserManager').default);
 
   ioc.constant('DATAPROVIDER_API_BASE_URL', nconf.get('dataProviderApi:baseUrl'));
   ioc.constant('DATAPROVIDER_API_TIMEOUT', nconf.get('dataProviderApi:timeout'));
-  ioc.service('CallsRequest', require('../../lib/requests/dataProviders/Call'), 'DATAPROVIDER_API_BASE_URL', 'DATAPROVIDER_API_TIMEOUT');
+  ioc.service('CallsRequest', CallsRequest, 'DATAPROVIDER_API_BASE_URL', 'DATAPROVIDER_API_TIMEOUT');
 
   ioc.service(
     'CallStatsRequest',
-    require('../../lib/requests/dataProviders/CallStats'),
+    require('../../lib/requests/dataProviders/CallStats').default,
     'DATAPROVIDER_API_BASE_URL',
     'DATAPROVIDER_API_TIMEOUT'
   );
 
-  ioc.service('ImRequest', require('../../lib/requests/dataProviders/Im'), 'DATAPROVIDER_API_BASE_URL', 'DATAPROVIDER_API_TIMEOUT');
-  ioc.service('VerificationRequest', require('../../lib/requests/dataProviders/Verification'), 'DATAPROVIDER_API_BASE_URL', 'DATAPROVIDER_API_TIMEOUT');
-  ioc.service('UserStatsRequest', require('../../lib/requests/dataProviders/UserStats'), 'DATAPROVIDER_API_BASE_URL', 'DATAPROVIDER_API_TIMEOUT');
+  ioc.service('ImRequest', require('../../lib/requests/dataProviders/Im').default, 'DATAPROVIDER_API_BASE_URL', 'DATAPROVIDER_API_TIMEOUT');
+  ioc.service('VerificationRequest', require('../../lib/requests/dataProviders/Verification').default, 'DATAPROVIDER_API_BASE_URL', 'DATAPROVIDER_API_TIMEOUT');
+  ioc.service('UserStatsRequest', require('../../lib/requests/dataProviders/UserStats').default, 'DATAPROVIDER_API_BASE_URL', 'DATAPROVIDER_API_TIMEOUT');
 
   ioc.constant('MUMS_API_BASE_URL', nconf.get('mumsApi:baseUrl'));
   ioc.constant('MUMS_API_TIMEOUT', nconf.get('mumsApi:timeout'));
-  ioc.service('EndUserRequest', require('../../lib/requests/mums/User'), 'MUMS_API_BASE_URL', 'MUMS_API_TIMEOUT');
+  ioc.service('EndUserRequest', require('../../lib/requests/mums/User').default, 'MUMS_API_BASE_URL', 'MUMS_API_TIMEOUT');
 
   ioc.constant('MVS_API_BASE_URL', nconf.get('mvsApi:baseUrl'));
   ioc.constant('MVS_API_TIMEOUT', nconf.get('mvsApi:timeout'));
-  ioc.service('VSFTransactionRequest', require('../../lib/requests/mvs/VSFTransaction'), 'MVS_API_BASE_URL', 'MVS_API_TIMEOUT');
+  ioc.service('VSFTransactionRequest', require('../../lib/requests/mvs/VSFTransaction').default, 'MVS_API_BASE_URL', 'MVS_API_TIMEOUT');
 
   ioc.constant('BOSS_API_BASE_URL', nconf.get('bossApi:baseUrl'));
   ioc.constant('BOSS_API_TIMEOUT', nconf.get('bossApi:timeout'));
-  ioc.service('TopUpRequest', require('../../lib/requests/boss/TopUp'), 'BOSS_API_BASE_URL', 'BOSS_API_TIMEOUT');
-  ioc.service('WalletRequest', require('../../lib/requests/boss/Wallet'), 'BOSS_API_BASE_URL', 'BOSS_API_TIMEOUT');
+  ioc.service('TopUpRequest', require('../../lib/requests/boss/TopUp').default, 'BOSS_API_BASE_URL', 'BOSS_API_TIMEOUT');
+  ioc.service('WalletRequest', require('../../lib/requests/boss/Wallet').default, 'BOSS_API_BASE_URL', 'BOSS_API_TIMEOUT');
 
-  ioc.service('RedisClient', () => {
-    return makeRedisClient(nconf.get('redisUri'));
-  });
+  ioc.service('RedisClient', () => makeRedisClient(nconf.get('redisUri')));
 
-  ioc.factory('ACL', () => {
-    return new NodeAcl(new NodeAcl.memoryBackend());
-  });
+  ioc.factory('ACL', () => new NodeAcl(new NodeAcl.memoryBackend()));
 
   ioc.factory('ACLManager', (container) => {
-    const AclManager = require('../../main/acl');
-    const carrierQuerier = require('../../main/acl/carrierQueryService');
+    const AclManager = require('../../main/acl').default;
+    const carrierQuerier = require('../../main/acl/carrierQueryService').default;
     const nodeAcl = container.ACL;
 
     return new AclManager(nodeAcl, carrierQuerier);

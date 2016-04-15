@@ -346,13 +346,19 @@ Api.prototype.getCallsStatsTotal = function getCallsStatsTotal(params, cb) {
     .end(genericHandler(cb));
 };
 
+import authRouter from './server/api/auth';
+import sessionRouter from './server/api/session';
+import accountsRouter from './server/api/accounts';
+import exportRouter from './server/api/export';
+import vsfRouter from './server/api/vsf';
+
 assign(
   Api.prototype,
-  require('./server/api/auth')(API_PATH_PREFIX),
-  require('./server/api/session')(API_PATH_PREFIX),
-  require('./server/api/accounts')(API_PATH_PREFIX),
-  require('./server/api/export')(EXPORT_PATH_PREFIX),
-  require('./server/api/vsf')(API_PATH_PREFIX)
+  authRouter(API_PATH_PREFIX),
+  sessionRouter(API_PATH_PREFIX),
+  accountsRouter(API_PATH_PREFIX),
+  exportRouter(EXPORT_PATH_PREFIX),
+  vsfRouter(API_PATH_PREFIX)
 );
 
 module.exports = Api;

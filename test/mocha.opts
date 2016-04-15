@@ -1,2 +1,2 @@
---compilers coffee:coffee-script/register,js:babel/register
+--compilers coffee:coffee-script/register,js:babel-core/register
 
