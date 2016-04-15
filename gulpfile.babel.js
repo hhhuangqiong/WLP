@@ -41,12 +41,17 @@ gulp.task('test', (cb) => {
     .pipe(istanbul())
     .pipe(istanbul.hookRequire())
     .on('finish', () => gulp.src(
-      ['test/unit/**/*.coffee', 'test/unit/**/*.js', 'test/scss/**/*.js'])
-        .pipe(mocha())
-        .pipe(istanbul.writeReports({
-          dir: `${dest.build}/coverage`,
-        }))
-        .on('end', cb)
+      [
+        'test/unit/**/*.js',
+        'test/scss/**/*.js',
+        'test/component/**/*.js',
+      ]
+    )
+      .pipe(mocha())
+      .pipe(istanbul.writeReports({
+        dir: `${dest.build}/coverage`,
+      }))
+      .on('end', cb)
     );
 });
 

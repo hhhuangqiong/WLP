@@ -1,45 +1,35 @@
-import React, { Component, PropTypes } from 'react';
+import React, { PropTypes } from 'react';
 import classNames from 'classnames';
 import moment from 'moment';
 
-export default class TimeFramePicker extends Component {
-  render() {
-    const {
-      className,
-      customClass,
-    } = this.props;
-
-    return (
-      <div className={classNames('time-frame-picker', className, customClass)}>
-        {
-          this
-            .props
-            .frames
-            .map(frame => (
-                <span
-                  className={classNames('item', { active: this.props.currentFrame === frame })}
-                  key={frame}
-                  onClick={this.props.onChange.bind(null, frame)}
-                >
-                  {frame.replace('hours', 'hrs')}
-                </span>
-              )
-            )
-        }
-      </div>
-    );
+export default function TimeFramePicker({ className, frames, currentFrame, onChange }) {
+  if (!Array.isArray(frames)) {
+    return null;
   }
+
+  return (
+    <div className={classNames('time-frame-picker', className)}>
+      {
+        frames.map(frame => (
+            <span
+              key={frame}
+              className={classNames('item', { active: currentFrame === frame })}
+              onClick={() => onChange(frame)}
+            >
+              {frame.replace('hours', 'hrs')}
+            </span>
+          )
+        )
+      }
+    </div>
+  );
 }
 
 TimeFramePicker.propTypes = {
   frames: PropTypes.arrayOf(PropTypes.string).isRequired,
   currentFrame: PropTypes.string.isRequired,
-  className: PropTypes.string.isRequired,
-  customClass: PropTypes.oneOfType([
-    PropTypes.string,
-    PropTypes.array,
-  ]),
   onChange: PropTypes.func.isRequired,
+  className: PropTypes.string,
 };
 
 // Buffer time in minutes

@@ -84,7 +84,10 @@ export default class DateSelectorArrow extends Component {
   }
 
   hasPrevious() {
-    return this.getCurrentDate().startOf(this.props.timescale).isAfter(moment(this.props.minDate).format('L'));
+    return this
+      .getCurrentDate()
+      .startOf(this.props.timescale)
+      .isAfter(moment(this.props.minDate, this.props.parseFormat).format('L'));
   }
 
   handleClickPrevious() {

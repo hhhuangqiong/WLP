@@ -127,7 +127,14 @@ DateSelector.propTypes = {
 };
 
 DateSelector.defaultProps = {
+  // NOW as default value
+  date: moment({
+    month: moment().month(),
+    year: moment().year(),
+  }).format('L'),
   monthFormat: 'MMMM',
   yearFormat: 'YYYY',
+  // one year long selection as default selectable range
+  minDate: moment().subtract(1, 'years').startOf('month').format('L'),
   maxDate: moment().endOf('month').format('L'),
 };

@@ -1,40 +1,38 @@
-{expect}   = require 'chai'
-nconf      = require 'nconf'
-nock       = require 'nock'
-moment     = require 'moment'
-util       = require 'util'
-Qs         = require 'qs'
+import { expect } from 'chai';
+import nock from 'nock';
+import moment from 'moment';
+import util from 'util';
+import Qs from 'qs';
 
-# object under test
-MvsRequest = require 'app/lib/requests/mvs/VSFTransaction'
-MvsRequest = MvsRequest.default
+// object under test
+import MvsRequest from 'app/lib/requests/mvs/VSFTransaction';
 
-describe 'mvsRequest', ->
-  request = null
-  params  = {}
-  carrierId = 'yato.maaii.com'
-  baseUrl = 'http://192.168.118.13:9125'
-  url     = util.format('/transactions/carriers/%s', carrierId);
-  delay   = 20
-  timeout = 100
+describe('mvsRequest', function() {
+  let request = null;
+  let params  = {};
+  let carrierId = 'yato.maaii.com';
+  let baseUrl = 'http://192.168.118.13:9125';
+  let url     = util.format('/transactions/carriers/%s', carrierId);
+  let delay   = 20;
+  let timeout = 100;
 
-  describe 'VSF Transaction Query', ->
+  describe('VSF Transaction Query', function() {
 
-    beforeEach ->
-      timeout = 100
-      request = new MvsRequest(baseUrl, timeout)
+    beforeEach(function() {
+      timeout = 100;
+      request = new MvsRequest(baseUrl, timeout);
       params  = {
         fromTime: '12/30/2014',
         toTime: '6/29/2015',
         pageSize: 1000
-      }
+      };
 
-      formattedParams = Qs.stringify({
+      let formattedParams = Qs.stringify({
         fromTime: moment(params.fromTime, 'L').startOf('day').format('MMMM Do YYYY, h:mm:ss a'),
         toTime: moment(params.toTime, 'L').endOf('day').format('MMMM Do YYYY, h:mm:ss a')
-      })
+      });
 
-      nock(baseUrl)
+      return nock(baseUrl)
         .get(util.format('%s?%s', url, formattedParams))
         .delay(delay)
         .reply(200, {
@@ -87,31 +85,33 @@ describe 'mvsRequest', ->
               "transactionStatus": "Failed"
             }
           ]
-        })
+        });
+    });
 
-    afterEach ->
-      request = null
+    afterEach(() => request = null);
 
-    it 'should convert date query strings into ISO 8601 format', ->
-      request.formatQueryData params, (err, val) ->
-        fromTime = moment(params.fromTime).startOf('day').toISOString()
-        toTime = moment(params.toTime).endOf('day').toISOString()
+    it('should convert date query strings into ISO 8601 format', () =>
+      request.formatQueryData(params, function(err, val) {
+        let fromTime = moment(params.fromTime).startOf('day').toISOString();
+        let toTime = moment(params.toTime).endOf('day').toISOString();
 
-        expect val.fromTime
-        .to.equal moment.utc(fromTime).format('YYYY-MM-DDTHH:MM:ss[Z]')
-        expect val.toTime
-        .to.equal moment.utc(toTime).format('YYYY-MM-DDTHH:MM:ss[Z]')
+        expect(val.fromTime)
+        .to.equal(moment.utc(fromTime).format('YYYY-MM-DDTHH:MM:ss[Z]'));
+        return expect(val.toTime)
+        .to.equal(moment.utc(toTime).format('YYYY-MM-DDTHH:MM:ss[Z]'));
+      })
+    );
 
-    it.skip 'should return a transaction record array in successful request', (done) ->
-      request.getTransactions carrierId, params, (err, body) ->
-        expect err
-        .to.not.exist
+    it.skip('should return a transaction record array in successful request', done =>
+      request.getTransactions(carrierId, params, function(err, body) {
+        expect(err)
+        .to.not.exist;
 
-        expect body
-        .to.be.an 'array'
-        expect body[0]
-        .to.be.an 'object'
-        .that.have.all.keys [
+        expect(body)
+        .to.be.an('array');
+        expect(body[0])
+        .to.be.an('object')
+        .that.have.all.keys([
           'userNumber',
           'purchaseDate',
           'virtualItemId',
@@ -122,16 +122,22 @@ describe 'mvsRequest', ->
           'currency',
           'transactionId',
           'transactionStatus'
-        ]
+        ]);
 
-        done()
+        return done();
+      })
+    );
 
-    it.skip 'should not return error if timeout', (done) ->
-      timeout = 10
-      request = new mvsRequest(baseUrl, timeout)
+    it.skip('should not return error if timeout', function(done) {
+      timeout = 10;
+      request = new mvsRequest(baseUrl, timeout);
 
-      request.getTransactions carrierId, params, (err, val) ->
-        expect err
-        .to.be.null
+      return request.getTransactions(carrierId, params, function(err, val) {
+        expect(err)
+        .to.be.null;
 
-        done()
+        return done();
+      });
+    });
+  });
+});
