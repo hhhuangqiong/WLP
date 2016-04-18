@@ -1,26 +1,30 @@
+import { get } from 'lodash';
+import path from 'path';
 import logger from 'winston';
 import React from 'react';
 import ReactDomServer from 'react-dom/server';
 import { RouterContext, match } from 'react-router';
 import serialize from 'serialize-javascript';
+import { IntlProvider } from 'react-intl';
 
 import Html from '../main/components/common/Html';
 import { getRedirectPath } from '../utils/reactRouter';
 import { createMarkupElement } from '../utils/fluxible';
+import { getLocaleDataFromPath } from '../utils/intl';
 
 /**
  * @method createHtmlElement
  *
- * @param config {String} serialized react-application-related configs
  * @param state {String} serialized state to be rehydrated
  * @param markupElement {ReactElement} the rendered ReactElement as output
+ * @param options {Object} object of serialized strings
  * @returns {ReactElement}
  */
-export function createHtmlElement(config, state, markupElement) {
+export function createHtmlElement(state, markupElement, options) {
   const props = {
-    config,
     state,
     markup: markupElement && ReactDomServer.renderToString(markupElement),
+    ...options,
   };
   const element = React.createElement(Html, props);
   return element;
@@ -83,9 +87,29 @@ export default function renderer(app, config) {
         // eslint-disable-next-line max-len
         const dehydratedState = `window.${config.GLOBAL_DATA_VARIABLE}=${serialize(dehydratedContext)};`;
         const serializedConfig = `window.${config.GLOBAL_CONFIG_VARIABLE}=${serialize(config)};`;
-        const children = React.createElement(RouterContext, renderProps);
+        let children = React.createElement(RouterContext, renderProps);
+
+        // TODO: check and take locale preference from user session if available
+        const locale = get(config, 'LOCALE.DEFAULT') || 'en';
+        logger.debug(`default locale is set as ${locale}`);
+
+        let serializedLocale;
+
+        if (get(config, 'LOCALE')) {
+          /* eslint-disable max-len */
+          logger.debug('Localization is enabled, wrapping RouterContext Component with IntlProvider Component');
+          const translations = getLocaleDataFromPath(path.resolve(__dirname, '../../public/locale-data'));
+          serializedLocale = `window.${config.GLOBAL_LOCALE_VARIABLE}=${serialize(translations[locale])};`;
+          children = React.createElement(IntlProvider, { locale, messages: translations[locale] }, children);
+          /* eslint-enable */
+        }
+
         const markupElement = createMarkupElement(context, children);
-        const htmlElement = createHtmlElement(serializedConfig, dehydratedState, markupElement);
+        const htmlElement = createHtmlElement(dehydratedState, markupElement, {
+          lang: locale,
+          config: serializedConfig,
+          locale: serializedLocale,
+        });
         const html = ReactDomServer.renderToStaticMarkup(htmlElement);
         const htmlWithDocType = prependDocType(html);
 

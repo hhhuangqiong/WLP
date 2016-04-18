@@ -15,9 +15,8 @@ if (enabledHotloader()) {
   bundlePath = '/javascript/bundle.js';
 }
 
-const Html = function (props) {
-  return (
-    <html lang="en">
+const Html = props => (
+    <html lang={props.lang}>
     <head>
       <meta charSet="utf-8" />
       <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -38,6 +37,8 @@ const Html = function (props) {
     <div id="app" dangerouslySetInnerHTML={{ __html: props.markup }}></div>
     <Version />
     <script dangerouslySetInnerHTML={{ __html: props.state }}></script>
+    <script dangerouslySetInnerHTML={{ __html: props.config }}></script>
+    <script dangerouslySetInnerHTML={{ __html: props.locale }}></script>
     <script src="/vendor/jquery/dist/jquery.min.js"></script>
     <script src="/vendor/highmaps/adapters/standalone-framework.js"></script>
     <script src="/vendor/highmaps/highcharts.js"></script>
@@ -47,13 +48,15 @@ const Html = function (props) {
     <script src={bundlePath} defer></script>
     </body>
     </html>
-  );
-};
+);
 
 Html.propTypes = {
-  title: PropTypes.string.isRequired,
   markup: PropTypes.element.isRequired,
   state: PropTypes.object,
+  lang: PropTypes.string,
+  title: PropTypes.string,
+  config: PropTypes.string,
+  locale: PropTypes.string,
 };
 
 export default Html;

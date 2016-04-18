@@ -1,10 +1,11 @@
 import _ from 'lodash';
 import React from 'react';
+import ReactDOM from 'react-dom';
 import LinkedStateMixin from 'react-addons-linked-state-mixin';
 import { FluxibleMixin } from 'fluxible-addons-react';
-import { Link } from 'react-router';
 import ValidationMixin from 'react-validation-mixin';
 import Joi from 'joi';
+import { FormattedMessage } from 'react-intl';
 
 import AuthStore from '../stores/AuthStore';
 import SignInStore from '../stores/SignInStore';
@@ -58,12 +59,12 @@ const SignIn = React.createClass({
 
     this.validate((error, data) => {
       if (data.username.length > 0) {
-        React.findDOMNode(this.refs.username).focus();
+        ReactDOM.findDOMNode(this.refs.username).focus();
         return;
       }
 
       if (data.password.length > 0) {
-        React.findDOMNode(this.refs.password).focus();
+        ReactDOM.findDOMNode(this.refs.password).focus();
         return;
       }
 
@@ -115,7 +116,9 @@ const SignIn = React.createClass({
       <form method="POST" onSubmit={this.handleSignIn}>
         <div className="panel--extra__title row">
           <div className="large-offset-1 large-22 columns">
-            <h1 className="text-center">Sign In</h1>
+            <h1 className="text-center">
+              <FormattedMessage id="app.sign-in.title" defaultMessage="Sign In" />
+            </h1>
           </div>
         </div>
         <div className="panel--extra__body row">
