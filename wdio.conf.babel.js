@@ -12,6 +12,7 @@ function getCapabilities(selectedBrowsers = Object.values(BROWSERS).join(',')) {
     .split(',')
     .map(browserName => ({
       browserName: browserName.trim(),
+      'phantomjs.binary.path': '/node_modules/phantomjs/lib/phantom/bin/phantomjs',
       // the following options can be specified
       // maxInstances: 5,
       // specs: [],
