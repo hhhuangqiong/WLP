@@ -9,7 +9,7 @@ import mongoose from 'mongoose';
  * @param {Object} mongoOpts MongoDB connection options
  * @param {Function} [cb]
  */
-function initialize(mongodbURI, mongodbOpts, cb) {
+function initialize(mongodbURI, mongodbOpts) {
   if (!mongodbURI || !mongodbOpts) {
     throw new Error('Both uri & options are required');
   }
@@ -33,10 +33,6 @@ function initialize(mongodbURI, mongodbOpts, cb) {
       process.exit(0);
     });
   });
-
-  if (_.isFunction(cb)) {
-    cb();
-  }
 }
 
 module.exports = initialize;

@@ -34,12 +34,9 @@ export default function (port) {
   // eslint-disable-next-line no-unused-vars
   const logger = require('./initializers/logging')(nconf.get('logging:winston'));
 
-  // database initialization + data seeding
+  // database initialization
   // eslint-disable-next-line max-len
-  const postDBInit = require('./initializers/dataseed')(path.resolve(__dirname, `../data/users.${env}.json`));
-
-  // eslint-disable-next-line max-len
-  require('./initializers/database')(nconf.get('mongodb:uri'), nconf.get('mongodb:options'), postDBInit);
+  require('./initializers/database')(nconf.get('mongodb:uri'), nconf.get('mongodb:options'));
 
   const ioc = (require('./initializers/ioc').default)(nconf);
 
