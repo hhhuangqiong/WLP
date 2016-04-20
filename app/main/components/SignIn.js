@@ -117,7 +117,7 @@ const SignIn = React.createClass({
         <div className="panel--extra__title row">
           <div className="large-offset-1 large-22 columns">
             <h1 className="text-center">
-              <FormattedMessage id="app.sign-in.title" defaultMessage="Sign In" />
+              <FormattedMessage id="sign-in.title" defaultMessage="Sign In" />
             </h1>
           </div>
         </div>
@@ -163,7 +163,11 @@ const SignIn = React.createClass({
                   * Disable Forgot Password temporary until Account module is being used
                 <label className="secondary">
                   <Link to="forgot-password">
-                    Forgot password?
+                    <FormattedMessage
+                      id="forgotPassword.message"
+                      defaultMessage="Forgot Password"
+                    />
+                    <span>?</span>
                   </Link>
                 </label>
                 */}
@@ -173,7 +177,9 @@ const SignIn = React.createClass({
                   id="sign-in-button"
                   className="button--primary right"
                   onClick={this.handleSignIn}
-                >Sign In</button>
+                >
+                  <FormattedMessage id="sign-in.title" defaultMessage="Sign In" />
+                </button>
               </div>
             </div>
           </div>

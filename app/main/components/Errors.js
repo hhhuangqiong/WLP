@@ -1,8 +1,9 @@
 import React, { PropTypes } from 'react';
 import classNames from 'classnames';
+import { FormattedMessage } from 'react-intl';
+
 import { HOME } from '../../server/paths';
 import errors from '../../config/errors.json';
-
 import Menu from './common/NavigationMenu';
 
 const ErrorTemplate = React.createClass({
@@ -53,9 +54,20 @@ const ErrorTemplate = React.createClass({
                     </li>
                     <li className="error-message">
                       {this.props.message},
-                      click
-                      <a href={HOME}>here</a>
-                      to go back to dashboard
+                      <FormattedMessage
+                        id="click"
+                        defaultMessage="Click"
+                      />
+                      <a href={HOME}>
+                        <FormattedMessage
+                          id="here"
+                          defaultMessage="Here"
+                        />
+                      </a>
+                      <FormattedMessage
+                        id="goBackToDashboard"
+                        defaultMessage="to go back to dashboard"
+                      />
                     </li>
                   </ul>
                 </div>

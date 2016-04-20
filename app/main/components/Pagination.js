@@ -1,5 +1,6 @@
 import classnames from 'classnames';
 import React, { Component, PropTypes } from 'react';
+import { FormattedMessage } from 'react-intl';
 
 export default class Pagination extends Component {
   static propTypes = {
@@ -8,6 +9,27 @@ export default class Pagination extends Component {
     onLoadMore: PropTypes.func.isRequired,
     isLoading: PropTypes.bool.isRequired,
   };
+
+  renderFooter() {
+    if (this.props.isLoading) {
+      return (
+        <div>
+          <FormattedMessage
+            id="loading"
+            defaultMessage="Loading"
+          />
+          <span>...</span>
+        </div>
+      );
+    }
+
+    return (
+      <FormattedMessage
+        id="loadMore"
+        defaultMessage="Load More"
+      />
+    );
+  }
 
   render() {
     const {
@@ -22,11 +44,14 @@ export default class Pagination extends Component {
         <tr>
           <td colSpan={colSpan}>
             <div className="pagination text-center">
-              No more
+              <FormattedMessage
+                id="details.noMore"
+                defaultMessage="No more"
+              />
             </div>
           </td>
         </tr>
-      )
+      );
     }
 
     return (
@@ -34,9 +59,13 @@ export default class Pagination extends Component {
         <td colSpan={colSpan}>
           <div className="pagination text-center">
             <span
-              className={classnames('pagination__button', { 'pagination__button--disabled': isLoading })}
+              className={classnames(
+                'pagination__button', { 'pagination__button--disabled': isLoading }
+              )}
               onClick={onLoadMore}
-            >{ isLoading ? 'Loading...' : 'Load More' }</span>
+            >
+              {this.renderFooter()}
+            </span>
           </div>
         </td>
       </tr>

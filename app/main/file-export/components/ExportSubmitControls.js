@@ -1,4 +1,5 @@
 import React from 'react';
+import { FormattedMessage } from 'react-intl';
 
 export default React.createClass({
   propTypes: {
@@ -17,7 +18,12 @@ export default React.createClass({
             e.preventDefault();
             this.props.closeModal();
           }}
-        >Cancel</a>
+        >
+          <FormattedMessage
+            id="cancel"
+            defaultMessage="Cancel"
+          />
+        </a>
 
         <a
           role="button"
@@ -27,7 +33,12 @@ export default React.createClass({
             e.preventDefault();
             this.props.handleExport();
           }}
-        >Proceed</a>
+        >
+          <FormattedMessage
+            id="proceed"
+            defaultMessage="Proceed"
+          />
+        </a>
       </div>
     );
   },

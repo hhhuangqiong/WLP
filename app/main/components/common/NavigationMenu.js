@@ -2,6 +2,7 @@ import _ from 'lodash';
 import React, { PropTypes } from 'react';
 import { Link } from 'react-router';
 import { FluxibleMixin } from 'fluxible-addons-react';
+import { FormattedMessage } from 'react-intl';
 
 import CompanySwitcher from './CompanySwitcher';
 import signOut from '../../actions/signOut';
@@ -88,7 +89,10 @@ const Navigation = React.createClass({
       return (
         <li className="navigation-bar__item no-border">
           <Link to="company-create" params={{ role, identity }}>
-            create new company
+            <FormattedMessage
+              id="company.createNewCompany"
+              defaultMessage="Create new company"
+            />
           </Link>
         </li>
       );
@@ -113,7 +117,10 @@ const Navigation = React.createClass({
       return (
         <li className="navigation-bar__item no-border">
           <Link to="account-create" params={{ role, identity }}>
-            create user
+            <FormattedMessage
+              id="account.createNewUser"
+              defaultMessage="Create new user"
+            />
           </Link>
         </li>
       );
@@ -140,23 +147,41 @@ const Navigation = React.createClass({
 
         <ul className="right">
           <li className="navigation-bar__item">
-            <a href="https://support.maaii.com" target="_new">report issue</a>
+            <a href="https://support.maaii.com" target="_new">
+              <FormattedMessage
+                id="reportIssue"
+                defaultMessage="report issue"
+              />
+            </a>
           </li>
           <CompanySwitcher />
           <li className="has-dropdown not-click navigation-bar__item">
             <a>
-              <span className="navigation-bar__display-name">hi, {this.state.displayName}</span>
+              <span>
+                <FormattedMessage
+                  id="hi"
+                  defaultMessage="Hi"
+                />
+                <span>, </span>
+                {this.state.displayName}
+              </span>
               <i className="icon-more" />
             </a>
             <ul className="dropdown">
               <li className="navigation-bar__item">
                 <a onClick={this.handleOpenChangePasswordDialog}>
                   <i className="icon-change-password"></i>
-                  Change Password
+                  <FormattedMessage
+                    id="changePassword"
+                    defaultMessage="Change Password"
+                  />
                 </a>
                 <a href="" onClick={this.handleSignOut}>
                   <i className="icon-logout"></i>
-                  logout
+                  <FormattedMessage
+                    id="logout"
+                    defaultMessage="Logout"
+                  />
                 </a>
               </li>
             </ul>

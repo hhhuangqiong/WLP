@@ -1,5 +1,6 @@
 import React, { PropTypes } from 'react';
 import classNames from 'classnames';
+import { FormattedMessage } from 'react-intl';
 
 const Panel = React.createClass({
   propTypes: {
@@ -31,16 +32,30 @@ const PanelHeader = React.createClass({
       PropTypes.string,
       PropTypes.array,
     ]),
-    title: PropTypes.string.isRequired,
+    title: PropTypes.string,
+    titleId: PropTypes.string,
     children: PropTypes.element.isRequired,
     caption: PropTypes.string.isRequired,
   },
+
+  renderTitle() {
+    const {
+      title, titleId,
+    } = this.props;
+
+    if (titleId) {
+      return <FormattedMessage id={titleId} defaultMessage={title} />;
+    }
+
+    return title;
+  },
+
   render() {
     return (
         <div className={classNames('header', 'inline-with-space', this.props.customClass)}>
           <div className="inline-container">
             <h4 className="title inline">
-              {this.props.title}
+              {this.renderTitle()}
             </h4>
             <If condition={!!this.props.caption}>
               <span className="caption inline">{this.props.caption}</span>

@@ -1,5 +1,7 @@
 import React, { PropTypes, Component } from 'react';
 import ReactModal from 'react-modal';
+import { FormattedMessage } from 'react-intl';
+
 import { CLIENT } from '../../utils/env';
 
 export default class Modal extends Component {
@@ -15,15 +17,36 @@ export default class Modal extends Component {
     }
   }
 
+  renderTitleSection() {
+    if (!(this.props.title || this.props.titleId)) {
+      return null;
+    }
+
+    return (
+      <label className="modal-header">
+        <h4 className="modal-header-title">
+          {this.renderTitleContent()}
+        </h4>
+      </label>
+    );
+  }
+
+  renderTitleContent() {
+    const {
+      title, titleId,
+    } = this.props;
+
+    if (titleId) {
+      return <FormattedMessage id={titleId} defaultMessage={title} />;
+    }
+
+    return title;
+  }
+
   render() {
     return (
       <ReactModal className="modal" isOpen={this.props.isOpen}>
-        <If condition={this.props.title}>
-          <label className="modal-header">
-            <h4 className="modal-header-title">{this.props.title}</h4>
-          </label>
-        </If>
-
+        {this.renderTitleSection()}
         <div className="modal-content">{this.props.children}</div>
       </ReactModal>
     );
@@ -33,6 +56,7 @@ export default class Modal extends Component {
 Modal.propTypes = {
   isOpen: PropTypes.bool.isRequired,
   title: PropTypes.string,
+  titleId: PropTypes.string,
   children: PropTypes.oneOfType([
     PropTypes.element,
     PropTypes.array,

@@ -1,4 +1,5 @@
 import React, { PropTypes, Component } from 'react';
+import { FormattedMessage } from 'react-intl';
 
 class EmptyRow extends Component {
   static propTypes = {
@@ -16,7 +17,12 @@ class EmptyRow extends Component {
       <tr className="empty">
         <td colSpan={colSpan}>
           <div className="text-center">
-            <span>No record found</span>
+            <span>
+              <FormattedMessage
+                id="noRecordFound"
+                defaultMessage="No record found"
+              />
+            </span>
           </div>
         </td>
       </tr>

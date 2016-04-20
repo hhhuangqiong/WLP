@@ -1,5 +1,6 @@
 import React, { PropTypes, Component } from 'react';
 import classNames from 'classnames';
+import { FormattedMessage } from 'react-intl';
 
 const EMPTY_DATA_LABEL = '0';
 const DATA_FETCHING_LABEL = '-';
@@ -53,10 +54,21 @@ class DataCell extends Component {
     return (data && data.toLocaleString());
   }
 
+  renderTitle() {
+    const {
+      title, titleId,
+    } = this.props;
+
+    if (titleId) {
+      return <FormattedMessage id={titleId} defaultMessage={title} />;
+    }
+
+    return title;
+  }
+
   render() {
     const {
       isLoading,
-      title,
       data,
       unit,
       changeDir,
@@ -68,7 +80,7 @@ class DataCell extends Component {
 
     return (
       <div className="data-cell">
-        <div className="data-cell__title">{ title }</div>
+        <div className="data-cell__title">{ this.renderTitle() }</div>
         <div className="data-cell__data">
           { this._localiseData(formatter(data)) }
         </div>
@@ -94,7 +106,8 @@ class DataCell extends Component {
 }
 
 DataCell.propTypes = {
-  title: PropTypes.string.isRequired,
+  title: PropTypes.string,
+  titleId: PropTypes.string,
   data: PropTypes.string.isRequired,
   unit: PropTypes.string,
   decimalPlace: PropTypes.number,

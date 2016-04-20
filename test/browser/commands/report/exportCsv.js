@@ -11,7 +11,7 @@ export default function exportCsv() {
 
   return this
     .click('.export-download-button')
-    .isVisible('h4=DOWNLOAD REPORT')
+    .isVisible('h4=Download Report')
     .getValue('.export-datetime-picker.export-from-time .datepicker__input')
     .then(date => fromDate = date)
     .getValue('.export-datetime-picker.export-to-time .datepicker__input')
