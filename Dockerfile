@@ -11,12 +11,14 @@ WORKDIR /src
 
 ENV NODE_ENV=production
 
+# disable cache for babel register, avoid permission problem for babel-register with user no body
+ENV BABEL_DISABLE_CACHE=1
+
 # 1. application listen port
 # 2. kue UI
 # 3. expose for debug purpose
 EXPOSE 3000 3100 5858
 
-# mask temporary workaround permission problem of babel/register
-# USER nobody
+USER nobody
 
 CMD ["node", "bin/www.js"]
