@@ -5,23 +5,26 @@
 ### Install dependencies
 
 To run the project you will need install the dependencies using Npm and Bower.
+
 ```
 # install bower modules
 bower -f install
 
 # install node modules
+# Please make sure the NODE_ENV variable is set to 'development', or you will miss all the development dependencies
 npm i
 ```
 
-### Set up the enviornment
+### Set up the environment
 
-You will need *Redis* and *MongoDB* to be installed and running on ur system. If you are on Mac, use [Homebrew](http://brew.sh) to install both of them.
+You will need [*Redis*](http://redis.io) and [*MongoDB*](https://www.mongodb.org) to be installed and running on your system. If you are on Mac, you may use [*Homebrew*](http://brew.sh) to install both of them, or alternatively, use [*Docker*](https://www.docker.com) you are proficient with it.
 
-There are env variables that needs set before you can run the application. Check `envrc.sample` for the enviornment variables that needs to be set. To setup env variables for each project locally, we suggest to use [direnv](direnv.net), it is also available via Homebrew.
+There are environment variables that needs to be set before you can run the application. Check `envrc.sample` for reference, or you may also refer to Docker page in Release section in this documentation. To setup environment variables for each project on your local machine, we suggest to use [*direnv*](direnv.net), it is also available via *Homebrew*.
 
 ### Run the application in dev mode
 
 Once dependencies installed you start the development with hot reload.
+
 ```
 npm run dev
 ```
@@ -65,6 +68,6 @@ please make sure the place the breakpoint in files under app directory
 
 console Error: Cannot find module '/path/to/debug.node':
 
-it is because you install the node-inspector globally under a different version of iojs,
+it is because you install the node-inspector globally under a different version of Node.js,
 it will not affect the functionality but you should still try correct the path
 

@@ -1,11 +1,31 @@
 ### Steps to seed capabilities to Companies
 
-1. Enter docker instance so that you can access the command line of WLP
-2. cd to WLP folder
-3. run the following command: `NODE_ENV=<env> npm run seed:capabilities`, please input corresponding node environment inside `<env>`
-4. you should see success message like below: `Company <company name> of carrierId <company carrierId> has been updated with capabilities`
+This is now an operational process, and it **MUST NOT** be done via project scripts.
+
+**IMPORTANT:** script `npm run seed:capabilities` is deprecated
+
+**DO NOT** run `npm run seed:capabilties` or all the changes made towards `capabilties` field in `Company` collection directly on mongoDB admin client **WILL BE ERASED**.
+
+1. log into the mongoDB admin client;
+2. go to the Mongo Document with the carrierId you want to edit;
+3. edit the `capabilities` field;
+4. save the changes;
+
+### Capabilities combinations
+
+Page / Feature | Key
+--- | ---
+overview | **NOT containing** 'service.sdk'
+end user | 'end-user'
+call | 'call'
+im | 'im'
+sms | 'service.white_label', 'im.im_to_sms', 'sms'
+vsf | 'service.white_label', 'vsf'
+top up | 'service.white_label', 'wallet'
+verification | 'service.sdk', 'verification-sdk'
 
 ### Capabilities details
+
 Remarks: Except for "Serivce type", all other features are assumed to be OFF
 
 |     Category     |            Name           |                         Description                         |
@@ -48,3 +68,176 @@ Remarks: Except for "Serivce type", all other features are assumed to be OFF
 |                  | wallet.shared             |                                                             |
 |                  | wallet                    | Allow all functions under wallet to be accessible           |
 |                  |                           |                                                             |
+
+### Company (Carrier) details
+
+Details:
+
+*Remarks*: keys not listed in the table below are not taken into effect.
+
+Key | Type | Description | Exmaple Value
+--- | --- | --- | ---
+name | String | display name of the carrier | "Maaii"
+carrierId | String | carrierId of the carrier | "maaii.com"
+country | String | location the carrier bases at | "Hong Kong"
+parentCompany | ObjectId | objectId of another *Company* document | ObjectId("570df15165eb2fca51268f72")
+status | String | status of the carrier on WLP | "active"
+capabilities | Array(String) |  | [ "service.sdk", "call" ]
+reseller | Boolean |  | false
+createAt | Date |  | new Date(1460531537617)
+createBy | ObjectId | ObjectId of a *PortalUser* document | ObjectId("570df15165eb2fca51268f72")
+updateAt | Date |  | new Date(1460531537617)
+updateBy | ObjectId | ObjectId of a *PortalUser* document | ObjectId("570df15165eb2fca51268f72")
+
+Schema:
+
+```
+  parentCompany: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Company',
+  },
+  name: {
+    type: String,
+    required: true,
+    unique: true,
+  },
+  carrierId: {
+    type: String,
+    unique: true,
+  },
+
+  // reflecting Company Type, either "Default" or "Reseller"
+  reseller: {
+    type: Boolean,
+  },
+  logo: {
+    type: mongoose.Schema.Types.ObjectId,
+  },
+  themeType: {
+    type: String,
+  },
+  address: {
+    type: String,
+  },
+  categoryID: {
+    type: String,
+  },
+  country: {
+    type: String,
+    required: true,
+  },
+  timezone: {
+    type: String,
+    required: true,
+  },
+  accountManager: {
+    type: String,
+  },
+  billCode: {
+    type: String,
+  },
+  expectedServiceDate: {
+    type: Date,
+  },
+  contractNumber: {
+    type: String,
+  },
+  referenceNumber: {
+    type: String,
+  },
+  features: {
+    type: Object,
+    default: [],
+  },
+  businessContact: {
+    name: {
+      type: String,
+    },
+    phone: {
+      type: String,
+    },
+    email: {
+      type: String,
+    },
+  },
+  technicalContact: {
+    name: {
+      type: String,
+    },
+    phone: {
+      type: String,
+    },
+    email: {
+      type: String,
+    },
+  },
+  supportContact: {
+    name: {
+      type: String,
+    },
+    phone: {
+      type: String,
+    },
+    email: {
+      type: String,
+    },
+  },
+  widgets: {
+    overview: [],
+    stores: [],
+    calls: [],
+    im: [],
+    sms: [],
+    vsf: [],
+  },
+  serviceConfig: {
+    developerKey: {
+      type: String,
+    },
+    developerSecret: {
+      type: String,
+    },
+    applicationId: {
+      type: String,
+    },
+    applications: {
+      ios: {
+        name: {
+          type: String,
+          default: null,
+        },
+      },
+      android: {
+        name: {
+          type: String,
+          default: null,
+        },
+      },
+    },
+  },
+  status: {
+    type: String,
+    required: true,
+    default: 'inactive',
+  },
+  capabilities: {
+    type: Array,
+    default: [],
+  },
+  createAt: {
+    type: Date,
+    default: Date.now,
+  },
+  createBy: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'PortalUser',
+  },
+  updateAt: {
+    type: Date,
+    default: Date.now,
+  },
+  updateBy: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'PortalUser',
+  }
+```
