@@ -1,4 +1,4 @@
-FROM mhart/alpine-node:4
+FROM mhart/alpine-node:5
 MAINTAINER "Andy Hui" <andyhui@maaii.com>
 
 # This dockerfile is designed to run from the jenkins build server, i.e. please
