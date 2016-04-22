@@ -1,6 +1,7 @@
 import React, { PropTypes } from 'react';
 import { Link } from 'react-router';
 import Select from 'react-select';
+import { FormattedMessage } from 'react-intl';
 import classNames from 'classnames';
 import moment from 'moment';
 import { isNull, max, last, merge, sortByOrder, some, values } from 'lodash';
@@ -187,11 +188,22 @@ export default React.createClass({
     return (
       <div>
         <div className="large-4 columns verification-overview__attempt__information">
-          <div className="verification-overview__title">Busiest Time:</div>
+          <div className="verification-overview__title">
+            <FormattedMessage
+              id="overview.busiestTime"
+              defaultMessage="Busiest Time"
+            />
+            <span>:</span>
+          </div>
           <div className="verification-overview__value">
             {this.isLoading() ? EMPTY_CELL_PLACEHOLDER : this.state.busiestAttempts}
           </div>
-          <div className="verification-overview__title">attempts</div>
+          <div className="verification-overview__title">
+            <FormattedMessage
+              id="attempts"
+              defaultMessage="attempts"
+            />
+          </div>
         </div>
 
         <div className="large-6 columns verification-overview__attempt__datetime">
@@ -217,7 +229,14 @@ export default React.createClass({
 
     return (
       <table className="verification-overview__country__table">
-        <tr><th>Location</th><th>Attempts</th></tr>
+        <tr>
+          <th>
+            <FormattedMessage id="location" defaultMessage="Location" />
+          </th>
+          <th>
+            <FormattedMessage id="attempts" defaultMessage="Attempts" />
+          </th>
+        </tr>
         {
           (sortedCountries.slice(0, 10) || []).map((country) => {
             return (<tr key={country.code}><td>{country.name || EMPTY_CELL_PLACEHOLDER}</td><td>{country.value || EMPTY_CELL_PLACEHOLDER}</td></tr>);
@@ -240,10 +259,10 @@ export default React.createClass({
         <FilterBar.Wrapper>
           <FilterBar.NavigationItems>
             <Link to={`/${role}/${identity}/verification/overview`} activeClassName="active">
-              Overview
+              <FormattedMessage id="overview" defaultMessage="Overview" />
             </Link>
             <Link to={`/${role}/${identity}/verification/details`} activeClassName="active">
-              Details Report
+              <FormattedMessage id="detailsReport" defaultMessage="Details Report" />
             </Link>
           </FilterBar.NavigationItems>
           <FilterBar.LeftItems>
@@ -277,8 +296,14 @@ export default React.createClass({
         <div className="verification-overview row">
           <div className="large-16 columns">
             <Panel.Wrapper>
-              <div className="header narrow"><h5 className="title">Summary</h5></div>
-              <div className={classNames('body', 'verification-overview__summary', { error: this.state.attemptsError || this.state.pastAttemptsError })}>
+              <div className="header narrow">
+                <h5 className="title">
+                  <FormattedMessage id="summary" defaultMessage="Summary" />
+                </h5>
+              </div>
+              <div
+                className={classNames('body', 'verification-overview__summary', { error: this.state.attemptsError || this.state.pastAttemptsError })}
+              >
                 <SummaryCells
                   isLoading={this.isLoading()}
                   accumulatedAttempts={this.state.accumulatedAttempts}
@@ -294,7 +319,14 @@ export default React.createClass({
             </Panel.Wrapper>
 
             <Panel.Wrapper>
-              <div className="header narrow"><h5 className="title">Verification Attempt</h5></div>
+              <div className="header narrow">
+                <h5 className="title">
+                  <FormattedMessage
+                    id="vsdk.verificationAttempt"
+                    defaultMessage="Verification Attempt"
+                  />
+                </h5>
+              </div>
               <div className={classNames('body', 'verification-overview__attempt', { error: this.state.attemptsError })}>
                 {this.renderAttemptInfo()}
                 <div className="large-24 columns verification-overview__attempt__chart">
@@ -316,7 +348,14 @@ export default React.createClass({
             </Panel.Wrapper>
 
             <Panel.Wrapper>
-              <div className="header narrow"><h5 className="title">Top 10 numbers of verification attempts in the world</h5></div>
+              <div className="header narrow">
+                <h5 className="title">
+                  <FormattedMessage
+                    id="vsdk.overview.top.attempts"
+                    defaultMessage="Top 10 numbers of verification attempts in the world"
+                  />
+                </h5>
+              </div>
               <div className={classNames('body', 'verification-overview__country', { error: this.state.countriesError })}>
                 <div className="large-10 columns">
                   {this.renderCountryTable()}
@@ -331,7 +370,14 @@ export default React.createClass({
 
           <div className="large-8 columns">
             <Panel.Wrapper>
-              <div className="header narrow"><h5 className="title">Verification by method</h5></div>
+              <div className="header narrow">
+                <h5 className="title">
+                  <FormattedMessage
+                    id="vsdk.details.method"
+                    defaultMessage="Verification by method"
+                  />
+                </h5>
+              </div>
               <div className={classNames('verification-overview__method', { error: this.state.typeError })}>
                 <Panel.Body>
                   <DonutChartPanel
@@ -346,7 +392,14 @@ export default React.createClass({
             </Panel.Wrapper>
 
             <Panel.Wrapper>
-              <div className="header narrow"><h5 className="title">Verification OS type</h5></div>
+              <div className="header narrow">
+                <h5 className="title">
+                  <FormattedMessage
+                    id="vsdk.details.osType"
+                    defaultMessage="Verification OS type"
+                  />
+                </h5>
+              </div>
               <div className={classNames('verification-overview__os', { error: this.state.osError })}>
                 <Panel.Body>
                   <DonutChartPanel

@@ -4,6 +4,7 @@ import moment from 'moment';
 import React, { PropTypes } from 'react';
 import { FluxibleMixin } from 'fluxible-addons-react';
 import { Link } from 'react-router';
+import { FormattedMessage } from 'react-intl';
 
 import * as FilterBar from './../../../main/components/FilterBar';
 import DateRangePicker from './../../../main/components/DateRangePicker';
@@ -109,17 +110,6 @@ const VerificationDetails = React.createClass({
     return _.merge(this.getStateFromStores(), query);
   },
 
-  onAppIdChange(val) {
-    this.setState({
-      appId: val,
-    });
-
-    this.handleQueryChange({
-      appId: val,
-      page: 0,
-    });
-  },
-
   getDefaultQuery() {
     return {
       // The page number, starting from 0, defaults to 0 if not specified.
@@ -214,6 +204,17 @@ const VerificationDetails = React.createClass({
     }
 
     this.autoSelectAppId();
+  },
+
+  onAppIdChange(val) {
+    this.setState({
+      appId: val,
+    });
+
+    this.handleQueryChange({
+      appId: val,
+      page: 0,
+    });
   },
 
   handleStartDateChange(dateString) {
@@ -355,13 +356,13 @@ const VerificationDetails = React.createClass({
               to={`/${role}/${identity}/verification/overview`}
               activeClassName="active"
             >
-              Overview
+              <FormattedMessage id="overview" defaultMessage="Overview" />
             </Link>
             <Link
               to={`/${role}/${identity}/verification/details`}
               activeClassName="active"
             >
-              Details Report
+              <FormattedMessage id="detailsReport" defaultMessage="Details Report" />
             </Link>
           </FilterBar.NavigationItems>
           <FilterBar.LeftItems>

@@ -1,5 +1,7 @@
 import React, { PropTypes, createClass } from 'react';
 import { Link } from 'react-router';
+import { FormattedMessage } from 'react-intl';
+
 import moment from 'moment';
 import { concurrent } from 'contra';
 import { merge, omit, clone } from 'lodash';
@@ -166,7 +168,7 @@ const VSFTransactionDetails = createClass({
                   to={`/${role}/${identity}/vsf/overview`}
                   activeClassName="active"
                 >
-                  Overview
+                  <FormattedMessage id="overview" defaultMessage="Overview" />
                 </Link>
               </li>
 
@@ -175,7 +177,7 @@ const VSFTransactionDetails = createClass({
                   to={`/${role}/${identity}/vsf/details`}
                   activeClassName="active"
                 >
-                  Details Report
+                  <FormattedMessage id="detailsReport" defaultMessage="Details Report" />
                 </Link>
               </li>
             </ul>

@@ -1,5 +1,7 @@
 import React, { PropTypes } from 'react';
 import { Link } from 'react-router';
+import { FormattedMessage } from 'react-intl';
+
 import { FluxibleMixin } from 'fluxible-addons-react';
 
 import WidgetNotAvailable from '../../../main/components/common/WidgetNotAvailable';
@@ -75,7 +77,7 @@ const VSFTransactionOverview = React.createClass({
                   to={`/${role}/${identity}/vsf/overview`}
                   activeClassName="active"
                 >
-                  Overview
+                  <FormattedMessage id="overview" defaultMessage="Overview" />
                 </Link>
               </li>
 
@@ -84,7 +86,7 @@ const VSFTransactionOverview = React.createClass({
                   to={`/${role}/${identity}/vsf/details`}
                   activeClassName="active"
                 >
-                  Details Report
+                  <FormattedMessage id="detailsReport" defaultMessage="Details Report" />
                 </Link>
               </li>
             </ul>

@@ -4,6 +4,7 @@ import { concurrent } from 'contra';
 
 import React, { PropTypes } from 'react';
 import { Link } from 'react-router';
+import { FormattedMessage } from 'react-intl';
 import { FluxibleMixin } from 'fluxible-addons-react';
 
 import loadTransactions from '../actions/loadTransactions';
@@ -15,6 +16,7 @@ import TopUpStore from '../stores/TopUpStore';
 import * as FilterBar from './../../../main/components/FilterBar';
 import DateRangePicker from './../../../main/components/DateRangePicker';
 import SearchBox from './../../../main/components/Searchbox';
+import Tooltip from './../../../main/components/Tooltip';
 
 const { inputDateFormat: DATE_FORMAT } = require('./../../../main/config');
 const { pages: { topUp: { pageRec: PAGE_REC } } } = require('./../../../main/config');
@@ -132,7 +134,7 @@ const TopUp = React.createClass({
             to={`/${role}/${identity}/top-up/details`}
             activeClassName="active"
           >
-            Details Report
+            <FormattedMessage id="detailsReport" defaultMessage="Details Report" />
           </Link>
           </FilterBar.NavigationItems>
           <FilterBar.LeftItems>
@@ -145,12 +147,20 @@ const TopUp = React.createClass({
             />
           </FilterBar.LeftItems>
           <FilterBar.RightItems>
-            <SearchBox
-              value={this.state.number}
-              placeHolder="Mobile"
-              onInputChangeHandler={this.handleSearchInputChange}
-              onKeyPressHandler={this.handleSearchInputSubmit}
-            />
+            <Tooltip
+              showTooltip={this.state.tooltipShow}
+              mouseActive={false}
+              cssName="top-up"
+              tip={ONLY_NUMBER_MESSAGE}
+              placement="left"
+            >
+              <SearchBox
+                value={this.state.number}
+                placeHolder="Mobile"
+                onInputChangeHandler={this.handleSearchInputChange}
+                onKeyPressHandler={this.handleSearchInputSubmit}
+              />
+            </Tooltip>
           </FilterBar.RightItems>
         </FilterBar.Wrapper>
         <div className="large-24 columns">
@@ -227,15 +237,34 @@ const TopUp = React.createClass({
   },
 
   handleSearchInputChange(e) {
+    if (!this.validateSearchInput(e.target.value)) {
+      this.showTooltip();
+      return;
+    }
+
+    this.hideTooltip();
     this.setState({ number: e.target.value });
   },
 
   handleSearchInputSubmit(e) {
-    if (e.which !== 13) {
-      return;
+    if ( e.which === 13 && this.validateSearchInput(e.target.value) ) {
+      this.handleQueryChange({ number: e.target.value, page: INITIAL_PAGE_NUMBER });
     }
+  },
 
-    this.handleQueryChange({ number: e.target.value, page: INITIAL_PAGE_NUMBER });
+  validateSearchInput(number) {
+    if (!number) return true;
+
+    const regex = /^\d+$/;
+    return regex.test(number);
+  },
+
+  showTooltip() {
+    this.setState({tooltipShow: true});
+  },
+
+  hideTooltip() {
+    this.setState({tooltipShow: false});
   },
 });
 

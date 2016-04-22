@@ -1,5 +1,6 @@
 import React from 'react';
 import { FluxibleMixin } from 'fluxible-addons-react';
+import { FormattedMessage } from 'react-intl';
 
 import WidgetNotAvailable from '../../../main/components/common/WidgetNotAvailable';
 import fetchOverviewWidgets from '../actions/fetchOverviewWidgets';
@@ -68,12 +69,18 @@ export default React.createClass({
     return (
       <div className="overview-background row">
         <div className="large-24 large-centered columns text-center">
-          <h2>Welcome {
-            this
-              .getStore(AuthStore)
-              .user
-              .displayName
-          }</h2>
+          <h2>
+            <FormattedMessage
+              id="overview.welcome"
+              defaultMessage="Welcome"
+            />
+            {
+              this
+                .getStore(AuthStore)
+                .user
+                .displayName
+            }
+          </h2>
           <div className="large-12 large-centered columns">{this.state.description}</div>
           {this.renderWidgets()}
         </div>

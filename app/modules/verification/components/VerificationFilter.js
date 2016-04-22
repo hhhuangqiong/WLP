@@ -1,4 +1,5 @@
 import React, { Component, PropTypes } from 'react';
+import { FormattedMessage } from 'react-intl';
 
 import Dropdown from '../../../main/dropdown';
 
@@ -40,14 +41,24 @@ export default class VerificationFilter extends Component {
       <Dropdown>
         <Dropdown.Trigger>
           <nav className="verification-filter-button">
-            <span className="verification-filter-button__text">Filter</span>
+            <span className="verification-filter-button__text">
+              <FormattedMessage
+                id="filter"
+                defaultMessage="Filter"
+              />
+            </span>
             <span className="icon-dropdown" />
           </nav>
         </Dropdown.Trigger>
 
         <Dropdown.Content className="verification-dropdown">
           <div>
-            <label className="bold">Application ID</label>
+            <label className="bold">
+              <FormattedMessage
+                id="appId"
+                defaultMessage="Application ID"
+              />
+            </label>
 
             <select
               className="radius"
@@ -66,7 +77,12 @@ export default class VerificationFilter extends Component {
           </div>
 
           <div>
-            <label className="bold">Verfication Method</label>
+            <label className="bold">
+              <FormattedMessage
+                id="vsdk.details.method"
+                defaultMessage="Verfication Method"
+              />
+            </label>
 
             <select
               className="radius"

@@ -3,6 +3,7 @@ import moment from 'moment';
 import classNames from 'classnames';
 import React, { PropTypes } from 'react';
 import Tooltip from 'rc-tooltip';
+import { FormattedMessage } from 'react-intl';
 
 import EmptyRow from '../../../main/components/data-table/EmptyRow';
 import Pagination from '../../../main/components/Pagination';
@@ -14,14 +15,14 @@ import config from './../../../main/config';
 const { displayDateFormat: DATE_FORMAT } = config;
 const converter = new Converter(currencyData, { default: '840' });
 
-const TABLE_TITLES = [
+const TABLE_TITLES_IDS = [
   '',
-  'Date / Time',
-  'Mobile',
-  'Wallet',
-  'Type',
-  'Amount',
-  'Remark',
+  'details.dateAndTime',
+  'mobile',
+  'wallet',
+  'type',
+  'amount',
+  'remark',
 ];
 
 import {
@@ -70,7 +71,9 @@ ${(!currency.code ? '' : currency.code)}`;
                 <span
                   className="pagination__button"
                   onClick={this.props.onPageLoad}
-                >Load More</span>
+                >
+                  <FormattedMessage id="loadMore" defaultMessage="Load More" />
+                </span>
               </div>
             </td>
           </tr>
@@ -169,13 +172,17 @@ ${(!currency.code ? '' : currency.code)}`;
         <thead>
           <tr>
             {
-              TABLE_TITLES.map(title => <th className="im-table--cell">{title}</th>)
+              TABLE_TITLES_IDS.map(id => (
+                <th className="top-up-table--cell">
+                  <FormattedMessage id={id} />
+                </th>
+              ))
             }
           </tr>
         </thead>
         {this.renderTableBody()}
         <Pagination
-          colSpan={TABLE_TITLES.length + 1}
+          colSpan={TABLE_TITLES_IDS.length + 1}
           hasMoreData={this.props.totalRec > this.props.page * this.props.pageRec}
           onLoadMore={this.props.onPageLoad}
           isLoading={this.props.isLoadingMore}

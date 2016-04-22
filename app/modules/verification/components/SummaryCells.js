@@ -1,5 +1,6 @@
 import React, { PropTypes } from 'react';
 import classNames from 'classnames';
+import { FormattedMessage } from 'react-intl';
 
 const TOTAL_COLUMNS = 24;
 
@@ -96,6 +97,7 @@ export default React.createClass({
 
     cellMetadataList.push({
       title: 'Total number of verification attempts',
+      titleId: 'vsdk.overview.total.attempts',
       value: accumulatedAttempts,
       changes: {
         status: trend.status,
@@ -109,6 +111,7 @@ export default React.createClass({
 
     cellMetadataList.push({
       title: 'Total number of success verification',
+      titleId: 'vsdk.overview.total.success',
       value: accumulatedSuccess,
       changes: {
         status: trend.status,
@@ -122,6 +125,7 @@ export default React.createClass({
 
     cellMetadataList.push({
       title: 'Number of failure verification',
+      titleId: 'vsdk.overview.number.failure',
       value: accumulatedFailure,
       changes: {
         status: trend.status,
@@ -135,6 +139,7 @@ export default React.createClass({
 
     cellMetadataList.push({
       title: 'Average success rate',
+      titleId: 'vsdk.overview.average.successRate',
       value: `${Math.round(averageSuccessRate)}%`,
       changes: {
         status: trend.status,
@@ -144,6 +149,14 @@ export default React.createClass({
     });
 
     return cellMetadataList;
+  },
+
+  renderTitle(titleId, title) {
+    if (titleId) {
+      return <FormattedMessage id={titleId} defaultMessage={title} />;
+    }
+
+    return title;
   },
 
   renderCells(cellMetadataList) {
@@ -157,7 +170,9 @@ export default React.createClass({
             index !== 0 ? 'left-border' : ''
           )}
         >
-          <div className="verification-overview__title">{cell.title}</div>
+          <div className="verification-overview__title">
+            {this.renderTitle(cell.titleId, cell.title)}
+          </div>
           <div className="verification-overview__value">{cell.value}</div>
           <div className={classNames(
             'verification-overview__changes',

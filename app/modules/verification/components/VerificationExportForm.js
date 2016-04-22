@@ -1,10 +1,9 @@
 import React, { PropTypes, Component } from 'react';
 import moment from 'moment';
+import { FormattedMessage } from 'react-intl';
 
 import DateTimePicker from '../../../main/components/DateTimePicker';
 import ExportSubmitControls from '../../../main/file-export/components/ExportSubmitControls';
-
-const EXPORT_HEADING = 'DOWNLOAD REPORT';
 
 export default class VerificationExportForm extends Component {
   static propTypes = {
@@ -29,92 +28,6 @@ export default class VerificationExportForm extends Component {
     this._export = this._export.bind(this);
 
     this.state = this._resetState(props);
-  }
-
-  render() {
-    return (
-      <form onSubmit={this._export} noValidate>
-        <h4 id="modalTitle">{EXPORT_HEADING}</h4>
-
-        <hr />
-
-        <div className="export-row">
-          <label className="left bold">Start time</label>
-
-          <DateTimePicker
-            className="export-datetime-picker export-from-time"
-            name="startPicker"
-            date={this.state.fromTime}
-            dataPickerkey="startExportDatePicker"
-            dataPickerRef="startExportDatePicker"
-            dateOnChange={this._handleStartDateChange}
-            dateFormat="MM/DD/YYYY"
-            timeFormat="h:mm a"
-          />
-        </div>
-
-        <div className="export-row">
-          <label className="left bold">End time</label>
-
-          <DateTimePicker
-            className="export-datetime-picker export-to-time"
-            name="endPicker"
-            date={this.state.toTime}
-            dataPickerkey="endExportDatePicker"
-            dataPickerRef="endExportDatePicker"
-            dateOnChange={this._handleEndDateChange}
-            minDate={this.state.fromTime}
-            dateFormat="MM/DD/YYYY"
-            timeFormat="h:mm a"
-          />
-        </div>
-
-        <div className="export-row">
-          <label className="left bold">Verification Method</label>
-
-          <select
-            className="large export-countries-dropdown radius"
-            value={this.props.verificationType}
-            onChange={this.props.handleVerificationMethodChange}
-          >
-            <option>{this.props.defaultOption}</option>
-            {this.props.verificationTypes.map((type) => {
-              return (
-                <option key={type} value={type}>
-                  {this.props.transformVerificationTypes(type)}
-                </option>
-              );
-            })}
-          </select>
-        </div>
-
-        <div className="export-row">
-          <label className="left bold">OS Type</label>
-
-          <select
-            className="large export-countries-dropdown radius"
-            value={this.props.osType}
-            onChange={this.props.handleOsTypeChange}
-          >
-            <option>{this.props.defaultOption}</option>
-            {this.props.osTypes.map(platform => {
-              return (
-                <option key={platform} value={platform}>
-                  {platform}
-                </option>
-              );
-            })}
-          </select>
-        </div>
-
-        <hr />
-
-        <ExportSubmitControls
-          closeModal={this.props.closeModal}
-          handleExport={this._export}
-        />
-      </form>
-    );
   }
 
   _handleStartDateChange(newDate) {
@@ -144,5 +57,114 @@ export default class VerificationExportForm extends Component {
 
     this.props.handleExport(params);
     this._resetState(this.props);
+  }
+
+  render() {
+    return (
+      <form onSubmit={this._export} noValidate>
+        <h4 id="modalTitle">
+          <FormattedMessage
+            id="details.downloadReport"
+            defaultMessage="Download Report"
+          />
+        </h4>
+
+        <hr />
+
+        <div className="export-row">
+          <label className="left bold">
+            <FormattedMessage
+              id="startTime"
+              defaultMessage="Start time"
+            />
+          </label>
+
+          <DateTimePicker
+            className="export-datetime-picker export-from-time"
+            name="startPicker"
+            date={this.state.fromTime}
+            dataPickerkey="startExportDatePicker"
+            dataPickerRef="startExportDatePicker"
+            dateOnChange={this._handleStartDateChange}
+            dateFormat="MM/DD/YYYY"
+            timeFormat="h:mm a"
+          />
+        </div>
+
+        <div className="export-row">
+          <label className="left bold">
+            <FormattedMessage
+              id="endTime"
+              defaultMessage="End time"
+            />
+          </label>
+
+          <DateTimePicker
+            className="export-datetime-picker export-to-time"
+            name="endPicker"
+            date={this.state.toTime}
+            dataPickerkey="endExportDatePicker"
+            dataPickerRef="endExportDatePicker"
+            dateOnChange={this._handleEndDateChange}
+            minDate={this.state.fromTime}
+            dateFormat="MM/DD/YYYY"
+            timeFormat="h:mm a"
+          />
+        </div>
+
+        <div className="export-row">
+          <label className="left bold">
+            <FormattedMessage
+              id="vsdk.details.method"
+              defaultMessage="Verification Method"
+            />
+          </label>
+
+          <select
+            className="large export-countries-dropdown radius"
+            value={this.props.verificationType}
+            onChange={this.props.handleVerificationMethodChange}
+          >
+            <option>{this.props.defaultOption}</option>
+            {this.props.verificationTypes.map(type => (
+              <option key={type} value={type}>
+                {this.props.transformVerificationTypes(type)}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        <div className="export-row">
+          <label className="left bold">
+            <FormattedMessage
+              id="vsdk.details.osType"
+              defaultMessage="OS Type"
+            />
+          </label>
+
+          <select
+            className="large export-countries-dropdown radius"
+            value={this.props.osType}
+            onChange={this.props.handleOsTypeChange}
+          >
+            <option>{this.props.defaultOption}</option>
+            {
+              this.props.osTypes.map(platform => (
+                <option key={platform} value={platform}>
+                  {platform}
+                </option>
+              ))
+            }
+          </select>
+        </div>
+
+        <hr />
+
+        <ExportSubmitControls
+          closeModal={this.props.closeModal}
+          handleExport={this._export}
+        />
+      </form>
+    );
   }
 }

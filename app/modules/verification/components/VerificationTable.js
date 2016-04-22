@@ -1,21 +1,23 @@
 import { isEmpty } from 'lodash';
 import React, { PropTypes } from 'react';
+import { FormattedMessage } from 'react-intl';
+
 import VerificationTableRow from './VerificationTableRow';
 import VerificationProfile from './VerificationProfile';
 import EmptyRow from '../../../main/components/data-table/EmptyRow';
 
 import Pagination from '../../../main/components/Pagination';
 
-const TABLE_TITLES = [
-  'DATE &amp; TIME',
-  'MOBILE',
-  'SOURCE IP',
-  'METHOD',
-  'OS',
-  'DEVICE MODEL',
-  'OPERATOR',
-  'RESULT',
-  'REMARKS',
+const TABLE_TITLES_IDS = [
+  'details.dateAndTime',
+  'mobile',
+  'vsdk.details.sourceIp',
+  'vsdk.details.method',
+  'os',
+  'vsdk.details.deviceModel',
+  'vsdk.details.operator',
+  'result',
+  'remark',
   '',
 ];
 
@@ -85,14 +87,18 @@ export default React.createClass({
         <div
           className="pagination__button text-center"
           onClick={this.props.onLoadMoreClick}
-        >Load More</div>
+        >
+          <FormattedMessage id="loadMore" defaultMessage="Load More" />
+        </div>
       );
     }
 
     return (
       <div
         className="pagination__button pagination__button--inactive text-center"
-      >no more result</div>
+      >
+        <FormattedMessage id="noMoreResult" defaultMessage="No more result" />
+      </div>
     );
   },
 
@@ -104,9 +110,13 @@ export default React.createClass({
         <table className="verification-report data-table small-24 large-22 large-offset-1">
           <thead>
             <tr>
-              {
-                TABLE_TITLES.map(title => <th className="im-table--cell">{title}</th>)
-              }
+            {
+              TABLE_TITLES_IDS.map(id => (
+                <th className="verification-table--cell">
+                  <FormattedMessage id={id} />
+                </th>
+              ))
+            }
             </tr>
           </thead>
           <tbody className="verification-table">
@@ -115,7 +125,7 @@ export default React.createClass({
           <tfoot>
             <If condition={!isEmpty(this.props.verifications)}>
               <Pagination
-                colSpan={TABLE_TITLES.length + 1}
+                colSpan={TABLE_TITLES_IDS.length + 1}
                 hasMoreData={this.props.verifications.length < this.props.total}
                 onLoadMore={this.props.onLoadMoreClick}
                 isLoading={this.props.isLoadingMore}

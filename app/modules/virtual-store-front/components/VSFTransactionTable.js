@@ -11,14 +11,14 @@ const NO_VALUE_LABEL = 'N/A';
 const IOS_PLATFORM = 'com.maaii.platform.ios';
 const ANDROID_PLATFORM = 'com.maaii.platform.android';
 
-const TABLE_TITLES = [
+const TABLE_TITLES_IDS = [
   '',
-  'DATE & TIME',
-  'MOBILE',
-  'PLATFORM',
-  'VIRTUAL ITEM',
-  'AMOUNT',
-  'TRANSACTION ID',
+  'details.dateAndTime',
+  'mobile',
+  'platform',
+  'vsf.virtualItem',
+  'amount',
+  'vsf.transactionId',
 ];
 
 import {
@@ -157,7 +157,11 @@ const VSFTransactionTable = React.createClass({
         <thead className="vsf-table--head">
           <tr>
             {
-              TABLE_TITLES.map(title => <th className="im-table--cell">{title}</th>)
+              TABLE_TITLES_IDS.map(id => (
+                <th className="vsf-table--cell">
+                  <FormattedMessage id={id} />
+                </th>
+              ))
             }
           </tr>
         </thead>
@@ -165,7 +169,7 @@ const VSFTransactionTable = React.createClass({
         <tfoot>
           <If condition={!isEmpty(this.props.transactions)}>
             <Pagination
-              colSpan={TABLE_TITLES.length + 1}
+              colSpan={TABLE_TITLES_IDS.length + 1}
               hasMoreData={this.props.hasNextPage}
               onLoadMore={this.props.loadPage}
               isLoading={this.props.isLoadingMore}

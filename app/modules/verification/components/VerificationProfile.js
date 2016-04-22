@@ -1,6 +1,7 @@
 import _ from 'lodash';
 import React, { PropTypes } from 'react';
 import moment from 'moment';
+import { FormattedMessage } from 'react-intl';
 
 import CountryFlag from '../../../main/components/CountryFlag';
 import { getCountryName } from '../../../utils/StringFormatter';
@@ -182,7 +183,18 @@ export default React.createClass({
                 <a className="back-button" onClick={this.props.onClickBack}>
                   <span className="icon-arrow" />
                 </a>
-                <span>Verification Details > { _.get(hlr, 'msisdn') || EMPTY_CELL }</span>
+                <span>
+                  <FormattedMessage
+                    id="vsdk.name"
+                    defaultMessage="Verification"
+                  />
+                  <FormattedMessage
+                    id="details"
+                    defaultMessage="Details"
+                  />
+                  <span> > </span>
+                  { _.get(hlr, 'msisdn') || EMPTY_CELL }
+                </span>
               </h5>
             </div>
           </td>
@@ -194,7 +206,12 @@ export default React.createClass({
                 <h4>{ _.get(hlr, 'msisdn') || EMPTY_CELL }</h4>
               </div>
               <div className="large-4 columns registered-date">
-                <p className="heading">Registered Date</p>
+                <p className="heading">
+                  <FormattedMessage
+                    id="vsdk.details.registeredDate"
+                    defaultMessage="Registered Date"
+                  />
+                </p>
                 <If condition={_.get(hlr, 'time')}>
                   <div>
                     <span>{ moment(_.get(hlr, 'time')).format('h:mm:ss a') }</span>
@@ -207,25 +224,65 @@ export default React.createClass({
               <div className="large-20 columns end">
                 <div className="status">
                   <If condition={_.get(profile, 'success')}>
-                    <span className="success label">Success</span>
+                    <span className="success label">
+                      <FormattedMessage
+                        id="success"
+                        defaultMessage="Success"
+                      />
+                    </span>
                   <Else />
-                    <span className="failure label">Failure</span>
+                    <span className="failure label">
+                      <FormattedMessage
+                        id="failure"
+                        defaultMessage="Failure"
+                      />
+                    </span>
                   </If>
                   <If condition={_.get(profile, 'isValid')}>
-                    <span className="default label">Valid</span>
+                    <span className="default label">
+                      <FormattedMessage
+                        id="valid"
+                        defaultMessage="Valid"
+                      />
+                    </span>
                   <Else />
-                    <span className="warning label">Invalid</span>
+                    <span className="warning label">
+                      <FormattedMessage
+                        id="invalid"
+                        defaultMessage="Invalid"
+                      />
+                    </span>
                   </If>
                   <If condition={_.get(profile, 'isPorted')}>
-                    <span className="default label">Ported</span>
+                    <span className="default label">
+                      <FormattedMessage
+                        id="vsdk.details.ported"
+                        defaultMessage="Ported"
+                      />
+                    </span>
                   </If>
                   <If condition={_.get(profile, 'isRoaming')}>
-                    <span className="default label">Roaming</span>
+                    <span className="default label">
+                      <FormattedMessage
+                        id="roaming"
+                        defaultMessage="Roaming"
+                      />
+                    </span>
                   </If>
                   <If condition={_.get(profile, 'imsiMatched')}>
-                    <span className="default label">Matched</span>
+                    <span className="default label">
+                      <FormattedMessage
+                        id="matched"
+                        defaultMessage="Matched"
+                      />
+                    </span>
                     <Else />
-                    <span className="warning label">Not matched</span>
+                    <span className="warning label">
+                      <FormattedMessage
+                        id="vsdk.details.notMatched"
+                        defaultMessage="Not matched"
+                      />
+                    </span>
                   </If>
                 </div>
               </div>
@@ -235,14 +292,22 @@ export default React.createClass({
         <tr className="column-heading-grey">
           <td colSpan={maxColumns}>
             <div className="large-24 columns">
-              <h6>Result Info</h6>
+              <h6>
+                <FormattedMessage
+                  id="vsdk.details.resultInfo"
+                  defaultMessage="Result Info"
+                />
+              </h6>
             </div>
           </td>
         </tr>
         <tr className="sim-imsi">
           <td>
             <div className="large-24 columns">
-              Device Model
+              <FormattedMessage
+                id="vsdk.details.deviceModel"
+                defaultMessage="Device Model"
+              />
             </div>
           </td>
           <td colSpan={ maxColumns - 1 }>
@@ -252,7 +317,10 @@ export default React.createClass({
         <tr className="sim-imsi">
           <td>
             <div className="large-24 columns">
-              Method
+              <FormattedMessage
+                id="method"
+                defaultMessage="Method"
+              />
             </div>
           </td>
           <td colSpan={ maxColumns - 1 }>
@@ -273,7 +341,13 @@ export default React.createClass({
           <tr className="column-heading-grey">
             <td colSpan={maxColumns}>
               <div className="large-24 columns">
-                <h6>SIM Card #1</h6>
+                <h6>
+                  <FormattedMessage
+                    id="vsdk.details.simCard"
+                    defaultMessage="SIM Card"
+                  />
+                <span> #1</span>
+                </h6>
               </div>
             </td>
           </tr>
@@ -294,15 +368,28 @@ export default React.createClass({
           <tr className="column-heading">
             {/* Row Title Spacer */}
             <td></td>
-            <td className="heading">Home</td>
-            <td className="heading" colSpan="3">Current</td>
+            <td className="heading">
+              <FormattedMessage
+                id="home"
+                defaultMessage="Home"
+              />
+            </td>
+            <td className="heading" colSpan="3">
+              <FormattedMessage
+                id="current"
+                defaultMessage="Current"
+              />
+            </td>
           </tr>
         </If>
         <If condition={!!simCard}>
           <tr className="sim-mcc">
             <td>
               <div className="large-24 columns">
-                Operator
+                <FormattedMessage
+                  id="vsdk.details.operator"
+                  defaultMessage="Operator"
+                />
               </div>
             </td>
             {
@@ -402,7 +489,10 @@ export default React.createClass({
           <tr className="hlr-operator">
             <td>
               <div className="large-24 columns">
-                Country
+                <FormattedMessage
+                  id="country"
+                  defaultMessage="Country"
+                />
               </div>
             </td>
             {
@@ -471,7 +561,10 @@ export default React.createClass({
           <tr className="hlr-country">
             <td>
               <div className="large-24 columns">
-                COUNTRY
+                <FormattedMessage
+                  id="country"
+                  defaultMessage="Country"
+                />
               </div>
             </td>
             {
@@ -483,7 +576,10 @@ export default React.createClass({
           <tr className="hlr-operator">
             <td>
               <div className="large-24 columns">
-                OPERATOR
+                <FormattedMessage
+                  id="operator"
+                  defaultMessage="Operator"
+                />
               </div>
             </td>
             {
