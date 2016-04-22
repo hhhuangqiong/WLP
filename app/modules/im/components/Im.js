@@ -7,6 +7,7 @@ import React from 'react';
 import { Link } from 'react-router';
 import { FluxibleMixin } from 'fluxible-addons-react';
 import DatePicker from 'react-datepicker';
+import { FormattedMessage } from 'react-intl';
 
 import ImStore from '../stores/ImStore';
 
@@ -133,10 +134,14 @@ const Im = React.createClass({
           <div className="top-bar-section">
             <ul className="left top-bar--inner tab--inverted">
               <li className="top-bar--inner tab--inverted__title">
-                <Link to="im-overview" params={params}>Overview</Link>
+                <Link to="im-overview" params={params}>
+                  <FormattedMessage id="overview" defaultMessage="Overview" />
+                </Link>
               </li>
               <li className="top-bar--inner tab--inverted__title">
-                <Link to="im" params={params}>Details Report</Link>
+                <Link to="im" params={params}>
+                  <FormattedMessage id="detailsReport" defaultMessage="Details Report" />
+                </Link>
               </li>
             </ul>
 

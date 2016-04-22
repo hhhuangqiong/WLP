@@ -3,6 +3,7 @@ import moment from 'moment';
 import { isNull, isEmpty, capitalize } from 'lodash';
 import classNames from 'classnames';
 import Tooltip from 'rc-tooltip';
+import { FormattedMessage } from 'react-intl';
 
 import { getCountryName } from '../../../utils/StringFormatter';
 import CountryFlag from '../../../main/components/CountryFlag';
@@ -13,10 +14,10 @@ import Pagination from '../../../main/components/Pagination';
 const IM_DATETIME_FORMAT = 'MMMM DD YYYY, hh:mm:ss a';
 const LABEL_FOR_NULL = 'N/A';
 
-const TABLE_TITLES = [
-  'Date & Time',
-  'Type / Filesize',
-  'Mobile & Destination',
+const TABLE_TITLES_IDS = [
+  'details.dateAndTime',
+  'im.details.typeAndFilesize',
+  'details.mobileAndDestination',
   '',
   '',
 ];
@@ -153,7 +154,13 @@ const ImTable = React.createClass({
                   trigger={['hover']}
                   overlay={u.recipients.map(n => <span className="recip-info">{n}</span>)}
                 >
-                  <span className="recipient-num">{u.recipients.length} Recipients</span>
+                  <span className="recipient-num">
+                    <span>{u.recipients.length}</span>
+                  <FormattedMessage
+                    id="im.details.recipients"
+                    defaultMessage="Recipients"
+                  />
+                  </span>
                 </Tooltip>
               </div>
             <Else />
@@ -204,7 +211,11 @@ const ImTable = React.createClass({
         <thead className="im-table--head">
         <tr className="im-table--row">
           {
-            TABLE_TITLES.map(title => <th className="im-table--cell">{title}</th>)
+            TABLE_TITLES_IDS.map(id => (
+              <th className="im-table--cell">
+                <FormattedMessage id={id} />
+              </th>
+            ))
           }
         </tr>
         </thead>
@@ -212,7 +223,7 @@ const ImTable = React.createClass({
         <tfoot>
           <If condition={!isEmpty(this.props.ims)}>
             <Pagination
-              colSpan={TABLE_TITLES.length + 1}
+              colSpan={TABLE_TITLES_IDS.length + 1}
               hasMoreData={(this.props.totalPages - 1) > this.props.page}
               onLoadMore={this.props.onDataLoad}
               isLoading={this.props.isLoadingMore}

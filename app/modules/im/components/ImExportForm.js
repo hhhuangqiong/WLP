@@ -1,5 +1,6 @@
 import React from 'react';
 import moment from 'moment';
+import { FormattedMessage } from 'react-intl';
 
 import DateTimePicker from '../../../main/components/DateTimePicker';
 import ExportCountriesDropdown from '../../../main/file-export/components/ExportCountriesDropdown';
@@ -15,68 +16,6 @@ export default React.createClass({
 
   getInitialState() {
     return this.defaultState();
-  },
-
-  render() {
-    return (
-      <form onSubmit={this.handleExport} noValidate>
-        <h4 id="modalTitle">DOWNLOAD REPORT</h4>
-
-        <hr />
-
-        <div className="export-row">
-          <label className="left bold">Start time</label>
-
-          <DateTimePicker
-            className="export-datetime-picker export-from-time"
-            name="startPicker"
-            date={this.state.fromTime}
-            dataPickerkey="startExportDatePicker"
-            dataPickerRef="startExportDatePicker"
-            dateOnChange={this.handleStartDateChange}
-            dateFormat="MM/DD/YYYY"
-            timeFormat="h:mm a"
-          />
-        </div>
-
-        <div className="export-row">
-          <label className="left bold">End time</label>
-
-          <DateTimePicker
-            className="export-datetime-picker export-to-time"
-            name="endPicker"
-            date={this.state.toTime}
-            dataPickerkey="endExportDatePicker"
-            dataPickerRef="endExportDatePicker"
-            dateOnChange={this.handleEndDateChange}
-            minDate={this.state.fromTime}
-            dateFormat="MM/DD/YYYY"
-            timeFormat="h:mm a"
-          />
-        </div>
-
-        <ExportCountriesDropdown
-          displayName="Origin"
-          defaultOption="All origins"
-          value={this.state.origin}
-          onChange={this.handleOriginChange}
-        />
-
-        <ExportCountriesDropdown
-          displayName="Destination"
-          defaultOption="All destinations"
-          value={this.state.destination}
-          onChange={this.handleDestinationChange}
-        />
-
-        <hr />
-
-        <ExportSubmitControls
-          closeModal={this.props.closeModal}
-          handleExport={this.handleExport}
-        />
-      </form>
-    );
   },
 
   defaultState() {
@@ -118,5 +57,82 @@ export default React.createClass({
 
     this.props.handleExport(params);
     this.clearState();
+  },
+
+  render() {
+    return (
+      <form onSubmit={this.handleExport} noValidate>
+        <h4 id="modalTitle">
+          <FormattedMessage
+            id="details.downloadReport"
+            defaultMessage="Download Report"
+          />
+        </h4>
+
+        <hr />
+
+        <div className="export-row">
+          <label className="left bold">
+            <FormattedMessage
+              id="startTime"
+              defaultMessage="Start time"
+            />
+          </label>
+
+          <DateTimePicker
+            className="export-datetime-picker export-from-time"
+            name="startPicker"
+            date={this.state.fromTime}
+            dataPickerkey="startExportDatePicker"
+            dataPickerRef="startExportDatePicker"
+            dateOnChange={this.handleStartDateChange}
+            dateFormat="MM/DD/YYYY"
+            timeFormat="h:mm a"
+          />
+        </div>
+
+        <div className="export-row">
+          <label className="left bold">
+            <FormattedMessage
+              id="endTime"
+              defaultMessage="End time"
+            />
+          </label>
+
+          <DateTimePicker
+            className="export-datetime-picker export-to-time"
+            name="endPicker"
+            date={this.state.toTime}
+            dataPickerkey="endExportDatePicker"
+            dataPickerRef="endExportDatePicker"
+            dateOnChange={this.handleEndDateChange}
+            minDate={this.state.fromTime}
+            dateFormat="MM/DD/YYYY"
+            timeFormat="h:mm a"
+          />
+        </div>
+
+        <ExportCountriesDropdown
+          displayName="Origin"
+          defaultOption="All origins"
+          value={this.state.origin}
+          onChange={this.handleOriginChange}
+        />
+
+        <ExportCountriesDropdown
+          displayName="Destination"
+          defaultOption="All destinations"
+          value={this.state.destination}
+          onChange={this.handleDestinationChange}
+        />
+
+        <hr />
+
+        <ExportSubmitControls
+          closeModal={this.props.closeModal}
+          handleExport={this.handleExport}
+        />
+      </form>
+    );
   },
 });

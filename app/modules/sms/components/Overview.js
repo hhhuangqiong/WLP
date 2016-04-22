@@ -1,12 +1,13 @@
 import React, { PropTypes } from 'react';
 import { Link } from 'react-router';
+import { FormattedMessage } from 'react-intl';
 
 import { FluxibleMixin } from 'fluxible-addons-react';
 
 import WidgetNotAvailable from '../../../main/components/common/WidgetNotAvailable';
 import loadSMSWidgets from '../actions/loadSMSWidgets';
 
-import SMSStore  from '../stores/SMSStore';
+import SMSStore from '../stores/SMSStore';
 import AuthStore from '../../../main/stores/AuthStore';
 
 const errorMessage = '<div className="widget-not-found">Dashboard is not available</div>';
@@ -74,10 +75,14 @@ const SMSOverview = React.createClass({
           <div className="top-bar-section">
             <ul className="left top-bar--inner tab--inverted">
               <li className="top-bar--inner tab--inverted__title">
-                <Link to="sms-overview" params={params}>Overview</Link>
+                <Link to="sms-overview" params={params}>
+                  <FormattedMessage id="overview" defaultMessage="Overview" />
+                </Link>
               </li>
               <li className="top-bar--inner tab--inverted__title">
-                <Link to="sms-details" params={params}>Details Report</Link>
+                <Link to="sms-details" params={params}>
+                  <FormattedMessage id="detailsReport" defaultMessage="Details Report" />
+                </Link>
               </li>
             </ul>
           </div>

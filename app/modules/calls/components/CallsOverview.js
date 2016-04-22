@@ -5,6 +5,7 @@ import classNames from 'classnames';
 import React, { PropTypes } from 'react';
 import { Link } from 'react-router';
 import Select from 'react-select';
+import { FormattedMessage } from 'react-intl';
 
 import { FluxibleMixin } from 'fluxible-addons-react';
 
@@ -411,13 +412,21 @@ const CallsOverview = React.createClass({
       <div className="row">
         <FilterBar.Wrapper>
           <FilterBar.NavigationItems>
-            <Link to={`/${role}/${identity}/calls/overview`} activeClassName="active">Overview</Link>
-            <Link to={`/${role}/${identity}/calls/details`} activeClassName="active">Details Report</Link>
+            <Link to={`/${role}/${identity}/calls/overview`} activeClassName="active">
+              <FormattedMessage id="overview" defaultMessage="Overview" />
+            </Link>
+            <Link to={`/${role}/${identity}/calls/details`} activeClassName="active">
+              <FormattedMessage id="detailsReport" defaultMessage="Details Report" />
+            </Link>
           </FilterBar.NavigationItems>
           <FilterBar.LeftItems>
             <a className={classNames({ active: this.state.type === CALL_TYPE.ALL })} onClick={ bindKey(this, 'changeCallType', CALL_TYPE.ALL) }>All</a>
-            <a className={classNames({ active: this.state.type === CALL_TYPE.ONNET })} onClick={ bindKey(this, 'changeCallType', CALL_TYPE.ONNET) }>On-net</a>
-            <a className={classNames({ active: this.state.type === CALL_TYPE.OFFNET })} onClick={ bindKey(this, 'changeCallType', CALL_TYPE.OFFNET) }>Off-net</a>
+            <a className={classNames({ active: this.state.type === CALL_TYPE.ONNET })} onClick={ bindKey(this, 'changeCallType', CALL_TYPE.ONNET) }>
+              <FormattedMessage id="onnet" defaultMessage="Onnet" />
+            </a>
+            <a className={classNames({ active: this.state.type === CALL_TYPE.OFFNET })} onClick={ bindKey(this, 'changeCallType', CALL_TYPE.OFFNET) }>
+              <FormattedMessage id="offnet" defaultMessage="Offnet" />
+            </a>
           </FilterBar.LeftItems>
           <FilterBar.RightItems>
             {/* Need not to provide selection when there is only one single selected options to avoid confusion */}
@@ -440,6 +449,7 @@ const CallsOverview = React.createClass({
             <Panel.Header
               customClass="narrow"
               title="Monthly Voice Call User"
+              titleId="calls.overview.monthlyVoiceCallUser"
               caption={this._getLastUpdate({ year: this.state.selectedYear, month: this.state.selectedMonth })} >
               <div className={classNames('tiny-spinner', { active: this.isMonthlyStatsLoading() })}></div>
               <DateSelector
@@ -454,6 +464,7 @@ const CallsOverview = React.createClass({
               <DataGrid.Wrapper>
                 <DataGrid.Cell
                   title="Monthly Voice Call User (Unique)"
+                  titleId="calls.overview.monthlyVoiceCallUser"
                   data={monthlyUserStats.total}
                   changeDir={monthlyUserStats.direction}
                   changeAmount={monthlyUserStats.change}
@@ -471,7 +482,9 @@ const CallsOverview = React.createClass({
             <Panel.Header
               customClass="narrow"
               title="Call Behaviour Statistics"
-              caption={this._getLastUpdateFromTimeFrame()} >
+              titleId="calls.overview.callBehaviourStatistics"
+              caption={this._getLastUpdateFromTimeFrame()}
+            >
               <div className={classNames('tiny-spinner', { active: this.isTotalStatsLoading() })}></div>
               <TimeFramePicker
                 className={classNames({ disabled: this.isTotalStatsLoading() })}
@@ -489,6 +502,7 @@ const CallsOverview = React.createClass({
                     <DataGrid.Wrapper>
                       <DataGrid.Cell
                         title="Total Calls Attempts"
+                        titleId="calls.overview.totalCallsAttempts"
                         data={this._getTotalCallAttempt()}
                         isLoading={this.isTotalStatsLoading()}
                       />
@@ -501,6 +515,7 @@ const CallsOverview = React.createClass({
                       />
                       <DataGrid.Cell
                         title="Total Call Duration"
+                        titleId="calls.overview.totalCallDuration"
                         data={this._getTotalCallDuration()}
                         formatter={normalizeDurationInMS}
                         unit="minutes"
@@ -508,6 +523,7 @@ const CallsOverview = React.createClass({
                       />
                       <DataGrid.Cell
                         title="Average Call Duration"
+                        titleId="calls.overview.averageCallDuration"
                         data={this._getAverageCallDuration()}
                         formatter={normalizeDurationInMS}
                         unit="seconds"
@@ -524,10 +540,17 @@ const CallsOverview = React.createClass({
                   <div className="chart-cell__header row">
                     <div className="large-24 columns">
                       <div className="chart-cell__header__title">
-                        Call Success Analytic - ASR (%)
+                        <FormattedMessage
+                          id="calls.overview.callSuccessAnalytic"
+                          defaultMessage="Call Success Analytic"
+                        />
+                        <span> - ASR (%)</span>
                       </div>
                       <div className="chart-cell__header__subtitle">
-                        Answer Seizure Ratio
+                        <FormattedMessage
+                          id="calls.overview.answerSeizureRatio"
+                          defaultMessage="Answer Seizure Ratio"
+                        />
                       </div>
                     </div>
                   </div>
@@ -559,10 +582,17 @@ const CallsOverview = React.createClass({
                   <div className="chart-cell__header row">
                     <div className="large-24 columns">
                       <div className="chart-cell__header__title">
-                        Call Duration Analytic - ACD
+                        <FormattedMessage
+                          id="calls.overview.callDurationAnalytic"
+                          defaultMessage="Call Duration Analytic"
+                        />
+                        <span> - ACD</span>s
                       </div>
                       <div className="chart-cell__header__subtitle">
-                        Average Call Duration
+                        <FormattedMessage
+                          id="calls.overview.averageCallDuration"
+                          defaultMessage="Average Call Duration"
+                        />
                       </div>
                     </div>
                   </div>

@@ -1,6 +1,8 @@
 import React, { PropTypes } from 'react';
 import { Link } from 'react-router';
 import Select from 'react-select';
+import { FormattedMessage } from 'react-intl';
+
 import moment from 'moment';
 import classNames from 'classnames';
 import { isNull, merge, max, clone, reduce, isEmpty } from 'lodash';
@@ -247,8 +249,12 @@ const EndUsersOverview = React.createClass({
       <div className="row">
         <FilterBar.Wrapper>
           <FilterBar.NavigationItems>
-            <Link to={`/${role}/${identity}/end-users/overview`} activeClassName="active">Overview</Link>
-            <Link to={`/${role}/${identity}/end-users/details`} activeClassName="active">Details Report</Link>
+            <Link to={`/${role}/${identity}/end-users/overview`} activeClassName="active">
+              <FormattedMessage id="overview" defaultMessage="Overview" />
+            </Link>
+            <Link to={`/${role}/${identity}/end-users/details`} activeClassName="active">
+              <FormattedMessage id="detailsReport" defaultMessage="Details Report" />
+            </Link>
           </FilterBar.NavigationItems>
           <FilterBar.LeftItems>
 
@@ -275,14 +281,17 @@ const EndUsersOverview = React.createClass({
               <Panel.Header
                 customClass="narrow"
                 title="Total User"
+                titleId="endUser.overview.totalUser"
                 caption={`Data updated till: ${moment().subtract(1, 'day').endOf('day').format(LAST_UPDATE_TIME_FORMAT)}`}
               />
               <Panel.Body customClass="narrow no-padding">
                 <DataGrid.Wrapper>
                   <DataGrid.Cell
                     title="Total Registered User"
+                    titleId="endUser.overview.totalRegisteredUser"
                     data={totalRegisteredUser}
-                    changeAmount=" " />
+                    changeAmount=" "
+                  />
                 </DataGrid.Wrapper>
               </Panel.Body>
             </Panel.Wrapper>
@@ -293,6 +302,7 @@ const EndUsersOverview = React.createClass({
               <Panel.Header
                 customClass="narrow"
                 title="Monthly Statistics"
+                titleId="endUser.overview.monthlyStatistics"
                 caption={this.getLastUpdate({ year: this.state.selectedYear, month: this.state.selectedMonth })}
               >
                 <div className={classNames('tiny-spinner', { active: this.isMonthlyStatsLoading() })}></div>
@@ -308,6 +318,7 @@ const EndUsersOverview = React.createClass({
                 <DataGrid.Wrapper>
                   <DataGrid.Cell
                     title="New Registered User"
+                    titleId="endUser.overview.newRegisteredUser"
                     data={monthlyRegisteredUserStats.total}
                     changeDir={monthlyRegisteredUserStats.direction}
                     changeAmount={monthlyRegisteredUserStats.change}
@@ -317,6 +328,7 @@ const EndUsersOverview = React.createClass({
                   />
                   <DataGrid.Cell
                     title="Active User"
+                    titleId="endUser.overview.activeUser"
                     data={monthlyActiveUserStats.total}
                     changeDir={monthlyActiveUserStats.direction}
                     changeAmount={monthlyActiveUserStats.change}
@@ -334,6 +346,7 @@ const EndUsersOverview = React.createClass({
               <Panel.Header
                 customClass="narrow"
                 title="Daily Statistics"
+                titleId="endUser.overview.dailyStatistics"
                 caption={this.getLastUpdateFromTimeFrame()} >
                 <div className={classNames('tiny-spinner', { active: this.isTotalStatsLoading() })}></div>
                 <TimeFramePicker
@@ -414,11 +427,21 @@ const EndUsersOverview = React.createClass({
                   <div className="chart-cell large-24 columns">
                     <div className="chart-cell__header row">
                       <div className="large-4 columns">
-                        <div className="chart-cell__header__title text-center">User Distribution by OS</div>
+                        <div className="chart-cell__header__title text-center">
+                          <FormattedMessage
+                            id="endUser.overview.userDistributionByOs"
+                            defaultMessage="User Distribution by OS"
+                          />
+                        </div>
                       </div>
                       <div className="large-3 columns end chart-cell__overview">
                         <div className="chart-cell__overview__value">{ this._getDeviceTotal() }</div>
-                        <div className="chart-cell__overview__unit">Total User</div>
+                        <div className="chart-cell__overview__unit">
+                          <FormattedMessage
+                            id="endUser.overview.totalUser"
+                            defaultMessage="Total User"
+                          />
+                        </div>
                       </div>
                     </div>
                     <div className="chart-cell__chart row">
@@ -432,7 +455,8 @@ const EndUsersOverview = React.createClass({
                                 title={PLATFORM_NAME[stat.platform]}
                                 percentage={percentage}
                                 stat={stat.total}
-                                unit="users" />
+                                unit="users"
+                              />
                             </div>
                           );
                         })

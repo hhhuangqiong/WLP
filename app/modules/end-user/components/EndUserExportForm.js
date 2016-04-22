@@ -4,6 +4,8 @@ import moment from 'moment';
 import DateRangePicker from '../../../main/components/DateRangePicker';
 import ExportSubmitControls from '../../../main/file-export/components/ExportSubmitControls';
 
+import { FormattedMessage } from 'react-intl';
+
 export default React.createClass({
   propTypes: {
     carrierId: React.PropTypes.string,
@@ -53,12 +55,22 @@ export default React.createClass({
   render() {
     return (
       <form onSubmit={this.handleExport} noValidate>
-        <h4 id="modalTitle">DOWNLOAD REPORT</h4>
+        <h4 id="modalTitle">
+          <FormattedMessage
+            id="details.downloadReport"
+            defaultMessage="Download Report"
+          />
+        </h4>
 
         <hr />
 
         <div className="export-row">
-          <label className="left bold">Period</label>
+          <label className="left bold">
+            <FormattedMessage
+              id="period"
+              defaultMessage="Period"
+            />
+          </label>
 
           <DateRangePicker
             withIcon
@@ -83,7 +95,6 @@ export default React.createClass({
           closeModal={this.props.closeModal}
           handleExport={this.handleExport}
         />
-
       </form>
     );
   },

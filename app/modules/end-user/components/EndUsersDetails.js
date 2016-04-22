@@ -3,6 +3,7 @@ import moment from 'moment';
 import { concurrent } from 'contra';
 import React, { PropTypes } from 'react';
 import { Link } from 'react-router';
+import { FormattedMessage } from 'react-intl';
 
 import { FluxibleMixin } from 'fluxible-addons-react';
 
@@ -85,8 +86,12 @@ const EndUsers = React.createClass({
       <div className="row">
         <FilterBar.Wrapper>
           <FilterBar.NavigationItems>
-            <Link to={`/${role}/${identity}/end-users/overview`} activeClassName="active">Overview</Link>
-            <Link to={`/${role}/${identity}/end-users/details`} activeClassName="active">Details Report</Link>
+            <Link to={`/${role}/${identity}/end-users/overview`} activeClassName="active">
+              <FormattedMessage id="overview" defaultMessage="Overview" />
+            </Link>
+            <Link to={`/${role}/${identity}/end-users/details`} activeClassName="active">
+              <FormattedMessage id="detailsReport" defaultMessage="Details Report" />
+            </Link>
           </FilterBar.NavigationItems>
 
           <FilterBar.LeftItems>

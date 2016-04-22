@@ -3,6 +3,7 @@ import moment from 'moment';
 
 import React, { PropTypes } from 'react';
 import classNames from 'classnames';
+import { FormattedMessage } from 'react-intl';
 
 import fetchWallet from '../actions/fetchWallet';
 import deactivateEndUser from '../actions/deactivateEndUser';
@@ -48,7 +49,12 @@ const EndUserProfile = React.createClass({
         <div className="error text-center">
           <div className="error-description full-width">
             <i className="error-icon icon-error3" />
-            <span className="error-message">Wallet info unavailable</span>
+            <span className="error-message">
+              <FormattedMessage
+                id="endUser.details.walletInfoUnavailable"
+                defaultMessage="Wallet info unavailable"
+              />
+            </span>
           </div>
           <div className="error-button" onClick={this.handleRefreshButtonClick}>
             <i className="icon-refresh" />
@@ -100,9 +106,19 @@ const EndUserProfile = React.createClass({
         <Item label="Created Time" className="end-user-info__created-time">{creationDate}</Item>
         <Item label="Verified" capitalize>
           <If condition={this.props.user.userDetails.verified}>
-            <span className="verified">verified</span>
+            <span className="verified">
+              <FormattedMessage
+                id="endUser.details.verified"
+                defaultMessage="Verified"
+              />
+            </span>
             <Else />
-            <span className="unverified">unverified</span>
+            <span className="unverified">
+              <FormattedMessage
+                id="endUser.details.unverified"
+                defaultMessage="Unverified"
+              />
+            </span>
           </If>
         </Item>
         <Item label="Country">

@@ -1,10 +1,13 @@
 import _ from 'lodash';
 import moment from 'moment';
 import { concurrent } from 'contra';
+
 import classNames from 'classnames';
 import React, { PropTypes } from 'react';
-import { FluxibleMixin } from 'fluxible-addons-react';
 import { Link } from 'react-router';
+import { FormattedMessage } from 'react-intl';
+
+import { FluxibleMixin } from 'fluxible-addons-react';
 
 import * as FilterBar from '../../../main/components/FilterBar';
 import DatePicker from '../../../main/components/DatePicker';
@@ -209,14 +212,34 @@ const Calls = React.createClass({
       <div className="row">
         <FilterBar.Wrapper>
           <FilterBar.NavigationItems>
-            <Link to={`/${role}/${identity}/calls/overview`} activeClassName="active">Overview</Link>
-            <Link to={`/${role}/${identity}/calls/details`} activeClassName="active">Details Report</Link>
+            <Link to={`/${role}/${identity}/calls/overview`} activeClassName="active"><FormattedMessage id="overview" defaultMessage="Overview" /></Link>
+            <Link to={`/${role}/${identity}/calls/details`} activeClassName="active"><FormattedMessage id="detailsReport" defaultMessage="Details Report" /></Link>
           </FilterBar.NavigationItems>
           <FilterBar.LeftItems>
-            <a className={classNames({ active: this.state.type === CALL_TYPE.ALL })} onClick={this.handleAllTypeClick}>All</a>
-            <a className={classNames({ active: this.state.type === CALL_TYPE.ONNET })} onClick={this.handleOnnetClick}>On-net</a>
-            <a className={classNames({ active: this.state.type === CALL_TYPE.OFFNET })} onClick={this.handleOffnetClick}>Off-net</a>
-            <a className={classNames({ active: this.state.type === CALL_TYPE.MAAII_IN })} onClick={this.handleMaaiiInClick}>Maaii-in</a>
+            <a
+              className={classNames({ active: this.state.type === CALL_TYPE.ALL })}
+              onClick={this.handleAllTypeClick}
+            >
+              <FormattedMessage id="all" defaultMessage="All" />
+            </a>
+            <a
+              className={classNames({ active: this.state.type === CALL_TYPE.ONNET })}
+              onClick={this.handleOnnetClick}
+            >
+              <FormattedMessage id="onnet" defaultMessage="Onnet" />
+            </a>
+            <a
+              className={classNames({ active: this.state.type === CALL_TYPE.OFFNET })}
+              onClick={this.handleOffnetClick}
+            >
+              <FormattedMessage id="offnet" defaultMessage="Offnet" />
+            </a>
+            <a
+              className={classNames({ active: this.state.type === CALL_TYPE.MAAII_IN })}
+              onClick={this.handleMaaiiInClick}
+            >
+              <FormattedMessage id="maaiiIn" defaultMessage="Maaii-In" />
+            </a>
           </FilterBar.LeftItems>
           <FilterBar.RightItems>
             {/* TODO: Move filter control items into DropdownFilter according to new design */}

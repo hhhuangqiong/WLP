@@ -1,12 +1,13 @@
 import React from 'react';
-import {Link} from 'react-router';
+import { Link } from 'react-router';
+import { FormattedMessage } from 'react-intl';
 
 import { FluxibleMixin } from 'fluxible-addons-react';
 
 import WidgetNotAvailable from '../../../main/components/common/WidgetNotAvailable';
 
 import ImStore from '../stores/ImStore';
-import AuthStore  from '../../../main/stores/AuthStore';
+import AuthStore from '../../../main/stores/AuthStore';
 
 import fetchImWidgets from '../actions/fetchImWidgets';
 
@@ -83,10 +84,14 @@ const ImOverview = React.createClass({
           <div className="top-bar-section">
             <ul className="left top-bar--inner tab--inverted">
               <li className="top-bar--inner tab--inverted__title">
-                <Link to="im-overview" params={params}>Overview</Link>
+                <Link to="im-overview" params={params}>
+                  <FormattedMessage id="overview" defaultMessage="Overview" />
+                </Link>
               </li>
               <li className="top-bar--inner tab--inverted__title">
-                <Link to="im" params={params}>Details Report</Link>
+                <Link to="im" params={params}>
+                  <FormattedMessage id="detailsReport" defaultMessage="Details Report" />
+                </Link>
               </li>
             </ul>
           </div>

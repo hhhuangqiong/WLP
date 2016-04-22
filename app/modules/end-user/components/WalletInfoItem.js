@@ -1,6 +1,7 @@
 import React, { PropTypes } from 'react';
 import moment from 'moment';
 import classNames from 'classnames';
+import { FormattedMessage } from 'react-intl';
 
 import currencyData from '../../../data/bossCurrencies.json';
 import Converter from '../../../utils/bossCurrencyConverter';
@@ -61,7 +62,12 @@ const WalletItem = React.createClass({
               this.props.wallet.walletType === 'overview' ? (
                 <div className="wallet-item__record row">
                   <div className="left">
-                    <span className="wallet-item--label">expiration date</span>
+                    <span className="wallet-item--label">
+                      <FormattedMessage
+                        id="endUser.details.expirationDate"
+                        defaultMessage="Expiration date"
+                      />
+                    </span>
                   </div>
                   <div className="right">
                     <span className="wallet-item--label--bold">
@@ -75,7 +81,12 @@ const WalletItem = React.createClass({
               this.props.wallet.walletType !== 'overview' ? (
                 <div className="wallet-item__record row">
                   <div className="left">
-                    <span className="wallet-item--label">last top-up</span>
+                    <span className="wallet-item--label">
+                      <FormattedMessage
+                        id="endUser.details.lastTopUp"
+                        defaultMessage="Last top-up"
+                      />
+                    </span>
                   </div>
                   <div className="right">
                   <span className="wallet-item--label--bold">

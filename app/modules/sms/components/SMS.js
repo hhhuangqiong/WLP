@@ -1,10 +1,11 @@
 import _ from 'lodash';
 import moment from 'moment';
-import {concurrent} from 'contra';
+import { concurrent } from 'contra';
 
 import React from 'react';
 import { Link } from 'react-router';
 import { FluxibleMixin } from 'fluxible-addons-react';
+import { FormattedMessage } from 'react-intl';
 
 import loadSMS from '../actions/loadSMS';
 import clearSMS from '../actions/clearSMS';
@@ -112,8 +113,8 @@ const SMS = React.createClass({
       <div className="row">
         <FilterBar.Wrapper>
           <FilterBar.NavigationItems>
-            <Link to="sms-overview" params={params}>Overview</Link>
-            <Link to="sms-details" params={params}>Details Report</Link>
+            <Link to="sms-overview" params={params}><FormattedMessage id="overview" defaultMessage="Overview" /></Link>
+            <Link to="sms-details" params={params}><FormattedMessage id="detailsReport" defaultMessage="Details Report" /></Link>
           </FilterBar.NavigationItems>
           <FilterBar.LeftItems>
             <DateRangePicker

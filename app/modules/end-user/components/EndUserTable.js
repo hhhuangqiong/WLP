@@ -2,6 +2,7 @@ import moment from 'moment';
 import { get, bindKey, isNull, isEmpty, capitalize } from 'lodash';
 import React, { PropTypes } from 'react';
 import classNames from 'classnames';
+import { FormattedMessage } from 'react-intl';
 
 import EmptyRow from '../../../main/components/data-table/EmptyRow';
 
@@ -12,13 +13,13 @@ const { displayDateFormat: DATE_FORMAT } = require('./../../../main/config');
 const NOT_FOUND_LABEL = 'N/A';
 const INACTIVE_ACCOUNT_LABEL = 'Inactive';
 
-const TABLE_TITLES = [
-  'Username',
-  'Registration Date',
-  'Account Status',
-  'Latest Device Model',
-  'Bundle ID',
-  'App Version no.',
+const TABLE_TITLES_IDS = [
+  'username',
+  'endUser.details.registrationDate',
+  'endUser.details.accountStatus',
+  'endUser.details.latestDeviceModel',
+  'buildId',
+  'endUser.details.appVersion',
 ];
 
 import {
@@ -47,18 +48,28 @@ const EndUserTable = React.createClass({
     };
   },
 
+  renderEmptyRow() {
+    if (!this.props.users || this.props.users.length === 0) {
+      return <EmptyRow colSpan={7} />;
+    }
+  },
+
   renderTableFooterContent() {
     if (this.props.hasNext) {
       return (
         <div className="text-center">
-          <span className="pagination__button" onClick={this.props.onPageChange}>Load More</span>
+          <span className="pagination__button" onClick={this.props.onPageChange}>
+            <FormattedMessage id="loadMore" defaultMessage="Load More" />
+          </span>
         </div>
       );
     }
 
     return (
       <div className="text-center">
-        <span className="pagination__button pagination__button--inactive">No more</span>
+        <span className="pagination__button pagination__button--inactive">
+		  <FormattedMessage id="noMoreResult" defaultMessage="No more result" />
+		</span>
       </div>
     );
   },
@@ -145,7 +156,11 @@ const EndUserTable = React.createClass({
         <thead>
           <tr>
             {
-              TABLE_TITLES.map(title => <th className="im-table--cell">{title}</th>)
+              TABLE_TITLES_IDS.map(id => (
+                <th className="im-table--cell">
+                  <FormattedMessage id={id} />
+                </th>
+              ))
             }
           </tr>
         </thead>
@@ -153,7 +168,7 @@ const EndUserTable = React.createClass({
         <tfoot>
           <If condition={!isEmpty(this.props.users)}>
             <Pagination
-              colSpan={TABLE_TITLES.length + 1}
+              colSpan={TABLE_TITLES_IDS.length + 1}
               hasMoreData={this.props.hasNext}
               onLoadMore={this.props.onPageChange}
             />

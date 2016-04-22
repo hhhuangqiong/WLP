@@ -2,6 +2,7 @@ import React, { PropTypes } from 'react';
 import classNames from 'classnames';
 import moment from 'moment';
 import { isEmpty, isNull } from 'lodash';
+import { FormattedMessage } from 'react-intl';
 
 import Pagination from '../../../main/components/Pagination';
 import { parseDuration } from '../../../utils/StringFormatter';
@@ -15,15 +16,15 @@ const EMPTY_STRING = 'N/A';
 const DATE_FORMAT = 'MMMM DD YYYY';
 const TIME_FORMAT = 'H:mm:ss';
 
-const TABLE_TITLES = [
-  'Caller',
-  'Callee',
-  'Call Duration',
-  'Date',
-  'Status',
-  'Last Response Code',
-  'Bye Reason',
-  'Release Party',
+const TABLE_TITLES_IDS = [
+  'calls.details.caller',
+  'calls.details.callee',
+  'calls.details.callDuration',
+  'date',
+  'status',
+  'calls.details.lastReponseCode',
+  'calls.details.byeReason',
+  'calls.details.releaseParty',
 ];
 
 import {
@@ -150,7 +151,7 @@ const CallsTable = React.createClass({
     return (
       <tfoot>
         <Pagination
-          colSpan={TABLE_TITLES.length + 1}
+          colSpan={TABLE_TITLES_IDS.length + 1}
           hasMoreData={(this.props.totalPages - 1) > this.props.page}
           onLoadMore={this.props.onDataLoad}
           isLoading={this.props.isLoadingMore}

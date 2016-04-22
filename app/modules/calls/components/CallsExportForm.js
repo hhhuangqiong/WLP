@@ -1,6 +1,7 @@
 import React, { PropTypes } from 'react';
 import moment from 'moment';
 import classNames from 'classnames';
+import { FormattedMessage } from 'react-intl';
 
 import DateTimePicker from '../../../main/components/DateTimePicker';
 import ExportSubmitControls from '../../../main/file-export/components/ExportSubmitControls';
@@ -76,12 +77,22 @@ export default React.createClass({
     // ExportCountryDropdown is removed for WLP-285
     return (
       <form onSubmit={this.handleExport} noValidate>
-        <h4 id="modalTitle">DOWNLOAD REPORT</h4>
+        <h4 id="modalTitle">
+          <FormattedMessage
+            id="details.downloadReport"
+            defaultMessage="Download Report"
+          />
+        </h4>
 
         <hr />
 
         <div className="export-row">
-          <label className="left bold">Start time</label>
+          <label className="left bold">
+            <FormattedMessage
+              id="startTime"
+              defaultMessage="Start time"
+            />
+          </label>
 
           <DateTimePicker
             className="export-datetime-picker export-from-time"
@@ -96,7 +107,12 @@ export default React.createClass({
         </div>
 
         <div className="export-row">
-          <label className="left bold">End time</label>
+          <label className="left bold">
+            <FormattedMessage
+              id="endTime"
+              defaultMessage="End time"
+            />
+          </label>
 
           <DateTimePicker
             className="export-datetime-picker export-to-time"
@@ -112,26 +128,37 @@ export default React.createClass({
         </div>
 
         <div className="export-row">
-          <label className="left bold">Type</label>
+          <label className="left bold">
+            <FormattedMessage
+              id="type"
+              defaultMessage="Type"
+            />
+          </label>
 
           <ul className="button-group round even-3 export-type-buttons">
             <li>
               <a
                 className={classNames('button', { active: this.state.netType === CALL_TYPE.ONNET })}
                 onClick={this.handleToggleOnnet}
-              >Onnet</a>
+              >
+                <FormattedMessage id="onnet" defaultMessage="Onnet" />
+              </a>
             </li>
             <li>
               <a
                 className={classNames('button', { active: this.state.netType === CALL_TYPE.OFFNET })}
                 onClick={this.handleToggleOffnet}
-              >Offnet</a>
+              >
+                <FormattedMessage id="offnet" defaultMessage="Offnet" />
+              </a>
             </li>
             <li>
               <a
                 className={classNames('button', { active: this.state.netType === CALL_TYPE.MAAII_IN })}
                 onClick={this.handleToggleMaaiiIn}
-              >Maaii-in</a>
+              >
+                <FormattedMessage id="maaiiIn" defaultMessage="Maaii-In" />
+              </a>
             </li>
           </ul>
         </div>

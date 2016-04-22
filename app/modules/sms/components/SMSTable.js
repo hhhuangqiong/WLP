@@ -3,6 +3,7 @@ import moment from 'moment';
 import classNames from 'classnames';
 import React, { PropTypes } from 'react';
 import Tooltip from 'rc-tooltip';
+import { FormattedMessage } from 'react-intl';
 
 import { getCountryName } from '../../../utils/StringFormatter';
 import config from './../../../main/config';
@@ -14,28 +15,22 @@ import Pagination from '../../../main/components/Pagination';
 const { displayDateFormat: DATE_FORMAT } = config;
 const SYSTEM_MESSAGE_LABEL = 'System Message';
 
-import {
-  UI_STATE_LOADING,
-  UI_STATE_EMPTY,
-  UI_STATE_NORMAL,
-} from '../../../main/constants/uiState';
-
-const TABLE_TITLES = [
+const TABLE_TITLES_IDS = [
   '',
-  'Date & Time',
-  'Type',
-  'Mobile/Destination',
-  'Status',
-  'Amount',
-  'Remark',
+  'details.dateAndTime',
+  'type',
+  'details.mobileAndDestination',
+  'status',
+  'amount',
+  'remark',
 ];
 
 const SMSTable = React.createClass({
   propTypes: {
     records: PropTypes.object,
     page: PropTypes.number,
-    totalPages: PropTypes.number,
-    onDataLoad: PropTypes.func,
+    totalPage: PropTypes.number,
+    onPageLoad: PropTypes.func,
     isLoadingMore: PropTypes.bool,
   },
 
@@ -53,7 +48,14 @@ const SMSTable = React.createClass({
 
   _renderStatusLabel(status) {
     if (status.toLowerCase() === 'submitted') {
-      return <span className="status-label label radius success">submitted</span>;
+      return (
+        <span className="status-label label radius success">
+          <FormattedMessage
+            id="submitted"
+            defaultMessage="submitted"
+          />
+        </span>
+      );
     }
 
     return <span className="status-label label radius alert">rejected</span>;
@@ -68,7 +70,9 @@ const SMSTable = React.createClass({
   },
 
   renderEmptyRow() {
-    return <EmptyRow colSpan={TABLE_TITLES.length} />;
+    if (!this.props.records || this.props.records.length === 0) {
+      return <EmptyRow colSpan={7} />;
+    }
   },
 
   renderRows(records = []) {
@@ -162,16 +166,20 @@ const SMSTable = React.createClass({
       <table className="data-table large-24 clickable">
         <thead>
           <tr>
-            {
-              TABLE_TITLES.map(title => <th className="im-table--cell">{title}</th>)
-            }
+          {
+            TABLE_TITLES_IDS.map(id => (
+              <th className="SMS-table--cell">
+                <FormattedMessage id={id} />
+              </th>
+            ))
+          }
           </tr>
         </thead>
         {this.renderTableBody()}
         <tfoot>
           <If condition={!isEmpty(this.props.records)}>
             <Pagination
-              colSpan={TABLE_TITLES.length + 1}
+              colSpan={TABLE_TITLES_IDS.length + 1}
               hasMoreData={(this.props.totalPages - 1) > this.props.page}
               onLoadMore={this.props.onDataLoad}
               isLoading={this.props.isLoadingMore}
