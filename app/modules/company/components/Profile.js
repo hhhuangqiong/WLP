@@ -51,7 +51,7 @@ const CompanyProfile = React.createClass({
   },
 
   getStateFromStores() {
-    const { carrierId } = this.context.router.getCurrentParams();
+    const { carrierId } = this.context.params;
 
     if (carrierId) {
       return this.getStore(CompanyStore).getCompanyByCarrierId(carrierId);
@@ -137,7 +137,7 @@ const CompanyProfile = React.createClass({
       // so no error handling is needed
       if (error) return;
 
-      const { carrierId } = this.context.router.getCurrentParams();
+      const { carrierId } = this.context.params;
       const form = React.findDOMNode(this.refs.companyForm);
       const formData = new FormData(form);
 

@@ -34,8 +34,8 @@ class CreatePassword extends Component {
   componentDidMount() {
     const { token } = this
       .context
-      .router
-      .getCurrentQuery();
+      .location
+      .query;
 
     if (!token) {
       this
@@ -72,8 +72,8 @@ class CreatePassword extends Component {
 
     const { token } = this
       .context
-      .router
-      .getCurrentQuery();
+      .location
+      .query;
 
     this.context.executeAction(createPassword, { password: this.state.password, token });
   }

@@ -1,4 +1,4 @@
-import _ from 'lodash';
+import _,{ some } from 'lodash';
 import React, { PropTypes } from 'react';
 import { Link } from 'react-router';
 import { FluxibleMixin } from 'fluxible-addons-react';
@@ -74,21 +74,10 @@ const Navigation = React.createClass({
   },
 
   renderCreateCompany() {
-    const currentRoute = _.last(this
-      .context
-      .router
-      .getCurrentRoutes()
-    );
-
-    const { role, identity } = this
-      .context
-      .router
-      .getCurrentParams();
-
-    if (_.includes(companyPages, currentRoute.name)) {
+    if (some(companyPages, page => this.context.location.pathname.indexOf(page) > -1)) {
       return (
         <li className="navigation-bar__item no-border">
-          <Link to="company-create" params={{ role, identity }}>
+          <Link to={`${this.context.location.pathname}/company-create`}>
             <FormattedMessage
               id="company.createNewCompany"
               defaultMessage="Create new company"
@@ -102,21 +91,10 @@ const Navigation = React.createClass({
   },
 
   renderCreateUser() {
-    const currentRoute = _.last(this
-      .context
-      .router
-      .getCurrentRoutes()
-    );
-
-    const { role, identity } = this
-      .context
-      .router
-      .getCurrentParams();
-
-    if (_.includes(accountPages, currentRoute.name)) {
+    if (some(accountPages, page => this.context.location.pathname.indexOf(page) > -1)) {
       return (
         <li className="navigation-bar__item no-border">
-          <Link to="account-create" params={{ role, identity }}>
+          <Link to={`${this.context.location.pathname}/account-create`}>
             <FormattedMessage
               id="account.createNewUser"
               defaultMessage="Create new user"

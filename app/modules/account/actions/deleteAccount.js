@@ -11,7 +11,7 @@ export default function (context, params, done) {
 
     context.executeAction(fetchAccounts, { carrierId: params.carrierId }, () => {
       const router = context.getRouter();
-      const routerParams = router.getCurrentParams();
+      const routerParams = context.params;
 
       context.dispatch('DELETE_ACCOUNT_SUCCESS', result);
       router.transitionTo('account', routerParams);

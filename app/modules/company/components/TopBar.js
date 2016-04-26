@@ -32,8 +32,7 @@ const CompanyTopBar = React.createClass({
   _handleDeactivateCompany() {
     const { carrierId } = this
       .context
-      .router
-      .getCurrentParams();
+      .params;
 
     this.context.executeAction(deactivateCompany, { carrierId });
   },
@@ -41,16 +40,14 @@ const CompanyTopBar = React.createClass({
   _handleReactivateCompany() {
     const { carrierId } = this
       .context
-      .router
-      .getCurrentParams();
+      .params;
     this.context.executeAction(reactivateCompany, { carrierId });
   },
 
   render() {
     const navParams = this
       .context
-      .router
-      .getCurrentParams();
+      .params;
 
     const role = navParams.role || null;
     const identity = navParams.identity || null;

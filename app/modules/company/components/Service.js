@@ -63,8 +63,7 @@ const CompanyService = React.createClass({
   getStateFromStores() {
     const { carrierId } = this
       .context
-      .router
-      .getCurrentParams();
+      .params;
 
     const {
       _id,
@@ -124,8 +123,7 @@ const CompanyService = React.createClass({
 
       const { carrierId } = this
         .context
-        .router
-        .getCurrentParams();
+        .params;
 
       const form = React.findDOMNode(this.refs.companyForm);
       const formData = new FormData(form);

@@ -86,7 +86,7 @@ export default React.createClass({
   },
 
   renderAccountItems(accounts) {
-    const { role, identity, accountId } = this.context.router.getCurrentParams();
+    const { role, identity, accountId } = this.context.params;
 
     return accounts.map(account => {
       const groupSettings = PredefinedGroups[account.assignedGroup];

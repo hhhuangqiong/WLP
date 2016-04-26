@@ -19,7 +19,7 @@ export default function (context, params, done) {
 
     // Redirect to the newly created user profile
     const router = context.getRouter();
-    const routerParams = router.getCurrentParams();
+    const routerParams = context.params;
 
     router.transitionTo('account-profile', merge(routerParams, {
       accountId: result._id,

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Route, NotFoundRoute, IndexRoute, IndexRedirect } from 'react-router';
+import { Route, IndexRedirect } from 'react-router';
 
 import App from './main/components/common/App';
 import Public from './main/components/common/Public';

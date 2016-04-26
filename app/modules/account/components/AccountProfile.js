@@ -42,7 +42,7 @@ export default React.createClass({
   },
 
   componentDidMount() {
-    const params = this.context.router.getCurrentParams();
+    const params = this.context.params;
     this.context.executeAction(fetchCarrierManagingCompanies, { carrierId: params.identity });
   },
 
@@ -53,7 +53,7 @@ export default React.createClass({
   getStateFromStores() {
     let stateFromStores = {};
 
-    const { accountId } = this.context.router.getCurrentParams();
+    const { accountId } = this.context.params;
 
     if (this.isCreate()) {
       stateFromStores = this.getStore(AccountStore).getNewAccount();
@@ -72,8 +72,7 @@ export default React.createClass({
   },
 
   isCreate() {
-    const currentRoute = _.last(this.context.router.getCurrentRoutes());
-    return currentRoute.name === NEW_ACCOUNT_ROUTE_NAME;
+    return this.context.location.pathname.indexOf(NEW_ACCOUNT_ROUTE_NAME) > -1
   },
 
   handleFirstNameChange(e) {
@@ -180,7 +179,7 @@ export default React.createClass({
   },
 
   handleDelete() {
-    const params = this.context.router.getCurrentParams();
+    const params = this.context.params;
 
     this.context.executeAction(deleteAccount, {
       accountId: this.state.accountId,

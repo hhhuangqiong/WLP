@@ -15,11 +15,10 @@ export default function (context, params) {
     // change the current Url to new carrierId
     if (result.carrierId !== result.company.carrierId) {
       const router = context.getRouter();
-      const params = router.getCurrentParams();
-      const query = router.getCurrentQuery();
+      const { query } = context.location;
 
       // using replaceWith to not add an entry into the browser history
-      router.replaceWith('company-profile', _.merge(params, { carrierId: result.company.carrierId }), query);
+      router.replaceWith('company-profile', _.merge(context.params, { carrierId: result.company.carrierId }), query);
     }
   });
 }

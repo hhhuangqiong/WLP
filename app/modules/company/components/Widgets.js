@@ -37,8 +37,7 @@ const CompanyWidget = React.createClass({
   getStateFromStores() {
     const { carrierId } = this
       .context
-      .router
-      .getCurrentParams();
+      .params;
 
     const { _id, status, widgets } = this.getStore(CompanyStore).getCompanyByCarrierId(carrierId);
     return { _id, status, data: _.extend(this._getDefaultState(sections), widgets) };
@@ -120,8 +119,7 @@ const CompanyWidget = React.createClass({
 
       const { carrierId } = this
         .context
-        .router
-        .getCurrentParams();
+        .params;
 
       const form = React.findDOMNode(this.refs.companyForm);
       const formData = new FormData(form);

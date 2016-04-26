@@ -67,8 +67,7 @@ const CompanyList = React.createClass({
   renderCompanyListItem(company, key) {
     const { role, identity } = this
       .context
-      .router
-      .getCurrentParams();
+      .params;
 
     // TODO add default logo
     // TODO reference status string from Company Collection ?
