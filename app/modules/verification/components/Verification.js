@@ -1,13 +1,16 @@
-import React from 'react';
+import React, { PropTypes } from 'react';
 import { FluxibleMixin } from 'fluxible-addons-react';
-import { RouteHandler } from 'react-router';
 
 import ApplicationStore from '../../../main/stores/ApplicationStore';
 
 const Verification = React.createClass({
+  propTypes: {
+    children: PropTypes.element.isRequired,
+  },
+
   contextTypes: {
-    router: React.PropTypes.func.isRequired,
-    executeAction: React.PropTypes.func.isRequired,
+    router: PropTypes.func.isRequired,
+    executeAction: PropTypes.func.isRequired,
   },
 
   mixins: [FluxibleMixin],
@@ -29,8 +32,14 @@ const Verification = React.createClass({
   },
 
   render() {
+    if (!this.props.children) {
+      return null;
+    }
+
     return (
-      <RouteHandler appIds={this.state.appIds} />
+      React.cloneElement(this.props.children, {
+        appIds: this.state.appIds,
+      })
     );
   },
 });

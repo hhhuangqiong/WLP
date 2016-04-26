@@ -1,4 +1,4 @@
-import _ from 'lodash';
+import _, { omit, merge } from 'lodash';
 import moment from 'moment';
 import { concurrent } from 'contra';
 
@@ -28,11 +28,11 @@ import CALL_TYPE from '../constants/callType';
 
 const Calls = React.createClass({
   contextTypes: {
-    executeAction: React.PropTypes.func.isRequired,
+    executeAction: PropTypes.func.isRequired,
     location: PropTypes.object,
     params: PropTypes.object,
     route: PropTypes.object,
-    router: React.PropTypes.object.isRequired,
+    router: PropTypes.func,
   },
 
   mixins: [FluxibleMixin],
@@ -115,16 +115,23 @@ const Calls = React.createClass({
   },
 
   handleQueryChange(newQuery) {
-    const routeName = _.last(this.context.routes).name;
-    const params = this.context.params;
-    const query = _.merge(this.context.location.query, this.getQueryFromState(), newQuery);
+    const query = merge(
+      this.context.location.query,
+      this.getQueryFromState(),
+      newQuery
+    );
 
-    this.context.router.transitionTo(routeName, params, _.omit(query, function (value) {
-      return !value;
-    }));
+    const queryWithoutNull = omit(query, value => !value);
+
+    const { pathname } = this.context.location;
+
+    this.context.router.push({
+      pathname,
+      query: queryWithoutNull,
+    });
   },
 
-  handlePageChange(e) {
+  handlePageChange() {
     const { identity } = this.context.params;
 
     this.context.executeAction(fetchMoreCalls, {
@@ -172,7 +179,7 @@ const Calls = React.createClass({
       type = CALL_TYPE.MAAII_IN;
     }
 
-    this.handleQueryChange({ type: type });
+    this.handleQueryChange({ type });
   },
 
   handleUsernameChange(e) {
@@ -212,8 +219,12 @@ const Calls = React.createClass({
       <div className="row">
         <FilterBar.Wrapper>
           <FilterBar.NavigationItems>
-            <Link to={`/${role}/${identity}/calls/overview`} activeClassName="active"><FormattedMessage id="overview" defaultMessage="Overview" /></Link>
-            <Link to={`/${role}/${identity}/calls/details`} activeClassName="active"><FormattedMessage id="detailsReport" defaultMessage="Details Report" /></Link>
+            <Link to={`/${role}/${identity}/calls/overview`} activeClassName="active">
+			  <FormattedMessage id="overview" defaultMessage="Overview" />
+			</Link>
+            <Link to={`/${role}/${identity}/calls/details`} activeClassName="active">
+			  <FormattedMessage id="detailsReport" defaultMessage="Details Report" />
+			</Link>
           </FilterBar.NavigationItems>
           <FilterBar.LeftItems>
             <a
@@ -278,7 +289,7 @@ const Calls = React.createClass({
                 startDate={this.state.startDate}
                 endDate={this.state.endDate}
                 netType={this.state.type}
-                />
+              />
             </Export>
 
             <Searchbox

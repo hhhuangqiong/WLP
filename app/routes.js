@@ -1,5 +1,5 @@
 import React from 'react';
-import { Route, IndexRedirect } from 'react-router';
+import { Route, IndexRedirect, IndexRoute } from 'react-router';
 
 import App from './main/components/common/App';
 import Public from './main/components/common/Public';
@@ -65,20 +65,20 @@ export default (
       <Route path=":role/:identity/overview" component={Overview} />
 
       <Route path=":role/:identity/companies" component={Companies}>
-        <Route name="company-create" path="create" component={NewProfile} />
-        <Route name="company-profile" path=":carrierId/profile" component={EditProfile} />
-        <Route name="company-service" path=":carrierId/service" component={Service} />
-        <Route name="company-widget" path=":carrierId/widget" component={Widgets} />
+        <Route path="create" component={NewProfile} />
+        <Route path=":carrierId/profile" component={EditProfile} />
+        <Route path=":carrierId/service" component={Service} />
+        <Route path=":carrierId/widget" component={Widgets} />
       </Route>
 
       <Route path=":role/:identity/account" component={Account}>
-        <Route name="account-create" path="create" component={AccountProfile} />
-        <Route name="account-profile" path=":accountId" component={AccountProfile} />
+        <Route path="create" component={AccountProfile} />
+        <Route path=":accountId" component={AccountProfile} />
       </Route>
 
-      <Route path=":role/:identity/verification" component={Verification}>
-        <Route path="/overview" component={VerificationOverview} />
-        <Route path="/details" component={VerificationDetails} />
+      <Route component={Verification}>
+        <Route path=":role/:identity/verification/overview" component={VerificationOverview} />
+        <Route path=":role/:identity/verification/details" component={VerificationDetails} />
       </Route>
 
       <Route path=":role/:identity/vsf/overview" component={VSFTransactionOverview} />

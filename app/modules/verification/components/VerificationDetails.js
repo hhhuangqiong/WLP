@@ -44,8 +44,10 @@ const VerificationDetails = React.createClass({
   },
 
   contextTypes: {
-    router: React.PropTypes.func.isRequired,
-    executeAction: React.PropTypes.func.isRequired,
+    router: PropTypes.func.isRequired,
+    params: PropTypes.object.isRequired,
+    location: PropTypes.object.isRequired,
+    executeAction: PropTypes.func.isRequired,
   },
 
   mixins: [FluxibleMixin],
@@ -101,13 +103,24 @@ const VerificationDetails = React.createClass({
     const query = _.merge(this.getDefaultQuery(),
       this
         .context
-        .router
-        .getCurrentQuery()
+        .location
+        .query
     );
     return _.merge(this.getStateFromStores(), query);
   },
 
-  getDefaultQuery: function() {
+  onAppIdChange(val) {
+    this.setState({
+      appId: val,
+    });
+
+    this.handleQueryChange({
+      appId: val,
+      page: 0,
+    });
+  },
+
+  getDefaultQuery() {
     return {
       // The page number, starting from 0, defaults to 0 if not specified.
       page: 0,
@@ -116,11 +129,11 @@ const VerificationDetails = React.createClass({
       endDate: moment().endOf('day').format(DATE_FORMAT),
       number: '',
       method: '',
-      os: ''
+      os: '',
     };
   },
 
-  getQueryFromState: function() {
+  getQueryFromState() {
     return {
       appId: this.state.appId,
       startDate: this.state.startDate && this.state.startDate.trim(),
@@ -129,12 +142,12 @@ const VerificationDetails = React.createClass({
       page: 0,
       size: config.PAGES.VERIFICATIONS.PAGE_SIZE,
       method: this.state.method && this.state.method.trim(),
-      os: this.state.os && this.state.os.trim()
+      os: this.state.os && this.state.os.trim(),
     };
   },
 
-  getStateFromStores: function() {
-    let store = this.getStore(VerificationStore);
+  getStateFromStores() {
+    const store = this.getStore(VerificationStore);
 
     return {
       verifications: store.getVerifications(),
@@ -145,7 +158,7 @@ const VerificationDetails = React.createClass({
     };
   },
 
-  componentDidMount: function() {
+  componentDidMount() {
     // auto select the default appId from the list
     // TODO: optimize this UX with server side rendering
 
@@ -167,10 +180,7 @@ const VerificationDetails = React.createClass({
       appId,
     });
 
-    const { identity } = this
-      .context
-      .router
-      .getCurrentParams();
+    const { identity } = this.context.params;
 
     // fetch using the local appId because setState is async
     this.context.executeAction(fetchVerifications, {
@@ -186,8 +196,8 @@ const VerificationDetails = React.createClass({
     });
   },
 
-  onChange: function() {
-    let query = _.merge(this.getDefaultQuery(), this.context.router.getCurrentQuery());
+  onChange() {
+    let query = _.merge(this.getDefaultQuery(), this.context.location.query);
     this.setState(_.merge(query, this.getStateFromStores()));
   },
 
@@ -206,19 +216,8 @@ const VerificationDetails = React.createClass({
     this.autoSelectAppId();
   },
 
-  onAppIdChange(val) {
-    this.setState({
-      appId: val,
-    });
-
-    this.handleQueryChange({
-      appId: val,
-      page: 0,
-    });
-  },
-
-  handleStartDateChange: function(dateString) {
-    let date = moment(dateString).format(DATE_FORMAT);
+  handleStartDateChange(dateString) {
+    const date = moment(dateString).format(DATE_FORMAT);
     this.handleQueryChange({ startDate: date, page: 0 });
   },
 
@@ -279,8 +278,7 @@ const VerificationDetails = React.createClass({
   fetchMore() {
     const { identity } = this
       .context
-      .router
-      .getCurrentParams();
+      .params;
 
     const nextPage = this.state.page + 1;
 
@@ -316,39 +314,27 @@ const VerificationDetails = React.createClass({
   },
 
   handleQueryChange(newQuery) {
-    const routeName = _.last(this
-      .context
-      .router
-      .getCurrentRoutes()
-    ).name;
-
-    const params = this
-      .context
-      .router
-      .getCurrentParams();
-
     const query = _.merge(
       this
         .context
-        .router
-        .getCurrentQuery(),
+        .location
+        .query,
       this.getQueryFromState(),
       newQuery
     );
 
     const changedQuery = _.omit(query, value => !value);
 
-    this
-      .context
-      .router
-      .transitionTo(routeName, params, changedQuery);
+    this.context.router.push({
+      pathname: this.context.location.pathname,
+      query: changedQuery,
+    });
   },
 
   render() {
     const { role, identity } = this
       .context
-      .router
-      .getCurrentParams();
+      .params;
 
     const options = [];
 
@@ -365,8 +351,18 @@ const VerificationDetails = React.createClass({
       <div className="row verification-details">
         <FilterBar.Wrapper>
           <FilterBar.NavigationItems>
-            <Link to="verification" params={{ role, identity }}>Overview</Link>
-            <Link to="verification-details" params={{ role, identity }}>Details Report</Link>
+            <Link
+              to={`/${role}/${identity}/verification/overview`}
+              activeClassName="active"
+            >
+              Overview
+            </Link>
+            <Link
+              to={`/${role}/${identity}/verification/details`}
+              activeClassName="active"
+            >
+              Details Report
+            </Link>
           </FilterBar.NavigationItems>
           <FilterBar.LeftItems>
             <VerificationFilter

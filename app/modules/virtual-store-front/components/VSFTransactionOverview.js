@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { PropTypes } from 'react';
 import { Link } from 'react-router';
 import { FluxibleMixin } from 'fluxible-addons-react';
 
@@ -12,8 +12,9 @@ const errorMessage = '<div className="widget-not-found">Dashboard is not availab
 
 const VSFTransactionOverview = React.createClass({
   contextTypes: {
-    router: React.PropTypes.func.isRequired,
-    executeAction: React.PropTypes.func.isRequired,
+    router: PropTypes.func.isRequired,
+    executeAction: PropTypes.func.isRequired,
+    params: PropTypes.object.isRequired,
   },
 
   mixins: [FluxibleMixin],
@@ -61,7 +62,7 @@ const VSFTransactionOverview = React.createClass({
   },
 
   render() {
-    const params = this.context.router.getCurrentParams();
+    const { role, identity } = this.context.params;
 
     return (
       <div className="row">
@@ -70,11 +71,21 @@ const VSFTransactionOverview = React.createClass({
 
             <ul className="left top-bar--inner tab--inverted">
               <li className="top-bar--inner tab--inverted__title">
-                <Link to="vsf-transaction-overview" params={params}>Overview</Link>
+                <Link
+                  to={`/${role}/${identity}/vsf/overview`}
+                  activeClassName="active"
+                >
+                  Overview
+                </Link>
               </li>
 
               <li className="top-bar--inner tab--inverted__title">
-                <Link to="vsf-transaction-details" params={params}>Details Report</Link>
+                <Link
+                  to={`/${role}/${identity}/vsf/details`}
+                  activeClassName="active"
+                >
+                  Details Report
+                </Link>
               </li>
             </ul>
 

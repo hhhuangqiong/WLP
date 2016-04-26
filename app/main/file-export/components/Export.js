@@ -118,7 +118,7 @@ export default createClass({
   handleExport(params) {
     debug('handleExport', params);
 
-    const { identity } = this.context.router.getCurrentParams();
+    const { identity } = this.context.params;
 
     // For Progress Bar
     this.setState({ carrierId: identity });

@@ -36,7 +36,7 @@ const EndUserProfile = React.createClass({
   },
 
   getParams() {
-    const { identity: carrierId } = this.context.router.getCurrentParams();
+    const { identity: carrierId } = this.context.params;
     const username = this.props.user.userDetails.username;
 
     return { carrierId, username };

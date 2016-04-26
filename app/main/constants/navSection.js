@@ -16,6 +16,7 @@ export default [
     icon: 'icon-menuaccount',
     page: ACCOUNT,
     routeName: 'account',
+    path: 'account',
   },
   {
     name: 'Users',

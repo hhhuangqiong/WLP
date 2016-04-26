@@ -15,6 +15,7 @@ const errorMessage = '<div className="widget-not-found">Dashboard is not availab
 const SMSOverview = React.createClass({
   contextTypes: {
     router: PropTypes.func.isRequired,
+    params: PropTypes.object.isRequired,
   },
 
   mixins: [FluxibleMixin],
@@ -67,7 +68,7 @@ const SMSOverview = React.createClass({
   },
 
   render() {
-    const params = this.context.router.getCurrentParams();
+    const { role, identity } = this.context.params;
 
     return (
       <div className="row">
@@ -75,12 +76,18 @@ const SMSOverview = React.createClass({
           <div className="top-bar-section">
             <ul className="left top-bar--inner tab--inverted">
               <li className="top-bar--inner tab--inverted__title">
-                <Link to="sms-overview" params={params}>
+                <Link
+                  to={`/${role}/${identity}/sms/overview`}
+                  activeClassName="active"
+                >
                   <FormattedMessage id="overview" defaultMessage="Overview" />
                 </Link>
               </li>
               <li className="top-bar--inner tab--inverted__title">
-                <Link to="sms-details" params={params}>
+                <Link
+                  to={`/${role}/${identity}/sms/details`}
+                  activeClassName="active"
+                >
                   <FormattedMessage id="detailsReport" defaultMessage="Details Report" />
                 </Link>
               </li>

@@ -2,7 +2,7 @@ import _ from 'lodash';
 import moment from 'moment';
 import { concurrent } from 'contra';
 
-import React from 'react';
+import React, { PropTypes } from 'react';
 import { Link } from 'react-router';
 import { FluxibleMixin } from 'fluxible-addons-react';
 import { FormattedMessage } from 'react-intl';
@@ -39,7 +39,9 @@ function getInitialQueryFromURL(params, query = {}) {
 
 const SMS = React.createClass({
   contextTypes: {
-    router: React.PropTypes.func.isRequired,
+    router: PropTypes.func.isRequired,
+    params: PropTypes.object.isRequired,
+    location: PropTypes.object.isRequired,
   },
 
   mixins: [FluxibleMixin],
@@ -50,7 +52,10 @@ const SMS = React.createClass({
     fetchData(context, params, query, done) {
       const defaultQuery = {
         carrierId: null,
-        startDate: moment().startOf('day').subtract(MONTHS_BEFORE_TODAY, 'month').format(DATE_FORMAT),
+        startDate: moment()
+          .startOf('day')
+          .subtract(MONTHS_BEFORE_TODAY, 'month')
+          .format(DATE_FORMAT),
         endDate: moment().endOf('day').format(DATE_FORMAT),
         number: null,
         page: INITIAL_PAGE_NUMBER,
@@ -59,13 +64,19 @@ const SMS = React.createClass({
 
       concurrent([
         context.executeAction.bind(context, clearSMS, {}),
-        context.executeAction.bind(context, loadSMS, _.merge(_.clone(defaultQuery), getInitialQueryFromURL(params, query))),
+        context.executeAction.bind(
+          context,
+          loadSMS,
+          _.merge(_.clone(defaultQuery), getInitialQueryFromURL(params, query))
+        ),
       ], done || (() => {}));
     },
   },
 
   getInitialState() {
-    return _.merge(_.clone(this.getDefaultQuery()), this.getRequestBodyFromQuery(), this.getStateFromStores());
+    return _.merge(
+      _.clone(this.getDefaultQuery()), this.getRequestBodyFromQuery(), this.getStateFromStores()
+    );
   },
 
   onChange() {
@@ -88,12 +99,12 @@ const SMS = React.createClass({
   },
 
   getRequestBodyFromQuery(query) {
-    const { startDate, endDate, number, page, pageRec } = query || this.context.router.getCurrentQuery();
+    const { startDate, endDate, number, page, pageRec } = query || this.context.location.query;
     return { startDate, endDate, number, page, pageRec };
   },
 
   getRequestBodyFromState() {
-    const { identity } = this.context.router.getCurrentParams();
+    const { identity } = this.context.params;
     const { startDate, endDate, number, page, pageRec } = this.state;
     return { carrierId: identity, startDate, endDate, number, page, pageRec };
   },
@@ -107,14 +118,24 @@ const SMS = React.createClass({
   },
 
   render() {
-    const params = this.context.router.getCurrentParams();
+    const { role, identity } = this.context.params;
 
     return (
       <div className="row">
         <FilterBar.Wrapper>
           <FilterBar.NavigationItems>
-            <Link to="sms-overview" params={params}><FormattedMessage id="overview" defaultMessage="Overview" /></Link>
-            <Link to="sms-details" params={params}><FormattedMessage id="detailsReport" defaultMessage="Details Report" /></Link>
+            <Link
+              to={`/${role}/${identity}/sms/overview`}
+              activeClassName="active"
+            >
+              <FormattedMessage id="overview" defaultMessage="Overview" />
+            </Link>
+            <Link
+              to={`/${role}/${identity}/sms/details`}
+              activeClassName="active"
+            >
+              <FormattedMessage id="detailsReport" defaultMessage="Details Report" />
+            </Link>
           </FilterBar.NavigationItems>
           <FilterBar.LeftItems>
             <DateRangePicker
@@ -148,11 +169,12 @@ const SMS = React.createClass({
   },
 
   handleQueryChange(newQuery) {
-    const routeName = _.last(this.context.router.getCurrentRoutes()).name;
-    const params = this.context.router.getCurrentParams();
     const query = _.merge(this.getRequestBodyFromQuery(), this.getRequestBodyFromState(), newQuery);
 
-    this.context.router.transitionTo(routeName, params, _.omit(query, value => !value));
+    this.context.router.push({
+      pathname: this.context.location.pathname,
+      query: _.omit(query, value => !value),
+    });
   },
 
   // action for client side
@@ -164,7 +186,10 @@ const SMS = React.createClass({
       page: targetPage,
     });
 
-    this.context.executeAction(loadSMS, _.merge(this.getRequestBodyFromState(), { page: targetPage }));
+    this.context.executeAction(
+      loadSMS,
+      _.merge(this.getRequestBodyFromState(), { page: targetPage })
+    );
   },
 
   handleStartDateChange(momentDate) {
@@ -186,7 +211,9 @@ const SMS = React.createClass({
   },
 
   handleSearchInputSubmit(e) {
-    if (e.which === 13) this.handleQueryChange({ number: e.target.value, page: INITIAL_PAGE_NUMBER });
+    if (e.which === 13) {
+      this.handleQueryChange({ number: e.target.value, page: INITIAL_PAGE_NUMBER });
+    }
   },
 });
 

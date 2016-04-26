@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { PropTypes } from 'react';
 import { Link } from 'react-router';
 import { FormattedMessage } from 'react-intl';
 
@@ -15,7 +15,8 @@ const errorMessage = '<div className="widget-not-found">Dashboard is not availab
 
 const ImOverview = React.createClass({
   contextTypes: {
-    router: React.PropTypes.func.isRequired,
+    router: PropTypes.func.isRequired,
+    params: PropTypes.object.isRequired,
   },
 
   mixins: [FluxibleMixin],
@@ -76,7 +77,7 @@ const ImOverview = React.createClass({
   },
 
   render() {
-    const params = this.context.router.getCurrentParams();
+    const { role, identity } = this.context.params;
 
     return (
       <div className="row">
@@ -85,11 +86,20 @@ const ImOverview = React.createClass({
             <ul className="left top-bar--inner tab--inverted">
               <li className="top-bar--inner tab--inverted__title">
                 <Link to="im-overview" params={params}>
-                  <FormattedMessage id="overview" defaultMessage="Overview" />
+
                 </Link>
+                <Link
+                  to={`/${role}/${identity}/im/overview`}
+                  activeClassName="active"
+                >
+                  <FormattedMessage id="overview" defaultMessage="Overview" />
+				</Link>
               </li>
               <li className="top-bar--inner tab--inverted__title">
-                <Link to="im" params={params}>
+                <Link
+                  to={`/${role}/${identity}/im/details`}
+                  activeClassName="active"
+                >
                   <FormattedMessage id="detailsReport" defaultMessage="Details Report" />
                 </Link>
               </li>

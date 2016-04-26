@@ -1,9 +1,9 @@
-import _ from 'lodash';
+import _, { merge, omit } from 'lodash';
 import moment from 'moment';
 import { concurrent } from 'contra';
 import classNames from 'classnames';
 
-import React from 'react';
+import React, { PropTypes } from 'react';
 import { Link } from 'react-router';
 import { FluxibleMixin } from 'fluxible-addons-react';
 import DatePicker from 'react-datepicker';
@@ -30,7 +30,9 @@ const searchTypes = [
 
 const Im = React.createClass({
   contextTypes: {
-    router: React.PropTypes.func.isRequired,
+    router: PropTypes.func.isRequired,
+    location: PropTypes.object,
+    params: PropTypes.object,
   },
 
   mixins: [FluxibleMixin],
@@ -58,7 +60,13 @@ const Im = React.createClass({
 
   getInitialState() {
     const defaultSearchType = _.first(searchTypes);
-    const query = _.merge(this.getDefaultQuery(), this.context.router.getCurrentQuery(), { searchType: defaultSearchType.value });
+
+    const query = _.merge(
+      this.getDefaultQuery(),
+      this.context.location.query,
+      { searchType: defaultSearchType.value }
+    );
+
     return _.merge(this.getStateFromStores(), query);
   },
 
@@ -67,7 +75,7 @@ const Im = React.createClass({
   },
 
   onChange() {
-    const query = _.merge(this.getDefaultQuery(), this.context.router.getCurrentQuery());
+    const query = _.merge(this.getDefaultQuery(), this.context.location.query);
     this.setState(_.merge(query, this.getStateFromStores()));
   },
 
@@ -108,15 +116,15 @@ const Im = React.createClass({
 
   getDefaultMessageTypes() {
     return [
-      {title: 'Text', value: 'text'},
-      {title: 'Image', value: 'image'},
-      {title: 'Audio', value: 'audio'},
-      {title: 'Video', value: 'video'},
-      {title: 'Remote', value: 'remote'},
-      {title: 'Animation', value: 'animation'},
-      {title: 'Sticker', value: 'sticker'},
-      {title: 'Voice Sticker', value: 'voice_sticker'},
-      {title: 'Ephemeral Image', value: 'ephemeral_image'},
+      { title: 'Text', value: 'text' },
+      { title: 'Image', value: 'image' },
+      { title: 'Audio', value: 'audio' },
+      { title: 'Video', value: 'video' },
+      { title: 'Remote', value: 'remote' },
+      { title: 'Animation', value: 'animation' },
+      { title: 'Sticker', value: 'sticker' },
+      { title: 'Voice Sticker', value: 'voice_sticker' },
+      { title: 'Ephemeral Image', value: 'ephemeral_image' },
     ];
   },
 
@@ -125,8 +133,8 @@ const Im = React.createClass({
   },
 
   render() {
-    const params = this.context.router.getCurrentParams();
-    const query = this.context.router.getCurrentQuery();
+    const { role, identity } = this.context.params;
+    const query = this.context.location.query;
 
     return (
       <div className="row">
@@ -134,12 +142,18 @@ const Im = React.createClass({
           <div className="top-bar-section">
             <ul className="left top-bar--inner tab--inverted">
               <li className="top-bar--inner tab--inverted__title">
-                <Link to="im-overview" params={params}>
-                  <FormattedMessage id="overview" defaultMessage="Overview" />
-                </Link>
+                <Link
+                  to={`/${role}/${identity}/im/overview`}
+                  activeClassName="active"
+                >
+                  <FormattedMessage id="overview" defaultMessage="Overview" />	
+				</Link>
               </li>
               <li className="top-bar--inner tab--inverted__title">
-                <Link to="im" params={params}>
+                <Link
+                  to={`/${role}/${identity}/im/details`}
+                  activeClassName="active"
+                >
                   <FormattedMessage id="detailsReport" defaultMessage="Details Report" />
                 </Link>
               </li>
@@ -150,7 +164,9 @@ const Im = React.createClass({
                 <div className="date-range-picker left">
                   <i className="date-range-picker__icon icon-calendar left" />
                   <div className="date-input-wrap left" onClick={this._handleStartDateClick}>
-                    <span className="interactive-button left date-range-picker__start">{this.state.fromTime}</span>
+                    <span
+                      className="interactive-button left date-range-picker__start"
+                    >{this.state.fromTime}</span>
                     <DatePicker
                       ref="startDatePicker"
                       key="start-date"
@@ -159,11 +175,13 @@ const Im = React.createClass({
                       minDate={moment().subtract(1, 'years')}
                       maxDate={moment(this.state.toTime, 'L')}
                       onChange={this.handleStartDateChange}
-                      />
+                    />
                   </div>
                   <i className="date-range-picker__separator left">-</i>
                   <div className="date-input-wrap left" onClick={this._handleEndDateClick}>
-                    <span className="interactive-button left date-range-picker__end">{this.state.toTime}</span>
+                    <span
+                      className="interactive-button left date-range-picker__end"
+                    >{this.state.toTime}</span>
                     <DatePicker
                       ref="endDatePicker"
                       key="end-date"
@@ -172,17 +190,27 @@ const Im = React.createClass({
                       minDate={moment(this.state.fromTime, 'L')}
                       maxDate={moment()}
                       onChange={this.handleEndDateChange}
-                      />
+                    />
                   </div>
                 </div>
               </li>
             </ul>
 
             <div className="im-type large-2 columns left top-bar-section">
-              <select className={classNames('top-bar-section__message-type-select', 'left')} name="messageTypeDropDown" onChange={this.handleTypeChange}>
+              <select
+                className={classNames('top-bar-section__message-type-select', 'left')}
+                name="messageTypeDropDown"
+                onChange={this.handleTypeChange}
+              >
                 <option key={'messageType-default'} value="">Choose</option>
-                {this.getDefaultMessageTypes().map((messageType)=>{
-                  return <option key={this.getOptKey(messageType)} value={messageType.value} selected={messageType.value === query.type}>{messageType.title}</option>;
+                {this.getDefaultMessageTypes().map(messageType => {
+                  return (
+                    <option
+                      key={this.getOptKey(messageType)}
+                      value={messageType.value}
+                      selected={messageType.value === query.type}
+                    >{messageType.title}</option>
+                  );
                 })}
               </select>
             </div>
@@ -204,7 +232,7 @@ const Im = React.createClass({
                 onSelectChangeHandler={this.handleSearchTypeChange}
                 onInputChangeHandler={this.handleSearchChange}
                 onKeyPressHandler={this.handleSearchChange}
-                />
+              />
             </div>
           </div>
         </nav>
@@ -225,17 +253,26 @@ const Im = React.createClass({
   },
 
   handleQueryChange(newQuery) {
-    const routeName = _.last(this.context.router.getCurrentRoutes()).name;
-    const params = this.context.router.getCurrentParams();
-    const query = _.merge(this.context.router.getCurrentQuery(), this.getQueryFromState(), newQuery);
+    const query = merge(
+      this.context.location.query,
+      this.getQueryFromState(),
+      newQuery
+    );
 
-    this.context.router.transitionTo(routeName, params, _.omit(query, (value, key) => {
-      return !value || key === 'page' || key === 'size';
-    }));
+    const queryWithoutNull = omit(query, (value, key) => (
+      !value || key === 'page' || key === 'size'
+    ));
+
+    const { pathname } = this.context.location;
+
+    this.context.router.push({
+      pathname,
+      query: queryWithoutNull,
+    });
   },
 
   handlePageChange() {
-    const { identity } = this.context.router.getCurrentParams();
+    const { identity } = this.context.params;
 
     this.context.executeAction(fetchMoreIms, {
       carrierId: identity,

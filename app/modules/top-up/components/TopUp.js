@@ -2,7 +2,7 @@ import { omit, merge, last, clone } from 'lodash';
 import moment from 'moment';
 import { concurrent } from 'contra';
 
-import React from 'react';
+import React, { PropTypes } from 'react';
 import { Link } from 'react-router';
 import { FluxibleMixin } from 'fluxible-addons-react';
 
@@ -42,7 +42,9 @@ function getInitialQueryFromURL(params, query = {}) {
 
 const TopUp = React.createClass({
   contextTypes: {
-    router: React.PropTypes.func.isRequired,
+    router: PropTypes.func.isRequired,
+    params: PropTypes.object.isRequired,
+    location: PropTypes.object.isRequired,
   },
 
   mixins: [FluxibleMixin],
@@ -53,7 +55,10 @@ const TopUp = React.createClass({
     fetchData(context, params, query, done) {
       const defaultQuery = {
         carrierId: null,
-        startDate: moment().startOf('day').subtract(MAX_QUERY_DATE_RANGE, 'days').format(DATE_FORMAT),
+        startDate: moment()
+          .startOf('day')
+          .subtract(MAX_QUERY_DATE_RANGE, 'days')
+          .format(DATE_FORMAT),
         endDate: moment().endOf('day').format(DATE_FORMAT),
         number: null,
         page: INITIAL_PAGE_NUMBER,
@@ -62,13 +67,20 @@ const TopUp = React.createClass({
 
       concurrent([
         context.executeAction.bind(context, clearTopUp, {}),
-        context.executeAction.bind(context, loadTransactions, merge(clone(defaultQuery), getInitialQueryFromURL(params, query), { reload: true })),
+        context.executeAction.bind(
+          context,
+          loadTransactions,
+          merge(clone(defaultQuery),
+          getInitialQueryFromURL(params, query), { reload: true })
+        ),
       ], done || (() => {}));
     },
   },
 
   getInitialState() {
-    return merge(clone(this.getDefaultQuery()), this.getRequestBodyFromQuery(), this.getStateFromStores());
+    return merge(
+      clone(this.getDefaultQuery()), this.getRequestBodyFromQuery(), this.getStateFromStores()
+    );
   },
 
   onChange() {
@@ -99,24 +111,29 @@ const TopUp = React.createClass({
   },
 
   getRequestBodyFromQuery(query) {
-    const { startDate, endDate, number, page, pageRec } = query || this.context.router.getCurrentQuery();
+    const { startDate, endDate, number, page, pageRec } = query || this.context.location.query;
     return { startDate, endDate, number, page, pageRec };
   },
 
   getRequestBodyFromState() {
-    const { identity } = this.context.router.getCurrentParams();
+    const { identity } = this.context.params;
     const { startDate, endDate, number, page, pageRec } = this.state;
     return { carrierId: identity, startDate, endDate, number, page, pageRec };
   },
 
   render() {
-    const params = this.context.router.getCurrentParams();
+    const { role, identity } = this.context.params;
 
     return (
       <div className="row">
         <FilterBar.Wrapper>
           <FilterBar.NavigationItems>
-            <Link to="top-up-details" params={params}>Details Report</Link>
+          <Link
+            to={`/${role}/${identity}/top-up/details`}
+            activeClassName="active"
+          >
+            Details Report
+          </Link>
           </FilterBar.NavigationItems>
           <FilterBar.LeftItems>
             <DateRangePicker
@@ -151,18 +168,19 @@ const TopUp = React.createClass({
   },
 
   handleQueryChange(newQuery) {
-    const routeName = last(this.context.router.getCurrentRoutes()).name;
-    const params = this.context.router.getCurrentParams();
     const query = merge(this.getRequestBodyFromQuery(), this.getRequestBodyFromState(), newQuery);
 
     const requiredKey = ['number'];
 
-    const sanitizedQuery = omit(query || {}, (value, key) => {
-      return !value && requiredKey.indexOf(key) === -1;
-    });
-
     /* Should not omit null value as 'number' field is always required even it is null */
-    this.context.router.transitionTo(routeName, params, sanitizedQuery);
+    const sanitizedQuery = omit(query || {}, (value, key) => (
+      !value && requiredKey.indexOf(key) === -1
+    ));
+
+    this.context.router.push({
+      pathname: this.context.location.pathname,
+      query: sanitizedQuery,
+    });
   },
 
   // action for client side

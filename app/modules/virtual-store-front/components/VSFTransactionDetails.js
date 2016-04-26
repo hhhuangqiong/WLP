@@ -2,10 +2,8 @@ import React, { PropTypes, createClass } from 'react';
 import { Link } from 'react-router';
 import moment from 'moment';
 import { concurrent } from 'contra';
-import { merge, last, omit, clone } from 'lodash';
+import { merge, omit, clone } from 'lodash';
 import { FluxibleMixin } from 'fluxible-addons-react';
-
-import Pagination from '../../../main/components/Pagination';
 
 import VSFTransactionTable from './VSFTransactionTable';
 import CategoryFilter from '../../../main/components/CategoryFilter';
@@ -24,6 +22,8 @@ const VSFTransactionDetails = createClass({
     router: PropTypes.func.isRequired,
     executeAction: PropTypes.func.isRequired,
     getStore: PropTypes.func.isRequired,
+    location: PropTypes.object.isRequired,
+    params: PropTypes.object.isRequired,
   },
 
   mixins: [FluxibleMixin],
@@ -53,7 +53,11 @@ const VSFTransactionDetails = createClass({
 
       concurrent([
         context.executeAction.bind(context, clearVSFTransaction, {}),
-        context.executeAction.bind(context, fetchVSFTransactions, merge(clone(defaultQuery), queryAndParams)),
+        context.executeAction.bind(
+          context,
+          fetchVSFTransactions,
+          merge(clone(defaultQuery), queryAndParams)
+        ),
       ], done || (() => {}));
     },
   },
@@ -64,12 +68,8 @@ const VSFTransactionDetails = createClass({
     return { fromTime, toTime, category, userNumber, transactions, isLoadingMore };
   },
 
-  syncQueryAndState(newState) {
-    const state = this.getStore(VSFTransactionStore).getQuery();
-    const query = this.context.router.getCurrentQuery();
-
-    const renewedState = newState ? merge(state, query, newState) : merge(state, query);
-    return renewedState;
+  componentWillUnmount() {
+    this.context.executeAction(clearVSFTransaction);
   },
 
   onChange() {
@@ -77,84 +77,25 @@ const VSFTransactionDetails = createClass({
     this.setState(data);
   },
 
-  componentWillUnmount() {
-    this.context.executeAction(clearVSFTransaction);
-  },
+  syncQueryAndState(newState) {
+    const state = this.getStore(VSFTransactionStore).getQuery();
+    const query = this.context.location.query;
 
-  render() {
-    const params = this.context.router.getCurrentParams();
-
-    return (
-      <div className="row">
-        <nav className="top-bar top-bar--inner">
-          <div className="top-bar-section">
-
-            <ul className="left top-bar--inner tab--inverted">
-              <li className="top-bar--inner tab--inverted__title">
-                <Link to="vsf-transaction-overview" params={params}>Overview</Link>
-              </li>
-
-              <li className="top-bar--inner tab--inverted__title">
-                <Link to="vsf-transaction-details" params={params}>Details Report</Link>
-              </li>
-            </ul>
-
-            <ul className="left top-bar--inner">
-              <li className="top-bar--inner">
-                <DateRangePicker
-                  displayFormat="MM/DD/YYYY"
-                  startDate={this.state.fromTime}
-                  endDate={this.state.toTime}
-                  handleStartDateChange={this.handleStartDateChange}
-                  handleEndDateChange={this.handleEndDateChange}
-                />
-              </li>
-            </ul>
-
-            <div className="large-5 columns left top-bar-section">
-              <CategoryFilter
-                category={this.state.category}
-                handleVoiceFilterToggle={this.handleVoiceFilterToggle}
-                handleAnimationFilterToggle={this.handleAnimationFilterToggle}
-                handleStickerFilterToggle={this.handleStickerFilterToggle}
-                handleCreditFilterToggle={this.handleCreditFilterToggle}
-              />
-            </div>
-
-            <div className="call-search top-bar-section right">
-              <Searchbox
-                value={this.state.userNumber}
-                placeHolder="Mobile"
-                onInputChangeHandler={this.handleNumberChange}
-                onKeyPressHandler={this.handleSearchSubmit}
-              />
-            </div>
-
-          </div>
-        </nav>
-
-        <div className="large-24 columns">
-          <VSFTransactionTable
-            transactions={this.state.transactions}
-            hasNextPage={this.state.hasNextPage}
-            loadPage={this.handlePageChange}
-            isLoadingMore={this.state.isLoadingMore}
-          />
-        </div>
-      </div>
-    );
+    const renewedState = newState ? merge(state, query, newState) : merge(state, query);
+    return renewedState;
   },
 
   handleQueryChange(newQueryChange) {
-    const routeName = last(this.context.router.getCurrentRoutes()).name;
-    const params = this.context.router.getCurrentParams();
     const toBeSent = this.syncQueryAndState(newQueryChange);
 
-    this.context.router.transitionTo(routeName, params, omit(toBeSent || {}, value => !value));
+    this.context.router.push({
+      pathname: this.context.location.pathname,
+      query: omit(toBeSent || {}, value => !value),
+    });
   },
 
   handlePageChange() {
-    const { identity: carrierId } = this.context.router.getCurrentParams();
+    const { identity: carrierId } = this.context.params;
     const { fromTime, toTime, pageIndex, pageSize, category, userNumber } = this.state;
 
     this.context.executeAction(fetchVSFTransactions, {
@@ -209,6 +150,80 @@ const VSFTransactionDetails = createClass({
     const changes = { category: this.state.category === 'credit' ? '' : 'credit' };
     this.setState(changes);
     this.handleQueryChange(changes);
+  },
+
+  render() {
+    const { role, identity } = this.context.params;
+
+    return (
+      <div className="row">
+        <nav className="top-bar top-bar--inner">
+          <div className="top-bar-section">
+
+            <ul className="left top-bar--inner tab--inverted">
+              <li className="top-bar--inner tab--inverted__title">
+                <Link
+                  to={`/${role}/${identity}/vsf/overview`}
+                  activeClassName="active"
+                >
+                  Overview
+                </Link>
+              </li>
+
+              <li className="top-bar--inner tab--inverted__title">
+                <Link
+                  to={`/${role}/${identity}/vsf/details`}
+                  activeClassName="active"
+                >
+                  Details Report
+                </Link>
+              </li>
+            </ul>
+
+            <ul className="left top-bar--inner">
+              <li className="top-bar--inner">
+                <DateRangePicker
+                  displayFormat="MM/DD/YYYY"
+                  startDate={this.state.fromTime}
+                  endDate={this.state.toTime}
+                  handleStartDateChange={this.handleStartDateChange}
+                  handleEndDateChange={this.handleEndDateChange}
+                />
+              </li>
+            </ul>
+
+            <div className="large-5 columns left top-bar-section">
+              <CategoryFilter
+                category={this.state.category}
+                handleVoiceFilterToggle={this.handleVoiceFilterToggle}
+                handleAnimationFilterToggle={this.handleAnimationFilterToggle}
+                handleStickerFilterToggle={this.handleStickerFilterToggle}
+                handleCreditFilterToggle={this.handleCreditFilterToggle}
+              />
+            </div>
+
+            <div className="call-search top-bar-section right">
+              <Searchbox
+                value={this.state.userNumber}
+                placeHolder="Mobile"
+                onInputChangeHandler={this.handleNumberChange}
+                onKeyPressHandler={this.handleSearchSubmit}
+              />
+            </div>
+
+          </div>
+        </nav>
+
+        <div className="large-24 columns">
+          <VSFTransactionTable
+            transactions={this.state.transactions}
+            hasNextPage={this.state.hasNextPage}
+            loadPage={this.handlePageChange}
+            isLoadingMore={this.state.isLoadingMore}
+          />
+        </div>
+      </div>
+    );
   },
 });
 

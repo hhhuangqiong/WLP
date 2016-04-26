@@ -54,6 +54,8 @@ export default React.createClass({
   contextTypes: {
     router: PropTypes.func.isRequired,
     executeAction: PropTypes.func.isRequired,
+    location: PropTypes.object.isRequired,
+    params: PropTypes.object.isRequired,
   },
 
   mixins: [FluxibleMixin],
@@ -70,7 +72,7 @@ export default React.createClass({
   },
 
   getInitialState() {
-    const { timeRange } = this.context.router.getCurrentQuery();
+    const { timeRange } = this.context.location.query;
     const timeRangeFromStore = this.getStore(VerificationOverviewStore).getTimeRange();
 
     return {
@@ -226,7 +228,7 @@ export default React.createClass({
   },
 
   render() {
-    const { role, identity } = this.context.router.getCurrentParams();
+    const { role, identity } = this.context.params;
     const options = [];
 
     this.props.appIds.forEach(item => {
@@ -237,8 +239,12 @@ export default React.createClass({
       <div className="row">
         <FilterBar.Wrapper>
           <FilterBar.NavigationItems>
-            <Link to="verification" params={{ role, identity }}>Overview</Link>
-            <Link to="verification-details" params={{ role, identity }}>Details Report</Link>
+            <Link to={`/${role}/${identity}/verification/overview`} activeClassName="active">
+              Overview
+            </Link>
+            <Link to={`/${role}/${identity}/verification/details`} activeClassName="active">
+              Details Report
+            </Link>
           </FilterBar.NavigationItems>
           <FilterBar.LeftItems>
             {/* Need not to provide selection when there is only one single selected options to avoid confusion */}
@@ -263,7 +269,7 @@ export default React.createClass({
                 frames={TIME_FRAMES}
                 currentFrame={this.state.timeRange}
                 onChange={this.handleTimeFrameChange}
-                />
+              />
             </div>
           </FilterBar.RightItems>
         </FilterBar.Wrapper>
@@ -377,7 +383,7 @@ export default React.createClass({
   },
 
   updateCharts(timeRange) {
-    const { identity } = this.context.router.getCurrentParams();
+    const { identity } = this.context.params;
     const { quantity, timescale } = parseTimeRange(timeRange);
 
     this.context.executeAction(fetchVerificationOverview, {
@@ -487,10 +493,11 @@ export default React.createClass({
 
   handleTimeFrameChange(timeRange) {
     /* Add timeRange value to query */
-    const routeName = last(this.context.router.getCurrentRoutes()).name;
-    const params = this.context.router.getCurrentParams();
+    this.context.router.push({
+      pathname: this.context.location.pathname,
+      query: { timeRange },
+    });
 
-    this.context.router.transitionTo(routeName, params, { timeRange });
 
     /* Store timeRange to store so that we can set it back into query back switch pages */
     this.executeAction(resetVerificationData);

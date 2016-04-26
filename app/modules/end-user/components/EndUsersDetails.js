@@ -1,4 +1,4 @@
-import _, { isNull } from 'lodash';
+import _, { merge, omit, isNull } from 'lodash';
 import moment from 'moment';
 import { concurrent } from 'contra';
 import React, { PropTypes } from 'react';
@@ -197,13 +197,20 @@ const EndUsers = React.createClass({
    * @param newQuery Object
    */
   handleQueryChange(newQuery) {
-    const routeName = _.last(this.context.routes).name;
-    const params = this.context.params;
-    const query = _.merge(this.getRequestBodyFromQuery(), this.getRequestBodyFromState(), newQuery);
+    const query = merge(
+      this.getRequestBodyFromQuery(),
+      this.getRequestBodyFromState(),
+      newQuery
+    );
 
-    this.context.router.transitionTo(routeName, params, _.omit(query, function(value) {
-      return !value;
-    }));
+    const queryWithoutNull = omit(query, value => !value);
+
+    const { pathname } = this.context.location;
+
+    this.context.router.push({
+      pathname,
+      query: queryWithoutNull,
+    });
   },
 
   handleStartDateChange(momentDate) {
