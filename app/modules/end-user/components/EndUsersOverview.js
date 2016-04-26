@@ -1,7 +1,7 @@
 import React, { PropTypes } from 'react';
 import { Link } from 'react-router';
 import Select from 'react-select';
-import { FormattedMessage } from 'react-intl';
+import { FormattedMessage, injectIntl } from 'react-intl';
 
 import moment from 'moment';
 import classNames from 'classnames';
@@ -239,6 +239,7 @@ const EndUsersOverview = React.createClass({
   },
 
   render() {
+    const { formatMessage } = this.props.intl;
     const { role, identity } = this.context.params;
     const totalRegisteredUser = this._getTotalRegisteredUser();
     const monthlyRegisteredUserStats = this._getMonthlyRegisteredUserStats();
@@ -280,15 +281,13 @@ const EndUsersOverview = React.createClass({
             <Panel.Wrapper>
               <Panel.Header
                 customClass="narrow"
-                title="Total User"
-                titleId="endUser.overview.totalUser"
+                title={formatMessage({ id: 'calls.overview.totalUser' })}
                 caption={`Data updated till: ${moment().subtract(1, 'day').endOf('day').format(LAST_UPDATE_TIME_FORMAT)}`}
               />
               <Panel.Body customClass="narrow no-padding">
                 <DataGrid.Wrapper>
                   <DataGrid.Cell
-                    title="Total Registered User"
-                    titleId="endUser.overview.totalRegisteredUser"
+                    title={formatMessage({ id: 'calls.overview.totalRegisteredUser' })}
                     data={totalRegisteredUser}
                     changeAmount=" "
                   />
@@ -301,8 +300,7 @@ const EndUsersOverview = React.createClass({
             <Panel.Wrapper>
               <Panel.Header
                 customClass="narrow"
-                title="Monthly Statistics"
-                titleId="endUser.overview.monthlyStatistics"
+                title={formatMessage({ id: 'calls.overview.monthlyStatistics' })}
                 caption={this.getLastUpdate({ year: this.state.selectedYear, month: this.state.selectedMonth })}
               >
                 <div className={classNames('tiny-spinner', { active: this.isMonthlyStatsLoading() })}></div>
@@ -317,8 +315,7 @@ const EndUsersOverview = React.createClass({
               <Panel.Body customClass="narrow no-padding">
                 <DataGrid.Wrapper>
                   <DataGrid.Cell
-                    title="New Registered User"
-                    titleId="endUser.overview.newRegisteredUser"
+                    title={formatMessage({ id: 'calls.overview.newRegisteredUser' })}
                     data={monthlyRegisteredUserStats.total}
                     changeDir={monthlyRegisteredUserStats.direction}
                     changeAmount={monthlyRegisteredUserStats.change}
@@ -327,8 +324,7 @@ const EndUsersOverview = React.createClass({
                     isLoading={this.isMonthlyStatsLoading()}
                   />
                   <DataGrid.Cell
-                    title="Active User"
-                    titleId="endUser.overview.activeUser"
+                    title={formatMessage({ id: 'calls.overview.activeUser' })}
                     data={monthlyActiveUserStats.total}
                     changeDir={monthlyActiveUserStats.direction}
                     changeAmount={monthlyActiveUserStats.change}
@@ -345,8 +341,7 @@ const EndUsersOverview = React.createClass({
             <Panel.Wrapper>
               <Panel.Header
                 customClass="narrow"
-                title="Daily Statistics"
-                titleId="endUser.overview.dailyStatistics"
+                title={formatMessage({ id: 'calls.overview.dailyStatistics' })}
                 caption={this.getLastUpdateFromTimeFrame()} >
                 <div className={classNames('tiny-spinner', { active: this.isTotalStatsLoading() })}></div>
                 <TimeFramePicker
@@ -664,4 +659,4 @@ const EndUsersOverview = React.createClass({
   },
 });
 
-export default EndUsersOverview;
+export default injectIntl(EndUsersOverview);

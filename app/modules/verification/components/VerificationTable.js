@@ -1,6 +1,6 @@
 import { isEmpty } from 'lodash';
 import React, { PropTypes } from 'react';
-import { FormattedMessage } from 'react-intl';
+import { FormattedMessage, defineMessages, injectIntl } from 'react-intl';
 
 import VerificationTableRow from './VerificationTableRow';
 import VerificationProfile from './VerificationProfile';
@@ -8,20 +8,59 @@ import EmptyRow from '../../../main/components/data-table/EmptyRow';
 
 import Pagination from '../../../main/components/Pagination';
 
-const TABLE_TITLES_IDS = [
-  'details.dateAndTime',
-  'mobile',
-  'vsdk.details.sourceIp',
-  'vsdk.details.method',
-  'os',
-  'vsdk.details.deviceModel',
-  'vsdk.details.operator',
-  'result',
-  'remark',
+const MESSAGES = defineMessages({
+  dateAndTime: {
+    id: 'details.dateAndTime',
+    defaultMessage: 'Date & Time',
+  },
+  mobile: {
+    id: 'mobile',
+    defaultMessage: 'Mobile',
+  },
+  sourceIp: {
+    id: 'vsdk.details.sourceIp',
+    defaultMessage: 'Source Ip',
+  },
+  method: {
+    id: 'vsdk.details.method',
+    defaultMessage: 'Verification Method',
+  },
+  os: {
+    id: 'os',
+    defaultMessage: 'OS',
+  },
+  deviceModel: {
+    id: 'vsdk.details.deviceModel',
+    defaultMessage: 'Device Model',
+  },
+  operator: {
+    id: 'vsdk.details.operator',
+    defaultMessage: 'Operator',
+  },
+  result: {
+    id: 'result',
+    defaultMessage: 'Result',
+  },
+  remark: {
+    id: 'remark',
+    defaultMessage: 'Remark',
+  },
+});
+
+const TABLE_TITLES = [
+  MESSAGES.dateAndTime,
+  MESSAGES.mobile,
+  MESSAGES.sourceIp,
+  MESSAGES.method,
+  MESSAGES.os,
+  MESSAGES.deviceModel,
+  MESSAGES.operator,
+  MESSAGES.result,
+  MESSAGES.remark,
   '',
 ];
 
-export default React.createClass({
+const VerificationTable = React.createClass({
   propTypes: {
     /**
      * Verification records
@@ -39,6 +78,7 @@ export default React.createClass({
      */
     onLoadMoreClick: PropTypes.func.isRequired,
     isLoadingMore: PropTypes.bool,
+    intl: PropTypes.object.isRequired,
   },
 
   getDefaultProps() {
@@ -77,11 +117,13 @@ export default React.createClass({
 
   renderEmptyRow() {
     if (!this.props.verifications || this.props.verifications.length === 0) {
-      return <EmptyRow colSpan={10} />;
+      return <EmptyRow colSpan={TABLE_TITLES.lenght} />;
     }
+
+    return null;
   },
 
-  renderPaginationFooter: function () {
+  renderPaginationFooter() {
     if (this.props.verifications.length < this.props.total) {
       return (
         <div
@@ -104,6 +146,7 @@ export default React.createClass({
 
   render() {
     const { selectedProfile } = this.state;
+    const { formatMessage } = this.props.intl;
 
     return (
       <If condition={!selectedProfile}>
@@ -111,9 +154,9 @@ export default React.createClass({
           <thead>
             <tr>
             {
-              TABLE_TITLES_IDS.map(id => (
+              TABLE_TITLES.map(title => (
                 <th className="verification-table--cell">
-                  <FormattedMessage id={id} />
+                  {formatMessage(title)}
                 </th>
               ))
             }
@@ -125,7 +168,7 @@ export default React.createClass({
           <tfoot>
             <If condition={!isEmpty(this.props.verifications)}>
               <Pagination
-                colSpan={TABLE_TITLES_IDS.length + 1}
+                colSpan={TABLE_TITLES.length + 1}
                 hasMoreData={this.props.verifications.length < this.props.total}
                 onLoadMore={this.props.onLoadMoreClick}
                 isLoading={this.props.isLoadingMore}
@@ -142,3 +185,5 @@ export default React.createClass({
     );
   },
 });
+
+export default injectIntl(VerificationTable);

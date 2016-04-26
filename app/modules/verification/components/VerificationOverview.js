@@ -199,10 +199,7 @@ export default React.createClass({
             {this.isLoading() ? EMPTY_CELL_PLACEHOLDER : this.state.busiestAttempts}
           </div>
           <div className="verification-overview__title">
-            <FormattedMessage
-              id="attempts"
-              defaultMessage="attempts"
-            />
+            {this.renderAttemptSection()}
           </div>
         </div>
 
@@ -224,6 +221,10 @@ export default React.createClass({
     );
   },
 
+  renderAttemptSection() {
+    return <FormattedMessage id="attempts" defaultMessage="Attempts" />;
+  },
+
   renderCountryTable() {
     const sortedCountries = sortByOrder(this.state.countriesData, ['value'], ['desc'], values);
 
@@ -234,7 +235,7 @@ export default React.createClass({
             <FormattedMessage id="location" defaultMessage="Location" />
           </th>
           <th>
-            <FormattedMessage id="attempts" defaultMessage="Attempts" />
+            {this.renderAttemptSection()}
           </th>
         </tr>
         {

@@ -6,6 +6,7 @@
   * [Env Vars](docs/ENV_VARS.md)
   * [Logstash](docs/Logstash.md)
 * [Test Automation](docs/AUTOMATED_BROWSER_TESTING.md)
+* [Internationalization and Localization](docs/I18N.md)
 * [Release](docs/RELEASE.md)
   * [Changes](doc/CHANGES.md)
   * [Docker](docs/DOCKER.md)

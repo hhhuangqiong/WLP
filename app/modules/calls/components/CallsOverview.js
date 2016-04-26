@@ -5,7 +5,7 @@ import classNames from 'classnames';
 import React, { PropTypes } from 'react';
 import { Link } from 'react-router';
 import Select from 'react-select';
-import { FormattedMessage } from 'react-intl';
+import { FormattedMessage, defineMessages, injectIntl } from 'react-intl';
 
 import { FluxibleMixin } from 'fluxible-addons-react';
 
@@ -43,7 +43,34 @@ const TIME_FRAMES = ['24 hours', '7 days', '30 days', '60 days', '90 days'];
 // this should be application-wide variable
 const DECIMAL_PLACE = 1;
 
+const MESSAGES = defineMessages({
+  monthlyVoiceCallUser: {
+    id: 'calls.overview.monthlyVoiceCallUser',
+    defaultMessage: 'Monthly Voice Call User (Unique)',
+  },
+  callBehaviourStatistics: {
+    id: 'calls.overview.callBehaviourStatistics',
+    defaultMessage: 'Call Behaviour Statistics',
+  },
+  totalCallsAttempts: {
+    id: 'calls.overview.totalCallsAttempts',
+    defaultMessage: 'Total Calls Attempts',
+  },
+  totalCallDuration: {
+    id: 'calls.overview.totalCallDuration',
+    defaultMessage: 'Total Call Duration',
+  },
+  averageCallDuration: {
+    id: 'calls.overview.averageCallDuration',
+    defaultMessage: 'Average Call Duration',
+  },
+});
+
 const CallsOverview = React.createClass({
+  propTypes: {
+    intl: PropTypes.object.isRequired,
+  },
+
   contextTypes: {
     location: PropTypes.object,
     params: PropTypes.object,
@@ -407,6 +434,7 @@ const CallsOverview = React.createClass({
     const { role, identity } = this.context.params;
     const monthlyUserStats = this._getMonthlyUser();
     const appIds = this._getAppIdSelectOptions();
+    const { formatMessage } = this.props.intl;
 
     return (
       <div className="row">
@@ -420,11 +448,20 @@ const CallsOverview = React.createClass({
             </Link>
           </FilterBar.NavigationItems>
           <FilterBar.LeftItems>
-            <a className={classNames({ active: this.state.type === CALL_TYPE.ALL })} onClick={ bindKey(this, 'changeCallType', CALL_TYPE.ALL) }>All</a>
-            <a className={classNames({ active: this.state.type === CALL_TYPE.ONNET })} onClick={ bindKey(this, 'changeCallType', CALL_TYPE.ONNET) }>
+            <a
+              className={classNames({ active: this.state.type === CALL_TYPE.ALL })}
+              onClick={ bindKey(this, 'changeCallType', CALL_TYPE.ALL) }
+            >All</a>
+            <a
+              className={classNames({ active: this.state.type === CALL_TYPE.ONNET })}
+              onClick={ bindKey(this, 'changeCallType', CALL_TYPE.ONNET) }
+            >
               <FormattedMessage id="onnet" defaultMessage="Onnet" />
             </a>
-            <a className={classNames({ active: this.state.type === CALL_TYPE.OFFNET })} onClick={ bindKey(this, 'changeCallType', CALL_TYPE.OFFNET) }>
+            <a
+              className={classNames({ active: this.state.type === CALL_TYPE.OFFNET })}
+              onClick={ bindKey(this, 'changeCallType', CALL_TYPE.OFFNET) }
+            >
               <FormattedMessage id="offnet" defaultMessage="Offnet" />
             </a>
           </FilterBar.LeftItems>
@@ -448,8 +485,7 @@ const CallsOverview = React.createClass({
           <Panel.Wrapper>
             <Panel.Header
               customClass="narrow"
-              title="Monthly Voice Call User"
-              titleId="calls.overview.monthlyVoiceCallUser"
+              title={formatMessage(MESSAGES.monthlyVoiceCallUser)}
               caption={this._getLastUpdate({ year: this.state.selectedYear, month: this.state.selectedMonth })} >
               <div className={classNames('tiny-spinner', { active: this.isMonthlyStatsLoading() })}></div>
               <DateSelector
@@ -463,8 +499,7 @@ const CallsOverview = React.createClass({
             <Panel.Body customClass="narrow no-padding">
               <DataGrid.Wrapper>
                 <DataGrid.Cell
-                  title="Monthly Voice Call User (Unique)"
-                  titleId="calls.overview.monthlyVoiceCallUser"
+                  title={formatMessage(MESSAGES.monthlyVoiceCallUser)}
                   data={monthlyUserStats.total}
                   changeDir={monthlyUserStats.direction}
                   changeAmount={monthlyUserStats.change}
@@ -481,8 +516,7 @@ const CallsOverview = React.createClass({
           <Panel.Wrapper>
             <Panel.Header
               customClass="narrow"
-              title="Call Behaviour Statistics"
-              titleId="calls.overview.callBehaviourStatistics"
+              title={formatMessage(MESSAGES.callBehaviourStatistics)}
               caption={this._getLastUpdateFromTimeFrame()}
             >
               <div className={classNames('tiny-spinner', { active: this.isTotalStatsLoading() })}></div>
@@ -501,8 +535,7 @@ const CallsOverview = React.createClass({
                   <div className="chart-cell__chart row">
                     <DataGrid.Wrapper>
                       <DataGrid.Cell
-                        title="Total Calls Attempts"
-                        titleId="calls.overview.totalCallsAttempts"
+                        title={formatMessage(MESSAGES.totalCallsAttempts)}
                         data={this._getTotalCallAttempt()}
                         isLoading={this.isTotalStatsLoading()}
                       />
@@ -514,16 +547,14 @@ const CallsOverview = React.createClass({
                         isLoading={this.isTotalStatsLoading()}
                       />
                       <DataGrid.Cell
-                        title="Total Call Duration"
-                        titleId="calls.overview.totalCallDuration"
+                        title={formatMessage(MESSAGES.totalCallDuration)}
                         data={this._getTotalCallDuration()}
                         formatter={normalizeDurationInMS}
                         unit="minutes"
                         isLoading={this.isTotalStatsLoading()}
                       />
                       <DataGrid.Cell
-                        title="Average Call Duration"
-                        titleId="calls.overview.averageCallDuration"
+                        title={formatMessage(MESSAGES.averageCallDuration)}
                         data={this._getAverageCallDuration()}
                         formatter={normalizeDurationInMS}
                         unit="seconds"
@@ -625,4 +656,4 @@ const CallsOverview = React.createClass({
   },
 });
 
-export default CallsOverview;
+export default injectIntl(CallsOverview);

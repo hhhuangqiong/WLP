@@ -1,10 +1,29 @@
 import React, { PropTypes } from 'react';
 import classNames from 'classnames';
-import { FormattedMessage } from 'react-intl';
+import { defineMessages, injectIntl } from 'react-intl';
 
 const TOTAL_COLUMNS = 24;
 
-export default React.createClass({
+const MESSAGES = defineMessages({
+  attempts: {
+    id: 'vsdk.overview.total.attempts',
+    defaultMessage: 'Total number of verification attempts',
+  },
+  success: {
+    id: 'vsdk.overview.total.success',
+    defaultMessage: 'Total number of success verification',
+  },
+  failure: {
+    id: 'vsdk.overview.number.failure',
+    defaultMessage: 'Number of failure verification',
+  },
+  successRate: {
+    id: 'vsdk.overview.average.successRate',
+    defaultMessage: 'Average success rate',
+  },
+});
+
+const SummaryCells = React.createClass({
   displayName: 'SummaryCells',
 
   propTypes: {
@@ -16,6 +35,7 @@ export default React.createClass({
     pastAccumulatedSuccess: PropTypes.number,
     pastAccumulatedFailure: PropTypes.number,
     pastAverageSuccessRate: PropTypes.number,
+    intl: PropTypes.object.isRequired,
   },
 
   /**
@@ -60,6 +80,7 @@ export default React.createClass({
   },
 
   prepareCellsMetadata() {
+    const { formatMessage } = this.props.intl;
     const accumulatedAttempts = this.props.accumulatedAttempts;
     const accumulatedSuccess = this.props.accumulatedSuccess;
     const accumulatedFailure = this.props.accumulatedFailure;
@@ -96,8 +117,7 @@ export default React.createClass({
     trend = computeTrend(pastAccumulatedAttempts, accumulatedAttempts, true);
 
     cellMetadataList.push({
-      title: 'Total number of verification attempts',
-      titleId: 'vsdk.overview.total.attempts',
+      title: formatMessage(MESSAGES.attempts),
       value: accumulatedAttempts,
       changes: {
         status: trend.status,
@@ -110,8 +130,7 @@ export default React.createClass({
     trend = computeTrend(pastAccumulatedSuccess, accumulatedSuccess, true);
 
     cellMetadataList.push({
-      title: 'Total number of success verification',
-      titleId: 'vsdk.overview.total.success',
+      title: formatMessage(MESSAGES.success),
       value: accumulatedSuccess,
       changes: {
         status: trend.status,
@@ -124,8 +143,7 @@ export default React.createClass({
     trend = computeTrend(pastAccumulatedFailure, accumulatedFailure, false);
 
     cellMetadataList.push({
-      title: 'Number of failure verification',
-      titleId: 'vsdk.overview.number.failure',
+      title: formatMessage(MESSAGES.failure),
       value: accumulatedFailure,
       changes: {
         status: trend.status,
@@ -138,8 +156,7 @@ export default React.createClass({
     trend = computeTrend(pastAverageSuccessRate, averageSuccessRate, true);
 
     cellMetadataList.push({
-      title: 'Average success rate',
-      titleId: 'vsdk.overview.average.successRate',
+      title: formatMessage(MESSAGES.successRate),
       value: `${Math.round(averageSuccessRate)}%`,
       changes: {
         status: trend.status,
@@ -149,14 +166,6 @@ export default React.createClass({
     });
 
     return cellMetadataList;
-  },
-
-  renderTitle(titleId, title) {
-    if (titleId) {
-      return <FormattedMessage id={titleId} defaultMessage={title} />;
-    }
-
-    return title;
   },
 
   renderCells(cellMetadataList) {
@@ -171,7 +180,7 @@ export default React.createClass({
           )}
         >
           <div className="verification-overview__title">
-            {this.renderTitle(cell.titleId, cell.title)}
+            {cell.title}
           </div>
           <div className="verification-overview__value">{cell.value}</div>
           <div className={classNames(
@@ -196,3 +205,5 @@ export default React.createClass({
     );
   },
 });
+
+export default injectIntl(SummaryCells);

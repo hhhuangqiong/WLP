@@ -3,7 +3,7 @@ import moment from 'moment';
 import classNames from 'classnames';
 import React, { PropTypes } from 'react';
 import Tooltip from 'rc-tooltip';
-import { FormattedMessage } from 'react-intl';
+import { FormattedMessage, defineMessages, injectIntl } from 'react-intl';
 
 import { getCountryName } from '../../../utils/StringFormatter';
 import config from './../../../main/config';
@@ -15,19 +15,47 @@ import Pagination from '../../../main/components/Pagination';
 const { displayDateFormat: DATE_FORMAT } = config;
 const SYSTEM_MESSAGE_LABEL = 'System Message';
 
-const TABLE_TITLES_IDS = [
+const MESSAGES = defineMessages({
+  dateAndTime: {
+    id: 'details.dateAndTime',
+    defaultMessage: 'Date & Time',
+  },
+  type: {
+    id: 'type',
+    defaultMessage: 'Type / Filesize',
+  },
+  mobileAndDestination: {
+    id: 'details.mobileAndDestination',
+    defaultMessage: 'Mobile & Destination',
+  },
+  status: {
+    id: 'status',
+    defaultMessage: 'Status',
+  },
+  amount: {
+    id: 'amount',
+    defaultMessage: 'Amount',
+  },
+  remark: {
+    id: 'remark',
+    defaultMessage: 'Remark',
+  },
+});
+
+const TABLE_TITLES = [
   '',
-  'details.dateAndTime',
-  'type',
-  'details.mobileAndDestination',
-  'status',
-  'amount',
-  'remark',
+  MESSAGES.dateAndTime,
+  MESSAGES.type,
+  MESSAGES.mobileAndDestination,
+  MESSAGES.status,
+  MESSAGES.amount,
+  MESSAGES.remark,
 ];
 
 const SMSTable = React.createClass({
   propTypes: {
     records: PropTypes.object,
+    intl: PropTypes.object.isRequired,
     page: PropTypes.number,
     totalPage: PropTypes.number,
     onPageLoad: PropTypes.func,
@@ -71,8 +99,10 @@ const SMSTable = React.createClass({
 
   renderEmptyRow() {
     if (!this.props.records || this.props.records.length === 0) {
-      return <EmptyRow colSpan={7} />;
+      return <EmptyRow colSpan={TABLE_TITLES.length} />;
     }
+
+    return null;
   },
 
   renderRows(records = []) {
@@ -162,14 +192,16 @@ const SMSTable = React.createClass({
   },
 
   render() {
+    const { formatMessage } = this.props.intl;
+
     return (
       <table className="data-table large-24 clickable">
         <thead>
           <tr>
           {
-            TABLE_TITLES_IDS.map(id => (
+            TABLE_TITLES.map(({ id }) => (
               <th className="SMS-table--cell">
-                <FormattedMessage id={id} />
+                {formatMessage({ id })}
               </th>
             ))
           }
@@ -179,7 +211,7 @@ const SMSTable = React.createClass({
         <tfoot>
           <If condition={!isEmpty(this.props.records)}>
             <Pagination
-              colSpan={TABLE_TITLES_IDS.length + 1}
+              colSpan={TABLE_TITLES.length + 1}
               hasMoreData={(this.props.totalPages - 1) > this.props.page}
               onLoadMore={this.props.onDataLoad}
               isLoading={this.props.isLoadingMore}
@@ -191,4 +223,4 @@ const SMSTable = React.createClass({
   },
 });
 
-export default SMSTable;
+export default injectIntl(SMSTable);

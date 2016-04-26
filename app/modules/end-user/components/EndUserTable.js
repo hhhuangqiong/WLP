@@ -2,7 +2,7 @@ import moment from 'moment';
 import { get, bindKey, isNull, isEmpty, capitalize } from 'lodash';
 import React, { PropTypes } from 'react';
 import classNames from 'classnames';
-import { FormattedMessage } from 'react-intl';
+import { FormattedMessage, defineMessages, injectIntl } from 'react-intl';
 
 import EmptyRow from '../../../main/components/data-table/EmptyRow';
 
@@ -13,13 +13,40 @@ const { displayDateFormat: DATE_FORMAT } = require('./../../../main/config');
 const NOT_FOUND_LABEL = 'N/A';
 const INACTIVE_ACCOUNT_LABEL = 'Inactive';
 
-const TABLE_TITLES_IDS = [
-  'username',
-  'endUser.details.registrationDate',
-  'endUser.details.accountStatus',
-  'endUser.details.latestDeviceModel',
-  'buildId',
-  'endUser.details.appVersion',
+const MESSAGES = defineMessages({
+  username: {
+    id: 'username',
+    defaultMessage: 'Username',
+  },
+  registrationDate: {
+    id: 'endUser.details.registrationDate',
+    defaultMessage: 'Registration Date',
+  },
+  accountStatus: {
+    id: 'endUser.details.accountStatus',
+    defaultMessage: 'Account Status',
+  },
+  latestDeviceModel: {
+    id: 'endUser.details.latestDeviceModel',
+    defaultMessage: 'Latest Device Model',
+  },
+  buildId: {
+    id: 'buildId',
+    defaultMessage: 'Build Id',
+  },
+  appVersion: {
+    id: 'endUser.details.appVersion',
+    defaultMessage: 'App Version',
+  },
+});
+
+const TABLE_TITLES = [
+  MESSAGES.username,
+  MESSAGES.registrationDate,
+  MESSAGES.accountStatus,
+  MESSAGES.latestDeviceModel,
+  MESSAGES.buildId,
+  MESSAGES.appVersion,
 ];
 
 import {
@@ -35,6 +62,7 @@ const EndUserTable = React.createClass({
     onUserClick: PropTypes.func,
     onPageChange: PropTypes.func.isRequired,
     currentUser: PropTypes.object.isRequired,
+    intl: PropTypes.object.isRequired,
   },
 
   contextTypes: {
@@ -50,8 +78,10 @@ const EndUserTable = React.createClass({
 
   renderEmptyRow() {
     if (!this.props.users || this.props.users.length === 0) {
-      return <EmptyRow colSpan={7} />;
+      return <EmptyRow colSpan={TABLE_TITLES.length} />;
     }
+
+    return null;
   },
 
   renderTableFooterContent() {
@@ -156,9 +186,9 @@ const EndUserTable = React.createClass({
         <thead>
           <tr>
             {
-              TABLE_TITLES_IDS.map(id => (
+              TABLE_TITLES.map(({ id }) => (
                 <th className="im-table--cell">
-                  <FormattedMessage id={id} />
+                  {formatMessage({ id })}
                 </th>
               ))
             }
@@ -168,7 +198,7 @@ const EndUserTable = React.createClass({
         <tfoot>
           <If condition={!isEmpty(this.props.users)}>
             <Pagination
-              colSpan={TABLE_TITLES_IDS.length + 1}
+              colSpan={TABLE_TITLES.length + 1}
               hasMoreData={this.props.hasNext}
               onLoadMore={this.props.onPageChange}
             />
@@ -179,4 +209,4 @@ const EndUserTable = React.createClass({
   },
 });
 
-export default EndUserTable;
+export default injectIntl(EndUserTable);

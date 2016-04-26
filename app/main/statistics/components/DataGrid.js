@@ -54,18 +54,6 @@ class DataCell extends Component {
     return (data && data.toLocaleString());
   }
 
-  renderTitle() {
-    const {
-      title, titleId,
-    } = this.props;
-
-    if (titleId) {
-      return <FormattedMessage id={titleId} defaultMessage={title} />;
-    }
-
-    return title;
-  }
-
   render() {
     const {
       isLoading,
@@ -76,11 +64,12 @@ class DataCell extends Component {
       changeAmount,
       changePercentage,
       formatter,
+      title,
     } = this.props;
 
     return (
       <div className="data-cell">
-        <div className="data-cell__title">{ this.renderTitle() }</div>
+        <div className="data-cell__title">{ title }</div>
         <div className="data-cell__data">
           { this._localiseData(formatter(data)) }
         </div>
@@ -106,8 +95,7 @@ class DataCell extends Component {
 }
 
 DataCell.propTypes = {
-  title: PropTypes.string,
-  titleId: PropTypes.string,
+  title: PropTypes.string.isRequired,
   data: PropTypes.string.isRequired,
   unit: PropTypes.string,
   decimalPlace: PropTypes.number,

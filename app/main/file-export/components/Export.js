@@ -49,37 +49,6 @@ export default createClass({
     }
   },
 
-  render() {
-    const ExportForm = cloneElement(this.props.children, {
-      handleExport: this.handleExport,
-      closeModal: this.closeModal,
-    });
-
-    return (
-      <div>
-        <Modal
-          isOpen={this.state.modalOpened}
-          onRequestClose={this.closeModal}
-          className="ReactModal__Content modal"
-        >
-          {ExportForm}
-        </Modal>
-
-        <ExportPanel
-          className="export-panel export-ie-fix"
-          exportId={this.state.exportId}
-          exportTriggered={this.state.exportTriggered}
-          progress={this.state.progress}
-          carrierId={this.state.carrierId}
-          cancel={this.cancel}
-          openModal={this.openModal}
-          download={this.download}
-          pollProgress={this.pollProgress}
-        />
-      </div>
-    );
-  },
-
   download() {
     const downloadPath = `/export/${this.state.carrierId}/file?exportId=${this.state.exportId}`;
     window.open(downloadPath);
@@ -139,4 +108,34 @@ export default createClass({
     };
   },
 
+  render() {
+    const ExportForm = cloneElement(this.props.children, {
+      handleExport: this.handleExport,
+      closeModal: this.closeModal,
+    });
+
+    return (
+      <div>
+        <Modal
+          isOpen={this.state.modalOpened}
+          onRequestClose={this.closeModal}
+          className="ReactModal__Content modal"
+        >
+          {ExportForm}
+        </Modal>
+
+        <ExportPanel
+          className="export-panel export-ie-fix"
+          exportId={this.state.exportId}
+          exportTriggered={this.state.exportTriggered}
+          progress={this.state.progress}
+          carrierId={this.state.carrierId}
+          cancel={this.cancel}
+          openModal={this.openModal}
+          download={this.download}
+          pollProgress={this.pollProgress}
+        />
+      </div>
+    );
+  },
 });

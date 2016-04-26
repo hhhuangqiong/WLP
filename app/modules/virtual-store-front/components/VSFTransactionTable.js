@@ -2,6 +2,7 @@ import React, { PropTypes } from 'react';
 import Moment from 'moment';
 import classNames from 'classnames';
 import { isNull, isEmpty } from 'lodash';
+import { FormattedMessage, defineMessages, injectIntl } from 'react-intl';
 
 import EmptyRow from '../../../main/components/data-table/EmptyRow';
 
@@ -11,14 +12,41 @@ const NO_VALUE_LABEL = 'N/A';
 const IOS_PLATFORM = 'com.maaii.platform.ios';
 const ANDROID_PLATFORM = 'com.maaii.platform.android';
 
-const TABLE_TITLES_IDS = [
+const MESSAGES = defineMessages({
+  dateAndTime: {
+    id: 'details.dateAndTime',
+    defaultMessage: 'Date & Time',
+  },
+  mobile: {
+    id: 'mobile',
+    defaultMessage: 'Mobile',
+  },
+  platform: {
+    id: 'platform',
+    defaultMessage: 'Platform',
+  },
+  virtualItem: {
+    id: 'vsf.virtualItem',
+    defaultMessage: 'Virtual Item',
+  },
+  amount: {
+    id: 'amount',
+    defaultMessage: 'Amount',
+  },
+  transactionId: {
+    id: 'vsf.transactionId',
+    defaultMessage: 'Transaction Id',
+  },
+});
+
+const TABLE_TITLES = [
   '',
-  'details.dateAndTime',
-  'mobile',
-  'platform',
-  'vsf.virtualItem',
-  'amount',
-  'vsf.transactionId',
+  MESSAGES.dateAndTime,
+  MESSAGES.mobile,
+  MESSAGES.platform,
+  MESSAGES.virtualItem,
+  MESSAGES.amount,
+  MESSAGES.transactionId,
 ];
 
 import {
@@ -29,9 +57,10 @@ import {
 
 const VSFTransactionTable = React.createClass({
   propTypes: {
-    transactions: React.PropTypes.array.isRequired,
-    hasNextPage: React.PropTypes.bool.isRequired,
-    loadPage: React.PropTypes.func.isRequired,
+    transactions: PropTypes.array.isRequired,
+    hasNextPage: PropTypes.bool.isRequired,
+    loadPage: PropTypes.func.isRequired,
+    intl: PropTypes.object.isRequired,
     isLoadingMore: PropTypes.bool,
   },
 
@@ -48,8 +77,11 @@ const VSFTransactionTable = React.createClass({
   },
 
   renderPlatform(platform) {
-    if (!platform) return NO_VALUE_LABEL;
-    return (<span className={this.getStyleByStoreType(platform)}></span>);
+    if (!platform) {
+      return NO_VALUE_LABEL;
+    }
+
+    return <span className={this.getStyleByStoreType(platform)}></span>;
   },
 
   renderRows() {
@@ -120,7 +152,11 @@ const VSFTransactionTable = React.createClass({
   },
 
   renderEmptyRow() {
-    return <EmptyRow colSpan={TABLE_TITLES.length} />;
+    if (!this.props.transactions || this.props.transactions.length === 0) {
+      return <EmptyRow colSpan={TABLE_TITLES.length} />;
+    }
+
+    return null;
   },
 
   renderTableBody() {
@@ -140,26 +176,20 @@ const VSFTransactionTable = React.createClass({
       );
     }
 
-    if (isEmpty(transactions)) {
-      return (
-        <tbody className={UI_STATE_EMPTY}>{this.renderEmptyRow()}</tbody>
-      );
-    }
-
-    return (
-      <tbody className={UI_STATE_NORMAL}>{this.renderRows()}</tbody>
-    );
+    return null;
   },
 
   render() {
+    const { formatMessage } = this.props.intl;
+
     return (
       <table className="large-24 clickable data-table" key="vsf-table">
         <thead className="vsf-table--head">
           <tr>
             {
-              TABLE_TITLES_IDS.map(id => (
+              TABLE_TITLES.map(title => (
                 <th className="vsf-table--cell">
-                  <FormattedMessage id={id} />
+                  {formatMessage(title)}
                 </th>
               ))
             }
@@ -169,7 +199,7 @@ const VSFTransactionTable = React.createClass({
         <tfoot>
           <If condition={!isEmpty(this.props.transactions)}>
             <Pagination
-              colSpan={TABLE_TITLES_IDS.length + 1}
+              colSpan={TABLE_TITLES.length + 1}
               hasMoreData={this.props.hasNextPage}
               onLoadMore={this.props.loadPage}
               isLoading={this.props.isLoadingMore}
@@ -181,4 +211,4 @@ const VSFTransactionTable = React.createClass({
   },
 });
 
-export default VSFTransactionTable;
+export default injectIntl(VSFTransactionTable);

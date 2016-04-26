@@ -3,7 +3,7 @@ import moment from 'moment';
 import classNames from 'classnames';
 import React, { PropTypes } from 'react';
 import Tooltip from 'rc-tooltip';
-import { FormattedMessage } from 'react-intl';
+import { FormattedMessage, defineMessages, injectIntl } from 'react-intl';
 
 import EmptyRow from '../../../main/components/data-table/EmptyRow';
 import Pagination from '../../../main/components/Pagination';
@@ -15,14 +15,41 @@ import config from './../../../main/config';
 const { displayDateFormat: DATE_FORMAT } = config;
 const converter = new Converter(currencyData, { default: '840' });
 
-const TABLE_TITLES_IDS = [
+const MESSAGES = defineMessages({
+  dateAndTime: {
+    id: 'details.dateAndTime',
+    defaultMessage: 'Date & Time',
+  },
+  mobile: {
+    id: 'mobile',
+    defaultMessage: 'Mobile',
+  },
+  wallet: {
+    id: 'wallet',
+    defaultMessage: 'Wallet',
+  },
+  type: {
+    id: 'type',
+    defaultMessage: 'Type',
+  },
+  amount: {
+    id: 'amount',
+    defaultMessage: 'Amount',
+  },
+  remark: {
+    id: 'remark',
+    defaultMessage: 'Remark',
+  },
+});
+
+const TABLE_TITLES = [
   '',
-  'details.dateAndTime',
-  'mobile',
-  'wallet',
-  'type',
-  'amount',
-  'remark',
+  MESSAGES.dummy,
+  MESSAGES.mobile,
+  MESSAGES.wallet,
+  MESSAGES.type,
+  MESSAGES.amount,
+  MESSAGES.remark,
 ];
 
 import {
@@ -40,6 +67,7 @@ const TopUpTable = React.createClass({
     totalRec: PropTypes.number,
     onPageLoad: PropTypes.func,
     isLoadingMore: PropTypes.bool,
+    intl: PropTypes.object.isRequired,
   },
 
   _isFreeWallet(type) {
@@ -85,7 +113,11 @@ ${(!currency.code ? '' : currency.code)}`;
   },
 
   renderEmptyRow() {
-    return <EmptyRow colSpan={TABLE_TITLES.length} />;
+    if (!this.props.histories || this.props.histories.length === 0) {
+      return <EmptyRow colSpan={TABLE_TITLES.length} />;
+    }
+
+    return null;
   },
 
   renderTableBody() {
@@ -167,14 +199,16 @@ ${(!currency.code ? '' : currency.code)}`;
   },
 
   render() {
+	const { formatMessage } = this.props.intl;
+
     return (
       <table className="data-table large-24 clickable">
         <thead>
           <tr>
             {
-              TABLE_TITLES_IDS.map(id => (
+              TABLE_TITLES.map(title => (
                 <th className="top-up-table--cell">
-                  <FormattedMessage id={id} />
+                  {formatMessage(title)}
                 </th>
               ))
             }
@@ -182,7 +216,7 @@ ${(!currency.code ? '' : currency.code)}`;
         </thead>
         {this.renderTableBody()}
         <Pagination
-          colSpan={TABLE_TITLES_IDS.length + 1}
+          colSpan={TABLE_TITLES.length + 1}
           hasMoreData={this.props.totalRec > this.props.page * this.props.pageRec}
           onLoadMore={this.props.onPageLoad}
           isLoading={this.props.isLoadingMore}
@@ -192,4 +226,4 @@ ${(!currency.code ? '' : currency.code)}`;
   },
 });
 
-export default TopUpTable;
+export default injectIntl(TopUpTable);

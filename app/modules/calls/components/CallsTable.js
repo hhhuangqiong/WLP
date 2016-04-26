@@ -2,7 +2,7 @@ import React, { PropTypes } from 'react';
 import classNames from 'classnames';
 import moment from 'moment';
 import { isEmpty, isNull } from 'lodash';
-import { FormattedMessage } from 'react-intl';
+import { defineMessages, injectIntl } from 'react-intl';
 
 import Pagination from '../../../main/components/Pagination';
 import { parseDuration } from '../../../utils/StringFormatter';
@@ -16,15 +16,50 @@ const EMPTY_STRING = 'N/A';
 const DATE_FORMAT = 'MMMM DD YYYY';
 const TIME_FORMAT = 'H:mm:ss';
 
-const TABLE_TITLES_IDS = [
-  'calls.details.caller',
-  'calls.details.callee',
-  'calls.details.callDuration',
-  'date',
-  'status',
-  'calls.details.lastReponseCode',
-  'calls.details.byeReason',
-  'calls.details.releaseParty',
+const MESSAGES = defineMessages({
+  caller: {
+    id: 'calls.details.caller',
+    defaultMessage: 'Caller',
+  },
+  callee: {
+    id: 'calls.details.callee',
+    defaultMessage: 'Callee',
+  },
+  callDuration: {
+    id: 'calls.details.callDuration',
+    defaultMessage: 'Call Duration',
+  },
+  date: {
+    id: 'date',
+    defaultMessage: 'Date',
+  },
+  status: {
+    id: 'status',
+    defaultMessage: 'Status',
+  },
+  lastReponseCode: {
+    id: 'calls.details.lastReponseCode',
+    defaultMessage: 'Last Response Code',
+  },
+  byeReason: {
+    id: 'calls.details.byeReason',
+    defaultMessage: 'Bye Reason',
+  },
+  releaseParty: {
+    id: 'calls.details.releaseParty',
+    defaultMessage: 'Release Party',
+  },
+});
+
+const TABLE_TITLES = [
+  MESSAGES.caller,
+  MESSAGES.callee,
+  MESSAGES.callDuration,
+  MESSAGES.date,
+  MESSAGES.status,
+  MESSAGES.lastReponseCode,
+  MESSAGES.byeReason,
+  MESSAGES.releaseParty,
 ];
 
 import {
@@ -40,6 +75,7 @@ const CallsTable = React.createClass({
     page: PropTypes.number.isRequired,
     onDataLoad: PropTypes.func.isRequired,
     isLoadingMore: PropTypes.bool,
+    intl: PropTypes.object.isRequired,
   },
 
   contextTypes: {
@@ -151,7 +187,7 @@ const CallsTable = React.createClass({
     return (
       <tfoot>
         <Pagination
-          colSpan={TABLE_TITLES_IDS.length + 1}
+          colSpan={TABLE_TITLES.length + 1}
           hasMoreData={(this.props.totalPages - 1) > this.props.page}
           onLoadMore={this.props.onDataLoad}
           isLoading={this.props.isLoadingMore}
@@ -165,7 +201,13 @@ const CallsTable = React.createClass({
       <table className="large-24 clickable data-table" key="calls-table">
         <thead>
           <tr>
-            {TABLE_TITLES.map(title => <th>{title}</th>)}
+            {
+              TABLE_TITLES.map(title => (
+                <th className="im-table--cell">
+                  {formatMessage(title)}
+                </th>
+              ))
+            }
           </tr>
         </thead>
         {this.renderTableBody(this.props.calls)}
@@ -175,4 +217,4 @@ const CallsTable = React.createClass({
   },
 });
 
-export default CallsTable;
+export default injectIntl(CallsTable);

@@ -2,6 +2,12 @@
   "presets": ["es2015", "stage-0", "react"],
   "plugins": [
     "transform-decorators-legacy",
-    "jsx-control-statements"
+    "jsx-control-statements",
+    [
+      "react-intl",
+      {
+        "messagesDir": "./build/intl/"
+      }
+    ]
   ]
 }

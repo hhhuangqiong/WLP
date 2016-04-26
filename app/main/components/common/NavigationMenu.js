@@ -2,7 +2,14 @@ import _,{ some } from 'lodash';
 import React, { PropTypes } from 'react';
 import { Link } from 'react-router';
 import { FluxibleMixin } from 'fluxible-addons-react';
-import { FormattedMessage } from 'react-intl';
+import { FormattedMessage, defineMessages, injectIntl } from 'react-intl';
+
+defineMessages({
+  changePasswordModal: {
+    id: 'changePassword',
+    defaultMessage: 'Change Password',
+  },
+});
 
 import CompanySwitcher from './CompanySwitcher';
 import signOut from '../../actions/signOut';
@@ -27,6 +34,7 @@ const Navigation = React.createClass({
     location: PropTypes.object,
     params: PropTypes.object,
     router: PropTypes.object,
+    intl: PropTypes.object.isRequired,
   },
 
   mixins: [FluxibleMixin],
@@ -108,6 +116,8 @@ const Navigation = React.createClass({
   },
 
   render() {
+    const { formatMessage } = this.props.intl;
+
     if (!this.state.isAuthenticated) {
       return null;
     }
@@ -115,7 +125,7 @@ const Navigation = React.createClass({
     return (
       <section className="top-bar-section navigation-bar">
         <Modal
-          title="Change Password"
+          title={formatMessage({ id: 'changePassword' })}
           isOpen={this.state.isChangePasswordOpened}
         >
           <ChangePasswordForm
@@ -170,4 +180,4 @@ const Navigation = React.createClass({
   },
 });
 
-export default Navigation;
+export default injectIntl(Navigation);

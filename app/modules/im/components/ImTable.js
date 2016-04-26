@@ -3,7 +3,7 @@ import moment from 'moment';
 import { isNull, isEmpty, capitalize } from 'lodash';
 import classNames from 'classnames';
 import Tooltip from 'rc-tooltip';
-import { FormattedMessage } from 'react-intl';
+import { FormattedMessage, defineMessages, injectIntl } from 'react-intl';
 
 import { getCountryName } from '../../../utils/StringFormatter';
 import CountryFlag from '../../../main/components/CountryFlag';
@@ -14,10 +14,25 @@ import Pagination from '../../../main/components/Pagination';
 const IM_DATETIME_FORMAT = 'MMMM DD YYYY, hh:mm:ss a';
 const LABEL_FOR_NULL = 'N/A';
 
-const TABLE_TITLES_IDS = [
-  'details.dateAndTime',
-  'im.details.typeAndFilesize',
-  'details.mobileAndDestination',
+const MESSAGES = defineMessages({
+  dateAndTime: {
+    id: 'details.dateAndTime',
+    defaultMessage: 'Date & Time',
+  },
+  typeAndFilesize: {
+    id: 'im.details.typeAndFilesize',
+    defaultMessage: 'Type / Filesize',
+  },
+  mobileAndDestination: {
+    id: 'details.mobileAndDestination',
+    defaultMessage: 'Mobile & Destination',
+  },
+});
+
+const TABLE_TITLES = [
+  MESSAGES.dateAndTime,
+  MESSAGES.typeAndFilesize,
+  MESSAGES.mobileAndDestination,
   '',
   '',
 ];
@@ -68,6 +83,7 @@ const ImTable = React.createClass({
     page: PropTypes.number.isRequired,
     onDataLoad: PropTypes.func.isRequired,
     isLoadingMore: PropTypes.bool,
+    intl: PropTypes.object.isRequired,
   },
 
   contextTypes: {
@@ -100,7 +116,11 @@ const ImTable = React.createClass({
   },
 
   renderEmptyRow() {
-    return <EmptyRow colSpan={TABLE_TITLES.length} />;
+    if (!this.props.ims || this.props.ims.length === 0) {
+      return <EmptyRow colSpan={TABLE_TITLES.length} />;
+    }
+
+    return null;
   },
 
   renderRows() {
@@ -206,24 +226,30 @@ const ImTable = React.createClass({
   },
 
   render() {
+	const {
+      ims, intl,
+    } = this.props;
+
+    const { formatMessage } = intl;
+
     return (
       <table className="data-table large-24 clickable im-table" key="im-table">
         <thead className="im-table--head">
         <tr className="im-table--row">
           {
-            TABLE_TITLES_IDS.map(id => (
+            TABLE_TITLES.map(({ id }) => (
               <th className="im-table--cell">
-                <FormattedMessage id={id} />
+                {formatMessage({ id })}
               </th>
             ))
           }
         </tr>
         </thead>
-        {this.renderTableBody(this.props.ims)}
+        {this.renderTableBody(ims)}
         <tfoot>
-          <If condition={!isEmpty(this.props.ims)}>
+          <If condition={!isEmpty(ims)}>
             <Pagination
-              colSpan={TABLE_TITLES_IDS.length + 1}
+              colSpan={TABLE_TITLES.length + 1}
               hasMoreData={(this.props.totalPages - 1) > this.props.page}
               onLoadMore={this.props.onDataLoad}
               isLoading={this.props.isLoadingMore}
@@ -235,4 +261,4 @@ const ImTable = React.createClass({
   },
 });
 
-export default ImTable;
+export default injectIntl(ImTable);
