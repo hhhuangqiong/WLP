@@ -266,7 +266,7 @@ schema.static('isValidCarrier', function isValidCarrier(carrierId) {
  */
 schema.static('getManagingCompany', function getManagingCompany(parentCarrierId, cb) {
   return Q
-    .ninvoke(this, 'findOne', { _id: parentCarrierId })
+    .ninvoke(this, 'findOne', { carrierId: parentCarrierId })
     .then(company => {
       if (!company) {
         throw new Error({
@@ -284,11 +284,7 @@ schema.static('getManagingCompany', function getManagingCompany(parentCarrierId,
         criteria = { carrierId: { $ne: ROOT_COMPANY_CARRIER_ID } };
       }
 
-      return Q
-        .ninvoke(this, 'find', criteria)
-        .catch((err) => {
-          throw err;
-        });
+      return Q.ninvoke(this, 'find', criteria)
     })
     .then(companies => cb(null, companies))
     .catch(err => cb(err));

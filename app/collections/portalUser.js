@@ -232,7 +232,7 @@ portalUserSchema.method('hasValidOneTimePassword', function hasValidOneTimePassw
 });
 
 /**
- * Validate carrierId with all accessable companies for current user
+ * Validate carrierId with all accessible companies for current user
  *
  * @method validateCarrier
  * @param {String} carrierId
@@ -253,6 +253,11 @@ portalUserSchema.method('validateCarrier', function validateCarrier(carrierId) {
         }
 
         Company.getManagingCompany(company.carrierId, (err, companies) => {
+          if (err) {
+            reject(err);
+            return;
+          }
+
           resolve(companies.find(managingCompany => managingCompany.carrierId === carrierId));
           return;
         });

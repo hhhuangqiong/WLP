@@ -1,10 +1,11 @@
-import HttpError from './HttpError';
-import { NotFoundError } from 'common-errors';
-
+import logger from 'winston';
+import { isFunction } from 'lodash';
+import { ArgumentNullError, HttpStatusError, NotFoundError } from 'common-errors';
 import User from '../../collections/portalUser';
 import Company from '../../collections/company';
 
 const NOT_FOUND_ERROR = 'resource not found';
+
 
 /**
  * @method AclManager
@@ -49,33 +50,46 @@ AclManager.prototype.middleware = function middleware(userId, carrierId, resourc
 
     const handleError = !this._errorHandler ? errorHandler : this._errorHandler;
 
-    const _userId = typeof userId === 'function' ? userId(req) : userId;
-    const _carrierId = typeof carrierId === 'function' ? carrierId(req) : carrierId;
-    const _resource = typeof _resource === 'function' ? resource(req) : resource;
+    const _userId = isFunction(userId) ? userId(req) : userId;
+    const _carrierId = isFunction(carrierId) ? carrierId(req) : carrierId;
+    const _resource = isFunction(resource) ? resource(req) : resource;
 
-    // what alternatives to escape from public resources?
+    // eslint-disable-next-line max-len
+    logger.debug('start acl checking with userId: %s, carrierId: %s, resourceId: %s', _userId, _carrierId, _resource);
+
     if (_carrierId === null) {
+      logger.debug('carrierId is `null` and regards as public resource. skipping acl checking.');
       next();
+      return;
+    }
+
+    if (!_userId) {
+      logger.debug('userId is empty. throwing error.');
+      const error = new ArgumentNullError('userId');
+      next(error);
       return;
     }
 
     Company
       .isValidCarrier(_carrierId)
-      .then(isValid => {
-        if (!isValid) {
-          throw new HttpError(404, NOT_FOUND_ERROR);
+      .then(isCarrierExisted => {
+        if (!isCarrierExisted) {
+          logger.debug('the carrier with carrierId: %s does not exist', _carrierId);
+          throw new NotFoundError(404, NOT_FOUND_ERROR);
         }
 
         return User.findByEmail(_userId);
       })
       .then(user => {
         if (!user) {
-          next(new NotFoundError(`Cannot find user with id ${_userId}`));
+          logger.debug('unidentified user with username: %s', _userId);
+          throw new NotFoundError(`Cannot find user with id ${_userId}`);
           return;
         }
 
         /* Skip checking for root user */
         if (user.isRoot) {
+          logger.debug('root user is detected. skipping acl checking.');
           next();
           return;
         }
@@ -84,7 +98,8 @@ AclManager.prototype.middleware = function middleware(userId, carrierId, resourc
           .validateCarrier(_carrierId)
           .then(isValidCarrier => {
             if (!isValidCarrier) {
-              throw new HttpError(404, NOT_FOUND_ERROR);
+              logger.debug('user: %s does not have access right to the carrier: %s.', _userId, _carrierId);
+              throw new NotFoundError(404, NOT_FOUND_ERROR);
             }
 
             next();

@@ -1,6 +1,6 @@
 import nconf from 'nconf';
 import { isURL } from 'validator';
-
+import { userPath } from '../paths';
 import { fetchDep } from '../utils/bottle';
 
 const aclManager = fetchDep(nconf.get('containerName'), 'ACLManager');
@@ -29,3 +29,15 @@ function getCarrierId(req) {
 // this middleware is just for carrier access checking for now
 // so pass null as `resource` and `action` parameters
 export default aclManager.middleware(getUserId, getCarrierId, null, null);
+
+export function errorHandler(err, req, res, next) {
+  const { user } = req;
+
+  if (!user) {
+    res.redirect('/sign-in');
+    return;
+  }
+
+  const { affiliatedCompany: { carrierId, role } } = user;
+  res.redirect(userPath(role, carrierId, '/'));
+}

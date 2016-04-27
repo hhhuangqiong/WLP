@@ -1,7 +1,8 @@
-import {
+import moduleId from '../../data/moduleId';
+const {
   OVERVIEW, ACCOUNT, COMPANY, END_USER, CALL,
   IM, SMS, VSF, TOP_UP, VERIFICATION_SDK,
-} from '../../data/moduleId';
+} = moduleId;
 
 export default [
   {
