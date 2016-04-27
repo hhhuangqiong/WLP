@@ -71,7 +71,7 @@ const ImTable = React.createClass({
   },
 
   contextTypes: {
-    router: PropTypes.func.isRequired,
+    router: PropTypes.object.isRequired,
   },
 
   getTypeSize(item, typeText) {

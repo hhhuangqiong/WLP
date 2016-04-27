@@ -28,7 +28,7 @@ export default React.createClass({
 
   contextTypes: {
     executeAction: PropTypes.func.isRequired,
-    router: PropTypes.func.isRequired,
+    router: PropTypes.object.isRequired,
   },
 
   mixins: [FluxibleMixin],

@@ -15,7 +15,7 @@ const PASSWORD_VALIDATION = Joi
 class ChangePasswordForm extends Component {
   static contextTypes = {
     executeAction: PropTypes.func.isRequired,
-    router: PropTypes.func.isRequired,
+    router: PropTypes.object.isRequired,
   };
 
   constructor() {

@@ -32,7 +32,7 @@ const Calls = React.createClass({
     location: PropTypes.object,
     params: PropTypes.object,
     route: PropTypes.object,
-    router: PropTypes.func,
+    router: PropTypes.object,
   },
 
   mixins: [FluxibleMixin],

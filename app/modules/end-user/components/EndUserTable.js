@@ -38,7 +38,7 @@ const EndUserTable = React.createClass({
   },
 
   contextTypes: {
-    router: PropTypes.func.isRequired,
+    router: PropTypes.object.isRequired,
   },
 
   getDefaultProps() {

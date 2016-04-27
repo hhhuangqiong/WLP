@@ -15,7 +15,7 @@ const errorMessage = '<div className="widget-not-found">Dashboard is not availab
 
 const ImOverview = React.createClass({
   contextTypes: {
-    router: PropTypes.func.isRequired,
+    router: PropTypes.object.isRequired,
     params: PropTypes.object.isRequired,
   },
 

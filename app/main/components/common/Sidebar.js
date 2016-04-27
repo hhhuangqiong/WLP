@@ -68,9 +68,9 @@ class Sidebar extends Component {
 }
 
 Sidebar.propTypes = {
-  role: PropTypes.string.isRequired,
-  carrierId: PropTypes.string.isRequired,
-  currentCompany: PropTypes.object.isRequired,
+  role: PropTypes.string,
+  carrierId: PropTypes.string,
+  currentCompany: PropTypes.object,
   isOffCanvas: PropTypes.bool.isRequired,
   handleOffCavnas: PropTypes.func.isRequired,
 };

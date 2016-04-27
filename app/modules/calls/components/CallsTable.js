@@ -43,7 +43,7 @@ const CallsTable = React.createClass({
   },
 
   contextTypes: {
-    router: React.PropTypes.func.isRequired,
+    router: PropTypes.object.isRequired,
   },
 
   renderCountryField(number, countryCode, callType = 'caller') {

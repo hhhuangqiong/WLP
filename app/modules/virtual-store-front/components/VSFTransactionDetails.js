@@ -19,7 +19,7 @@ const PAGE_SIZE = 100;
 
 const VSFTransactionDetails = createClass({
   contextTypes: {
-    router: PropTypes.func.isRequired,
+    router: PropTypes.object.isRequired,
     executeAction: PropTypes.func.isRequired,
     getStore: PropTypes.func.isRequired,
     location: PropTypes.object.isRequired,

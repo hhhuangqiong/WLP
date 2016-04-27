@@ -14,7 +14,7 @@ export default React.createClass({
   },
 
   contextTypes: {
-    router: PropTypes.func.isRequired,
+    router: PropTypes.object.isRequired,
   },
 
   getInitialState() {

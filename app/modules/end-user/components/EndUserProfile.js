@@ -32,7 +32,7 @@ const EndUserProfile = React.createClass({
 
   contextTypes: {
     executeAction: React.PropTypes.func.isRequired,
-    router: React.PropTypes.func.isRequired,
+    router: PropTypes.object.isRequired,
   },
 
   getParams() {

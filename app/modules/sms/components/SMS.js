@@ -39,7 +39,7 @@ function getInitialQueryFromURL(params, query = {}) {
 
 const SMS = React.createClass({
   contextTypes: {
-    router: PropTypes.func.isRequired,
+    router: PropTypes.object.isRequired,
     params: PropTypes.object.isRequired,
     location: PropTypes.object.isRequired,
   },

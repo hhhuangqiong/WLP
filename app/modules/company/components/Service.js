@@ -1,5 +1,5 @@
 import _ from 'lodash';
-import React from 'react';
+import React, { PropTypes } from 'react';
 import { FluxibleMixin } from 'fluxible-addons-react';
 import ValidationMixin from 'react-validation-mixin';
 
@@ -39,7 +39,7 @@ const defaultState = {
 
 const CompanyService = React.createClass({
   contextTypes: {
-    router: React.PropTypes.func.isRequired,
+    router: PropTypes.object.isRequired,
   },
 
   mixins: [FluxibleMixin, ValidationMixin],

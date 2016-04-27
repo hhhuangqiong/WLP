@@ -30,7 +30,7 @@ const searchTypes = [
 
 const Im = React.createClass({
   contextTypes: {
-    router: PropTypes.func.isRequired,
+    router: PropTypes.object.isRequired,
     location: PropTypes.object,
     params: PropTypes.object,
   },
@@ -130,6 +130,84 @@ const Im = React.createClass({
 
   getOptKey(messageType) {
     return `messageType-${messageType.value}`;
+  },
+
+  handleQueryChange(newQuery) {
+    const query = merge(
+      this.context.location.query,
+      this.getQueryFromState(),
+      newQuery
+    );
+
+    const queryWithoutNull = omit(query, (value, key) => (
+      !value || key === 'page' || key === 'size'
+    ));
+
+    const { pathname } = this.context.location;
+
+    this.context.router.push({
+      pathname,
+      query: queryWithoutNull,
+    });
+  },
+
+  handlePageChange() {
+    const { identity } = this.context.params;
+
+    this.context.executeAction(fetchMoreIms, {
+      carrierId: identity,
+      fromTime: this.state.fromTime,
+      toTime: this.state.toTime,
+      page: this.state.page,
+      size: config.PAGES.IMS.PAGE_SIZE,
+      type: this.state.type,
+      search: this.state.search,
+      searchType: this.state.searchType,
+    });
+  },
+
+  handleStartDateChange(momentDate) {
+    const date = moment(momentDate).format('L');
+    this.handleQueryChange({ fromTime: date, page: 0 });
+  },
+
+  handleEndDateChange(momentDate) {
+    const date = moment(momentDate).format('L');
+    this.handleQueryChange({ toTime: date, page: 0 });
+  },
+
+  handleTypeChange(e) {
+    e.preventDefault();
+    const type = e.target.value;
+    const _type = this.state.type !== type ? type : null;
+    this.handleQueryChange({ type: _type });
+  },
+
+  handleSearchChange(e) {
+    const search = e.target.value;
+    this.setState({ search });
+
+    if (e.which === 13) {
+      this.handleQueryChange({ search });
+    }
+  },
+
+  handleSearchTypeChange(e) {
+    const searchType = e.target.value;
+    this.setState({ searchType });
+
+    // only submit change if search input isn't empty
+    if (this.state.search) {
+      this.handleQueryChange({ searchType });
+    }
+  },
+
+  _handleStartDateClick() {
+    this.refs.startDatePicker.handleFocus();
+  },
+
+  _handleEndDateClick() {
+    this.refs.endDatePicker.handleFocus();
   },
 
   render() {
@@ -250,84 +328,6 @@ const Im = React.createClass({
         </div>
       </div>
     );
-  },
-
-  handleQueryChange(newQuery) {
-    const query = merge(
-      this.context.location.query,
-      this.getQueryFromState(),
-      newQuery
-    );
-
-    const queryWithoutNull = omit(query, (value, key) => (
-      !value || key === 'page' || key === 'size'
-    ));
-
-    const { pathname } = this.context.location;
-
-    this.context.router.push({
-      pathname,
-      query: queryWithoutNull,
-    });
-  },
-
-  handlePageChange() {
-    const { identity } = this.context.params;
-
-    this.context.executeAction(fetchMoreIms, {
-      carrierId: identity,
-      fromTime: this.state.fromTime,
-      toTime: this.state.toTime,
-      page: this.state.page,
-      size: config.PAGES.IMS.PAGE_SIZE,
-      type: this.state.type,
-      search: this.state.search,
-      searchType: this.state.searchType,
-    });
-  },
-
-  handleStartDateChange(momentDate) {
-    const date = moment(momentDate).format('L');
-    this.handleQueryChange({ fromTime: date, page: 0 });
-  },
-
-  handleEndDateChange(momentDate) {
-    const date = moment(momentDate).format('L');
-    this.handleQueryChange({ toTime: date, page: 0 });
-  },
-
-  handleTypeChange(e) {
-    e.preventDefault();
-    const type = e.target.value;
-    const _type = this.state.type !== type ? type : null;
-    this.handleQueryChange({ type: _type });
-  },
-
-  handleSearchChange(e) {
-    const search = e.target.value;
-    this.setState({ search: search });
-
-    if (e.which === 13) {
-      this.handleQueryChange({ search: search });
-    }
-  },
-
-  handleSearchTypeChange(e) {
-    const searchType = e.target.value;
-    this.setState({ searchType: searchType });
-
-    // only submit change if search input isn't empty
-    if (this.state.search) {
-      this.handleQueryChange({ searchType: searchType });
-    }
-  },
-
-  _handleStartDateClick() {
-    this.refs.startDatePicker.handleFocus();
-  },
-
-  _handleEndDateClick() {
-    this.refs.endDatePicker.handleFocus();
   },
 });
 

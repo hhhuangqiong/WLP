@@ -14,7 +14,7 @@ import forgotPassword from '../actions/forgotPassword';
 export default class ForgotPassword extends Component {
   static contextTypes = {
     executeAction: PropTypes.func.isRequired,
-    router: PropTypes.func.isRequired,
+    router: PropTypes.object.isRequired,
   };
 
   static propTypes = {

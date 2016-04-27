@@ -44,7 +44,7 @@ const VerificationDetails = React.createClass({
   },
 
   contextTypes: {
-    router: PropTypes.func.isRequired,
+    router: PropTypes.object.isRequired,
     params: PropTypes.object.isRequired,
     location: PropTypes.object.isRequired,
     executeAction: PropTypes.func.isRequired,

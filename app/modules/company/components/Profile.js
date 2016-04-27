@@ -1,5 +1,5 @@
 import _ from 'lodash';
-import React from 'react';
+import React, { PropTypes } from 'react';
 import { FluxibleMixin } from 'fluxible-addons-react';
 import ValidationMixin from 'react-validation-mixin';
 
@@ -20,7 +20,7 @@ const { inputDateFormat: DATE_FORMAT } = config;
 
 const CompanyProfile = React.createClass({
   contextTypes: {
-    router: React.PropTypes.func.isRequired,
+    router: PropTypes.object.isRequired,
     executeAction: React.PropTypes.func.isRequired,
   },
 

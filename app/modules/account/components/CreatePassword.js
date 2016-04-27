@@ -23,7 +23,7 @@ import validator from '../../../main/components/ValidateDecorator';
 class CreatePassword extends Component {
   static contextTypes = {
     executeAction: PropTypes.func.isRequired,
-    router: PropTypes.func.isRequired,
+    router: PropTypes.object.isRequired,
   };
 
   constructor() {

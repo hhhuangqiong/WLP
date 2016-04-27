@@ -33,11 +33,11 @@ const MONTHS_BEFORE_TODAY = 1;
 
 const EndUsers = React.createClass({
   contextTypes: {
-    executeAction: React.PropTypes.func.isRequired,
+    executeAction: PropTypes.func.isRequired,
     location: PropTypes.object,
     params: PropTypes.object,
     route: PropTypes.object,
-    router: React.PropTypes.object,
+    router: PropTypes.object,
   },
 
   mixins: [FluxibleMixin],
