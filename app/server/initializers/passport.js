@@ -9,15 +9,35 @@ import passport from 'passport';
  */
 export default function setup() {
   passport.serializeUser((user, done) => {
-    done(null, user.id);
+    done(null, user._id);
   });
 
   passport.deserializeUser((id, done) => {
     PortalUser
       .findById(id)
-      .populate('affiliatedCompany', 'carrierId')
+      .populate('affiliatedCompany', 'carrierId role')
       .exec((err, user) => {
-        done(err, user);
+        if (err) {
+          done(err);
+          return;
+        }
+
+        if (!user) {
+          done(new Error('user not found'));
+          return;
+        }
+
+        try {
+          // SHOULD NOT return the a mongoose document, but an object
+          const userObject = user.toObject({ virtuals: true });
+
+          delete userObject.hashedPassword;
+          delete userObject.salt;
+
+          done(null, userObject);
+        } catch (error) {
+          done(error);
+        }
       });
   });
 
@@ -43,7 +63,8 @@ export default function setup() {
           return;
         }
 
-        // TODO check if the user has been verified (i.e., isVerified === true)
+        // TODO other checkings e.g. verified, suspended, whitelisted, etc
+
         done(null, user);
       });
   }));
