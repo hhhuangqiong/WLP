@@ -1,6 +1,5 @@
-import React from 'react';
+import React, { PropTypes } from 'react';
 import { concurrent } from 'contra';
-import { RouteHandler } from 'react-router';
 
 import { FluxibleMixin } from 'fluxible-addons-react';
 
@@ -10,8 +9,12 @@ import CompanyList from './CompanyList';
 import CompanyStore from '../stores/CompanyStore';
 
 const Companies = React.createClass({
+  propTypes: {
+    children: PropTypes.element.isRequired,
+  },
+
   contextTypes: {
-    router: React.PropTypes.func.isRequired,
+    router: PropTypes.func.isRequired,
   },
 
   mixins: [FluxibleMixin],
@@ -48,7 +51,7 @@ const Companies = React.createClass({
         </div>
         <div className="large-18 columns" data-equalizer-watch>
           <div className="row">
-            <RouteHandler />
+            {this.props.children}
           </div>
         </div>
       </div>

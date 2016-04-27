@@ -41,7 +41,7 @@ class CreatePassword extends Component {
       this
         .context
         .router
-        .transitionTo('sign-in', {}, {});
+        .push('sign-in');
     }
 
     this.context.executeAction(verifyAccountToken, { token });
@@ -55,7 +55,7 @@ class CreatePassword extends Component {
       this
         .context
         .router
-        .transitionTo('sign-in', {}, {});
+        .push('sign-in');
     }
   }
 

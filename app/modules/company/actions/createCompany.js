@@ -10,10 +10,12 @@ export default function (context, params, done) {
 
     context.dispatch('CREATE_COMPANY_SUCCESS', result.company);
 
-    const { role, identity } = context.params;
-    context
-      .getRouter()
-      .transitionTo('company-profile', { role, identity, carrierId: result.company.carrierId });
+    context.router.push({
+      pathname: 'company-profile',
+      query: {
+        carrierId: result.company.carrierId,
+      },
+    });
     done();
   });
 }

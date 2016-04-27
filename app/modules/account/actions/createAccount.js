@@ -1,5 +1,3 @@
-import { merge } from 'lodash';
-
 export default function (context, params, done) {
   context.api.createAccount(params, (err, { error, result }) => {
     if (err) {
@@ -18,12 +16,12 @@ export default function (context, params, done) {
     context.dispatch('INFO_MESSAGE', { message: 'Create account success!' });
 
     // Redirect to the newly created user profile
-    const router = context.getRouter();
-    const routerParams = context.params;
-
-    router.transitionTo('account-profile', merge(routerParams, {
-      accountId: result._id,
-    }));
+    context.router.push({
+      pathname: 'account-profile',
+      query: {
+        accountId: result._id,
+      },
+    });
 
     done();
   });

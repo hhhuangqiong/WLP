@@ -1,5 +1,4 @@
 import React, { PropTypes } from 'react';
-import { RouteHandler } from 'react-router';
 
 import { FluxibleMixin } from 'fluxible-addons-react';
 
@@ -9,6 +8,10 @@ import AccountTable from './AccountTable';
 
 export default React.createClass({
   displayName: 'Account',
+
+  propTypes: {
+    children: PropTypes.element.isRequired,
+  },
 
   contextTypes: {
     executeAction: PropTypes.func.isRequired,
@@ -41,7 +44,7 @@ export default React.createClass({
     return (
       <div className="row">
         <AccountTable accounts={this.state.accounts} />
-        <RouteHandler />
+        {this.props.children}
       </div>
     );
   },

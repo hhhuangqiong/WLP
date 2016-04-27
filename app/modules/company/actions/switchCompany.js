@@ -9,10 +9,10 @@ export default function (context, params) {
     const defaultPath = authority.getDefaultPath();
 
     if (!defaultPath) {
-      context.getRouter().transitionTo('/error/not-found');
+      context.router.push('/error/not-found');
       return;
     }
 
-    context.getRouter().transitionTo(userPath(params.role, params.identity, defaultPath));
+    context.router.push(userPath(params.role, params.identity, defaultPath));
   });
 }
