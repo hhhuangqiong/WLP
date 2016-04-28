@@ -16,7 +16,7 @@ Changes of this documentation for releases
 
 Environment:
 
-- iojs @ 1.2.0 / @2.3.4
+- Node 4+
 
 Tool:
 

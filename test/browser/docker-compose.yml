@@ -1,0 +1,35 @@
+# compose file for selenium server and latest snapshot image
+app:
+  image: docker.dev.maaii.com/m800/m800-white-label-portal-snapshot:latest
+  environment:
+    - TZ=Asia/Hong_Kong
+    - APP_PORT=3000
+    - mongodb__uri=mongodb://deploy.dev.maaii.com:27018/m800-whitelabel-portal
+    - mongodb__options__user=
+    - mongodb__options__pass=
+    - redisUri=redis://deploy.dev.maaii.com:6379/11
+    - bossApi__baseUrl=192.168.56.42:8080
+    - mumsApi__baseUrl=http://192.168.56.232:8080
+    - dataProviderApi__baseUrl=http://192.168.56.127:9998
+    - mvsApi__baseUrl=http://192.168.56.12:9125
+    - DEBUG=app:*
+  ports:
+    - "3000"
+selenium-hub:
+  image: selenium/hub:2.53.0
+  ports:
+    - "4444"
+selenium-node-chrome:
+  image: selenium/node-chrome-debug
+  links:
+    - selenium-hub:hub
+    - app
+  ports:
+    - "5900"
+selenium-node-firefox:
+  image: selenium/node-firefox-debug
+  links:
+    - selenium-hub:hub
+    - app
+  ports:
+    - "5900"

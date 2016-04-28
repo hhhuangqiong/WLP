@@ -166,6 +166,9 @@ export default {
   //
   // Gets executed before all workers get launched.
   onPrepare() {
+    log.info(`Connect to selenium server:
+      ${process.env.REMOTE ? (process.env.SELENIUM_HOST || 'deploy.dev.maaii.com') :
+      'localhost'}: ${process.env.SELENIUM_PORT}`);
     log.info('Start running browser test');
 
     /* Ensure no previous result left inside reports dir */

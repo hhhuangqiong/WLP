@@ -1,0 +1,28 @@
+#!/bin/sh
+
+COMPOSE_FILE=test/browser/docker-compose.yml
+
+# pull all necessary image to ensure pull up time is fast
+docker-compose -f $COMPOSE_FILE pull
+
+# start selenium server and application
+docker-compose -f $COMPOSE_FILE up -d
+
+#wait for 1m for all things to be ready
+sleep 30s
+
+# start web driver
+SELENIUM_HOST=`echo $DOCKER_HOST | cut -d / -f 3 | cut -d : -f 1`
+SELENIUM_PORT=`docker-compose -f $COMPOSE_FILE port selenium-hub 4444 | cut -d : -f 2`
+APP_PORT=`docker-compose -f $COMPOSE_FILE port app 3000 | cut -d : -f 2`
+TEST_URL=http://$SELENIUM_HOST:$APP_PORT
+
+echo "SELENIUM_HOST=$SELENIUM_HOST"
+echo "SELENIUM_PORT=$SELENIUM_PORT"
+echo "TEST_URL=$TEST_URL"
+echo "DOCKER_HOST=$DOCKER_HOST"
+
+BROWSER=firefox,chrome REMOTE=true SELENIUM_HOST=$SELENIUM_HOST SELENIUM_PORT=$SELENIUM_PORT TEST_URL=$TEST_URL npm run test:browser
+
+# stop selenium server and application
+docker-compose -f test/browser/docker-compose.yml down
