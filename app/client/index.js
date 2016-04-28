@@ -57,7 +57,7 @@ Q.nfcall(createContext, app, dehydratedState, contextOptions)
       history: browserHistory,
     });
 
-    if (get(config, 'LOCALES')) {
+    if (get(config, 'LOCALE')) {
       debug('Localization is enabled, wrapping Router Component with IntlProvider Component');
       // assuming that value in localStorage has higher priority
       // than the lang attribute from server
