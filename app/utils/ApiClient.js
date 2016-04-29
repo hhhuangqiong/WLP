@@ -1,4 +1,5 @@
 import { get, isString, isObject } from 'lodash';
+import { TimeoutError } from 'common-errors';
 import fetch from 'isomorphic-fetch';
 import { stringify } from 'query-string';
 import { baseUrl } from './url';
@@ -8,6 +9,16 @@ const debug = require('debug')('app:utils/ApiClient.js');
 // @see: https://fetch.spec.whatwg.org/#methods
 // method `HEAD` and `OPTIONS` are excluded as they do not contain response
 const methods = ['get', 'post', 'put', 'patch', 'delete'];
+
+export function timeout(ms, promise) {
+  return new Promise((resolve, reject) => {
+    setTimeout(() => {
+      reject(new TimeoutError(ms));
+    }, ms);
+
+    promise.then(resolve, reject);
+  });
+}
 
 /**
  * @method parseJSON
@@ -88,9 +99,10 @@ export default class ApiClient {
        * @param query {Object} query string in Object format
        * @param data {Object|FormData} either a data Object or an instance of FormData
        * to be passed as `body`
+       * @param configs {Object}
        * @return {Promise}
        */
-      this[method] = (path, { query, data } = {}) => new Promise((resolve, reject) => {
+      this[method] = (path, { query, data } = {}, configs = { timeout: 3000, ...configs }) => new Promise((resolve, reject) => {
         if (query && !isObject(query)) {
           reject(new Error('`query` argument must be an object'));
           return;
@@ -111,6 +123,10 @@ export default class ApiClient {
             'Content-Type': 'application/json',
           },
           credentials: 'same-origin',
+          // intentionally excluded `timeout` here
+          // as it does not provide consistent effect across client & server side
+          // timeout is implemented as a workaround at the bottom
+          ...configs,
         };
 
         // IMPORTANT:
@@ -151,7 +167,10 @@ export default class ApiClient {
 
         debug(`start sending request to ${url} with options:`, options);
 
-        fetch(url, options)
+        // fetch yet to have its standard for timeout
+        // use this workaround as suggested on
+        // https://github.com/facebook/react-native/pull/6504#issuecomment-210485260
+        timeout(configs.timeout, fetch(url, options))
           .then(parseJSON)
           .then(jsonData => {
             debug('resolving json data:', jsonData);
