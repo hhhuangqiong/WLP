@@ -1,73 +1,60 @@
 import logger from 'winston';
 import passport from 'passport';
-
-import sessionClient from '../initializers/sessionClient';
-
-const sessionDebug = require('debug')('app:sessionFlow');
-
-function getAuthUser(user) {
-  const { _id, username, displayName } = user;
-  const { carrierId, role } = user.affiliatedCompany || {};
-
-  return { _id, username, displayName, carrierId, role };
-}
+import { NotFoundError } from 'common-errors';
 
 function signIn(req, res, next) {
   passport.authenticate('local', (err, user) => {
-    function signInError() {
-      res.status(401).json({
-        error: {
-          message: 'Wrong username or password',
-        },
-      });
+    if (err) {
+      logger.error('error occurred in passport.js localStrategy', err);
+      res.apiError(500, err);
+      return;
     }
 
-    // TODO simplify this
-    if (err || !user) {
-      return signInError();
+    if (!user) {
+      const error = new NotFoundError('user');
+      res.apiError(401, error);
+      return;
     }
 
-    req.logIn(user, err => {
-      if (err) {
-        logger.error('failed during `req.logIn`', err);
-        signInError();
+    req.logIn(user, loginErr => {
+      if (loginErr) {
+        logger.error('error occurred in req.logIn()', loginErr);
+        res.apiError(500, loginErr);
         return;
       }
 
-      // from 'express-session'
-      const authUser = getAuthUser(user);
-      const data = {
-        user: authUser._id,
-        username: authUser.username,
-        displayName: authUser.displayName,
-        carrierId: authUser.carrierId,
-        role: authUser.role,
-      };
-
-      req.session.data = data;
+      /* eslint-disable no-param-reassign */
+      req.session.data = user;
       req.session.save();
+      /* eslint-enable no-param-reassign */
 
-      sessionClient.createSession(data, err => {
-        if (err) {
-          logger.error(err);
-          next(err);
-          return;
-        }
+      logger.debug('session saved for %s', req.session.username);
+
+      // eslint-disable-next-line no-use-before-define
+      const { _id, ...attributes } = user;
+
+      res.apiResponse(200, {
+        data: {
+          type: 'user',
+          id: _id,
+          attributes: { ...attributes },
+        },
       });
-
-      logger.info('session saved for %s', req.session.username);
-
-      res.json({ user: authUser });
     });
   })(req, res, next);
 }
 
 function signOut(req, res) {
   const { user } = req;
+  const { username } = user;
+
+  logger.debug('user: %s is logging out', username);
 
   try {
     req.logout();
   } catch (err) {
+    logger.error('error occurred in req.logout()', err);
+
     res.status(500).json({
       success: false,
       error: err.message,
@@ -75,13 +62,45 @@ function signOut(req, res) {
     return;
   }
 
+  logger.debug('user: %s logged out successfully', username);
+
   res.status(200).json({
     success: true,
     user,
   });
 }
 
+function getSession(req, res) {
+  logger.debug('loading session from express request');
+
+  const { user } = req;
+
+  if (!user) {
+    logger.debug('user session not found, responding 200 with data of `null`');
+
+    res.apiResponse(200, {
+      data: null,
+    });
+
+    return;
+  }
+
+  logger.debug('user session detected, %j', user);
+
+  // eslint-disable-next-line no-use-before-define
+  const { _id: id, ...attributes } = user;
+
+  res.apiResponse(200, {
+    data: !!user ? {
+      type: 'user',
+      id,
+      attributes: { ...attributes },
+    } : null,
+  });
+}
+
 export {
   signIn,
   signOut,
+  getSession,
 };

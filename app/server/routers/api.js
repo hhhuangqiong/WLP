@@ -11,12 +11,13 @@ import * as accounts from '../routes/accounts';
 import cacheControl from '../middlewares/cacheControl';
 
 const multipart = require('connect-multiparty')();
-const router = Router();
+const router = new Router();
 
 router
   .use(cacheControl)
   .post(SIGN_IN, auth.signIn)
   .get(SIGN_OUT, auth.signOut)
+  .get('/session', auth.getSession)
   .get('/accounts/verify/:token', accounts.verifyToken)
   .put('/accounts/verify/:token', accounts.createPassword)
   .put('/accounts/reverify/:username', accounts.reverifyAccount)
