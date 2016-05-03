@@ -1,5 +1,6 @@
 import Q from 'q';
 import _ from 'lodash';
+import logger from 'winston';
 
 import Controller from '../controllers/company';
 import Company from '../../collections/company';
@@ -8,6 +9,7 @@ import PortalUser from '../../collections/portalUser';
 import {
   MongoDBError,
   NotFoundError,
+  ArgumentError,
   ArgumentNullError,
 } from 'common-errors';
 
@@ -149,23 +151,79 @@ const getManagingCompany = companyId => {
   });
 };
 
-const carrierCompniesHandler = async (req) => {
-  const { carrierId } = req.params;
-  const company = await getCompanyByCarrierId(carrierId);
-  const compaines = await getManagingCompany(company._id);
-
-  return compaines;
+const carrierCompaniesHandler = async (carrierId) => {
+  return await getManagingCompany(carrierId);
 };
 
-const getCarrierCompanies = (req, res, next) => {
-  carrierCompniesHandler(req, res, next)
-    .then(companies => res.json({ result: companies ? companies : [] }))
-    .catch(error => next(error));
+/**
+ * @method getAccessibleCompanies
+ * to get accessible companies by to user session
+ *
+ * @param req {Object} Express req
+ * @param res {Object} Express res
+ * @param next {Function} Express next
+ */
+const getAccessibleCompanies = (req, res, next) => {
+  const { user } = req;
+
+  logger.debug('fetching accessible companies');
+
+  if (!user) {
+    logger.debug('user is not logged in');
+    res.apiResponse(200, {
+      success: true,
+      status: 200,
+      data: [],
+    });
+    return;
+  }
+
+  const carrierId = _.get(req, 'user.affiliatedCompany.carrierId');
+
+  if (!carrierId) {
+    res.apiError(500, {
+      success: false,
+      status: 500,
+      errors: new ArgumentError('req.user.affiliatedCompany.carrierId'),
+    });
+    return;
+  }
+
+  logger.debug('fetching accessible companies for carrier: %s', carrierId);
+
+  carrierCompaniesHandler(carrierId)
+    .then(companies => {
+      logger.debug('fetched accessible companies for carrier: %s', carrierId, companies);
+
+      res.apiResponse(200, {
+        success: true,
+        data: _.reduce(companies, (result, company) => {
+          const { _id, ...attributes } = company.toObject({ virtuals: true });
+
+          const document = {
+            type: 'company',
+            id: _id,
+            attributes,
+          };
+
+          result.push(document);
+          return result;
+        }, []),
+      });
+    })
+    .catch(err => {
+      logger.error('error occurred when fetching accessible companies for carrier: %s', carrierId, err);
+      res.apiError(500, {
+        success: false,
+        status: 500,
+        errors: err,
+      });
+    });
 };
 
 export {
+  getAccessibleCompanies,
   getApplicationCompanies,
-  getCarrierCompanies,
   getApplications,
   getApplicationIds,
   getInfo,
