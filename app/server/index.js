@@ -98,7 +98,8 @@ export default function (port) {
   server.use(config.API_PATH_PREFIX, apiErrorHandler);
 
   // eslint-disable-next-line prefer-arrow-callback, func-names
-  server.use(function (req, res, next) {
+  const aclMiddlewares = require('./middlewares/aclMiddleware');
+  server.use(aclMiddlewares.default, aclMiddlewares.errorHandler, function handler(req, res, next) {
     render(app, config)(req, res, next);
   });
 
