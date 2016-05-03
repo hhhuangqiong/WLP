@@ -10,6 +10,7 @@ import app from '../app';
 import config from '../config';
 import { isDev } from '../utils/env';
 import { createContext, createMarkupElement } from '../utils/fluxible';
+import getRoutes from '../routes';
 
 const debug = require('debug');
 const bootstrapDebug = debug('app:client');
@@ -50,10 +51,10 @@ const messages = window[GLOBAL_LOCALE_VARIABLE];
 
 Q.nfcall(createContext, app, dehydratedState, contextOptions)
   .then(context => {
-    // TODO: unsure why it loaded session without dehydratedState
-    // it should be placed inside a container component instead
+    const routes = getRoutes(context);
+
     let children = React.createElement(Router, {
-      routes: context.getComponent(),
+      routes,
       history: browserHistory,
     });
 

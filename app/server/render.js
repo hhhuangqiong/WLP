@@ -1,3 +1,4 @@
+import Q from 'q';
 import { get } from 'lodash';
 import path from 'path';
 import logger from 'winston';
@@ -8,9 +9,13 @@ import serialize from 'serialize-javascript';
 import { IntlProvider } from 'react-intl';
 
 import Html from '../main/components/common/Html';
+import getRoutes from '../routes';
 import { getRedirectPath } from '../utils/reactRouter';
-import { createMarkupElement } from '../utils/fluxible';
+import { createMarkupElement, getInitialData } from '../utils/fluxible';
 import { getLocaleDataFromPath } from '../utils/intl';
+
+import loadSession from '../main/actions/loadSession';
+import getAccessibleCompanies from '../main/actions/getAccessibleCompanies';
 
 /**
  * @method createHtmlElement
@@ -55,70 +60,91 @@ export default function renderer(app, config) {
     throw new Error('Fluxible is missing');
   }
 
-  const routes = app.getComponent();
-
   return function render(req, res, next) {
-    match({ routes, location: req.url }, (matchingErr, redirectLocation, renderProps) => {
-      if (matchingErr) {
-        // if error occurred during matching url with react-router,
-        // it should response with internal server error
-        next(matchingErr);
-        return;
-      }
+    const context = app.createContext({ req, res, config });
+    const routes = getRoutes(context);
 
-      if (redirectLocation) {
-        // if redirection is detected by react-router,
-        // it should response with redirection
-        try {
-          const redirectTo = getRedirectPath(redirectLocation);
-          logger.debug(`redirection is detected, to: ${redirectTo}`);
-          res.redirect(302, redirectTo);
-        } catch (err) {
-          next(err);
-        }
-        return;
-      }
+    const initialActions = [
+      loadSession,
+      getAccessibleCompanies,
+    ];
 
-      if (renderProps) {
-        // if renderProps is returned by react-router,
-        // that means react-router hit a route
-        const context = app.createContext({ req, res, config });
-        const dehydratedContext = app.dehydrate(context);
-        // eslint-disable-next-line max-len
-        const dehydratedState = `window.${config.GLOBAL_DATA_VARIABLE}=${serialize(dehydratedContext)};`;
-        const serializedConfig = `window.${config.GLOBAL_CONFIG_VARIABLE}=${serialize(config)};`;
-        let children = React.createElement(RouterContext, renderProps);
+    // it turns out that the server defines the
+    // get initial data details by its own
+    // which is not satisfying
+    // could it be defined within the routes?
+    // see: https://github.com/erikras/react-redux-universal-hot-example/blob/master/src%2Froutes.js#L27
+    Q.nfcall(getInitialData, context, initialActions)
+      .then(() => {
+        match({ routes, location: req.url }, (matchingErr, redirectLocation, renderProps) => {
+          if (matchingErr) {
+            logger.debug('react-router route matching error occurred', matchingErr);
+            // if error occurred during matching url with react-router,
+            // it should response with internal server error
+            next(matchingErr);
+            return;
+          }
 
-        // TODO: check and take locale preference from user session if available
-        const locale = get(config, 'LOCALE.DEFAULT') || 'en';
-        logger.debug(`default locale is set as ${locale}`);
+          if (redirectLocation) {
+            // if redirection is detected by react-router,
+            // it should response with redirection
+            try {
+              const redirectTo = getRedirectPath(redirectLocation);
+              logger.debug(`redirection is detected, to: ${redirectTo}`);
+              res.redirect(302, redirectTo);
+            } catch (err) {
+              next(err);
+            }
+            return;
+          }
 
-        let serializedLocale;
+          if (renderProps) {
+            // if renderProps is returned by react-router,
+            // that means react-router hit a route
 
-        if (get(config, 'LOCALE')) {
-          /* eslint-disable max-len */
-          logger.debug('Localization is enabled, wrapping RouterContext Component with IntlProvider Component');
-          const translations = getLocaleDataFromPath(path.resolve(__dirname, '../../public/locale-data'));
-          serializedLocale = `window.${config.GLOBAL_LOCALE_VARIABLE}=${serialize(translations[locale])};`;
-          children = React.createElement(IntlProvider, { locale, messages: translations[locale] }, children);
-          /* eslint-enable */
-        }
+            const dehydratedContext = app.dehydrate(context);
+            /* eslint-disable max-len */
+            const dehydratedState = `window.${config.GLOBAL_DATA_VARIABLE}=${serialize(dehydratedContext)};`;
+            const serializedConfig = `window.${config.GLOBAL_CONFIG_VARIABLE}=${serialize(config)};`;
+            /* eslint-enable max-len */
 
-        const markupElement = createMarkupElement(context, children);
-        const htmlElement = createHtmlElement(dehydratedState, markupElement, {
-          lang: locale,
-          config: serializedConfig,
-          locale: serializedLocale,
+            let children = React.createElement(RouterContext, renderProps);
+
+            // TODO: check and take locale preference from user session if available
+            const locale = get(config, 'LOCALE.DEFAULT') || 'en';
+            logger.debug(`default locale is set as ${locale}`);
+
+            let serializedLocale;
+
+            if (get(config, 'LOCALE')) {
+              /* eslint-disable max-len */
+              logger.debug('Localization is enabled, wrapping RouterContext Component with IntlProvider Component');
+              const translations = getLocaleDataFromPath(path.resolve(__dirname, '../../public/locale-data'));
+              serializedLocale = `window.${config.GLOBAL_LOCALE_VARIABLE}=${serialize(translations[locale])};`;
+              children = React.createElement(IntlProvider, { locale, messages: translations[locale] }, children);
+              /* eslint-enable */
+            }
+
+            const markupElement = createMarkupElement(context, children);
+            const htmlElement = createHtmlElement(dehydratedState, markupElement, {
+              lang: locale,
+              config: serializedConfig,
+              locale: serializedLocale,
+            });
+            const html = ReactDomServer.renderToStaticMarkup(htmlElement);
+            const htmlWithDocType = prependDocType(html);
+
+            res.send(htmlWithDocType);
+            return;
+          }
+
+          // TODO: refine Error
+          next(new Error('not found'));
         });
-        const html = ReactDomServer.renderToStaticMarkup(htmlElement);
-        const htmlWithDocType = prependDocType(html);
-
-        res.send(htmlWithDocType);
-        return;
-      }
-
-      // TODO: refine Error
-      next(new Error('not found'));
-    });
+      })
+      .catch(err => {
+        logger.error(err);
+        next(err);
+      });
   };
 }

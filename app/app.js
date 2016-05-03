@@ -1,6 +1,9 @@
 import Fluxible from 'fluxible';
 
+/* eslint-disable max-len */
+import InitialDataStore from './main/stores/InitialDataStore';
 import ApplicationStore from './main/stores/ApplicationStore';
+import AuthStore from './main/stores/AuthStore';
 import VerificationStore from './modules/verification/stores/VerificationStore';
 import VerificationOverviewStore from './modules/verification/stores/VerificationOverviewStore';
 import CompanyStore from './modules/company/stores/CompanyStore';
@@ -22,23 +25,22 @@ import ExportStore from './main/file-export/stores/ExportStore';
 import EndUsersOverviewStore from './modules/end-user/stores/EndUsersOverviewStore';
 import EndUsersRegistrationStatsStore from './modules/end-user/stores/EndUsersRegistrationStatsStore';
 import EndUsersGeographicStatsStore from './modules/end-user/stores/EndUsersGeographicStatsStore';
+/* eslint-enable max-len */
 
-import routes from './routes';
-
+import getRoutes from './routes';
+const routes = getRoutes();
 const app = new Fluxible({
   // doing this so that in app/client/index.js
   // context.getComponent() will be available
-  component: routes
+  component: routes,
 });
 
 app.plug(require('./utils/apiPlugin'));
 app.plug(require('./utils/authorityPlugin'));
 app.plug(require('./utils/routerPlugin')());
 
-// authentication support
-app.registerStore(require('./main/stores/AuthStore'));
-
-// register other stores below
+app.registerStore(AuthStore);
+app.registerStore(InitialDataStore);
 app.registerStore(ApplicationStore);
 app.registerStore(CompanyStore);
 app.registerStore(VerificationStore);
