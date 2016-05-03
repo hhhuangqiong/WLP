@@ -1,6 +1,3 @@
-import { browserHistory } from 'react-router';
-import { SIGN_IN } from '../../server/paths';
-
 module.exports = (context, payload, done) => {
   context.dispatch('SIGN_OUT_START');
 

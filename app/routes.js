@@ -3,7 +3,7 @@ import { Route, IndexRedirect } from 'react-router';
 
 import App from './main/components/common/App';
 import Public from './main/components/common/Public';
-import SignIn from './main/components/SignIn';
+import SignIn from './modules/sign-in/container';
 import ForgotPassword from './modules/account/components/ForgotPassword';
 import CreatePassword from './modules/account/components/CreatePassword';
 
