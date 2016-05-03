@@ -22,7 +22,7 @@ import { sync as globSync } from 'glob';
 const defaultTasks = ['nodemon', 'watch', 'scss', 'webpack', 'browser-sync'];
 const webpackConfig = require('./webpack.config');
 
-const DEFAULT_LANGUAGE_FILE_NAME = 'en.json';
+const DEFAULT_LANGUAGE_FILE_NAME = 'default.json';
 const INTL_MESSAGES_PATTERN = './build/intl/**/*.json';
 
 if (webpackConfig.custom.hotLoadPort) {
