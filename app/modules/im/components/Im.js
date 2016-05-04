@@ -224,8 +224,8 @@ const Im = React.createClass({
                   to={`/${role}/${identity}/im/overview`}
                   activeClassName="active"
                 >
-                  <FormattedMessage id="overview" defaultMessage="Overview" />	
-				</Link>
+                  <FormattedMessage id="overview" defaultMessage="Overview" />
+                </Link>
               </li>
               <li className="top-bar--inner tab--inverted__title">
                 <Link

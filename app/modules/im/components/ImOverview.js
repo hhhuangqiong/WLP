@@ -85,15 +85,12 @@ const ImOverview = React.createClass({
           <div className="top-bar-section">
             <ul className="left top-bar--inner tab--inverted">
               <li className="top-bar--inner tab--inverted__title">
-                <Link to="im-overview" params={params}>
-
-                </Link>
                 <Link
                   to={`/${role}/${identity}/im/overview`}
                   activeClassName="active"
                 >
                   <FormattedMessage id="overview" defaultMessage="Overview" />
-				</Link>
+		            </Link>
               </li>
               <li className="top-bar--inner tab--inverted__title">
                 <Link

@@ -1,12 +1,12 @@
 import { isEmpty } from 'lodash';
 import React, { PropTypes } from 'react';
-import { FormattedMessage, defineMessages, injectIntl } from 'react-intl';
+import { FormattedMessage, defineMessages } from 'react-intl';
 
 import VerificationTableRow from './VerificationTableRow';
 import VerificationProfile from './VerificationProfile';
-import EmptyRow from '../../../main/components/data-table/EmptyRow';
-
-import Pagination from '../../../main/components/Pagination';
+import EmptyRow from '../../../modules/data-table/components/EmptyRow';
+import TableHeader from '../../../modules/data-table/components/TableHeader';
+import Pagination from '../../../modules/data-table/components/Pagination';
 
 const MESSAGES = defineMessages({
   dateAndTime: {
@@ -146,22 +146,11 @@ const VerificationTable = React.createClass({
 
   render() {
     const { selectedProfile } = this.state;
-    const { formatMessage } = this.props.intl;
 
     return (
       <If condition={!selectedProfile}>
         <table className="verification-report data-table small-24 large-22 large-offset-1">
-          <thead>
-            <tr>
-            {
-              TABLE_TITLES.map(title => (
-                <th className="verification-table--cell">
-                  {formatMessage(title)}
-                </th>
-              ))
-            }
-            </tr>
-          </thead>
+          <TableHeader headers={TABLE_TITLES} />
           <tbody className="verification-table">
             {isEmpty(this.renderTableRows()) ? this.renderEmptyRow() : this.renderTableRows()}
           </tbody>
@@ -186,4 +175,4 @@ const VerificationTable = React.createClass({
   },
 });
 
-export default injectIntl(VerificationTable);
+export default VerificationTable;

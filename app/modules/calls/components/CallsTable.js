@@ -4,12 +4,13 @@ import moment from 'moment';
 import { isEmpty, isNull } from 'lodash';
 import { defineMessages, injectIntl } from 'react-intl';
 
-import Pagination from '../../../main/components/Pagination';
+import Pagination from '../../../modules/data-table/components/Pagination';
 import { parseDuration } from '../../../utils/StringFormatter';
 
 import { getCountryName } from '../../../utils/StringFormatter';
 import CountryFlag from '../../../main/components/CountryFlag';
-import EmptyRow from '../../../main/components/data-table/EmptyRow';
+import EmptyRow from '../../../modules/data-table/components/EmptyRow';
+import TableHeader from '../../../modules/data-table/components/TableHeader';
 
 const EMPTY_STRING = 'N/A';
 
@@ -199,17 +200,7 @@ const CallsTable = React.createClass({
   render() {
     return (
       <table className="large-24 clickable data-table" key="calls-table">
-        <thead>
-          <tr>
-            {
-              TABLE_TITLES.map(title => (
-                <th className="im-table--cell">
-                  {formatMessage(title)}
-                </th>
-              ))
-            }
-          </tr>
-        </thead>
+        <TableHeader headers={TABLE_TITLES} />
         {this.renderTableBody(this.props.calls)}
         {this.renderTableFoot()}
       </table>
