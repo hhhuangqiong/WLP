@@ -32,6 +32,7 @@ const PanelHeader = React.createClass({
       PropTypes.string,
       PropTypes.array,
     ]),
+    className: PropTypes.string,
     title: PropTypes.string.isRequired,
     children: PropTypes.element.isRequired,
     caption: PropTypes.string.isRequired,
@@ -39,7 +40,15 @@ const PanelHeader = React.createClass({
 
   render() {
     return (
-        <div className={classNames('header', 'inline-with-space', this.props.customClass)}>
+        <div className={
+            classNames(
+              'header',
+              'inline-with-space',
+              this.props.customClass,
+              this.props.className
+            )
+          }
+        >
           <div className="inline-container">
             <h4 className="title inline">
               {this.props.title}
@@ -61,12 +70,13 @@ const PanelBody = React.createClass({
       PropTypes.string,
       PropTypes.array,
     ]),
+    className: PropTypes.string,
     children: PropTypes.element.isRequired,
   },
 
   render() {
     return (
-      <div className={classNames('body', this.props.customClass)}>
+      <div className={classNames('body', this.props.customClass, this.props.className)}>
         {this.props.children}
       </div>
     );

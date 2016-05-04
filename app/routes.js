@@ -20,11 +20,9 @@ import Verification from './modules/verification/components/Verification';
 import VerificationOverview from './modules/verification/components/VerificationOverview';
 import VerificationDetails from './modules/verification/components/VerificationDetails';
 
-import
-  VSFTransactionOverview
-from './modules/virtual-store-front/components/VSFTransactionOverview';
-
+import VsfOverview from './modules/virtual-store-front/components/overview/VsfOverview';
 import VSFTransactionDetails from './modules/virtual-store-front/components/VSFTransactionDetails';
+
 import Overview from './modules/overview/components/Overview';
 import CallsOverview from './modules/calls/components/CallsOverview';
 import Calls from './modules/calls/components/Calls';
@@ -118,7 +116,7 @@ export default (context) => {
           <Route path=":role/:identity/verification/details" component={VerificationDetails} />
         </Route>
 
-        <Route path=":role/:identity/vsf/overview" component={VSFTransactionOverview} />
+        <Route path=":role/:identity/vsf/overview" component={VsfOverview} />
         <Route path=":role/:identity/vsf/details" component={VSFTransactionDetails} />
 
         <Route path=":role/:identity/calls/overview" component={CallsOverview} />
@@ -142,4 +140,3 @@ export default (context) => {
     </Route>
   );
 };
-

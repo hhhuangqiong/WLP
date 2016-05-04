@@ -346,6 +346,22 @@ Api.prototype.getCallsStatsTotal = function getCallsStatsTotal(params, cb) {
     .end(genericHandler(cb));
 };
 
+Api.prototype.getVsfSummaryStats = function getVsfSummaryStats(params, cb) {
+  return superagent
+    .get(`${this._getHost()}/api/carriers/${params.carrierId}/vsf/overview/summaryStats`)
+    .accept('json')
+    .query(params)
+    .end(genericHandler(cb));
+};
+
+Api.prototype.getVsfMonthlyStats = function monthlyStats(params, cb) {
+  return superagent
+    .get(`${this._getHost()}/api/carriers/${params.carrierId}/vsf/overview/monthlyStats`)
+    .accept('json')
+    .query(params)
+    .end(genericHandler(cb));
+};
+
 import authRouter from './server/api/auth';
 import sessionRouter from './server/api/session';
 import accountsRouter from './server/api/accounts';

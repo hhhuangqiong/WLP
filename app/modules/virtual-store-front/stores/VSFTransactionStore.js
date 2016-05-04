@@ -8,7 +8,6 @@ const VSFTransactionStore = createStore({
   handlers: {
     FETCH_VSF_SUCCESS: 'handleTransactionsFetch',
     FETCH_VSF_START: 'handleTransactionsFetching',
-    FETCH_VSF_WIDGETS_SUCCESS: 'handleWidgetsFetch',
     CLEAR_VSF: 'handleClearTransaction',
   },
 
@@ -24,7 +23,6 @@ const VSFTransactionStore = createStore({
     this.toTime = moment().endOf('day').format('L');
     this.category = '';
     this.userNumber = '';
-    this.widgets = [];
     this.isLoadingMore = false;
     this.pendingRequests = {};
   },
@@ -45,16 +43,6 @@ const VSFTransactionStore = createStore({
     this.emitChange();
   },
 
-  handleWidgetsFetch(payload) {
-    if (payload && payload.widgets) {
-      this.widgets = payload.widgets;
-    } else {
-      this.widgets = [];
-    }
-
-    this.emitChange();
-  },
-
   getState() {
     return {
       fromTime: this.fromTime,
@@ -64,7 +52,6 @@ const VSFTransactionStore = createStore({
       pageIndex: this.pageIndex,
       pageSize: this.pageSize,
       hasNextPage: this.hasNextPage,
-      widgets: this.widgets,
       transactions: this.transactions,
       isLoadingMore: this.isLoadingMore,
     };
@@ -139,7 +126,6 @@ const VSFTransactionStore = createStore({
     this.pageSize = state.pageSize;
     this.hasNextPage = state.hasNextPage;
     this.userNumber = state.userNumber;
-    this.widgets = state.widgets;
     this.transactions = state.transactions;
     this.isLoadingMore = state.isLoadingMore;
   },

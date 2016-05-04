@@ -1,8 +1,22 @@
 import React, { PropTypes } from 'react';
 import classNames from 'classnames';
-import moment from 'moment';
+import { defineMessages, injectIntl } from 'react-intl';
+import { parseTimeRange } from '../../utils/timeFormatter';
 
-export default function TimeFramePicker({ className, frames, currentFrame, onChange }) {
+const MESSAGES = defineMessages({
+  timeFrameHours: {
+    id: 'timeFrameHours',
+    defaultMessage: 'hrs',
+  },
+  timeFrameDays: {
+    id: 'timeFrameDays',
+    defaultMessage: 'days',
+  },
+});
+
+function TimeFramePicker({ className, frames, currentFrame, onChange, intl }) {
+  const { formatMessage } = intl;
+
   if (!Array.isArray(frames)) {
     return null;
   }
@@ -10,16 +24,23 @@ export default function TimeFramePicker({ className, frames, currentFrame, onCha
   return (
     <div className={classNames('time-frame-picker', className)}>
       {
-        frames.map(frame => (
+        frames.map(frame => {
+          const { quantity, timescale } = parseTimeRange(frame);
+
+          const displayTimescale = timescale === 'hours' ?
+            formatMessage(MESSAGES.timeFrameHours) :
+            formatMessage(MESSAGES.timeFrameDays);
+
+          return (
             <span
               key={frame}
               className={classNames('item', { active: currentFrame === frame })}
               onClick={() => onChange(frame)}
             >
-              {frame.replace('hours', 'hrs')}
+              <span>{`${quantity} ${displayTimescale}`}</span>
             </span>
-          )
-        )
+          );
+        })
       }
     </div>
   );
@@ -30,55 +51,9 @@ TimeFramePicker.propTypes = {
   currentFrame: PropTypes.string.isRequired,
   onChange: PropTypes.func.isRequired,
   className: PropTypes.string,
+  intl: PropTypes.shape({
+    formatMessage: PropTypes.func.isRequired,
+  }),
 };
 
-// Buffer time in minutes
-const BUFFER_TIME_FOR_PROXY_HOURLY = 60;
-const BUFFER_TIME_FOR_PROXY_DAILY = 480;
-
-export function parseTimeRange(timeRange) {
-  const splitedTimeRange = timeRange.split(' ');
-  const quantity = parseInt(splitedTimeRange[0], 10) || 1;
-  const timescale = splitedTimeRange[1] === 'days' ? 'day' : 'hour';
-  // +1 to align the time to the corresponding bucket
-  // for the time that is 24 hours before 12:09, we need 13:00
-  // 12:09 + 1 hour = 13:09, startOf(13:09) = 13:00, 13:00 - 24 hour = 13:00
-
-  // The requirement has changed to
-  // `display only the timescale unit which has complete data set`
-  // so the above comment has become invalid as the latest timescale for hour
-  // is always incomplete, which means
-  // for 12:09, it should show only up to 12:00, but not 13:00
-  const to = timescale === 'hour' ?
-    moment()
-      // This is the buffer time of hourly proxy cache
-      .subtract(BUFFER_TIME_FOR_PROXY_HOURLY, 'minutes')
-      .startOf(timescale)
-      .valueOf() :
-    // Issue: WLP-584
-    // from day n-1 to day n-7
-    moment()
-      .subtract(1, timescale)
-      // This is the buffer time of daily proxy cache
-      .subtract(BUFFER_TIME_FOR_PROXY_DAILY, 'minutes')
-      .endOf(timescale)
-      .valueOf();
-
-  const from = timescale === 'hour' ?
-      moment(to)
-        .clone()
-        .subtract(quantity, timescale)
-        .startOf(timescale)
-        .valueOf() :
-      moment(to)
-        .clone()
-        .subtract(quantity - 1, timescale)
-        .startOf(timescale).valueOf();
-
-  return {
-    from,
-    to,
-    quantity,
-    timescale,
-  };
-}
+export default injectIntl(TimeFramePicker);

@@ -4,7 +4,7 @@ import Select from 'react-select';
 import { FormattedMessage } from 'react-intl';
 import classNames from 'classnames';
 import moment from 'moment';
-import { isNull, max, last, merge, sortByOrder, some, values } from 'lodash';
+import { isNull, max, merge, sortByOrder, some, values } from 'lodash';
 
 import { FluxibleMixin } from 'fluxible-addons-react';
 
@@ -13,7 +13,8 @@ import * as Panel from './../../../main/components/Panel';
 import getMapConfig from '../constants/mapOfAttempts';
 
 import ColorRadioButton from '../../../main/components/ColorRadioButton';
-import TimeFramePicker, { parseTimeRange } from '../../../main/components/TimeFramePicker';
+import TimeFramePicker from '../../../main/components/TimeFramePicker';
+import { parseTimeRange } from '../../../utils/timeFormatter';
 import LineChart from '../../../main/components/LineChart';
 import DonutChartPanel from '../../../main/components/DonutChartPanel';
 import SummaryCells from './SummaryCells';

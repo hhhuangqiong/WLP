@@ -12,7 +12,8 @@ import { FluxibleMixin } from 'fluxible-addons-react';
 import * as FilterBar from '../../../main/components/FilterBar';
 import * as Panel from './../../../main/components/Panel';
 import * as DataGrid from '../../../main/statistics/components/DataGrid';
-import TimeFramePicker, { parseTimeRange } from '../../../main/components/TimeFramePicker';
+import TimeFramePicker from '../../../main/components/TimeFramePicker';
+import { parseTimeRange } from '../../../utils/timeFormatter';
 import DateSelector from '../../../main/components/DateSelector';
 import CombinationChart from '../../../main/components/CombinationChart';
 

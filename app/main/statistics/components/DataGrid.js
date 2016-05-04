@@ -187,7 +187,10 @@ class DataCell extends Component {
 
 DataCell.propTypes = {
   title: PropTypes.string.isRequired,
-  data: PropTypes.string.isRequired,
+  data: PropTypes.oneOfType([
+    PropTypes.string.isRequired,
+    PropTypes.number.isRequired,
+  ]),
   unit: PropTypes.string,
   decimalPlace: PropTypes.number,
   changeDir: PropTypes.string,
