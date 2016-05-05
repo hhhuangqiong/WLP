@@ -43,6 +43,8 @@ const dest = {
 };
 
 gulp.task('test', (cb) => {
+  require('babel-polyfill');
+
   gulp.src([`${dest.app}/**/*.js`])
     .pipe(istanbul())
     .pipe(istanbul.hookRequire())

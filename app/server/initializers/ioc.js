@@ -74,6 +74,7 @@ export default function init(nconf) {
 
   ioc.service('VerificationRequest', require('../../lib/requests/dataProviders/Verification').default, 'DATAPROVIDER_API_BASE_URL', 'DATAPROVIDER_API_TIMEOUT');
   ioc.service('UserStatsRequest', require('../../lib/requests/dataProviders/UserStats').default, 'DATAPROVIDER_API_BASE_URL', 'DATAPROVIDER_API_TIMEOUT');
+  ioc.service('VsfStatsRequest', require('../../lib/requests/mvs/VsfStatsRequest').default, 'DATAPROVIDER_API_BASE_URL', 'DATAPROVIDER_API_TIMEOUT');
 
   ioc.constant('MUMS_API_BASE_URL', nconf.get('mumsApi:baseUrl'));
   ioc.constant('MUMS_API_TIMEOUT', nconf.get('mumsApi:timeout'));

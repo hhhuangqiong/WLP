@@ -19,6 +19,7 @@ const verificationRequest = fetchDep(nconf.get('containerName'), 'VerificationRe
 const callStatsRequest = fetchDep(nconf.get('containerName'), 'CallStatsRequest');
 const userStatsRequest = fetchDep(nconf.get('containerName'), 'UserStatsRequest');
 const redisClient = fetchDep(nconf.get('containerName'), 'RedisClient');
+const vsfStatsRequest = fetchDep(nconf.get('containerName'), 'VsfStatsRequest');
 
 import errorHandler from '../middlewares/errorHandler';
 import SmsRequest from '../../lib/requests/dataProviders/SMS';
@@ -1262,6 +1263,50 @@ function getCallUserStatsMonthly(req, res, next) {
       });
     })
     .done();
+}
+
+export function getVsfMonthlyStats(req, res, next) {
+  req.checkQuery('from').notEmpty();
+  req.checkQuery('to').notEmpty();
+
+  const error = req.validationErrors();
+
+  if (error) {
+    next(new ValidationError(prepareValidationMessage(error)));
+    return;
+  }
+
+  const { from, to } = req.query;
+
+  vsfStatsRequest
+    .getMonthlyStats({ from, to })
+    .then(stats => res.json({ stats }))
+    .catch(sendRequestError => {
+      next(new dataError.TransactionError(sendRequestError.message, sendRequestError));
+    });
+}
+
+export function getVsfSummaryStats(req, res, next) {
+  req.checkQuery('from').notEmpty();
+  req.checkQuery('to').notEmpty();
+  req.checkQuery('timescale').notEmpty();
+
+  const error = req.validationErrors();
+
+  if (error) {
+    next(new ValidationError(prepareValidationMessage(error)));
+    return;
+  }
+
+  const { from, to, timescale } = req.query;
+  const breakdown = 'itemCategory';
+
+  vsfStatsRequest
+    .getSummaryStats({ from, to, timescale, breakdown })
+    .then(stats => res.json({ stats }))
+    .catch(sendRequestError => {
+      next(new dataError.TransactionError(sendRequestError.message, sendRequestError));
+    });
 }
 
 function getCallUserStatsTotal(req, res, next) {

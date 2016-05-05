@@ -39,6 +39,8 @@ router
   .get('/carriers/:carrierId/stats/sms', carriers.getSMSStats)
   .get('/carriers/:carrierId/topup', carriers.getTopUp)
   .get('/carriers/:carrierId/vsf', carriers.getVSF)
+  .get('/carriers/:carrierId/vsf/overview/summaryStats', carriers.getVsfSummaryStats)
+  .get('/carriers/:carrierId/vsf/overview/monthlyStats', carriers.getVsfMonthlyStats)
   .get('/carriers/:carrierId/verifications', carriers.getVerifications)
   .get('/carriers/:carrierId/verificationStats', carriers.getVerificationStatistics)
   .get('/carriers/:carrierId/widgets/:type(calls|im|overview|store|sms|vsf)', carriers.getWidgets)
