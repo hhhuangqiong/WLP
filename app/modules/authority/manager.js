@@ -5,10 +5,11 @@ import { NotFoundError } from 'common-errors';
 import { getAclString } from './utils';
 import Company from '../../collections/company';
 
-import {
+import modules from '../../data/moduleId';
+const {
   OVERVIEW, ACCOUNT, COMPANY, END_USER, CALL,
   IM, SMS, VSF, TOP_UP, VERIFICATION_SDK,
-} from '../../data/moduleId';
+} = modules;
 
 const ROOT_COMPANY_CARRIER = 'm800';
 
@@ -121,6 +122,7 @@ class Authority {
             return;
           }
 
+          // eslint-disable-next-line consistent-return
           this._allMenuItems.forEach(menuItem => {
             const removeFeatures = _.bindKey(this, '_removeFeatures', menuItem);
 

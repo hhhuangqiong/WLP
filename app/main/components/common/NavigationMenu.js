@@ -1,4 +1,4 @@
-import _,{ some } from 'lodash';
+import { some } from 'lodash';
 import React, { PropTypes } from 'react';
 import { Link } from 'react-router';
 import { FluxibleMixin } from 'fluxible-addons-react';
@@ -69,6 +69,7 @@ const Navigation = React.createClass({
 
   handleSignOut(e) {
     e.preventDefault();
+    e.stopPropagation();
     this.context.executeAction(signOut, {});
   },
 
@@ -164,7 +165,7 @@ const Navigation = React.createClass({
                     defaultMessage="Change Password"
                   />
                 </a>
-                <a href="" onClick={this.handleSignOut}>
+                <a onClick={this.handleSignOut}>
                   <i className="icon-logout"></i>
                   <FormattedMessage
                     id="logout"
