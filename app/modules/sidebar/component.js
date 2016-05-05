@@ -3,6 +3,7 @@ import classnames from 'classnames';
 import { Link } from 'react-router';
 import Permit from '../../main/components/common/Permit';
 import navSections from '../../main/constants/navSection';
+import { userPath } from '../../server/paths';
 
 const Sidebar = (props) => {
   const {
@@ -42,8 +43,7 @@ const Sidebar = (props) => {
                     'item',
                     'mainmenu-bar__item',
                   )}
-                  to={section.routeName}
-                  params={{ role, identity }}
+                  to={userPath(role, identity, section.path)}
                 >
                   <label>
                     <i className={section.icon} />
