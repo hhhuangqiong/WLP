@@ -4,9 +4,9 @@ import classNames from 'classnames';
 import { isNull, isEmpty } from 'lodash';
 import { FormattedMessage, defineMessages, injectIntl } from 'react-intl';
 
-import EmptyRow from '../../../main/components/data-table/EmptyRow';
-
-import Pagination from '../../../main/components/Pagination';
+import EmptyRow from '../../../modules/data-table/components/EmptyRow';
+import TableHeader from '../../../modules/data-table/components/TableHeader';
+import Pagination from '../../../modules/data-table/components/Pagination';
 
 const NO_VALUE_LABEL = 'N/A';
 const IOS_PLATFORM = 'com.maaii.platform.ios';
@@ -184,17 +184,7 @@ const VSFTransactionTable = React.createClass({
 
     return (
       <table className="large-24 clickable data-table" key="vsf-table">
-        <thead className="vsf-table--head">
-          <tr>
-            {
-              TABLE_TITLES.map(title => (
-                <th className="vsf-table--cell">
-                  {formatMessage(title)}
-                </th>
-              ))
-            }
-          </tr>
-        </thead>
+        <TableHeader headers={TABLE_TITLES} />
         {this.renderTableBody()}
         <tfoot>
           <If condition={!isEmpty(this.props.transactions)}>

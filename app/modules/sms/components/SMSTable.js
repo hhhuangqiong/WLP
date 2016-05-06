@@ -8,9 +8,9 @@ import { FormattedMessage, defineMessages, injectIntl } from 'react-intl';
 import { getCountryName } from '../../../utils/StringFormatter';
 import config from './../../../main/config';
 import CountryFlag from '../../../main/components/CountryFlag';
-import EmptyRow from '../../../main/components/data-table/EmptyRow';
-
-import Pagination from '../../../main/components/Pagination';
+import EmptyRow from '../../../modules/data-table/components/EmptyRow';
+import TableHeader from '../../../modules/data-table/components/TableHeader';
+import Pagination from '../../../modules/data-table/components/Pagination';
 
 const { displayDateFormat: DATE_FORMAT } = config;
 const SYSTEM_MESSAGE_LABEL = 'System Message';
@@ -196,17 +196,7 @@ const SMSTable = React.createClass({
 
     return (
       <table className="data-table large-24 clickable">
-        <thead>
-          <tr>
-          {
-            TABLE_TITLES.map(({ id }) => (
-              <th className="SMS-table--cell">
-                {formatMessage({ id })}
-              </th>
-            ))
-          }
-          </tr>
-        </thead>
+        <TableHeader headers={TABLE_TITLES} />
         {this.renderTableBody()}
         <tfoot>
           <If condition={!isEmpty(this.props.records)}>

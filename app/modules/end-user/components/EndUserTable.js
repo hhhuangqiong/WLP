@@ -4,9 +4,9 @@ import React, { PropTypes } from 'react';
 import classNames from 'classnames';
 import { FormattedMessage, defineMessages, injectIntl } from 'react-intl';
 
-import EmptyRow from '../../../main/components/data-table/EmptyRow';
-
-import Pagination from '../../../main/components/Pagination';
+import EmptyRow from '../../../modules/data-table/components/EmptyRow';
+import TableHeader from '../../../modules/data-table/components/TableHeader';
+import Pagination from '../../../modules/data-table/components/Pagination';
 
 const { displayDateFormat: DATE_FORMAT } = require('./../../../main/config');
 
@@ -183,17 +183,7 @@ const EndUserTable = React.createClass({
   render() {
     return (
       <table className="data-table large-24 clickable">
-        <thead>
-          <tr>
-            {
-              TABLE_TITLES.map(({ id }) => (
-                <th className="im-table--cell">
-                  {formatMessage({ id })}
-                </th>
-              ))
-            }
-          </tr>
-        </thead>
+        <TableHeader headers={TABLE_TITLES} />
         {this.renderTableBody(this.props.users)}
         <tfoot>
           <If condition={!isEmpty(this.props.users)}>

@@ -130,12 +130,12 @@ const TopUp = React.createClass({
       <div className="row">
         <FilterBar.Wrapper>
           <FilterBar.NavigationItems>
-          <Link
-            to={`/${role}/${identity}/top-up/details`}
-            activeClassName="active"
-          >
-            <FormattedMessage id="detailsReport" defaultMessage="Details Report" />
-          </Link>
+            <Link
+              to={`/${role}/${identity}/top-up/details`}
+              activeClassName="active"
+            >
+              <FormattedMessage id="detailsReport" defaultMessage="Details Report" />
+            </Link>
           </FilterBar.NavigationItems>
           <FilterBar.LeftItems>
             <DateRangePicker

@@ -5,8 +5,9 @@ import React, { PropTypes } from 'react';
 import Tooltip from 'rc-tooltip';
 import { FormattedMessage, defineMessages, injectIntl } from 'react-intl';
 
-import EmptyRow from '../../../main/components/data-table/EmptyRow';
-import Pagination from '../../../main/components/Pagination';
+import EmptyRow from '../../../modules/data-table/components/EmptyRow';
+import Pagination from '../../../modules/data-table/components/Pagination';
+import TableHeader from '../../../modules/data-table/components/TableHeader';
 
 import currencyData from '../../../data/bossCurrencies.json';
 import Converter from '../../../utils/bossCurrencyConverter';
@@ -44,7 +45,7 @@ const MESSAGES = defineMessages({
 
 const TABLE_TITLES = [
   '',
-  MESSAGES.dummy,
+  MESSAGES.dateAndTime,
   MESSAGES.mobile,
   MESSAGES.wallet,
   MESSAGES.type,
@@ -203,17 +204,7 @@ ${(!currency.code ? '' : currency.code)}`;
 
     return (
       <table className="data-table large-24 clickable">
-        <thead>
-          <tr>
-            {
-              TABLE_TITLES.map(title => (
-                <th className="top-up-table--cell">
-                  {formatMessage(title)}
-                </th>
-              ))
-            }
-          </tr>
-        </thead>
+        <TableHeader headers={TABLE_TITLES} />
         {this.renderTableBody()}
         <Pagination
           colSpan={TABLE_TITLES.length + 1}

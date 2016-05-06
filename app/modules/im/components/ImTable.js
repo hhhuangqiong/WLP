@@ -7,9 +7,9 @@ import { FormattedMessage, defineMessages, injectIntl } from 'react-intl';
 
 import { getCountryName } from '../../../utils/StringFormatter';
 import CountryFlag from '../../../main/components/CountryFlag';
-import EmptyRow from '../../../main/components/data-table/EmptyRow';
-
-import Pagination from '../../../main/components/Pagination';
+import EmptyRow from '../../../modules/data-table/components/EmptyRow';
+import TableHeader from '../../../modules/data-table/components/TableHeader';
+import Pagination from '../../../modules/data-table/components/Pagination';
 
 const IM_DATETIME_FORMAT = 'MMMM DD YYYY, hh:mm:ss a';
 const LABEL_FOR_NULL = 'N/A';
@@ -234,17 +234,7 @@ const ImTable = React.createClass({
 
     return (
       <table className="data-table large-24 clickable im-table" key="im-table">
-        <thead className="im-table--head">
-        <tr className="im-table--row">
-          {
-            TABLE_TITLES.map(({ id }) => (
-              <th className="im-table--cell">
-                {formatMessage({ id })}
-              </th>
-            ))
-          }
-        </tr>
-        </thead>
+        <TableHeader headers={TABLE_TITLES} />
         {this.renderTableBody(ims)}
         <tfoot>
           <If condition={!isEmpty(ims)}>
