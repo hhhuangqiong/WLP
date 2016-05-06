@@ -1,4 +1,5 @@
 import { get, isEmpty } from 'lodash';
+import { userPath } from '../../server/paths';
 const createStore = require('fluxible/addons/createStore');
 
 const AuthStore = createStore({
@@ -21,8 +22,8 @@ const AuthStore = createStore({
     this.signInError = null;
   },
 
-  loadSession(auth) {
-    this.user = get(auth, 'user');
+  loadSession(user) {
+    this.user = user;
     this.emitChange();
   },
 
@@ -91,6 +92,22 @@ const AuthStore = createStore({
 
   getSignInError() {
     return this.signInError;
+  },
+
+  getLandingPath() {
+    const authenticated = this.isAuthenticated();
+
+    if (!authenticated) {
+      return '/sign-in';
+    }
+
+    try {
+      const { role, identity } = get(this, 'user.affiliatedCompany');
+      const path = userPath(role, identity, '/');
+      return path;
+    } catch (err) {
+      throw new Error('landing path cannot be resolved');
+    }
   },
 
   dehydrate() {

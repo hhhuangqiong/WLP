@@ -1,60 +1,34 @@
-const debug = require('debug')('app:actions/loadSession');
-const sessionDebug = require('debug')('app:sessionFlow');
+let debug = require('debug');
+debug = debug('app:actions/loadSession');
 
 module.exports = (context, payload, done) => {
   debug('Started');
 
-  const token = context.cookie.get('token');
-  sessionDebug('loadSession token:', token);
-  const user = context.cookie.get('user');
-  const username = context.cookie.get('username');
-  const displayName = context.cookie.get('displayName');
-  const carrierId = context.cookie.get('carrierId');
-  const role = context.cookie.get('role');
+  const { apiClient } = context;
 
-  if (!token) {
-    context.dispatch('LOAD_SESSION', null);
-    done();
-    return;
-  }
+  apiClient
+    .get('session')
+    .then(result => {
+      if (!result.data) {
+        debug('empty session returned');
+        context.dispatch('LOAD_SESSION', null);
+        done();
+        return;
+      }
 
-  // shadow token in parameter
-  context.api.getSession(token, (err, token) => {
-    if (err) {
-      debug('Failed');
+      debug(`data acquired from /session: ${result}`);
+      const { id, attributes } = result.data;
+      const user = {
+        id,
+        ...attributes,
+      };
+
+      context.dispatch('LOAD_SESSION', user);
+      done(null, user);
+    })
+    .catch(err => {
+      debug(err);
+      context.dispatch('LOAD_SESSION', null);
       done(err);
-      return;
-    }
-
-    // !IMPORTANT
-    // blindly followed Nicolas Hery
-    //
-    // token is empty during server side rendering
-    // wholly not understand why clear cookies while !token
-    // clearing cookie DO NOT affect the login session at all
-    // please inspire if you got the answer
-    if (!token) {
-      context.cookie.clear('token');
-      context.cookie.clear('user');
-      context.cookie.clear('carrierId');
-      context.cookie.clear('role');
-      done();
-      return;
-    }
-
-    const session = {
-      token,
-      user: {
-        _id: user,
-        username,
-        displayName,
-        carrierId,
-        role,
-      },
-    };
-
-    debug('Success');
-    context.dispatch('LOAD_SESSION', session);
-    done(null, session);
-  });
+    });
 };
