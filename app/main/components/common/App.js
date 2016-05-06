@@ -1,4 +1,5 @@
-import React, { PropTypes, Component } from 'react';
+import { PropTypes, Component } from 'react';
+import getAuthorityList from '../../../modules/authority/actions/getAuthorityList';
 
 /**
  * this is the entry point of the whole React application,
@@ -6,12 +7,12 @@ import React, { PropTypes, Component } from 'react';
  * a more manageable position
  */
 
-export default class App extends Component {
-  static childContextTypes = {
-    location: PropTypes.object.isRequired,
-    params: PropTypes.object.isRequired,
-    route: PropTypes.object.isRequired,
-  };
+class App extends Component {
+  constructor(props) {
+    super(props);
+
+    this._getData = this._getData.bind(this);
+  }
 
   getChildContext() {
     return {
@@ -21,15 +22,42 @@ export default class App extends Component {
     };
   }
 
-  constructor(props, context) {
-    super(props, context);
+  componentDidMount() {
+    this._getData();
+  }
+
+  componentDidUpdate(prevProps) {
+    if (this.props.params.identity !== prevProps.params.identity) {
+      this._getData();
+    }
+  }
+
+  _getData() {
+    const { params } = this.props;
+    this.context.executeAction(getAuthorityList, { params });
   }
 
   render() {
-    return (
-      <div>
-        { this.props.children }
-      </div>
-    )
+    return this.props.children;
   }
 }
+
+App.childContextTypes = {
+  location: PropTypes.object.isRequired,
+  params: PropTypes.object.isRequired,
+  route: PropTypes.object.isRequired,
+};
+
+App.contextTypes = {
+  executeAction: PropTypes.func,
+};
+
+App.propTypes = {
+  location: PropTypes.object.isRequired,
+  params: PropTypes.object.isRequired,
+  route: PropTypes.object.isRequired,
+  children: PropTypes.element.isRequired,
+};
+
+export default App;
+

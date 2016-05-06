@@ -4,7 +4,7 @@ import { ArgumentNullError, TypeError } from 'common-errors';
 import React, { PropTypes } from 'react';
 import Fluxible from 'fluxible';
 import FluxContext from 'fluxible/lib/FluxibleContext';
-import { FluxibleComponent } from 'fluxible-addons-react';
+import { FluxibleComponent, provideContext } from 'fluxible-addons-react';
 
 const debug = require('debug')('app:utils/fluxible');
 
@@ -88,7 +88,12 @@ export function createMarkupElement(context, children) {
 
   try {
     const element = React.createElement(
-      FluxibleComponent,
+      provideContext(FluxibleComponent, {
+        getStore: PropTypes.func,
+        executeAction: PropTypes.func,
+        // custom context(s)
+        getAuthority: PropTypes.func,
+      }),
       { context: context.getComponentContext() },
       children,
     );

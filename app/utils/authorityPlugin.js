@@ -1,4 +1,4 @@
-import Authority from '../main/authority/checker';
+import Authority from '../modules/authority/plugin';
 
 module.exports = {
   name: 'AuthorityPlugin',

@@ -1,38 +1,33 @@
-import React, { PropTypes } from 'react';
-import Invariant from 'invariant';
+import { PropTypes, Component } from 'react';
+import invariant from 'invariant';
 
-export default React.createClass({
-  propTypes: {
-    children: PropTypes.any.isRequired,
-    action: PropTypes.string.isRequired,
-    resource: PropTypes.string.isRequired,
-  },
-
-  contextTypes: {
-    getAuthority: PropTypes.func.isRequired,
-  },
-
+class Permit extends Component {
   componentWillMount() {
-    Invariant(
+    invariant(
       this.props.children,
       'Authority should have at least 1 child component'
     );
-  },
+  }
 
   _hasAuthority() {
     const { action, resource } = this.props;
-
     const authority = this.context.getAuthority();
     return authority.scan(action, resource);
-  },
+  }
 
   render() {
-    return (
-      <If condition={!this._hasAuthority()}>
-        { null }
-      <Else />
-        { this.props.children }
-      </If>
-    );
-  },
-});
+    return this._hasAuthority() ? this.props.children : null;
+  }
+}
+
+Permit.propTypes = {
+  children: PropTypes.any.isRequired,
+  action: PropTypes.string.isRequired,
+  resource: PropTypes.string.isRequired,
+};
+
+Permit.contextTypes = {
+  getAuthority: PropTypes.func.isRequired,
+};
+
+export default Permit;

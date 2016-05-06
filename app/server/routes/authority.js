@@ -1,6 +1,6 @@
 import logger from 'winston';
-import Authority from '../../main/authority/index';
-import { getResources } from '../../main/authority/utils';
+import Authority from '../../modules/authority/manager';
+import { getResources } from '../../modules/authority/utils';
 
 const getCapabilityList = (req, res, next) => {
   const { carrierId } = req.params;

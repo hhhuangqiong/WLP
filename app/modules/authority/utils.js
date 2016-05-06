@@ -1,5 +1,5 @@
 import _ from 'lodash';
-import { ACL_STRING_SEPARATOR, navResources } from './constants';
+import { ACL_STRING_SEPARATOR, navResources } from './constants/index';
 
 /**
  * @method _getAclString

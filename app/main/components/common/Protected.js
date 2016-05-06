@@ -1,6 +1,5 @@
 import React, { PropTypes } from 'react';
-import { concurrent } from 'contra';
-import Sidebar from './Sidebar';
+import Sidebar from '../../../modules/sidebar/container';
 import CanvasWrapper from './CanvasWrapper';
 import Navigation from './NavigationBar';
 import Title from './NavigationTitle';
@@ -10,37 +9,9 @@ import SystemMessage from './SystemMessage';
 import LoadingSpinner from './LoadingSpinner';
 import classnames from 'classnames';
 
-import AuthStore from '../../../main/stores/AuthStore';
-import fetchCurrentCompanyInfo from '../../actions/fetchCurrentCompanyInfo';
-import fetchManagingCompanies from '../../actions/fetchManagingCompanies';
-import fetchAppIds from '../../../main/actions/fetchAppIds';
-
 const Protected = React.createClass({
   propTypes: {
     pageTitle: PropTypes.string.isRequired,
-  },
-
-  statics: {
-    // `context` is prepared by server's `renderApp()`
-    fetchData(context, params, query, done) {
-      concurrent([
-        context.executeAction.bind(
-          context,
-          fetchCurrentCompanyInfo,
-          { carrierId: params.identity }
-        ),
-        context.executeAction.bind(
-          context,
-          fetchManagingCompanies,
-          {}
-        ),
-        context.executeAction.bind(
-          context,
-          fetchAppIds,
-          { carrierId: params.identity, userId: context.getStore(AuthStore).getUserId() }
-        ),
-      ], done || function callback() {});
-    },
   },
 
   getInitialState() {
@@ -58,7 +29,7 @@ const Protected = React.createClass({
   render() {
     return (
       <div className={classnames({ 'wrapper--extended': !this.state.isOffCanvas })}>
-        <Sidebar isOffCanvas={this.state.isOffCanvas} handleOffCavnas={this._setOffCanvas} />
+        <Sidebar isOffCanvas={this.state.isOffCanvas} handleOffCanvas={this._setOffCanvas} />
         <CanvasWrapper isOffCanvas={this.state.isOffCanvas}>
           <Navigation isOffCanvas={this.state.isOffCanvas}>
             <Title title={this.props.pageTitle} />
