@@ -11,6 +11,7 @@ import session from 'express-session';
 import app from '../app';
 import config from '../config';
 import render from './render';
+import apiResponse from './utils/apiResponse';
 import { apiErrorHandler } from './middlewares/errorHandler';
 
 const PROJ_ROOT = path.join(__dirname, '../..');
@@ -89,6 +90,8 @@ export default function (port) {
 
   // ensure express.session() is before passport.session()
   server.use(passport.session());
+
+  server.use(apiResponse({ logger }));
 
   // as API server
   server.use(require('./routers/hlr').default);
