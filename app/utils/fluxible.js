@@ -1,5 +1,7 @@
-import { isFunction } from 'lodash';
-import React from 'react';
+import Q from 'q';
+import { isArray, isEmpty, isFunction, reduce } from 'lodash';
+import { ArgumentNullError, TypeError } from 'common-errors';
+import React, { PropTypes } from 'react';
 import Fluxible from 'fluxible';
 import FluxContext from 'fluxible/lib/FluxibleContext';
 import { FluxibleComponent } from 'fluxible-addons-react';
@@ -95,4 +97,55 @@ export function createMarkupElement(context, children) {
   } catch (err) {
     throw err;
   }
+}
+
+/**
+ * @method getInitialData
+ * to fetch the initial data with Fluxible. Actions SHOULD BE
+ * the processes only that are essential for starting the application.
+ * Be aware that getting initial data does not involve `payload` object,
+ * enforcing that all the related processes can only be user
+ * session related.
+ *
+ * @param context {FluxContext}
+ * @param actions {Array} array of actions
+ * @param cb {Function}
+ */
+export function getInitialData(context, actions, cb) {
+  if (!context) {
+    throw new ArgumentNullError('context');
+  }
+
+  if (!(context instanceof FluxContext)) {
+    throw new TypeError('`context` is not a FluxContext');
+  }
+
+  if (!isArray(actions)) {
+    throw new TypeError('`actions` is not an array');
+  }
+
+  if (!cb) {
+    throw new ArgumentNullError('cb');
+  }
+
+  if (!isFunction(cb)) {
+    throw new TypeError('`cb` is not a function');
+  }
+
+  const actionContext = context.getActionContext();
+
+  Q.all(actions.map(action => Q.ninvoke(actionContext, 'executeAction', action, {})))
+    .then(data => {
+      debug('initial request is done, updating InitialDataStore', data);
+      actionContext.dispatch('INITIAL_DATA_FETCHED');
+
+      // most of the time the dehydrated process
+      // does not need to return the data as the data
+      // is already put into stores.
+      cb(null, data);
+    })
+    .catch(err => {
+      debug('error occurred in getInitialData()', err);
+      cb(err);
+    });
 }
