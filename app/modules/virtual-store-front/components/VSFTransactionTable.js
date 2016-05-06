@@ -176,12 +176,18 @@ const VSFTransactionTable = React.createClass({
       );
     }
 
-    return null;
+    if (isEmpty(transactions)) {
+      return (
+        <tbody className={UI_STATE_EMPTY}>{this.renderEmptyRow()}</tbody>
+      );
+    }
+
+    return (
+      <tbody className={UI_STATE_NORMAL}>{this.renderRows()}</tbody>
+    );
   },
 
   render() {
-    const { formatMessage } = this.props.intl;
-
     return (
       <table className="large-24 clickable data-table" key="vsf-table">
         <TableHeader headers={TABLE_TITLES} />

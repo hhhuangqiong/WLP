@@ -90,29 +90,6 @@ const TopUpTable = React.createClass({
 ${(!currency.code ? '' : currency.code)}`;
   },
 
-  renderFooter() {
-    if (this.props.totalRec > this.props.page * this.props.pageRec) {
-      return (
-        <tfoot>
-          <tr>
-            <td colSpan="7" className="pagination">
-              <div className="text-center">
-                <span
-                  className="pagination__button"
-                  onClick={this.props.onPageLoad}
-                >
-                  <FormattedMessage id="loadMore" defaultMessage="Load More" />
-                </span>
-              </div>
-            </td>
-          </tr>
-        </tfoot>
-      );
-    }
-
-    return null;
-  },
-
   renderEmptyRow() {
     if (!this.props.histories || this.props.histories.length === 0) {
       return <EmptyRow colSpan={TABLE_TITLES.length} />;
@@ -199,19 +176,29 @@ ${(!currency.code ? '' : currency.code)}`;
     );
   },
 
-  render() {
-	const { formatMessage } = this.props.intl;
+  renderTableFoot() {
+    if (!this.props.histories || isEmpty(this.props.histories)) {
+      return null;
+    }
 
+    return (
+      <tfoot>
+      <Pagination
+        colSpan={TABLE_TITLES.length + 1}
+        hasMoreData={(this.props.totalPages - 1) > this.props.page}
+        onLoadMore={this.props.onDataLoad}
+        isLoading={this.props.isLoadingMore}
+        />
+      </tfoot>
+    );
+  },
+
+  render() {
     return (
       <table className="data-table large-24 clickable">
         <TableHeader headers={TABLE_TITLES} />
         {this.renderTableBody()}
-        <Pagination
-          colSpan={TABLE_TITLES.length + 1}
-          hasMoreData={this.props.totalRec > this.props.page * this.props.pageRec}
-          onLoadMore={this.props.onPageLoad}
-          isLoading={this.props.isLoadingMore}
-        />
+        {this.renderTableFoot()}
       </table>
     );
   },

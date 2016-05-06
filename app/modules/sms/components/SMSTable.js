@@ -12,6 +12,12 @@ import EmptyRow from '../../../modules/data-table/components/EmptyRow';
 import TableHeader from '../../../modules/data-table/components/TableHeader';
 import Pagination from '../../../modules/data-table/components/Pagination';
 
+import {
+  UI_STATE_LOADING,
+  UI_STATE_EMPTY,
+  UI_STATE_NORMAL,
+  } from '../../../main/constants/uiState';
+
 const { displayDateFormat: DATE_FORMAT } = config;
 const SYSTEM_MESSAGE_LABEL = 'System Message';
 
@@ -192,8 +198,6 @@ const SMSTable = React.createClass({
   },
 
   render() {
-    const { formatMessage } = this.props.intl;
-
     return (
       <table className="data-table large-24 clickable">
         <TableHeader headers={TABLE_TITLES} />
