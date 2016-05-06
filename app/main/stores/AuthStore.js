@@ -75,11 +75,11 @@ const AuthStore = createStore({
   },
 
   getUserRole() {
-    return this.user && this.user.role;
+    return get(this, 'user.affiliatedCompany.role');
   },
 
   getCarrierId() {
-    return this.user && this.user.carrierId;
+    return get(this, 'user.affiliatedCompany.carrierId');
   },
 
   isSigningIn() {

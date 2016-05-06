@@ -22,7 +22,14 @@ class SidebarContainer extends Component {
   render() {
     const logo = this._getLogo();
     const { isOffCanvas, handleOffCanvas } = this.props;
-    const { carrierId, currentCompany, isAuthorityReady, role } = this.props;
+    const { currentCompany, isAuthorityReady } = this.props;
+
+    // data in context reflects the company that the user
+    // is currently browsing,
+    // if context.params is unavailable,
+    // it will fall back to that in store which is the user company
+    const contextSource = this.context.params || this.props;
+    const { identity: carrierId, role } = contextSource;
 
     return (
       <Sidebar
@@ -38,7 +45,7 @@ class SidebarContainer extends Component {
   }
 }
 
-Sidebar.contextTypes = {
+SidebarContainer.contextTypes = {
   location: PropTypes.object,
   params: PropTypes.object,
   router: PropTypes.object,
@@ -58,7 +65,7 @@ SidebarContainer = connectToStores(
   [AuthStore, AuthorityStore, ApplicationStore],
   context => ({
     role: context.getStore(AuthStore).getUserRole(),
-    carrierId: context.getStore(AuthStore).getCarrierId(),
+    identity: context.getStore(AuthStore).getCarrierId(),
     currentCompany: context.getStore(ApplicationStore).getCurrentCompany(),
     // eslint-disable-next-line max-len
     isAuthorityReady: !context.getStore(AuthorityStore).getIsLoading() && !!context.getStore(AuthorityStore).getIsLoaded(),

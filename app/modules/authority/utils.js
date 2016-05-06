@@ -49,7 +49,7 @@ export function getRouteByResource(resource) {
   return _.result(_.find(
     navResources,
     nav => nav.page === resource
-  ), 'routeName');
+  ), 'path');
 }
 
 /**
