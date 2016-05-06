@@ -1,9 +1,10 @@
 import _ from 'lodash';
 import React from 'react';
 import { FluxibleMixin } from 'fluxible-addons-react';
+import { browserHistory } from 'react-router';
 
+import { userPath } from '../../../server/paths';
 import ApplicationStore from '../../stores/ApplicationStore';
-import switchCompany from '../../../modules/company/actions/switchCompany';
 
 const DEFAULT_LOGO_SRC = '/images/default-logo.png';
 
@@ -29,14 +30,16 @@ const CompanySwitcher = React.createClass({
   },
 
   switchCompany(params) {
-    this.context.executeAction(switchCompany, params);
+    const { role, identity } = params;
+    const destination = userPath(role, identity, '/');
+    browserHistory.push(destination);
   },
 
   render() {
     const buttons = this
       .state
       .companies
-      .map(({ name, carrierId, logo, role, identity }) => {
+      .map(({ attributes: { name, carrierId, logo, role, identity } }) => {
         const logoSrc = logo ? `/data/${logo}` : DEFAULT_LOGO_SRC;
 
         return (

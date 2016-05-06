@@ -1,5 +1,5 @@
 import React from 'react';
-import { Route, IndexRedirect, IndexRoute } from 'react-router';
+import { Route, IndexRedirect } from 'react-router';
 
 import App from './main/components/common/App';
 import Public from './main/components/common/Public';
@@ -49,60 +49,97 @@ import {
   ERROR_500 as path500,
 } from './server/paths';
 
-// convention: separate path by "-" following the component name
+import AuthStore from './main/stores/AuthStore';
+// import InitialDataStore from './main/stores/InitialDataStore';
 
-export default (
-  <Route path="/" component={App}>
-    <IndexRedirect from="/" to="sign-in" />
+const debug = require('debug')('app:routes');
 
-    <Route component={Public}>
-      <Route path="sign-in" component={SignIn} />
-      <Route path="forgot-password" component={ForgotPassword} />
-      <Route path="create-password" path="verify/sign-up" component={CreatePassword} />
+export default (context) => {
+  function requireAuth(nextState, replace, cb) {
+    const isAuthenticated = context.getStore(AuthStore).isAuthenticated();
+
+    if (!isAuthenticated) {
+      debug('user is not authenticated, redirecting to /sign-in');
+      replace('/sign-in');
+    }
+
+    // TODO: implementation on client side
+    // const isDataLoaded = context.getStore(InitialDataStore).isDataLoaded();
+    // run getInitialRequest
+
+    cb();
+  }
+
+  function alreadyAuth(nextState, replace, cb) {
+    const isAuthenticated = context.getStore(AuthStore).isAuthenticated();
+
+    if (isAuthenticated) {
+      try {
+        const path = context.getStore(AuthStore).getLandingPath();
+        debug('user is already authenticated, redirecting to landing page %s', path);
+        replace(path);
+      } catch (err) {
+        debug('error occurred when getting landing path', err);
+        debug('redirecting to /sign-in');
+        replace('/sign-in');
+      }
+    }
+
+    cb();
+  }
+
+  return (
+    <Route path="/" component={App}>
+      <IndexRedirect from="/" to="sign-in" />
+
+      <Route component={Public}>
+        <Route path="sign-in" component={SignIn} onEnter={alreadyAuth} />
+        <Route path="forgot-password" component={ForgotPassword} />
+        <Route path="verify/sign-up" component={CreatePassword} />
+      </Route>
+
+      <Route component={Protected} onEnter={requireAuth} >
+        <Route path=":role/:identity" component={Overview} />
+
+        <Route path=":role/:identity/companies" component={Companies}>
+          <Route path="create" component={NewProfile} />
+          <Route path=":carrierId/profile" component={EditProfile} />
+          <Route path=":carrierId/service" component={Service} />
+          <Route path=":carrierId/widget" component={Widgets} />
+        </Route>
+
+        <Route path=":role/:identity/account" component={Account}>
+          <Route path="create" component={AccountProfile} />
+          <Route path=":accountId" component={AccountProfile} />
+        </Route>
+
+        <Route component={Verification}>
+          <Route path=":role/:identity/verification/overview" component={VerificationOverview} />
+          <Route path=":role/:identity/verification/details" component={VerificationDetails} />
+        </Route>
+
+        <Route path=":role/:identity/vsf/overview" component={VSFTransactionOverview} />
+        <Route path=":role/:identity/vsf/details" component={VSFTransactionDetails} />
+
+        <Route path=":role/:identity/calls/overview" component={CallsOverview} />
+        <Route path=":role/:identity/calls/details" component={Calls} />
+
+        <Route path=":role/:identity/end-users/overview" component={EndUsersOverview} />
+        <Route path=":role/:identity/end-users/details" component={EndUsersDetails} />
+
+        <Route path=":role/:identity/im/overview" component={ImOverview} />
+        <Route path=":role/:identity/im/details" component={Im} />
+
+        <Route path=":role/:identity/sms/overview" component={SmsOverview} />
+        <Route path=":role/:identity/sms/details" component={SMS} />
+
+        <Route path=":role/:identity/top-up/details" component={TopUp} />
+      </Route>
+
+      <Route path={path401} component={Error401} />
+      <Route path={path404} component={Error404} />
+      <Route path={path500} component={Error500} />
     </Route>
+  );
+};
 
-    <Route component={Protected}>
-      <Route path=":role/:identity/overview" component={Overview} />
-
-      <Route path=":role/:identity/companies" component={Companies}>
-        <Route path="create" component={NewProfile} />
-        <Route path=":carrierId/profile" component={EditProfile} />
-        <Route path=":carrierId/service" component={Service} />
-        <Route path=":carrierId/widget" component={Widgets} />
-      </Route>
-
-      <Route path=":role/:identity/account" component={Account}>
-        <Route path="create" component={AccountProfile} />
-        <Route path=":accountId" component={AccountProfile} />
-      </Route>
-
-      <Route component={Verification}>
-        <Route path=":role/:identity/verification/overview" component={VerificationOverview} />
-        <Route path=":role/:identity/verification/details" component={VerificationDetails} />
-      </Route>
-
-      <Route path=":role/:identity/vsf/overview" component={VSFTransactionOverview} />
-      <Route path=":role/:identity/vsf/details" component={VSFTransactionDetails} />
-
-      <Route path=":role/:identity/calls/overview" component={CallsOverview} />
-      <Route path=":role/:identity/calls/details" component={Calls} />
-
-      <Route path=":role/:identity/end-users/overview" component={EndUsersOverview} />
-      <Route path=":role/:identity/end-users/details" component={EndUsersDetails} />
-
-      <Route path=":role/:identity/im/overview" component={ImOverview} />
-      <Route path=":role/:identity/im/details" component={Im} />
-
-      <Route path=":role/:identity/sms/overview" component={SmsOverview} />
-      <Route path=":role/:identity/sms/details" component={SMS} />
-
-      <Route path=":role/:identity/top-up/details" component={TopUp} />
-    </Route>
-
-    <Route path={path401} component={Error401} />
-    <Route path={path404} component={Error404} />
-    <Route path={path500} component={Error500} />
-
-    <Route path="*" component={Error404} />
-  </Route>
-);
