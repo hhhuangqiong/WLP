@@ -1,7 +1,8 @@
 import _ from 'lodash';
 import React, { PropTypes } from 'react';
 import { FluxibleMixin } from 'fluxible-addons-react';
-import ValidationMixin from 'react-validation-mixin';
+import validation from 'react-validation-mixin';
+import strategy from 'joi-validation-strategy';
 
 import createProfile from '../actions/createCompany';
 import updateProfile from '../actions/updateProfile';
@@ -24,7 +25,7 @@ const CompanyProfile = React.createClass({
     executeAction: React.PropTypes.func.isRequired,
   },
 
-  mixins: [FluxibleMixin, ValidationMixin],
+  mixins: [FluxibleMixin],
 
   statics: {
     storeListeners: [CompanyStore],
@@ -201,7 +202,7 @@ const CompanyProfile = React.createClass({
   },
 });
 
-const ProfileTemplate = React.createFactory(CompanyProfile);
+const ProfileTemplate = React.createFactory(validation(strategy)(CompanyProfile));
 
 export const NewProfile = React.createClass({
   render() {

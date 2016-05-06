@@ -8,7 +8,7 @@ import VerificationStore from './modules/verification/stores/VerificationStore';
 import VerificationOverviewStore from './modules/verification/stores/VerificationOverviewStore';
 import CompanyStore from './modules/company/stores/CompanyStore';
 import EndUserStore from './modules/end-user/stores/EndUserStore';
-import SignInStore from './main/stores/SignInStore';
+import SignInStore from './modules/sign-in/store';
 import OverviewStore from './modules/overview/stores/OverviewStore';
 import AccountStore from './modules/account/stores/AccountStore';
 import CreatePasswordStore from './modules/account/stores/CreatePasswordStore';

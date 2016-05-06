@@ -1,7 +1,8 @@
 import _ from 'lodash';
 import React, { PropTypes } from 'react';
 import { FluxibleMixin } from 'fluxible-addons-react';
-import ValidationMixin from 'react-validation-mixin';
+import validation from 'react-validation-mixin';
+import strategy from 'joi-validation-strategy';
 
 import updateCompanyService from '../actions/updateCompanyService';
 
@@ -42,7 +43,7 @@ const CompanyService = React.createClass({
     router: PropTypes.object.isRequired,
   },
 
-  mixins: [FluxibleMixin, ValidationMixin],
+  mixins: [FluxibleMixin],
 
   statics: {
     storeListeners: [CompanyStore],
@@ -244,4 +245,4 @@ const CompanyService = React.createClass({
   },
 });
 
-export default CompanyService;
+export default validation(strategy)(CompanyService);
