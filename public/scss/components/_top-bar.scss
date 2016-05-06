@@ -47,16 +47,10 @@
                         padding-right: rem-calc(20) !important;
                         display: flex;
                         align-items: center;
-                        span{
-                            min-width: rem-calc(210);
-                        }
                         i {
                             line-height: 1rem;
                             position: relative;
                         }
-                        // &:after{
-                        //     display: none;
-                        // }
                     }
                 }
             }

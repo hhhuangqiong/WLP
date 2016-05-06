@@ -226,12 +226,7 @@ const ImTable = React.createClass({
   },
 
   render() {
-	const {
-      ims, intl,
-    } = this.props;
-
-    const { formatMessage } = intl;
-
+	  const { ims } = this.props;
     return (
       <table className="data-table large-24 clickable im-table" key="im-table">
         <TableHeader headers={TABLE_TITLES} />
