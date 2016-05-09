@@ -13,6 +13,7 @@ const walletRequest = fetchDep(nconf.get('containerName'), 'WalletRequest');
 const callsRequest = fetchDep(nconf.get('containerName'), 'CallsRequest');
 const topUpRequest = fetchDep(nconf.get('containerName'), 'TopUpRequest');
 const imRequest = fetchDep(nconf.get('containerName'), 'ImRequest');
+const smsStatsRequest = fetchDep(nconf.get('containerName'), 'SMSStatsRequest');
 const vsfRequest = fetchDep(nconf.get('containerName'), 'VSFTransactionRequest');
 const verificationRequest = fetchDep(nconf.get('containerName'), 'VerificationRequest');
 const callStatsRequest = fetchDep(nconf.get('containerName'), 'CallStatsRequest');
@@ -478,6 +479,56 @@ const getSMS = function (req, res) {
     }
 
     res.json(result);
+  });
+};
+
+function getSMSStats(req, res) {
+  req.checkParams('carrierId').notEmpty();
+  req.checkQuery('fromTime').notEmpty();
+  req.checkQuery('toTime').notEmpty();
+  req.checkQuery('stat_type').notEmpty();
+
+
+  const error = req.validationErrors();
+
+  if (error) {
+    res.apiError(400, new ValidationError(prepareValidationMessage(error)));
+    return;
+  }
+
+  const { carrierId } = req.params;
+  const {
+    breakdown,
+    destination,
+    fromTime,
+    origin,
+    stat_type,
+    status,
+    toTime,
+    timescale,
+    type,
+  } = req.query;
+
+  const params = _.omit({
+    carrier: carrierId,
+    from: fromTime,
+    to: toTime,
+    stat_type,
+    timescale,
+    breakdown,
+    destination,
+    origin,
+    status,
+    type,
+  }, val => !val);
+
+  Q.ninvoke(smsStatsRequest, 'getSMSStats', params).then(result => {
+    // not using res.apiResponse
+    // because it acts as a dataProvider proxy only
+    res.status(200).json(_.merge({ success: true }, result));
+  }).catch(err => {
+    logger.error(err);
+    res.apiError(500, new dataError.TransactionError(err.message, err));
   });
 };
 
@@ -1358,6 +1409,7 @@ export {
   getCallUserStatsTotal,
   getIM,
   getSMS,
+  getSMSStats,
   getTopUp,
   getUserWallet,
   getUsername,
