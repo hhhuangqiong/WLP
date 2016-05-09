@@ -2,8 +2,8 @@ import React from 'react';
 
 import * as FilterBar from '../../../../main/components/FilterBar';
 import FilterBarNavigation from '../../../../main/filter-bar/components/FilterBarNavigation';
-import VsfMonthlyStatsContainer from '../../containers/VsfMonthlyStatsContainer';
-import VsfSummaryStatsContainer from '../../containers/VsfSummaryStatsContainer';
+import MonthlyStats from '../../containers/MonthlyStats';
+import SummaryStats from '../../containers/SummaryStats';
 
 export default function VsfOverview() {
   return (
@@ -13,8 +13,8 @@ export default function VsfOverview() {
       </FilterBar.Wrapper>
 
       <div className="large-24 columns">
-        <VsfMonthlyStatsContainer />
-        <VsfSummaryStatsContainer />
+        <MonthlyStats />
+        <SummaryStats />
       </div>
     </div>
   );

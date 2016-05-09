@@ -7,19 +7,19 @@ import { concurrent } from 'contra';
 import { merge, omit, clone } from 'lodash';
 import { FluxibleMixin } from 'fluxible-addons-react';
 
-import VSFTransactionTable from './VSFTransactionTable';
+import VsfTable from './VsfTable';
 import CategoryFilter from '../../../main/components/CategoryFilter';
 import DateRangePicker from '../../../main/components/DateRangePicker';
 import Searchbox from '../../../main/components/Searchbox';
 
-import VSFTransactionStore from '../stores/VSFTransactionStore';
+import VSFTransactionStore from '../stores/details';
 import fetchVSFTransactions from '../actions/fetchVSFTransactions';
 import clearVSFTransaction from '../actions/clearVSFTransaction';
 
 const SUBMIT_KEY = 13;
 const PAGE_SIZE = 100;
 
-const VSFTransactionDetails = createClass({
+const VsfDetails = createClass({
   contextTypes: {
     router: PropTypes.object.isRequired,
     executeAction: PropTypes.func.isRequired,
@@ -217,7 +217,7 @@ const VSFTransactionDetails = createClass({
         </nav>
 
         <div className="large-24 columns">
-          <VSFTransactionTable
+          <VsfTable
             transactions={this.state.transactions}
             hasNextPage={this.state.hasNextPage}
             loadPage={this.handlePageChange}
@@ -229,4 +229,4 @@ const VSFTransactionDetails = createClass({
   },
 });
 
-export default VSFTransactionDetails;
+export default VsfDetails;

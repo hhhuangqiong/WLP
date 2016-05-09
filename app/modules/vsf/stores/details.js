@@ -2,8 +2,8 @@ import { assign, forEach } from 'lodash';
 import moment from 'moment';
 import createStore from 'fluxible/addons/createStore';
 
-const VSFTransactionStore = createStore({
-  storeName: 'VSFTransactionStore',
+export default createStore({
+  storeName: 'VsfDetailsStore',
 
   handlers: {
     FETCH_VSF_SUCCESS: 'handleTransactionsFetch',
@@ -130,5 +130,3 @@ const VSFTransactionStore = createStore({
     this.isLoadingMore = state.isLoadingMore;
   },
 });
-
-export default VSFTransactionStore;

@@ -2,13 +2,28 @@ import React, { PropTypes, Component } from 'react';
 import moment from 'moment';
 import connectToStores from 'fluxible-addons-react/connectToStores';
 
-import VsfSummaryStats from '../components/overview/VsfSummaryStats';
-import { clearVsfSummaryStats, fetchVsfSummaryStats } from '../actions/vsfStatsActions';
-import VsfSummaryStatsStore from '../stores/VsfSummaryStatsStore';
+import SummaryStats from '../components/overview/SummaryStats';
+import { clearVsfSummaryStats, fetchVsfSummaryStats } from '../actions/stats';
+import SummaryStatsStore from '../stores/summaryStats';
 import { parseTimeRange } from '../../../utils/timeFormatter';
 import { LAST_UPDATE_TIME_FORMAT } from '../../../utils/timeFormatter';
 
-class VsfSummaryStatsContainer extends Component {
+class SummaryStatsContainer extends Component {
+  componentDidMount() {
+    const { timeFrame } = this.props;
+
+    const { from, to, timescale } = parseTimeRange(timeFrame);
+    const { identity: carrierId } = this.context.params;
+
+    this.context.executeAction(fetchVsfSummaryStats, {
+      from,
+      to,
+      timescale,
+      carrierId,
+      timeFrame,
+    });
+  }
+
   componentWillUnmount() {
     this.context.executeAction(clearVsfSummaryStats);
   }
@@ -45,7 +60,7 @@ class VsfSummaryStatsContainer extends Component {
     } = this.props;
 
     return (
-      <VsfSummaryStats
+      <SummaryStats
         lastUpdate={::this.getLastUpdateMessage()}
         onChange={::this.onChange}
         isLoading={isLoading}
@@ -56,23 +71,23 @@ class VsfSummaryStatsContainer extends Component {
   }
 }
 
-VsfSummaryStatsContainer.contextTypes = {
+SummaryStatsContainer.contextTypes = {
   executeAction: PropTypes.func.isRequired,
   params: PropTypes.object.isRequired,
 };
 
-VsfSummaryStatsContainer.propTypes = {
+SummaryStatsContainer.propTypes = {
   stats: PropTypes.object.isRequired,
   timeFrame: PropTypes.string.isRequired,
   isLoading: PropTypes.bool.isRequired,
 };
 
 export default connectToStores(
-  VsfSummaryStatsContainer,
-  [VsfSummaryStatsStore],
+  SummaryStatsContainer,
+  [SummaryStatsStore],
   ({ getStore }) => ({
-    stats: getStore(VsfSummaryStatsStore).getState().stats,
-    isLoading: getStore(VsfSummaryStatsStore).getState().isLoading,
-    timeFrame: getStore(VsfSummaryStatsStore).getState().timeFrame,
+    stats: getStore(SummaryStatsStore).getState().stats,
+    isLoading: getStore(SummaryStatsStore).getState().isLoading,
+    timeFrame: getStore(SummaryStatsStore).getState().timeFrame,
   })
 );

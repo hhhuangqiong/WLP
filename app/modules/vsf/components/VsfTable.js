@@ -55,7 +55,7 @@ import {
   UI_STATE_NORMAL,
 } from '../../../main/constants/uiState';
 
-const VSFTransactionTable = React.createClass({
+const VsfTable = React.createClass({
   propTypes: {
     transactions: PropTypes.array.isRequired,
     hasNextPage: PropTypes.bool.isRequired,
@@ -207,4 +207,4 @@ const VSFTransactionTable = React.createClass({
   },
 });
 
-export default injectIntl(VSFTransactionTable);
+export default injectIntl(VsfTable);

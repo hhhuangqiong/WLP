@@ -2,12 +2,21 @@ import React, { Component, PropTypes } from 'react';
 import moment from 'moment';
 import connectToStores from 'fluxible-addons-react/connectToStores';
 
-import { fetchVsfMonthlyStats, clearVsfMonthlyStats } from '../actions/vsfStatsActions';
-import VsfMonthlyStats from '../components/overview/VsfMonthlyStats';
-import VsfMonthlyStatsStore from '../stores/VsfMonthlyStatsStore';
+import { fetchVsfMonthlyStats, clearVsfMonthlyStats } from '../actions/stats';
+import MonthlyStats from '../components/overview/MonthlyStats';
+import MonthlyStatsStore from '../stores/monthlyStats';
 import { LAST_UPDATE_TIME_FORMAT } from '../../../utils/timeFormatter';
 
-class VsfMonthlyStatsContainer extends Component {
+class MonthlyStatsContainer extends Component {
+  componentDidMount() {
+    const { identity: carrierId } = this.context.params;
+
+    this.context.executeAction(fetchVsfMonthlyStats, {
+      date: this.props.date,
+      carrierId,
+    });
+  }
+
   componentWillUnmount() {
     this.context.executeAction(clearVsfMonthlyStats);
   }
@@ -33,7 +42,7 @@ class VsfMonthlyStatsContainer extends Component {
     } = this.props;
 
     return (
-      <VsfMonthlyStats
+      <MonthlyStats
         lastUpdate={::this.getLastUpdateMessage()}
         isLoading={isLoading}
         onChange={::this.onChange}
@@ -44,23 +53,23 @@ class VsfMonthlyStatsContainer extends Component {
   }
 }
 
-VsfMonthlyStatsContainer.contextTypes = {
+MonthlyStatsContainer.contextTypes = {
   executeAction: PropTypes.func.isRequired,
   params: PropTypes.object.isRequired,
 };
 
-VsfMonthlyStatsContainer.propTypes = {
+MonthlyStatsContainer.propTypes = {
   stats: PropTypes.array.isRequired,
   date: PropTypes.string.isRequired,
   isLoading: PropTypes.bool.isRequired,
 };
 
 export default connectToStores(
-  VsfMonthlyStatsContainer,
-  [VsfMonthlyStatsStore],
+  MonthlyStatsContainer,
+  [MonthlyStatsStore],
   ({ getStore }) => ({
-    stats: getStore(VsfMonthlyStatsStore).getState().stats,
-    date: getStore(VsfMonthlyStatsStore).getState().date,
-    isLoading: getStore(VsfMonthlyStatsStore).getState().isLoading,
+    stats: getStore(MonthlyStatsStore).getState().stats,
+    date: getStore(MonthlyStatsStore).getState().date,
+    isLoading: getStore(MonthlyStatsStore).getState().isLoading,
   })
 );
