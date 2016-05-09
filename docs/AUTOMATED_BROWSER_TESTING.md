@@ -1,5 +1,13 @@
 # Automated Browser Testing
 
+The environment of front-end is not rigor like back-end development.
+The output can be varied from the input depending on different accessing devices, software versions and screen size.
+It is therefore necessary to test screen output in *User Perspective*, so that deviation are always in control.
+
+## Target Browsers
+- Chrome (Latest Version)
+- Firefox (Latest Version)
+
 ## 1. Begin
 
 ### Before start
