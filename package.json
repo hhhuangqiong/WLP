@@ -26,6 +26,7 @@
   },
   "dependencies": {
     "acl": "^0.4.9",
+    "babel-core": "^6.7.6",
     "bcrypt": "^0.8.0",
     "body-parser": "^1.8.1",
     "bottlejs": "^1.0.0",
@@ -109,7 +110,6 @@
   },
   "devDependencies": {
     "babel-cli": "^6.7.5",
-    "babel-core": "^6.7.6",
     "babel-eslint": "^6.0.0",
     "babel-loader": "^6.2.4",
     "babel-plugin-react-intl": "^2.1.2",
