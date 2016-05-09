@@ -1,6 +1,7 @@
 import React from 'react';
-import { shallow } from 'enzyme';
+import { shallow, mount } from 'enzyme';
 import { expect } from 'chai';
+import { spy } from 'sinon';
 
 import TimeFramePicker from '../../../app/main/components/TimeFramePicker';
 
@@ -42,6 +43,39 @@ describe('<TimeFramePicker />', () => {
       );
 
       expect(wrapper.find('.active').text()).to.equal('7 days');
+    });
+
+    it('should detect click event when receiving it', () => {
+      const onChange = spy();
+
+      const wrapper = mount(
+        <TimeFramePicker
+          frames={['24 hours', '7 days']}
+          currentFrame="7 days"
+          onChange={onChange}
+        />
+      );
+
+      wrapper.find('span').last().simulate('click');
+      expect(onChange.calledOnce).to.equal(true);
+    });
+
+    it('should change time frame when a props has changed', () => {
+      const wrapper = mount(
+        <TimeFramePicker
+          frames={['24 hours', '7 days', '30 days']}
+          currentFrame="7 days"
+          onChange={spy()}
+        />
+      );
+
+      expect(wrapper.find('.active').text()).to.equal('7 days');
+
+      wrapper.setProps({
+        currentFrame: '30 days',
+      });
+
+      expect(wrapper.find('.active').text()).to.equal('30 days');
     });
   });
 });
