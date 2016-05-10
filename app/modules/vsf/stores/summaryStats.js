@@ -4,9 +4,9 @@ export default createStore({
   storeName: 'VsfSummaryStatsStore',
 
   handlers: {
+    FETCH_VSF_SUMMARY_STATS_START: 'startLoading',
+    FETCH_VSF_SUMMARY_STATS_END: 'stopLoading',
     FETCH_VSF_SUMMARY_STATS_SUCCESS: 'handleFetched',
-    START_VSF_SUMMARY_STATS_LOADING: 'startLoading',
-    STOP_VSF_SUMMARY_STATS_LOADING: 'stopLoading',
     UPDATE_VSF_SUMMARY_STATS_TIME_FRAME: 'updateTimeFrame',
     CLEAR_VSF_SUMMARY_STATS: 'clearStats',
   },

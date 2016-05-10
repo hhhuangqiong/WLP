@@ -1,4 +1,5 @@
 import { ERROR_MESSAGE } from '../../../main/constants/actionTypes';
+import actionCreator from '../../../main/utils/apiActionCreator';
 
 export function clearVsfMonthlyStats(context, params, done) {
   context.dispatch('CLEAR_VSF_MONTHLY_STATS');
@@ -10,40 +11,34 @@ export function clearVsfSummaryStats(context, params, done) {
   done();
 }
 
-export function fetchVsfMonthlyStats(context, params, done) {
-  context.dispatch('START_VSF_MONTHLY_STATS_LOADING');
+export function updateVsfMonthlyStatsDate(context, params, done) {
+  context.dispatch('UPDATE_VSF_MONTHLY_STATS_DATE', params.date);
+  done();
+}
 
-  context.api.getVsfMonthlyStats(params, (error, result) => {
-    context.dispatch('STOP_VSF_MONTHLY_STATS_LOADING');
+export function updateVsfSummaryStatsTimeFrame(context, params, done) {
+  context.dispatch('UPDATE_VSF_SUMMARY_STATS_TIME_FRAME', params.timeFrame);
+  done();
+}
 
+export const fetchVsfMonthlyStats = actionCreator('FETCH_VSF_MONTHLY_STATS', 'getVsfMonthlyStats', {
+  cb: (error, response, context, params) => {
     if (error) {
       context.dispatch(ERROR_MESSAGE, error);
-      done();
       return;
     }
 
-    context.dispatch('UPDATE_VSF_MONTHLY_STATS_DATE', params.date);
-    context.dispatch('FETCH_VSF_MONTHLY_STATS_SUCCESS', result);
+    context.dispatch('FETCH_VSF_MONTHLY_STATS_SUCCESS', response);
+  },
+});
 
-    done();
-  });
-}
-
-export function fetchVsfSummaryStats(context, params, done) {
-  context.dispatch('START_VSF_SUMMARY_STATS_LOADING');
-
-  context.api.getVsfSummaryStats(params, (error, result) => {
-    context.dispatch('STOP_VSF_SUMMARY_STATS_LOADING');
-
+export const fetchVsfSummaryStats = actionCreator('FETCH_VSF_SUMMARY_STATS', 'getVsfMonthlyStats', {
+  cb: (error, response, context, params) => {
     if (error) {
       context.dispatch(ERROR_MESSAGE, error);
-      done();
       return;
     }
 
-    context.dispatch('UPDATE_VSF_SUMMARY_STATS_TIME_FRAME', params.timeFrame);
-    context.dispatch('FETCH_VSF_SUMMARY_STATS_SUCCESS', result);
-
-    done();
-  }, 1000);
-}
+    context.dispatch('FETCH_VSF_SUMMARY_STATS_SUCCESS', response);
+  },
+});

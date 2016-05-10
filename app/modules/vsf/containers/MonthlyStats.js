@@ -2,19 +2,32 @@ import React, { Component, PropTypes } from 'react';
 import moment from 'moment';
 import connectToStores from 'fluxible-addons-react/connectToStores';
 
-import { fetchVsfMonthlyStats, clearVsfMonthlyStats } from '../actions/stats';
+import {
+  updateVsfMonthlyStatsDate,
+  fetchVsfMonthlyStats,
+  clearVsfMonthlyStats,
+} from '../actions/stats';
 import MonthlyStats from '../components/overview/MonthlyStats';
 import MonthlyStatsStore from '../stores/monthlyStats';
 import { LAST_UPDATE_TIME_FORMAT } from '../../../utils/timeFormatter';
 
 class MonthlyStatsContainer extends Component {
-  componentDidMount() {
-    const { identity: carrierId } = this.context.params;
+  constructor(props) {
+    super(props);
+    this.executeFetch = this.executeFetch.bind(this);
+  }
 
-    this.context.executeAction(fetchVsfMonthlyStats, {
-      date: this.props.date,
-      carrierId,
-    });
+  componentDidMount() {
+    const { date } = this.props.date;
+    this.executeFetch(date);
+  }
+
+  shouldComponentUpdate({ date }) {
+    return date !== this.props.date;
+  }
+
+  componentDidUpdate({ date }) {
+    this.executeFetch(date);
   }
 
   componentWillUnmount() {
@@ -22,16 +35,22 @@ class MonthlyStatsContainer extends Component {
   }
 
   onChange(date) {
+    this.context.executeAction(updateVsfMonthlyStatsDate, {
+      date,
+    });
+  }
+
+  getLastUpdateMessage() {
+    return moment(this.props.date, 'L').endOf('month').format(LAST_UPDATE_TIME_FORMAT);
+  }
+
+  executeFetch(date) {
     const { identity: carrierId } = this.context.params;
 
     this.context.executeAction(fetchVsfMonthlyStats, {
       date,
       carrierId,
     });
-  }
-
-  getLastUpdateMessage() {
-    return moment(this.props.date, 'L').endOf('month').format(LAST_UPDATE_TIME_FORMAT);
   }
 
   render() {

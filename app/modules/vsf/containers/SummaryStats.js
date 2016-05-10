@@ -3,25 +3,32 @@ import moment from 'moment';
 import connectToStores from 'fluxible-addons-react/connectToStores';
 
 import SummaryStats from '../components/overview/SummaryStats';
-import { clearVsfSummaryStats, fetchVsfSummaryStats } from '../actions/stats';
+import {
+  updateVsfSummaryStatsTimeFrame,
+  clearVsfSummaryStats,
+  fetchVsfSummaryStats,
+} from '../actions/stats';
 import SummaryStatsStore from '../stores/summaryStats';
 import { parseTimeRange } from '../../../utils/timeFormatter';
 import { LAST_UPDATE_TIME_FORMAT } from '../../../utils/timeFormatter';
 
 class SummaryStatsContainer extends Component {
+  constructor(props) {
+    super(props);
+    this.executeFetch = this.executeFetch.bind(this);
+  }
+
   componentDidMount() {
     const { timeFrame } = this.props;
+    this.executeFetch(timeFrame);
+  }
 
-    const { from, to, timescale } = parseTimeRange(timeFrame);
-    const { identity: carrierId } = this.context.params;
+  shouldComponentUpdate({ timeFrame }) {
+    return timeFrame !== this.props.timeFrame;
+  }
 
-    this.context.executeAction(fetchVsfSummaryStats, {
-      from,
-      to,
-      timescale,
-      carrierId,
-      timeFrame,
-    });
+  componentDidUpdate({ timeFrame }) {
+    this.executeFetch(timeFrame);
   }
 
   componentWillUnmount() {
@@ -29,18 +36,7 @@ class SummaryStatsContainer extends Component {
   }
 
   onChange(timeFrame) {
-    if (timeFrame === this.props.timeFrame) {
-      return;
-    }
-
-    const { from, to, timescale } = parseTimeRange(timeFrame);
-    const { identity: carrierId } = this.context.params;
-
-    this.context.executeAction(fetchVsfSummaryStats, {
-      from,
-      to,
-      timescale,
-      carrierId,
+    this.context.executeAction(updateVsfSummaryStatsTimeFrame, {
       timeFrame,
     });
   }
@@ -50,6 +46,19 @@ class SummaryStatsContainer extends Component {
     const lastUpdate = timescale === 'hour' ? moment(to).subtract(1, timescale) : moment(to);
 
     return lastUpdate.endOf(timescale).format(LAST_UPDATE_TIME_FORMAT);
+  }
+
+  executeFetch(timeFrame) {
+    const { from, to, timescale } = parseTimeRange(timeFrame);
+    const { identity: carrierId } = this.context.params;
+
+    this.context.executeAction(fetchVsfSummaryStats, {
+      from,
+      to,
+      timescale,
+      carrierId,
+      timeFrame,
+    });
   }
 
   render() {

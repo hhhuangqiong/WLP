@@ -1,20 +1,22 @@
 import moment from 'moment';
 import createStore from 'fluxible/addons/createStore';
 
+import { SHORT_DATE_FORMAT } from '../../../utils/timeFormatter';
+
 export default createStore({
   storeName: 'VsfMonthlyStatsStore',
 
   handlers: {
+    FETCH_VSF_MONTHLY_STATS_START: 'startLoading',
+    FETCH_VSF_MONTHLY_STATS_END: 'stopLoading',
     FETCH_VSF_MONTHLY_STATS_SUCCESS: 'handleFetched',
     UPDATE_VSF_MONTHLY_STATS_DATE: 'updateDate',
-    START_VSF_MONTHLY_STATS_LOADING: 'startLoading',
-    STOP_VSF_MONTHLY_STATS_LOADING: 'stopLoading',
     CLEAR_VSF_MONTHLY_STATS: 'clearStats',
   },
 
   initialize() {
     this.stats = {};
-    this.date = moment().format('L');
+    this.date = moment().format(SHORT_DATE_FORMAT);
     this.isLoading = false;
   },
 
@@ -29,6 +31,12 @@ export default createStore({
   },
 
   updateDate(date) {
+    if (moment.isMoment(date)) {
+      this.date = date.format(SHORT_DATE_FORMAT);
+      this.emitChange();
+      return;
+    }
+
     this.date = date;
     this.emitChange();
   },

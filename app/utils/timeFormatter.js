@@ -1,5 +1,6 @@
 import moment from 'moment';
 
+export const SHORT_DATE_FORMAT = 'L';
 export const LAST_UPDATE_TIME_FORMAT = 'MMM DD, YYYY H:mm';
 
 // Buffer time in minutes
