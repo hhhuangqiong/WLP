@@ -16,7 +16,6 @@ import CreatePasswordStore from './modules/account/stores/CreatePasswordStore';
 import ChangePasswordStore from './modules/account/stores/ChangePasswordStore';
 import CallsStore from './modules/calls/stores/CallsStore';
 import CallsOverviewStore from './modules/calls/stores/CallsOverviewStore';
-import SMSStore from './modules/sms/stores/SMSStore';
 import TopUpStore from './modules/top-up/stores/TopUpStore';
 import ImStore from './modules/im/stores/ImStore';
 import SystemMessageStore from './main/stores/SystemMessageStore';
@@ -28,6 +27,10 @@ import ExportStore from './main/file-export/stores/ExportStore';
 import EndUsersOverviewStore from './modules/end-user/stores/EndUsersOverviewStore';
 import EndUsersRegistrationStatsStore from './modules/end-user/stores/EndUsersRegistrationStatsStore';
 import EndUsersGeographicStatsStore from './modules/end-user/stores/EndUsersGeographicStatsStore';
+
+import SMSStore from './modules/sms/stores/SMSStore';
+import SmsSummaryStatsStore from './modules/sms/stores/summaryStats';
+import SmsMonthlyStatsStore from './modules/sms/stores/monthlyStats';
 /* eslint-enable max-len */
 
 import getRoutes from './routes';
@@ -56,7 +59,6 @@ app.registerStore(CreatePasswordStore);
 app.registerStore(ChangePasswordStore);
 app.registerStore(CallsStore);
 app.registerStore(CallsOverviewStore);
-app.registerStore(SMSStore);
 app.registerStore(TopUpStore);
 app.registerStore(SystemMessageStore);
 app.registerStore(LoadingSpinnerStore);
@@ -68,5 +70,9 @@ app.registerStore(ExportStore);
 app.registerStore(EndUsersOverviewStore);
 app.registerStore(EndUsersRegistrationStatsStore);
 app.registerStore(EndUsersGeographicStatsStore);
+
+app.registerStore(SMSStore);
+app.registerStore(SmsSummaryStatsStore);
+app.registerStore(SmsMonthlyStatsStore);
 
 export default app;

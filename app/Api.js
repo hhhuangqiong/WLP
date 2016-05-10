@@ -187,11 +187,19 @@ Api.prototype.getSMS = function getSMS(params, cb) {
     .end(genericHandler(cb));
 };
 
-Api.prototype.getSMSWidgets = function getSMSWidgets(params, cb) {
+Api.prototype.getSmsSummaryStats = function getSmsSummaryStats(params, cb) {
   return superagent
-    .get(`${this._getHost()}/api/carriers/${params.carrierId}/widgets/sms`)
+    .get(`${this._getHost()}/api/carriers/${params.carrierId}/sms/overview/summaryStats`)
     .accept('json')
-    .query({ userId: params.userId })
+    .query(params)
+    .end(genericHandler(cb));
+};
+
+Api.prototype.getSmsMonthlyStats = function getSmsMonthlyStats(params, cb) {
+  return superagent
+    .get(`${this._getHost()}/api/carriers/${params.carrierId}/sms/overview/monthlyStats`)
+    .accept('json')
+    .query(params)
     .end(genericHandler(cb));
 };
 
