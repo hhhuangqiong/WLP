@@ -14,9 +14,22 @@ var config =  {
   devtool: 'source-map',
   module: {
     loaders: [
-      { test: /\.js$/, exclude: /node_modules/, loaders: ['react-hot', 'babel?cacheDirectory']},
-      { test: /\.json$/, loader: 'json' }
-    ]
+      { test: /\.js$/, exclude: /node_modules/, loader: 'react-hot' },
+      {
+        test: /\.js$/,
+        exclude: /node_modules/,
+        loader: 'babel',
+        query: {
+          presets: ['es2015', 'stage-0', 'react'],
+          plugins: [
+            'transform-decorators-legacy',
+            'jsx-control-statements',
+            ['react-intl', { messagesDir: './build/intl/' }],
+          ],
+        },
+      },
+      { test: /\.json$/, loader: 'json' },
+    ],
   },
   plugins: [],
   output: {

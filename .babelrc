@@ -3,11 +3,5 @@
   "plugins": [
     "transform-decorators-legacy",
     "jsx-control-statements",
-    [
-      "react-intl",
-      {
-        "messagesDir": "./build/intl/"
-      }
-    ]
   ]
 }
