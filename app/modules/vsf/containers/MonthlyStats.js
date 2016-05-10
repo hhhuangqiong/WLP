@@ -14,6 +14,8 @@ import { LAST_UPDATE_TIME_FORMAT } from '../../../utils/timeFormatter';
 class MonthlyStatsContainer extends Component {
   constructor(props) {
     super(props);
+    this.getLastUpdateMessage = this.getLastUpdateMessage.bind(this);
+    this.onChange = this.onChange.bind(this);
     this.executeFetch = this.executeFetch.bind(this);
   }
 
@@ -62,9 +64,9 @@ class MonthlyStatsContainer extends Component {
 
     return (
       <MonthlyStats
-        lastUpdate={::this.getLastUpdateMessage()}
+        lastUpdate={this.getLastUpdateMessage()}
         isLoading={isLoading}
-        onChange={::this.onChange}
+        onChange={this.onChange}
         date={date}
         stats={stats}
       />

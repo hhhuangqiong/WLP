@@ -15,6 +15,8 @@ import { LAST_UPDATE_TIME_FORMAT } from '../../../utils/timeFormatter';
 class SummaryStatsContainer extends Component {
   constructor(props) {
     super(props);
+    this.getLastUpdate = this.getLastUpdate.bind(this);
+    this.onChange = this.onChange.bind(this);
     this.executeFetch = this.executeFetch.bind(this);
   }
 
@@ -41,7 +43,7 @@ class SummaryStatsContainer extends Component {
     });
   }
 
-  getLastUpdateMessage() {
+  getLastUpdate() {
     const { to, timescale } = parseTimeRange(this.props.timeFrame);
     const lastUpdate = timescale === 'hour' ? moment(to).subtract(1, timescale) : moment(to);
 
@@ -70,8 +72,8 @@ class SummaryStatsContainer extends Component {
 
     return (
       <SummaryStats
-        lastUpdate={::this.getLastUpdateMessage()}
-        onChange={::this.onChange}
+        lastUpdate={this.getLastUpdate()}
+        onChange={this.onChange}
         isLoading={isLoading}
         timeFrame={timeFrame}
         stats={stats}
