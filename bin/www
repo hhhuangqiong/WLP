@@ -3,6 +3,16 @@
 require('babel-core/register')();
 require('babel-polyfill');
 
+// although from http://formatjs.io/guides/runtime-environments
+// it says that Node.js 0.12 has built-in Intl APIs,
+// but it turns out that Intl APIs is NOT always built across
+// different environment
+// @see: https://github.com/nodesource/distributions/issues/168
+if (!global.Intl) {
+  // No `Intl`, so use and load the polyfill.
+  global.Intl = require('intl');
+}
+
 const http = require('http');
 const port = process.env.PORT || 3000;
 const server = (require('../app/server').default)(port);
