@@ -21,7 +21,7 @@
     "test:report": "NODE_PATH=app mocha --compilers js:babel-core/register --recursive test/unit --reporter xunit > build/reports.xml",
     "test:browser": "wdio wdio.conf.js",
     "test:browser:docker": "test/browser/bin/run",
-    "test:component": "mocha --compilers js:babel-core/register --recursive test/component/specs",
+    "test:component": "mocha --require test/component/lib/domSetup.js --compilers js:babel-core/register --recursive test/component/specs",
     "seed:capabilities": "babel-node bin/capabilitiesSeeding.js"
   },
   "dependencies": {
