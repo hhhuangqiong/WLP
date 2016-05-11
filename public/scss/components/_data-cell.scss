@@ -54,6 +54,16 @@
           vertical-align: top;
         }
       }
+
+      &.no-effect {
+        color: $no-effect-trend-font-color;
+
+        .arrow {
+          @include triangle(up, $no-effect-trend-font-color, 9);
+          line-height: rem-calc(8);
+          vertical-align: top;
+        }
+      }
     }
 
     &.down {
@@ -73,6 +83,16 @@
         .arrow {
           @include triangle(down, $up-trend-font-color, 9);
           line-height: rem-calc(10);
+          vertical-align: bottom;
+        }
+      }
+
+      &.no-effect {
+        color: $no-effect-trend-font-color;
+
+        .arrow {
+          @include triangle(down, $no-effect-trend-font-color, 9);
+          line-height: rem-calc(8);
           vertical-align: bottom;
         }
       }

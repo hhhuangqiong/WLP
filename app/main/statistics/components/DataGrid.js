@@ -1,43 +1,113 @@
-import React, { PropTypes, Component } from 'react';
+import { isNumber, isUndefined, reduce } from 'lodash';
+import React, { PropTypes, Children, Component } from 'react';
+import { getGridColumnClass } from '../../utils/grid';
 import classNames from 'classnames';
-import { FormattedMessage } from 'react-intl';
+import warning from 'warning';
 
 const EMPTY_DATA_LABEL = '0';
 const DATA_FETCHING_LABEL = '-';
 
-class DataCellWrapper extends Component {
-  render() {
-    const { children, totalColumns } = this.props;
+const Wrapper = props => {
+  const {
+    children,
+    totalColumns,
+    maxColumnPerRow,
+    customClass,
+    wrapperClass,
+  } = props;
 
-    return (
-      <div className="data-cell__wrapper row">
-        {
-          React.Children.map(children, (child) => {
-            return (
-              <div className={classNames(`large-${totalColumns / children.length}`, 'columns')}>
-                { child }
-              </div>
-            );
-          })
-        }
-      </div>
-    );
+  let { columnPerRow } = props;
+
+  warning(
+    totalColumns % columnPerRow !== 0,
+    // eslint-disable-next-line max-len
+    `Invalid number of columns per row. It should be evenly divisible by total columns of ${totalColumns}, or the layout will be distorted.`
+  );
+
+  if (!columnPerRow) {
+    if (isNumber(maxColumnPerRow)) {
+      columnPerRow = maxColumnPerRow;
+    } else {
+      columnPerRow = reduce(maxColumnPerRow, (result, columnSize, className) => {
+        // eslint-disable-next-line no-param-reassign
+        result[className] = Math.min(Children.count(children), columnSize);
+        return result;
+      }, {});
+    }
   }
-}
 
-DataCellWrapper.propTypes = {
-  totalColumns: PropTypes.number,
-  children: PropTypes.arrayOf(PropTypes.element),
+  const gridClassName = getGridColumnClass(totalColumns, columnPerRow);
+
+  return (
+    <div className={classNames(customClass, wrapperClass)}>
+      {
+        Children.map(children, child => (
+          <div className={gridClassName}>
+            { child }
+          </div>
+        ))
+      }
+    </div>
+  );
 };
 
-DataCellWrapper.defaultProps = {
+Wrapper.propTypes = {
+  columnPerRow: PropTypes.oneOfType([
+    // for non-responsiveness
+    PropTypes.number,
+    // for responsiveness
+    PropTypes.object,
+    // for Foundation CSS
+    PropTypes.shape({
+      large: PropTypes.number,
+      medium: PropTypes.number,
+      small: PropTypes.number,
+    }),
+  ]),
+  maxColumnPerRow: PropTypes.oneOfType([
+    // for non-responsiveness
+    PropTypes.number,
+    // for responsiveness
+    PropTypes.object,
+    // for Foundation CSS
+    PropTypes.shape({
+      large: PropTypes.number,
+      medium: PropTypes.number,
+      small: PropTypes.number,
+    }),
+  ]),
+  totalColumns: PropTypes.number,
+  children: PropTypes.arrayOf(PropTypes.element),
+  customClass: PropTypes.oneOf([
+    PropTypes.string,
+    PropTypes.array,
+  ]),
+  wrapperClass: PropTypes.oneOf([
+    PropTypes.string,
+    PropTypes.array,
+  ]),
+};
+
+Wrapper.defaultProps = {
+  maxColumnPerRow: {
+    large: 6,
+    medium: 4,
+    small: 2,
+  },
   totalColumns: 24,
+  customClass: 'data-cell__wrapper',
+  wrapperClass: 'row',
 };
 
 class DataCell extends Component {
-  isEmpty() {
+  _isEmpty() {
     const { data } = this.props;
-    return !data || isNaN(data) || data === 'Infinity';
+    return isUndefined(data) || isNaN(data) || data === 'Infinity';
+  }
+
+  _isLoading() {
+    const { isLoading } = this.props;
+    return isLoading;
   }
 
   _localiseData(data) {
@@ -54,15 +124,50 @@ class DataCell extends Component {
     return (data && data.toLocaleString());
   }
 
-  render() {
+  renderUnit() {
+    const { unit } = this.props;
+
+    return (!this._isEmpty() && !this._isLoading() && !!unit && unit !== '%') ? (
+      <div className="data-cell__unit">{ unit }</div>
+    ) : null;
+  }
+
+  renderArrow(direction) {
+    return !!direction ? <span className="arrow" /> : null;
+  }
+
+  renderChangeNumber(amount) {
+    return !isUndefined(amount) ? <span>{ amount }</span> : null;
+  }
+
+  renderChangePercentage(percentage) {
+    return !isUndefined(percentage) ? <span>{`(${percentage}%)`}</span> : null;
+  }
+
+  renderDataChange() {
     const {
-      isLoading,
-      data,
-      unit,
       changeDir,
       changeEffect,
       changeAmount,
       changePercentage,
+    } = this.props;
+
+    if (!this._isEmpty() && !this._isLoading()) {
+      return (
+        <div className={classNames('data-cell__trend', changeEffect, changeDir)}>
+          { this.renderArrow(changeDir) }
+          { this.renderChangeNumber(changeAmount) }
+          { this.renderChangePercentage(changePercentage) }
+        </div>
+      );
+    }
+
+    return null;
+  }
+
+  render() {
+    const {
+      data,
       formatter,
       title,
     } = this.props;
@@ -73,22 +178,8 @@ class DataCell extends Component {
         <div className="data-cell__data">
           { this._localiseData(formatter(data)) }
         </div>
-        <If condition={!this.isEmpty() && !isLoading && !!unit && unit !== '%'}>
-          <div className="data-cell__unit">{ unit }</div>
-        </If>
-        <If condition={!this.isEmpty() && !isLoading && (!!changeAmount || !!changePercentage)}>
-          <div className={classNames('data-cell__trend', changeEffect, changeDir)}>
-            <If condition={!!changeDir}>
-              <span className="arrow" />
-            </If>
-            <If condition={!!changeAmount}>
-              <span>{ changeAmount }</span>
-            </If>
-            <If condition={!!changePercentage}>
-              <span>{`(${changePercentage}%)`}</span>
-            </If>
-          </div>
-        </If>
+        { this.renderUnit() }
+        { this.renderDataChange() }
       </div>
     );
   }
@@ -103,7 +194,7 @@ DataCell.propTypes = {
   changeAmount: PropTypes.string,
   isLoading: PropTypes.bool,
   changeEffect: PropTypes.oneOf([
-    'positive', 'negative',
+    'positive', 'negative', 'no-effect',
   ]),
   changePercentage: PropTypes.string,
   formatter: PropTypes.func,
@@ -125,6 +216,6 @@ DataCell.defaultProps = {
 };
 
 export {
-  DataCellWrapper as Wrapper,
+  Wrapper as Wrapper,
   DataCell as Cell,
 };
