@@ -36,6 +36,7 @@ router
   .get('/carriers/:carrierId/callUserStatsTotal', carriers.getCallUserStatsTotal)
   .get('/carriers/:carrierId/im', carriers.getIM)
   .get('/carriers/:carrierId/sms', carriers.getSMS)
+  .get('/carriers/:carrierId/stats/sms', carriers.getSMSStats)
   .get('/carriers/:carrierId/topup', carriers.getTopUp)
   .get('/carriers/:carrierId/vsf', carriers.getVSF)
   .get('/carriers/:carrierId/verifications', carriers.getVerifications)

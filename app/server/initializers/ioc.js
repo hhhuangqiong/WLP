@@ -64,6 +64,14 @@ export default function init(nconf) {
   );
 
   ioc.service('ImRequest', require('../../lib/requests/dataProviders/Im').default, 'DATAPROVIDER_API_BASE_URL', 'DATAPROVIDER_API_TIMEOUT');
+
+  ioc.service(
+    'SMSStatsRequest',
+    require('../../lib/requests/dataProviders/SMSStats').default,
+    'DATAPROVIDER_API_BASE_URL',
+    'DATAPROVIDER_API_TIMEOUT'
+  );
+
   ioc.service('VerificationRequest', require('../../lib/requests/dataProviders/Verification').default, 'DATAPROVIDER_API_BASE_URL', 'DATAPROVIDER_API_TIMEOUT');
   ioc.service('UserStatsRequest', require('../../lib/requests/dataProviders/UserStats').default, 'DATAPROVIDER_API_BASE_URL', 'DATAPROVIDER_API_TIMEOUT');
 
