@@ -2,15 +2,20 @@ import React, { PropTypes, Component } from 'react';
 import moment from 'moment';
 import connectToStores from 'fluxible-addons-react/connectToStores';
 
-import SummaryStats from '../components/overview/SummaryStats';
 import {
   updateVsfSummaryStatsTimeFrame,
   clearVsfSummaryStats,
   fetchVsfSummaryStats,
 } from '../actions/stats';
+
+import {
+  LAST_UPDATE_TIME_FORMAT,
+  HOUR_FORMAT_LABEL,
+} from '../../../utils/timeFormatter';
+
+import SummaryStats from '../components/overview/SummaryStats';
 import SummaryStatsStore from '../stores/summaryStats';
 import { parseTimeRange } from '../../../utils/timeFormatter';
-import { LAST_UPDATE_TIME_FORMAT } from '../../../utils/timeFormatter';
 
 class SummaryStatsContainer extends Component {
   constructor(props) {
@@ -25,12 +30,10 @@ class SummaryStatsContainer extends Component {
     this.executeFetch(timeFrame);
   }
 
-  shouldComponentUpdate({ timeFrame }) {
-    return timeFrame !== this.props.timeFrame;
-  }
-
   componentDidUpdate({ timeFrame }) {
-    this.executeFetch(timeFrame);
+    if (timeFrame !== this.props.timeFrame) {
+      this.executeFetch(this.props.timeFrame);
+    }
   }
 
   componentWillUnmount() {
@@ -45,7 +48,10 @@ class SummaryStatsContainer extends Component {
 
   getLastUpdate() {
     const { to, timescale } = parseTimeRange(this.props.timeFrame);
-    const lastUpdate = timescale === 'hour' ? moment(to).subtract(1, timescale) : moment(to);
+    const lastUpdate =
+      timescale === HOUR_FORMAT_LABEL ?
+        moment(to).subtract(1, timescale) :
+        moment(to);
 
     return lastUpdate.endOf(timescale).format(LAST_UPDATE_TIME_FORMAT);
   }

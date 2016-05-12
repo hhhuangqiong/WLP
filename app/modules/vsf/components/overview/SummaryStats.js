@@ -5,6 +5,7 @@ import { defineMessages, injectIntl } from 'react-intl';
 import TimeFramePicker from '../../../../main/components/TimeFramePicker';
 import * as Panel from '../../../../main/components/Panel';
 import * as DataGrid from '../../../../main/statistics/components/DataGrid';
+import CombinationChart from '../../../../main/components/CombinationChart';
 
 const TIME_FRAMES = ['24 hours', '7 days', '30 days'];
 
@@ -13,16 +14,16 @@ const MESSAGES = defineMessages({
     id: 'overview.summary',
     defaultMessage: 'Summary',
   },
-  totalMusicPurchased: {
-    id: 'vsf.overview.totalMusicPurchased',
-    defaultMessage: 'Total Music Purchased',
+  totalVoiceStickerPurchased: {
+    id: 'vsf.overview.totalVoiceStickerPurchased',
+    defaultMessage: 'Total Voice Sticker Purchased',
   },
   totalStickersPurchased: {
     id: 'vsf.overview.totalStickersPurchased',
     defaultMessage: 'Total Stickers Purchased',
   },
-  totalSoundEffectPurchased: {
-    id: 'vsf.overview.totalSoundEffectPurchased',
+  totalAnimationPurchased: {
+    id: 'vsf.overview.totalAnimationPurchased',
     defaultMessage: 'Total Sound Effect Purchased',
   },
   totalCreditsPurchased: {
@@ -45,10 +46,10 @@ export default function VsfSummaryStats({
 }) {
   const { formatMessage } = intl;
   const {
-    totalMusic,
-    totalStickers,
-    totalSoundEffect,
-    totalCredits,
+    voiceSticker,
+    sticker,
+    animation,
+    credit,
   } = stats;
 
   return (
@@ -69,23 +70,39 @@ export default function VsfSummaryStats({
       <Panel.Body className="narrow no-padding">
         <DataGrid.Wrapper>
           <DataGrid.Cell
-            title={formatMessage(MESSAGES.totalMusicPurchased)}
-            data={totalMusic}
+            title={formatMessage(MESSAGES.totalVoiceStickerPurchased)}
+            data={voiceSticker.total}
+            changeDir={voiceSticker.direction}
+            changeAmount={voiceSticker.change}
+            changePercentage={voiceSticker.percent}
+            changeEffect="positive"
             isLoading={isLoading}
           />
           <DataGrid.Cell
             title={formatMessage(MESSAGES.totalStickersPurchased)}
-            data={totalStickers}
+            data={sticker.total}
+            changeDir={sticker.direction}
+            changeAmount={sticker.change}
+            changePercentage={sticker.percent}
+            changeEffect="positive"
             isLoading={isLoading}
           />
           <DataGrid.Cell
-            title={formatMessage(MESSAGES.totalSoundEffectPurchased)}
-            data={totalSoundEffect}
+            title={formatMessage(MESSAGES.totalAnimationPurchased)}
+            data={animation.total}
+            changeDir={animation.direction}
+            changeAmount={animation.change}
+            changePercentage={animation.percent}
+            changeEffect="positive"
             isLoading={isLoading}
           />
           <DataGrid.Cell
             title={formatMessage(MESSAGES.totalCreditsPurchased)}
-            data={totalCredits}
+            data={credit.total}
+            changeDir={credit.direction}
+            changeAmount={credit.change}
+            changePercentage={credit.percent}
+            changeEffect="positive"
             isLoading={isLoading}
           />
         </DataGrid.Wrapper>
@@ -101,10 +118,10 @@ VsfSummaryStats.propTypes = {
   onChange: PropTypes.func.isRequired,
   timeFrame: PropTypes.string.isRequired,
   stats: PropTypes.shape({
-    totalMusic: PropTypes.number.isRequired,
-    totalStickers: PropTypes.number.isRequired,
-    totalSoundEffect: PropTypes.number.isRequired,
-    totalCredits: PropTypes.number.isRequired,
+    voiceSticker: PropTypes.number.isRequired,
+    sticker: PropTypes.number.isRequired,
+    animation: PropTypes.number.isRequired,
+    credit: PropTypes.number.isRequired,
   }),
 };
 
