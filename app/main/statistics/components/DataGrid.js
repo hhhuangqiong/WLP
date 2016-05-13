@@ -156,8 +156,8 @@ class DataCell extends Component {
       return (
         <div className={classNames('data-cell__trend', changeEffect, changeDir)}>
           { this.renderArrow(changeDir) }
-          { this.renderChangeNumber(changeAmount) }
-          { this.renderChangePercentage(changePercentage) }
+          { this.renderChangeNumber(this._localiseData(changeAmount)) }
+          { this.renderChangePercentage(this._localiseData(changePercentage)) }
         </div>
       );
     }
@@ -188,18 +188,24 @@ class DataCell extends Component {
 DataCell.propTypes = {
   title: PropTypes.string.isRequired,
   data: PropTypes.oneOfType([
-    PropTypes.string.isRequired,
-    PropTypes.number.isRequired,
+    PropTypes.string,
+    PropTypes.number,
   ]),
   unit: PropTypes.string,
   decimalPlace: PropTypes.number,
   changeDir: PropTypes.string,
-  changeAmount: PropTypes.string,
+  changeAmount: PropTypes.oneOfType([
+    PropTypes.string,
+    PropTypes.number,
+  ]),
   isLoading: PropTypes.bool,
   changeEffect: PropTypes.oneOf([
     'positive', 'negative', 'no-effect',
   ]),
-  changePercentage: PropTypes.string,
+  changePercentage: PropTypes.oneOfType([
+    PropTypes.string,
+    PropTypes.number,
+  ]),
   formatter: PropTypes.func,
 };
 

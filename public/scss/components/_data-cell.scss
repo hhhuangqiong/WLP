@@ -1,15 +1,28 @@
 .data-cell {
-  padding: rem-calc(30);
+  width: 100%;
+  padding: rem-calc(15) 0;
   text-align: center;
 
   &__wrapper {
     margin: 0;
+    display: flex;
+    align-items: stretch;
 
     > .columns {
       border-right: 1px solid #eee;
+      display: flex;
+      align-items: center;
+      padding-bottom: 1.5rem;
+      padding-top: 0.75rem;
+      flex: 1;
+
+      &:first-child {
+        margin-left: rem-calc(15);
+      }
 
       &:last-child {
         border-right: 0 none;
+        margin-right: rem-calc(15);
       }
     }
   }
