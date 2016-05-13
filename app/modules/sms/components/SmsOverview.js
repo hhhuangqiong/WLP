@@ -2,8 +2,8 @@ import React from 'react';
 
 import * as FilterBar from '../../../main/components/FilterBar';
 import FilterBarNavigation from '../../../main/filter-bar/components/FilterBarNavigation';
-import SmsMonthlyStatsContainer from '../../containers/SmsMonthlyStatsContainer';
-import SmsSummaryStatsContainer from '../../containers/SmsSummaryStatsContainer';
+import SmsMonthlyStatsContainer from '../containers/MonthlyStats';
+import SmsSummaryStatsContainer from '../containers/SummaryStats';
 
 export default function SmsOverview() {
   return (
