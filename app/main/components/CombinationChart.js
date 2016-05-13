@@ -136,6 +136,10 @@ export default React.createClass({
      * @type {String}
      */
     selectedLine: PropTypes.string,
+    /**
+     * The formatter of shared tooltip
+     */
+    formatter: PropTypes.func,
   },
 
   getInitialState() {
@@ -246,21 +250,13 @@ export default React.createClass({
         marginRight: props.marginRight || 50,
         // That's almost a fixed amount, unless there are too much series that
         // makes a two-row legend
-        marginTop: props.showLegend ? 50 : 0,
+        marginTop: 50,
         renderTo: this.state.containerId,
       },
-      exporting: {
-        enabled: false,
-      },
-      credits: {
-        enabled: false,
-      },
-      title: {
-        text: null,
-      },
-      subtitle: {
-        text: null,
-      },
+      exporting: { enabled: false },
+      credits: { enabled: false },
+      title: { text: null },
+      subtitle: { text: null },
       xAxis: {
         type: 'datetime',
         dateTimeLabelFormats: {
@@ -339,7 +335,7 @@ export default React.createClass({
         lineWidth: 0,
       }],
       legend: {
-        enabled: true,
+        enabled: props.showLegend ? true : false,
         layout: 'horizontal',
         align: 'left',
         verticalAlign: 'top',
@@ -391,6 +387,7 @@ export default React.createClass({
           day: '%d %b %Y',
           hour: '%H:%M %d %b %Y',
         },
+        formatter: props.formatter,
       },
     });
   },
