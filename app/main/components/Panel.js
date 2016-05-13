@@ -1,4 +1,5 @@
-import React, { PropTypes } from 'react';
+import { isString } from 'lodash';
+import React, { PropTypes, isValidElement } from 'react';
 import classNames from 'classnames';
 import { FormattedMessage } from 'react-intl';
 
@@ -35,7 +36,22 @@ const PanelHeader = React.createClass({
     className: PropTypes.string,
     title: PropTypes.string.isRequired,
     children: PropTypes.element.isRequired,
-    caption: PropTypes.string.isRequired,
+    caption: PropTypes.oneOf([
+      PropTypes.string.isRequired,
+      PropTypes.element.isRequired,
+    ]),
+  },
+
+  renderCaption(caption) {
+    if (isString(caption)) {
+      return <span className="caption inline">{caption}</span>;
+    }
+
+    if (isValidElement(caption)) {
+      return caption;
+    }
+
+    return null;
   },
 
   render() {
@@ -53,9 +69,7 @@ const PanelHeader = React.createClass({
             <h4 className="title inline">
               {this.props.title}
             </h4>
-            <If condition={!!this.props.caption}>
-              <span className="caption inline">{this.props.caption}</span>
-            </If>
+            {this.renderCaption(this.props.caption)}
           </div>
 
           <div className="inline-with-space">{this.props.children}</div>
