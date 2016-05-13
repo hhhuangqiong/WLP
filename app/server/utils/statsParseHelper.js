@@ -243,3 +243,101 @@ export function standardiseStatusDataSet(results, params) {
     failureSet,
   };
 }
+
+/**
+ * @method getSegmentsByProperties
+ * to return the results only while its segment properties match
+ * all the key value pairs in the `properties` argument
+ *
+ * @throw will throw error if `properties` argument is not an object
+ * @throw will throw error if `properties` argument is not an object with Array or String values
+ * @param results {Array} array of objects with `segment` and `data`
+ * @param properties {Object} key and value pairs to be matched with the segment properties
+ * @returns {Array}
+ */
+export function getSegmentsByProperties(results = [], properties = {}) {
+  if (!_.isPlainObject(properties)) {
+    throw new Error('`properties` is not an object');
+  }
+
+  if (_.find(properties, value => !_.isString(value) && !_.isArray(value))) {
+    throw new Error('`properties` is not an object with Array or String values');
+  }
+
+  return _.filter(results, ({ segment = {} }) => !_.find(properties, (value, key) => {
+    if (_.isArray(value)) {
+      return !_.includes(value, segment[key]);
+    }
+
+    return value !== segment[key];
+  }));
+}
+
+/**
+ * @method getTotalFromSegmentData
+ * to sum up the total of a single segment of stats data
+ *
+ * @param data {Array} array of time and value objects
+ * @returns {Number}
+ */
+export function getTotalFromSegmentData(data = []) {
+  if (!_.isArray(data)) {
+    throw new Error('`data` is not an array');
+  }
+
+  return _.reduce(data, (result, { v }) => {
+    if (!_.isString(v) && !_.isNumber(v)) {
+      return result;
+    }
+
+    // eslint-disable-next-line no-param-reassign
+    result += +v;
+    return result;
+  }, 0);
+}
+
+/**
+ * @method getTotalFromSegments
+ * to sum up the total across all segments of stats data,
+ * this is usually used with stats breakdowns
+ *
+ * @param segments {Array} array of segment data
+ * @returns {Number}
+ */
+export function getTotalFromSegments(segments = []) {
+  return _.reduce(segments, (total, { data = [] }) => {
+    if (!_.isArray(data)) {
+      return total;
+    }
+
+    const segmentTotal = getTotalFromSegmentData(data);
+    // eslint-disable-next-line no-param-reassign
+    total += segmentTotal;
+    return total;
+  }, 0);
+}
+
+/**
+ * @method parseStatsComparison
+ * to normalise the format of stats comparison with two different time ranges
+ *
+ * @throw will throw error if one of the arguments is not a number
+ * @param newData {Number|String}
+ * @param oldData {Number|String}
+ * @returns {{value: number, oldValue: number, change: number}}
+ */
+export function parseStatsComparison(newData, oldData) {
+  if (!_.isNumber(newData)) {
+    throw new Error('`newData` is not a number');
+  }
+
+  if (!_.isNumber(oldData)) {
+    throw new Error('`oldData` is not a number');
+  }
+
+  return {
+    value: newData,
+    oldValue: oldData,
+    change: newData - oldData,
+  };
+}
