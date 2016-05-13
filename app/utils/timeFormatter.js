@@ -1,11 +1,24 @@
 import moment from 'moment';
 
+export const HOUR_FORMAT_LABEL = 'hour';
+
+export const DAY_FORMAT_LABEL = 'day';
+export const MONTH_FORMAT_LABLE = 'month';
+export const YEAR_FORMAT_LABLE = 'year';
+
+export const MILLISECOND_DATE_FORMAT = 'x';
 export const SHORT_DATE_FORMAT = 'L';
 export const LAST_UPDATE_TIME_FORMAT = 'MMM DD, YYYY H:mm';
 
 // Buffer time in minutes
 const BUFFER_TIME_FOR_PROXY_HOURLY = 60;
 const BUFFER_TIME_FOR_PROXY_DAILY = 480;
+
+export function shiftToLastMonth(date, format) {
+  return moment(date, format)
+    .subtract(1, MONTH_FORMAT_LABLE)
+    .format(format);
+}
 
 export function parseTimeRange(timeRange) {
   const splitedTimeRange = timeRange.split(' ');
