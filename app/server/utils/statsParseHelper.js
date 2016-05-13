@@ -264,12 +264,20 @@ export function getSegmentsByProperties(results = [], properties = {}) {
     throw new Error('`properties` is not an object with Array or String values');
   }
 
+  if (!_.isArray(results)) {
+    return [];
+  }
+
   return _.filter(results, ({ segment = {} }) => !_.find(properties, (value, key) => {
     if (_.isArray(value)) {
       return !_.includes(value, segment[key]);
     }
 
-    return value !== segment[key];
+    try {
+      return value.toLowerCase() !== (segment[key]).toLowerCase();
+    } catch (err) {
+      return false;
+    }
   }));
 }
 

@@ -10,6 +10,7 @@ describe('statsParseHelper', () => {
     ];
     const invalidResults = 'result';
     const validStringProperties = { nature: 'voice_sticker' };
+    const validUppercaseStringPropperties = { nature: 'VOICE_STICKER' };
     const validArrayProperties = { nature: ['voice_sticker', 'remote'] };
     const validMultipleProperties = { nature: 'voice_sticker', country: 'us' };
     const invalidProperties = 'properties';
@@ -42,6 +43,13 @@ describe('statsParseHelper', () => {
     // eslint-disable-next-line max-len
     it('should return matched array of objects with `properties` object with string value', done => {
       const results = getSegmentsByProperties(validResults, validStringProperties);
+      expect(results).to.be.a('array').that.have.lengthOf(1);
+      done();
+    });
+
+    // eslint-disable-next-line max-len
+    it('should not be case sensitive with array of objects with `properties` object with string value', done => {
+      const results = getSegmentsByProperties(validResults, validUppercaseStringPropperties);
       expect(results).to.be.a('array').that.have.lengthOf(1);
       done();
     });
