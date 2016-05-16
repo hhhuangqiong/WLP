@@ -22,7 +22,7 @@ describe('VsfStats', () => {
       })
   ));
 
-  it('should display summary data correctly', () => {
+  it.skip('should display summary data correctly', () => {
     const from = 1456761600000;
     const to = 1462032000000;
     const timescale = 'day';
@@ -38,7 +38,7 @@ describe('VsfStats', () => {
       });
   });
 
-  it('should display monthly data correctly', () => {
+  it.skip('should display monthly data correctly', () => {
     const from = 1456761600000;
     const to = 1462032000000;
     const timescale = 'day';
