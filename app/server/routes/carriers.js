@@ -538,7 +538,205 @@ function getSMSStats(req, res) {
     logger.error(err);
     res.apiError(500, new dataError.TransactionError(err.message, err));
   });
-};
+}
+
+function getSMSMonthlyStats(req, res) {
+  req.checkParams('carrierId').notEmpty();
+  req.checkQuery('fromTime').notEmpty();
+  req.checkQuery('toTime').notEmpty();
+
+  const error = req.validationErrors();
+
+  if (error) {
+    res.apiError(400, new ValidationError(prepareValidationMessage(error)));
+    return;
+  }
+
+  const { carrierId } = req.params;
+  const { fromTime, toTime, breakdown } = req.query;
+  const statType = 'count';
+  const timescale = 'day';
+
+  const thisMonthParams = _.omit({
+    carrier: carrierId,
+    from: fromTime,
+    to: toTime,
+    timescale,
+    breakdown,
+    stat_type: statType,
+  }, val => !val);
+
+  const prevMonthParams = _.omit({
+    carrier: carrierId,
+    from: moment(fromTime, 'x').subtract(1, 'month').startOf('month').format('x'),
+    to: moment(toTime, 'x').subtract(1, 'month').endOf('month').format('x'),
+    timescale,
+    breakdown,
+    stat_type: statType,
+  });
+
+  Q
+    .all([
+      Q.ninvoke(smsStatsRequest, 'getSMSStats', thisMonthParams),
+      Q.ninvoke(smsStatsRequest, 'getSMSStats', prevMonthParams),
+    ])
+    .spread((thisMonthResult, prevMonthResult) => {
+      const thisMonthData = _.get(thisMonthResult, 'results.0.data');
+      const prevMonthData = _.get(prevMonthResult, 'results.0.data');
+
+      if (!thisMonthData || !prevMonthData) {
+        logger.error('missing data set to compute monthly stats', thisMonthData, prevMonthData);
+        throw new Error('incomplete data set');
+      }
+
+      const thisMonthTotal = getTotalFromSegmentData(thisMonthData);
+      const prevMonthTotal = getTotalFromSegmentData(prevMonthData);
+      const data = parseStatsComparison(thisMonthTotal, prevMonthTotal);
+
+      // not using res.apiResponse
+      // because it failed adopt jsonApi spec,
+      // as it does not contain `id` field
+      res.status(200).json({
+        success: true,
+        data,
+      });
+    })
+    .catch(err => {
+      logger.error('error occurred when fetching sms monthly stats', err);
+      res.apiError(500, new dataError.TransactionError(err.message, err));
+    });
+}
+
+function getSMSSummaryStats(req, res) {
+  req.checkParams('carrierId').notEmpty();
+  req.checkQuery('fromTime').notEmpty();
+  req.checkQuery('toTime').notEmpty();
+
+  const error = req.validationErrors();
+
+  if (error) {
+    res.apiError(400, new ValidationError(prepareValidationMessage(error)));
+    return;
+  }
+
+  const types = {
+    undelivered: 'undelivered',
+    submitted: 'submitted',
+    rejected: 'rejected',
+  };
+
+  const { carrierId } = req.params;
+  const { fromTime, toTime, timescale, breakdown } = req.query;
+  const statType = 'count';
+  const statusArray = _.reduce(types, (result, status) => {
+    // eslint-disable-next-line no-param-reassign
+    result = result.concat(status);
+    return result;
+  }, []);
+  const status = statusArray.join(',');
+
+  const lineChartParams = _.omit({
+    carrier: carrierId,
+    from: fromTime,
+    to: toTime,
+    timescale,
+    breakdown: 'carrier',
+    stat_type: statType,
+    status: status.toUpperCase(),
+  }, val => !val);
+
+  const geographicChartParams = _.omit({
+    carrier: carrierId,
+    from: fromTime,
+    to: toTime,
+    timescale,
+    breakdown: 'carrier, country',
+    stat_type: statType,
+    status: status.toUpperCase(),
+  }, val => !val);
+
+  const thisTimeRangeParams = _.omit({
+    carrier: carrierId,
+    from: fromTime,
+    to: toTime,
+    timescale,
+    breakdown,
+    stat_type: statType,
+  }, val => !val);
+
+  const prevTimeRangeParams = _.omit({
+    carrier: carrierId,
+    from: fromTime - (toTime - fromTime),
+    to: fromTime,
+    timescale,
+    breakdown,
+    stat_type: statType,
+  });
+
+  function getTotalByProperty(results, property) {
+    const segments = getSegmentsByProperties(results, property);
+    return getTotalFromSegments(segments);
+  }
+
+  Q
+    .all([
+      Q.ninvoke(smsStatsRequest, 'getSMSStats', thisTimeRangeParams),
+      Q.ninvoke(smsStatsRequest, 'getSMSStats', prevTimeRangeParams),
+      Q.ninvoke(smsStatsRequest, 'getSMSStats', lineChartParams),
+      Q.ninvoke(smsStatsRequest, 'getSMSStats', geographicChartParams),
+    ])
+    .spread((thisTimeRangeResult, prevTimeRangeResult, lineChartResult, geographicChartResult) => {
+      const thisTimeRangeResults = _.get(thisTimeRangeResult, 'results');
+      const prevTimeRangeResults = _.get(prevTimeRangeResult, 'results');
+      const lineChartResults = _.get(lineChartResult, 'results');
+      const geographicChartResults = _.get(geographicChartResult, 'results');
+
+      if (!thisTimeRangeResults || !prevTimeRangeResults || !lineChartResults || !geographicChartResults) {
+        logger.error('missing data set to compute monthly stats', thisTimeRangeResults, prevTimeRangeResults, lineChartResults, geographicChartResults);
+        throw new Error('incomplete data set');
+      }
+
+      const lineChartData = _.get(lineChartResults, '0.data');
+      const geographicChartData = _.reduce(geographicChartResults, (result, { segment, data }) => {
+        const { country } = segment;
+        if (country) {
+          result[country] = data;
+        }
+        return result;
+      }, {});
+
+      let data = { lineChart: lineChartData, geographicChart: geographicChartData };
+
+      let thisMonthSubTotal = 0;
+      let prevMonthSubTotal = 0;
+
+      data = _.reduce(types, (result, status, statusKey) => {
+        const currentTotal = getTotalByProperty(thisTimeRangeResults, { status });
+        const prevTotal = getTotalByProperty(prevTimeRangeResults, { status });
+
+        thisMonthSubTotal += currentTotal;
+        prevMonthSubTotal += prevTotal;
+
+        // eslint-disable-next-line no-param-reassign
+        result[statusKey] = parseStatsComparison(currentTotal, prevTotal);
+        return result;
+      }, data);
+
+      _.assign(data, { total: parseStatsComparison(thisMonthSubTotal, prevMonthSubTotal) });
+
+      // not using res.apiResponse
+      // because it failed adopt jsonApi spec,
+      // as it does not contain `id` field
+      res.status(200).json({
+        success: true,
+        data,
+      });
+    })
+    .catch(err => {
+      logger.error('error occurred when fetching im stats', err);
+      res.apiError(500, new dataError.TransactionError(err.message, err));
+    });
+}
 
 // '/carriers/:carrierId/im'
 function getIM(req, res) {
@@ -1662,6 +1860,8 @@ export {
   getIMSummaryStats,
   getSMS,
   getSMSStats,
+  getSMSMonthlyStats,
+  getSMSSummaryStats,
   getTopUp,
   getUserWallet,
   getUsername,

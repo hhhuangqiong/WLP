@@ -40,6 +40,8 @@ router
   .get('/carriers/:carrierId/stats/im/summary', carriers.getIMSummaryStats)
   .get('/carriers/:carrierId/sms', carriers.getSMS)
   .get('/carriers/:carrierId/stats/sms', carriers.getSMSStats)
+  .get('/carriers/:carrierId/stats/sms/monthly', carriers.getSMSMonthlyStats)
+  .get('/carriers/:carrierId/stats/sms/summary', carriers.getSMSSummaryStats)
   .get('/carriers/:carrierId/topup', carriers.getTopUp)
   .get('/carriers/:carrierId/vsf', carriers.getVSF)
   .get('/carriers/:carrierId/vsf/overview/summaryStats', carriers.getVsfSummaryStats)
