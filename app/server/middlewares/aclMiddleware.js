@@ -3,6 +3,8 @@ import { isURL } from 'validator';
 import { userPath } from '../paths';
 import { fetchDep } from '../utils/bottle';
 
+const debug = require('debug')('app:server/middleware/aclMiddleware');
+
 const aclManager = fetchDep(nconf.get('containerName'), 'ACLManager');
 
 /* Get user identity (username) from request */
@@ -31,8 +33,13 @@ function getCarrierId(req) {
 export default aclManager.middleware(getUserId, getCarrierId, null, null);
 
 export function errorHandler(err, req, res, next) {
-  const { user } = req;
 
+  // error
+  if (err) {
+    debug(`Error thrown: `, err.stack);
+  }
+
+  const { user } = req;
   if (!user) {
     res.redirect('/sign-in');
     return;

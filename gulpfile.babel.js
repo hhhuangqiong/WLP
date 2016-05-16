@@ -19,7 +19,7 @@ import * as fs from 'fs';
 import * as path from 'path';
 import { sync as globSync } from 'glob';
 
-const defaultTasks = ['nodemon', 'watch', 'scss', 'webpack', 'browser-sync'];
+const defaultTasks = ['nodemon', 'watch', 'scss', 'webpack'];
 const webpackConfig = require('./webpack.config');
 
 const DEFAULT_LANGUAGE_FILE_NAME = 'default.json';

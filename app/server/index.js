@@ -7,6 +7,7 @@ import favicon from 'serve-favicon';
 import methodOverride from 'method-override';
 import morgan from 'morgan';
 import session from 'express-session';
+import userLocale from 'm800-user-locale';
 
 import app from '../app';
 import config from '../config';
@@ -90,6 +91,9 @@ export default function (port) {
 
   // ensure express.session() is before passport.session()
   server.use(passport.session());
+
+  // m800 user locale initialization
+  userLocale.initializer(server, config.LOCALES);
 
   server.use(apiResponse({ logger }));
 

@@ -111,19 +111,16 @@ export default function renderer(app, config) {
             let children = React.createElement(RouterContext, renderProps);
 
             // TODO: check and take locale preference from user session if available
-            const locale = get(config, 'LOCALE.DEFAULT') || 'en';
-            logger.debug(`default locale is set as ${locale}`);
+            const locale = req.locale;
+            logger.debug(`locale is set as ${locale}`);
 
-            let serializedLocale;
 
-            if (get(config, 'LOCALE')) {
-              /* eslint-disable max-len */
-              logger.debug('Localization is enabled, wrapping RouterContext Component with IntlProvider Component');
-              const translations = getLocaleDataFromPath(path.resolve(__dirname, '../../public/locale-data'));
-              serializedLocale = `window.${config.GLOBAL_LOCALE_VARIABLE}=${serialize(translations[locale])};`;
-              children = React.createElement(IntlProvider, { locale, messages: translations[locale] }, children);
-              /* eslint-enable */
-            }
+            /* eslint-disable max-len */
+            logger.debug('Localization is enabled, wrapping RouterContext Component with IntlProvider Component');
+            const translations = getLocaleDataFromPath(path.resolve(__dirname, '../../public/locale-data'));
+            const serializedLocale = `window.${config.GLOBAL_LOCALE_VARIABLE}=${serialize(translations[locale])};`;
+            children = React.createElement(IntlProvider, { locale, messages: translations[locale] }, children);
+            /* eslint-enable */
 
             const markupElement = createMarkupElement(context, children);
             const htmlElement = createHtmlElement(dehydratedState, markupElement, {
