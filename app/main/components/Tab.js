@@ -1,6 +1,6 @@
 import _ from 'lodash';
 import classNames from 'classnames';
-import React, { PropTypes } from 'react';
+import React, { PropTypes, cloneElement } from 'react';
 import Invariant from 'invariant';
 
 /**
@@ -67,9 +67,10 @@ const Tab = React.createClass({
             }
           </TabList>
           {
-            React.Children.map(this.props.children, (child, index) => {
-              return React.addons.cloneWithProps(child, { isActive: this._isTabActive(index) });
-            })
+            React.Children.map(
+              this.props.children,
+              (child, index) => cloneElement(child, { isActive: this._isTabActive(index) })
+            )
           }
         </div>
       </div>

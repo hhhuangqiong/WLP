@@ -718,16 +718,15 @@ export default class CompanyController {
    */
   getApplicationIds(req, res) {
     req.checkParams('carrierId').notEmpty();
-    req.checkQuery('userId').notEmpty();
 
     if (req.validationErrors()) {
       res.status(400).json({
-        error: new Error('missing query parameter `userId`'),
+        error: new Error('missing parameters'),
       });
       return null;
     }
 
-    const userId = req.query.userId;
+    const { _id: userId } = req.user;
     const carrierId = req.params.carrierId;
 
     const makeApiRequest = _.partial(carrierId => {

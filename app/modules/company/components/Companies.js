@@ -1,10 +1,6 @@
 import React, { PropTypes } from 'react';
-import { concurrent } from 'contra';
-
 import { FluxibleMixin } from 'fluxible-addons-react';
-
 import fetchCompanies from '../actions/fetchCompanies';
-
 import CompanyList from './CompanyList';
 import CompanyStore from '../stores/CompanyStore';
 
@@ -15,22 +11,22 @@ const Companies = React.createClass({
 
   contextTypes: {
     router: PropTypes.object.isRequired,
+    params: PropTypes.object.isRequired,
   },
 
   mixins: [FluxibleMixin],
 
   statics: {
     storeListeners: [CompanyStore],
-
-    fetchData(context, params, query, done) {
-      concurrent([
-        context.executeAction.bind(context, fetchCompanies, { carrierId: params.carrierId }),
-      ], done || (() => {}));
-    },
   },
 
   getInitialState() {
     return this.getStateFromStores();
+},
+
+  componentDidMount() {
+    const { executeAction, params } = this.context;
+    executeAction(fetchCompanies, { carrierId: params.identity });
   },
 
   onChange() {

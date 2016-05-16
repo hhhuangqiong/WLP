@@ -12,6 +12,7 @@ const CompanyList = React.createClass({
 
   contextTypes: {
     router: PropTypes.object.isRequired,
+    params: PropTypes.object.isRequired,
   },
 
   getDefaultProps() {
@@ -73,7 +74,7 @@ const CompanyList = React.createClass({
     // TODO reference status string from Company Collection ?
     return (
       <li className="company-sidebar__list__item" key={key}>
-        <Link to="company-profile" params={{ role, identity, carrierId: company.carrierId }}>
+        <Link to={`/${role}/${identity}/companies/${company.carrierId}/profile`}>
           <span className="company-sidebar__list__item__logo left">
             <If condition={company.logo}>
               <img src={`/data/${company.logo}`} />

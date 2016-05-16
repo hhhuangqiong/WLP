@@ -89,6 +89,20 @@ const TopUp = React.createClass({
     this.setState(this.getStateFromStores());
   },
 
+  componentDidMount() {
+    this.fetchData();
+  },
+
+  componentDidUpdate(prevProps) {
+    const { location: { search } } = this.props;
+    const { location: { search: prevSearch } } = prevProps;
+
+    if (search !== prevSearch) {
+      this.context.executeAction(clearTopUp);
+      this.fetchData();
+    }
+  },
+
   componentWillUnmount() {
     this.context.executeAction(clearTopUp);
   },
@@ -121,6 +135,26 @@ const TopUp = React.createClass({
     const { identity } = this.context.params;
     const { startDate, endDate, number, page, pageRec } = this.state;
     return { carrierId: identity, startDate, endDate, number, page, pageRec };
+  },
+
+  fetchData() {
+    const { executeAction, location: { query }, params } = this.context;
+
+    const defaultQuery = {
+      carrierId: null,
+      startDate: moment()
+        .startOf('day')
+        .subtract(MAX_QUERY_DATE_RANGE, 'days')
+        .format(DATE_FORMAT),
+      endDate: moment().endOf('day').format(DATE_FORMAT),
+      number: null,
+      page: INITIAL_PAGE_NUMBER,
+      pageRec: PAGE_REC,
+    };
+
+    const queryFromUrl = getInitialQueryFromURL(params, query);
+
+    executeAction(loadTransactions, merge(clone(defaultQuery), queryFromUrl, { reload: true }));
   },
 
   render() {

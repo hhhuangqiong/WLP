@@ -39,23 +39,6 @@ const Calls = React.createClass({
 
   statics: {
     storeListeners: [CallsStore],
-
-    fetchData(context, params, query, done) {
-      concurrent([
-        context.executeAction.bind(context, clearCallsReport),
-        context.executeAction.bind(context, fetchCalls, {
-          carrierId: params.identity,
-          startDate: query.startDate || moment().subtract(2, 'day').startOf('day').format('L'),
-          endDate: query.endDate || moment().endOf('day').format('L'),
-          size: config.PAGES.CALLS.PAGE_SIZE,
-          // The page number, starting from 0, defaults to 0 if not specified.
-          page: query.page || 0,
-          type: query.type || CALL_TYPE.ALL,
-          search: query.search || '',
-          searchType: query.searchType || 'caller',
-        }),
-      ], done || function () {});
-    },
   },
 
   getStateFromStores() {
@@ -91,6 +74,17 @@ const Calls = React.createClass({
 
   componentDidMount() {
     $(document).foundation('reveal', 'reflow');
+    this.fetchData();
+  },
+
+  componentDidUpdate(prevProps) {
+    const { location: { search } } = this.props;
+    const { location: { search: prevSearch } } = prevProps;
+
+    if (search !== prevSearch) {
+      this.context.executeAction(clearCallsReport);
+      this.fetchData();
+    }
   },
 
   componentWillUnmount() {
@@ -112,6 +106,22 @@ const Calls = React.createClass({
       type: this.state.type && this.state.type.trim(),
       searchType: this.state.searchType && this.state.searchType.trim(),
     };
+  },
+
+  fetchData() {
+    const { executeAction, location: { query }, params } = this.context;
+
+    executeAction(fetchCalls, {
+      carrierId: params.identity,
+      startDate: query.startDate || moment().subtract(2, 'day').startOf('day').format('L'),
+      endDate: query.endDate || moment().endOf('day').format('L'),
+      size: config.PAGES.CALLS.PAGE_SIZE,
+      // The page number, starting from 0, defaults to 0 if not specified.
+      page: query.page || 0,
+      type: query.type || CALL_TYPE.ALL,
+      search: query.search || '',
+      searchType: query.searchType || 'caller',
+    });
   },
 
   handleQueryChange(newQuery) {
@@ -220,11 +230,11 @@ const Calls = React.createClass({
         <FilterBar.Wrapper>
           <FilterBar.NavigationItems>
             <Link to={`/${role}/${identity}/calls/overview`} activeClassName="active">
-			  <FormattedMessage id="overview" defaultMessage="Overview" />
-			</Link>
-            <Link to={`/${role}/${identity}/calls/details`} activeClassName="active">
-			  <FormattedMessage id="detailsReport" defaultMessage="Details Report" />
-			</Link>
+              <FormattedMessage id="overview" defaultMessage="Overview" />
+            </Link>
+                  <Link to={`/${role}/${identity}/calls/details`} activeClassName="active">
+              <FormattedMessage id="detailsReport" defaultMessage="Details Report" />
+            </Link>
           </FilterBar.NavigationItems>
           <FilterBar.LeftItems>
             <a

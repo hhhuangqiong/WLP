@@ -22,7 +22,8 @@ const { inputDateFormat: DATE_FORMAT } = config;
 const CompanyProfile = React.createClass({
   contextTypes: {
     router: PropTypes.object.isRequired,
-    executeAction: React.PropTypes.func.isRequired,
+    executeAction: PropTypes.func.isRequired,
+    params: PropTypes.object.isRequired,
   },
 
   mixins: [FluxibleMixin],
@@ -52,7 +53,7 @@ const CompanyProfile = React.createClass({
   },
 
   getStateFromStores() {
-    const { carrierId } = this.context.params;
+    const { identity: carrierId } = this.context.params;
 
     if (carrierId) {
       return this.getStore(CompanyStore).getCompanyByCarrierId(carrierId);
@@ -77,7 +78,7 @@ const CompanyProfile = React.createClass({
     // otherwise it would be done onBlur
     if (e.target.tagName === 'SELECT') {
       const inputName = e.target.name;
-      this.validate(inputName);
+      this.props.validate(inputName);
     }
   },
 
@@ -122,7 +123,7 @@ const CompanyProfile = React.createClass({
 
   _handleInputBlur(e) {
     const inputName = e.target.name;
-    this.validate(inputName);
+    this.props.validate(inputName);
   },
 
   _handleSetReseller(isReseller) {
@@ -132,7 +133,7 @@ const CompanyProfile = React.createClass({
   },
 
   _handleSubmit() {
-    this.validate(error => {
+    this.props.validate(error => {
       // react-validation-mixin will trigger changes in
       // this.state.errors upon this.validate() is called
       // so no error handling is needed
@@ -164,7 +165,7 @@ const CompanyProfile = React.createClass({
         <TopBar
           _id={this.state._id}
           status={this.state.status}
-          hasError={!this.isValid()}
+          hasError={!this.props.isValid()}
           onSave={this._handleSubmit}
         />
         <form ref="companyForm" encType="multipart/form-data" onSubmit={this._handleSubmit}>
@@ -181,7 +182,7 @@ const CompanyProfile = React.createClass({
                 onLogoChange={this._handleLogoChange}
                 onInputBlur={this._handleInputBlur}
                 onSetReseller={this._handleSetReseller}
-                getValidationMessages={this.getValidationMessages}
+                getValidationMessages={this.props.getValidationMessages}
                 renderHelpText={this._renderHelpText}
                 {...this.state}
               />
@@ -191,7 +192,7 @@ const CompanyProfile = React.createClass({
                 ref="contacts"
                 onDataChange={this._handleContactChange}
                 onInputBlur={this._handleInputBlur}
-                getValidationMessages={this.getValidationMessages}
+                getValidationMessages={this.props.getValidationMessages}
                 renderHelpText={this._renderHelpText}
                 {...this.state}
               />
