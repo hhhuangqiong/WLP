@@ -5,7 +5,7 @@ import { spy } from 'sinon';
 
 import TimeFramePicker from '../../../app/main/components/TimeFramePicker';
 
-describe('<TimeFramePicker />', () => {
+describe.skip('<TimeFramePicker />', () => {
   describe('#Normal', () => {
     it('should have same number of children for frames length', () => {
       expect(shallow(
