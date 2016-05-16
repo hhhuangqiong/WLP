@@ -21,6 +21,8 @@ router
   .get('/accounts/verify/:token', accounts.verifyToken)
   .put('/accounts/verify/:token', accounts.createPassword)
   .put('/accounts/reverify/:username', accounts.reverifyAccount)
+  .get('/carriers/:carrierId/overview/summaryStats', carriers.getOverviewSummaryStats)
+  .get('/carriers/:carrierId/overview/detailStats', carriers.getOverviewDetailStats)
   .get('/carriers/:carrierId/authority', authority.getCapabilityList)
   .get('/carriers/:carrierId/users', carriers.getUsers)
   // TODO: change userStatsTotal and userStatsMonthly
@@ -48,7 +50,6 @@ router
   .get('/carriers/:carrierId/vsf/overview/monthlyStats', carriers.getVsfMonthlyStats)
   .get('/carriers/:carrierId/verifications', carriers.getVerifications)
   .get('/carriers/:carrierId/verificationStats', carriers.getVerificationStatistics)
-  .get('/carriers/:carrierId/widgets/:type(calls|im|overview|store|sms|vsf)', carriers.getWidgets)
   .get('/companies', companies.list)
   .get('/accounts', accounts.getAccounts)
   .post('/accounts', accounts.createAccount)

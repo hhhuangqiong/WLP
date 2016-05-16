@@ -32,3 +32,28 @@ export function mapStatsToDataGrid(total, lastTotal) {
     direction: remainder >= 0 ? ARROW_UP_CLASS : ARROW_DOWN_CLASS,
   };
 }
+
+export function getLatestTimeslotValue(data) {
+  return data[data.length - 1].v;
+}
+
+export function mapAccumulatedValueBySegment(results, key) {
+  // Whenever the response is not broken down, it means no records exist in the period.
+  // In such cases, return an empty result.
+  if (results[0].segment[key] === 'all') {
+    return {};
+  }
+
+  const countryByKeys = {};
+
+  results
+    .forEach(result => {
+      const mappedKey = result.segment[key];
+      // For accumlated values, the last item will always be the latest value
+      const value = result.data[result.data.length - 1].v;
+
+      countryByKeys[mappedKey] = value;
+    });
+
+  return countryByKeys;
+}

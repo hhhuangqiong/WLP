@@ -227,11 +227,19 @@ Api.prototype.getImWidgets = function getImWidgets(params, cb) {
     .end(genericHandler(cb));
 };
 
-Api.prototype.getOverviewWidgets = function getOverviewWidgets(params, cb) {
-  superagent
-    .get(`${this._getHost()}/api/carriers/${params.carrierId}/widgets/overview`)
+Api.prototype.getOverviewSummaryStats = function getOverviewSummaryStats(params, cb) {
+  return superagent
+    .get(`${this._getHost()}/api/carriers/${params.carrierId}/overview/summaryStats`)
     .accept('json')
-    .query({ userId: params.userId })
+    .query(params)
+    .end(genericHandler(cb));
+};
+
+Api.prototype.getOverviewDetailStats = function getOverviewDetailStats(params, cb) {
+  return superagent
+    .get(`${this._getHost()}/api/carriers/${params.carrierId}/overview/detailStats`)
+    .accept('json')
+    .query(params)
     .end(genericHandler(cb));
 };
 

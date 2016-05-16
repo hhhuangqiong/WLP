@@ -27,11 +27,9 @@ const callStatsRequest = fetchDep(nconf.get('containerName'), 'CallStatsRequest'
 const userStatsRequest = fetchDep(nconf.get('containerName'), 'UserStatsRequest');
 const redisClient = fetchDep(nconf.get('containerName'), 'RedisClient');
 const vsfStatsRequest = fetchDep(nconf.get('containerName'), 'VsfStatsRequest');
+const overviewStatsRequest = fetchDep(nconf.get('containerName'), 'OverviewStatsRequest');
 
-import errorHandler from '../middlewares/errorHandler';
 import SmsRequest from '../../lib/requests/dataProviders/SMS';
-import PortalUser from '../../collections/portalUser';
-import Company from '../../collections/company';
 
 import { parseVerificationStatistic } from '../parser/verificationStats';
 import { parseTotalAtTime, parseMonthlyTotalInTime } from '../parser/userStats';
@@ -378,68 +376,6 @@ function getTopUp(req, res) {
 
     res.json(result);
   });
-}
-
-// '/carriers/:carrierId/widgets/:type(calls|im|overview|store|sms|vsf)?userId'
-function getWidgets(req, res) {
-  req.checkParams('carrierId').notEmpty();
-  req.checkParams('type').notEmpty();
-  req.checkQuery('userId').notEmpty();
-
-  const carrierId = req.params.carrierId;
-  const type = req.params.type;
-  const userId = req.query.userId;
-
-  Q
-    .ninvoke(PortalUser, 'findOne', {
-      _id: userId,
-    })
-    .then(user => {
-      if (!user) {
-        res.status(401).json({
-          error: {
-            name: 'InvalidUser',
-          },
-        });
-
-        return;
-      }
-
-      return Q.ninvoke(Company, 'findOne', {
-        carrierId,
-      }, '', {
-        lean: true,
-      });
-    })
-    .then(company => {
-      if (!company) {
-        res.status(404).json({
-          error: {
-            name: 'Invalid Carrier',
-          },
-        });
-
-        return;
-      }
-
-      res.json({
-        carrierId,
-        widgets: company.widgets && company.widgets[type],
-      });
-    })
-    .catch(err => {
-      if (err) {
-        const { code, message, timeout, status } = err;
-
-        res.status(status || 500).json({
-          error: {
-            code,
-            message,
-            timeout,
-          },
-        });
-      }
-    });
 }
 
 // '/carriers/:carrierId/sms'
@@ -1470,6 +1406,56 @@ function getCallUserStatsMonthly(req, res, next) {
     .done();
 }
 
+export function getOverviewDetailStats(req, res, next) {
+  req.checkParams('carrierId').notEmpty();
+
+  req.checkQuery('from').notEmpty();
+  req.checkQuery('to').notEmpty();
+  req.checkQuery('timescale').notEmpty();
+
+  const error = req.validationErrors();
+
+  if (error) {
+    next(new ValidationError(prepareValidationMessage(error)));
+    return;
+  }
+
+  const { from, to, timescale, carriers } = req.query;
+
+  overviewStatsRequest
+    .getDetailStats({ from, to, timescale, carriers })
+    .then(stats => res.json({ stats }))
+    .catch(sendRequestError => {
+      next(new dataError.TransactionError(sendRequestError.message, sendRequestError));
+    });
+}
+
+export function getOverviewSummaryStats(req, res, next) {
+  req.checkParams('carrierId').notEmpty();
+
+  req.checkQuery('from').notEmpty();
+  req.checkQuery('to').notEmpty();
+  req.checkQuery('timescale').notEmpty();
+  req.checkQuery('breakdown').notEmpty();
+
+  const error = req.validationErrors();
+
+  if (error) {
+    next(new ValidationError(prepareValidationMessage(error)));
+    return;
+  }
+
+  const { from, to, timescale, breakdown } = req.query;
+  const { carrierId: carriers } = req.params;
+
+  overviewStatsRequest
+    .getSummaryStats({ from, to, timescale, carriers, breakdown })
+    .then(stats => res.json({ stats }))
+    .catch(sendRequestError => {
+      next(new dataError.TransactionError(sendRequestError.message, sendRequestError));
+    });
+}
+
 export function getVsfMonthlyStats(req, res, next) {
   req.checkQuery('from').notEmpty();
   req.checkQuery('to').notEmpty();
@@ -1872,7 +1858,6 @@ export {
   getVSF,
   getVerifications,
   getVerificationStatistics,
-  getWidgets,
   reactivateUser,
   suspendUser,
 };
