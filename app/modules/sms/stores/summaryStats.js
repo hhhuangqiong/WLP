@@ -1,20 +1,29 @@
 import createStore from 'fluxible/addons/createStore';
 
+import {
+  FETCH_SMS_SUMMARY_STATS_START,
+  FETCH_SMS_SUMMARY_STATS_SUCCESS,
+  FETCH_SMS_SUMMARY_STATS_FAILURE,
+  UPDATE_SMS_SUMMARY_STATS_TIME_FRAME,
+  CLEAR_SMS_SUMMARY_STATS,
+} from '../constants/actionTypes';
+
 export default createStore({
   storeName: 'SmsSummaryStatsStore',
 
   handlers: {
-    FETCH_SMS_SUMMARY_STATS_START: 'startLoading',
-    FETCH_SMS_SUMMARY_STATS_END: 'stopLoading',
-    FETCH_SMS_SUMMARY_STATS_SUCCESS: 'handleFetched',
-    UPDATE_SMS_SUMMARY_STATS_TIME_FRAME: 'updateTimeFrame',
-    CLEAR_SMS_SUMMARY_STATS: 'clearStats',
+    [FETCH_SMS_SUMMARY_STATS_START]: 'startLoading',
+    [FETCH_SMS_SUMMARY_STATS_SUCCESS]: 'handleFetchSuccess',
+    [FETCH_SMS_SUMMARY_STATS_FAILURE]: 'handleFetchFailure',
+    [UPDATE_SMS_SUMMARY_STATS_TIME_FRAME]: 'updateTimeFrame',
+    [CLEAR_SMS_SUMMARY_STATS]: 'clearStats',
   },
 
   initialize() {
     this.stats = {};
     this.timeFrame = '24 hours';
     this.isLoading = false;
+    this.errors = null;
   },
 
   updateTimeFrame(timeFrame) {
@@ -24,16 +33,20 @@ export default createStore({
 
   startLoading() {
     this.isLoading = true;
+    this.stats = {};
+    this.errors = null;
     this.emitChange();
   },
 
-  stopLoading() {
+  handleFetchSuccess(stats) {
+    this.stats = stats || {};
     this.isLoading = false;
     this.emitChange();
   },
 
-  handleFetched(payload) {
-    this.stats = payload.stats;
+  handleFetchFailure(err) {
+    this.errors = err;
+    this.isLoading = false;
     this.emitChange();
   },
 
@@ -47,16 +60,7 @@ export default createStore({
       stats: this.stats,
       timeFrame: this.timeFrame,
       isLoading: this.isLoading,
+      errors: this.errors,
     };
-  },
-
-  dehydrate() {
-    return this.getState();
-  },
-
-  rehydrate(state) {
-    this.stats = state.stats;
-    this.timeFrame = state.timeFrame;
-    this.isLoading = state.isLoading;
   },
 });

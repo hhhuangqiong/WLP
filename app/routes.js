@@ -29,7 +29,7 @@ import EndUsersOverview from './modules/end-user/components/EndUsersOverview';
 import EndUsersDetails from './modules/end-user/components/EndUsersDetails';
 import ImOverview from './modules/im/components/Overview';
 import Im from './modules/im/components/Im';
-import SmsOverview from './modules/sms/components/SmsOverview';
+import SmsOverview from './modules/sms/components/Overview';
 import SMS from './modules/sms/components/SMS';
 import TopUp from './modules/top-up/components/TopUp';
 

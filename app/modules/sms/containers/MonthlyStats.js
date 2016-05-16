@@ -8,12 +8,11 @@ import {
   clearSmsMonthlyStats,
 } from '../actions/stats';
 
-import MonthlyStats from '../components/overview/MonthlyStats';
+import MonthlyStats from '../components/MonthlyStats';
 import monthlyStatsStore from '../stores/monthlyStats';
 
 import {
   SHORT_DATE_FORMAT,
-  LAST_UPDATE_TIME_FORMAT,
   MILLISECOND_DATE_FORMAT,
   MONTH_FORMAT_LABLE,
 } from '../../../utils/timeFormatter';
@@ -21,7 +20,6 @@ import {
 class MonthlyStatsContainer extends Component {
   constructor(props) {
     super(props);
-    this.getLastUpdate = this.getLastUpdate.bind(this);
     this.onChange = this.onChange.bind(this);
   }
 
@@ -41,19 +39,11 @@ class MonthlyStatsContainer extends Component {
   }
 
   onChange(date) {
-    this.context.executeAction(updateSmsMonthlyStatsDate, {
-      date,
-    });
-  }
-
-  getLastUpdate() {
-    return moment(this.props.date, SHORT_DATE_FORMAT)
-      .endOf(MONTH_FORMAT_LABLE)
-      .format(LAST_UPDATE_TIME_FORMAT);
+    this.context.executeAction(updateSmsMonthlyStatsDate, date);
   }
 
   executeFetch(date) {
-    const { identity: carrierId } = this.context.params;
+    const { identity } = this.context.params;
 
     const from = moment(date, SHORT_DATE_FORMAT)
       .startOf(MONTH_FORMAT_LABLE)
@@ -64,10 +54,30 @@ class MonthlyStatsContainer extends Component {
       .format(MILLISECOND_DATE_FORMAT);
 
     this.context.executeAction(fetchSmsMonthlyStats, {
-      from,
-      to,
-      carrierId,
+      fromTime: from,
+      toTime: to,
+      identity,
     });
+  }
+
+  parseData(data) {
+    if (!data) {
+      return data;
+    }
+
+    const { value, oldValue, change } = data;
+    const percentageChange = (change / oldValue) * 100;
+
+    // TODO: standardize the data structure
+    return {
+      value,
+      change: {
+        value: change,
+        direction: change > 0 ? 'up' : 'down',
+        effect: 'positive',
+        percentage: percentageChange,
+      },
+    };
   }
 
   render() {
@@ -79,11 +89,10 @@ class MonthlyStatsContainer extends Component {
 
     return (
       <MonthlyStats
-        lastUpdate={this.getLastUpdate()}
         isLoading={isLoading}
         onChange={this.onChange}
         date={date}
-        stats={stats}
+        stats={this.parseData(stats)}
       />
     );
   }
@@ -95,7 +104,11 @@ MonthlyStatsContainer.contextTypes = {
 };
 
 MonthlyStatsContainer.propTypes = {
-  stats: PropTypes.array.isRequired,
+  stats: PropTypes.shape({
+    value: PropTypes.number,
+    oldValue: PropTypes.number,
+    change: PropTypes.number,
+  }),
   date: PropTypes.string.isRequired,
   isLoading: PropTypes.bool.isRequired,
 };
