@@ -3,8 +3,25 @@ import classnames from 'classnames';
 import { connectToStores } from 'fluxible-addons-react';
 import Joi from 'joi';
 
+import { injectIntl, FormattedMessage, defineMessages, intlShape } from 'react-intl';
+
 import changePassword from '../actions/changePassword';
 import ChangePasswordStore from '../stores/ChangePasswordStore';
+
+const MESSAGES = defineMessages({
+  currentPasswordPlaceholder: {
+    id: 'changePassword.currentPassword.placeholder',
+    defaultMessage: 'New password',
+  },
+  newPasswordPlaceholder: {
+    id: 'changePassword.newPassword.placeholder',
+    defaultMessage: 'New password',
+  },
+  newPasswordAgain: {
+    id: 'changePassword.newPassword.again',
+    defaultMessage: 'New password again',
+  },
+});
 
 const PASSWORD_VALIDATION = Joi
   .string()
@@ -127,6 +144,7 @@ class ChangePasswordForm extends Component {
   }
 
   render() {
+    const { formatMessage } = this.props.intl;
     const {
       currentPasswordIncorrectError,
       currentPasswordError,
@@ -136,13 +154,18 @@ class ChangePasswordForm extends Component {
 
     return (
       <form className="change-password-form">
-        <label>Please enter your current password</label>
+        <label>
+          <FormattedMessage
+            id="changepassword.currentpassword.label"
+            defaultMessage="Please enter your current password"
+          />
+        </label>
 
         <div>
           <input
             ref="currentPassword"
             name="currentPassword"
-            placeholder="Current password"
+            placeholder={formatMessage(MESSAGES.currentPasswordPlaceholder)}
             className={classnames(
               'radius',
               { error: currentPasswordIncorrectError || currentPasswordError },
@@ -163,13 +186,18 @@ class ChangePasswordForm extends Component {
           </label>
         </div>
 
-        <label>and your new password</label>
+        <label>
+          <FormattedMessage
+            id="changepassword.newpassword.label"
+            defaultMessage="and your new password"
+          />
+        </label>
 
         <div>
           <input
             ref="newPassword"
             name="newPassword"
-            placeholder="New password"
+            placeholder={formatMessage(MESSAGES.newPasswordPlaceholder)}
             className={classnames('radius', { error: newPasswordError })}
             type="password"
             value={this.state.newPassword}
@@ -187,7 +215,7 @@ class ChangePasswordForm extends Component {
           <input
             ref="newPasswordConfirm"
             name="newPasswordConfirm"
-            placeholder="New password again"
+            placeholder={formatMessage(MESSAGES.newPasswordAgain)}
             className={classnames('radius', { error: newPasswordConfirmError })}
             type="password"
             value={this.state.newPasswordConfirm}
@@ -225,10 +253,12 @@ class ChangePasswordForm extends Component {
 
 ChangePasswordForm.propTypes = {
   handleClose: PropTypes.func,
+  intl: intlShape.isRequired,
 };
 
-ChangePasswordForm = connectToStores(ChangePasswordForm, [ChangePasswordStore], stores => ({
-  currentPasswordIncorrectError: stores.ChangePasswordStore.getCurrentPasswordIncorrectError(),
+ChangePasswordForm = connectToStores(ChangePasswordForm, [ChangePasswordStore], (context) => ({
+  // eslint-disable-next-line
+  currentPasswordIncorrectError: context.getStore(ChangePasswordStore).getCurrentPasswordIncorrectError(),
 }));
 
-export default ChangePasswordForm;
+export default injectIntl(ChangePasswordForm);

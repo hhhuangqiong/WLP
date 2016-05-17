@@ -60,7 +60,6 @@
             &.dropdown {
                 width: auto;
                 min-width: 80%;
-                max-width: 80%;
                 padding-top: rem-calc(5);
                 @include border-radius($global-radius $global-radius);
                 @include box-shadow('0 30px 40px rgba(0, 0, 0, 0.2)');
@@ -96,6 +95,9 @@
                     &:before {
                         display: none;
                     }
+                }
+                li.change-password {
+                  width: rem-calc(250);
                 }
                 &--company-switcher{
                     min-width: rem-calc($company-switcher-width);
