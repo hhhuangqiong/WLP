@@ -37,7 +37,7 @@ migrations/*
 
 # Generated files
 *.js.map
-public/locales/
+public/locale-data/default.json
 public/vendor/
 public/javascript/bundle.js
 
