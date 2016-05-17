@@ -48,29 +48,6 @@ const SMS = React.createClass({
 
   statics: {
     storeListeners: [SMSStore],
-
-    fetchData(context, params, query, done) {
-      const defaultQuery = {
-        carrierId: null,
-        startDate: moment()
-          .startOf('day')
-          .subtract(MONTHS_BEFORE_TODAY, 'month')
-          .format(DATE_FORMAT),
-        endDate: moment().endOf('day').format(DATE_FORMAT),
-        number: null,
-        page: INITIAL_PAGE_NUMBER,
-        pageRec: PAGE_REC,
-      };
-
-      concurrent([
-        context.executeAction.bind(context, clearSMS, {}),
-        context.executeAction.bind(
-          context,
-          loadSMS,
-          _.merge(_.clone(defaultQuery), getInitialQueryFromURL(params, query))
-        ),
-      ], done || (() => {}));
-    },
   },
 
   getInitialState() {
@@ -83,8 +60,39 @@ const SMS = React.createClass({
     this.setState(this.getStateFromStores());
   },
 
+  componentDidMount() {
+    this.fetchData();
+  },
+
+  componentDidUpdate(prevProps) {
+    const { location: { search } } = this.props;
+    const { location: { search: prevSearch } } = prevProps;
+
+    if (search !== prevSearch) {
+      this.context.executeAction(clearSMS);
+      this.fetchData();
+    }
+  },
+
   componentWillUnmount() {
     this.context.executeAction(clearSMS);
+  },
+
+  fetchData() {
+    const { executeAction, location: { query }, params } = this.context;
+    const defaultQuery = {
+      carrierId: null,
+      startDate: moment()
+        .startOf('day')
+        .subtract(MONTHS_BEFORE_TODAY, 'month')
+        .format(DATE_FORMAT),
+      endDate: moment().endOf('day').format(DATE_FORMAT),
+      number: null,
+      page: INITIAL_PAGE_NUMBER,
+      pageRec: PAGE_REC,
+    };
+
+    executeAction(loadSMS, _.merge(_.clone(defaultQuery), getInitialQueryFromURL(params, query)));
   },
 
   getDefaultQuery() {

@@ -206,8 +206,8 @@ const SMSTable = React.createClass({
           <If condition={!isEmpty(this.props.records)}>
             <Pagination
               colSpan={TABLE_TITLES.length + 1}
-              hasMoreData={(this.props.totalPages - 1) > this.props.page}
-              onLoadMore={this.props.onDataLoad}
+              hasMoreData={(this.props.totalPage - 1) > this.props.page}
+              onLoadMore={this.props.onPageLoad}
               isLoading={this.props.isLoadingMore}
             />
           </If>
