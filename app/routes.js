@@ -28,7 +28,7 @@ import CallsOverview from './modules/calls/components/CallsOverview';
 import Calls from './modules/calls/components/Calls';
 import EndUsersOverview from './modules/end-user/components/EndUsersOverview';
 import EndUsersDetails from './modules/end-user/components/EndUsersDetails';
-import ImOverview from './modules/im/components/ImOverview';
+import ImOverview from './modules/im/components/Overview';
 import Im from './modules/im/components/Im';
 import SmsOverview from './modules/sms/components/SmsOverview';
 import SMS from './modules/sms/components/SMS';
