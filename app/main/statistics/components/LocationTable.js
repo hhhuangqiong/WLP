@@ -85,8 +85,8 @@ const LocationTable = props => {
           );
         }) : (
           <div className="geographic-chart__country-table__body row" key="empty">
-            <div className="country large-15 columns">formatMessage(MESSAGES.locationLoading)</div>
-            <div className="stats large-9 columns">formatMessage(MESSAGES.valueLoading)</div>
+            <div className="country large-15 columns">{formatMessage(MESSAGES.locationLoading)}</div>
+            <div className="stats large-9 columns">{formatMessage(MESSAGES.valueLoading)}</div>
           </div>
         )
       }
