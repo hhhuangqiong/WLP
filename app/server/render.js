@@ -16,6 +16,7 @@ import { getLocaleDataFromPath } from '../utils/intl';
 
 import loadSession from '../main/actions/loadSession';
 import getAccessibleCompanies from '../main/actions/getAccessibleCompanies';
+import setUserLanguage from '../main/actions/setUserLanguage';
 
 /**
  * @method createHtmlElement
@@ -67,6 +68,7 @@ export default function renderer(app, config) {
     const initialActions = [
       loadSession,
       getAccessibleCompanies,
+      setUserLanguage,
     ];
 
     // it turns out that the server defines the
@@ -74,7 +76,7 @@ export default function renderer(app, config) {
     // which is not satisfying
     // could it be defined within the routes?
     // see: https://github.com/erikras/react-redux-universal-hot-example/blob/master/src%2Froutes.js#L27
-    Q.nfcall(getInitialData, context, initialActions)
+    Q.nfcall(getInitialData, context, initialActions, { req, res })
       .then(() => {
         match({ routes, location: req.url }, (matchingErr, redirectLocation, renderProps) => {
           if (matchingErr) {

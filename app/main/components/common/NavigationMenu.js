@@ -4,19 +4,20 @@ import { Link } from 'react-router';
 import { FluxibleMixin } from 'fluxible-addons-react';
 import { FormattedMessage, defineMessages, injectIntl } from 'react-intl';
 
-defineMessages({
-  changePasswordModal: {
-    id: 'changePassword',
-    defaultMessage: 'Change Password',
-  },
-});
-
+import LanguageSwitcher from './LanguageSwitcher';
 import CompanySwitcher from './CompanySwitcher';
 import signOut from '../../actions/signOut';
 import Modal from '../../../main/components/Modal';
 import ChangePasswordForm from '../../../modules/account/components/ChangePasswordForm';
 
 import AuthStore from '../../stores/AuthStore';
+
+defineMessages({
+  changePasswordModal: {
+    id: 'changePassword',
+    defaultMessage: 'Change Password',
+  },
+});
 
 const companyPages = [
   'companies',
@@ -135,6 +136,9 @@ const Navigation = React.createClass({
         </Modal>
 
         <ul className="right">
+          <li className="navigation-bar__item">
+            <LanguageSwitcher />
+          </li>
           <li className="navigation-bar__item">
             <a href="https://support.maaii.com" target="_new">
               <FormattedMessage

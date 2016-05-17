@@ -1,6 +1,8 @@
 import React, { PropTypes } from 'react';
 import SystemMessage from './SystemMessage';
 import LoadingSpinner from './LoadingSpinner';
+import LanguageSwitcher from './LanguageSwitcher';
+import Version from './Version';
 
 const Public = props => (
   <div className="outer-wrapper">
@@ -10,6 +12,13 @@ const Public = props => (
           <img className="logo" src="/images/logo-default-m800.png" />
         </li>
       </ul>
+      <section className="top-bar-section navigation-bar">
+        <ul className="right">
+          <li className="navigation-bar__item">
+            <LanguageSwitcher />
+          </li>
+        </ul>
+      </section>
     </nav>
     <div className="public-container row">
       <div className="large-8 large-centered columns">

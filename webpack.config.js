@@ -14,22 +14,33 @@ var config =  {
   devtool: 'source-map',
   module: {
     loaders: [
-      { test: /\.js$/, exclude: /node_modules/, loader: 'react-hot' },
+      { test: /\.js$/,
+        include: [
+          path.join(__dirname, 'app'),
+        ],
+        loader: 'react-hot',
+      },
       {
         test: /\.js$/,
-        exclude: /node_modules/,
+        include: [
+          path.join(__dirname, 'app')
+        ],
         loader: 'babel',
         query: {
           presets: ['es2015', 'stage-0', 'react'],
           plugins: [
             'transform-decorators-legacy',
             'jsx-control-statements',
+            //@workaround duplicated babelrc config with addition of react-intl
             ['react-intl', { messagesDir: './build/intl/' }],
           ],
         },
       },
       { test: /\.json$/, loader: 'json' },
     ],
+  },
+  resolve: {
+    fallback: path.join(__dirname, 'node_modules'),
   },
   plugins: [],
   output: {

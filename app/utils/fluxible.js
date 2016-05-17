@@ -114,9 +114,12 @@ export function createMarkupElement(context, children) {
  *
  * @param context {FluxContext}
  * @param actions {Array} array of actions
+ * @param params.req {Object} express req
+ * @param params.res {Object} express res
+ * @param params.config {Object} application configuration
  * @param cb {Function}
  */
-export function getInitialData(context, actions, cb) {
+export function getInitialData(context, actions, params, cb) {
   if (!context) {
     throw new ArgumentNullError('context');
   }
@@ -139,7 +142,7 @@ export function getInitialData(context, actions, cb) {
 
   const actionContext = context.getActionContext();
 
-  Q.all(actions.map(action => Q.ninvoke(actionContext, 'executeAction', action, {})))
+  Q.all(actions.map(action => (Q.ninvoke(actionContext, 'executeAction', action, params))))
     .then(data => {
       debug('initial request is done, updating InitialDataStore', data);
       actionContext.dispatch('INITIAL_DATA_FETCHED');

@@ -8,6 +8,11 @@ const ApplicationStore = createStore({
     SIGN_OUT_SUCCESS: 'resetCompanies',
     FETCH_COMPANY_INFO_SUCCESS: 'loadedCurrentCompany',
     FETCH_APP_IDS_SUCCESS: 'handleAppIdsFetched',
+    LANGUAGE_CHANGED: 'handleLanguageChanged',
+  },
+
+  initialize() {
+    this.currentLanguage = null;
   },
 
   loadedCurrentCompany(company) {
@@ -39,6 +44,11 @@ const ApplicationStore = createStore({
     this.emitChange();
   },
 
+  handleLanguageChanged(langCode) {
+    this.currentLanguage = langCode;
+    this.emitChange();
+  },
+
   getAppIds() {
     return this.appIds;
   },
@@ -47,8 +57,13 @@ const ApplicationStore = createStore({
     return this.defaultAppId;
   },
 
+  getCurrentLanguage() {
+    return this.currentLanguage;
+  },
+
   getState() {
     return {
+      currentLanguage: this.currentLanguage,
       currentCompany: this.currentCompany,
       managingCompanies: this.managingCompanies,
       appIds: this.appIds,

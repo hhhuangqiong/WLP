@@ -32,6 +32,9 @@
                       vertical-align: middle;
                     }
                 }
+                > div {
+                  background-color: $topbar-link-bg;
+                }
                 &:not(.no-border) {
                   &:before {
                     width: rem-calc(1);
