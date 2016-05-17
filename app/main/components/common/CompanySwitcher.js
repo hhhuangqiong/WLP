@@ -32,7 +32,13 @@ const CompanySwitcher = React.createClass({
   switchCompany(params) {
     const { role, identity } = params;
     const destination = userPath(role, identity, '/');
-    browserHistory.push(destination);
+
+    // it should always be a client side process
+    // let's refresh the page at this moment, until we
+    // establish a mechanism to detect identity change in every page
+    if (window) {
+      window.location.assign(destination);
+    }
   },
 
   render() {
