@@ -108,6 +108,6 @@ export default [
     name: MESSAGES.verification,
     icon: 'icon-menuverification',
     page: VERIFICATION_SDK,
-    path: '/verification',
+    path: '/verification/overview',
   },
 ];
