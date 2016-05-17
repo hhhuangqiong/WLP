@@ -1,7 +1,7 @@
 import React, { PropTypes } from 'react';
 import { Link } from 'react-router';
 import Select from 'react-select';
-import { FormattedMessage, injectIntl } from 'react-intl';
+import { FormattedMessage, injectIntl, defineMessages } from 'react-intl';
 
 import moment from 'moment';
 import classNames from 'classnames';
@@ -44,7 +44,6 @@ const PLATFORM_NAME = {
   ios: 'IOS',
   android: 'Android',
   phone: 'Windows Phone',
-  // eslint-disable-next-line
   'windows.phone': 'Windows Phone',
 };
 
@@ -68,12 +67,39 @@ const LINECHART_TOGGLES = [
 
 const TOOLTIP_TIME_FORMAT = 'lll';
 
+const MESSAGES = defineMessages({
+  totalUser: {
+    id: 'endUser.overview.totalUser',
+    defaultMessage: 'Total User',
+  },
+  totalRegisteredUser: {
+    id: 'endUser.overview.totalRegisteredUser',
+    defaultMessage: 'Total Registered User',
+  },
+  newRegisteredUser: {
+    id: 'endUser.overview.newRegisteredUser',
+    defaultMessage: 'New Registered User',
+  },
+  activeUser: {
+    id: 'endUser.overview.activeUser',
+    defaultMessage: 'Active User',
+  },
+  dailyStatistics: {
+    id: 'endUser.overview.dailyStatistics',
+    defaultMessage: 'Daily Statistics',
+  },
+  monthlyStats: {
+    id: 'overview.monthlyStats',
+    defaultMessage: 'Monthly Statistic',
+  },
+});
+
 const EndUsersOverview = React.createClass({
   displayName: 'EndUsersOverview',
 
   contextTypes: {
     params: PropTypes.object,
-    executeAction: React.PropTypes.func.isRequired,
+    executeAction: PropTypes.func.isRequired,
   },
 
   mixins: [FluxibleMixin],
@@ -282,13 +308,13 @@ const EndUsersOverview = React.createClass({
             <Panel.Wrapper>
               <Panel.Header
                 customClass="narrow"
-                title={formatMessage({ id: 'calls.overview.totalUser' })}
+                title={formatMessage(MESSAGES.totalUser)}
                 caption={`Data updated till: ${moment().subtract(1, 'day').endOf('day').format(LAST_UPDATE_TIME_FORMAT)}`}
               />
               <Panel.Body customClass="narrow no-padding">
                 <DataGrid.Wrapper>
                   <DataGrid.Cell
-                    title={formatMessage({ id: 'calls.overview.totalRegisteredUser' })}
+                    title={formatMessage(MESSAGES.totalRegisteredUser)}
                     data={totalRegisteredUser}
                     changeAmount=" "
                   />
@@ -301,7 +327,7 @@ const EndUsersOverview = React.createClass({
             <Panel.Wrapper>
               <Panel.Header
                 customClass="narrow"
-                title={formatMessage({ id: 'calls.overview.monthlyStatistics' })}
+                title={formatMessage(MESSAGES.monthlyStats)}
                 caption={this.getLastUpdate({ year: this.state.selectedYear, month: this.state.selectedMonth })}
               >
                 <div className={classNames('tiny-spinner', { active: this.isMonthlyStatsLoading() })}></div>
@@ -316,7 +342,7 @@ const EndUsersOverview = React.createClass({
               <Panel.Body customClass="narrow no-padding">
                 <DataGrid.Wrapper>
                   <DataGrid.Cell
-                    title={formatMessage({ id: 'calls.overview.newRegisteredUser' })}
+                    title={formatMessage(MESSAGES.newRegisteredUser)}
                     data={monthlyRegisteredUserStats.total}
                     changeDir={monthlyRegisteredUserStats.direction}
                     changeAmount={monthlyRegisteredUserStats.change}
@@ -325,7 +351,7 @@ const EndUsersOverview = React.createClass({
                     isLoading={this.isMonthlyStatsLoading()}
                   />
                   <DataGrid.Cell
-                    title={formatMessage({ id: 'calls.overview.activeUser' })}
+                    title={formatMessage(MESSAGES.activeUser)}
                     data={monthlyActiveUserStats.total}
                     changeDir={monthlyActiveUserStats.direction}
                     changeAmount={monthlyActiveUserStats.change}
@@ -342,7 +368,7 @@ const EndUsersOverview = React.createClass({
             <Panel.Wrapper>
               <Panel.Header
                 customClass="narrow"
-                title={formatMessage({ id: 'calls.overview.dailyStatistics' })}
+                title={formatMessage(MESSAGES.dailyStatistics)}
                 caption={this.getLastUpdateFromTimeFrame()} >
                 <div className={classNames('tiny-spinner', { active: this.isTotalStatsLoading() })}></div>
                 <TimeFramePicker
