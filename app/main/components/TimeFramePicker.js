@@ -1,7 +1,7 @@
 import React, { PropTypes } from 'react';
 import classNames from 'classnames';
 import { defineMessages, injectIntl } from 'react-intl';
-import { parseTimeRange } from '../../utils/timeFormatter';
+import { HOUR_FORMAT_LABEL, parseTimeRange } from '../../utils/timeFormatter';
 
 const MESSAGES = defineMessages({
   timeFrameHours: {
@@ -26,8 +26,7 @@ function TimeFramePicker({ className, frames, currentFrame, onChange, intl }) {
       {
         frames.map(frame => {
           const { quantity, timescale } = parseTimeRange(frame);
-
-          const displayTimescale = timescale === 'hours' ?
+          const displayTimescale = timescale === HOUR_FORMAT_LABEL ?
             formatMessage(MESSAGES.timeFrameHours) :
             formatMessage(MESSAGES.timeFrameDays);
 
