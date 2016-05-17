@@ -41,20 +41,22 @@ const defaultState = {
 const CompanyService = React.createClass({
   contextTypes: {
     router: PropTypes.object.isRequired,
+    params: PropTypes.object.isRequired,
   },
 
   mixins: [FluxibleMixin],
 
   statics: {
     storeListeners: [CompanyStore],
-
-    fetchData(context, params) {
-      context.executeAction(fetchCompanyService, { carrierId: params.carrierId });
-    },
   },
 
   getInitialState() {
     return this.getStateFromStores();
+  },
+
+  componentDidMount() {
+    const { executeAction, params } = this.context;
+    executeAction(fetchCompanyService, { carrierId: params.identity });
   },
 
   onChange() {
@@ -62,7 +64,7 @@ const CompanyService = React.createClass({
   },
 
   getStateFromStores() {
-    const { carrierId } = this
+    const { identity: carrierId } = this
       .context
       .params;
 
@@ -112,17 +114,17 @@ const CompanyService = React.createClass({
 
   _handleInputBlur(e) {
     const inputName = e.target.name;
-    this.validate(inputName);
+    this.props.validate(inputName);
   },
 
   _handleSubmit() {
-    this.validate(error => {
+    this.props.validate(error => {
       // react-validation-mixin will trigger changes in
       // this.state.errors upon this.validate() is called
       // so no error handling is needed
       if (error) return;
 
-      const { carrierId } = this
+      const { identity: carrierId } = this
         .context
         .params;
 
@@ -147,7 +149,7 @@ const CompanyService = React.createClass({
         <TopBar
           _id={this.state._id}
           status={this.state.status}
-          hasError={!this.isValid()}
+          hasError={!this.props.isValid()}
           onSave={this._handleSubmit}
         />
         <form ref="companyForm" onSubmit={this._handleSubmit}>
@@ -212,7 +214,7 @@ const CompanyService = React.createClass({
                       }
                       onDataChange={_.bindKey(this, '_handleInputChange', 'ios')}
                       onInputBlur={this._handleInputBlur}
-                      getValidationMessages={this.getValidationMessages}
+                      getValidationMessages={this.props.getValidationMessages}
                       renderHelpText={this._renderHelpText}
                     />
                   </Tab.Panel>
@@ -231,7 +233,7 @@ const CompanyService = React.createClass({
                       }
                       onDataChange={_.bindKey(this, '_handleInputChange', 'android')}
                       onInputBlur={this._handleInputBlur}
-                      getValidationMessages={this.getValidationMessages}
+                      getValidationMessages={this.props.getValidationMessages}
                       renderHelpText={this._renderHelpText}
                     />
                   </Tab.Panel>

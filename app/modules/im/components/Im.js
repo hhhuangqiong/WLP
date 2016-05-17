@@ -39,23 +39,6 @@ const Im = React.createClass({
 
   statics: {
     storeListeners: [ImStore],
-
-    fetchData(context, params, query, done) {
-      concurrent([
-        context.executeAction.bind(context, clearIm, {}),
-        context.executeAction.bind(context, fetchIm, {
-          carrierId: params.identity,
-          fromTime: query.fromTime || moment().subtract(2, 'month').startOf('day').format('L'),
-          toTime: query.toTime || moment().endOf('day').format('L'),
-          type: query.type,
-          searchType: query.searchType,
-          search: query.search,
-          size: config.PAGES.IMS.PAGE_SIZE,
-          // The page number, starting from 0, defaults to 0 if not specified.
-          page: query.page || 0,
-        }),
-      ], done || (() => {}));
-    },
   },
 
   getInitialState() {
@@ -68,6 +51,20 @@ const Im = React.createClass({
     );
 
     return _.merge(this.getStateFromStores(), query);
+  },
+
+  componentDidMount() {
+    this.fetchData();
+  },
+
+  componentDidUpdate(prevProps) {
+    const { location: { search } } = this.props;
+    const { location: { search: prevSearch } } = prevProps;
+
+    if (search !== prevSearch) {
+      this.context.executeAction(clearIm);
+      this.fetchData();
+    }
   },
 
   componentWillUnmount() {
@@ -130,6 +127,21 @@ const Im = React.createClass({
 
   getOptKey(messageType) {
     return `messageType-${messageType.value}`;
+  },
+
+  fetchData() {
+    const { executeAction, location: { query }, params } = this.context;
+    executeAction(fetchIm, {
+      carrierId: params.identity,
+      fromTime: query.fromTime || moment().subtract(2, 'month').startOf('day').format('L'),
+      toTime: query.toTime || moment().endOf('day').format('L'),
+      type: query.type,
+      searchType: query.searchType,
+      search: query.search,
+      size: config.PAGES.IMS.PAGE_SIZE,
+      // The page number, starting from 0, defaults to 0 if not specified.
+      page: query.page || 0,
+    });
   },
 
   handleQueryChange(newQuery) {

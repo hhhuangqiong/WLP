@@ -3,7 +3,6 @@ import { Link } from 'react-router';
 import { FormattedMessage } from 'react-intl';
 
 import moment from 'moment';
-import { concurrent } from 'contra';
 import { merge, omit, clone } from 'lodash';
 import { FluxibleMixin } from 'fluxible-addons-react';
 
@@ -32,42 +31,26 @@ const VsfDetails = createClass({
 
   statics: {
     storeListeners: [VSFTransactionStore],
-
-    fetchData(context, params, query, done) {
-      const defaultQuery = {
-        fromTime: moment().subtract(2, 'day').startOf('day').format('L'),
-        toTime: moment().endOf('day').format('L'),
-        category: '',
-        pageIndex: 0,
-        pageSize: PAGE_SIZE,
-        userNumber: '',
-      };
-
-      const queryAndParams = {
-        carrierId: params.identity,
-        fromTime: query.fromTime,
-        toTime: query.toTime,
-        category: query.category,
-        pageIndex: query.pageIndex,
-        pageSize: query.pageSize,
-        userNumber: query.userNumber,
-      };
-
-      concurrent([
-        context.executeAction.bind(context, clearVSFTransaction, {}),
-        context.executeAction.bind(
-          context,
-          fetchVSFTransactions,
-          merge(clone(defaultQuery), queryAndParams)
-        ),
-      ], done || (() => {}));
-    },
   },
 
   getInitialState() {
     const { fromTime, toTime, category, userNumber, isLoadingMore } = this.syncQueryAndState();
     const { transactions } = this.getStore(VSFTransactionStore).getData();
     return { fromTime, toTime, category, userNumber, transactions, isLoadingMore };
+  },
+
+  componentDidMount() {
+    this.fetchData();
+  },
+
+  componentDidUpdate(prevProps) {
+    const { location: { search } } = this.props;
+    const { location: { search: prevSearch } } = prevProps;
+
+    if (search !== prevSearch) {
+      this.context.executeAction(clearVSFTransaction);
+      this.fetchData();
+    }
   },
 
   componentWillUnmount() {
@@ -77,6 +60,31 @@ const VsfDetails = createClass({
   onChange() {
     const data = this.getStore(VSFTransactionStore).getData();
     this.setState(data);
+  },
+
+  fetchData() {
+    const { executeAction, location: { query }, params } = this.context;
+
+    const defaultQuery = {
+      fromTime: moment().subtract(2, 'day').startOf('day').format('L'),
+      toTime: moment().endOf('day').format('L'),
+      category: '',
+      pageIndex: 0,
+      pageSize: PAGE_SIZE,
+      userNumber: '',
+    };
+
+    const queryAndParams = {
+      carrierId: params.identity,
+      fromTime: query.fromTime,
+      toTime: query.toTime,
+      category: query.category,
+      pageIndex: query.pageIndex,
+      pageSize: query.pageSize,
+      userNumber: query.userNumber,
+    };
+
+    executeAction(fetchVSFTransactions, merge(clone(defaultQuery), queryAndParams));
   },
 
   syncQueryAndState(newState) {

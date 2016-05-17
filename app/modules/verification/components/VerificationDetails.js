@@ -9,8 +9,10 @@ import { FormattedMessage } from 'react-intl';
 import * as FilterBar from './../../../main/components/FilterBar';
 import DateRangePicker from './../../../main/components/DateRangePicker';
 
+import fetchAppIds from '../../../main/actions/fetchAppIds';
 import fetchVerifications from '../actions/fetchVerifications';
 import fetchMoreVerifications from '../actions/fetchMoreVerifications';
+import clearVerifications from '../actions/resetVerificationData';
 
 import VerificationStore from '../stores/VerificationStore';
 import ApplicationStore from '../../../main/stores/ApplicationStore';
@@ -154,14 +156,17 @@ const VerificationDetails = React.createClass({
 
     // appId has been selected, no need to auto select
     if (this.state.appId) {
+      this.fetchData();
       return;
     }
 
-    const appId = this.getStore(ApplicationStore).getDefaultAppId();
+    const { appId } = this.context.location.query;
 
     // no default, cannot select and fetch
     // proper fetch will be done after onApplicationStoreChange
     if (!appId) {
+      const { identity } = this.context.params;
+      this.context.executeAction(fetchAppIds, { carrierId: identity });
       return;
     }
 
@@ -169,21 +174,16 @@ const VerificationDetails = React.createClass({
     this.setState({
       appId,
     });
+  },
 
-    const { identity } = this.context.params;
+  componentDidUpdate(prevProps, prevState) {
+    const { location: { search } } = this.props;
+    const { location: { search: prevSearch } } = prevProps;
 
-    // fetch using the local appId because setState is async
-    this.context.executeAction(fetchVerifications, {
-      carrierId: identity,
-      appId,
-      page: this.state.page,
-      pageSize: this.state.pageSize,
-      startDate: this.state.startDate,
-      endDate: this.state.endDate,
-      number: this.state.number,
-      os: this.state.os,
-      method: this.state.method,
-    });
+    if ((search !== prevSearch) || (prevState.appId !== this.state.appId)) {
+      this.context.executeAction(clearVerifications);
+      this.fetchData();
+    }
   },
 
   onChange() {
@@ -269,6 +269,22 @@ const VerificationDetails = React.createClass({
   handleOsTypeChange(event) {
     const value = event.target.value;
     this.handleQueryChange({ os: value === LABEL_OF_ALL ? '' : event.target.value });
+  },
+
+  fetchData() {
+    const { identity } = this.context.params;
+
+    this.context.executeAction(fetchVerifications, {
+      carrierId: identity,
+      appId: this.state.appId,
+      page: this.state.page,
+      pageSize: this.state.pageSize,
+      startDate: this.state.startDate,
+      endDate: this.state.endDate,
+      number: this.state.number,
+      os: this.state.os,
+      method: this.state.method,
+    });
   },
 
   /**

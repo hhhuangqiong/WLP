@@ -117,7 +117,7 @@ const VerificationTable = React.createClass({
 
   renderEmptyRow() {
     if (!this.props.verifications || this.props.verifications.length === 0) {
-      return <EmptyRow colSpan={TABLE_TITLES.lenght} />;
+      return <EmptyRow colSpan={TABLE_TITLES.length} />;
     }
 
     return null;

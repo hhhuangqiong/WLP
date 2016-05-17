@@ -89,7 +89,6 @@ Api.prototype.getApplicationIds = function getApplicationIds(params, cb) {
   superagent
     .get(`${this._getHost()}/api/companies/${params.carrierId}/applicationIds`)
     .accept('json')
-    .query({ userId: params.userId })
     .end(genericHandler(cb));
 };
 

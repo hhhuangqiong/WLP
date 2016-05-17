@@ -7,6 +7,7 @@ export default createStore({
     FETCH_VERIFICATIONS_SUCCESS: 'handleVerificationsFetched',
     FETCH_MORE_VERIFICATIONS_START: 'handleMoreVerificationsFetching',
     FETCH_MORE_VERIFICATIONS_SUCCESS: 'handleMoreVerificationsFetched',
+    RESET_VERIFICATION_DATA: 'handleClearData',
   },
 
   initialize() {
@@ -40,6 +41,11 @@ export default createStore({
 
     this.isLoadingMore = false;
 
+    this.emitChange();
+  },
+
+  handleClearData() {
+    this.initialize();
     this.emitChange();
   },
 

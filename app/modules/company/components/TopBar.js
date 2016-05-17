@@ -19,6 +19,7 @@ const CompanyTopBar = React.createClass({
   contextTypes: {
     executeAction: PropTypes.func.isRequired,
     router: PropTypes.object.isRequired,
+    params: PropTypes.object.isRequired,
   },
 
   getDefaultProps() {
@@ -65,13 +66,14 @@ const CompanyTopBar = React.createClass({
         <Else />
           <FilterBar.NavigationItems>
             <Link
-              to="company-profile"
-              params={{ role, identity, carrierId }}
+              to={`/${role}/${identity}/companies/${carrierId}/profile`}
             >company profile</Link>
             <Link
-              to="company-service"
-              params={{ role, identity, carrierId }}
+              to={`/${role}/${identity}/companies/${carrierId}/service`}
             >service config</Link>
+            <Link
+              to={`/${role}/${identity}/companies/${carrierId}/widget`}
+            >widget config</Link>
           </FilterBar.NavigationItems>
         </If>
         <If condition={this.props._id}>
