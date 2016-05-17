@@ -161,13 +161,14 @@ const Navigation = React.createClass({
             </a>
             <ul className="dropdown">
               <li className="navigation-bar__item">
-                <a onClick={this.handleOpenChangePasswordDialog}>
+                {/* Disable change password since it is not yet a released function */}
+                {/*<a onClick={this.handleOpenChangePasswordDialog}>
                   <i className="icon-change-password"></i>
                   <FormattedMessage
                     id="changePassword"
                     defaultMessage="Change Password"
                   />
-                </a>
+                </a>*/}
                 <a onClick={this.handleSignOut}>
                   <i className="icon-logout"></i>
                   <FormattedMessage
