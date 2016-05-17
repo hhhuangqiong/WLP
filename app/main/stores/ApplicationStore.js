@@ -76,7 +76,7 @@ const ApplicationStore = createStore({
   },
 
   rehydrate(state) {
-    this.currentLanguage = state.currentLanguage,
+    this.currentLanguage = state.currentLanguage;
     this.currentCompany = state.currentCompany;
     this.managingCompanies = state.managingCompanies;
     this.appIds = state.appIds;
