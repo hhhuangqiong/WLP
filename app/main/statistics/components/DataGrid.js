@@ -110,6 +110,17 @@ class DataCell extends Component {
     return isLoading;
   }
 
+  _withoutChange() {
+    const {
+      changeDir,
+      changeEffect,
+      changeAmount,
+      changePercentage,
+    } = this.props;
+
+    return !changeDir || !changeEffect || !changeAmount || !changePercentage;
+  }
+
   _localiseData(data) {
     const { isLoading } = this.props;
 
@@ -152,7 +163,7 @@ class DataCell extends Component {
       changePercentage,
     } = this.props;
 
-    if (!this._isEmpty() && !this._isLoading()) {
+    if (!this._isEmpty() && !this._isLoading() && !this._withoutChange()) {
       return (
         <div className={classNames('data-cell__trend', changeEffect, changeDir)}>
           { this.renderArrow(changeDir) }

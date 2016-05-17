@@ -1,7 +1,13 @@
-import React, { PropTypes } from 'react';
+import React from 'react';
+
+import SummaryStatsContainer from '../containers/SummaryStats';
+import DetailStatsContainer from '../containers/DetailStats';
 
 export default function Overview() {
   return (
-    <div>Overview</div>
+    <div>
+      <SummaryStatsContainer />
+      <DetailStatsContainer />
+    </div>
   );
 }
