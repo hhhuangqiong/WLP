@@ -115,7 +115,7 @@ export default (context) => {
         </Route>
 
         <Route path=":role/:identity/vsf/overview" component={VsfOverview} />
-      <Route path=":role/:identity/vsf/details" component={VsfDetails} />
+        <Route path=":role/:identity/vsf/details" component={VsfDetails} />
 
         <Route path=":role/:identity/calls/overview" component={CallsOverview} />
         <Route path=":role/:identity/calls/details" component={Calls} />
