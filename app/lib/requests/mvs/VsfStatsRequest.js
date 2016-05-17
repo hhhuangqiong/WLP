@@ -45,21 +45,25 @@ export default class VsfStatsRequest {
       this.normalizeLastMonthParams(params)
     );
 
-    return Promise.resolve({
+    return Promise.resolve(this.compareSummaryStatsData(currentMonth, lastMonth));
+  }
+
+  compareSummaryStatsData(currentMonth, lastMonth) {
+    return {
       sticker: mapStatsToDataGrid(currentMonth.sticker, lastMonth.sticker),
       credit: mapStatsToDataGrid(currentMonth.credit, lastMonth.credit),
       animation: mapStatsToDataGrid(currentMonth.animation, lastMonth.animation),
       voiceSticker: mapStatsToDataGrid(currentMonth.voiceSticker, lastMonth.voiceSticker),
-    });
+    };
   }
 
   fetchSummaryTotal(params) {
     return this
       .sendRequest(ENDPOINTS.COMMON, params)
-      .then(data => this.normalizeSummaryStats(data));
+      .then(data => this.parseSummaryStatsResponses(data));
   }
 
-  normalizeSummaryStats(data) {
+  parseSummaryStatsResponses(data) {
     const stickerData = findDataBySegment(data.results, ITEM_CATEGORY_SEGMENT, STICKER);
     const creditData = findDataBySegment(data.results, ITEM_CATEGORY_SEGMENT, CREDIT);
     const animationData = findDataBySegment(data.results, ITEM_CATEGORY_SEGMENT, ANIMATION);
@@ -69,12 +73,12 @@ export default class VsfStatsRequest {
       VOICE_STICKER
     );
 
-    return Promise.resolve({
+    return {
       sticker: sumData(stickerData),
       credit: sumData(creditData),
       animation: sumData(animationData),
       voiceSticker: sumData(voiceStickerData),
-    });
+    };
   }
 
   normalizeLastMonthParams(params) {
