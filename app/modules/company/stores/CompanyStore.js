@@ -30,7 +30,6 @@ const CompanyStore = createStore({
     CREATE_COMPANY_SUCCESS: 'handleCompanyCreated',
     UPDATE_COMPANY_PROFILE_SUCCESS: 'handleCompanyUpdated',
     UPDATE_COMPANY_SERVICE_SUCCESS: 'handleCompanyServiceUpdated',
-    UPDATE_COMPANY_WIDGET_SUCCESS: 'handleCompanyUpdated',
     RESET_COMPANY: 'handleCompanyReset',
     REACTIVATE_COMPANY_SUCCESS: 'handleCompanyStatusChanged',
     DEACTIVATE_COMPANY_SUCCESS: 'handleCompanyStatusChanged',

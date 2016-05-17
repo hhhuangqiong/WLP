@@ -25,24 +25,4 @@ module.exports = {
       PAGE_SIZE: 100,
     },
   },
-  WIDGETS: {
-    OVERVIEW: {
-      NUMBER_OF_WIDGETS: 6,
-    },
-    CALLS: {
-      NUMBER_OF_WIDGETS: 10,
-    },
-    IM: {
-      NUMBER_OF_WIDGETS: 8,
-    },
-    SMS: {
-      NUMBER_OF_WIDGETS: 3,
-    },
-    STORES: {
-      NUMBER_OF_WIDGETS: 3,
-    },
-    VSF: {
-      NUMBER_OF_WIDGETS: 3,
-    },
-  },
 };

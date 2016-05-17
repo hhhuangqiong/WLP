@@ -12,7 +12,6 @@ import Protected from './main/components/common/Protected';
 import Companies from './modules/company/components/Companies';
 import { NewProfile, EditProfile } from './modules/company/components/Profile';
 import Service from './modules/company/components/Service';
-import Widgets from './modules/company/components/Widgets';
 
 import Account from './modules/account/components/Account';
 import AccountProfile from './modules/account/components/AccountProfile';
@@ -103,7 +102,6 @@ export default (context) => {
           <Route path="create" component={NewProfile} />
           <Route path=":carrierId/profile" component={EditProfile} />
           <Route path=":carrierId/service" component={Service} />
-          <Route path=":carrierId/widget" component={Widgets} />
         </Route>
 
         <Route path=":role/:identity/account" component={Account}>

@@ -72,10 +72,6 @@ const CompanyTopBar = React.createClass({
               to="company-service"
               params={{ role, identity, carrierId }}
             >service config</Link>
-            <Link
-              to="company-widget"
-              params={{ role, identity, carrierId }}
-            >widget config</Link>
           </FilterBar.NavigationItems>
         </If>
         <If condition={this.props._id}>

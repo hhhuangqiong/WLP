@@ -182,14 +182,6 @@ Schema:
       type: String,
     },
   },
-  widgets: {
-    overview: [],
-    stores: [],
-    calls: [],
-    im: [],
-    sms: [],
-    vsf: [],
-  },
   serviceConfig: {
     developerKey: {
       type: String,

@@ -37,7 +37,6 @@
     "status": "active",
     "timezone": "UTC+8",
     "country": "Hong Kong",
-    "logoFile": "logo-m800.png",
-    "widgets": {}
+    "logoFile": "logo-m800.png"
   }
 }]

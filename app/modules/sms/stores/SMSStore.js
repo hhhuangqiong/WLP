@@ -8,11 +8,9 @@ const SMSStore = createStore({
     FETCH_SMS_START: 'handleLoadSMSFetching',
     FETCH_SMS_SUCCESS: 'handleLoadSMS',
     CLEAR_SMS: 'handleClearSMS',
-    LOAD_SMS_WIDGETS_SUCCESS: 'handleLoadSMSWidgets',
   },
 
   initialize() {
-    this.widgets = null;
     this.records = null;
     this.page = 1;
     this.totalPage = 0;
@@ -45,20 +43,6 @@ const SMSStore = createStore({
     this.emitChange();
   },
 
-  handleLoadSMSWidgets(payload) {
-    if (payload && payload.widgets) {
-      this.widgets = payload.widgets;
-    } else {
-      this.widgets = [];
-    }
-
-    this.emitChange();
-  },
-
-  getWidgets() {
-    return this.widgets;
-  },
-
   getTotalPage() {
     return this.totalPage;
   },
@@ -73,7 +57,6 @@ const SMSStore = createStore({
 
   getState() {
     return {
-      widgets: this.widgets,
       records: this.records,
       page: this.page,
       totalPage: this.totalPage,
@@ -120,7 +103,6 @@ const SMSStore = createStore({
   },
 
   rehydrate(state) {
-    this.widgets = state.widgets;
     this.records = state.records;
     this.page = state.page;
     this.totalPage = state.totalPage;

@@ -23,7 +23,6 @@ const companyPages = [
   'companies',
   'company-create',
   'company-profile',
-  'company-widget',
   'company-service',
 ];
 

@@ -64,7 +64,6 @@ router
   .get('/companies/:carrierId/applicationIds', companies.getApplicationIds)
   .put('/companies/:carrierId/profile', multipart, companies.updateProfile)
   .put('/companies/:carrierId/service', multipart, companies.saveService)
-  .put('/companies/:carrierId/widget', multipart, companies.saveWidget)
   .get('/accessibleCompanies', companies.getAccessibleCompanies)
   .get('/companies/parent', companies.getParents)
   .post('/companies/:carrierId/suspension', companies.deactivateCompany)

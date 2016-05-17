@@ -16,13 +16,5 @@ export default function (apiPrefix = '') {
         .accept('json')
         .end(genericHandler(cb));
     },
-
-    getVSFWidgets(params, cb) {
-      return superagent
-        .get(`${this._getHost()}${carrierBasePath}/${params.carrierId}/widgets/vsf`)
-        .query(params)
-        .accept('json')
-        .end(genericHandler(cb));
-    },
   };
 }

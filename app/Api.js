@@ -109,14 +109,6 @@ Api.prototype.updateCompanyService = function updateCompanyService(params, cb) {
     .end(genericHandler(cb));
 };
 
-Api.prototype.updateCompanyWidget = function updateCompanyWidget(params, cb) {
-  superagent
-    .put(`${this._getHost()}/api/companies/${params.carrierId}/widget`)
-    .accept('json')
-    .send(params.data)
-    .end(genericHandler(cb));
-};
-
 Api.prototype.deactivateCompany = function deactivateCompany(params, cb) {
   superagent
     .post(`${this._getHost()}/api/companies/${params.carrierId}/suspension`)
@@ -208,22 +200,6 @@ Api.prototype.getCalls = function getCalls(params, cb) {
     .get(`${this._getHost()}/api/carriers/${params.carrierId}/calls`)
     .query(params)
     .accept('json')
-    .end(genericHandler(cb));
-};
-
-Api.prototype.getCallsWidgets = function getCallsWidgets(params, cb) {
-  superagent
-    .get(`${this._getHost()}/api/carriers/${params.carrierId}/widgets/calls`)
-    .accept('json')
-    .query({ userId: params.userId })
-    .end(genericHandler(cb));
-};
-
-Api.prototype.getImWidgets = function getImWidgets(params, cb) {
-  return superagent
-    .get(`${this._getHost()}/api/carriers/${params.carrierId}/widgets/im`)
-    .accept('json')
-    .query({ userId: params.userId })
     .end(genericHandler(cb));
 };
 
