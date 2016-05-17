@@ -70,11 +70,6 @@ const saveService = function (req, res) {
   return controller.saveService(req, res);
 };
 
-// '/companies/:carrierId/widget'
-const saveWidget = function (req, res) {
-  return controller.saveWidget(req, res);
-};
-
 // '/application/companies'
 const getApplicationCompanies = function (req, res) {
   const { user } = res.locals.user;
@@ -231,7 +226,6 @@ export {
   list,
   updateProfile,
   saveService,
-  saveWidget,
   createProfile,
   getParents,
   deactivateCompany,

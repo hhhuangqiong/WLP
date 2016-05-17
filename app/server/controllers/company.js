@@ -651,62 +651,6 @@ export default class CompanyController {
       .done();
   }
 
-  saveWidget(req, res) {
-    // req.checkBody('carrierId').notEmpty();
-    /**
-     * Update Company widgets
-     *
-     * @param isPermitted {Boolean}
-     * @param params {Object} data params received
-     */
-    const saveCompany = _.bind(function bind() {
-      const params = this.params;
-
-      logger.debug('updating company widget with payload %j', params, {});
-
-      const { WIDGETS: sections } = config;
-      const widgetPayload = {};
-
-      _.map(sections, ({ NUMBER_OF_WIDGETS: numberOfWidgets }, key) => {
-        const section = key.toLowerCase();
-        widgetPayload[section] = [];
-        for (let i = 0; i < numberOfWidgets; i++) {
-          widgetPayload[section].push(params[`${section}-widget-${i}`]);
-        }
-      });
-
-      return Q.ninvoke(Company, 'findOneAndUpdate', { _id: params._id }, {
-        $set: {
-          widgets: widgetPayload,
-          updateAt: new Date(),
-          updateBy: req.user._id,
-        },
-      }, { new: true });
-    }, { params: req.body });
-
-    Q
-      .ninvoke(this, 'checkPermission', req.user, req.body._id)
-      .then(user => {
-        // user found then is permitted
-        if (!user) {
-          throw new Error('permission denied');
-        }
-      })
-      .then(saveCompany)
-      .then(company => {
-        res.status(200).json({
-          company,
-        });
-      })
-      .catch(err => {
-        logger.error(err);
-        res.status(err.code || 500).json({
-          error: err,
-        });
-      })
-      .done();
-  }
-
   /**
    * Checks if the user having the specified userId can access the application information.
    *

@@ -23,7 +23,6 @@ const SystemMessageStore = createStore({
     UPDATE_COMPANY_PROFILE_SUCCESS: 'handleUpdateCompanySuccess',
     UPDATE_COMPANY_SERVICE_FAILURE: 'handleUpdateCompanyFailure',
     UPDATE_COMPANY_SERVICE_SUCCESS: 'handleUpdateCompanySuccess',
-    UPDATE_COMPANY_WIDGET_SUCCESS: 'handleUpdateCompanySuccess',
   },
 
   // do not change this

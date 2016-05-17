@@ -49,7 +49,6 @@ Post-login
       # similar to '/r/{reseller-identifier}/settings' below
       /settings
         /service
-        /widget
     /query
   /accounts
   /settings
@@ -121,6 +120,5 @@ Post-login
       /logo       # for partial update (e.g., ajax upload); TBC
 
     /service      # service config; should include other information, like feature list
-    /widget       # widget config
 
 ```

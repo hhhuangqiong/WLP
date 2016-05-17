@@ -6,7 +6,6 @@ const ImStore = createStore({
 
   handlers: {
     FETCH_IM_SUCCESS: 'handleImChange',
-    FETCH_IM_WIDGETS_SUCCESS: 'handleImWidgetsChange',
     CLEAR_IM_STORE: 'handleClearStore',
 
     FETCH_IM_START: 'appendPendingRequest',
@@ -15,7 +14,6 @@ const ImStore = createStore({
   },
 
   initialize() {
-    this.widgets = [];
     this.ims = null;
     this.offset = 0;
     this.pageNumber = 0;
@@ -59,26 +57,12 @@ const ImStore = createStore({
     this.emitChange();
   },
 
-  handleImWidgetsChange(payload) {
-    if (payload && payload.widgets) {
-      this.widgets = payload.widgets;
-    } else {
-      this.widgets = [];
-    }
-
-    this.emitChange();
-  },
-
   getIMsCount() {
     return this.imsCount;
   },
 
   getIMs() {
     return this.ims;
-  },
-
-  getWidgets() {
-    return this.widgets;
   },
 
   getTotalPages() {
@@ -97,7 +81,6 @@ const ImStore = createStore({
       pageSize: this.pageSize,
       imsCount: this.imsCount,
       totalPages: this.totalPages,
-      widgets: this.widgets,
       loaded: true,
       isLoadingMore: this.isLoadingMore,
     };
@@ -148,7 +131,6 @@ const ImStore = createStore({
     this.pageSize = state.pageSize;
     this.imsCount = state.imsCount;
     this.totalPages = state.totalPages;
-    this.widgets = state.widgets;
     this.isLoadingMore = state.isLoadingMore;
   },
 });
