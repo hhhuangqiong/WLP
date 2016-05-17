@@ -1,3 +1,4 @@
+import moment from 'moment';
 import React, { PropTypes } from 'react';
 import classNames from 'classnames';
 import { defineMessages, injectIntl } from 'react-intl';
@@ -35,6 +36,7 @@ function VsfMonthlyStats({ intl, lastUpdate, isLoading, onChange, date, stats })
         <DateSelector
           className={classNames({ disabled: isLoading })}
           date={date}
+          maxDate={moment().subtract(1, 'month').endOf('month')}
           onChange={onChange}
         />
       </Panel.Header>
@@ -45,8 +47,8 @@ function VsfMonthlyStats({ intl, lastUpdate, isLoading, onChange, date, stats })
             data={stats.total}
             changeDir={stats.direction}
             changeAmount={stats.change}
-            changeEffect="positive"
             changePercentage={stats.percent}
+            changeEffect="positive"
             isLoading={isLoading}
           />
         </DataGrid.Wrapper>

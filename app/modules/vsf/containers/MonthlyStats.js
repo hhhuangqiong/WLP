@@ -7,29 +7,34 @@ import {
   fetchVsfMonthlyStats,
   clearVsfMonthlyStats,
 } from '../actions/stats';
+
 import MonthlyStats from '../components/overview/MonthlyStats';
 import MonthlyStatsStore from '../stores/monthlyStats';
-import { LAST_UPDATE_TIME_FORMAT } from '../../../utils/timeFormatter';
+
+import {
+  SHORT_DATE_FORMAT,
+  LAST_UPDATE_TIME_FORMAT,
+  MILLISECOND_DATE_FORMAT,
+  MONTH_FORMAT_LABLE,
+} from '../../../utils/timeFormatter';
 
 class MonthlyStatsContainer extends Component {
   constructor(props) {
     super(props);
-    this.getLastUpdateMessage = this.getLastUpdateMessage.bind(this);
+    this.getLastUpdate = this.getLastUpdate.bind(this);
     this.onChange = this.onChange.bind(this);
     this.executeFetch = this.executeFetch.bind(this);
   }
 
   componentDidMount() {
-    const { date } = this.props.date;
+    const { date } = this.props;
     this.executeFetch(date);
-  }
-
-  shouldComponentUpdate({ date }) {
-    return date !== this.props.date;
   }
 
   componentDidUpdate({ date }) {
-    this.executeFetch(date);
+    if (date !== this.props.date) {
+      this.executeFetch(this.props.date);
+    }
   }
 
   componentWillUnmount() {
@@ -42,15 +47,26 @@ class MonthlyStatsContainer extends Component {
     });
   }
 
-  getLastUpdateMessage() {
-    return moment(this.props.date, 'L').endOf('month').format(LAST_UPDATE_TIME_FORMAT);
+  getLastUpdate() {
+    return moment(this.props.date, SHORT_DATE_FORMAT)
+      .endOf(MONTH_FORMAT_LABLE)
+      .format(LAST_UPDATE_TIME_FORMAT);
   }
 
   executeFetch(date) {
     const { identity: carrierId } = this.context.params;
 
+    const from = moment(date, SHORT_DATE_FORMAT)
+      .startOf(MONTH_FORMAT_LABLE)
+      .format(MILLISECOND_DATE_FORMAT);
+
+    const to = moment(date, SHORT_DATE_FORMAT)
+      .endOf(MONTH_FORMAT_LABLE)
+      .format(MILLISECOND_DATE_FORMAT);
+
     this.context.executeAction(fetchVsfMonthlyStats, {
-      date,
+      from,
+      to,
       carrierId,
     });
   }
@@ -64,7 +80,7 @@ class MonthlyStatsContainer extends Component {
 
     return (
       <MonthlyStats
-        lastUpdate={this.getLastUpdateMessage()}
+        lastUpdate={this.getLastUpdate()}
         isLoading={isLoading}
         onChange={this.onChange}
         date={date}

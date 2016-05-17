@@ -1,7 +1,10 @@
 import moment from 'moment';
 import createStore from 'fluxible/addons/createStore';
 
-import { SHORT_DATE_FORMAT } from '../../../utils/timeFormatter';
+import {
+  SHORT_DATE_FORMAT,
+  MONTH_FORMAT_LABLE,
+} from '../../../utils/timeFormatter';
 
 export default createStore({
   storeName: 'VsfMonthlyStatsStore',
@@ -16,7 +19,7 @@ export default createStore({
 
   initialize() {
     this.stats = {};
-    this.date = moment().format(SHORT_DATE_FORMAT);
+    this.date = moment().subtract(1, MONTH_FORMAT_LABLE).format(SHORT_DATE_FORMAT);
     this.isLoading = false;
   },
 

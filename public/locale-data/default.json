@@ -205,5 +205,7 @@
   "vsf.overview.totalCreditsPurchased": "Total Credits Purchased",
   "platform": "Platform",
   "vsf.virtualItem": "Virtual Item",
-  "vsf.transactionId": "Transaction Id"
+  "vsf.transactionId": "Transaction Id",
+  "vsf.overview.totalVoiceStickerPurchased": "Total Voice Sticker Purchased",
+  "vsf.overview.totalAnimationPurchased": "Total Sound Effect Purchased"
 }

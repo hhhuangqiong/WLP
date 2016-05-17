@@ -12,7 +12,13 @@ export default createStore({
   },
 
   initialize() {
-    this.stats = {};
+    this.stats = {
+      sticker: {},
+      credit: {},
+      animation: {},
+      voiceSticker: {},
+    };
+
     this.timeFrame = '24 hours';
     this.isLoading = false;
   },
