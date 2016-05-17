@@ -1,4 +1,4 @@
-import { get, map, sortBy, reduce } from 'lodash';
+import { get, map, sortBy, reduce, isUndefined } from 'lodash';
 import React, { PropTypes } from 'react';
 import { defineMessages, intlShape, injectIntl } from 'react-intl';
 import { countries } from 'country-data';
@@ -69,7 +69,8 @@ const LocationTable = props => {
       </div>
       {
         !isLoading ? map(locationData, ({ code, value }) => {
-          const countryCode = get(countries, `${code}.name`) || formatMessage(MESSAGES.locationOthers);
+          const _code = code && code.toUpperCase();
+          const countryCode = get(countries, `${_code}.name`) || formatMessage(MESSAGES.locationOthers);
 
           return (
             <div className="geographic-chart__country-table__body row" key={code}>
@@ -78,7 +79,7 @@ const LocationTable = props => {
                 { countryCode || formatMessage(MESSAGES.locationEmpty) }
               </div>
               <div className="stats large-9 columns">
-                { value && value.toLocaleString() || formatMessage(MESSAGES.valueEmpty) }
+                { !isUndefined(value) && value.toLocaleString() || formatMessage(MESSAGES.valueEmpty) }
               </div>
             </div>
           );

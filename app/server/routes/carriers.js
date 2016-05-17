@@ -1416,17 +1416,19 @@ export function getOverviewDetailStats(req, res, next) {
   const error = req.validationErrors();
 
   if (error) {
-    next(new ValidationError(prepareValidationMessage(error)));
+    res.apiError(400, new ValidationError(prepareValidationMessage(error)));
     return;
   }
 
-  const { from, to, timescale, carriers } = req.query;
+  const { from, to, timescale } = req.query;
+  const { carrierId: carriers } = req.params;
 
   overviewStatsRequest
     .getDetailStats({ from, to, timescale, carriers })
     .then(stats => res.json({ stats }))
     .catch(sendRequestError => {
-      next(new dataError.TransactionError(sendRequestError.message, sendRequestError));
+      const error = new dataError.TransactionError(sendRequestError.message, sendRequestError);
+      res.apiError(500, error);
     });
 }
 
@@ -1441,7 +1443,7 @@ export function getOverviewSummaryStats(req, res, next) {
   const error = req.validationErrors();
 
   if (error) {
-    next(new ValidationError(prepareValidationMessage(error)));
+    res.apiError(400, new ValidationError(prepareValidationMessage(error)));
     return;
   }
 

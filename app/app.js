@@ -28,6 +28,10 @@ import ExportStore from './main/file-export/stores/ExportStore';
 import EndUsersOverviewStore from './modules/end-user/stores/EndUsersOverviewStore';
 import EndUsersRegistrationStatsStore from './modules/end-user/stores/EndUsersRegistrationStatsStore';
 import EndUsersGeographicStatsStore from './modules/end-user/stores/EndUsersGeographicStatsStore';
+
+import OverviewSummaryStatsStore from './modules/overview/stores/summaryStats';
+import OverviewDetailStatsStore from './modules/overview/stores/detailStats';
+
 import SMSStore from './modules/sms/stores/SMSStore';
 import SmsSummaryStatsStore from './modules/sms/stores/summaryStats';
 import SmsMonthlyStatsStore from './modules/sms/stores/monthlyStats';
@@ -71,6 +75,10 @@ app.registerStore(ExportStore);
 app.registerStore(EndUsersOverviewStore);
 app.registerStore(EndUsersRegistrationStatsStore);
 app.registerStore(EndUsersGeographicStatsStore);
+
+app.registerStore(OverviewSummaryStatsStore);
+app.registerStore(OverviewDetailStatsStore);
+
 app.registerStore(SMSStore);
 app.registerStore(SmsSummaryStatsStore);
 app.registerStore(SmsMonthlyStatsStore);
