@@ -21,7 +21,7 @@ import {
 class MonthlyStatsContainer extends Component {
   constructor(props) {
     super(props);
-    this.getLastUpdate = this.getLastUpdate.bind(this);
+
     this.onChange = this.onChange.bind(this);
     this.executeFetch = this.executeFetch.bind(this);
   }
@@ -45,12 +45,6 @@ class MonthlyStatsContainer extends Component {
     this.context.executeAction(updateVsfMonthlyStatsDate, {
       date,
     });
-  }
-
-  getLastUpdate() {
-    return moment(this.props.date, SHORT_DATE_FORMAT)
-      .endOf(MONTH_FORMAT_LABLE)
-      .format(LAST_UPDATE_TIME_FORMAT);
   }
 
   executeFetch(date) {
@@ -80,7 +74,6 @@ class MonthlyStatsContainer extends Component {
 
     return (
       <MonthlyStats
-        lastUpdate={this.getLastUpdate()}
         isLoading={isLoading}
         onChange={this.onChange}
         date={date}

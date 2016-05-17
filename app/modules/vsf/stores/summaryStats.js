@@ -17,6 +17,7 @@ export default createStore({
       credit: {},
       animation: {},
       voiceSticker: {},
+      lineChartData: {},
     };
 
     this.timeFrame = '24 hours';
@@ -30,6 +31,13 @@ export default createStore({
 
   startLoading() {
     this.isLoading = true;
+    this.stats = {
+      sticker: {},
+      credit: {},
+      animation: {},
+      voiceSticker: {},
+      lineChartData: {},
+    };
     this.emitChange();
   },
 

@@ -1,5 +1,5 @@
+import { reduce } from 'lodash';
 import React, { PropTypes, Component } from 'react';
-import moment from 'moment';
 import connectToStores from 'fluxible-addons-react/connectToStores';
 
 import {
@@ -8,11 +8,6 @@ import {
   fetchVsfSummaryStats,
 } from '../actions/stats';
 
-import {
-  LAST_UPDATE_TIME_FORMAT,
-  HOUR_FORMAT_LABEL,
-} from '../../../utils/timeFormatter';
-
 import SummaryStats from '../components/overview/SummaryStats';
 import SummaryStatsStore from '../stores/summaryStats';
 import { parseTimeRange } from '../../../utils/timeFormatter';
@@ -20,7 +15,7 @@ import { parseTimeRange } from '../../../utils/timeFormatter';
 class SummaryStatsContainer extends Component {
   constructor(props) {
     super(props);
-    this.getLastUpdate = this.getLastUpdate.bind(this);
+
     this.onChange = this.onChange.bind(this);
     this.executeFetch = this.executeFetch.bind(this);
   }
@@ -46,16 +41,6 @@ class SummaryStatsContainer extends Component {
     });
   }
 
-  getLastUpdate() {
-    const { to, timescale } = parseTimeRange(this.props.timeFrame);
-    const lastUpdate =
-      timescale === HOUR_FORMAT_LABEL ?
-        moment(to).subtract(1, timescale) :
-        moment(to);
-
-    return lastUpdate.endOf(timescale).format(LAST_UPDATE_TIME_FORMAT);
-  }
-
   executeFetch(timeFrame) {
     const { from, to, timescale } = parseTimeRange(timeFrame);
     const { identity: carrierId } = this.context.params;
@@ -69,6 +54,14 @@ class SummaryStatsContainer extends Component {
     });
   }
 
+  parseLineChartData(data) {
+    return {
+      // eslint-disable-next-line no-return-assign,no-param-reassign
+      sum: reduce(data, (total, { v }) => total += +v, 0),
+      breakdown: reduce(data, (breakdown, { v }) => { breakdown.push(v); return breakdown; }, []),
+    };
+  }
+
   render() {
     const {
       stats,
@@ -78,11 +71,11 @@ class SummaryStatsContainer extends Component {
 
     return (
       <SummaryStats
-        lastUpdate={this.getLastUpdate()}
         onChange={this.onChange}
         isLoading={isLoading}
         timeFrame={timeFrame}
         stats={stats}
+        lineChartData={this.parseLineChartData(stats.lineChartData)}
       />
     );
   }

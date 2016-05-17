@@ -1,3 +1,4 @@
+import { assign, get } from 'lodash';
 import logger from 'winston';
 import qs from 'qs';
 import request from 'superagent';
@@ -45,7 +46,12 @@ export default class VsfStatsRequest {
       this.normalizeLastMonthParams(params)
     );
 
-    return Promise.resolve(this.compareSummaryStatsData(currentMonth, lastMonth));
+	const lineChartData = await this.fetchSummaryBreakdown(params);
+
+	const data = this.compareSummaryStatsData(currentMonth, lastMonth);
+	assign(data, { lineChartData });
+
+    return Promise.resolve(data);
   }
 
   compareSummaryStatsData(currentMonth, lastMonth) {
@@ -55,6 +61,12 @@ export default class VsfStatsRequest {
       animation: mapStatsToDataGrid(currentMonth.animation, lastMonth.animation),
       voiceSticker: mapStatsToDataGrid(currentMonth.voiceSticker, lastMonth.voiceSticker),
     };
+  }
+
+  fetchSummaryBreakdown(params) {
+    return this
+      .sendRequest(ENDPOINTS.COMMON, params)
+      .then(data => get(data, 'results.0.data'));
   }
 
   fetchSummaryTotal(params) {
