@@ -1,23 +1,21 @@
 import React, { PropTypes } from 'react';
 import classnames from 'classnames';
 import { Link } from 'react-router';
-import { injectIntl } from 'react-intl';
-
 import Permit from '../../main/components/common/Permit';
 import navSections from '../../main/constants/navSection';
 import { userPath } from '../../server/paths';
 
-const Sidebar = ({
-  carrierId: identity,
-  companyName,
-  handleOffCanvas,
-  isAuthorityReady,
-  isOffCanvas,
-  logo: logoSrc,
-  role,
-  intl,
-}) => {
-  const { formatMessage } = intl;
+const Sidebar = (props) => {
+  const {
+    carrierId: identity,
+    companyName,
+    handleOffCanvas,
+    isAuthorityReady,
+    isOffCanvas,
+    logo: logoSrc,
+    role,
+  } = props;
+
   const closeSidebar = handleOffCanvas.bind(null, true);
   const openSidebar = handleOffCanvas.bind(null, false);
 
@@ -49,7 +47,7 @@ const Sidebar = ({
                 >
                   <label>
                     <i className={section.icon} />
-                    {formatMessage(section.name)}
+                    {section.name}
                   </label>
                 </Link>
               </li>
@@ -69,7 +67,6 @@ Sidebar.propTypes = {
   isOffCanvas: PropTypes.bool.isRequired,
   logo: PropTypes.string.isRequired,
   role: PropTypes.string.isRequired,
-  intl: PropTypes.object.isRequired,
 };
 
-export default injectIntl(Sidebar);
+export default Sidebar;

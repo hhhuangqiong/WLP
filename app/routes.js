@@ -110,23 +110,23 @@ export default (context) => {
         </Route>
 
         <Route component={Verification}>
-          <Route path=":role/:identity/verification" component={VerificationOverview} />
+          <Route path=":role/:identity/verification/overview" component={VerificationOverview} />
           <Route path=":role/:identity/verification/details" component={VerificationDetails} />
         </Route>
 
-        <Route path=":role/:identity/vsf" component={VsfOverview} />
+        <Route path=":role/:identity/vsf/overview" component={VsfOverview} />
       <Route path=":role/:identity/vsf/details" component={VsfDetails} />
 
-        <Route path=":role/:identity/calls" component={CallsOverview} />
+        <Route path=":role/:identity/calls/overview" component={CallsOverview} />
         <Route path=":role/:identity/calls/details" component={Calls} />
 
-        <Route path=":role/:identity/end-users" component={EndUsersOverview} />
+        <Route path=":role/:identity/end-users/overview" component={EndUsersOverview} />
         <Route path=":role/:identity/end-users/details" component={EndUsersDetails} />
 
-        <Route path=":role/:identity/im" component={ImOverview} />
+        <Route path=":role/:identity/im/overview" component={ImOverview} />
         <Route path=":role/:identity/im/details" component={Im} />
 
-        <Route path=":role/:identity/sms" component={SmsOverview} />
+        <Route path=":role/:identity/sms/overview" component={SmsOverview} />
         <Route path=":role/:identity/sms/details" component={SMS} />
 
         <Route path=":role/:identity/top-up/details" component={TopUp} />
