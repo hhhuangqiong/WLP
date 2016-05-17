@@ -1454,7 +1454,7 @@ export function getOverviewSummaryStats(req, res, next) {
     .getSummaryStats({ from, to, timescale, carriers, breakdown })
     .then(stats => res.json({ stats }))
     .catch(sendRequestError => {
-      next(new dataError.TransactionError(sendRequestError.message, sendRequestError));
+      res.apiError(500, new dataError.TransactionError(sendRequestError.message, sendRequestError));
     });
 }
 
