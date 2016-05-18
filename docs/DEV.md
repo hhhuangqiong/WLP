@@ -13,6 +13,9 @@ bower -f install
 # install node modules
 # Please make sure the NODE_ENV variable is set to 'development', or you will miss all the development dependencies
 npm i
+
+# Download translation files from One Sky
+npm run i18n:download
 ```
 
 ### Set up the environment
