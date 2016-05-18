@@ -3,7 +3,7 @@ import moment from 'moment';
 
 import React, { PropTypes } from 'react';
 import classNames from 'classnames';
-import { FormattedMessage } from 'react-intl';
+import { defineMessages, FormattedMessage, intlShape, injectIntl } from 'react-intl';
 
 import fetchWallet from '../actions/fetchWallet';
 import deactivateEndUser from '../actions/deactivateEndUser';
@@ -19,10 +19,80 @@ import Item from './InfoItem';
 const { displayDateFormat: DATE_FORMAT } = require('./../../../main/config');
 import { getCountryName } from '../../../utils/StringFormatter';
 
-const EMPTY_STRING = 'N/A';
+const MESSAGES = defineMessages({
+  walletTitle: {
+    id: 'endUser.profile.wallet.title',
+    defaultMessage: 'Wallet Info',
+  },
+  accountTitle: {
+    id: 'endUser.profile.account.title',
+    defaultMessage: 'Account Info',
+  },
+  appTitle: {
+    id: 'endUser.profile.app.title',
+    defaultMessage: 'App Info',
+  },
+  createdTime: {
+    id: 'endUser.profile.createdTime',
+    defaultMessage: 'Created Time',
+  },
+  verified: {
+    id: 'endUser.profile.verified',
+    defaultMessage: 'Verified',
+  },
+  country: {
+    id: 'endUser.profile.country',
+    defaultMessage: 'Country',
+  },
+  username: {
+    id: 'endUser.profile.username',
+    defaultMessage: 'Username',
+  },
+  email: {
+    id: 'endUser.profile.email',
+    defaultMessage: 'Email',
+  },
+  pin: {
+    id: 'endUser.profile.pin',
+    defaultMessage: 'Pin',
+  },
+  dateOfBirth: {
+    id: 'endUser.profile.dateOfBirth',
+    defaultMessage: 'Date of Birth',
+  },
+  gender: {
+    id: 'endUser.profile.gender',
+    defaultMessage: 'Gender',
+  },
+  device: {
+    id: 'endUser.profile.device',
+    defaultMessage: 'Device',
+  },
+  version: {
+    id: 'endUser.profile.version',
+    defaultMessage: 'Version',
+  },
+  language: {
+    id: 'endUser.profile.language',
+    defaultMessage: 'Language',
+  },
+  male: {
+    id: 'endUser.profile.gender.male',
+    defaultMessage: 'Male',
+  },
+  female: {
+    id: 'endUser.profile.gender.female',
+    defaultMessage: 'Female',
+  },
+  empty: {
+    id: 'endUser.profile.empty',
+    defaultMessage: 'N/A',
+  },
+});
 
 const EndUserProfile = React.createClass({
   propTypes: {
+    intl: intlShape.isRequired,
     user: PropTypes.shape({
       userDetails: PropTypes.shape({
         username: PropTypes.string.isRequired,
@@ -44,8 +114,10 @@ const EndUserProfile = React.createClass({
 
 
   renderWalletPanel() {
+    const { intl: { formatMessage } } = this.props;
+
     let wallets = (
-      <Accordion.Navigation title="Wallet Info">
+      <Accordion.Navigation title={formatMessage(MESSAGES.walletTitle)}>
         <div className="error text-center">
           <div className="error-description full-width">
             <i className="error-icon icon-error3" />
@@ -83,7 +155,7 @@ const EndUserProfile = React.createClass({
       });
 
       wallets = (
-        <Accordion.Navigation title="Wallet Info">
+        <Accordion.Navigation title={formatMessage(MESSAGES.walletTitle)}>
           <WalletInfoItem wallet={overviewWallet} />
           {this.props.user.wallets.map((wallet) => {
             return (
@@ -98,13 +170,20 @@ const EndUserProfile = React.createClass({
   },
 
   renderAccountPanel() {
+    const { intl: { formatMessage } } = this.props;
+    const EMPTY_STRING = formatMessage(MESSAGES.empty)
+    const gender = _.get(this.props, 'user.userDetails.gender');
     const creationDate = moment(this.props.user.userDetails.creationDate).format(DATE_FORMAT);
     const countryCode = (this.props.user.userDetails.countryCode || '').toLowerCase();
 
     return (
-      <Accordion.Navigation title="Account Info" hasIndicator verified={this.props.user.userDetails.verified}>
-        <Item label="Created Time" className="end-user-info__created-time">{creationDate}</Item>
-        <Item label="Verified" capitalize>
+      <Accordion.Navigation
+        title={formatMessage(MESSAGES.accountTitle)}
+        verified={_.get(this.props, 'user.userDetails.verified')}
+        hasIndicator
+      >
+        <Item label={formatMessage(MESSAGES.createdTime)} className="end-user-info__created-time">{creationDate}</Item>
+        <Item label={formatMessage(MESSAGES.verified)} capitalize>
           <If condition={this.props.user.userDetails.verified}>
             <span className="verified">
               <FormattedMessage
@@ -121,21 +200,23 @@ const EndUserProfile = React.createClass({
             </span>
           </If>
         </Item>
-        <Item label="Country">
+        <Item label={formatMessage(MESSAGES.country)}>
           <div className="country-label">
             <CountryFlag code={countryCode} />
             {getCountryName(countryCode)}
           </div>
         </Item>
-        <Item label="Username">{this.props.user.userDetails.jid}</Item>
-        <Item label="Email">{this.props.user.userDetails.email || EMPTY_STRING}</Item>
-        <Item label="Pin">{this.props.user.userDetails.pin || EMPTY_STRING}</Item>
-        <Item label="Date of Birth">{this.props.user.userDetails.birthDate || EMPTY_STRING}</Item>
-        <Item label="Gender" capitalize>
+        <Item label={formatMessage(MESSAGES.username)}>{this.props.user.userDetails.jid}</Item>
+        <Item label={formatMessage(MESSAGES.email)}>{this.props.user.userDetails.email || EMPTY_STRING}</Item>
+        <Item label={formatMessage(MESSAGES.pin)}>{this.props.user.userDetails.pin || EMPTY_STRING}</Item>
+        <Item label={formatMessage(MESSAGES.dateOfBirth)}>{this.props.user.userDetails.birthDate || EMPTY_STRING}</Item>
+        <Item label={formatMessage(MESSAGES.gender)} capitalize>
           <span className="gender-label">
             <i
               className={classNames({ 'icon-male': this.props.user.userDetails.gender === 'male', 'icon-female': this.props.user.userDetails.gender === 'female' })} />
-            {this.props.user.userDetails.gender || EMPTY_STRING}
+            {
+              !!gender ? formatMessage(MESSAGES[gender.toLowerCase()]) : EMPTY_STRING
+            }
           </span>
         </Item>
       </Accordion.Navigation>
@@ -143,23 +224,26 @@ const EndUserProfile = React.createClass({
   },
 
   renderDevicePanel() {
+    const { intl: { formatMessage } } = this.props;
+    const EMPTY_STRING = formatMessage(MESSAGES.empty);
+
     return this.props.user.userDetails.devices.map((device) => {
       return (
-        <Accordion.Navigation title="App Info">
-          <Item label="Device">
+        <Accordion.Navigation title={formatMessage(MESSAGES.appTitle)}>
+          <Item label={formatMessage(MESSAGES.device)}>
             <span className="device-label">
               <i className={classNames({ 'icon-apple': this.checkPlatformOS(device.platform, 'ios') }, { 'icon-android': this.checkPlatformOS(device.platform, 'android') })} />
               {device.platform}
             </span>
           </Item>
-          <Item label="Version">
+          <Item label={formatMessage(MESSAGES.version)}>
             <If condition={device.appVersionNumber}>
               <span>v{device.appVersionNumber}</span>
             <Else />
               <span>{EMPTY_STRING}</span>
             </If>
           </Item>
-          <Item label="Language">{device.appLanguage}</Item>
+          <Item label={formatMessage(MESSAGES.language)}>{device.appLanguage}</Item>
         </Accordion.Navigation>
       );
     });
@@ -216,4 +300,4 @@ const EndUserProfile = React.createClass({
   },
 });
 
-export default EndUserProfile;
+export default injectIntl(EndUserProfile);

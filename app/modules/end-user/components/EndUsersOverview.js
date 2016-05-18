@@ -5,7 +5,7 @@ import { FormattedMessage, injectIntl, defineMessages } from 'react-intl';
 
 import moment from 'moment';
 import classNames from 'classnames';
-import { isNull, merge, max, clone, reduce, isEmpty } from 'lodash';
+import { isNull, merge, max, clone, reduce, isEmpty, partial } from 'lodash';
 import getMapConfig from '../utils/getMapConfig';
 import MAP_DATA from '../constants/mapData';
 
@@ -36,25 +36,6 @@ import fetchDeviceStats from '../actions/fetchDeviceStats';
 import fetchGeographicStats from '../actions/fetchGeographicStats';
 import clearEndUsersStats from '../actions/clearEndUsersStats';
 
-const TIME_FRAMES = ['7 days', '30 days', '60 days', '90 days'];
-const gChartContainerId = 'registrationByCountry';
-
-const defaultQueryMonth = moment().subtract(1, 'month');
-
-const PLATFORM_NAME = {
-  ios: 'IOS',
-  android: 'Android',
-  phone: 'Windows Phone',
-  'windows.phone': 'Windows Phone',
-};
-
-const STATS_TYPE = {
-  REGISTERED_USER: 'registereduser',
-  ACTIVE_USER: 'activeuser',
-};
-
-const TOOLTIP_TIME_FORMAT = 'lll';
-
 const MESSAGES = defineMessages({
   totalUser: {
     id: 'endUser.overview.totalUser',
@@ -80,7 +61,30 @@ const MESSAGES = defineMessages({
     id: 'overview.monthlyStats',
     defaultMessage: 'Monthly Statistic',
   },
+  userUnit: {
+    id: 'overview.user.unit',
+    defaultMessage: 'users',
+  },
 });
+
+const TIME_FRAMES = ['7 days', '30 days', '60 days', '90 days'];
+const gChartContainerId = 'registrationByCountry';
+
+const defaultQueryMonth = moment().subtract(1, 'month');
+
+const PLATFORM_NAME = {
+  ios: 'IOS',
+  android: 'Android',
+  phone: 'Windows Phone',
+  'windows.phone': 'Windows Phone',
+};
+
+const STATS_TYPE = {
+  REGISTERED_USER: 'registereduser',
+  ACTIVE_USER: 'activeuser',
+};
+
+const TOOLTIP_TIME_FORMAT = 'lll';
 
 const LINECHART_TOGGLES = [
   {
@@ -255,7 +259,7 @@ const EndUsersOverview = React.createClass({
   },
 
   render() {
-    const { formatMessage } = this.props.intl;
+    const { intl: { formatMessage } } = this.props;
     const { role, identity } = this.context.params;
     const totalRegisteredUser = this._getTotalRegisteredUser();
     const monthlyRegisteredUserStats = this._getMonthlyRegisteredUserStats();
@@ -476,7 +480,7 @@ const EndUsersOverview = React.createClass({
                                 title={PLATFORM_NAME[stat.platform]}
                                 percentage={percentage}
                                 stat={stat.total}
-                                unit={formatMessage(i18nMessages.users)}
+                                unit={formatMessage(MESSAGES.userUnit)}
                               />
                             </div>
                           );
@@ -587,18 +591,20 @@ const EndUsersOverview = React.createClass({
             `;
     };
 
+    const { intl: { formatMessage } } = this.props;
+
     return !isEmpty(this.state.lastXDaysRegisteredUser) && !isEmpty(this.state.lastXDaysActiveUser) ? [
       {
         name: STATS_TYPE.REGISTERED_USER,
         data: reduce(this.state.lastXDaysRegisteredUser, (result, stat) => { result.push(Math.round(stat.v)); return result; }, []),
         color: '#FB3940',
-        tooltipFormatter: _.partial(tooltipFormatter, 'New Registered Users'),
+        tooltipFormatter: partial(tooltipFormatter, formatMessage(MESSAGES.newRegisteredUser)),
       },
       {
         name: STATS_TYPE.ACTIVE_USER,
         data: reduce(this.state.lastXDaysActiveUser, (result, stat) => { result.push(Math.round(stat.v)); return result; }, []),
         color: '#21C031',
-        tooltipFormatter: _.partial(tooltipFormatter, 'Active Users'),
+        tooltipFormatter: partial(tooltipFormatter, formatMessage(MESSAGES.activeUser)),
       },
     ] : null;
   },

@@ -1,15 +1,28 @@
+import { get } from 'lodash';
 import React, { PropTypes } from 'react';
 import moment from 'moment';
 import classNames from 'classnames';
-import { FormattedMessage } from 'react-intl';
+import { defineMessages, FormattedMessage, intlShape, injectIntl } from 'react-intl';
 
 import currencyData from '../../../data/bossCurrencies.json';
 import Converter from '../../../utils/bossCurrencyConverter';
+
+const MESSAGES = defineMessages({
+  freeWallet: {
+    id: 'wallet.type.free',
+    defaultMessage: 'Free',
+  },
+  paidWallet: {
+    id: 'wallet.type.paid',
+    defaultMessage: 'Paid',
+  },
+});
 
 const CurrencyConverter = new Converter(currencyData);
 
 const WalletItem = React.createClass({
   propTypes: {
+    intl: intlShape.isRequired,
     wallet: PropTypes.shape({
       currency: PropTypes.string.isRequired,
       expiryDate: PropTypes.string.isRequired,
@@ -20,6 +33,8 @@ const WalletItem = React.createClass({
   },
 
   render() {
+    const { intl: { formatMessage } } = this.props;
+    const walletType = get(this.props, 'wallet.walletType');
     const currency = CurrencyConverter.getCurrencyById(this.props.wallet.currency);
     const expiryDate = moment(this.props.wallet.expiryDate, 'yyyymmddhh24miss').isValid() ?
       moment(this.props.wallet.expiryDate, 'yyyymmddhh24miss')
@@ -49,7 +64,9 @@ const WalletItem = React.createClass({
               hide: this.props.wallet.walletType === 'overview',
             })}
             >
-              {this.props.wallet.walletType}
+              {
+                !!walletType ? formatMessage(MESSAGES[walletType]) : ''
+              }
             </div>
             <div className="row">
               <div className="wallet-item__balance">
@@ -103,4 +120,4 @@ const WalletItem = React.createClass({
   },
 });
 
-export default WalletItem;
+export default injectIntl(WalletItem);
