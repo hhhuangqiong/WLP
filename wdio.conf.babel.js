@@ -153,7 +153,7 @@ export default {
   // See the full list at http://mochajs.org/
   mochaOpts: {
     ui: 'bdd',
-    compilers: ['js:babel/register'],
+    compilers: ['js:babel-core/register'],
     timeout: process.env.TEST_TIMEOUT || 500000,
   },
 
