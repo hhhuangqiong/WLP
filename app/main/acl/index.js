@@ -1,11 +1,8 @@
 import logger from 'winston';
 import { isFunction } from 'lodash';
-import { ArgumentNullError, HttpStatusError, NotFoundError } from 'common-errors';
+import { ArgumentNullError, NotFoundError, NotPermittedError } from 'common-errors';
 import User from '../../collections/portalUser';
 import Company from '../../collections/company';
-
-const NOT_FOUND_ERROR = 'resource not found';
-
 
 /**
  * @method AclManager
@@ -75,7 +72,7 @@ AclManager.prototype.middleware = function middleware(userId, carrierId, resourc
       .then(isCarrierExisted => {
         if (!isCarrierExisted) {
           logger.debug('the carrier with carrierId: %s does not exist', _carrierId);
-          throw new NotFoundError(404, NOT_FOUND_ERROR);
+          throw new NotFoundError('Company');
         }
 
         return User.findByEmail(_userId);
@@ -83,8 +80,7 @@ AclManager.prototype.middleware = function middleware(userId, carrierId, resourc
       .then(user => {
         if (!user) {
           logger.debug('unidentified user with username: %s', _userId);
-          throw new NotFoundError(`Cannot find user with id ${_userId}`);
-          return;
+          throw new NotFoundError('User');
         }
 
         /* Skip checking for root user */
@@ -98,8 +94,9 @@ AclManager.prototype.middleware = function middleware(userId, carrierId, resourc
           .validateCarrier(_carrierId)
           .then(isValidCarrier => {
             if (!isValidCarrier) {
+              // eslint-disable-next-line max-len
               logger.debug('user: %s does not have access right to the carrier: %s.', _userId, _carrierId);
-              throw new NotFoundError(404, NOT_FOUND_ERROR);
+              throw new NotPermittedError('user does not have access right to the carrier');
             }
 
             next();

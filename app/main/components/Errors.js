@@ -72,7 +72,7 @@ const ErrorTemplate = React.createClass({
     const { intl: { formatMessage } } = this.props;
 
     return (
-      <div>
+      <div className="full-height">
         <nav className="top-bar public-header" data-topbar role="navigation">
           <ul className="title-area public-header__title-area">
             <li className="logo public-header__logo">

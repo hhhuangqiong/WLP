@@ -135,6 +135,7 @@ export default (context) => {
       <Route path={path401} component={Error401} />
       <Route path={path404} component={Error404} />
       <Route path={path500} component={Error500} />
+      <Route path="*" component={Error404} />
     </Route>
   );
 };

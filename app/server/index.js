@@ -30,6 +30,7 @@ export default function (port) {
   const env = server.get('env');
 
   // let 'nconf' be the first initializer so configuration is accessed thru it
+  // eslint-disable-next-line max-len
   const nconf = (require('./initializers/nconf').default)(env, path.resolve(__dirname, '../config'));
 
   // NB: intentionally put 'logging' initializers before the others
@@ -79,6 +80,7 @@ export default function (port) {
   // static resources
   server.use(express.static(path.join(PROJ_ROOT, 'public')));
 
+  // eslint-disable-next-line max-len
   const redisStore = (require('./initializers/redisStore').default)(session, nconf.get('redisUri'), env);
 
   server.use((require('./middlewares/redisConnection').default)(
@@ -104,13 +106,11 @@ export default function (port) {
   server.use(config.API_PATH_PREFIX, require('./routers/api').default);
   server.use(config.API_PATH_PREFIX, apiErrorHandler);
 
-  // eslint-disable-next-line prefer-arrow-callback, func-names
   const aclMiddlewares = require('./middlewares/aclMiddleware');
+  // eslint-disable-next-line prefer-arrow-callback
   server.use(aclMiddlewares.default, aclMiddlewares.errorHandler, function handler(req, res, next) {
     render(app, config)(req, res, next);
   });
-
-  // TODO: add viewErrorHandler
 
   return server;
 }

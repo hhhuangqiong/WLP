@@ -2,10 +2,9 @@ import React, { PropTypes } from 'react';
 import SystemMessage from './SystemMessage';
 import LoadingSpinner from './LoadingSpinner';
 import LanguageSwitcher from './LanguageSwitcher';
-import Version from './Version';
 
 const Public = props => (
-  <div className="outer-wrapper">
+  <div className="full-height">
     <nav className="top-bar public-header" data-topbar role="navigation">
       <ul className="title-area public-header__title-area">
         <li className="logo public-header__logo">

@@ -13,6 +13,7 @@ body {
 
 .public-container {
   height: 100%;
+  margin-top: -$topbar-height;
   display: flex;
   align-items: center;
   overflow: hidden;
