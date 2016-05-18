@@ -1,6 +1,11 @@
 import React, { PropTypes } from 'react';
 import classNames from 'classnames';
 
+import {
+  injectIntl,
+  intlShape,
+} from 'react-intl';
+
 const SearchBox = React.createClass({
   propTypes: {
     value: PropTypes.string,
@@ -12,6 +17,7 @@ const SearchBox = React.createClass({
     onInputChangeHandler: PropTypes.func,
     onKeyPressHandler: PropTypes.func.isRequired,
     onSelectChangeHandler: PropTypes.func,
+    intl: intlShape.isRequired,
   },
 
   getDefaultProps() {
@@ -29,6 +35,8 @@ const SearchBox = React.createClass({
   },
 
   render() {
+    const { intl: { formatMessage } } = this.props;
+
     return (
       <div>
         <If condition={this.props.searchTypes}>
@@ -40,18 +48,26 @@ const SearchBox = React.createClass({
           >
             {
               this
-                .props
-                .searchTypes
-                .map((type, index) => (
-                  // this will trigger a warning of
-                  // `Use the `defaultValue` or `value` props on <select> instead of
-                  // setting `selected` on <option>.`
+              .props
+              .searchTypes
+              .map((type, index) => (
+              // this will trigger a warning of
+              // `Use the `defaultValue` or `value` props on <select> instead of
+              // setting `selected` on <option>.`
                   // from React, but without doing this,
                   // the selected value will be jumpy,
                   // e.g. the value changes again on client side rendering
                   type.value === this.props.selectedType ?
-                    <option key={index} value={type.value} selected>{type.name}</option> :
-                    <option key={index} value={type.value}>{type.name}</option>
+                    (
+                      <option key={index} value={type.value} selected>
+                        <span className="capitalize">{formatMessage(type.name)}</span>
+                      </option>
+                    ) :
+                    (
+                      <option key={index} value={type.value}>
+                        <span className="capitalize">{formatMessage(type.name)}</span>
+                      </option>
+                    )
                 ))
             }
           </select>
@@ -74,4 +90,4 @@ const SearchBox = React.createClass({
   },
 });
 
-export default SearchBox;
+export default injectIntl(SearchBox);

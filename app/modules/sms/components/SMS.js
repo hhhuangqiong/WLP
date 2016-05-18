@@ -1,11 +1,14 @@
 import _ from 'lodash';
 import moment from 'moment';
-import { concurrent } from 'contra';
 
 import React, { PropTypes } from 'react';
 import { Link } from 'react-router';
 import { FluxibleMixin } from 'fluxible-addons-react';
-import { FormattedMessage } from 'react-intl';
+
+import {
+  FormattedMessage,
+  injectIntl,
+} from 'react-intl';
 
 import loadSMS from '../actions/loadSMS';
 import clearSMS from '../actions/clearSMS';
@@ -13,6 +16,7 @@ import clearSMS from '../actions/clearSMS';
 import SMSTable from './SMSTable';
 import SMSStore from '../stores/SMSStore';
 
+import i18nMessages from '../../../main/constants/i18nMessages';
 import * as FilterBar from './../../../main/components/FilterBar';
 import DateRangePicker from './../../../main/components/DateRangePicker';
 import SearchBox from './../../../main/components/Searchbox';
@@ -126,6 +130,7 @@ const SMS = React.createClass({
   },
 
   render() {
+    const { intl: { formatMessage } } = this.props;
     const { role, identity } = this.context.params;
 
     return (
@@ -156,7 +161,7 @@ const SMS = React.createClass({
           </FilterBar.LeftItems>
           <FilterBar.RightItems>
             <SearchBox
-              placeHolder="Sender"
+              placeHolder={formatMessage(i18nMessages.sender)}
               value={this.state.number}
               onInputChangeHandler={this.handleSearchInputChange}
               onKeyPressHandler={this.handleSearchInputSubmit}
@@ -225,4 +230,4 @@ const SMS = React.createClass({
   },
 });
 
-export default SMS;
+export default injectIntl(SMS);

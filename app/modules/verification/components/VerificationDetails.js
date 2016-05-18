@@ -4,7 +4,11 @@ import moment from 'moment';
 import React, { PropTypes } from 'react';
 import { FluxibleMixin } from 'fluxible-addons-react';
 import { Link } from 'react-router';
-import { FormattedMessage } from 'react-intl';
+import {
+  FormattedMessage,
+  injectIntl,
+  defineMessages,
+} from 'react-intl';
 
 import * as FilterBar from './../../../main/components/FilterBar';
 import DateRangePicker from './../../../main/components/DateRangePicker';
@@ -25,13 +29,26 @@ import VerificationExportForm from './VerificationExportForm';
 import VerificationFilter from './VerificationFilter';
 
 import SearchButton from '../../../main/search-button/SearchButton';
+import i18nMessages from '../../../main/constants/i18nMessages';
 
 const ENTER_KEY = 13;
-const LABEL_OF_ALL = 'All';
+const LABEL_OF_ALL = i18nMessages.all;
+
+
+const MESSAGES = defineMessages({
+  callIn: {
+    id: 'vsdk.details.callIn',
+    defaultMessage: 'call-in',
+  },
+  callOut: {
+    id: 'vsdk.details.callOut',
+    defaultMessage: 'call-out',
+  },
+});
 
 const VERIFICATION_TYPES = [
-  'call-in',
-  'call-out',
+  MESSAGES.callIn,
+  MESSAGES.callOut,
 ];
 
 const OS_TYPES = [
@@ -243,8 +260,8 @@ const VerificationDetails = React.createClass({
 
   transformVerificationTypes(type) {
     switch (type) {
-      case 'MobileTerminated': return 'call-in';
-      case 'MobileOriginated': return 'call-out';
+      case 'MobileTerminated': return MESSAGES.callIn;
+      case 'MobileOriginated': return MESSAGES.callOut;
       default: return type;
     }
   },
@@ -262,13 +279,15 @@ const VerificationDetails = React.createClass({
   },
 
   handleVerificationMethodChange(event) {
+    const { intl: { formatMessage } } = this.props;
     const value = event.target.value;
-    this.handleQueryChange({ method: value === LABEL_OF_ALL ? '' : event.target.value });
+    this.handleQueryChange({ method: value === formatMessage(LABEL_OF_ALL) ? '' : event.target.value });
   },
 
   handleOsTypeChange(event) {
+    const { intl: { formatMessage } } = this.props;
     const value = event.target.value;
-    this.handleQueryChange({ os: value === LABEL_OF_ALL ? '' : event.target.value });
+    this.handleQueryChange({ os: value === formatMessage(LABEL_OF_ALL) ? '' : event.target.value });
   },
 
   fetchData() {
@@ -349,6 +368,7 @@ const VerificationDetails = React.createClass({
   },
 
   render() {
+    const { intl: { formatMessage } } = this.props;
     const { role, identity } = this
       .context
       .params;
@@ -393,7 +413,7 @@ const VerificationDetails = React.createClass({
               methods={VERIFICATION_TYPES}
               methodChange={this.handleVerificationMethodChange}
               transformVerificationTypes={this.transformVerificationTypes}
-              defaultOption={LABEL_OF_ALL}
+              defaultOption={formatMessage(LABEL_OF_ALL)}
             />
 
             <DateRangePicker
@@ -406,7 +426,7 @@ const VerificationDetails = React.createClass({
           </FilterBar.LeftItems>
           <FilterBar.RightItems>
             <SearchButton
-              placeHolder="Mobile"
+              placeHolder={formatMessage(i18nMessages.mobile)}
               value={this.state.number}
               onInputChangeHandler={this.handleSearchInputChange}
               onKeyPressHandler={this.handleSearchInputSubmit}
@@ -422,7 +442,7 @@ const VerificationDetails = React.createClass({
                 handleVerificationMethodChange={this.handleVerificationMethodChange}
                 handleOsTypeChange={this.handleOsTypeChange}
                 transformVerificationTypes={this.transformVerificationTypes}
-                defaultOption={LABEL_OF_ALL}
+                defaultOption={formatMessage(LABEL_OF_ALL)}
               />
             </Export>
           </FilterBar.RightItems>
@@ -439,4 +459,4 @@ const VerificationDetails = React.createClass({
   },
 });
 
-export default VerificationDetails;
+export default injectIntl(VerificationDetails);

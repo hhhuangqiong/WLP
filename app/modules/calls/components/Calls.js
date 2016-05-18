@@ -1,17 +1,22 @@
 import _, { omit, merge } from 'lodash';
 import moment from 'moment';
-import { concurrent } from 'contra';
 
 import classNames from 'classnames';
 import React, { PropTypes } from 'react';
 import { Link } from 'react-router';
-import { FormattedMessage } from 'react-intl';
+
+import {
+  FormattedMessage,
+  injectIntl,
+  intlShape,
+} from 'react-intl';
 
 import { FluxibleMixin } from 'fluxible-addons-react';
 
 import * as FilterBar from '../../../main/components/FilterBar';
 import DatePicker from '../../../main/components/DatePicker';
 
+import i18nMessages from '../../../main/constants/i18nMessages';
 import fetchCalls from '../actions/fetchCalls';
 import fetchMoreCalls from '../actions/fetchMoreCalls';
 import clearCallsReport from '../actions/clearCallsReport';
@@ -77,9 +82,8 @@ const Calls = React.createClass({
     this.fetchData();
   },
 
-  componentDidUpdate(prevProps) {
+  componentDidUpdate({ location: { search: prevSearch } }) {
     const { location: { search } } = this.props;
-    const { location: { search: prevSearch } } = prevProps;
 
     if (search !== prevSearch) {
       this.context.executeAction(clearCallsReport);
@@ -222,8 +226,13 @@ const Calls = React.createClass({
   },
 
   render() {
+    const { intl: { formatMessage } } = this.props;
     const { role, identity } = this.context.params;
-    const searchTypes = [{ name: 'Caller', value: 'caller' }, { name: 'Callee', value: 'callee' }];
+
+    const searchTypes = [
+      { name: i18nMessages.caller, value: 'caller' },
+      { name: i18nMessages.callee, value: 'callee' },
+    ];
 
     return (
       <div className="row">
@@ -268,8 +277,13 @@ const Calls = React.createClass({
 
             <div className="date-range-picker left">
               <i className="date-range-picker__icon icon-calendar left" />
-              <div className="date-input-wrap date-range-picker__start left" onClick={this._handleStartDateClick}>
-                <span className="interactive-button left date-range-picker__date-span">{this.state.startDate}</span>
+              <div
+                className="date-input-wrap date-range-picker__start left"
+                onClick={this._handleStartDateClick}
+              >
+                <span className="interactive-button left date-range-picker__date-span">
+                  {this.state.startDate}
+                </span>
                 <DatePicker
                   ref="startDatePicker"
                   key="start-date"
@@ -280,8 +294,13 @@ const Calls = React.createClass({
                 />
               </div>
               <i className="date-range-picker__separator left">-</i>
-              <div className="date-input-wrap date-range-picker__end left" onClick={this._handleEndDateClick}>
-                <span className="interactive-button left date-range-picker__date-span">{this.state.endDate}</span>
+              <div
+                className="date-input-wrap date-range-picker__end left"
+                onClick={this._handleEndDateClick}
+              >
+                <span className="interactive-button left date-range-picker__date-span">
+                  {this.state.endDate}
+                </span>
                 <DatePicker
                   ref="endDatePicker"
                   key="end-date"
@@ -306,7 +325,7 @@ const Calls = React.createClass({
               value={this.state.search}
               searchTypes={searchTypes}
               selectedType={this.state.searchType}
-              placeHolder="Username/Mobile"
+              placeHolder={formatMessage(i18nMessages.userOrMobile)}
               onInputChangeHandler={this.handleUsernameChange}
               onSelectChangeHandler={this.handleSearchTypeChange}
               onKeyPressHandler={this.handleSearchSubmit}
@@ -330,4 +349,8 @@ const Calls = React.createClass({
   },
 });
 
-export default Calls;
+Calls.propTypes = {
+  intl: intlShape,
+};
+
+export default injectIntl(Calls);

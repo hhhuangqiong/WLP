@@ -5,8 +5,9 @@ import { FormattedMessage } from 'react-intl';
 
 import CountryFlag from '../../../main/components/CountryFlag';
 import { getCountryName } from '../../../utils/StringFormatter';
+import i18nMessages from '../../../main/constants/i18nMessages';
 
-const EMPTY_CELL = 'N/A';
+const EMPTY_CELL = i18nMessages.unknownLabel;
 const maxColumns = 5;
 
 export default React.createClass({
@@ -170,6 +171,7 @@ export default React.createClass({
   },
 
   render() {
+    const { intl: { formatMessage } } = this.props;
     const { profile } = this.props;
     const { hlr, sims: simCard } = profile || {};
 
@@ -193,7 +195,7 @@ export default React.createClass({
                     defaultMessage="Details"
                   />
                   <span> > </span>
-                  { _.get(hlr, 'msisdn') || EMPTY_CELL }
+                  { _.get(hlr, 'msisdn') || formatMessage(EMPTY_CELL) }
                 </span>
               </h5>
             </div>
@@ -203,7 +205,7 @@ export default React.createClass({
           <td colSpan={maxColumns}>
             <div className="inner-wrap">
               <div className="large-24 columns">
-                <h4>{ _.get(hlr, 'msisdn') || EMPTY_CELL }</h4>
+                <h4>{ _.get(hlr, 'msisdn') || formatMessage(EMPTY_CELL) }</h4>
               </div>
               <div className="large-4 columns registered-date">
                 <p className="heading">
@@ -218,7 +220,7 @@ export default React.createClass({
                     <span>{ moment(_.get(hlr, 'time')).format('DD MMMM YYYY') }</span>
                   </div>
                 <Else />
-                  <span>{ EMPTY_CELL }</span>
+                  <span>{formatMessage(EMPTY_CELL)}</span>
                 </If>
               </div>
               <div className="large-20 columns end">
