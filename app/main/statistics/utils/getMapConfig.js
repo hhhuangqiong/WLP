@@ -1,4 +1,4 @@
-export default (containerId, data, maxNumber) => ({
+export default (containerId, data, maxNumber, unitMessage) => ({
   chart: {
     renderTo: containerId,
   },
@@ -32,7 +32,7 @@ export default (containerId, data, maxNumber) => ({
     mapData: Highcharts.maps['custom/world'],
     joinBy: ['iso-a2', 'code'],
     animation: true,
-    name: 'Number of attemps',
+    name: unitMessage,
     states: {
       hover: {
         color: '#BADA55',

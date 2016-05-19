@@ -59,6 +59,7 @@ function DetailStats({
               id="geographic-chart"
               data={geographicChartData}
               isLoading={isLoading}
+              unit={formatMessage(MESSAGES.userUnit)}
             />
           </div>
         </div>
