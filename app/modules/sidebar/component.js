@@ -46,6 +46,7 @@ const Sidebar = props => {
                     'mainmenu-bar__item',
                   )}
                   to={userPath(role, identity, section.path)}
+                  activeClassName="active"
                 >
                   <label>
                     <i className={section.icon} />
