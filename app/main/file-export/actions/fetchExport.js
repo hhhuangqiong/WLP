@@ -4,11 +4,9 @@ export default function (context, params, done) {
   debug('Started');
 
   context.dispatch('FETCH_EXPORT_START');
-
-  const exportType = params.exportType;
+  const { exportType } = params;
 
   function exportCallback(err, result) {
-    result.exportType = exportType;
 
     if (err) {
       debug('Failed');
@@ -19,6 +17,7 @@ export default function (context, params, done) {
     }
 
     debug('Success');
+    result.exportType = exportType;
     context.dispatch('FETCH_EXPORT_SUCCESS', result);
     done();
   }
