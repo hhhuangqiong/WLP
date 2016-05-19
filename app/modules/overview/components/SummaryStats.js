@@ -13,19 +13,19 @@ const MESSAGES = defineMessages({
     defaultMessage: 'Summary',
   },
   accumulatedRegisterediOSUser: {
-    id: 'overview.overview.accumulatedVerifiediOSUser',
-    defaultMessage: 'Accumulated Verified iOS User',
-  },
-  accumulatedVerifiediOSUser: {
-    id: 'overview.overview.accumulatedRegisterediOSUser',
+    id: 'overview.accumulatedRegisterediOSUser',
     defaultMessage: 'Accumulated Registered iOS User',
   },
+  accumulatedVerifiediOSUser: {
+    id: 'overview.accumulatedVerifiediOSUser',
+    defaultMessage: 'Accumulated Verified iOS User',
+  },
   accumulatedRegisteredAndroidUser: {
-    id: 'overview.overview.accumulatedRegisteredAndroidUser',
+    id: 'overview.accumulatedRegisteredAndroidUser',
     defaultMessage: 'Accumulated Registered Android User',
   },
   accumulatedVerifiedAndroidUser: {
-    id: 'overview.overview.accumulatedVerifiedAndroidUser',
+    id: 'overview.accumulatedVerifiedAndroidUser',
     defaultMessage: 'Accumulated Verified Android User',
   },
 });
@@ -68,16 +68,16 @@ function OverviewSummaryStats({
           />
           <DataGrid.Cell
           title={formatMessage(MESSAGES.accumulatedVerifiediOSUser)}
-          data={registeredAndroid}
-          isLoading={isLoading}
-          />
-          <DataGrid.Cell
-          title={formatMessage(MESSAGES.accumulatedVerifiedAndroidUser)}
           data={verifiedIos}
           isLoading={isLoading}
           />
           <DataGrid.Cell
-            title={formatMessage(MESSAGES.accumulatedRegisteredAndroidUser)}
+          title={formatMessage(MESSAGES.accumulatedRegisteredAndroidUser)}
+          data={registeredAndroid}
+          isLoading={isLoading}
+          />
+          <DataGrid.Cell
+            title={formatMessage(MESSAGES.accumulatedVerifiedAndroidUser)}
             data={verifiedAndroid}
             isLoading={isLoading}
           />
