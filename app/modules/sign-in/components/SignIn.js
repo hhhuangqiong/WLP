@@ -28,6 +28,9 @@ const SignIn = props => (
               placeholder="email"
               value={props.username}
               onChange={props.changeUsername}
+              onBlur={props.changeUsername}
+              autoComplete="off"
+              autoFocus
             />
             {
               (props.getValidationMessages('username') || []).map(renderHelpText)
@@ -46,6 +49,7 @@ const SignIn = props => (
               placeholder="password"
               value={props.password}
               onChange={props.changePassword}
+              onBlur={props.changePassword}
             />
             {
               (props.getValidationMessages('password') || []).map(renderHelpText)
