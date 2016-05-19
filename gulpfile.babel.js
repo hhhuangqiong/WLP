@@ -8,6 +8,7 @@ import mocha from 'gulp-mocha';
 import nodemon from 'gulp-nodemon';
 import sass from 'gulp-sass';
 import bless from 'gulp-bless';
+import gfile from 'gulp-file';
 import sourcemaps from 'gulp-sourcemaps';
 import webpack from 'webpack';
 import WebpackDevServer from 'webpack-dev-server';
@@ -18,6 +19,8 @@ import browserSync from 'browser-sync';
 import * as fs from 'fs';
 import * as path from 'path';
 import { sync as globSync } from 'glob';
+import onesky from 'onesky-utils';
+import m800Locale from 'm800-user-locale';
 
 const defaultTasks = ['nodemon', 'watch', 'scss', 'webpack'];
 const webpackConfig = require('./webpack.config');
@@ -89,7 +92,7 @@ gulp.task('watch', () => {
   gulp.watch('public/scss/**/*.scss', ['scss']);
 });
 
-gulp.task('clean', () => del([`${dest.app}`, `${dest.build}/**/*`]));
+gulp.task('clean', () => del([dest.app, `${dest.build}/**/*`, dest.intl]));
 
 const autoprefixerOpts = {
   browsers: ['last 2 versions'],
@@ -220,4 +223,23 @@ gulp.task('browser-sync', () => {
     startPath: '/',
     port: 3333,
   });
+});
+
+gulp.task('download-translation', (done) => {
+  const supportedLangs = require('./app/config').LOCALES;
+  const oneSkyConfig = require('./app/config/credentials').ONE_SKY;
+
+  Promise.all(supportedLangs.map((lang) => {
+    const locale = m800Locale.util.toOneSkyLocale(lang);
+
+    gutil.log(`Downloading for language ${lang} by ${locale}...`);
+    return onesky.getFile(Object.assign({ language: locale }, oneSkyConfig))
+      .then((content) => {
+        gutil.log(`Done download for ${lang}.`);
+
+        gfile(`${lang}.json`, content, { src: true })
+         .pipe(gulp.dest(dest.intl));
+      });
+  }))
+  .then(() => {done();}, done);
 });
