@@ -182,6 +182,17 @@ class Authority {
   }
 
   /**
+   * @method setCarrierId
+   * setter of carrierId, in case the carrierId is not ready
+   * when the class is just initialised
+   *
+   * @param carrierId {String}
+   */
+  setCarrierId(carrierId) {
+    this._carrierId = carrierId;
+  }
+
+  /**
    * @method getCapabilities
    * get capability list
    *

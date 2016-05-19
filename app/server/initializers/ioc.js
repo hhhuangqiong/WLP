@@ -101,7 +101,7 @@ export default function init(nconf) {
 
   ioc.factory('ACL', () => new NodeAcl(new NodeAcl.memoryBackend()));
 
-  ioc.factory('ACLManager', (container) => {
+  ioc.factory('ACLManager', container => {
     const AclManager = require('../../main/acl').default;
     const carrierQuerier = require('../../main/acl/carrierQueryService');
     const nodeAcl = container.ACL;

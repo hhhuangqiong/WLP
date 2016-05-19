@@ -1,17 +1,19 @@
-import Authority from '../modules/authority/plugin';
+import AuthorityChecker from '../modules/authority/plugin';
 
 module.exports = {
   name: 'AuthorityPlugin',
 
   plugContext(options) {
-    const authorityChecker = new Authority(options);
+    const authorityChecker = new AuthorityChecker(options);
 
     return {
       plugComponentContext(componentContext) {
-        componentContext.getAuthority = () => authorityChecker;
+        // eslint-disable-next-line no-param-reassign
+        componentContext.authorityChecker = authorityChecker;
       },
       plugActionContext(actionContext) {
-        actionContext.getAuthority = () => authorityChecker;
+        // eslint-disable-next-line no-param-reassign
+        actionContext.authorityChecker = authorityChecker;
       },
     };
   },

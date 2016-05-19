@@ -11,8 +11,8 @@ class Permit extends Component {
 
   _hasAuthority() {
     const { action, resource } = this.props;
-    const authority = this.context.getAuthority();
-    return authority.scan(action, resource);
+    const { authorityChecker } = this.context;
+    return authorityChecker.scan(action, resource);
   }
 
   render() {
@@ -27,7 +27,7 @@ Permit.propTypes = {
 };
 
 Permit.contextTypes = {
-  getAuthority: PropTypes.func.isRequired,
+  authorityChecker: PropTypes.object.isRequired,
 };
 
 export default Permit;

@@ -12,6 +12,7 @@ const AuthorityStore = createStore({
   initialize() {
     this.isLoaded = false;
     this.isLoading = false;
+    this.capability = [];
   },
 
   handleGetAuthorityStart() {
@@ -20,8 +21,9 @@ const AuthorityStore = createStore({
     this.emitChange();
   },
 
-  handleGetAuthorityEnd() {
+  handleGetAuthorityEnd(capability = []) {
     this.isLoaded = true;
+    this.capability = capability;
     this.isLoading = false;
     this.emitChange();
   },
@@ -33,6 +35,24 @@ const AuthorityStore = createStore({
   getIsLoading() {
     return this.isLoading;
   },
+
+  getCapability() {
+    return this.capability;
+  },
+
+  dehydrate() {
+    return {
+      isLoaded: this.isLoaded,
+      isLoading: this.isLoading,
+      capability: this.capability,
+    };
+  },
+
+  rehydrate(state) {
+    this.isLoaded = state.isLoaded;
+    this.isLoading = state.isLoading;
+    this.capability = state.capability;
+  },
 });
 
-module.exports = AuthorityStore;
+export default AuthorityStore;

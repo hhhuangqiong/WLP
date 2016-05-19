@@ -14,17 +14,13 @@ module.exports = (context, payload, done) => {
       return;
     }
 
-    context.dispatch('SIGN_OUT_SUCCESS');
-
-    const authority = context.getAuthority();
-    authority.reset();
-
     try {
       window.location.assign('/');
     } catch (error) {
       throw error;
     }
 
+    context.dispatch('SIGN_OUT_SUCCESS');
     done();
   });
 };

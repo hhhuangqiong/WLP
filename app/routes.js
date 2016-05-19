@@ -47,7 +47,10 @@ import {
 } from './server/paths';
 
 import AuthStore from './main/stores/AuthStore';
+import AuthorityStore from './modules/authority/store';
 // import InitialDataStore from './main/stores/InitialDataStore';
+
+import { userPath } from './server/paths';
 
 const debug = require('debug')('app:routes');
 
@@ -60,9 +63,14 @@ export default (context) => {
       replace('/sign-in');
     }
 
-    // TODO: implementation on client side
-    // const isDataLoaded = context.getStore(InitialDataStore).isDataLoaded();
-    // run getInitialRequest
+    const capability = context.getStore(AuthorityStore).getCapability();
+    const { role, identity: carrierId } = nextState.params;
+    const { authorityChecker } = context.getActionContext();
+    authorityChecker.reset(carrierId, capability);
+    if (!authorityChecker.canAccessPath(nextState.location.pathname)) {
+      const defaultPath = authorityChecker.getDefaultPath();
+      replace(userPath(role, carrierId, defaultPath));
+    }
 
     cb();
   }
@@ -96,7 +104,7 @@ export default (context) => {
       </Route>
 
       <Route component={Protected} onEnter={requireAuth} >
-        <Route path=":role/:identity" component={Overview} />
+        <Route path=":role/:identity/" component={Overview} />
 
         <Route path=":role/:identity/companies" component={Companies}>
           <Route path="create" component={NewProfile} />

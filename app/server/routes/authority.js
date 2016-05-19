@@ -2,7 +2,7 @@ import logger from 'winston';
 import Authority from '../../modules/authority/manager';
 import { getResources } from '../../modules/authority/utils';
 
-const getCapabilityList = (req, res, next) => {
+export function getCapabilityList(req, res, next) {
   const { carrierId } = req.params;
   const resources = getResources();
 
@@ -31,7 +31,4 @@ const getCapabilityList = (req, res, next) => {
       logger.error('failed to get authority for carrier: %s', carrierId, err);
       next(err);
     });
-};
-
-
-export { getCapabilityList };
+}
