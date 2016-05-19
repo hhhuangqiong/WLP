@@ -1,3 +1,11 @@
+.datepicker__tether-element {
+  // fix layout display among the incapability of react-datepicker and react-modal plugins
+  z-index: 300;
+
+  // position fix for the native tether element class offset
+  margin-top: -15px;
+}
+
 .date-range-picker,
 .date-picker-button {
   @include button-control;
