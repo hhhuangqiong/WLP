@@ -40,7 +40,7 @@ function parseListData(data, count) {
     return sortedData;
   }
 
-  const breakdown = sortedData.slice(0, (count + 1));
+  const breakdown = sortedData.slice(0, count);
   // eslint-disable-next-line no-return-assign,no-param-reassign
   const otherTotal = reduce(sortedData.slice(count), (result, { value }) => result += value, 0);
 
