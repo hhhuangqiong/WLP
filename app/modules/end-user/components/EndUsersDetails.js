@@ -93,7 +93,6 @@ const EndUsers = React.createClass({
               <FormattedMessage id="detailsReport" defaultMessage="Details Report" />
             </Link>
           </FilterBar.NavigationItems>
-
           <FilterBar.LeftItems>
             <DateRangePicker
               withIcon
@@ -102,18 +101,16 @@ const EndUsers = React.createClass({
               handleStartDateChange={this.handleStartDateChange}
               handleEndDateChange={this.handleEndDateChange}
             />
-
             {/*
-            <div>
+              <div>
               <select className="status-select top-bar-section__query-input" name="statusSelect" onChange={this.handleStatusChange}>
-                <option key={'status'} value="">Choose Account Status</option>
-                {accountStatus.map((status)=>{
-                  return <option key={status} value={status.toUpperCase()}>{status}</option>;
-                })}
+              <option key={'status'} value="">Choose Account Status</option>
+              {accountStatus.map((status)=>{
+              return <option key={status} value={status.toUpperCase()}>{status}</option>;
+              })}
               </select>
-            </div>
-          */}
-
+              </div>
+            */}
           </FilterBar.LeftItems>
           <FilterBar.RightItems>
             <li className="top-bar--inner">
@@ -125,7 +122,6 @@ const EndUsers = React.createClass({
                 />
               </Export>
             </li>
-
           </FilterBar.RightItems>
         </FilterBar.Wrapper>
         <div className="large-24 columns">

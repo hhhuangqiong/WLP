@@ -7,11 +7,11 @@ import { FormattedMessage, defineMessages, injectIntl } from 'react-intl';
 import EmptyRow from '../../../modules/data-table/components/EmptyRow';
 import TableHeader from '../../../modules/data-table/components/TableHeader';
 import Pagination from '../../../modules/data-table/components/Pagination';
+import i18nMessages from '../../../main/constants/i18nMessages';
 
 const { displayDateFormat: DATE_FORMAT } = require('./../../../main/config');
 
-const NOT_FOUND_LABEL = 'N/A';
-const INACTIVE_ACCOUNT_LABEL = 'Inactive';
+const ACTIVE_STATUS = 'active';
 
 const MESSAGES = defineMessages({
   username: {
@@ -38,7 +38,17 @@ const MESSAGES = defineMessages({
     id: 'endUser.details.appVersion',
     defaultMessage: 'App Version',
   },
+  active: {
+    id: 'active',
+    defaultMessage: 'Active',
+  },
+  inactive: {
+    id: 'inactive',
+    defaultMessage: 'Inactive',
+  },
 });
+
+const NOT_FOUND_LABEL = i18nMessages.unknownLabel;
 
 const TABLE_TITLES = [
   MESSAGES.username,
@@ -98,8 +108,8 @@ const EndUserTable = React.createClass({
     return (
       <div className="text-center">
         <span className="pagination__button pagination__button--inactive">
-		  <FormattedMessage id="noMoreResult" defaultMessage="No more result" />
-		</span>
+          <FormattedMessage id="noMoreResult" defaultMessage="No more result" />
+        </span>
       </div>
     );
   },
@@ -111,7 +121,11 @@ const EndUserTable = React.createClass({
           <tr>
             <td colSpan={TABLE_TITLES.length}>
               <div className="text-center">
-                <span>Loading...</span>
+                <FormattedMessage
+                  id="loading"
+                  defaultMessage="Loading"
+                />
+                <span>...</span>
               </div>
             </td>
           </tr>
@@ -132,22 +146,34 @@ const EndUserTable = React.createClass({
     );
   },
 
+  getAccountStatus(accountStatus) {
+    const { intl: { formatMessage } } = this.props;
+
+    if (accountStatus.toLowerCase() === ACTIVE_STATUS) {
+      return capitalize(formatMessage(MESSAGES.active));
+    }
+
+    return formatMessage(MESSAGES.inactive);
+  },
+
   renderRows(content) {
+    const { intl: { formatMessage } } = this.props;
+
     return content.map(u => {
       const device = get(u, 'devices.0') || {};
 
       const creationDate = moment(u.creationDate).format(DATE_FORMAT);
       const handleOnClick = bindKey(this.props, 'onUserClick', u.username.trim());
 
-      const platform = device.platform || NOT_FOUND_LABEL;
+      const platform = device.platform || formatMessage(NOT_FOUND_LABEL);
       const currentUser = this.props.currentUser;
 
       return (
         <tr
           className={
             classNames(
-              'end-user-table-row',
-              { selected: currentUser && currentUser.userDetails.username === u.username }
+            'end-user-table-row',
+            { selected: currentUser && currentUser.userDetails.username === u.username }
             )
           }
           onClick={handleOnClick}
@@ -163,7 +189,7 @@ const EndUserTable = React.createClass({
                   (u.accountStatus === 'ACTIVE') ? 'success' : 'alert'
                 )}
               ></span>
-              {capitalize((u.accountStatus || INACTIVE_ACCOUNT_LABEL).toLowerCase())}
+              {this.getAccountStatus(u.accountStatus)}
             </span>
           </td>
           <td className="device-modal">
@@ -171,10 +197,10 @@ const EndUserTable = React.createClass({
               { 'icon-apple': (platform) ? platform.toLowerCase() === 'ios' : false },
               { 'icon-android': (platform) ? platform.toLowerCase() === 'android' : false })}
             />
-            {device.deviceModel || NOT_FOUND_LABEL}
+            {device.deviceModel || formatMessage(NOT_FOUND_LABEL)}
           </td>
-          <td>{device.appBundleId || NOT_FOUND_LABEL}</td>
-          <td>{device.appVersionNumber || NOT_FOUND_LABEL}</td>
+          <td>{device.appBundleId || formatMessage(NOT_FOUND_LABEL)}</td>
+          <td>{device.appVersionNumber || formatMessage(NOT_FOUND_LABEL)}</td>
         </tr>
       );
     });
