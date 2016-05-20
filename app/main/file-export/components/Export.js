@@ -22,6 +22,7 @@ export default createClass({
 
   contextTypes: {
     router: PropTypes.object.isRequired,
+    params: PropTypes.object.isRequired,
   },
 
   mixins: [FluxibleMixin],

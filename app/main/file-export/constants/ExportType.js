@@ -1,6 +1,4 @@
-export default {
-  CALLS: 'Calls',
-  IM: 'Im',
-  VERIFICATION: 'Verification',
-  END_USER: 'End_User',
-};
+export const CALLS = 'Calls';
+export const IM = 'Im';
+export const VERIFICATION = 'Verification';
+export const END_USER = 'End_User';
