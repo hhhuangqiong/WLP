@@ -20,46 +20,9 @@ import i18nMessages from '../../../main/constants/i18nMessages';
 import Export from '../../../main/file-export/components/Export';
 import ImExportForm from './ImExportForm';
 
-import config from '../../../config';
+import MESSAGES from '../constants/i18n';
 
-const MESSAGES = defineMessages({
-  text: {
-    id: 'im.details.text',
-    defaultMessage: 'Text',
-  },
-  image: {
-    id: 'im.details.image',
-    defaultMessage: 'Image',
-  },
-  audio: {
-    id: 'im.details.audio',
-    defaultMessage: 'Audio',
-  },
-  video: {
-    id: 'im.details.video',
-    defaultMessage: 'Video',
-  },
-  remote: {
-    id: 'im.details.remote',
-    defaultMessage: 'Remote',
-  },
-  animation: {
-    id: 'im.details.animation',
-    defaultMessage: 'Animation',
-  },
-  sticker: {
-    id: 'im.details.sticker',
-    defaultMessage: 'Sticker',
-  },
-  voiceSticker: {
-    id: 'im.details.voiceSticker',
-    defaultMessage: 'Voice Sticker',
-  },
-  ephemeralImage: {
-    id: 'im.details.ephemeralImage',
-    defaultMessage: 'Ephemeral Image',
-  },
-});
+import config from '../../../config';
 
 const searchTypes = [
   { name: i18nMessages.sender, value: 'sender' },

@@ -4,7 +4,10 @@ import { concurrent } from 'contra';
 
 import React, { PropTypes } from 'react';
 import { Link } from 'react-router';
-import { FormattedMessage } from 'react-intl';
+import {
+  FormattedMessage,
+  injectIntl,
+} from 'react-intl';
 import { FluxibleMixin } from 'fluxible-addons-react';
 
 import loadTransactions from '../actions/loadTransactions';
@@ -16,6 +19,7 @@ import TopUpStore from '../stores/TopUpStore';
 import * as FilterBar from './../../../main/components/FilterBar';
 import DateRangePicker from './../../../main/components/DateRangePicker';
 import SearchBox from './../../../main/components/Searchbox';
+import i18nMessages from '../../../main/constants/i18nMessages';
 
 const { inputDateFormat: DATE_FORMAT } = require('./../../../main/config');
 const { pages: { topUp: { pageRec: PAGE_REC } } } = require('./../../../main/config');
@@ -155,6 +159,7 @@ const TopUp = React.createClass({
   },
 
   render() {
+    const { intl: { formatMessage } } = this.props;
     const { role, identity } = this.context.params;
 
     return (
@@ -180,7 +185,7 @@ const TopUp = React.createClass({
           <FilterBar.RightItems>
             <SearchBox
               value={this.state.number}
-              placeHolder="Mobile"
+              placeHolder={formatMessage(i18nMessages.mobile)}
               onInputChangeHandler={this.handleSearchInputChange}
               onKeyPressHandler={this.handleSearchInputSubmit}
             />
@@ -283,4 +288,4 @@ const TopUp = React.createClass({
   },
 });
 
-export default TopUp;
+export default injectIntl(TopUp);

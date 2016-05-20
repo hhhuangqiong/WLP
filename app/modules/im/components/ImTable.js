@@ -6,13 +6,16 @@ import Tooltip from 'rc-tooltip';
 import { FormattedMessage, defineMessages, injectIntl } from 'react-intl';
 
 import { getCountryName } from '../../../utils/StringFormatter';
+import { DATETIME_FORMAT_WITH_SECONDS } from '../../../utils/timeFormatter';
 import CountryFlag from '../../../main/components/CountryFlag';
 import EmptyRow from '../../../modules/data-table/components/EmptyRow';
 import TableHeader from '../../../modules/data-table/components/TableHeader';
 import Pagination from '../../../modules/data-table/components/Pagination';
+import i18nMessages from '../../../main/constants/i18nMessages';
 
-const IM_DATETIME_FORMAT = 'MMMM DD YYYY, hh:mm:ss a';
-const LABEL_FOR_NULL = 'N/A';
+import IM_MESSAGES from '../constants/i18n';
+
+const LABEL_FOR_NULL = i18nMessages.unknownLabel;
 
 const MESSAGES = defineMessages({
   dateAndTime: {
@@ -123,10 +126,28 @@ const ImTable = React.createClass({
     return null;
   },
 
+  getImType(messageType) {
+    const { intl: { formatMessage } } = this.props;
+
+    if (!(messageType in MESSAGE_TYPES)) {
+      return formatMessage(LABEL_FOR_NULL);
+    }
+
+    const { title } = MESSAGE_TYPES[messageType];
+
+    if (!(title in IM_MESSAGES)) {
+      return formatMessage(LABEL_FOR_NULL);
+    }
+
+    return formatMessage(IM_MESSAGES[title]);
+  },
+
   renderRows() {
+    const { intl: { formatMessage } } = this.props;
+
     return this.props.ims.map((u, key) => {
-      const imDate = moment(u.timestamp).format(IM_DATETIME_FORMAT);
-      const imType = MESSAGE_TYPES[u.message_type] || LABEL_FOR_NULL;
+      const imDate = moment(u.timestamp).format(DATETIME_FORMAT_WITH_SECONDS);
+      const imType = this.getImType(u.message_type);
       const typeSize = this.getTypeSize(u, imType.title);
 
       let sender = null;
@@ -148,7 +169,7 @@ const ImTable = React.createClass({
               className={classNames('im-message-type-icon', imType.className, u.message_type)}
             ></span>
             <div className="im-message-type-info">
-              <span className={"im-message-type-text dark"}>{imType.title || LABEL_FOR_NULL}</span>
+              <span className={"im-message-type-text dark"}>{imType}</span>
               <br />
               <span className={"im-message-type-size"}>{typeSize}</span>
             </div>
@@ -206,7 +227,11 @@ const ImTable = React.createClass({
           <tr>
             <td colSpan={TABLE_TITLES.length}>
               <div className="text-center">
-                <span>Loading...</span>
+                <FormattedMessage
+                  id="loading"
+                  defaultMessage="Loading"
+                />
+                <span>...</span>
               </div>
             </td>
           </tr>
