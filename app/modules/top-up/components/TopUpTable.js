@@ -106,8 +106,12 @@ ${(!currency.code ? '' : currency.code)}`;
         <tbody className={UI_STATE_LOADING}>
           <tr>
             <td colSpan={TABLE_TITLES.length}>
-              <div className="text-center">
-                <span>Loading...</span>
+              <div className="text-center capitalize">
+                <FormattedMessage
+                  id="loading"
+                  defaultMessage="Loading"
+                />
+                <span>...</span>
               </div>
             </td>
           </tr>
@@ -124,6 +128,19 @@ ${(!currency.code ? '' : currency.code)}`;
     return (
       <tbody className={UI_STATE_NORMAL}>{this.renderRows()}</tbody>
     );
+  },
+
+  getWalletType(walletType) {
+    if (walletType === 'Paid') {
+      return (
+        <FormattedMessage
+          id="paid"
+          defaultMessage="Paid"
+        />
+      );
+    }
+
+    return walletType;
   },
 
   renderRows() {
@@ -156,7 +173,10 @@ ${(!currency.code ? '' : currency.code)}`;
                 { alert: !history.walletType }
               )
             }
-            >{history.walletType || 'Unknown'}</span>
+            >{this.getWalletType(history.walletType) || (<FormattedMessage
+              id="unknown"
+              defaultMessage="Unknown"
+            />)}</span>
           </td>
           <td>{history.rechargeType}</td>
           <td>{this._getFormattedAmount(history.currency, history.amount)}</td>
@@ -183,11 +203,11 @@ ${(!currency.code ? '' : currency.code)}`;
 
     return (
       <tfoot>
-      <Pagination
-        colSpan={TABLE_TITLES.length + 1}
-        hasMoreData={(this.props.totalPages - 1) > this.props.page}
-        onLoadMore={this.props.onDataLoad}
-        isLoading={this.props.isLoadingMore}
+        <Pagination
+          colSpan={TABLE_TITLES.length + 1}
+          hasMoreData={(this.props.totalPages - 1) > this.props.page}
+          onLoadMore={this.props.onDataLoad}
+          isLoading={this.props.isLoadingMore}
         />
       </tfoot>
     );

@@ -7,8 +7,9 @@ import { FormattedMessage, defineMessages, injectIntl } from 'react-intl';
 import EmptyRow from '../../../modules/data-table/components/EmptyRow';
 import TableHeader from '../../../modules/data-table/components/TableHeader';
 import Pagination from '../../../modules/data-table/components/Pagination';
+import i18nMessages from '../../../main/constants/i18nMessages';
 
-const NO_VALUE_LABEL = 'N/A';
+const NO_VALUE_LABEL = i18nMessages.unknownLabel;
 const IOS_PLATFORM = 'com.maaii.platform.ios';
 const ANDROID_PLATFORM = 'com.maaii.platform.android';
 
@@ -77,14 +78,17 @@ const VsfTable = React.createClass({
   },
 
   renderPlatform(platform) {
+    const { intl: { formatMessage } } = this.props;
+
     if (!platform) {
-      return NO_VALUE_LABEL;
+      return formatMessage(NO_VALUE_LABEL);
     }
 
     return <span className={this.getStyleByStoreType(platform)}></span>;
   },
 
   renderRows() {
+    const { intl: { formatMessage } } = this.props;
     const transactions = this.props.transactions;
 
     return (transactions || []).map((transaction, i) =>
@@ -136,7 +140,10 @@ const VsfTable = React.createClass({
 
           <td className="vsf-table--cell">
             <If condition={transaction.paymentType === 'Free'}>
-              <span>Free</span>
+              <FormattedMessage
+                id="free"
+                defaultMessage="Free"
+              />
             </If>
             <If condition={transaction.paymentType === 'Paid'}>
               <span>{transaction.currency} ${transaction.amount}</span>
@@ -144,7 +151,7 @@ const VsfTable = React.createClass({
           </td>
 
           <td className="vsf-table--cell">
-            <span>{transaction.transactionId || NO_VALUE_LABEL}</span>
+            <span>{transaction.transactionId || formatMessage(NO_VALUE_LABEL)}</span>
           </td>
         </tr>
       )
@@ -167,8 +174,12 @@ const VsfTable = React.createClass({
         <tbody className={UI_STATE_LOADING}>
           <tr>
             <td colSpan={TABLE_TITLES.length}>
-              <div className="text-center">
-                <span>Loading...</span>
+              <div className="text-center capitalize">
+                <FormattedMessage
+                  id="loading"
+                  defaultMessage="loading"
+                />
+                <span>...</span>
               </div>
             </td>
           </tr>

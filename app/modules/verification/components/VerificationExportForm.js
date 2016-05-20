@@ -1,24 +1,11 @@
 import React, { PropTypes, Component } from 'react';
 import moment from 'moment';
-import { FormattedMessage } from 'react-intl';
+import { FormattedMessage, injectIntl } from 'react-intl';
 
 import DateTimePicker from '../../../main/components/DateTimePicker';
 import ExportSubmitControls from '../../../main/file-export/components/ExportSubmitControls';
 
-export default class VerificationExportForm extends Component {
-  static propTypes = {
-    verificationType: PropTypes.string,
-    osType: PropTypes.string,
-    handleExport: PropTypes.func.isRequired,
-    closeModal: PropTypes.func.isRequired,
-    handleVerificationMethodChange: PropTypes.func.isRequired,
-    transformVerificationTypes: PropTypes.func.isRequired,
-    defaultOption: PropTypes.string,
-    verificationTypes: PropTypes.array,
-    handleOsTypeChange: PropTypes.func.isRequired,
-    osTypes: PropTypes.array,
-  };
-
+class VerificationExportForm extends Component {
   constructor(props) {
     super();
 
@@ -60,6 +47,8 @@ export default class VerificationExportForm extends Component {
   }
 
   render() {
+    const { intl: { formatMessage } } = this.props;
+
     return (
       <form onSubmit={this._export} noValidate>
         <h4 id="modalTitle">
@@ -128,7 +117,7 @@ export default class VerificationExportForm extends Component {
             <option>{this.props.defaultOption}</option>
             {this.props.verificationTypes.map(type => (
               <option key={type} value={type}>
-                {this.props.transformVerificationTypes(type)}
+                {this.props.transformVerificationTypes(formatMessage(type))}
               </option>
             ))}
           </select>
@@ -168,3 +157,18 @@ export default class VerificationExportForm extends Component {
     );
   }
 }
+
+VerificationExportForm.propTypes = {
+  verificationType: PropTypes.string,
+  osType: PropTypes.string,
+  handleExport: PropTypes.func.isRequired,
+  closeModal: PropTypes.func.isRequired,
+  handleVerificationMethodChange: PropTypes.func.isRequired,
+  transformVerificationTypes: PropTypes.func.isRequired,
+  defaultOption: PropTypes.string,
+  verificationTypes: PropTypes.array,
+  handleOsTypeChange: PropTypes.func.isRequired,
+  osTypes: PropTypes.array,
+};
+
+export default injectIntl(VerificationExportForm);

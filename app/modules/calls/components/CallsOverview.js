@@ -9,14 +9,15 @@ import { FormattedMessage, defineMessages, injectIntl } from 'react-intl';
 
 import { FluxibleMixin } from 'fluxible-addons-react';
 
+import LastUpdateTime from '../../../main/statistics/components/LastUpdateTime';
 import * as FilterBar from '../../../main/components/FilterBar';
 import * as Panel from './../../../main/components/Panel';
 import * as DataGrid from '../../../main/statistics/components/DataGrid';
 import TimeFramePicker from '../../../main/components/TimeFramePicker';
-import { parseTimeRange } from '../../../utils/timeFormatter';
+import { parseTimeRange, SHORT_DATE_FORMAT } from '../../../utils/timeFormatter';
 import DateSelector from '../../../main/components/DateSelector';
 import CombinationChart from '../../../main/components/CombinationChart';
-
+import i18nMessages from '../../../main/constants/i18nMessages';
 import CallsOverviewStore from '../stores/CallsOverviewStore';
 import ApplicationStore from '../../../main/stores/ApplicationStore';
 
@@ -26,16 +27,7 @@ import clearCallsStats from '../actions/clearCallsStats';
 
 import { normalizeDurationInMS } from '../../../utils/StringFormatter';
 
-const LAST_UPDATE_TIME_FORMAT = 'MMM DD, YYYY H:mm';
 const defaultQueryMonth = moment().subtract(1, 'month');
-
-const STATS_TYPE = {
-  TOTAL_ATTEMPT: 'Total Calls Attempts',
-  SUCCESSFUL_ATTEMPT: 'Total Success Calls',
-  SUCCESSFUL_RATE: 'ASR (%)',
-  TOTAL_DURATION: 'Total Call Duration',
-  AVERAGE_DURATION: 'Average Call Duration',
-};
 
 import CALL_TYPE from '../constants/callType';
 
@@ -57,6 +49,10 @@ const MESSAGES = defineMessages({
     id: 'calls.overview.totalCallsAttempts',
     defaultMessage: 'Total Calls Attempts',
   },
+  totalSuccessfulCalls: {
+    id: 'calls.overview.totalSuccessfulCalls',
+    defaultMessage: 'Total Successful Calls',
+  },
   totalCallDuration: {
     id: 'calls.overview.totalCallDuration',
     defaultMessage: 'Total Call Duration',
@@ -65,7 +61,19 @@ const MESSAGES = defineMessages({
     id: 'calls.overview.averageCallDuration',
     defaultMessage: 'Average Call Duration',
   },
+  totalSuccessfulRate: {
+    id: 'calls.overview.totalSuccessfulRate',
+    defaultMessage: 'ASR (%)',
+  },
 });
+
+const STATS_TYPE = {
+  TOTAL_ATTEMPT: MESSAGES.totalCallsAttempts,
+  SUCCESSFUL_ATTEMPT: MESSAGES.totalSuccessfulCalls,
+  SUCCESSFUL_RATE: MESSAGES.totalSuccessfulRate,
+  TOTAL_DURATION: MESSAGES.totalCallDuration,
+  AVERAGE_DURATION: MESSAGES.averageCallDuration,
+};
 
 const CallsOverview = React.createClass({
   propTypes: {
@@ -87,6 +95,7 @@ const CallsOverview = React.createClass({
   },
 
   getInitialState() {
+    console.log(`STATS_TYPE.TOTAL_ATTEMPT.id`, STATS_TYPE.TOTAL_ATTEMPT.id);
     return {
       appIds: this.getStore(ApplicationStore).getAppIds() || [],
       appId: this.getStore(ApplicationStore).getDefaultAppId(),
@@ -94,8 +103,8 @@ const CallsOverview = React.createClass({
       selectedMonth: defaultQueryMonth.get('month'),
       selectedYear: defaultQueryMonth.get('year'),
       selectedLastXDays: TIME_FRAMES[0],
-      selectedAttemptLine: STATS_TYPE.TOTAL_ATTEMPT,
-      selectedDurationLine: STATS_TYPE.TOTAL_DURATION,
+      selectedAttemptLine: STATS_TYPE.TOTAL_ATTEMPT.id,
+      selectedDurationLine: STATS_TYPE.TOTAL_DURATION.id,
     };
   },
 
@@ -171,13 +180,15 @@ const CallsOverview = React.createClass({
   },
 
   _getAttemptLineChartData() {
+    const { intl: { formatMessage } } = this.props;
+
     const totalAttemptData = reduce(this.state.totalAttemptStats, (result, stat) => { result.push(round(stat.v, DECIMAL_PLACE)); return result; }, []);
     const successAttemptData = reduce(this.state.successAttemptStats, (result, stat) => { result.push(round(stat.v, DECIMAL_PLACE)); return result; }, []);
     const successRateData = reduce(this.state.successRateStats, (result, stat) => { result.push(round(stat.v, DECIMAL_PLACE)); return result; }, []);
 
     return !isEmpty(this.state.totalAttemptStats) && !isEmpty(this.state.successAttemptStats) && !isEmpty(this.state.successRateStats) ? [
       {
-        name: STATS_TYPE.SUCCESSFUL_RATE,
+        name: formatMessage(STATS_TYPE.SUCCESSFUL_RATE),
         legendIndex: 2,
         type: 'line',
         data: successRateData,
@@ -199,7 +210,7 @@ const CallsOverview = React.createClass({
         },
       },
       {
-        name: STATS_TYPE.TOTAL_ATTEMPT,
+        name: formatMessage(STATS_TYPE.TOTAL_ATTEMPT),
         legendIndex: 0,
         type: 'column',
         data: totalAttemptData,
@@ -207,7 +218,7 @@ const CallsOverview = React.createClass({
         yAxis: 0,
       },
       {
-        name: STATS_TYPE.SUCCESSFUL_ATTEMPT,
+        name: formatMessage(STATS_TYPE.SUCCESSFUL_ATTEMPT),
         legendIndex: 1,
         type: 'column',
         data: successAttemptData,
@@ -218,6 +229,8 @@ const CallsOverview = React.createClass({
   },
 
   _getDurationLineChartData() {
+    const { intl: { formatMessage } } = this.props;
+
     const totalDurationData = reduce(this.state.totalDurationStats, (result, stat) => {
       let value = stat.v / 1000 / 60;
       result.push(value);
@@ -228,7 +241,7 @@ const CallsOverview = React.createClass({
 
     return !isEmpty(this.state.totalDurationStats) && !isEmpty(this.state.averageDurationStats) && !isEmpty(this.state.averageDurationStats) ? [
       {
-        name: STATS_TYPE.AVERAGE_DURATION,
+        name: formatMessage(STATS_TYPE.AVERAGE_DURATION),
         legendIndex: 2,
         type: 'line',
         data: averageDurationData,
@@ -242,7 +255,7 @@ const CallsOverview = React.createClass({
         },
       },
       {
-        name: STATS_TYPE.TOTAL_DURATION,
+        name: formatMessage(STATS_TYPE.TOTAL_DURATION),
         legendIndex: 0,
         type: 'column',
         data: totalDurationData,
@@ -261,7 +274,7 @@ const CallsOverview = React.createClass({
         },
       },
       {
-        name: STATS_TYPE.SUCCESSFUL_ATTEMPT,
+        name: formatMessage(STATS_TYPE.SUCCESSFUL_ATTEMPT),
         legendIndex: 1,
         type: 'column',
         data: successAttemptData,
@@ -403,18 +416,6 @@ const CallsOverview = React.createClass({
     return (totalDuration / totalSuccess) * 60;
   },
 
-  _getLastUpdate(date) {
-    const lastUpdate = moment(date).endOf('month').format(LAST_UPDATE_TIME_FORMAT);
-    return `Data updated till: ${lastUpdate}`;
-  },
-
-  _getLastUpdateFromTimeFrame() {
-    const { to, timescale } = parseTimeRange(this.state.selectedLastXDays);
-    const lastUpdate = timescale === 'hour' ? moment(to).subtract(1, timescale) : moment(to);
-
-    return `Data updated till: ${lastUpdate.endOf(timescale).format(LAST_UPDATE_TIME_FORMAT)}`;
-  },
-
   getMonthlyStatsDate() {
     return moment({
       month: this.state.selectedMonth,
@@ -487,7 +488,15 @@ const CallsOverview = React.createClass({
             <Panel.Header
               customClass="narrow"
               title={formatMessage(MESSAGES.monthlyVoiceCallUser)}
-              caption={this._getLastUpdate({ year: this.state.selectedYear, month: this.state.selectedMonth })} >
+              caption={(
+                <LastUpdateTime
+                  time={moment({
+                    year: this.state.selectedYear,
+                    month: this.state.selectedMonth,
+                  }).format(SHORT_DATE_FORMAT)}
+                />
+              )}
+            >
               <div className={classNames('tiny-spinner', { active: this.isMonthlyStatsLoading() })}></div>
               <DateSelector
                 className={classNames({ disabled: this.isMonthlyStatsLoading() })}
@@ -518,7 +527,9 @@ const CallsOverview = React.createClass({
             <Panel.Header
               customClass="narrow"
               title={formatMessage(MESSAGES.callBehaviourStatistics)}
-              caption={this._getLastUpdateFromTimeFrame()}
+              caption={(
+                <LastUpdateTime time={this.state.selectedLastXDays} />
+              )}
             >
               <div className={classNames('tiny-spinner', { active: this.isTotalStatsLoading() })}></div>
               <TimeFramePicker
@@ -551,14 +562,14 @@ const CallsOverview = React.createClass({
                         title={formatMessage(MESSAGES.totalCallDuration)}
                         data={this._getTotalCallDuration()}
                         formatter={normalizeDurationInMS}
-                        unit="minutes"
+                        unit={formatMessage(i18nMessages.minutes)}
                         isLoading={this.isTotalStatsLoading()}
                       />
                       <DataGrid.Cell
                         title={formatMessage(MESSAGES.averageCallDuration)}
                         data={this._getAverageCallDuration()}
                         formatter={normalizeDurationInMS}
-                        unit="seconds"
+                        unit={formatMessage(i18nMessages.seconds)}
                         isLoading={this.isTotalStatsLoading()}
                       />
                     </DataGrid.Wrapper>

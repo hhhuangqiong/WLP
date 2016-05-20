@@ -1,7 +1,7 @@
 import moment from 'moment';
 import React, { PropTypes } from 'react';
-import { defineMessages, injectIntl } from 'react-intl';
-import { parseTimeRange } from '../../../utils/timeFormatter';
+import { defineMessages, injectIntl, intlShape } from 'react-intl';
+import { parseTimeRange, LAST_UPDATE_TIME_FORMAT } from '../../../utils/timeFormatter';
 
 const MESSAGES = defineMessages({
   dataUpdatedTill: {
@@ -42,7 +42,7 @@ const LastUpdateTime = props => {
 };
 
 LastUpdateTime.propTypes = {
-  intl: PropTypes.object,
+  intl: intlShape,
   type: PropTypes.oneOf([
     TIME_TYPES.MONTHLY,
     TIME_TYPES.TIME_RANGE,
@@ -53,7 +53,8 @@ LastUpdateTime.propTypes = {
 };
 
 LastUpdateTime.defaultProps = {
-  timeFormat: 'MMM DD, YYYY H:mm',
+  timeFormat: LAST_UPDATE_TIME_FORMAT,
+  type: TIME_TYPES.LATEST,
 };
 
 export default injectIntl(LastUpdateTime);

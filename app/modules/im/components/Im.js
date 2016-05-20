@@ -1,13 +1,12 @@
 import _, { merge, omit } from 'lodash';
 import moment from 'moment';
-import { concurrent } from 'contra';
 import classNames from 'classnames';
 
 import React, { PropTypes } from 'react';
 import { Link } from 'react-router';
 import { FluxibleMixin } from 'fluxible-addons-react';
 import DatePicker from 'react-datepicker';
-import { FormattedMessage } from 'react-intl';
+import { FormattedMessage, defineMessages, injectIntl } from 'react-intl';
 
 import ImStore from '../stores/ImStore';
 
@@ -17,15 +16,54 @@ import fetchMoreIms from '../actions/fetchMoreIms';
 
 import ImTable from './ImTable';
 import Searchbox from '../../../main/components/Searchbox';
-
+import i18nMessages from '../../../main/constants/i18nMessages';
 import Export from '../../../main/file-export/components/Export';
 import ImExportForm from './ImExportForm';
 
 import config from '../../../config';
 
+const MESSAGES = defineMessages({
+  text: {
+    id: 'im.details.text',
+    defaultMessage: 'Text',
+  },
+  image: {
+    id: 'im.details.image',
+    defaultMessage: 'Image',
+  },
+  audio: {
+    id: 'im.details.audio',
+    defaultMessage: 'Audio',
+  },
+  video: {
+    id: 'im.details.video',
+    defaultMessage: 'Video',
+  },
+  remote: {
+    id: 'im.details.remote',
+    defaultMessage: 'Remote',
+  },
+  animation: {
+    id: 'im.details.animation',
+    defaultMessage: 'Animation',
+  },
+  sticker: {
+    id: 'im.details.sticker',
+    defaultMessage: 'Sticker',
+  },
+  voiceSticker: {
+    id: 'im.details.voiceSticker',
+    defaultMessage: 'Voice Sticker',
+  },
+  ephemeralImage: {
+    id: 'im.details.ephemeralImage',
+    defaultMessage: 'Ephemeral Image',
+  },
+});
+
 const searchTypes = [
-  { name: 'Sender', value: 'sender' },
-  { name: 'Recipient', value: 'recipient' },
+  { name: i18nMessages.sender, value: 'sender' },
+  { name: i18nMessages.recipient, value: 'recipient' },
 ];
 
 const Im = React.createClass({
@@ -113,15 +151,15 @@ const Im = React.createClass({
 
   getDefaultMessageTypes() {
     return [
-      { title: 'Text', value: 'text' },
-      { title: 'Image', value: 'image' },
-      { title: 'Audio', value: 'audio' },
-      { title: 'Video', value: 'video' },
-      { title: 'Remote', value: 'remote' },
-      { title: 'Animation', value: 'animation' },
-      { title: 'Sticker', value: 'sticker' },
-      { title: 'Voice Sticker', value: 'voice_sticker' },
-      { title: 'Ephemeral Image', value: 'ephemeral_image' },
+      { title: MESSAGES.text, value: 'text' },
+      { title: MESSAGES.image, value: 'image' },
+      { title: MESSAGES.audio, value: 'audio' },
+      { title: MESSAGES.video, value: 'video' },
+      { title: MESSAGES.remote, value: 'remote' },
+      { title: MESSAGES.animation, value: 'animation' },
+      { title: MESSAGES.sticker, value: 'sticker' },
+      { title: MESSAGES.voiceSticker, value: 'voice_sticker' },
+      { title: MESSAGES.ephemeralImage, value: 'ephemeral_image' },
     ];
   },
 
@@ -223,6 +261,7 @@ const Im = React.createClass({
   },
 
   render() {
+    const { intl: { formatMessage } } = this.props;
     const { role, identity } = this.context.params;
     const query = this.context.location.query;
 
@@ -292,16 +331,19 @@ const Im = React.createClass({
                 name="messageTypeDropDown"
                 onChange={this.handleTypeChange}
               >
-                <option key={'messageType-default'} value="">Choose</option>
-                {this.getDefaultMessageTypes().map(messageType => {
-                  return (
-                    <option
-                      key={this.getOptKey(messageType)}
-                      value={messageType.value}
-                      selected={messageType.value === query.type}
-                    >{messageType.title}</option>
-                  );
-                })}
+                <option key={'messageType-default'} value="">
+                  <FormattedMessage
+                    id="choose"
+                    defaultMessage="Choose"
+                  />
+                </option>
+                {this.getDefaultMessageTypes().map(messageType => (
+                  <option
+                    key={this.getOptKey(messageType)}
+                    value={messageType.value}
+                    selected={messageType.value === query.type}
+                  >{formatMessage(messageType.title)}</option>
+                ))}
               </select>
             </div>
 
@@ -318,7 +360,7 @@ const Im = React.createClass({
               <Searchbox
                 value={this.state.search}
                 searchTypes={searchTypes}
-                placeHolder="Username/Mobile"
+                placeHolder={formatMessage(i18nMessages.userOrMobile)}
                 onSelectChangeHandler={this.handleSearchTypeChange}
                 onInputChangeHandler={this.handleSearchChange}
                 onKeyPressHandler={this.handleSearchChange}
@@ -343,4 +385,4 @@ const Im = React.createClass({
   },
 });
 
-export default Im;
+export default injectIntl(Im);

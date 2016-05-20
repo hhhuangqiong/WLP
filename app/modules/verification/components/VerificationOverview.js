@@ -1,17 +1,21 @@
 import React, { PropTypes } from 'react';
 import { Link } from 'react-router';
 import Select from 'react-select';
-import { FormattedMessage } from 'react-intl';
 import classNames from 'classnames';
 import moment from 'moment';
 import { isNull, max, merge, sortByOrder, some, values } from 'lodash';
+
+import {
+  FormattedMessage,
+  defineMessages,
+  injectIntl,
+} from 'react-intl';
 
 import { FluxibleMixin } from 'fluxible-addons-react';
 
 import * as FilterBar from './../../../main/components/FilterBar';
 import * as Panel from './../../../main/components/Panel';
 import getMapConfig from '../constants/mapOfAttempts';
-
 import ColorRadioButton from '../../../main/components/ColorRadioButton';
 import TimeFramePicker from '../../../main/components/TimeFramePicker';
 import { parseTimeRange } from '../../../utils/timeFormatter';
@@ -25,6 +29,7 @@ import ApplicationStore from '../../../main/stores/ApplicationStore';
 import { normalizeDurationInMS, timeFromNow } from '../../../utils/StringFormatter';
 import MAP_DATA from '../constants/mapData.js';
 import changeTimeRange from '../actions/changeTimeRange';
+import i18nMessages from '../../../main/constants/i18nMessages';
 
 const TIME_FRAMES = ['24 hours', '7 days', '30 days', '60 days', '90 days'];
 const DEFAULT_TIME_RANGE = '30 days';
@@ -46,7 +51,22 @@ function fromTimeslot(collection, fromTime, timeframe) {
   return subtractedFromTime.add(maxIndex, timeframe.indexOf('hours') > -1 ? 'hours' : 'days');
 }
 
-export default React.createClass({
+const MESSAGES = defineMessages({
+  totalNumbersOfVerificationAttempts: {
+    id: 'verification.overview.totalNumbersOfVerificationAttempts',
+    defaultMessage: 'Totals numbers of verification attempts',
+  },
+  successVerificationAttempts: {
+    id: 'verification.overview.successVerificationAttempts',
+    defaultMessage: 'Success verification attempts',
+  },
+  successVerificationRate: {
+    id: 'verification.overview.successVerificationRate',
+    defaultMessage: 'Success verification rate',
+  },
+});
+
+const VerificationOverview = React.createClass({
   displayName: 'VerificationOverview',
 
   propTypes: {
@@ -150,39 +170,39 @@ export default React.createClass({
   },
 
   renderAttemptToggles() {
+    const { intl: { formatMessage } } = this.props;
+
     const ATTEMPT_TOGGLES = [
       {
         id: TOTAL_NUMBER_ATTEMPTS,
-        title: 'Totals numbers of verification attempts',
+        title: MESSAGES.totalNumbersOfVerificationAttempts,
         color: 'red',
       },
       {
         id: SUCCESS_ATTEMPTS_NUMBER,
-        title: 'Success verification attempts',
+        title: MESSAGES.successVerificationAttempts,
         color: 'green',
       },
       {
         id: SUCCESS_ATTEMPTS_RATE,
-        title: 'Success verification rate',
+        title: MESSAGES.successVerificationRate,
         color: 'blue',
       },
     ];
 
-    return ATTEMPT_TOGGLES.map((toggle) => {
-      return (
-        <div key={toggle.id} className="verification-overview__title">
-          <ColorRadioButton
-            group="verificationAttempt"
-            label={toggle.title}
-            value={toggle.id}
-            color={toggle.color}
-            checked={this.state.attemptToggle === toggle.id}
-            onChange={this.toggleAttemptType}
-            location="right"
-          />
-        </div>
-      );
-    });
+    return ATTEMPT_TOGGLES.map(toggle => (
+      <div key={toggle.id} className="verification-overview__title">
+        <ColorRadioButton
+          group="verificationAttempt"
+          label={formatMessage(toggle.title)}
+          value={toggle.id}
+          color={toggle.color}
+          checked={this.state.attemptToggle === toggle.id}
+          onChange={this.toggleAttemptType}
+          location="right"
+        />
+      </div>
+    ));
   },
 
   renderAttemptInfo() {
@@ -211,7 +231,10 @@ export default React.createClass({
               <div>{moment(this.state.busiestTime).format('h:mma')}</div>
             </div>
           <Else />
-            <div>N/A</div>
+            <FormattedMessage
+              id="unknownLabel"
+              defaultMessage="N/A"
+            />
           </If>
         </div>
 
@@ -249,6 +272,7 @@ export default React.createClass({
   },
 
   render() {
+    const { intl: { formatMessage } } = this.props;
     const { role, identity } = this.context.params;
     const options = [];
 
@@ -337,14 +361,15 @@ export default React.createClass({
                     lines={this.state.lines}
                     xAxis={this.state.xAxis}
                     yAxis={this.state.yAxis}
-                    selectedLine={this.state.selectedLineInChartA} />
-
+                    selectedLine={this.state.selectedLineInChartA}
+                  />
                   <LineChart
                     className={classNames('success-line', { hide: !this.state.showSuccessRate })}
                     lines={this.state.successRateSeries}
                     xAxis={this.state.sXAxis}
                     yAxis={this.state.sYAxis}
-                    selectedLine={SUCCESS_ATTEMPTS_RATE} />
+                    selectedLine={SUCCESS_ATTEMPTS_RATE}
+                  />
                 </div>
               </div>
             </Panel.Wrapper>
@@ -364,7 +389,13 @@ export default React.createClass({
                 </div>
 
                 <div className="large-14 columns">
-                  <div id="verificationCountrySection">Loading maps...</div>
+                  <div id="verificationCountrySection">
+                    <FormattedMessage
+                      id="loadingMap"
+                      defaultMessage="Loading map"
+                    />
+                    <span>...</span>
+                  </div>
                 </div>
               </div>
             </Panel.Wrapper>
@@ -387,7 +418,7 @@ export default React.createClass({
                     data={this.state.types}
                     size={150}
                     bars={4}
-                    unit="attempts"
+                    unit={formatMessage(i18nMessages.attempts)}
                   />
                 </Panel.Body>
               </div>
@@ -409,7 +440,7 @@ export default React.createClass({
                     data={this.state.osTypes}
                     size={150}
                     bars={2}
-                    unit="attempts"
+                    unit={formatMessage(i18nMessages.attempts)}
                   />
                 </Panel.Body>
               </div>
@@ -583,3 +614,5 @@ export default React.createClass({
     return pendingFetched && !hasError;
   },
 });
+
+export default injectIntl(VerificationOverview);

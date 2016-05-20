@@ -1,29 +1,13 @@
 import React, { Component, PropTypes } from 'react';
-import { FormattedMessage } from 'react-intl';
+import {
+  FormattedMessage,
+  injectIntl,
+  intlShape,
+} from 'react-intl';
 
 import Dropdown from '../../../main/dropdown';
 
-export default class VerificationFilter extends Component {
-  static propTypes = {
-    appId: PropTypes.string,
-    options: PropTypes.array.isRequired,
-    appIdChange: PropTypes.func,
-    os: PropTypes.string,
-    osTypes: PropTypes.array.isRequired,
-    osChange: PropTypes.func,
-    method: PropTypes.string,
-    methods: PropTypes.array.isRequired,
-    methodChange: PropTypes.func,
-    defaultOption: PropTypes.string,
-    transformVerificationTypes: PropTypes.func,
-  };
-
-  static defaultProps = {
-    options: [],
-    osTypes: [],
-    methods: [],
-  };
-
+class VerificationFilter extends Component {
   render() {
     const {
       appId,
@@ -35,6 +19,7 @@ export default class VerificationFilter extends Component {
       method,
       methods,
       methodChange,
+      intl: { formatMessage },
     } = this.props;
 
     return (
@@ -63,16 +48,14 @@ export default class VerificationFilter extends Component {
             <select
               className="radius"
               name="appid"
-              value={appId ? appId : '-'}
+              value={appId || '-'}
               onChange={appIdChange}
             >
-              {options.map(option => {
-                return (
-                  <option key={option.label} value={option.value}>
-                    {option.label}
-                  </option>
-                );
-              })}
+              {options.map(option => (
+                <option key={option.label} value={option.value}>
+                  {option.label}
+                </option>
+              ))}
             </select>
           </div>
 
@@ -90,18 +73,21 @@ export default class VerificationFilter extends Component {
               onChange={methodChange}
             >
               <option>{this.props.defaultOption}</option>
-                {methods.map((type) => {
-                  return (
-                    <option key={type} value={type}>
-                      {this.props.transformVerificationTypes(type)}
-                    </option>
-                  );
-                })}
+                {methods.map(type => (
+                  <option key={type} value={type}>
+                    {this.props.transformVerificationTypes(formatMessage(type))}
+                  </option>
+                ))}
             </select>
           </div>
 
           <div>
-            <label className="bold">OS Type</label>
+            <label className="bold">
+              <FormattedMessage
+                id="vsdk.details.osType"
+                defaultMessage="OS Type"
+              />
+            </label>
 
             <select
               className="radius"
@@ -109,13 +95,11 @@ export default class VerificationFilter extends Component {
               onChange={osChange}
             >
               <option>{this.props.defaultOption}</option>
-              {osTypes.map((platform) => {
-                return (
-                  <option key={platform} value={platform}>
-                    {platform}
-                  </option>
-                );
-              })}
+              {osTypes.map(platform => (
+                <option key={platform} value={platform}>
+                  {platform}
+                </option>
+              ))}
             </select>
           </div>
         </Dropdown.Content>
@@ -123,3 +107,26 @@ export default class VerificationFilter extends Component {
     );
   }
 }
+
+VerificationFilter.defaultProps = {
+  options: [],
+  osTypes: [],
+  methods: [],
+};
+
+VerificationFilter.propTypes = {
+  appId: PropTypes.string,
+  options: PropTypes.array.isRequired,
+  appIdChange: PropTypes.func,
+  os: PropTypes.string,
+  osTypes: PropTypes.array.isRequired,
+  osChange: PropTypes.func,
+  method: PropTypes.string,
+  methods: PropTypes.array.isRequired,
+  methodChange: PropTypes.func,
+  defaultOption: PropTypes.string,
+  transformVerificationTypes: PropTypes.func,
+  intl: intlShape.isRequired,
+};
+
+export default injectIntl(VerificationFilter);

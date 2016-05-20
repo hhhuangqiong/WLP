@@ -1,15 +1,8 @@
 import { clone, get, isEmpty, max } from 'lodash';
 import React, { PropTypes, Component } from 'react';
-import { defineMessages, intlShape, injectIntl } from 'react-intl';
+import { FormattedMessage } from 'react-intl';
 import MAP_DATA from '../constants/mapData';
 import getMapConfig from '../utils/getMapConfig';
-
-const MESSAGES = defineMessages({
-  highmapLoading: {
-    id: 'highmap.loading',
-    defaultMessage: 'Loading maps...',
-  },
-});
 
 class HighMap extends Component {
   componentDidUpdate() {
@@ -29,14 +22,19 @@ class HighMap extends Component {
   }
 
   render() {
-    const { intl: { formatMessage } } = this.props;
     const { id, data, isLoading } = this.props;
 
     return !isEmpty(data) ? (
       <div id={id}>
         {
           isLoading ? (
-            <span>{formatMessage(MESSAGES.highmapLoading)}</span>
+            <span>
+              <FormattedMessage
+                id="loadingMap"
+                defaultMessage="Loading map"
+              />
+              <span>...</span>
+            </span>
           ) : null
         }
       </div>
@@ -45,7 +43,6 @@ class HighMap extends Component {
 }
 
 HighMap.propTypes = {
-  intl: intlShape.isRequired,
   id: PropTypes.string.isRequired,
   data: PropTypes.arrayOf(PropTypes.shape({
     code: PropTypes.string,
@@ -59,4 +56,4 @@ HighMap.defaultProps = {
   mapData: MAP_DATA,
 };
 
-export default injectIntl(HighMap);
+export default HighMap;

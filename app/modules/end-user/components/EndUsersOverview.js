@@ -11,6 +11,7 @@ import MAP_DATA from '../constants/mapData';
 
 import { FluxibleMixin } from 'fluxible-addons-react';
 
+import LastUpdateTime from '../../../main/statistics/components/LastUpdateTime';
 import * as FilterBar from '../../../main/components/FilterBar';
 import * as Panel from './../../../main/components/Panel';
 import ColorRadioButton from '../../../main/components/ColorRadioButton';
@@ -20,6 +21,8 @@ import { parseTimeRange } from '../../../utils/timeFormatter';
 import * as DataGrid from '../../../main/statistics/components/DataGrid';
 import PercentageChart from '../../../main/components/PercentageChart';
 import DateSelector from '../../../main/components/DateSelector';
+import i18nMessages from '../../../main/constants/i18nMessages';
+import { SHORT_DATE_FORMAT } from '../../../utils/timeFormatter';
 
 import EndUsersOverviewStore from '../stores/EndUsersOverviewStore';
 import EndUsersRegistrationStatsStore from '../stores/EndUsersRegistrationStatsStore';
@@ -36,8 +39,6 @@ import clearEndUsersStats from '../actions/clearEndUsersStats';
 const TIME_FRAMES = ['7 days', '30 days', '60 days', '90 days'];
 const gChartContainerId = 'registrationByCountry';
 
-const LAST_UPDATE_TIME_FORMAT = 'MMM DD, YYYY H:mm';
-
 const defaultQueryMonth = moment().subtract(1, 'month');
 
 const PLATFORM_NAME = {
@@ -51,19 +52,6 @@ const STATS_TYPE = {
   REGISTERED_USER: 'registereduser',
   ACTIVE_USER: 'activeuser',
 };
-
-const LINECHART_TOGGLES = [
-  {
-    id: STATS_TYPE.REGISTERED_USER,
-    title: 'new registered user',
-    color: 'red',
-  },
-  {
-    id: STATS_TYPE.ACTIVE_USER,
-    title: 'active user',
-    color: 'green',
-  },
-];
 
 const TOOLTIP_TIME_FORMAT = 'lll';
 
@@ -93,6 +81,19 @@ const MESSAGES = defineMessages({
     defaultMessage: 'Monthly Statistic',
   },
 });
+
+const LINECHART_TOGGLES = [
+  {
+    id: STATS_TYPE.REGISTERED_USER,
+    title: MESSAGES.newRegisteredUser,
+    color: 'red',
+  },
+  {
+    id: STATS_TYPE.ACTIVE_USER,
+    title: MESSAGES.activeUser,
+    color: 'green',
+  },
+];
 
 const EndUsersOverview = React.createClass({
   displayName: 'EndUsersOverview',
@@ -250,19 +251,7 @@ const EndUsersOverview = React.createClass({
     return moment({
       month: this.state.selectedMonth,
       year: this.state.selectedYear,
-    }).format('L');
-  },
-
-  getLastUpdate(date) {
-    const lastUpdate = moment(date).endOf('month').format(LAST_UPDATE_TIME_FORMAT);
-    return `Data updated till: ${lastUpdate}`;
-  },
-
-  getLastUpdateFromTimeFrame() {
-    const timeframe = this.state.selectedLastXDays;
-    const { to, timescale } = parseTimeRange(timeframe);
-    const lastUpdate = timescale === 'hour' ? moment(to).format(LAST_UPDATE_TIME_FORMAT) : moment(to).endOf(timescale).format(LAST_UPDATE_TIME_FORMAT);
-    return `Data updated till: ${lastUpdate}`;
+    }).format(SHORT_DATE_FORMAT);
   },
 
   render() {
@@ -309,7 +298,7 @@ const EndUsersOverview = React.createClass({
               <Panel.Header
                 customClass="narrow"
                 title={formatMessage(MESSAGES.totalUser)}
-                caption={`Data updated till: ${moment().subtract(1, 'day').endOf('day').format(LAST_UPDATE_TIME_FORMAT)}`}
+                caption={(<LastUpdateTime />)}
               />
               <Panel.Body customClass="narrow no-padding">
                 <DataGrid.Wrapper>
@@ -328,14 +317,21 @@ const EndUsersOverview = React.createClass({
               <Panel.Header
                 customClass="narrow"
                 title={formatMessage(MESSAGES.monthlyStats)}
-                caption={this.getLastUpdate({ year: this.state.selectedYear, month: this.state.selectedMonth })}
+                caption={(
+                  <LastUpdateTime
+                    time={moment({
+                      year: this.state.selectedYear,
+                      month: this.state.selectedMonth,
+                    }).format(SHORT_DATE_FORMAT)}
+                  />
+                )}
               >
                 <div className={classNames('tiny-spinner', { active: this.isMonthlyStatsLoading() })}></div>
                 <DateSelector
                   className={classNames({ disabled: this.isMonthlyStatsLoading() })}
                   date={this.getMonthlyStatsDate()}
-                  minDate={moment().subtract(1, 'months').subtract(1, 'years').startOf('month').format('L')}
-                  maxDate={moment().subtract(1, 'months').endOf('month').format('L')}
+                  minDate={moment().subtract(1, 'months').subtract(1, 'years').startOf('month').format(SHORT_DATE_FORMAT)}
+                  maxDate={moment().subtract(1, 'months').endOf('month').format(SHORT_DATE_FORMAT)}
                   onChange={this.handleMonthlyStatsChange}
                 />
               </Panel.Header>
@@ -369,7 +365,10 @@ const EndUsersOverview = React.createClass({
               <Panel.Header
                 customClass="narrow"
                 title={formatMessage(MESSAGES.dailyStatistics)}
-                caption={this.getLastUpdateFromTimeFrame()} >
+                caption={(
+                  <LastUpdateTime time={this.state.selectedLastXDays} />
+                )}
+              >
                 <div className={classNames('tiny-spinner', { active: this.isTotalStatsLoading() })}></div>
                 <TimeFramePicker
                   className={classNames({ disabled: this.isTotalStatsLoading() })}
@@ -386,20 +385,19 @@ const EndUsersOverview = React.createClass({
                       <div className="chart-cell__line-toggle large-24 columns">
                         <ul className="inner-wrap">
                           {
-                            LINECHART_TOGGLES.map((toggle) => {
-                              return (
-                                <li key={toggle.id} className="verification-overview__title">
-                                  <ColorRadioButton
-                                    group="verificationAttempt"
-                                    label={toggle.title}
-                                    value={toggle.id}
-                                    color={toggle.color}
-                                    checked={this.state.selectedLine === toggle.id}
-                                    onChange={this.toggleSummaryType}
-                                    location="left" />
-                                </li>
-                              );
-                            })
+                            LINECHART_TOGGLES.map(toggle => (
+                              <li key={toggle.id} className="verification-overview__title">
+                                <ColorRadioButton
+                                  group="verificationAttempt"
+                                  label={formatMessage(toggle.title)}
+                                  value={toggle.id}
+                                  color={toggle.color}
+                                  checked={this.state.selectedLine === toggle.id}
+                                  onChange={this.toggleSummaryType}
+                                  location="left"
+                                />
+                              </li>
+                            ))
                           }
                         </ul>
                       </div>
@@ -410,7 +408,8 @@ const EndUsersOverview = React.createClass({
                         lines={this._getLineChartData()}
                         xAxis={this._getLineChartXAxis()}
                         yAxis={[{}]}
-                        selectedLine={this._getLineChartSelectedLine()} />
+                        selectedLine={this._getLineChartSelectedLine()}
+                      />
                     </div>
                   </div>
                   {/*
@@ -477,7 +476,7 @@ const EndUsersOverview = React.createClass({
                                 title={PLATFORM_NAME[stat.platform]}
                                 percentage={percentage}
                                 stat={stat.total}
-                                unit="users"
+                                unit={formatMessage(i18nMessages.users)}
                               />
                             </div>
                           );
@@ -495,7 +494,7 @@ const EndUsersOverview = React.createClass({
   },
 
   handleMonthlyStatsChange(date) {
-    const momentDate = moment(date, 'L');
+    const momentDate = moment(date, SHORT_DATE_FORMAT);
     const selectedMonth = momentDate.month();
     const selectedYear = momentDate.year();
 

@@ -2,17 +2,17 @@ import React, { PropTypes } from 'react';
 import classNames from 'classnames';
 import moment from 'moment';
 import { isEmpty, isNull } from 'lodash';
-import { defineMessages, injectIntl } from 'react-intl';
+import { FormattedMessage, defineMessages, injectIntl } from 'react-intl';
 
+import i18nMessages from '../../../main/constants/i18nMessages';
 import Pagination from '../../../modules/data-table/components/Pagination';
 import { parseDuration } from '../../../utils/StringFormatter';
-
 import { getCountryName } from '../../../utils/StringFormatter';
 import CountryFlag from '../../../main/components/CountryFlag';
 import EmptyRow from '../../../modules/data-table/components/EmptyRow';
 import TableHeader from '../../../modules/data-table/components/TableHeader';
 
-const EMPTY_STRING = 'N/A';
+const EMPTY_STRING = i18nMessages.unknownLabel;
 
 const DATE_FORMAT = 'MMMM DD YYYY';
 const TIME_FORMAT = 'H:mm:ss';
@@ -110,7 +110,49 @@ const CallsTable = React.createClass({
     return <EmptyRow colSpan={TABLE_TITLES.length} />;
   },
 
+  getCallStatus(success) {
+    if (success) {
+      return (
+        <FormattedMessage
+          id="success"
+          defaultMessage="Success"
+        />
+      );
+    }
+
+    return (
+      <FormattedMessage
+        id="failure"
+        defaultMessage="Failure"
+      />
+    );
+  },
+
+  getReleaseParty(releaseParty) {
+    if (releaseParty === 'Caller') {
+      return (
+        <FormattedMessage
+          id="calls.details.caller"
+          defaultMessage="Caller"
+        />
+      );
+    }
+
+    if (releaseParty === 'Inter-release') {
+      return (
+        <FormattedMessage
+          id="calls.details.interRelease"
+          defaultMessage="Inter-release"
+        />
+      );
+    }
+
+    return releaseParty;
+  },
+
   renderRows(records = []) {
+    const { intl: { formatMessage } } = this.props;
+
     return records.map(u => {
       const callStartDate = moment(u.start_time).format(DATE_FORMAT);
       const callEndDate = (u.end_time > 0) ?
@@ -141,14 +183,21 @@ const CallsTable = React.createClass({
           <td>
             <span
               className={classNames('call_status', u.success ? 'success' : 'alert')}
-            >{u.success ? 'Success' : 'Failure'}
+            >
+              {this.getCallStatus(u.success)}
             </span>
           </td>
           <td>
-            <span className="last_response_code">{u.last_response_code || EMPTY_STRING}</span>
+            <span className="last_response_code">
+              {u.last_response_code || formatMessage(EMPTY_STRING)}
+            </span>
           </td>
-          <td><div className="call_by_reason">{u.bye_reason || EMPTY_STRING}</div></td>
-          <td><span>{u.release_party || EMPTY_STRING}</span></td>
+          <td>
+            <div className="call_by_reason">{u.bye_reason || formatMessage(EMPTY_STRING)}</div>
+          </td>
+          <td>
+            <span>{this.getReleaseParty(u.release_party) || formatMessage(EMPTY_STRING)}</span>
+          </td>
         </tr>
       );
     });
@@ -161,7 +210,13 @@ const CallsTable = React.createClass({
           <tr>
             <td colSpan={TABLE_TITLES.length}>
               <div className="text-center">
-                <span>Loading...</span>
+                <span>
+                  <FormattedMessage
+                    id="loading"
+                    defaultMessage="Loading"
+                  />
+                  <span>...</span>
+                </span>
               </div>
             </td>
           </tr>

@@ -11,6 +11,12 @@ import CountryFlag from '../../../main/components/CountryFlag';
 
 const mobileOperators = require('../../../data/mobileOperators.json');
 
+import {
+  FormattedMessage,
+  injectIntl,
+  defineMessages,
+} from 'react-intl';
+
 /**
  * @typedef Country
  * @property {String} name  The country name
@@ -46,23 +52,16 @@ const lookupMobileOperator = function (mcc, mnc) {
   return operatorObject ? operatorObject.operator : '';
 };
 
-/**
- * Returns the verification method from the type.
- *
- * @method
- * @param {String} type  The type of the verification event
- * @returns {String} The verification method
- */
-const getVerificationMethod = function (type) {
-  switch (type) {
-    case 'MobileTerminated':
-      return 'call-in';
-    case 'MobileOriginated':
-      return 'call-out';
-    default:
-      return type;
-  }
-};
+const MESSAGES = defineMessages({
+  callIn: {
+    id: 'vsdk.details.callIn',
+    defaultMessage: 'call-in',
+  },
+  callOut: {
+    id: 'vsdk.details.callOut',
+    defaultMessage: 'call-out',
+  },
+});
 
 /**
  * Returns the name of the icon corresponding to the OS from the platform.
@@ -151,10 +150,43 @@ const VerificationTableRow = React.createClass({
        * @type {String}
        */
       reason_message: PropTypes.string,
+      intl: PropTypes.object.isRequired,
     }),
   },
 
+  getResult(status) {
+    if (status === 'success') {
+      return (
+        <FormattedMessage
+          id="success"
+          defaultMessage="Success"
+        />
+      );
+    }
+
+    return (
+      <FormattedMessage
+        id="failure"
+        defaultMessage="Failure"
+      />
+    );
+  },
+
+  getVerificationMethod(type) {
+    const { intl: { formatMessage } } = this.props;
+
+    switch (type) {
+      case 'MobileTerminated':
+        return formatMessage(MESSAGES.callIn);
+      case 'MobileOriginated':
+        return formatMessage(MESSAGES.callOut);
+      default:
+        return type;
+    }
+  },
+
   render() {
+    const { intl: { formatMessage } } = this.props;
     const verification = this.props.verification;
 
     const time = moment(verification.timestamp);
@@ -174,7 +206,7 @@ const VerificationTableRow = React.createClass({
     const ip = verification.source_ip;
     const ipCountry = getCountryName(verification.source_country);
 
-    const method = getVerificationMethod(verification.type);
+    const method = this.getVerificationMethod(verification.type);
 
     const deviceModel = verification.hardware_identifier || '';
     const remarks = verification.reason_message;
@@ -224,7 +256,7 @@ const VerificationTableRow = React.createClass({
         };
       }
 
-      details.isValid = hlr.is_valid === 'Yes' ? true : false;
+      details.isValid = hlr.is_valid === 'Yes';
     }
 
     if (verification.cell_info) {
@@ -284,7 +316,7 @@ const VerificationTableRow = React.createClass({
         <td><span className={`icon-${os}`} /></td>
         <td>{deviceModel || '-'}</td>
         <td>{operator || '-'}</td>
-        <td><span className={statusFlagClasses}>{_.capitalize(status)}</span></td>
+        <td><span className={statusFlagClasses}>{this.getResult(status)}</span></td>
         <td className="text-center">
           <If condition={!success}>
             <Tooltip placement="left" trigger={['hover']} overlay={<span>{remarks}</span>}>
@@ -304,4 +336,4 @@ const VerificationTableRow = React.createClass({
   },
 });
 
-export default VerificationTableRow;
+export default injectIntl(VerificationTableRow);
