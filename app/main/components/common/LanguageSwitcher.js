@@ -15,13 +15,15 @@ class LanguageSwitcher extends Component {
 
   render() {
     return (
-      <div>
-        <select className="language-switcher" defaultValue={this.props.currentLanguage} onChange={this.handleClick}>
-          {locales.map(lang => <option key={lang} value={lang}>
-            {localeUtil.getLangNativeName(lang)}
-          </option>)}
-        </select>
-      </div>
+      <select
+        className="language-switcher"
+        defaultValue={this.props.currentLanguage}
+        onChange={this.handleClick}
+      >
+        {locales.map(lang => <option key={lang} value={lang}>
+          {localeUtil.getLangNativeName(lang)}
+        </option>)}
+      </select>
     );
   }
 }

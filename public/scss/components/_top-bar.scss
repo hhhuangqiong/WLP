@@ -22,40 +22,38 @@
         ul {
             font-size: rem-calc(14);
             li {
-                > a {
-                    text-transform: capitalize;
-                    min-height: rem-calc(60);
-                    padding-left: rem-calc(0 30) !important;
-                    padding-right: rem-calc(0 30) !important;
-                    > [class^="icon-"] {
-                      font-size: rem-calc(22);
-                      vertical-align: middle;
-                    }
-                }
-                > div {
-                  background-color: $topbar-link-bg;
-                }
-                &:not(.no-border) {
-                  &:before {
-                    width: rem-calc(1);
-                    height: rem-calc(12);
-                    background: rgba(255, 255, 255, 0.5);
-                    content: "";
-                    position: absolute;
-                    top: rem-calc(24);
+              background-color: $topbar-link-bg;
+              > a {
+                  text-transform: capitalize;
+                  min-height: rem-calc(60);
+                  padding-left: rem-calc(0 30) !important;
+                  padding-right: rem-calc(0 30) !important;
+                  > [class^="icon-"] {
+                    font-size: rem-calc(22);
+                    vertical-align: middle;
                   }
+              }
+              &:not(.no-border) {
+                &:before {
+                  width: rem-calc(1);
+                  height: rem-calc(12);
+                  background: rgba(255, 255, 255, 0.5);
+                  content: "";
+                  position: absolute;
+                  top: rem-calc(24);
                 }
-                &:last-child {
-                    > a {
-                        padding-right: rem-calc(20) !important;
-                        display: flex;
-                        align-items: center;
-                        i {
-                            line-height: 1rem;
-                            position: relative;
-                        }
-                    }
-                }
+              }
+              &:last-child {
+                  > a {
+                      padding-right: rem-calc(20) !important;
+                      display: flex;
+                      align-items: center;
+                      i {
+                          line-height: 1rem;
+                          position: relative;
+                      }
+                  }
+              }
             }
             &.dropdown {
                 width: auto;
