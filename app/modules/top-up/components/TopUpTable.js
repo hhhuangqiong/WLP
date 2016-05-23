@@ -201,12 +201,15 @@ ${(!currency.code ? '' : currency.code)}`;
       return null;
     }
 
+    const { totalRec, pageRec } = this.props;
+    const totalPage = Math.ceil(totalRec / pageRec);
+
     return (
       <tfoot>
         <Pagination
           colSpan={TABLE_TITLES.length + 1}
-          hasMoreData={(this.props.totalPages - 1) > this.props.page}
-          onLoadMore={this.props.onDataLoad}
+          hasMoreData={totalPage > this.props.page}
+          onLoadMore={this.props.onPageLoad}
           isLoading={this.props.isLoadingMore}
         />
       </tfoot>
