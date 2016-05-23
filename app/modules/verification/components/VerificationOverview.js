@@ -27,7 +27,7 @@ import resetVerificationData from '../actions/resetVerificationData';
 import VerificationOverviewStore from '../stores/VerificationOverviewStore';
 import ApplicationStore from '../../../main/stores/ApplicationStore';
 import { normalizeDurationInMS, timeFromNow } from '../../../utils/StringFormatter';
-import MAP_DATA from '../constants/mapData.js';
+import MAP_DATA from '../../../main/statistics/constants/mapData.js';
 import changeTimeRange from '../actions/changeTimeRange';
 import i18nMessages from '../../../main/constants/i18nMessages';
 

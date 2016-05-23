@@ -7,7 +7,7 @@ import moment from 'moment';
 import classNames from 'classnames';
 import { isNull, merge, max, clone, reduce, isEmpty, partial } from 'lodash';
 import getMapConfig from '../utils/getMapConfig';
-import MAP_DATA from '../constants/mapData';
+import MAP_DATA from '../../../main/statistics/constants/mapData';
 
 import { FluxibleMixin } from 'fluxible-addons-react';
 
