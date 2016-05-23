@@ -26,7 +26,7 @@ const SignIn = props => (
               type="text"
               name="username"
               placeholder="email"
-              value={props.username}
+              defaultValue={props.username}
               onChange={props.changeUsername}
               onBlur={props.changeUsername}
               autoComplete="off"
@@ -47,7 +47,7 @@ const SignIn = props => (
               type="password"
               name="password"
               placeholder="password"
-              value={props.password}
+              defaultValue={props.password}
               onChange={props.changePassword}
               onBlur={props.changePassword}
             />
