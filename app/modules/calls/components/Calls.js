@@ -288,7 +288,7 @@ const Calls = React.createClass({
                   ref="startDatePicker"
                   key="start-date"
                   dateFormat="MM/DD/YYYY"
-                  selected={moment(this.state.startDate, 'L')}
+                  selectedDate={moment(this.state.startDate, 'L')}
                   maxDate={moment(this.state.endDate, 'L')}
                   onChange={this.handleStartDateChange}
                 />
@@ -305,7 +305,7 @@ const Calls = React.createClass({
                   ref="endDatePicker"
                   key="end-date"
                   dateFormat="MM/DD/YYYY"
-                  selected={moment(this.state.endDate, 'L')}
+                  selectedDate={moment(this.state.endDate, 'L')}
                   minDate={moment(this.state.startDate, 'L')}
                   maxDate={moment()}
                   onChange={this.handleEndDateChange}
