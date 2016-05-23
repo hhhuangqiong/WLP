@@ -34,7 +34,7 @@ const Html = props => (
       <script src="/vendor/foundation/js/vendor/modernizr.js"></script>
     </head>
     <body>
-    <div id="app" dangerouslySetInnerHTML={{ __html: props.markup }}></div>
+    <div id="app" className="full-height" dangerouslySetInnerHTML={{ __html: props.markup }}></div>
     <Version />
     <script dangerouslySetInnerHTML={{ __html: props.state }}></script>
     <script dangerouslySetInnerHTML={{ __html: props.config }}></script>

@@ -33,18 +33,19 @@ function getCarrierId(req) {
 export default aclManager.middleware(getUserId, getCarrierId, null, null);
 
 export function errorHandler(err, req, res, next) {
-
-  // error
   if (err) {
-    debug(`Error thrown: `, err.stack);
-  }
+    debug(`Acl error detected: ${err.stack}`);
 
-  const { user } = req;
-  if (!user) {
-    res.redirect('/sign-in');
+    const { user } = req;
+    if (!user) {
+      res.redirect('/sign-in');
+      return;
+    }
+
+    const { affiliatedCompany: { carrierId, role } } = user;
+    res.redirect(userPath(role, carrierId, '/'));
     return;
   }
 
-  const { affiliatedCompany: { carrierId, role } } = user;
-  res.redirect(userPath(role, carrierId, '/'));
+  next();
 }
