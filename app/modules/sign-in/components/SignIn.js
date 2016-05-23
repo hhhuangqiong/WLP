@@ -73,7 +73,9 @@ const SignIn = props => (
           <button
             className="button--primary right"
             onClick={props.doLogin}
-          >Sign In</button>
+          >
+            <FormattedMessage id="sign-in.button" defaultMessage="Sign In" />
+          </button>
         </div>
       </div>
     </div>
