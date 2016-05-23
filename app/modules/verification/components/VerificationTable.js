@@ -147,8 +147,8 @@ const VerificationTable = React.createClass({
   render() {
     const { selectedProfile } = this.state;
 
-    return (
-      <If condition={!selectedProfile}>
+    if (!selectedProfile) {
+      return (
         <table className="verification-report data-table small-24 large-22 large-offset-1">
           <TableHeader headers={TABLE_TITLES} />
           <tbody className="verification-table">
@@ -165,12 +165,14 @@ const VerificationTable = React.createClass({
             </If>
           </tfoot>
         </table>
-      <Else />
-        <VerificationProfile
-          profile={selectedProfile}
-          onClickBack={this.onClickBackButton}
-        />
-      </If>
+      );
+    }
+
+    return (
+      <VerificationProfile
+        profile={selectedProfile}
+        onClickBack={this.onClickBackButton}
+      />
     );
   },
 });

@@ -46,6 +46,19 @@ class VerificationExportForm extends Component {
     this._resetState(this.props);
   }
 
+  transformMethodToId(method) {
+    switch (method) {
+      case 'call-out':
+        return 'vsdk.details.callOut';
+      case 'SMS':
+        return 'vsdk.details.sms';
+      case 'IVR':
+        return 'vsdk.details.ivr';
+      default:
+        return 'vsdk.details.callIn';
+    }
+  }
+
   render() {
     const { intl: { formatMessage } } = this.props;
 
@@ -79,7 +92,6 @@ class VerificationExportForm extends Component {
             timeFormat="h:mm a"
           />
         </div>
-
         <div className="export-row">
           <label className="left bold">
             <FormattedMessage
@@ -87,7 +99,6 @@ class VerificationExportForm extends Component {
               defaultMessage="End time"
             />
           </label>
-
           <DateTimePicker
             className="export-datetime-picker export-to-time"
             name="endPicker"
@@ -100,7 +111,6 @@ class VerificationExportForm extends Component {
             timeFormat="h:mm a"
           />
         </div>
-
         <div className="export-row">
           <label className="left bold">
             <FormattedMessage
@@ -108,21 +118,19 @@ class VerificationExportForm extends Component {
               defaultMessage="Verification Method"
             />
           </label>
-
           <select
             className="large export-countries-dropdown radius"
-            value={this.props.verificationType}
+            value={this.transformMethodToId(this.props.verificationType)}
             onChange={this.props.handleVerificationMethodChange}
           >
             <option>{this.props.defaultOption}</option>
             {this.props.verificationTypes.map(type => (
-              <option key={type} value={type}>
-                {this.props.transformVerificationTypes(formatMessage(type))}
+              <option key={type.id} value={type.id}>
+                {formatMessage(type)}
               </option>
             ))}
           </select>
         </div>
-
         <div className="export-row">
           <label className="left bold">
             <FormattedMessage
@@ -130,7 +138,6 @@ class VerificationExportForm extends Component {
               defaultMessage="OS Type"
             />
           </label>
-
           <select
             className="large export-countries-dropdown radius"
             value={this.props.osType}
@@ -146,9 +153,7 @@ class VerificationExportForm extends Component {
             }
           </select>
         </div>
-
         <hr />
-
         <ExportSubmitControls
           closeModal={this.props.closeModal}
           handleExport={this._export}
@@ -164,7 +169,6 @@ VerificationExportForm.propTypes = {
   handleExport: PropTypes.func.isRequired,
   closeModal: PropTypes.func.isRequired,
   handleVerificationMethodChange: PropTypes.func.isRequired,
-  transformVerificationTypes: PropTypes.func.isRequired,
   defaultOption: PropTypes.string,
   verificationTypes: PropTypes.array,
   handleOsTypeChange: PropTypes.func.isRequired,

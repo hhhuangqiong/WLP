@@ -23,7 +23,7 @@ export default createStore({
     this.emitChange();
   },
 
-  handleVerificationsFetched: function(payload) {
+  handleVerificationsFetched(payload) {
     this.page = payload.page;
     this.count = payload.count;
     this.verifications = payload.items;
@@ -86,5 +86,5 @@ export default createStore({
     this.pageSize = state.pageSize;
     this.count = state.count;
     this.isLoadingMore = state.isLoadingMore;
-  }
+  },
 });

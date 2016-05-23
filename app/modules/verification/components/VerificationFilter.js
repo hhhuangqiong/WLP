@@ -1,4 +1,5 @@
 import React, { Component, PropTypes } from 'react';
+
 import {
   FormattedMessage,
   injectIntl,
@@ -8,6 +9,19 @@ import {
 import Dropdown from '../../../main/dropdown';
 
 class VerificationFilter extends Component {
+  transformMethodToId(method) {
+    switch (method) {
+      case 'call-out':
+        return 'vsdk.details.callOut';
+      case 'SMS':
+        return 'vsdk.details.sms';
+      case 'IVR':
+        return 'vsdk.details.ivr';
+      default:
+        return 'vsdk.details.callIn';
+    }
+  }
+
   render() {
     const {
       appId,
@@ -35,7 +49,6 @@ class VerificationFilter extends Component {
             <span className="icon-dropdown" />
           </nav>
         </Dropdown.Trigger>
-
         <Dropdown.Content className="verification-dropdown">
           <div>
             <label className="bold">
@@ -44,7 +57,6 @@ class VerificationFilter extends Component {
                 defaultMessage="Application ID"
               />
             </label>
-
             <select
               className="radius"
               name="appid"
@@ -58,7 +70,6 @@ class VerificationFilter extends Component {
               ))}
             </select>
           </div>
-
           <div>
             <label className="bold">
               <FormattedMessage
@@ -66,21 +77,21 @@ class VerificationFilter extends Component {
                 defaultMessage="Verfication Method"
               />
             </label>
-
             <select
               className="radius"
-              value={method}
+              value={this.transformMethodToId(method)}
               onChange={methodChange}
             >
               <option>{this.props.defaultOption}</option>
-                {methods.map(type => (
-                  <option key={type} value={type}>
-                    {this.props.transformVerificationTypes(formatMessage(type))}
+              {
+                methods.map(type => (
+                  <option key={type.id} value={type.id}>
+                    {formatMessage(type)}
                   </option>
-                ))}
+                ))
+              }
             </select>
           </div>
-
           <div>
             <label className="bold">
               <FormattedMessage
@@ -88,7 +99,6 @@ class VerificationFilter extends Component {
                 defaultMessage="OS Type"
               />
             </label>
-
             <select
               className="radius"
               value={os}
@@ -125,7 +135,6 @@ VerificationFilter.propTypes = {
   methods: PropTypes.array.isRequired,
   methodChange: PropTypes.func,
   defaultOption: PropTypes.string,
-  transformVerificationTypes: PropTypes.func,
   intl: intlShape.isRequired,
 };
 

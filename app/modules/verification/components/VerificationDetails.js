@@ -34,7 +34,6 @@ import i18nMessages from '../../../main/constants/i18nMessages';
 const ENTER_KEY = 13;
 const LABEL_OF_ALL = i18nMessages.all;
 
-
 const MESSAGES = defineMessages({
   callIn: {
     id: 'vsdk.details.callIn',
@@ -44,11 +43,21 @@ const MESSAGES = defineMessages({
     id: 'vsdk.details.callOut',
     defaultMessage: 'call-out',
   },
+  sms: {
+    id: 'vsdk.details.sms',
+    defaultMessage: 'SMS',
+  },
+  ivr: {
+    id: 'vsdk.details.ivr',
+    defaultMessage: 'IVR',
+  },
 });
 
 const VERIFICATION_TYPES = [
   MESSAGES.callIn,
   MESSAGES.callOut,
+  MESSAGES.sms,
+  MESSAGES.ivr,
 ];
 
 const OS_TYPES = [
@@ -258,14 +267,6 @@ const VerificationDetails = React.createClass({
       .handleFocus();
   },
 
-  transformVerificationTypes(type) {
-    switch (type) {
-      case 'MobileTerminated': return MESSAGES.callIn;
-      case 'MobileOriginated': return MESSAGES.callOut;
-      default: return type;
-    }
-  },
-
   handleSearchInputChange(evt) {
     this.setState({
       number: evt.target.value,
@@ -279,15 +280,38 @@ const VerificationDetails = React.createClass({
   },
 
   handleVerificationMethodChange(event) {
-    const { intl: { formatMessage } } = this.props;
-    const value = event.target.value;
-    this.handleQueryChange({ method: value === formatMessage(LABEL_OF_ALL) ? '' : event.target.value });
+    const methodId = event.target.value;
+
+    let method = '';
+
+    switch (methodId) {
+      case MESSAGES.callIn.id:
+        method = MESSAGES.callIn.defaultMessage;
+        break;
+      case MESSAGES.callOut.id:
+        method = MESSAGES.callOut.defaultMessage;
+        break;
+      case MESSAGES.sms.id:
+        method = MESSAGES.sms.defaultMessage;
+        break;
+      case MESSAGES.ivr.id:
+        method = MESSAGES.ivr.defaultMessage;
+        break;
+      default:
+        break;
+    }
+
+    this.setState({
+      method,
+    });
+
+    this.handleQueryChange({ method });
   },
 
   handleOsTypeChange(event) {
     const { intl: { formatMessage } } = this.props;
     const value = event.target.value;
-    this.handleQueryChange({ os: value === formatMessage(LABEL_OF_ALL) ? '' : event.target.value });
+    this.handleQueryChange({ os: value === formatMessage(LABEL_OF_ALL) ? '' : value });
   },
 
   fetchData() {
@@ -412,10 +436,8 @@ const VerificationDetails = React.createClass({
               method={this.state.method}
               methods={VERIFICATION_TYPES}
               methodChange={this.handleVerificationMethodChange}
-              transformVerificationTypes={this.transformVerificationTypes}
               defaultOption={formatMessage(LABEL_OF_ALL)}
             />
-
             <DateRangePicker
               withIcon
               startDate={this.state.startDate}
@@ -441,13 +463,11 @@ const VerificationDetails = React.createClass({
                 osTypes={OS_TYPES}
                 handleVerificationMethodChange={this.handleVerificationMethodChange}
                 handleOsTypeChange={this.handleOsTypeChange}
-                transformVerificationTypes={this.transformVerificationTypes}
                 defaultOption={formatMessage(LABEL_OF_ALL)}
               />
             </Export>
           </FilterBar.RightItems>
         </FilterBar.Wrapper>
-
         <VerificationTable
           verifications={this.state.verifications}
           total={this.state.count}
