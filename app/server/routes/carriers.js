@@ -1472,7 +1472,7 @@ export function getVsfMonthlyStats(req, res, next) {
   const { from, to } = req.query;
 
   vsfStatsRequest
-    .getMonthlyStats({ from, to })
+    .getMonthlyStats({ from, to, timescale: 'day' })
     .then(stats => res.json({ stats }))
     .catch(sendRequestError => {
       next(new dataError.TransactionError(sendRequestError.message, sendRequestError));

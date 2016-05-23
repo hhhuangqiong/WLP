@@ -47,6 +47,10 @@
     font-size: rem-calc(12);
     margin-top: rem-calc(10);
 
+    &.flat {
+      color: $gray;
+    }
+
     &.up {
       &.positive {
         color: $up-trend-font-color;

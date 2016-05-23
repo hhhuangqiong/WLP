@@ -1,7 +1,6 @@
 import moment from 'moment';
 
 export const HOUR_FORMAT_LABEL = 'hour';
-
 export const DAY_FORMAT_LABEL = 'day';
 export const MONTH_FORMAT_LABLE = 'month';
 export const YEAR_FORMAT_LABLE = 'year';
@@ -14,9 +13,17 @@ export const LAST_UPDATE_TIME_FORMAT = 'MMM DD, YYYY H:mm';
 const BUFFER_TIME_FOR_PROXY_HOURLY = 60;
 const BUFFER_TIME_FOR_PROXY_DAILY = 480;
 
-export function shiftToLastMonth(date, format) {
+export function shiftToLastMonthStart(date, format) {
   return moment(date, format)
     .subtract(1, MONTH_FORMAT_LABLE)
+    .startOf('month')
+    .format(format);
+}
+
+export function shiftToLastMonthEnd(date, format) {
+  return moment(date, format)
+    .subtract(1, MONTH_FORMAT_LABLE)
+    .endOf('month')
     .format(format);
 }
 
