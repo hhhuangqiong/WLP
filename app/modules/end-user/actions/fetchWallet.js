@@ -1,5 +1,5 @@
 import actionCreator from '../../../main/utils/apiActionCreator';
-import { ERROR_MESSAGE } from '../../../main/constants/actionTypes';
+import { ERROR_MESSAGE } from '../../../main/system-message/constants/actionTypes';
 
 export default actionCreator('FETCH_END_USER_WALLET', 'getEndUserWallet', {
   cb: (err, response, context) => {

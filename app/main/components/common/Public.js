@@ -1,5 +1,5 @@
 import React, { PropTypes } from 'react';
-import SystemMessage from './SystemMessage';
+import SystemMessage from '../../system-message/container';
 import LoadingSpinner from './LoadingSpinner';
 import LanguageSwitcher from './LanguageSwitcher';
 

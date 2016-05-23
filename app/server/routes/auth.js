@@ -12,7 +12,7 @@ function signIn(req, res, next) {
 
     if (!user) {
       const error = new NotFoundError('user');
-      res.apiError(401, error);
+      res.apiError(422, error);
       return;
     }
 

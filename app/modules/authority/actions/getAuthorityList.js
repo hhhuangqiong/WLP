@@ -4,7 +4,7 @@ import {
   GET_AUTHORITY_SUCCESS,
   GET_AUTHORITY_FAILURE,
 } from '../constants/actionTypes';
-import { ERROR_MESSAGE } from '../../../main/constants/actionTypes';
+import { ERROR_MESSAGE } from '../../../main/system-message/constants/actionTypes';
 const debug = require('debug')('app:modules/authority/actions/getAuthorityList');
 
 export default function (context, payload, cb) {

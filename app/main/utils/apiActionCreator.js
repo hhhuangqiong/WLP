@@ -8,7 +8,7 @@
  */
 import _ from 'lodash';
 
-import { ERROR_MESSAGE } from '../../main/constants/actionTypes';
+import { ERROR_MESSAGE } from '../../main/system-message/constants/actionTypes';
 
 const EVENT_KEYS = ['START', 'END', 'SUCCESS', 'FAILURE', 'ABORT'];
 

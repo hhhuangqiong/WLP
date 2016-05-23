@@ -1,5 +1,5 @@
 import { browserHistory } from 'react-router';
-import { ERROR_MESSAGE } from '../../../main/constants/actionTypes';
+import { ERROR_MESSAGE } from '../../../main/system-message/constants/actionTypes';
 import { userPath } from '../../../server/paths';
 
 export default function (context, params, done) {

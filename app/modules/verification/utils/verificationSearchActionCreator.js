@@ -2,7 +2,7 @@ import _ from 'lodash';
 import moment from 'moment';
 
 import actionCreator from '../../../main/utils/apiActionCreator';
-import { ERROR_MESSAGE } from '../../../main/constants/actionTypes';
+import { ERROR_MESSAGE } from '../../../main/system-message/constants/actionTypes';
 import config from '../../../config';
 
 const { inputDateFormat: DATE_FORMAT } = require('./../../../main/config');
