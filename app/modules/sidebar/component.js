@@ -4,12 +4,12 @@ import { Link } from 'react-router';
 import { injectIntl } from 'react-intl';
 import Permit from '../../main/components/common/Permit';
 import navSections from '../../main/constants/navSection';
-import { userPath } from '../../server/paths';
+import { userPath } from '../../utils/paths';
 
 const Sidebar = props => {
   const {
     carrierId: identity,
-    companyName,
+    currentCompany,
     handleOffCanvas,
     isAuthorityReady,
     isOffCanvas,
@@ -32,7 +32,7 @@ const Sidebar = props => {
           <a className="item mainmenu-bar__item" href="#">
             <label>
               <i><img src={logoSrc} /></i>
-              <span>{companyName}</span>
+              <span>{ currentCompany && currentCompany.name }</span>
             </label>
           </a>
         </li>
@@ -64,7 +64,7 @@ const Sidebar = props => {
 
 Sidebar.propTypes = {
   carrierId: PropTypes.string.isRequired,
-  companyName: PropTypes.string.isRequired,
+  currentCompany: PropTypes.object.isRequired,
   handleOffCanvas: PropTypes.func.isRequired,
   isAuthorityReady: PropTypes.bool.isRequired,
   isOffCanvas: PropTypes.bool.isRequired,

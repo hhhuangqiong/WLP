@@ -44,13 +44,12 @@ import {
   ERROR_401 as path401,
   ERROR_404 as path404,
   ERROR_500 as path500,
-} from './server/paths';
+} from './utils/paths';
 
 import AuthStore from './main/stores/AuthStore';
 import AuthorityStore from './modules/authority/store';
-// import InitialDataStore from './main/stores/InitialDataStore';
 
-import { userPath } from './server/paths';
+import { userPath } from './utils/paths';
 
 const debug = require('debug')('app:routes');
 

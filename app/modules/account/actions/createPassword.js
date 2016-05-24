@@ -1,6 +1,6 @@
 import { browserHistory } from 'react-router';
 import { ERROR_MESSAGE } from '../../../main/system-message/constants/actionTypes';
-import { userPath } from '../../../server/paths';
+import { userPath } from '../../../utils/paths';
 
 export default function (context, params, done) {
   context.dispatch('CREATE_PASSWORD_START');

@@ -1,6 +1,6 @@
 import { Router } from 'express';
 
-import { SIGN_IN, SIGN_OUT } from '../paths';
+import { SIGN_IN, SIGN_OUT } from '../../utils/paths';
 
 import * as auth from '../routes/auth';
 import * as carriers from '../routes/carriers';

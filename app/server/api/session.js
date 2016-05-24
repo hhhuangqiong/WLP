@@ -1,5 +1,5 @@
 import superagent from 'superagent';
-import { SESSION } from '../paths';
+import { SESSION } from '../../utils/paths';
 
 const debug = require('debug')('app:server/api/session');
 

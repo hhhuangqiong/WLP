@@ -1,5 +1,5 @@
-import { isURL } from 'validator';
-import { get, isUndefined } from 'lodash';
+import { get } from 'lodash';
+import { resolveCarrierId } from '../../../utils/fluxible';
 import {
   GET_AUTHORITY_START,
   GET_AUTHORITY_SUCCESS,
@@ -10,19 +10,7 @@ const debug = require('debug')('app:modules/authority/actions/getAuthorityList')
 
 export default function (context, payload, cb) {
   const { apiClient } = context;
-  const { params } = payload;
-
-  let carrierId;
-
-  if (!isUndefined(params)) {
-    carrierId = params.identity;
-  } else {
-    const url = get(payload, 'req.url');
-    carrierId = url.split('/')[2];
-    carrierId = (carrierId === 'm800' ||
-      isURL(carrierId, { allow_underscores: true })
-    ) && carrierId || null;
-  }
+  const carrierId = resolveCarrierId(payload);
 
   // if carrierId does not exists
   if (!carrierId) {
@@ -45,6 +33,10 @@ export default function (context, payload, cb) {
 
         switch (status) {
           case '401':
+            errorId = 'authority.error.unauthorized';
+            break;
+
+          case '404':
             errorId = 'authority.error.notFound';
             break;
 

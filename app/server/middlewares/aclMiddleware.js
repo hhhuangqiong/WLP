@@ -1,8 +1,7 @@
 import { isNull } from 'lodash';
 import { NotPermittedError, NotFoundError } from 'common-errors';
 import nconf from 'nconf';
-import { isURL } from 'validator';
-import { userPath } from '../paths';
+import { getCarrierIdFromUrl, userPath } from '../../utils/paths';
 import { fetchDep } from '../utils/bottle';
 
 const debug = require('debug')('app:server/middleware/aclMiddleware');
@@ -21,16 +20,8 @@ function getUserId(req) {
 
 /* Extract and parse the carrierId from current url (when we cannot use req.params) */
 function getCarrierId(req) {
-  const carrierId = req
-    .url
-    .split('/')[2];
-
-  // m800 is a corner case
-  // return null to escape from permission checking
-  return (
-    carrierId === 'm800' ||
-    isURL(carrierId, { allow_underscores: true })
-  ) && carrierId || null;
+  const { url } = req;
+  return getCarrierIdFromUrl(url);
 }
 
 function getRole(req) {

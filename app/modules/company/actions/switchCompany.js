@@ -1,4 +1,4 @@
-import { userPath } from '../../../server/paths';
+import { userPath } from '../../../utils/paths';
 
 export default function (context, params) {
   context.api.getAuthorityList(params.identity, (err, { carrierId, capability }) => {

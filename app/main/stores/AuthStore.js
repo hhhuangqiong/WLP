@@ -1,5 +1,5 @@
 import { get, isEmpty } from 'lodash';
-import { userPath } from '../../server/paths';
+import { userPath } from '../../utils/paths';
 const createStore = require('fluxible/addons/createStore');
 
 const AuthStore = createStore({

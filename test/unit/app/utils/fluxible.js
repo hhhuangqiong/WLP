@@ -2,7 +2,7 @@ import React from 'react';
 import Fluxible from 'fluxible';
 import FluxContext from 'fluxible/lib/FluxibleContext';
 import { expect } from 'chai';
-import { createContext, createMarkupElement } from 'app/utils/fluxible';
+import { createContext, createMarkupElement, resolveCarrierId } from 'app/utils/fluxible';
 
 describe('fluxible Utils', () => {
   describe('#createContext()', () => {
@@ -57,29 +57,64 @@ describe('fluxible Utils', () => {
     const children = <div />;
     const invalidChildren = {};
 
-    it('should throw error if the first argument is missing', (done) => {
+    it('should throw error if the first argument is missing', () => {
       const fn = () => createMarkupElement();
       expect(fn).to.throw('missing FluxContext');
-      done();
     });
 
-    it('should throw error if the first argument is not a FluxContext', (done) => {
+    it('should throw error if the first argument is not a FluxContext', () => {
       const fn = () => createMarkupElement(invalidContext, children);
       expect(fn).to.throw('invalid context instance');
-      done();
     });
 
-    it('should throw error if the second argument is not a ReactElement', (done) => {
+    it('should throw error if the second argument is not a ReactElement', () => {
       const fn = () => createMarkupElement(context, invalidChildren);
       expect(fn).to.throw('missing ReactElement');
-      done();
     });
 
-    it('should return a ReactElement', (done) => {
+    it('should return a ReactElement', () => {
       const element = createMarkupElement(context, children);
       // eslint-disable-next-line no-unused-expressions
       expect(React.isValidElement(element)).to.be.true;
-      done();
+    });
+  });
+
+  describe('#resolveCarrierId()', () => {
+    const identity = 'maaii.com';
+    const clientSidePayload = {
+      params: {
+        role: 'w',
+        identity,
+      },
+    };
+    const serverSidePayload = {
+      req: {
+        url: `/w/${identity}`,
+      },
+    };
+    const unrecognisedPayload = {};
+
+    it('should throw error if the first argument is missing', () => {
+      const fn = () => resolveCarrierId();
+      expect(fn).to.throw('missing `payload` argument');
+    });
+
+    it('should not throw error and return undefined with unrecognised payload', () => {
+      let carrierId;
+      const fn = () => { carrierId = resolveCarrierId(unrecognisedPayload); };
+      expect(fn).not.to.throw(Error);
+      // eslint-disable-next-line no-unused-expressions
+      expect(carrierId).to.be.undefined;
+    });
+
+    it('should return `params.identity` with client side payload', () => {
+      const carrierId = resolveCarrierId(clientSidePayload);
+      expect(carrierId).to.equal(clientSidePayload.params.identity);
+    });
+
+    it(`should return ${identity} with client side payload`, () => {
+      const carrierId = resolveCarrierId(serverSidePayload);
+      expect(carrierId).to.equal(identity);
     });
   });
 });

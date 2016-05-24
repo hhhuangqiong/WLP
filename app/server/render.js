@@ -18,6 +18,7 @@ import loadSession from '../main/actions/loadSession';
 import getAccessibleCompanies from '../main/actions/getAccessibleCompanies';
 import setUserLanguage from '../main/actions/setUserLanguage';
 import getAuthorityList from '../modules/authority/actions/getAuthorityList';
+import fetchCurrentCompanyInfo from '../main/actions/fetchCurrentCompanyInfo';
 
 /**
  * @method createHtmlElement
@@ -71,6 +72,7 @@ export default function renderer(app, config) {
       getAccessibleCompanies,
       setUserLanguage,
       getAuthorityList,
+      fetchCurrentCompanyInfo,
     ];
 
     // it turns out that the server defines the

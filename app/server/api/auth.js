@@ -1,7 +1,7 @@
 import _ from 'lodash';
 import superagent from 'superagent';
 
-import { SIGN_IN, SIGN_OUT } from '../paths';
+import { SIGN_IN, SIGN_OUT } from '../../utils/paths';
 import * as saUtil from '../../utils/superagent';
 
 const debug = require('debug')('app:server/api/auth');

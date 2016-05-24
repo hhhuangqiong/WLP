@@ -6,7 +6,7 @@ import {
   injectIntl,
 } from 'react-intl';
 
-import { HOME } from '../../server/paths';
+import { HOME } from '../../utils/paths';
 import Menu from './common/NavigationMenu';
 
 const ERROR_NAMES = defineMessages({

@@ -1,11 +1,12 @@
 import Q from 'q';
-import { isArray, isEmpty, isFunction, reduce } from 'lodash';
+import { get, isArray, isFunction, isUndefined } from 'lodash';
 import { ArgumentNullError, TypeError } from 'common-errors';
 import React, { PropTypes } from 'react';
 import Fluxible from 'fluxible';
 import FluxContext from 'fluxible/lib/FluxibleContext';
 import { FluxibleComponent, provideContext } from 'fluxible-addons-react';
 import AuthorityChecker from '../modules/authority/plugin';
+import { getCarrierIdFromUrl } from './paths';
 
 const debug = require('debug')('app:utils/fluxible');
 
@@ -157,4 +158,35 @@ export function getInitialData(context, actions, params, cb) {
       debug('error occurred in getInitialData()', err);
       cb(err);
     });
+}
+
+/**
+ * @method resolveCarrierId
+ * to resolve the carrierId in an action payload. This is mainly for
+ * actions to be executed in getInitialData method.
+ *
+ * @param payload {Object}
+ * @param payload.params {Object} React-router params object, only available
+ * in client-side-rendering
+ * @param payload.req {Object} Express req object, only available in server-side-rendering
+ */
+export function resolveCarrierId(payload) {
+  if (!payload) {
+    throw new Error('missing `payload` argument');
+  }
+
+  const { params } = payload;
+
+  if (!isUndefined(params)) {
+    return params.identity;
+  }
+
+  let carrierId;
+  const url = get(payload, 'req.url');
+
+  if (url) {
+    carrierId = getCarrierIdFromUrl(url);
+  }
+
+  return carrierId;
 }

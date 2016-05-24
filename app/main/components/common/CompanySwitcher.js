@@ -3,7 +3,7 @@ import React from 'react';
 import { FluxibleMixin } from 'fluxible-addons-react';
 import { browserHistory } from 'react-router';
 
-import { userPath } from '../../../server/paths';
+import { userPath } from '../../../utils/paths';
 import ApplicationStore from '../../stores/ApplicationStore';
 
 const DEFAULT_LOGO_SRC = '/images/default-logo.png';
