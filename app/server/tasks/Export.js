@@ -182,9 +182,6 @@ export default class ExportTask {
         row.end_time = beautifyTime(row.end_time);
         row.answer_time = beautifyTime(row.answer_time);
 
-        row.caller_country = getCountryName(row.caller_country);
-        row.callee_country = getCountryName(row.caller_country);
-
         row.caller_bundle_id = row.caller_bundle_id || null;
         row.sip_trunk = row.sip_trunk || null;
         /* jscs: enable */
