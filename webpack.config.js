@@ -9,7 +9,8 @@ var enableHotloader = process.env.ENABLE_WEBPACK_HOTLOADER === "true" || false;
 var config =  {
   custom: {},
   entry: [
-    './app/client/index.js'
+    'babel-polyfill',
+    './app/client/index.js',
   ],
   devtool: 'source-map',
   module: {
