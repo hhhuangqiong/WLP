@@ -155,12 +155,12 @@ export default function SummaryStats({
                 showLegend={false}
                 formatter={function tooltipFormatter() {
                   return `
-                          <div style="text-align: center">
-                            <div>${moment(this.x).local().format(TOOLTIP_TIME_FORMAT)}</div>
-                            <div>${this.y.toLocaleString()}</div>
-                            <div>${formatMessage(MESSAGES.smsUnitSent)}</div>
-                          </div>
-                        `;
+                  <div style="text-align: center">
+                  <div>${moment(this.x).local().format(TOOLTIP_TIME_FORMAT)}</div>
+                  <div>${this.y.toLocaleString()}</div>
+                  <div>${formatMessage(MESSAGES.smsUnitSent)}</div>
+                  </div>
+                  `;
                 }}
               />
             </div>
@@ -193,6 +193,7 @@ export default function SummaryStats({
                   id="geographic-chart"
                   data={geographicChartData}
                   isLoading={isLoading}
+                  unit={formatMessage(MESSAGES.smsUnitSent)}
                 />
               </div>
             </div>

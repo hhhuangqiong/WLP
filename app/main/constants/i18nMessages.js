@@ -49,4 +49,8 @@ export default defineMessages({
     id: 'mobile',
     defaultMessage: 'Mobile',
   },
+  numberOfUnit: {
+    id: 'numberOfUnit',
+    defaultMessage: 'Number of {unit}',
+  },
 });

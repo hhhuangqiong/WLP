@@ -1,19 +1,31 @@
 import { clone, get, isEmpty, max } from 'lodash';
 import React, { PropTypes, Component } from 'react';
-import { FormattedMessage } from 'react-intl';
 import MAP_DATA from '../constants/mapData';
 import getMapConfig from '../utils/getMapConfig';
 
+import {
+  FormattedMessage,
+  injectIntl,
+  intlShape,
+} from 'react-intl';
+
+import i18nMessages from '../../../main/constants/i18nMessages';
+
 class HighMap extends Component {
   componentDidUpdate() {
-    const { id, data, mapData } = this.props;
+    const { id, data, mapData, unit, intl: { formatMessage } } = this.props;
 
     if (!isEmpty(data)) {
       const maxValue = this.getMaxValueFromData(data);
       // eslint-disable-next-line no-undef
       Highcharts.maps['custom/world'] = mapData;
       // eslint-disable-next-line no-undef,no-new
-      new Highcharts.Map(getMapConfig(id, clone(data), maxValue));
+      new Highcharts.Map(getMapConfig(
+        id,
+        clone(data),
+        maxValue,
+        formatMessage(i18nMessages.numberOfUnit, { unit })
+      ));
     }
   }
 
@@ -50,10 +62,12 @@ HighMap.propTypes = {
   })),
   isLoading: PropTypes.bool,
   mapData: PropTypes.object.isRequired,
+  unit: PropTypes.string.isRequired,
+  intl: intlShape.isRequired,
 };
 
 HighMap.defaultProps = {
   mapData: MAP_DATA,
 };
 
-export default HighMap;
+export default injectIntl(HighMap);
