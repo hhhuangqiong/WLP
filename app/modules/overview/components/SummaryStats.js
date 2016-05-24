@@ -39,8 +39,10 @@ function OverviewSummaryStats({
   const {
     registeredAndroid,
     registeredIos,
+    /* Disabled for WLP-824
     verifiedAndroid,
     verifiedIos,
+    */
   } = stats;
   const lastUpdate = (
     <LastUpdateTime
@@ -66,21 +68,29 @@ function OverviewSummaryStats({
             data={registeredIos}
             isLoading={isLoading}
           />
+          {
+            /* Disabled for WLP-824
+            <DataGrid.Cell
+            title={formatMessage(MESSAGES.accumulatedVerifiediOSUser)}
+            data={verifiedIos}
+            isLoading={isLoading}
+            />
+            */
+          }
           <DataGrid.Cell
-          title={formatMessage(MESSAGES.accumulatedVerifiediOSUser)}
-          data={verifiedIos}
-          isLoading={isLoading}
-          />
-          <DataGrid.Cell
-          title={formatMessage(MESSAGES.accumulatedRegisteredAndroidUser)}
-          data={registeredAndroid}
-          isLoading={isLoading}
-          />
-          <DataGrid.Cell
-            title={formatMessage(MESSAGES.accumulatedVerifiedAndroidUser)}
-            data={verifiedAndroid}
+            title={formatMessage(MESSAGES.accumulatedRegisteredAndroidUser)}
+            data={registeredAndroid}
             isLoading={isLoading}
           />
+          {
+            /* Disabled for WLP-824
+            <DataGrid.Cell
+              title={formatMessage(MESSAGES.accumulatedVerifiedAndroidUser)}
+              data={verifiedAndroid}
+              isLoading={isLoading}
+            />
+            */
+          }
         </DataGrid.Wrapper>
       </Panel.Body>
     </Panel.Wrapper>
@@ -89,8 +99,10 @@ function OverviewSummaryStats({
 
 OverviewSummaryStats.defaultProps = {
   stats: {
+    /* Disabled for WLP-824
     verifiedIos: 0,
     verifiedAndroid: 0,
+    */
     registeredIos: 0,
     registeredAndroid: 0,
   }
@@ -102,8 +114,10 @@ OverviewSummaryStats.propTypes = {
   stats: PropTypes.shape({
     registeredAndroid: PropTypes.number.isRequired,
     registeredIos: PropTypes.number.isRequired,
+    /* Disabled for WLP-824
     verifiedAndroid: PropTypes.number.isRequired,
     verifiedIos: PropTypes.number.isRequired,
+    */
   }),
 };
 
