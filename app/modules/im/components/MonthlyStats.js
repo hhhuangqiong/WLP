@@ -14,7 +14,7 @@ const MESSAGES = defineMessages({
   },
   totalImSent: {
     id: 'im.overview.totalImSent',
-    defaultMessage: 'Number of total IM Send Volume',
+    defaultMessage: 'Number of total IM Sent Volume',
   },
   imUnit: {
     id: 'im.unit',
