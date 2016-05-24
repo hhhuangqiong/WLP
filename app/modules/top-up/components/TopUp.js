@@ -1,4 +1,4 @@
-import { omit, merge, last, clone } from 'lodash';
+import { omit, merge, clone } from 'lodash';
 import moment from 'moment';
 import { concurrent } from 'contra';
 
@@ -16,7 +16,6 @@ import TopUpStore from '../stores/TopUpStore';
 import * as FilterBar from './../../../main/components/FilterBar';
 import DateRangePicker from './../../../main/components/DateRangePicker';
 import SearchBox from './../../../main/components/Searchbox';
-import Tooltip from './../../../main/components/Tooltip';
 
 const { inputDateFormat: DATE_FORMAT } = require('./../../../main/config');
 const { pages: { topUp: { pageRec: PAGE_REC } } } = require('./../../../main/config');
@@ -28,8 +27,6 @@ const INITIAL_PAGE_NUMBER = 1;
 
 // WLP-323
 const MAX_QUERY_DATE_RANGE = 7;
-
-const ONLY_NUMBER_MESSAGE = 'Only numbers are allowed.';
 
 function getInitialQueryFromURL(params, query = {}) {
   return {
@@ -85,10 +82,6 @@ const TopUp = React.createClass({
     );
   },
 
-  onChange() {
-    this.setState(this.getStateFromStores());
-  },
-
   componentDidMount() {
     this.fetchData();
   },
@@ -105,6 +98,10 @@ const TopUp = React.createClass({
 
   componentWillUnmount() {
     this.context.executeAction(clearTopUp);
+  },
+
+  onChange() {
+    this.setState(this.getStateFromStores());
   },
 
   getStateFromStores() {
@@ -181,20 +178,12 @@ const TopUp = React.createClass({
             />
           </FilterBar.LeftItems>
           <FilterBar.RightItems>
-            <Tooltip
-              showTooltip={this.state.tooltipShow}
-              mouseActive={false}
-              cssName="top-up"
-              tip={ONLY_NUMBER_MESSAGE}
-              placement="left"
-            >
-              <SearchBox
-                value={this.state.number}
-                placeHolder="Mobile"
-                onInputChangeHandler={this.handleSearchInputChange}
-                onKeyPressHandler={this.handleSearchInputSubmit}
-              />
-            </Tooltip>
+            <SearchBox
+              value={this.state.number}
+              placeHolder="Mobile"
+              onInputChangeHandler={this.handleSearchInputChange}
+              onKeyPressHandler={this.handleSearchInputSubmit}
+            />
           </FilterBar.RightItems>
         </FilterBar.Wrapper>
         <div className="large-24 columns">
@@ -272,33 +261,25 @@ const TopUp = React.createClass({
 
   handleSearchInputChange(e) {
     if (!this.validateSearchInput(e.target.value)) {
-      this.showTooltip();
       return;
     }
 
-    this.hideTooltip();
     this.setState({ number: e.target.value });
   },
 
   handleSearchInputSubmit(e) {
-    if ( e.which === 13 && this.validateSearchInput(e.target.value) ) {
+    if (e.which === 13 && this.validateSearchInput(e.target.value)) {
       this.handleQueryChange({ number: e.target.value, page: INITIAL_PAGE_NUMBER });
     }
   },
 
   validateSearchInput(number) {
-    if (!number) return true;
+    if (!number) {
+      return true;
+    }
 
-    const regex = /^\d+$/;
+    const regex = /^\+?\d*$/;
     return regex.test(number);
-  },
-
-  showTooltip() {
-    this.setState({tooltipShow: true});
-  },
-
-  hideTooltip() {
-    this.setState({tooltipShow: false});
   },
 });
 
