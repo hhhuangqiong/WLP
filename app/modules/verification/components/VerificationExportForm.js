@@ -124,11 +124,13 @@ class VerificationExportForm extends Component {
             onChange={this.props.handleVerificationMethodChange}
           >
             <option>{this.props.defaultOption}</option>
-            {this.props.verificationTypes.map(type => (
-              <option key={type.id} value={type.id}>
-                {formatMessage(type)}
-              </option>
-            ))}
+            {
+              this.props.verificationTypes.map(type => (
+                <option key={type.id} value={type.id}>
+                  { formatMessage(type) }
+                </option>
+              ))
+            }
           </select>
         </div>
         <div className="export-row">

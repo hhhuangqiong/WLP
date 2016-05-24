@@ -313,7 +313,7 @@ const VerificationTableRow = React.createClass({
           </div>
         </td>
         <td>{method}</td>
-        <td><span className={`icon-${os}`} /></td>
+        <td><span className={classNames(`icon-${os}`, `icon-${os}-hack`)} /></td>
         <td>{deviceModel || '-'}</td>
         <td>{operator || '-'}</td>
         <td><span className={statusFlagClasses}>{this.getResult(status)}</span></td>

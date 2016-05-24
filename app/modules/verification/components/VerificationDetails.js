@@ -13,7 +13,6 @@ import {
 import * as FilterBar from './../../../main/components/FilterBar';
 import DateRangePicker from './../../../main/components/DateRangePicker';
 
-import fetchAppIds from '../../../main/actions/fetchAppIds';
 import fetchVerifications from '../actions/fetchVerifications';
 import fetchMoreVerifications from '../actions/fetchMoreVerifications';
 import clearVerifications from '../actions/resetVerificationData';
@@ -31,6 +30,8 @@ import VerificationFilter from './VerificationFilter';
 import SearchButton from '../../../main/search-button/SearchButton';
 import i18nMessages from '../../../main/constants/i18nMessages';
 
+const debug = require('debug')('app:modules/verification/components/VerificationDetails');
+
 const ENTER_KEY = 13;
 const LABEL_OF_ALL = i18nMessages.all;
 
@@ -45,11 +46,11 @@ const MESSAGES = defineMessages({
   },
   sms: {
     id: 'vsdk.details.sms',
-    defaultMessage: 'SMS',
+    defaultMessage: 'sms',
   },
   ivr: {
     id: 'vsdk.details.ivr',
-    defaultMessage: 'IVR',
+    defaultMessage: 'ivr',
   },
 });
 
@@ -85,31 +86,6 @@ const VerificationDetails = React.createClass({
     storeListeners: {
       onChange: VerificationStore,
       onApplicationStoreChange: ApplicationStore,
-    },
-
-    fetchData(context, params, query, done) {
-      // when no appId was provided, don't have to pre-render
-      if (!query.appId) {
-        done();
-        return;
-      }
-
-      context.executeAction(fetchVerifications, {
-        carrierId: params.identity,
-        appId: query.appId,
-        startDate:
-          query.startDate ||
-          moment()
-            .subtract(2, 'month')
-            .startOf('day')
-            .format(DATE_FORMAT),
-        endDate: query.endDate || moment().endOf('day').format(DATE_FORMAT),
-        method: query.method,
-        os: query.os,
-        number: query.number,
-        size: config.PAGES.VERIFICATIONS.PAGE_SIZE,
-        page: query.page || 0,
-      }, done || Function.prototype);
     },
   },
 
@@ -191,8 +167,7 @@ const VerificationDetails = React.createClass({
     // no default, cannot select and fetch
     // proper fetch will be done after onApplicationStoreChange
     if (!appId) {
-      const { identity } = this.context.params;
-      this.context.executeAction(fetchAppIds, { carrierId: identity });
+      this.autoSelectAppId();
       return;
     }
 
@@ -210,6 +185,10 @@ const VerificationDetails = React.createClass({
       this.context.executeAction(clearVerifications);
       this.fetchData();
     }
+  },
+
+  componentWillUnmount() {
+    this.context.executeAction(clearVerifications);
   },
 
   onChange() {
@@ -315,18 +294,23 @@ const VerificationDetails = React.createClass({
   },
 
   fetchData() {
+    if (!this.state.appId) {
+      debug('appId is not ready, stop fetching data.');
+      return;
+    }
+
+    const { query } = this.context.location;
     const { identity } = this.context.params;
 
     this.context.executeAction(fetchVerifications, {
       carrierId: identity,
       appId: this.state.appId,
-      page: this.state.page,
       pageSize: this.state.pageSize,
-      startDate: this.state.startDate,
-      endDate: this.state.endDate,
+      startDate: query.startDate || this.state.startDate,
+      endDate: query.endDate || this.state.endDate,
       number: this.state.number,
-      os: this.state.os,
-      method: this.state.method,
+      os: query.os,
+      method: query.method,
     });
   },
 
