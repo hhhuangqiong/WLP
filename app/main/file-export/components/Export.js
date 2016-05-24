@@ -120,7 +120,7 @@ export default createClass({
         <Modal
           isOpen={this.state.modalOpened}
           onRequestClose={this.closeModal}
-          className="ReactModal__Content modal"
+          className="modal"
         >
           {ExportForm}
         </Modal>
