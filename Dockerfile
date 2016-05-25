@@ -25,6 +25,4 @@ ENV BABEL_DISABLE_CACHE=1
 # 3. expose for debug purpose
 EXPOSE 3000 3100 5858
 
-USER nobody
-
 CMD ["node", "bin/www"]
