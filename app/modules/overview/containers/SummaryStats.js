@@ -33,7 +33,7 @@ class SummaryStatsContainer extends Component {
   }
 
   getLastUpdate() {
-    // Since the API of gettig verified user will update every hour
+    // Since the API of getting verified user will update every hour
     // The last update time is set to fetch last hour data to ensure the alignment with the API
     return moment()
       .subtract(1, HOUR_FORMAT_LABEL)

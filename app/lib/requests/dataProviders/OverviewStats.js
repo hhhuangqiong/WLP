@@ -1,4 +1,3 @@
-import { isEmpty } from 'lodash';
 import logger from 'winston';
 import qs from 'qs';
 import request from 'superagent';
@@ -70,13 +69,17 @@ export default class OverviewStatsRequest {
 
   async getSummaryStats(params) {
     const { android: registeredAndroid, ios: registeredIos } = await this.fetchAccumulatedSummary(params);
+    /* Disabled for WLP-824
     const { android: verifiedAndroid, ios: verifiedIos } = await this.fetchVerifiedSummary(params);
+    */
 
     return Promise.resolve({
       registeredAndroid,
       registeredIos,
+      /* Disabled for WLP-824
       verifiedAndroid,
       verifiedIos,
+      */
     });
   }
 
