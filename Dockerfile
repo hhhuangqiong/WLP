@@ -1,6 +1,12 @@
 FROM mhart/alpine-node:5
 MAINTAINER "Andy Hui" <andyhui@maaii.com>
 
+RUN apk add --update tzdata && \
+    cp /usr/share/zoneinfo/Asia/Hong_Kong /etc/localtime && \
+    echo "Asia/Hong_Kong" > /etc/timezone && \
+    apk del tzdata && \
+    rm -rf /var/cache/apk/*
+
 # This dockerfile is designed to run from the jenkins build server, i.e. please
 # run 'npm install' and 'gulp' to prepare all dependencies and build the project.
 # The built/compiled/installed dependencies with be copied into the docker image
