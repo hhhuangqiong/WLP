@@ -1,4 +1,4 @@
-import { isNumber, isUndefined, reduce } from 'lodash';
+import { isNumber, isNull, isUndefined, reduce } from 'lodash';
 import React, { PropTypes, Children, Component } from 'react';
 import { getGridColumnClass } from '../../utils/grid';
 import classNames from 'classnames';
@@ -118,7 +118,7 @@ class DataCell extends Component {
       changePercentage,
     } = this.props;
 
-    return !changeDir || !changeEffect || !changeAmount || !changePercentage;
+    return !changeDir || !changeEffect || isNull(changeAmount) || isUndefined(changeAmount) || isNull(changePercentage) || isUndefined(changePercentage);
   }
 
   _localiseData(data) {

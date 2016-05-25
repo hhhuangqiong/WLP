@@ -1,4 +1,4 @@
-import { assign, get } from 'lodash';
+import { assign, clone, get } from 'lodash';
 import logger from 'winston';
 import qs from 'qs';
 import request from 'superagent';
@@ -14,7 +14,8 @@ import {
 
 import {
   MILLISECOND_DATE_FORMAT,
-  shiftToLastMonth,
+  shiftToLastMonthStart,
+  shiftToLastMonthEnd,
 } from '../../../utils/timeFormatter';
 
 import {
@@ -43,13 +44,13 @@ export default class VsfStatsRequest {
     const currentMonth = await this.fetchSummaryTotal(params);
 
     const lastMonth = await this.fetchSummaryTotal(
-      this.normalizeLastMonthParams(params)
+      this.normalizeLastTimeRangeParams(params)
     );
 
-	const lineChartData = await this.fetchSummaryBreakdown(params);
+    const lineChartData = await this.fetchSummaryBreakdown(params);
 
-	const data = this.compareSummaryStatsData(currentMonth, lastMonth);
-	assign(data, { lineChartData });
+    const data = this.compareSummaryStatsData(currentMonth, lastMonth);
+    assign(data, { lineChartData });
 
     return Promise.resolve(data);
   }
@@ -64,8 +65,10 @@ export default class VsfStatsRequest {
   }
 
   fetchSummaryBreakdown(params) {
+    const { breakdown, ...restParams } = params;
+
     return this
-      .sendRequest(ENDPOINTS.COMMON, params)
+      .sendRequest(ENDPOINTS.COMMON, restParams)
       .then(data => get(data, 'results.0.data'));
   }
 
@@ -96,10 +99,23 @@ export default class VsfStatsRequest {
   normalizeLastMonthParams(params) {
     const lastMonthParams = params;
 
-    lastMonthParams.from = shiftToLastMonth(lastMonthParams.from, MILLISECOND_DATE_FORMAT);
-    lastMonthParams.to = shiftToLastMonth(lastMonthParams.to, MILLISECOND_DATE_FORMAT);
+    lastMonthParams.from = shiftToLastMonthStart(lastMonthParams.from, MILLISECOND_DATE_FORMAT);
+    lastMonthParams.to = shiftToLastMonthEnd(lastMonthParams.to, MILLISECOND_DATE_FORMAT);
 
     return lastMonthParams;
+  }
+
+  normalizeLastTimeRangeParams(params) {
+    const lastTimeRangeParams = clone(params);
+    const { from, to } = lastTimeRangeParams;
+
+    const newTo = from;
+    const newFrom = from - (to - from);
+
+    lastTimeRangeParams.from = newFrom;
+    lastTimeRangeParams.to = newTo;
+
+    return lastTimeRangeParams;
   }
 
   async getMonthlyStats(params) {

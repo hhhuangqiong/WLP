@@ -1,4 +1,4 @@
-import { ARROW_UP_CLASS, ARROW_DOWN_CLASS } from '../../main/constants/stats';
+import { ARROW_UP_CLASS, ARROW_DOWN_CLASS, ARROW_FLAT_CLASS } from '../../main/constants/stats';
 
 export function findDataBySegment(results, key, value) {
   const targetResult = results.find(result => {
@@ -25,11 +25,21 @@ export function sumData(data) {
 export function mapStatsToDataGrid(total, lastTotal) {
   const remainder = total - lastTotal;
 
+  let direction;
+
+  if (remainder === 0) {
+    direction = ARROW_FLAT_CLASS;
+  } else if (remainder > 0) {
+    direction = ARROW_UP_CLASS;
+  } else {
+    direction = ARROW_DOWN_CLASS;
+  }
+
   return {
     total,
     change: remainder,
     percent: Math.round(remainder / lastTotal * 100),
-    direction: remainder >= 0 ? ARROW_UP_CLASS : ARROW_DOWN_CLASS,
+    direction,
   };
 }
 
