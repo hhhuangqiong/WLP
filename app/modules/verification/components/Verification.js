@@ -1,6 +1,7 @@
+import { isEmpty } from 'lodash';
 import React, { PropTypes } from 'react';
 import { FluxibleMixin } from 'fluxible-addons-react';
-
+import fetchAppIds from '../../../main/actions/fetchAppIds';
 import ApplicationStore from '../../../main/stores/ApplicationStore';
 
 const Verification = React.createClass({
@@ -11,6 +12,7 @@ const Verification = React.createClass({
   contextTypes: {
     router: PropTypes.object.isRequired,
     executeAction: PropTypes.func.isRequired,
+    params: PropTypes.object,
   },
 
   mixins: [FluxibleMixin],
@@ -23,6 +25,16 @@ const Verification = React.createClass({
     return {
       appIds: this.getStore(ApplicationStore).getAppIds() || [],
     };
+  },
+
+  componentDidMount() {
+    // auto select the default appId from the list
+    // TODO: optimize this UX with server side rendering
+
+    if (isEmpty(this.state.appIds)) {
+      const { identity } = this.context.params;
+      this.context.executeAction(fetchAppIds, { carrierId: identity });
+    }
   },
 
   onChange() {

@@ -25,7 +25,7 @@ class VerificationFilter extends Component {
   render() {
     const {
       appId,
-      options,
+      appIdOptions,
       appIdChange,
       os,
       osTypes,
@@ -63,11 +63,13 @@ class VerificationFilter extends Component {
               value={appId || '-'}
               onChange={appIdChange}
             >
-              {options.map(option => (
-                <option key={option.label} value={option.value}>
-                  {option.label}
-                </option>
-              ))}
+              {
+                appIdOptions.map(option => (
+                  <option key={option.label} value={option.value}>
+                    {option.label}
+                  </option>
+                ))
+              }
             </select>
           </div>
           <div>
@@ -86,7 +88,7 @@ class VerificationFilter extends Component {
               {
                 methods.map(type => (
                   <option key={type.id} value={type.id}>
-                    {formatMessage(type)}
+                    { formatMessage(type) }
                   </option>
                 ))
               }
@@ -105,11 +107,13 @@ class VerificationFilter extends Component {
               onChange={osChange}
             >
               <option>{this.props.defaultOption}</option>
-              {osTypes.map(platform => (
-                <option key={platform} value={platform}>
-                  {platform}
-                </option>
-              ))}
+              {
+                osTypes.map(platform => (
+                  <option key={platform} value={platform}>
+                    {platform}
+                  </option>
+                ))
+              }
             </select>
           </div>
         </Dropdown.Content>
@@ -126,7 +130,7 @@ VerificationFilter.defaultProps = {
 
 VerificationFilter.propTypes = {
   appId: PropTypes.string,
-  options: PropTypes.array.isRequired,
+  appIdOptions: PropTypes.array.isRequired,
   appIdChange: PropTypes.func,
   os: PropTypes.string,
   osTypes: PropTypes.array.isRequired,

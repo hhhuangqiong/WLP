@@ -42,7 +42,7 @@ export default class VerificationRequest {
     if (!phoneNumber) {
       return '';
     }
-    
+
     return phoneNumber.replace('+', '');
   }
 
@@ -78,6 +78,8 @@ export default class VerificationRequest {
     switch (type) {
       case 'call-in': return 'MobileTerminated';
       case 'call-out': return 'MobileOriginated';
+      case 'sms': return 'SMS';
+      case 'ivr': return 'IVR';
       default: return type;
     }
   }
