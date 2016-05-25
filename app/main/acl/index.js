@@ -43,7 +43,11 @@ function AclManager(acl, carrierQuerier, options = {}) {
  */
 AclManager.prototype.middleware = function middleware(userId, carrierId, resource) {
   return (req, res, next) => {
-    const errorHandler = (error) => next(error);
+    const errorHandler = error => {
+      logger.error('error occurred in AclManager middleware', error);
+      next(error);
+      return;
+    };
 
     const handleError = !this._errorHandler ? errorHandler : this._errorHandler;
 

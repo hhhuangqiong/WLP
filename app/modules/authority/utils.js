@@ -30,33 +30,27 @@ export function decodeAclString(aclString) {
   }
 }
 
+/**
+ * @method getResources
+ * to convert an object of resource to a list of resource name
+ *
+ * @returns {Array}
+ */
 export function getResources() {
-  return _.reduce(navResources, function (result, nav) {
-    result.menus.push(nav.page);
+  return _.reduce(navResources, (result, nav) => {
+    const { page } = nav;
+    if (page) {
+      result.menus.push(page);
+    }
     return result;
   }, { menus: [] });
 }
 
 /**
- * Returns the route name of the specific resource.
- * The route name is essentially the name of the react-router route.
- *
- * @method
- * @param {String} resource  The resource name
- * @returns {String} The route name
- */
-export function getRouteByResource(resource) {
-  return _.result(_.find(
-    navResources,
-    nav => nav.page === resource
-  ), 'path');
-}
-
-/**
- * Returns the route path of the specific resource.
+ * @method getPathByResource
+ * returns the route path of the specific resource.
  * The path name is essentially path of the URI.
  *
- * @method
  * @param {String} resource  The resource name
  * @returns {String} The route path
  */

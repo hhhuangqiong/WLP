@@ -8,7 +8,7 @@ import { getAclString, decodeAclString, getPathByResource } from './utils';
  * the AclStrings is included in the capability list
  */
 class AuthorityChecker {
-  constructor(options) {
+  constructor(options = {}) {
     this._carrierId = null;
 
     if (options.req) {
@@ -101,6 +101,29 @@ class AuthorityChecker {
 
     const activity = this._getAclString(action, resource);
     return _.includes(this._capability, activity);
+  }
+
+  /**
+   * @method canAccessPath
+   * to determine whether a path is accessible by a carrier
+   * by matching the location path with the capability
+   *
+   * @param path
+   * @returns {boolean}
+   */
+  canAccessPath(path) {
+    let accessible = false;
+
+    _.forEach(this._capability, capability => {
+      const { resource } = decodeAclString(capability);
+      const resourcePath = getPathByResource(resource);
+
+      if (_.includes(path, resourcePath)) {
+        accessible = true;
+      }
+    });
+
+    return accessible;
   }
 }
 

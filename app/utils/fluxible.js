@@ -5,6 +5,7 @@ import React, { PropTypes } from 'react';
 import Fluxible from 'fluxible';
 import FluxContext from 'fluxible/lib/FluxibleContext';
 import { FluxibleComponent, provideContext } from 'fluxible-addons-react';
+import AuthorityChecker from '../modules/authority/plugin';
 
 const debug = require('debug')('app:utils/fluxible');
 
@@ -92,7 +93,7 @@ export function createMarkupElement(context, children) {
         getStore: PropTypes.func,
         executeAction: PropTypes.func,
         // custom context(s)
-        getAuthority: PropTypes.func,
+        authorityChecker: PropTypes.instanceOf(AuthorityChecker),
       }),
       { context: context.getComponentContext() },
       children,
