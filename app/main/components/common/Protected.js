@@ -5,7 +5,7 @@ import Navigation from './NavigationBar';
 import Title from './NavigationTitle';
 import Menu from './NavigationMenu';
 import Content from './MainContent';
-import SystemMessage from './SystemMessage';
+import SystemMessage from '../../system-message/container';
 import LoadingSpinner from './LoadingSpinner';
 import classnames from 'classnames';
 

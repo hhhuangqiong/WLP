@@ -19,7 +19,7 @@ import TopUpStore from './modules/top-up/stores/TopUpStore';
 import ImStore from './modules/im/stores/ImStore';
 import ImMonthlyStatsStore from './modules/im/stores/MonthlyStats';
 import ImSummaryStatsStore from './modules/im/stores/SummaryStats';
-import SystemMessageStore from './main/stores/SystemMessageStore';
+import SystemMessageStore from './main/system-message/store';
 import LoadingSpinnerStore from './main/stores/LoadingSpinnerStore';
 import VsfTransactionStore from './modules/vsf/stores/details';
 import VsfMonthlyStatsStore from './modules/vsf/stores/monthlyStats';

@@ -3,9 +3,11 @@ import {
   CHANGE_USERNAME,
   CHANGE_PASSWORD,
   SIGN_IN_START,
-  SIGN_IN_FAILURE
+  SIGN_IN_FAILURE,
 } from '../constants/actionTypes';
-import { ERROR_MESSAGE } from '../../../main/constants/actionTypes';
+import { ERROR_MESSAGE } from '../../../main/system-message/constants/actionTypes';
+import { MESSAGES } from '../../../main/system-message/constants/messages';
+
 const debug = require('debug')('app:main/actions/signIn');
 
 export function changePassword(context, payload) {
@@ -37,24 +39,16 @@ export function signIn(context, payload, done) {
       // not confirmed how to handle
       // error localisation properly yet
       if (errors) {
-        let errorId;
+        let error;
 
         switch (status) {
-          case '401':
-            errorId = 'sign-in.error.notFound';
-            break;
-
-          case '500':
-            errorId = 'sign-in.error.internalServerError';
+          case '400':
+            error = MESSAGES.signInBadRequest;
             break;
 
           default:
-            errorId = 'sign-in.error.general';
+            error = MESSAGES.signInGeneral;
         }
-
-        const error = {
-          id: errorId,
-        };
 
         context.dispatch(SIGN_IN_FAILURE, error);
         context.dispatch(ERROR_MESSAGE, error);
@@ -76,15 +70,11 @@ export function signIn(context, payload, done) {
     .catch(err => {
       debug('error occurred when signing in', err);
 
-      let errorId;
+      let error = MESSAGES.signInInternalServerError;
 
       if (err instanceof TimeoutError) {
-        errorId = 'sign-in.error.timeout';
+        error = MESSAGES.signInTimeout;
       }
-
-      const error = {
-        id: errorId,
-      };
 
       context.dispatch(SIGN_IN_FAILURE, error);
       context.dispatch(ERROR_MESSAGE, error);

@@ -1,3 +1,5 @@
+import { isPlainObject } from 'lodash';
+import { DISMISS_MESSAGE } from './constants/actionTypes';
 import createStore from 'fluxible/addons/createStore';
 
 /**
@@ -9,6 +11,7 @@ const SystemMessageStore = createStore({
   storeName: 'SystemMessageStore',
 
   handlers: {
+    [DISMISS_MESSAGE]: 'handleDismissMessage',
     ERROR_MESSAGE: 'handleErrorMessage',
     INFO_MESSAGE: 'handleInfoMessage',
     // types below are going to be obsoleted or moved to the corresponding store
@@ -31,12 +34,6 @@ const SystemMessageStore = createStore({
     this.type = 'error';
     this.message = null;
     this.autoMiss = true;
-
-    // IMPORTANT
-    // onDismiss has to be a function
-
-    this.onDismiss = () => {};
-
     this.buttons = null;
     this.hidden = true;
     this.timeout = 5000;
@@ -123,9 +120,20 @@ const SystemMessageStore = createStore({
   handleErrorMessage(err) {
     this.id = Date.now();
     this.type = 'secondary';
-    this.message = err.message;
+
+    if (isPlainObject(err)) {
+      this.message = err;
+    } else {
+      this.message = err.message;
+    }
+
     this.hidden = false;
 
+    this.emitChange();
+  },
+
+  handleDismissMessage() {
+    this.initialize();
     this.emitChange();
   },
 
@@ -135,7 +143,6 @@ const SystemMessageStore = createStore({
       type: this.type,
       message: this.message,
       autoMiss: this.autoMiss,
-      onDismiss: this.onDismiss,
       buttons: this.buttons,
       hidden: this.hidden,
       timeout: this.timeout,
@@ -152,7 +159,6 @@ const SystemMessageStore = createStore({
     this.type = state.type;
     this.message = state.message;
     this.autoMiss = state.autoMiss;
-    this.onDismiss = state.onDismiss;
     this.buttons = state.buttons;
     this.hidden = state.hidden;
     this.timeout = state.timeout;
