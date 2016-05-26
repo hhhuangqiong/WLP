@@ -250,7 +250,6 @@ const Im = React.createClass({
                 </Link>
               </li>
             </ul>
-
             <ul className="left top-bar--inner">
               <li className="top-bar--inner">
                 <div className="date-range-picker left">
@@ -287,7 +286,6 @@ const Im = React.createClass({
                 </div>
               </li>
             </ul>
-
             <div className="im-type large-2 columns left top-bar-section">
               <select
                 className={classNames('top-bar-section__message-type-select', 'left')}
@@ -309,7 +307,6 @@ const Im = React.createClass({
                 ))}
               </select>
             </div>
-
             <div className="right">
               <Export exportType="Im">
                 <ImExportForm
@@ -318,7 +315,6 @@ const Im = React.createClass({
                 />
               </Export>
             </div>
-
             <div className="im-search top-bar-section right">
               <Searchbox
                 value={this.state.search}
