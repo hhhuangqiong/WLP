@@ -95,7 +95,7 @@ gulp.task('watch', () => {
 gulp.task('clean', () => del([dest.app, `${dest.build}/**/*`, dest.intl]));
 
 const autoprefixerOpts = {
-  browsers: ['last 2 versions'],
+  browsers: ['last 3 versions'],
 };
 
 gulp.task('scss:production', () =>
