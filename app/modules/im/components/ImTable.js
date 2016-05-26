@@ -1,6 +1,6 @@
 import React, { PropTypes } from 'react';
 import moment from 'moment';
-import { isNull, isEmpty, capitalize } from 'lodash';
+import { get, isNull, isEmpty, capitalize } from 'lodash';
 import classNames from 'classnames';
 import Tooltip from 'rc-tooltip';
 import { FormattedMessage, defineMessages, injectIntl } from 'react-intl';
@@ -43,39 +43,39 @@ const TABLE_TITLES = [
 const MESSAGE_TYPES = {
   text: {
     className: 'icon-text',
-    title: 'text',
+    messageId: 'text',
   },
   image: {
     className: 'icon-image',
-    title: 'image',
+    messageId: 'image',
   },
   audio: {
     className: 'icon-audio',
-    title: 'audio',
+    messageId: 'audio',
   },
   video: {
     className: 'icon-video',
-    title: 'video',
+    messageId: 'video',
   },
   remote: {
     className: 'icon-ituneyoutube',
-    title: 'sharing',
+    messageId: 'remote',
   },
   animation: {
     className: 'icon-video',
-    title: 'animation',
+    messageId: 'animation',
   },
   sticker: {
     className: 'icon-image',
-    title: 'sticker',
+    messageId: 'sticker',
   },
   voice_sticker: {
     className: 'icon-audio',
-    title: 'voice sticker',
+    messageId: 'voiceSticker',
   },
   ephemeral_image: {
     className: 'icon-image',
-    title: 'ephemeral image',
+    messageId: 'ephemeralImage',
   },
 };
 
@@ -110,9 +110,8 @@ const ImTable = React.createClass({
       typeSize = calculateSize(item.file_size > 0 ? item.file_size : item.message_size);
     }
 
-    if (typeText === 'Sharing') {
-      typeSize = item.resource_id;
-      if (typeSize !== 'itunes') typeSize = capitalize(typeSize);
+    if (typeText === 'Remote' && item.resource_id !== 'itunes') {
+      typeSize = capitalize(typeSize);
     }
 
     return typeSize;
@@ -126,20 +125,20 @@ const ImTable = React.createClass({
     return null;
   },
 
-  getImType(messageType) {
+  getImTypeTitle(messageType) {
     const { intl: { formatMessage } } = this.props;
 
     if (!(messageType in MESSAGE_TYPES)) {
       return formatMessage(LABEL_FOR_NULL);
     }
 
-    const { title } = MESSAGE_TYPES[messageType];
+    const { messageId } = MESSAGE_TYPES[messageType];
 
-    if (!(title in IM_MESSAGES)) {
+    if (!(messageId in IM_MESSAGES)) {
       return formatMessage(LABEL_FOR_NULL);
     }
 
-    return formatMessage(IM_MESSAGES[title]);
+    return formatMessage(IM_MESSAGES[messageId]);
   },
 
   renderRows() {
@@ -147,8 +146,9 @@ const ImTable = React.createClass({
 
     return this.props.ims.map((u, key) => {
       const imDate = moment(u.timestamp).format(DATETIME_FORMAT_WITH_SECONDS);
-      const imType = this.getImType(u.message_type);
-      const typeSize = this.getTypeSize(u, imType.title);
+      const imType = get(MESSAGE_TYPES, u.message_type);
+      const imTypeTitle = this.getImTypeTitle(u.message_type);
+      const typeSize = this.getTypeSize(u, imTypeTitle);
 
       let sender = null;
 
@@ -169,7 +169,7 @@ const ImTable = React.createClass({
               className={classNames('im-message-type-icon', imType.className, u.message_type)}
             ></span>
             <div className="im-message-type-info">
-              <span className={"im-message-type-text dark"}>{imType}</span>
+              <span className={"im-message-type-text dark"}>{imTypeTitle}</span>
               <br />
               <span className={"im-message-type-size"}>{typeSize}</span>
             </div>
