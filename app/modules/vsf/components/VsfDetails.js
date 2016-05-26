@@ -1,6 +1,9 @@
 import React, { PropTypes, createClass } from 'react';
 import { Link } from 'react-router';
-import { FormattedMessage } from 'react-intl';
+import {
+  FormattedMessage,
+  injectIntl,
+} from 'react-intl';
 
 import moment from 'moment';
 import { merge, omit, clone } from 'lodash';
@@ -14,6 +17,8 @@ import Searchbox from '../../../main/components/Searchbox';
 import VSFTransactionStore from '../stores/details';
 import fetchVSFTransactions from '../actions/fetchVSFTransactions';
 import clearVSFTransaction from '../actions/clearVSFTransaction';
+
+import i18nMessages from '../../../main/constants/i18nMessages';
 
 const SUBMIT_KEY = 13;
 const PAGE_SIZE = 100;
@@ -163,13 +168,13 @@ const VsfDetails = createClass({
   },
 
   render() {
+    const { intl: { formatMessage } } = this.props;
     const { role, identity } = this.context.params;
 
     return (
       <div className="row">
         <nav className="top-bar top-bar--inner">
           <div className="top-bar-section">
-
             <ul className="left top-bar--inner tab--inverted">
               <li className="top-bar--inner tab--inverted__title">
                 <Link
@@ -179,7 +184,6 @@ const VsfDetails = createClass({
                   <FormattedMessage id="overview" defaultMessage="Overview" />
                 </Link>
               </li>
-
               <li className="top-bar--inner tab--inverted__title">
                 <Link
                   to={`/${role}/${identity}/vsf/details`}
@@ -189,7 +193,6 @@ const VsfDetails = createClass({
                 </Link>
               </li>
             </ul>
-
             <ul className="left top-bar--inner">
               <li className="top-bar--inner">
                 <DateRangePicker
@@ -201,7 +204,6 @@ const VsfDetails = createClass({
                 />
               </li>
             </ul>
-
             <div className="large-5 columns left top-bar-section">
               <CategoryFilter
                 category={this.state.category}
@@ -211,11 +213,10 @@ const VsfDetails = createClass({
                 handleCreditFilterToggle={this.handleCreditFilterToggle}
               />
             </div>
-
             <div className="call-search top-bar-section right">
               <Searchbox
                 value={this.state.userNumber}
-                placeHolder="Mobile"
+                placeHolder={formatMessage(i18nMessages.mobile)}
                 onInputChangeHandler={this.handleNumberChange}
                 onKeyPressHandler={this.handleSearchSubmit}
               />
@@ -237,4 +238,4 @@ const VsfDetails = createClass({
   },
 });
 
-export default VsfDetails;
+export default injectIntl(VsfDetails);

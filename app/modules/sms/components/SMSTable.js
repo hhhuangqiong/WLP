@@ -19,7 +19,6 @@ import {
   } from '../../../main/constants/uiState';
 
 const { displayDateFormat: DATE_FORMAT } = config;
-const SYSTEM_MESSAGE_LABEL = 'System Message';
 
 const MESSAGES = defineMessages({
   dateAndTime: {
@@ -46,6 +45,10 @@ const MESSAGES = defineMessages({
     id: 'remark',
     defaultMessage: 'Remark',
   },
+  systemMessage: {
+    id: 'systemMessage',
+    defaultMessage: 'System Message',
+  },
 });
 
 const TABLE_TITLES = [
@@ -69,12 +72,14 @@ const SMSTable = React.createClass({
   },
 
   _renderCaller(sms) {
+    const { intl: { formatMessage } } = this.props;
+
     if (sms.source_address_inbound) {
       return sms.source_address_inbound;
     }
 
     if (sms.origin_interface === 'PLATFORM') {
-      return SYSTEM_MESSAGE_LABEL;
+      return formatMessage(MESSAGES.systemMessage);
     }
 
     return sms.destination_address_inbound;
@@ -92,7 +97,14 @@ const SMSTable = React.createClass({
       );
     }
 
-    return <span className="status-label label radius alert">rejected</span>;
+    return (
+      <span className="status-label label radius alert">
+        <FormattedMessage
+          id="rejected"
+          defaultMessage="rejected"
+        />
+      </span>
+    );
   },
 
   _renderTypeIcon(type) {
@@ -125,7 +137,7 @@ const SMSTable = React.createClass({
           </td>
           <td className="data-table__datetime">{moment(sms.request_date).format(DATE_FORMAT)}</td>
           <td>
-          {this._renderTypeIcon(sms.type2)}
+            {this._renderTypeIcon(sms.type2)}
           </td>
           <td>
             <div className="large-24 columns">
@@ -182,7 +194,11 @@ const SMSTable = React.createClass({
           <tr>
             <td colSpan={TABLE_TITLES.length}>
               <div className="text-center">
-                <span>Loading...</span>
+                <FormattedMessage
+                  id="loading"
+                  defaultMessage="Loading"
+                />
+                <span>...</span>
               </div>
             </td>
           </tr>

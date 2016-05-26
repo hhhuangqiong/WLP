@@ -95,7 +95,6 @@ const CallsOverview = React.createClass({
   },
 
   getInitialState() {
-    console.log(`STATS_TYPE.TOTAL_ATTEMPT.id`, STATS_TYPE.TOTAL_ATTEMPT.id);
     return {
       appIds: this.getStore(ApplicationStore).getAppIds() || [],
       appId: this.getStore(ApplicationStore).getDefaultAppId(),
@@ -453,7 +452,7 @@ const CallsOverview = React.createClass({
             <a
               className={classNames({ active: this.state.type === CALL_TYPE.ALL })}
               onClick={ bindKey(this, 'changeCallType', CALL_TYPE.ALL) }
-            >All</a>
+            ><FormattedMessage id="all" defaultMessage="All" /></a>
             <a
               className={classNames({ active: this.state.type === CALL_TYPE.ONNET })}
               onClick={ bindKey(this, 'changeCallType', CALL_TYPE.ONNET) }
