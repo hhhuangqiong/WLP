@@ -152,6 +152,52 @@ ${(!currency.code ? '' : currency.code)}`;
     return walletType;
   },
 
+  getRechargeType(type) {
+    switch (type) {
+      case 'InviteByEmail':
+        return (
+          <FormattedMessage
+            id="topUp.details.inviteByEmail"
+            defaultMessage="Invite By Email"
+          />
+      );
+
+      case 'RateUs':
+        return (
+          <FormattedMessage
+            id="topUp.details.rateUs"
+            defaultMessage="Rate us"
+          />
+        );
+
+      case 'Monitoring':
+        return (
+          <FormattedMessage
+            id="topUp.details.monitoring"
+            defaultMessage="Monitoring"
+          />
+        );
+
+      case 'promotional':
+        return (
+          <FormattedMessage
+            id="topUp.details.promotional"
+            defaultMessage="Promotional"
+          />
+        );
+
+      case 'voucher':
+        return (
+          <FormattedMessage
+            id="topUp.details.voucher"
+            defaultMessage="Voucher"
+          />
+        );
+
+      default: return type;
+    }
+  },
+
   renderRows() {
     return this.props.histories.map(history =>
       (
@@ -187,7 +233,7 @@ ${(!currency.code ? '' : currency.code)}`;
               defaultMessage="Unknown"
             />)}</span>
           </td>
-          <td>{history.rechargeType}</td>
+          <td>{this.getRechargeType(history.rechargeType)}</td>
           <td>{this._getFormattedAmount(history.currency, history.amount)}</td>
           <td className="remark">
             <If condition={history.status.toLowerCase() !== 'success'}>
