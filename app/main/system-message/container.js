@@ -1,4 +1,4 @@
-import { isPlainObject } from 'lodash';
+import { has } from 'lodash';
 import React, { PropTypes, Component } from 'react';
 import { injectIntl, intlShape } from 'react-intl';
 import { connectToStores } from 'fluxible-addons-react';
@@ -21,8 +21,10 @@ class SystemMessageContainer extends Component {
   parseMessage(message) {
     const { formatMessage } = this.props.intl;
 
-    if (isPlainObject(message)) {
+    if (has(message, 'id') && has(message, 'defaultMessage')) {
       return formatMessage(message);
+    } else if (has(message, 'message')) {
+      return message.message;
     }
 
     return message;
@@ -50,7 +52,16 @@ SystemMessageContainer.propTypes = {
   intl: intlShape.isRequired,
   id: PropTypes.string,
   type: PropTypes.oneOf(['error', 'info']),
-  message: PropTypes.string,
+  message: PropTypes.oneOfType([
+    PropTypes.shape({
+      id: PropTypes.string,
+      defaultMessage: PropTypes.string,
+    }),
+    PropTypes.shape({
+      message: PropTypes.string,
+    }),
+    PropTypes.string,
+  ]),
   buttons: PropTypes.array,
   hidden: PropTypes.bool,
   timeout: PropTypes.number,
