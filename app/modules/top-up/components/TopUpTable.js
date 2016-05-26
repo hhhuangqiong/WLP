@@ -134,8 +134,17 @@ ${(!currency.code ? '' : currency.code)}`;
     if (walletType === 'Paid') {
       return (
         <FormattedMessage
-          id="paid"
+          id="wallet.type.paid"
           defaultMessage="Paid"
+        />
+      );
+    }
+
+    if (walletType === 'Free') {
+      return (
+        <FormattedMessage
+          id="wallet.type.free"
+          defaultMessage="Free"
         />
       );
     }
