@@ -135,7 +135,7 @@
     "eslint-plugin-react": "^4.0.0",
     "gitbook-cli": "^2.1.2",
     "gulp": "^3.8.10",
-    "gulp-autoprefixer": "^2.1.0",
+    "gulp-autoprefixer": "^3.1.0",
     "gulp-babel": "^6.1.2",
     "gulp-bless": "~3.0.1",
     "gulp-file": "^0.3.0",
