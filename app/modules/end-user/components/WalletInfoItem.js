@@ -8,11 +8,15 @@ import currencyData from '../../../data/bossCurrencies.json';
 import Converter from '../../../utils/bossCurrencyConverter';
 
 const MESSAGES = defineMessages({
-  freeWallet: {
+  overview: {
+    id: 'wallet.type.overview',
+    defaultMessage: 'Overview',
+  },
+  free: {
     id: 'wallet.type.free',
     defaultMessage: 'Free',
   },
-  paidWallet: {
+  paid: {
     id: 'wallet.type.paid',
     defaultMessage: 'Paid',
   },
@@ -65,7 +69,7 @@ const WalletItem = React.createClass({
             })}
             >
               {
-                !!walletType ? formatMessage(MESSAGES[walletType]) : ''
+                !!walletType ? formatMessage(MESSAGES[walletType.toLowerCase()]) : ''
               }
             </div>
             <div className="row">
