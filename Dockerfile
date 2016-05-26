@@ -1,11 +1,11 @@
 FROM mhart/alpine-node:5
 MAINTAINER "Andy Hui" <andyhui@maaii.com>
 
+# To configure the timezone to Asia/Hong_Kong
+# TODO: make it as m800-alpine-node
 RUN apk add --update tzdata && \
     cp /usr/share/zoneinfo/Asia/Hong_Kong /etc/localtime && \
-    echo "Asia/Hong_Kong" > /etc/timezone && \
-    apk del tzdata && \
-    rm -rf /var/cache/apk/*
+    echo "Asia/Hong_Kong" > /etc/timezone
 
 # This dockerfile is designed to run from the jenkins build server, i.e. please
 # run 'npm install' and 'gulp' to prepare all dependencies and build the project.
@@ -24,5 +24,7 @@ ENV BABEL_DISABLE_CACHE=1
 # 2. kue UI
 # 3. expose for debug purpose
 EXPOSE 3000 3100 5858
+
+USER nobody
 
 CMD ["node", "bin/www"]
