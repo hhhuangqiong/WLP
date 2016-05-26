@@ -8,7 +8,7 @@ import { IntlProvider, addLocaleData } from 'react-intl';
 import app from '../app';
 import config from '../config';
 import { isDev } from '../utils/env';
-import { createContext, createMarkupElement } from '../utils/fluxible';
+import { createContext, createMarkupElement, intlPolyfill } from '../utils/fluxible';
 import getRoutes from '../routes';
 
 const debug = require('debug');
@@ -52,7 +52,8 @@ const dehydratedState = window[GLOBAL_DATA_VARIABLE];
 const contextOptions = { config };
 const messages = window[GLOBAL_LOCALE_VARIABLE];
 
-Q.nfcall(createContext, app, dehydratedState, contextOptions)
+Q.nfcall(intlPolyfill)
+  .then(() => Q.nfcall(createContext, app, dehydratedState, contextOptions))
   .then(context => {
     const routes = getRoutes(context);
 
@@ -66,7 +67,6 @@ Q.nfcall(createContext, app, dehydratedState, contextOptions)
     // than the lang attribute from server
     const locale = store.get('locale') || document.documentElement.getAttribute('lang');
     children = React.createElement(IntlProvider, { locale, messages }, children);
-
 
     const markupElement = createMarkupElement(context, children);
     ReactDOM.render(markupElement, mountNode);

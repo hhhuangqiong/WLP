@@ -39,7 +39,7 @@ migrations/*
 *.js.map
 public/locale-data/
 public/vendor/
-public/javascript/bundle.js
+public/javascript/*bundle.js
 
 # Assume all css are generated from SCSS
 public/stylesheets/*.css

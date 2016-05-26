@@ -190,3 +190,31 @@ export function resolveCarrierId(payload) {
 
   return carrierId;
 }
+
+/**
+ * @method intlPolyfill
+ * to polyfill the intl library on browser
+ *
+ * @param cb {Function}
+ */
+export function intlPolyfill(cb) {
+  if (global.Intl) {
+    cb(null);
+    return;
+  }
+
+  try {
+    require.ensure([
+      'intl',
+      'intl/locale-data/jsonp/en.js',
+      'intl/locale-data/jsonp/zh.js',
+    ], require => {
+      require('intl');
+      require('intl/locale-data/jsonp/en.js');
+      require('intl/locale-data/jsonp/zh.js');
+      cb(null);
+    });
+  } catch (err) {
+    cb(err);
+  }
+}
