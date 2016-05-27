@@ -5,6 +5,8 @@ import classNames from 'classnames';
 import moment from 'moment';
 import * as Panel from './../../../main/components/Panel';
 import * as DataGrid from '../../../main/statistics/components/DataGrid';
+import LastUpdateTime, { TIME_TYPES } from '../../../main/statistics/components/LastUpdateTime';
+import { LAST_UPDATE_TIME_FORMAT } from '../../../utils/timeFormatter';
 import DateSelector from '../../../main/components/DateSelector';
 
 const MESSAGES = defineMessages({
@@ -31,13 +33,17 @@ const MonthlyStats = props => {
     onSelectedDateChange,
   } = props;
 
+  const lastUpdate = (
+    <LastUpdateTime type={TIME_TYPES.MONTHLY} time={selectedDate} timeFormat={LAST_UPDATE_TIME_FORMAT} />
+  );
+
   return (
     <div className="large-24 columns">
       <Panel.Wrapper>
         <Panel.Header
           customClass="narrow"
           title={formatMessage(MESSAGES.monthlyStatistic)}
-          caption={null}
+          caption={lastUpdate}
         >
           <div className={classNames('tiny-spinner', { active: isLoading })}></div>
           <DateSelector

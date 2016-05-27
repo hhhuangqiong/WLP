@@ -28,7 +28,7 @@ function DetailStats({
   const lastUpdate = (
     <LastUpdateTime
       type={TIME_TYPES.LATEST}
-      timescale="hour"
+      timescale="day"
       timeFormat={LAST_UPDATE_TIME_FORMAT}
     />
   );
