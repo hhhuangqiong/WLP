@@ -1,7 +1,11 @@
 import React, { createClass, PropTypes } from 'react';
 import { FluxibleMixin } from 'fluxible-addons-react';
 
-export default createClass({
+import {
+  FormattedMessage,
+} from 'react-intl';
+
+const ExportPanel = createClass({
   propTypes: {
     exportId: PropTypes.number,
     exportTriggered: PropTypes.bool,
@@ -19,70 +23,6 @@ export default createClass({
   componentWillUpdate(nextProps) {
     if (!nextProps.exportTriggered || nextProps.progress === 100) return;
     this.props.pollProgress(nextProps.exportId, nextProps.carrierId);
-  },
-
-  renderCurrentProgress() {
-    const isFailed = this.isFailed();
-    const isCompleted = this.isCompleted();
-    const isInProgress = this.isInProgress();
-
-    if (isFailed) {
-      return (
-        <ul className="button-group round">
-          <li>
-            <a className="export-loading-button button">
-              <span className="export-failure-text">Export failure</span>
-            </a>
-          </li>
-
-          <li>
-            <a className="right button" onClick={this.props.cancel}>
-              <i className="icon-error left" />
-            </a>
-          </li>
-        </ul>
-      );
-    } else if (isCompleted) {
-      return (
-        <div className="export-download-button export-ie-fix" onClick={this.props.download}>
-          Download<span className="icon-download"></span>
-        </div>
-      );
-    } else if (isInProgress) {
-      return (
-        <ul className="button-group round">
-          <li><a className="spinner left button"></a></li>
-
-          <li>
-            <a className="export-loading-button button">
-              <span className="export-loading-text">Exporting ({this.exportProgress()}%)</span>
-            </a>
-          </li>
-
-          <li>
-            <a className="right button" onClick={this.props.cancel}>
-              <i className="icon-error left" />
-            </a>
-          </li>
-        </ul>
-      );
-    }
-
-    return (
-      <div className="interactive-button export-download-button export-ie-fix" onClick={this.props.openModal}>
-        <span className="icon-download"></span>
-      </div>
-    );
-  },
-
-  render() {
-    const { className } = this.props;
-
-    return (
-      <div className={className}>
-        {this.renderCurrentProgress()}
-      </div>
-    );
   },
 
   isTriggered() {
@@ -104,4 +44,88 @@ export default createClass({
   exportProgress() {
     return this.props.progress;
   },
+
+  renderCurrentProgress() {
+    const isFailed = this.isFailed();
+    const isCompleted = this.isCompleted();
+    const isInProgress = this.isInProgress();
+
+    if (isFailed) {
+      return (
+        <ul className="button-group round">
+          <li>
+            <a className="export-loading-button button">
+              <span className="export-failure-text">
+                <FormattedMessage
+                  id="exportFailure"
+                  defaultMessage="Export failure"
+                />
+              </span>
+            </a>
+          </li>
+
+          <li>
+            <a className="right button" onClick={this.props.cancel}>
+              <i className="icon-error left" />
+            </a>
+          </li>
+        </ul>
+      );
+    } else if (isCompleted) {
+      return (
+        <div className="export-download-button export-ie-fix" onClick={this.props.download}>
+          <FormattedMessage
+            id="download"
+            defaultMessage="Download"
+          />
+          <span className="icon-download"></span>
+        </div>
+      );
+    } else if (isInProgress) {
+      return (
+        <ul className="button-group round">
+          <li><a className="spinner left button"></a></li>
+
+          <li>
+            <a className="export-loading-button button">
+              <span className="export-loading-text">
+                <FormattedMessage
+                  id="exporting"
+                  defaultMessage="Exporting"
+                />
+                <span> ({this.exportProgress()}%)</span>
+              </span>
+            </a>
+          </li>
+
+          <li>
+            <a className="right button" onClick={this.props.cancel}>
+              <i className="icon-error left" />
+            </a>
+          </li>
+        </ul>
+      );
+    }
+
+    return (
+      <div
+        className="interactive-button export-download-button export-ie-fix"
+        onClick={this.props.openModal}
+      >
+        <span className="icon-download"></span>
+      </div>
+    );
+  },
+
+  render() {
+    const { className } = this.props;
+
+    return (
+      <div className={className}>
+        {this.renderCurrentProgress()}
+      </div>
+    );
+  },
 });
+
+export default ExportPanel;
