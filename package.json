@@ -71,7 +71,7 @@
     "lodash": "^3.1.0",
     "logging": "^2.0.21",
     "m800-mail-service-client": "^1.0.0",
-    "m800-user-locale": "^0.1.0",
+    "m800-user-locale": "^0.1.3",
     "m800-util": "^0.6.2",
     "method-override": "^2.3.1",
     "mime": "^1.3.4",
