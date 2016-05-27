@@ -53,4 +53,24 @@ export default defineMessages({
     id: 'numberOfUnit',
     defaultMessage: 'Number of {unit}',
   },
+  cny: {
+    id: 'cny',
+    defaultMessage: 'CNY',
+  },
+  usd: {
+    id: 'usd',
+    defaultMessage: 'USD',
+  },
+  ntd: {
+    id: 'ntd',
+    defaultMessage: 'NTD',
+  },
+  eur: {
+    id: 'eur',
+    defaultMessage: 'EUR',
+  },
+  mins: {
+    id: 'mins',
+    defaultMessage: 'MINS',
+  },
 });

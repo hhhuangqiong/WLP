@@ -6,6 +6,8 @@ import { defineMessages, FormattedMessage, intlShape, injectIntl } from 'react-i
 
 import currencyData from '../../../data/bossCurrencies.json';
 import Converter from '../../../utils/bossCurrencyConverter';
+import { getCurrencyTranslation } from '../../../main/components/Currency';
+import i18nMessages from '../../../main/constants/i18nMessages';
 
 const MESSAGES = defineMessages({
   overview: {
@@ -43,12 +45,12 @@ const WalletItem = React.createClass({
     const expiryDate = moment(this.props.wallet.expiryDate, 'yyyymmddhh24miss').isValid() ?
       moment(this.props.wallet.expiryDate, 'yyyymmddhh24miss')
         .format('MMMM DD, YYYY h:mm:ss a') :
-      'N/A';
+      formatMessage(i18nMessages.unknownLabel);
 
     const lastTopUpDate = moment(this.props.wallet.lastTopupDate, 'yyyymmddhh24miss').isValid() ?
       moment(this.props.wallet.lastTopupDate, 'yyyymmddhh24miss')
         .format('MMMM DD,YYYY h:mm:ss a') :
-      'N/A';
+      formatMessage(i18nMessages.unknownLabel);
 
     return (
       <div className={
@@ -76,7 +78,9 @@ const WalletItem = React.createClass({
               <div className="wallet-item__balance">
                 <span className="wallet-item__balance--sign">{currency.sign}</span>
                 <span className="wallet-item__balance--value">{this.props.wallet.balance}</span>
-                <span className="wallet-item__balance--code">{currency.code}</span>
+                <span className="wallet-item__balance--code">
+                  {getCurrencyTranslation(currency.code, formatMessage)}
+                </span>
               </div>
             </div>
             {
