@@ -1,5 +1,6 @@
 import React from 'react';
 import { Route, IndexRedirect } from 'react-router';
+import modules from './constants/moduleId';
 
 import App from './main/components/common/App';
 import Public from './main/components/common/Public';
@@ -79,13 +80,19 @@ export default (context) => {
 
     if (isAuthenticated) {
       try {
-        const path = context.getStore(AuthStore).getLandingPath();
+        const role = context.getStore(AuthStore).getUserRole();
+        const carrierId = context.getStore(AuthStore).getCarrierId();
+        const capability = context.getStore(AuthorityStore).getCapability();
+        const { authorityChecker } = context.getActionContext();
+        authorityChecker.reset(carrierId, capability);
+        const defaultPath = authorityChecker.getDefaultPath();
+        const path = userPath(role, carrierId, defaultPath);
         debug('user is already authenticated, redirecting to landing page %s', path);
         replace(path);
       } catch (err) {
         debug('error occurred when getting landing path', err);
-        debug('redirecting to /sign-in');
-        replace('/sign-in');
+        debug(`redirecting to ${path500}`);
+        replace(path500);
       }
     }
 
@@ -103,40 +110,40 @@ export default (context) => {
       </Route>
 
       <Route component={Protected} onEnter={requireAuth} >
-        <Route path=":role/:identity/" component={Overview} />
+        <Route path={`:role/:identity/${modules.OVERVIEW}`} component={Overview} />
 
-        <Route path=":role/:identity/companies" component={Companies}>
+        <Route path={`:role/:identity/${modules.COMPANY}`} component={Companies}>
           <Route path="create" component={NewProfile} />
           <Route path=":carrierId/profile" component={EditProfile} />
           <Route path=":carrierId/service" component={Service} />
         </Route>
 
-        <Route path=":role/:identity/account" component={Account}>
+        <Route path={`:role/:identity/${modules.ACCOUNT}`} component={Account}>
           <Route path="create" component={AccountProfile} />
           <Route path=":accountId" component={AccountProfile} />
         </Route>
 
         <Route component={Verification}>
-          <Route path=":role/:identity/verification/overview" component={VerificationOverview} />
-          <Route path=":role/:identity/verification/details" component={VerificationDetails} />
+          <Route path={`:role/:identity/${modules.VERIFICATION_SDK}/overview`} component={VerificationOverview} />
+          <Route path={`:role/:identity/${modules.VERIFICATION_SDK}/details`} component={VerificationDetails} />
         </Route>
 
-        <Route path=":role/:identity/vsf/overview" component={VsfOverview} />
-        <Route path=":role/:identity/vsf/details" component={VsfDetails} />
+        <Route path={`:role/:identity/${modules.VSF}/overview`} component={VsfOverview} />
+        <Route path={`:role/:identity/${modules.VSF}/details`} component={VsfDetails} />
 
-        <Route path=":role/:identity/calls/overview" component={CallsOverview} />
-        <Route path=":role/:identity/calls/details" component={Calls} />
+        <Route path={`:role/:identity/${modules.CALL}/overview`} component={CallsOverview} />
+        <Route path={`:role/:identity/${modules.CALL}/details`} component={Calls} />
 
-        <Route path=":role/:identity/end-users/overview" component={EndUsersOverview} />
-        <Route path=":role/:identity/end-users/details" component={EndUsersDetails} />
+        <Route path={`:role/:identity/${modules.END_USER}/overview`} component={EndUsersOverview} />
+        <Route path={`:role/:identity/${modules.END_USER}/details`} component={EndUsersDetails} />
 
-        <Route path=":role/:identity/im/overview" component={ImOverview} />
-        <Route path=":role/:identity/im/details" component={Im} />
+        <Route path={`:role/:identity/${modules.IM}/overview`} component={ImOverview} />
+        <Route path={`:role/:identity/${modules.IM}/details`} component={Im} />
 
-        <Route path=":role/:identity/sms/overview" component={SmsOverview} />
-        <Route path=":role/:identity/sms/details" component={SMS} />
+        <Route path={`:role/:identity/${modules.SMS}/overview`} component={SmsOverview} />
+        <Route path={`:role/:identity/${modules.SMS}/details`} component={SMS} />
 
-        <Route path=":role/:identity/top-up/details" component={TopUp} />
+        <Route path={`:role/:identity/${modules.TOP_UP}/details`} component={TopUp} />
       </Route>
 
       <Route path={path401} component={Error401} />

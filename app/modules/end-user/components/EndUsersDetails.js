@@ -84,7 +84,7 @@ const EndUsers = React.createClass({
     return (
       <div className="row">
         <FilterBar.Wrapper>
-          <FilterBarNavigation section="end-users" tab="details" />
+          <FilterBarNavigation section="end-user" tab="details" />
           <FilterBar.LeftItems>
             <DateRangePicker
               withIcon

@@ -5,7 +5,7 @@ import { NotFoundError } from 'common-errors';
 import { getAclString } from './utils';
 import Company from '../../collections/company';
 
-import modules from '../../data/moduleId';
+import modules from '../../constants/moduleId';
 const {
   OVERVIEW, ACCOUNT, COMPANY, END_USER, CALL,
   IM, SMS, VSF, TOP_UP, VERIFICATION_SDK,

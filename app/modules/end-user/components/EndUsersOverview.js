@@ -271,7 +271,7 @@ const EndUsersOverview = React.createClass({
     return (
       <div className="row">
         <FilterBar.Wrapper>
-          <FilterBarNavigation section="end-users" tab="overview" />
+          <FilterBarNavigation section="end-user" tab="overview" />
           <FilterBar.LeftItems>
 
           </FilterBar.LeftItems>

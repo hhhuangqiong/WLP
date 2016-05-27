@@ -32,7 +32,7 @@ export function userPath(role, identity, targetPath) {
 /**
  * @method getCarrierIdFromUrl
  * to resolve the carrierId from a url based on our routes structure.
- * http://domain.name/{role}/{identity}/{section}/{sub-section}
+ * http://domain.name/{role}/{identity}/{module}/{section}
  *
  * @param url {String}
  * @returns {String | Null}
@@ -51,4 +51,22 @@ export function getCarrierIdFromUrl(url) {
     carrierId === ROOT_CARRIER ||
     isURL(carrierId, { allow_underscores: true })
   ) && carrierId || null;
+}
+
+/**
+ * @method getModuleIdFromUrl
+ * to resolve the moduleId from a url based on our routes structure.
+ * http://domain.name/{role}/{identity}/{module}/{section}
+ *
+ * @param url
+ * @returns {String | undefined}
+ */
+export function getModuleIdFromUrl(url) {
+  if (!url) {
+    throw new Error('missing `url` argument');
+  }
+
+  const moduleId = get(url.split('/'), 3);
+
+  return moduleId;
 }
