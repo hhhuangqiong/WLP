@@ -1,11 +1,10 @@
 import React, { PropTypes, Component } from 'react';
 import { connectToStores } from 'fluxible-addons-react';
-import validation from 'react-validation-mixin';
-import strategy from 'joi-validation-strategy';
 import Joi from 'joi';
 import { changeUsername, changePassword, signIn } from './actions/signIn';
 import SignInStore from './store';
 import SignIn from './components/SignIn';
+import formValidation from '../../main/form-validation/containers/FormValidation';
 
 class SignInContainer extends Component {
   constructor(props) {
@@ -99,7 +98,7 @@ SignInContainer.contextTypes = {
   getStore: PropTypes.func.isRequired,
 };
 
-SignInContainer = validation(strategy)(SignInContainer);
+SignInContainer = formValidation(SignInContainer);
 
 SignInContainer = connectToStores(
   SignInContainer,

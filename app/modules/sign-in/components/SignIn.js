@@ -1,5 +1,5 @@
 import React, { PropTypes } from 'react';
-import { FormattedMessage } from 'react-intl';
+import { FormattedMessage, injectIntl, intlShape } from 'react-intl';
 import Tooltip from 'rc-tooltip';
 
 const renderHelpText = message => (
@@ -33,7 +33,11 @@ const SignIn = props => (
               autoFocus
             />
             {
-              (props.getValidationMessages('username') || []).map(renderHelpText)
+              (props.getValidationMessages('username') || []).map(error => {
+                const errorObject = JSON.parse(error);
+                const message = props.intl.formatMessage(errorObject);
+                return renderHelpText(message);
+              })
             }
           </div>
         </div>
@@ -52,7 +56,11 @@ const SignIn = props => (
               onBlur={props.changePassword}
             />
             {
-              (props.getValidationMessages('password') || []).map(renderHelpText)
+              (props.getValidationMessages('password') || []).map(error => {
+                const errorObject = JSON.parse(error);
+                const message = props.intl.formatMessage(errorObject);
+                return renderHelpText(message);
+              })
             }
           </div>
         </div>
@@ -83,6 +91,7 @@ const SignIn = props => (
 );
 
 SignIn.propTypes = {
+  intl: intlShape.isRequired,
   username: PropTypes.string,
   password: PropTypes.string,
   doLogin: PropTypes.func.isRequired,
@@ -91,4 +100,4 @@ SignIn.propTypes = {
   changePassword: PropTypes.func.isRequired,
 };
 
-export default SignIn;
+export default injectIntl(SignIn);
