@@ -149,6 +149,10 @@ const EndUserTable = React.createClass({
   getAccountStatus(accountStatus) {
     const { intl: { formatMessage } } = this.props;
 
+    if (!accountStatus) {
+      return formatMessage(NOT_FOUND_LABEL);
+    }
+
     if (accountStatus.toLowerCase() === ACTIVE_STATUS) {
       return capitalize(formatMessage(MESSAGES.active));
     }
