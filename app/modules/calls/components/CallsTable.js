@@ -147,6 +147,15 @@ const CallsTable = React.createClass({
       );
     }
 
+    if (releaseParty === 'Callee') {
+      return (
+        <FormattedMessage
+          id="calls.details.callee"
+          defaultMessage="Callee"
+        />
+      );
+    }
+
     return releaseParty;
   },
 
