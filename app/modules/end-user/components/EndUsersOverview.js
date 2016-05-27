@@ -21,7 +21,6 @@ import { parseTimeRange } from '../../../utils/timeFormatter';
 import * as DataGrid from '../../../main/statistics/components/DataGrid';
 import PercentageChart from '../../../main/components/PercentageChart';
 import DateSelector from '../../../main/components/DateSelector';
-import i18nMessages from '../../../main/constants/i18nMessages';
 import { LAST_UPDATE_TIME_FORMAT, SHORT_DATE_FORMAT } from '../../../utils/timeFormatter';
 
 import EndUsersOverviewStore from '../stores/EndUsersOverviewStore';
@@ -37,6 +36,7 @@ import fetchGeographicStats from '../actions/fetchGeographicStats';
 import clearEndUsersStats from '../actions/clearEndUsersStats';
 
 import FilterBarNavigation from '../../../main/filter-bar/components/FilterBarNavigation';
+import getPlatformInfo from '../utils/getPlatformInfo';
 
 const MESSAGES = defineMessages({
   totalUser: {
@@ -73,13 +73,6 @@ const TIME_FRAMES = ['7 days', '30 days', '60 days', '90 days'];
 const gChartContainerId = 'registrationByCountry';
 
 const defaultQueryMonth = moment().subtract(1, 'month');
-
-const PLATFORM_NAME = {
-  ios: 'IOS',
-  android: 'Android',
-  phone: 'Windows Phone',
-  'windows.phone': 'Windows Phone',
-};
 
 const STATS_TYPE = {
   REGISTERED_USER: 'registereduser',
@@ -479,7 +472,7 @@ const EndUsersOverview = React.createClass({
                           return (
                             <div className="large-12 columns left">
                               <PercentageChart
-                                title={PLATFORM_NAME[stat.platform]}
+                                title={formatMessage(getPlatformInfo(stat.platform).name)}
                                 percentage={percentage}
                                 stat={stat.total}
                                 unit={formatMessage(MESSAGES.userUnit)}

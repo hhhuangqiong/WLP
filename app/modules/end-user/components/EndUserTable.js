@@ -9,6 +9,8 @@ import TableHeader from '../../../modules/data-table/components/TableHeader';
 import Pagination from '../../../modules/data-table/components/Pagination';
 import i18nMessages from '../../../main/constants/i18nMessages';
 
+import getPlatformInfo from '../utils/getPlatformInfo.js';
+
 const { displayDateFormat: DATE_FORMAT } = require('./../../../main/config');
 
 const ACTIVE_STATUS = 'active';
@@ -193,10 +195,7 @@ const EndUserTable = React.createClass({
             </span>
           </td>
           <td className="device-modal">
-            <i className={classNames(
-              { 'icon-apple': (platform) ? platform.toLowerCase() === 'ios' : false },
-              { 'icon-android': (platform) ? platform.toLowerCase() === 'android' : false })}
-            />
+            <i className={classNames(getPlatformInfo(platform).iconClass)} />
             {device.deviceModel || formatMessage(NOT_FOUND_LABEL)}
           </td>
           <td>{device.appBundleId || formatMessage(NOT_FOUND_LABEL)}</td>

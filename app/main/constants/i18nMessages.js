@@ -73,4 +73,16 @@ export default defineMessages({
     id: 'mins',
     defaultMessage: 'MINS',
   },
+  ios: {
+    id: 'ios',
+    defaultMessage: 'iOS',
+  },
+  android: {
+    id: 'android',
+    defaultMessage: 'Android',
+  },
+  windowsPhone: {
+    id: 'windowsPhone',
+    defaultMessage: 'Windows Phone',
+  },
 });
