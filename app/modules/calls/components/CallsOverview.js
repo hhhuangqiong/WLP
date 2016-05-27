@@ -61,16 +61,16 @@ const MESSAGES = defineMessages({
     id: 'calls.overview.averageCallDuration',
     defaultMessage: 'Average Call Duration',
   },
-  totalSuccessfulRate: {
-    id: 'calls.overview.totalSuccessfulRate',
-    defaultMessage: 'ASR (%)',
+  answerSeizureRatio: {
+    id: 'calls.overview.answerSeizureRatio',
+    defaultMessage: 'Answer Seizure Ratio',
   },
 });
 
 const STATS_TYPE = {
   TOTAL_ATTEMPT: MESSAGES.totalCallsAttempts,
   SUCCESSFUL_ATTEMPT: MESSAGES.totalSuccessfulCalls,
-  SUCCESSFUL_RATE: MESSAGES.totalSuccessfulRate,
+  ANSWER_SEIZURE_RATIO: MESSAGES.answerSeizureRatio,
   TOTAL_DURATION: MESSAGES.totalCallDuration,
   AVERAGE_DURATION: MESSAGES.averageCallDuration,
 };
@@ -187,7 +187,7 @@ const CallsOverview = React.createClass({
 
     return !isEmpty(this.state.totalAttemptStats) && !isEmpty(this.state.successAttemptStats) && !isEmpty(this.state.successRateStats) ? [
       {
-        name: formatMessage(STATS_TYPE.SUCCESSFUL_RATE),
+        name: `${formatMessage(STATS_TYPE.ANSWER_SEIZURE_RATIO)} (%)`,
         legendIndex: 2,
         type: 'line',
         data: successRateData,
@@ -551,7 +551,7 @@ const CallsOverview = React.createClass({
                         isLoading={this.isTotalStatsLoading()}
                       />
                       <DataGrid.Cell
-                        title="ASR (%)"
+                        title={`${formatMessage(MESSAGES.answerSeizureRatio)} (%)`}
                         data={this._getAverageSuccessfulRate()}
                         formatter={normalizeDurationInMS}
                         unit="%"
