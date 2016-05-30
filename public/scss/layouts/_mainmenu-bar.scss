@@ -47,16 +47,25 @@
                 }
             }
 
-            .icon-menuverification {
-                background: url(../images/user-verify-solid_white.svg) no-repeat;
-                background-position: center;
-                height: $menu-sidebar-item-height;
+            .icon-menuverification{
+                &:before{
+                    background-color: #ffffff;
+                    mask: url(../images/user-verify-solid_white.svg) no-repeat 50%;
+                    height: $menu-sidebar-item-height;
+                    content:"";
+                    display:block;
+                }
             }
         }
         &:hover, &.active {
             i, label {
                 color: #EC5252;
                 text-shadow: 0px 1px 3px rgba(0, 0, 0, 0.2);
+            }
+            .icon-menuverification{
+                &:before{
+                  background-color: #EC5252;
+                }
             }
         }
     }
