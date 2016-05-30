@@ -41,6 +41,10 @@ const MESSAGES = defineMessages({
     id: 'remark',
     defaultMessage: 'Remark',
   },
+  invalidVoucher: {
+    id: 'topUp.details.invalidVoucher',
+    defaultMessage: 'Invalid voucher number',
+  },
 });
 
 const TABLE_TITLES = [
@@ -198,6 +202,19 @@ ${(!currency.code ? '' : currency.code)}`;
     }
   },
 
+  getErrorDescription(type) {
+    const {
+        formatMessage
+    } = this.props.intl;
+    
+    switch (type) {
+      case 'Invalid voucher no':
+        return formatMessage(MESSAGES.invalidVoucher);
+      default:
+        return type;
+    }
+  },
+
   renderRows() {
     return this.props.histories.map(history =>
       (
@@ -240,7 +257,7 @@ ${(!currency.code ? '' : currency.code)}`;
               <Tooltip
                 placement="left"
                 trigger={['hover']}
-                overlay={<span>{history.errorDescription}</span>}
+                overlay={<span>{this.getErrorDescription(history.errorDescription)}</span>}
               >
                 <i className="icon-error6" />
               </Tooltip>
