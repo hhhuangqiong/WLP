@@ -114,27 +114,23 @@ const EndUserTable = React.createClass({
     );
   },
 
-  renderTableBody(content) {
-    if (isNull(content)) {
-      return (
-        <tbody className={UI_STATE_LOADING}>
-          <tr>
-            <td colSpan={TABLE_TITLES.length}>
-              <div className="text-center">
-                <FormattedMessage
-                  id="loading"
-                  defaultMessage="Loading"
-                />
-                <span>...</span>
-              </div>
-            </td>
-          </tr>
-        </tbody>
-      );
-    }
-
+  renderTableBody(content, isLoading) {
     if (isEmpty(content)) {
-      return (
+      return isLoading ? (
+        <tbody className={UI_STATE_LOADING}>
+        <tr>
+          <td colSpan={TABLE_TITLES.length}>
+            <div className="text-center">
+              <FormattedMessage
+                id="loading"
+                defaultMessage="Loading"
+                />
+              <span>...</span>
+            </div>
+          </td>
+        </tr>
+        </tbody>
+      ) : (
         <tbody className={UI_STATE_EMPTY}>
           <EmptyRow colSpan={TABLE_TITLES.length} />
         </tbody>
@@ -214,15 +210,18 @@ const EndUserTable = React.createClass({
     return (
       <table className="data-table large-24 clickable">
         <TableHeader headers={TABLE_TITLES} />
-        {this.renderTableBody(this.props.users)}
+        {this.renderTableBody(this.props.users, this.props.isLoading)}
         <tfoot>
-          <If condition={!isEmpty(this.props.users)}>
+        {
+          !isEmpty(this.props.users) ? (
             <Pagination
               colSpan={TABLE_TITLES.length + 1}
               hasMoreData={this.props.hasNext}
               onLoadMore={this.props.onPageChange}
+              isLoading={this.props.isLoading}
             />
-          </If>
+          ) : null
+        }
         </tfoot>
       </table>
     );

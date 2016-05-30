@@ -1,4 +1,4 @@
-import _ from 'lodash';
+import { get, first, isNull } from 'lodash';
 import moment from 'moment';
 
 import React, { PropTypes } from 'react';
@@ -103,15 +103,15 @@ const EndUserProfile = React.createClass({
   contextTypes: {
     executeAction: React.PropTypes.func.isRequired,
     router: PropTypes.object.isRequired,
+    params: PropTypes.object.isRequired,
   },
 
   getParams() {
     const { identity: carrierId } = this.context.params;
-    const username = this.props.user.userDetails.username;
+    const username = get(this.props, 'user.userDetails.username');
 
     return { carrierId, username };
   },
-
 
   renderWalletPanel() {
     const { intl: { formatMessage } } = this.props;
@@ -128,9 +128,17 @@ const EndUserProfile = React.createClass({
               />
             </span>
           </div>
-          <div className="error-button" onClick={this.handleRefreshButtonClick}>
-            <i className="icon-refresh" />
-          </div>
+          {
+            // retry button should only available when action failed
+            // if fetchWallet action is failed,
+            // store will assign null to user.wallets,
+            // otherwise, it will always be an array even an empty one
+            isNull(this.props.user.wallets) ? (
+              <div className="error-button" onClick={this.handleRefreshButtonClick}>
+                <i className="icon-refresh" />
+              </div>
+            ) : null
+          }
         </div>
       </Accordion.Navigation>
     );
@@ -140,7 +148,7 @@ const EndUserProfile = React.createClass({
       const overviewWallet = {
         walletType: 'overview',
         // assume the currency are consistent between free & paid wallet
-        currency: _.first(this.props.user.wallets).currency,
+        currency: first(get(this.props, 'user.wallets')).currency,
         balance: 0,
       };
 
@@ -172,14 +180,14 @@ const EndUserProfile = React.createClass({
   renderAccountPanel() {
     const { intl: { formatMessage } } = this.props;
     const EMPTY_STRING = formatMessage(MESSAGES.empty)
-    const gender = _.get(this.props, 'user.userDetails.gender');
+    const gender = get(this.props, 'user.userDetails.gender');
     const creationDate = moment(this.props.user.userDetails.creationDate).format(DATE_FORMAT);
     const countryCode = (this.props.user.userDetails.countryCode || '').toLowerCase();
 
     return (
       <Accordion.Navigation
         title={formatMessage(MESSAGES.accountTitle)}
-        verified={_.get(this.props, 'user.userDetails.verified')}
+        verified={get(this.props, 'user.userDetails.verified')}
         hasIndicator
       >
         <Item label={formatMessage(MESSAGES.createdTime)} className="end-user-info__created-time">{creationDate}</Item>

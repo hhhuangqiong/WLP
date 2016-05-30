@@ -44,12 +44,6 @@ const EndUsers = React.createClass({
 
   statics: {
     storeListeners: [EndUserStore],
-
-    fetchData(context, params, query, done) {
-      concurrent([
-        context.executeAction.bind(context, clearEndUsers),
-      ], done || (() => {}));
-    },
   },
 
   getInitialState() {
@@ -61,8 +55,13 @@ const EndUsers = React.createClass({
   },
 
   componentDidUpdate(prevProps, prevState) {
-    // @TODO should not update userList here, need to change it later or perhaps call within `fetchData`?
-    this.loadUserList(prevState);
+    const { location: { search } } = this.props;
+    const { location: { search: prevSearch } } = prevProps;
+
+    if (search !== prevSearch) {
+      this.context.executeAction(clearEndUsers);
+      this.loadUserList(prevState);
+    }
   },
 
   onChange() {
@@ -81,6 +80,7 @@ const EndUsers = React.createClass({
 
   render() {
     const { role, identity } = this.context.params;
+    const selectedUser = this.getStore(EndUserStore).getCurrentUser();
 
     return (
       <div className="row">
@@ -128,17 +128,20 @@ const EndUsers = React.createClass({
           <div className="large-16 columns">
             <EndUserTable
               ref="endUserTable"
-              currentUser={this.getStore(EndUserStore).getCurrentUser()}
+              currentUser={selectedUser}
               users={this.applyFilters(this.getStore(EndUserStore).getDisplayUsers())}
               hasNext={this._checkHasNext()}
               onUserClick={this.handleUserClick}
               onPageChange={this.handleShowNextPage}
+              isLoading={this.state.isLoading}
             />
           </div>
           <div className="large-8 columns">
-            <If condition={this.getStore(EndUserStore).getCurrentUser()}>
-              <EndUserProfile user={this.getStore(EndUserStore).getCurrentUser()} />
-            </If>
+            {
+              !!selectedUser ? (
+                <EndUserProfile user={selectedUser} />
+              ) : null
+            }
           </div>
         </div>
       </div>
@@ -182,6 +185,7 @@ const EndUsers = React.createClass({
       page: this.getStore(EndUserStore).getPage(),
       hasNextPage: this.getStore(EndUserStore).getHasNextPage(),
       currentUser: this.context.params.username ? this.getStore(EndUserStore).getCurrentUser() : null,
+      isLoading: this.getStore(EndUserStore).getIsLoading(),
     };
   },
 
