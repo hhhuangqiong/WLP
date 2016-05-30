@@ -123,27 +123,46 @@ export default (context) => {
           <Route path=":accountId" component={AccountProfile} />
         </Route>
 
-        <Route component={Verification}>
-          <Route path={`:role/:identity/${modules.VERIFICATION_SDK}/overview`} component={VerificationOverview} />
-          <Route path={`:role/:identity/${modules.VERIFICATION_SDK}/details`} component={VerificationDetails} />
+        <Route path={`:role/:identity/${modules.VERIFICATION_SDK}`} component={Verification}>
+          <IndexRedirect to="overview" />
+          <Route path="overview" component={VerificationOverview} />
+          <Route path="details" component={VerificationDetails} />
         </Route>
 
-        <Route path={`:role/:identity/${modules.VSF}/overview`} component={VsfOverview} />
-        <Route path={`:role/:identity/${modules.VSF}/details`} component={VsfDetails} />
+        <Route path={`:role/:identity/${modules.VSF}`}>
+          <IndexRedirect to="overview" />
+          <Route path="overview" component={VsfOverview} />
+          <Route path="details" component={VsfDetails} />
+        </Route>
 
-        <Route path={`:role/:identity/${modules.CALL}/overview`} component={CallsOverview} />
-        <Route path={`:role/:identity/${modules.CALL}/details`} component={Calls} />
+        <Route path={`:role/:identity/${modules.CALL}`}>
+          <IndexRedirect to="overview" />
+          <Route path="overview" component={CallsOverview} />
+          <Route path="details" component={Calls} />
+        </Route>
 
-        <Route path={`:role/:identity/${modules.END_USER}/overview`} component={EndUsersOverview} />
-        <Route path={`:role/:identity/${modules.END_USER}/details`} component={EndUsersDetails} />
+        <Route path={`:role/:identity/${modules.END_USER}`}>
+          <IndexRedirect to="overview" />
+          <Route path="overview" component={EndUsersOverview} />
+          <Route path="details" component={EndUsersDetails} />
+        </Route>
 
-        <Route path={`:role/:identity/${modules.IM}/overview`} component={ImOverview} />
-        <Route path={`:role/:identity/${modules.IM}/details`} component={Im} />
+        <Route path={`:role/:identity/${modules.IM}`}>
+          <IndexRedirect to="overview" />
+          <Route path="overview" component={ImOverview} />
+          <Route path="details" component={Im} />
+        </Route>
 
-        <Route path={`:role/:identity/${modules.SMS}/overview`} component={SmsOverview} />
-        <Route path={`:role/:identity/${modules.SMS}/details`} component={SMS} />
+        <Route path={`:role/:identity/${modules.SMS}`}>
+          <IndexRedirect to="overview" />
+          <Route path="overview" component={SmsOverview} />
+          <Route path="details" component={SMS} />
+        </Route>
 
-        <Route path={`:role/:identity/${modules.TOP_UP}/details`} component={TopUp} />
+        <Route path={`:role/:identity/${modules.TOP_UP}`}>
+          <IndexRedirect to="details" />
+          <Route path="details" component={TopUp} />
+        </Route>
       </Route>
 
       <Route path={path401} component={Error401} />
