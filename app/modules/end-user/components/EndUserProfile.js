@@ -19,6 +19,8 @@ import Item from './InfoItem';
 const { displayDateFormat: DATE_FORMAT } = require('./../../../main/config');
 import { getCountryName } from '../../../utils/StringFormatter';
 
+import getPlatformInfo from '../utils/getPlatformInfo';
+
 const MESSAGES = defineMessages({
   walletTitle: {
     id: 'endUser.profile.wallet.title',
@@ -240,8 +242,8 @@ const EndUserProfile = React.createClass({
         <Accordion.Navigation title={formatMessage(MESSAGES.appTitle)}>
           <Item label={formatMessage(MESSAGES.device)}>
             <span className="device-label">
-              <i className={classNames({ 'icon-apple': this.checkPlatformOS(device.platform, 'ios') }, { 'icon-android': this.checkPlatformOS(device.platform, 'android') })} />
-              {device.platform}
+              <i className={classNames(getPlatformInfo(device.platform).iconClass)} />
+              {formatMessage(getPlatformInfo(device.platform).name)}
             </span>
           </Item>
           <Item label={formatMessage(MESSAGES.version)}>
@@ -306,6 +308,7 @@ const EndUserProfile = React.createClass({
   checkPlatformOS(platform, matchOS) {
     return (platform) ? platform.toLowerCase() === matchOS : false;
   },
+
 });
 
 export default injectIntl(EndUserProfile);
