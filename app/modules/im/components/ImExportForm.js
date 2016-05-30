@@ -1,12 +1,36 @@
 import React from 'react';
 import moment from 'moment';
-import { FormattedMessage } from 'react-intl';
+
+import {
+  FormattedMessage,
+  injectIntl,
+  defineMessages,
+} from 'react-intl';
 
 import DateTimePicker from '../../../main/components/DateTimePicker';
 import ExportCountriesDropdown from '../../../main/file-export/components/ExportCountriesDropdown';
 import ExportSubmitControls from '../../../main/file-export/components/ExportSubmitControls';
 
-export default React.createClass({
+const MESSAGES = defineMessages({
+  origin: {
+    id: 'im.details.origin',
+    defaultMessage: 'Origin',
+  },
+  allOrigins: {
+    id: 'im.details.allOrigins',
+    defaultMessage: 'All origins',
+  },
+  destination: {
+    id: 'im.details.destination',
+    defaultMessage: 'Destination',
+  },
+  allDestination: {
+    id: 'im.details.allDestination',
+    defaultMessage: 'All destinations',
+  },
+});
+
+const ImExportForm = React.createClass({
   propTypes: {
     fromTime: React.PropTypes.object,
     toTime: React.PropTypes.object,
@@ -60,6 +84,8 @@ export default React.createClass({
   },
 
   render() {
+    const { formatMessage } = this.props.intl;
+
     return (
       <form onSubmit={this.handleExport} noValidate>
         <h4 id="modalTitle">
@@ -113,15 +139,15 @@ export default React.createClass({
         </div>
 
         <ExportCountriesDropdown
-          displayName="Origin"
-          defaultOption="All origins"
+          displayName={formatMessage(MESSAGES.origin)}
+          defaultOption={formatMessage(MESSAGES.allOrigins)}
           value={this.state.origin}
           onChange={this.handleOriginChange}
         />
 
         <ExportCountriesDropdown
-          displayName="Destination"
-          defaultOption="All destinations"
+          displayName={formatMessage(MESSAGES.destination)}
+          defaultOption={formatMessage(MESSAGES.allDestination)}
           value={this.state.destination}
           onChange={this.handleDestinationChange}
         />
@@ -136,3 +162,5 @@ export default React.createClass({
     );
   },
 });
+
+export default injectIntl(ImExportForm);
