@@ -40,6 +40,94 @@ const MESSAGES = defineMessages({
     id: 'remark',
     defaultMessage: 'Remark',
   },
+  creditAppStore: {
+    id: 'creditAppStore',
+    defaultMessage: 'Credit AppStore',
+  },
+  creditGooglePlay: {
+    id: 'topUp.details.creditGooglePlay',
+    defaultMessage: 'Credit GooglePlay',
+  },
+  stickerAppStore: {
+    id: 'topUp.details.stickerAppStore',
+    defaultMessage: 'Sticker AppStore',
+  },
+  stickerGooglePlay: {
+    id: 'topUp.details.stickerGooglePlay',
+    defaultMessage: 'Sticker GooglePlay',
+  },
+  creditCard: {
+    id: 'topUp.details.creditCard',
+    defaultMessage: 'CreditCard',
+  },
+  payPal: {
+    id: 'topUp.details.payPal',
+    defaultMessage: 'PayPal',
+  },
+  freeVoucher: {
+    id: 'topUp.details.freeVoucher',
+    defaultMessage: 'FreeVoucher',
+  },
+  paidVoucher: {
+    id: 'topUp.details.paidVoucher',
+    defaultMessage: 'PaidVoucher',
+  },
+  universalVoucher: {
+    id: 'topUp.details.universalVoucher',
+    defaultMessage: 'UniversalVoucher',
+  },
+  promotional: {
+    id: 'topUp.details.promotional',
+    defaultMessage: 'Promotional',
+  },
+  inviteByFacebook: {
+    id: 'topUp.details.inviteByFacebook',
+    defaultMessage: 'Invite by Facebook',
+  },
+  inviteBySMS: {
+    id: 'topUp.details.inviteBySMS',
+    defaultMessage: 'Invite by SMS',
+  },
+  inviteByTwitter: {
+    id: 'topUp.details.inviteByTwitter',
+    defaultMessage: 'Invite by Twitter',
+  },
+  inviteByWeibo: {
+    id: 'topUp.details.inviteByWeibo',
+    defaultMessage: 'Invite by Weibo',
+  },
+  inviteByEmail: {
+    id: 'topUp.details.inviteByEmail',
+    defaultMessage: 'Invite by Email',
+  },
+  rateUs: {
+    id: 'topUp.details.rateUs',
+    defaultMessage: 'Rate us',
+  },
+  onNetCallReward: {
+    id: 'topUp.details.onNetCallReward',
+    defaultMessage: 'OnNet Call Reward',
+  },
+  sysRefund: {
+    id: 'topUp.details.sysRefund',
+    defaultMessage: 'System Refund',
+  },
+  sysRecharge: {
+    id: 'topUp.details.sysRecharge',
+    defaultMessage: 'System Recharge',
+  },
+  forfeit: {
+    id: 'topUp.details.forfeit',
+    defaultMessage: 'Forfeit',
+  },
+  monitoring: {
+    id: 'topUp.details.monitoring',
+    defaultMessage: 'Monitoring',
+  },
+  purchaseCredit: {
+    id: 'topUp.details.purchaseCredit',
+    defaultMessage: 'Purchase Credit',
+  },
 });
 
 const TABLE_TITLES = [
@@ -145,49 +233,29 @@ const TopUpTable = React.createClass({
   },
 
   getRechargeType(type) {
-    switch (type) {
-      case 'InviteByEmail':
-        return (
-          <FormattedMessage
-            id="topUp.details.inviteByEmail"
-            defaultMessage="Invite By Email"
-          />
+    const { formatMessage } = this.props.intl;
+
+
+    if (!type) {
+      return (
+        <FormattedMessage
+          id="unknown"
+          defaultMessage="Unknown"
+        />
       );
-
-      case 'RateUs':
-        return (
-          <FormattedMessage
-            id="topUp.details.rateUs"
-            defaultMessage="Rate us"
-          />
-        );
-
-      case 'Monitoring':
-        return (
-          <FormattedMessage
-            id="topUp.details.monitoring"
-            defaultMessage="Monitoring"
-          />
-        );
-
-      case 'promotional':
-        return (
-          <FormattedMessage
-            id="topUp.details.promotional"
-            defaultMessage="Promotional"
-          />
-        );
-
-      case 'voucher':
-        return (
-          <FormattedMessage
-            id="topUp.details.voucher"
-            defaultMessage="Voucher"
-          />
-        );
-
-      default: return type;
     }
+
+    // transform the first letter of the case to be lower to match with translation identifier
+    const clonedType = type.slice(0);
+    const firstLetter = clonedType[0].toLowerCase();
+    const restLetters = clonedType.substr(1);
+    const messageType = `${firstLetter}${restLetters}`;
+
+    if (!(type in MESSAGES)) {
+      return type;
+    }
+
+    return formatMessage(MESSAGES[messageType]);
   },
 
   renderRows() {
