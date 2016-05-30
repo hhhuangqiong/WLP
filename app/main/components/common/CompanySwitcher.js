@@ -1,5 +1,5 @@
 import _ from 'lodash';
-import React from 'react';
+import React, { PropTypes } from 'react';
 import { FluxibleMixin } from 'fluxible-addons-react';
 import { browserHistory } from 'react-router';
 
@@ -31,7 +31,11 @@ const CompanySwitcher = React.createClass({
 
   switchCompany(params) {
     const { role, identity } = params;
-    const destination = userPath(role, identity, '/');
+
+    // redirecting to an existing module will work
+    // a proper landing path will be checked on server-side
+    // ideally it should reconstruct the defaultPath by authorityChecker
+    const destination = userPath(role, identity, '/overview');
 
     // it should always be a client side process
     // let's refresh the page at this moment, until we

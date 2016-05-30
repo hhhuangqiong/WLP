@@ -1,4 +1,4 @@
-import moduleId from '../../data/moduleId';
+import moduleId from '../../constants/moduleId';
 import { defineMessages } from 'react-intl';
 
 const {
@@ -54,60 +54,60 @@ export default [
     name: MESSAGES.overview,
     icon: 'icon-menuoverview',
     page: OVERVIEW,
-    path: '/',
+    path: '/overview',
   },
   {
     name: MESSAGES.account,
     icon: 'icon-menuaccount',
     page: ACCOUNT,
-    path: '/account',
+    path: `/${ACCOUNT}`,
   },
   {
     name: MESSAGES.users,
     icon: 'icon-menuenduser',
     page: END_USER,
-    path: '/end-users/overview',
+    path: `/${END_USER}/overview`,
   },
   {
     name: MESSAGES.company,
     icon: 'icon-menucompany',
     page: COMPANY,
-    path: '/companies',
+    path: `/${COMPANY}`,
   },
   {
     name: MESSAGES.calls,
     icon: 'icon-menucalls',
     page: CALL,
-    path: '/calls/overview',
+    path: `/${CALL}/overview`,
   },
   {
     name: MESSAGES.im,
     icon: 'icon-menuim',
     page: IM,
-    path: '/im/overview',
+    path: `/${IM}/overview`,
   },
   {
     name: MESSAGES.sms,
     icon: 'icon-menu-sms',
     page: SMS,
-    path: '/sms/overview',
+    path: `/${SMS}/overview`,
   },
   {
     name: MESSAGES.vsf,
     icon: 'icon-menustore',
     page: VSF,
-    path: '/vsf/overview',
+    path: `/${VSF}/overview`,
   },
   {
     name: MESSAGES.topUp,
     icon: 'icon-menutopup',
     page: TOP_UP,
-    path: '/top-up/details',
+    path: `/${TOP_UP}/details`,
   },
   {
     name: MESSAGES.verification,
     icon: 'icon-menuverification',
     page: VERIFICATION_SDK,
-    path: '/verification/overview',
+    path: `/${VERIFICATION_SDK}/overview`,
   },
 ];

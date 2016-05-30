@@ -1,5 +1,6 @@
 import _ from 'lodash';
 import { getAclString, decodeAclString, getPathByResource } from './utils';
+import { getModuleIdFromUrl } from '../../utils/paths';
 
 /**
  * @class Authority Checker
@@ -116,9 +117,9 @@ class AuthorityChecker {
 
     _.forEach(this._capability, capability => {
       const { resource } = decodeAclString(capability);
-      const resourcePath = getPathByResource(resource);
+      const moduleId = getModuleIdFromUrl(path);
 
-      if (_.includes(path, resourcePath)) {
+      if (resource === moduleId) {
         accessible = true;
       }
     });

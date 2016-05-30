@@ -10,7 +10,12 @@ const debug = require('debug')('app:modules/authority/actions/getAuthorityList')
 
 export default function (context, payload, cb) {
   const { apiClient } = context;
-  const carrierId = resolveCarrierId(payload);
+  let carrierId = resolveCarrierId(payload);
+
+  if (!carrierId) {
+    debug('carrierId data cannot be found in url, returns to user session');
+    carrierId = get(payload, 'req.user.affiliatedCompany.carrierId');
+  }
 
   // if carrierId does not exists
   if (!carrierId) {

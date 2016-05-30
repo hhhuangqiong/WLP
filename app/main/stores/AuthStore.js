@@ -94,22 +94,6 @@ const AuthStore = createStore({
     return this.signInError;
   },
 
-  getLandingPath() {
-    const authenticated = this.isAuthenticated();
-
-    if (!authenticated) {
-      return '/sign-in';
-    }
-
-    try {
-      const { role, identity } = get(this, 'user.affiliatedCompany');
-      const path = userPath(role, identity, '/');
-      return path;
-    } catch (err) {
-      throw new Error('landing path cannot be resolved');
-    }
-  },
-
   dehydrate() {
     return {
       user: this.user,

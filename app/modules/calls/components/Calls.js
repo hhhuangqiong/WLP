@@ -238,7 +238,7 @@ const Calls = React.createClass({
     return (
       <div className="row">
         <FilterBar.Wrapper>
-          <FilterBarNavigation section="calls" tab="details" />
+          <FilterBarNavigation section="call" tab="details" />
           <FilterBar.LeftItems>
             <a
               className={classNames({ active: this.state.type === CALL_TYPE.ALL })}
