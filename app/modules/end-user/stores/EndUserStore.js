@@ -9,6 +9,7 @@ const EndUserStore = createStore({
 
   handlers: {
     CLEAR_END_USERS: 'handleClearEndUsers',
+    FETCH_END_USERS_START: 'handleFetchEndUsersStart',
     FETCH_END_USERS_SUCCESS: 'handleEndUsersChange',
     FETCH_END_USERS_FAILURE: 'handleFetchEndUsersFailure',
     FETCH_END_USER_SUCCESS: 'handleEndUserChange',
@@ -28,6 +29,7 @@ const EndUserStore = createStore({
     this.page = 0;
     this.pageRec = PAGE_REC;
     this.currentPage = 1;
+    this.isLoading = false;
   },
 
   _getStartIndex() {
@@ -58,11 +60,17 @@ const EndUserStore = createStore({
     this.emitChange();
   },
 
+  handleFetchEndUsersStart() {
+    this.isLoading = true;
+    this.emitChange();
+  },
+
   handleEndUsersChange(payload) {
     this.users = (this.users || []).concat(payload.userList);
     this.displayUsers = (this.displayUsers || []).concat(this._getDisplayUsers());
     this.hasNextPage = payload.hasNextPage;
     this.page = payload.dateRange.pageNumberIndex;
+    this.isLoading = false;
     this.emitChange();
   },
 
@@ -77,7 +85,8 @@ const EndUserStore = createStore({
   },
 
   handleFetchEndUserWalletFailure() {
-    this.currentUser.wallets = [];
+    // set it as `null` to indicate a process failure
+    this.currentUser.wallets = null;
     this.emitChange();
   },
 
@@ -141,6 +150,10 @@ const EndUserStore = createStore({
     return usersWithBundleId.map(u => u.appBundleId);
   },
 
+  getIsLoading() {
+    return this.isLoading;
+  },
+
   getNeedMoreData() {
     return this.displayUsers.length === this.users.length;
   },
@@ -158,6 +171,7 @@ const EndUserStore = createStore({
       page: this.page,
       pageRec: this.pageRec,
       currentPage: this.currentPage,
+      isLoading: this.isLoading,
     };
   },
 
@@ -169,6 +183,7 @@ const EndUserStore = createStore({
     this.page = state.page;
     this.pageRec = state.pageRec;
     this.currentPage = state.currentPage;
+    this.isLoading = state.isLoading;
   },
 });
 
