@@ -61,6 +61,18 @@ const MESSAGES = defineMessages({
     id: 'vsdk.details.callOut',
     defaultMessage: 'call-out',
   },
+  notFound: {
+    id: 'vsdk.details.notfound',
+    defaultMessage: 'Not found',
+  },
+  timeout: {
+    id: 'vsdk.details.timeout',
+    defaultMessage: 'Timeout',
+  },
+  cliDontMatch: {
+    id: 'vsdk.details.cliDontMatch',
+    defaultMessage: 'CLI don\'t match',
+  },
 });
 
 /**
@@ -185,6 +197,21 @@ const VerificationTableRow = React.createClass({
     }
   },
 
+  getReasonMessage(reasonMessage) {
+    const { formatMessage } = this.props.intl;
+
+    switch (reasonMessage) {
+      case 'NOT_FOUND':
+        return formatMessage(MESSAGES.notFound);
+      case 'TIMEOUT':
+        return formatMessage(MESSAGES.timeout);
+      case 'CLI_DONT_MATCH':
+        return formatMessage(MESSAGES.cliDontMatch);
+      default:
+        return reasonMessage;
+    }
+  },
+
   render() {
     const { intl: { formatMessage } } = this.props;
     const verification = this.props.verification;
@@ -209,7 +236,7 @@ const VerificationTableRow = React.createClass({
     const method = this.getVerificationMethod(verification.type);
 
     const deviceModel = verification.hardware_identifier || '';
-    const remarks = verification.reason_message;
+    const remarks = this.getReasonMessage(verification.reason_message);
 
     const os = getOsIconName(verification.platform);
     const operator = lookupMobileOperator(verification.home_mcc, verification.home_mnc);
