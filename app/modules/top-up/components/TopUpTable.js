@@ -132,6 +132,10 @@ const MESSAGES = defineMessages({
     id: 'topUp.details.voucher',
     defaultMessage: 'Voucher',
   },
+  invalidVoucher: {
+    id: 'topUp.details.invalidVoucher',
+    defaultMessage: 'Invalid voucher number',
+  },
 });
 
 const TABLE_TITLES = [
@@ -262,6 +266,19 @@ const TopUpTable = React.createClass({
     return formatMessage(MESSAGES[messageType]);
   },
 
+  getErrorDescription(type) {
+    const {
+        formatMessage
+    } = this.props.intl;
+    
+    switch (type) {
+      case 'Invalid voucher no':
+        return formatMessage(MESSAGES.invalidVoucher);
+      default:
+        return type;
+    }
+  },
+
   renderRows() {
     return this.props.histories.map(history =>
       (
@@ -309,7 +326,7 @@ const TopUpTable = React.createClass({
               <Tooltip
                 placement="left"
                 trigger={['hover']}
-                overlay={<span>{history.errorDescription}</span>}
+                overlay={<span>{this.getErrorDescription(history.errorDescription)}</span>}
               >
                 <i className="icon-error6" />
               </Tooltip>
