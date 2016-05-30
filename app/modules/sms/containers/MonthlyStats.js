@@ -68,12 +68,21 @@ class MonthlyStatsContainer extends Component {
     const { value, oldValue, change } = data;
     const percentageChange = (change / oldValue) * 100;
 
-    // TODO: standardize the data structure
+    let direction;
+
+    if (change > 0) {
+      direction = 'up';
+    } else if (change < 0) {
+      direction = 'down';
+    } else {
+      direction = 'flat';
+    }
+
     return {
       value,
       change: {
         value: change,
-        direction: change > 0 ? 'up' : 'down',
+        direction,
         effect: 'positive',
         percentage: percentageChange,
       },

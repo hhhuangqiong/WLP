@@ -558,11 +558,21 @@ const EndUsersOverview = React.createClass({
     const { thisMonthActive, lastMonthActive } = this.state;
     const activeUserChange = thisMonthActive - lastMonthActive;
 
+    let direction;
+
+    if (activeUserChange > 0) {
+      direction = 'up';
+    } else if (activeUserChange < 0) {
+      direction = 'down';
+    } else {
+      direction = 'flat';
+    }
+
     return {
       total: thisMonthActive,
       change: thisMonthActive - lastMonthActive,
       percent: activeUserChange && lastMonthActive ? Math.round((activeUserChange / lastMonthActive) * 100) : '-',
-      direction: activeUserChange > 0 ? 'up' : 'down',
+      direction,
     };
   },
 
@@ -570,11 +580,21 @@ const EndUsersOverview = React.createClass({
     const { thisMonthRegistered, lastMonthRegistered } = this.state;
     const registeredUserChange = thisMonthRegistered - lastMonthRegistered;
 
+    let direction;
+
+    if (registeredUserChange > 0) {
+      direction = 'up';
+    } else if (registeredUserChange < 0) {
+      direction = 'down';
+    } else {
+      direction = 'flat';
+    }
+
     return {
       total: thisMonthRegistered,
       change: registeredUserChange,
       percent: registeredUserChange && lastMonthRegistered ? Math.round((registeredUserChange / lastMonthRegistered) * 100) : '-',
-      direction: (registeredUserChange > 0) ? 'up' : 'down',
+      direction,
     };
   },
 
