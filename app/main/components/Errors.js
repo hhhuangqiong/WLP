@@ -25,17 +25,17 @@ const ERROR_NAMES = defineMessages({
 });
 
 const ERROR_MESSAGES = defineMessages({
-  message401: {
+  401: {
     id: '401Messages',
-    defaultMessage: 'you don\'t have permission to access the resource',
+    defaultMessage: 'you don\'t have permission to access the resource. ',
   },
-  message404: {
+  404: {
     id: '404Messages',
-    defaultMessage: 'the page is not available',
+    defaultMessage: 'the page is not available. ',
   },
-  message500: {
+  500: {
     id: '500Message',
-    defaultMessage: 'there is a problem with the resource you are looking for, and it cannot be displayed',
+    defaultMessage: 'there is a problem with the resource you are looking for, and it cannot be displayed. ',
   },
 });
 
@@ -106,7 +106,7 @@ const ErrorTemplate = React.createClass({
                       {formatMessage(this.props.name)}
                     </li>
                     <li className="error-message">
-                      {formatMessage(this.props.message)},
+                      {formatMessage(this.props.message)}
                       <FormattedMessage
                         id="click"
                         defaultMessage="Click"
@@ -133,22 +133,22 @@ const ErrorTemplate = React.createClass({
   },
 });
 
-const errorFactory = React.createFactory(ErrorTemplate);
+const errorFactory = React.createFactory(injectIntl(ErrorTemplate));
 
 export const Error401 = React.createClass({
   render() {
-    return injectIntl(errorFactory(ERRORS['401']));
+    return errorFactory(ERRORS['401']);
   },
 });
 
 export const Error404 = React.createClass({
   render() {
-    return injectIntl(errorFactory(ERRORS['404']));
+    return errorFactory(ERRORS['404']);
   },
 });
 
 export const Error500 = React.createClass({
   render() {
-    return injectIntl(errorFactory(ERRORS['500']));
+    return errorFactory(ERRORS['500']);
   },
 });
