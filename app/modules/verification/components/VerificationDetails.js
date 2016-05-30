@@ -396,7 +396,7 @@ const VerificationDetails = React.createClass({
     return (
       <div className="row verification-details">
         <FilterBar.Wrapper>
-          <FilterBarNavigation section="verification" tab="details" />
+          <FilterBarNavigation section="verification-sdk" tab="details" />
           <FilterBar.LeftItems>
             <VerificationFilter
               appId={this.state.appId}

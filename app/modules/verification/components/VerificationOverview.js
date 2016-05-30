@@ -284,7 +284,7 @@ const VerificationOverview = React.createClass({
     return (
       <div className="row">
         <FilterBar.Wrapper>
-          <FilterBarNavigation section="verification" tab="overview" />
+          <FilterBarNavigation section="verification-sdk" tab="overview" />
           <FilterBar.LeftItems>
             {/* Need not to provide selection when there is only one single selected options to avoid confusion */}
             <If condition={options.length > 1}>
