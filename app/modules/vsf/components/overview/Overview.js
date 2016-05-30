@@ -9,7 +9,7 @@ export default function VsfOverview() {
   return (
     <div className="row">
       <FilterBar.Wrapper>
-        <FilterBarNavigation section="vsf" />
+        <FilterBarNavigation section="vsf" tab="overview" />
       </FilterBar.Wrapper>
 
       <div className="large-24 columns">

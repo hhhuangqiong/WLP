@@ -2,7 +2,34 @@ import React, { PropTypes } from 'react';
 import { Link } from 'react-router';
 import { FormattedMessage } from 'react-intl';
 
-export default function FilterBarNavigation({ section }, { params }) {
+const overviewMessage = <FormattedMessage id="overview" defaultMessage="Overview" />;
+const detailsMessage = <FormattedMessage id="detailsReport" defaultMessage="Details Report" />;
+
+function renderOverview(tab, to) {
+  if (tab === 'overview') {
+    return (
+      <a className="active">{overviewMessage}</a>
+    );
+  }
+
+  return (
+    <Link to={to} activeClassName="active">{overviewMessage}</Link>
+  );
+}
+
+function renderDetails(tab, to) {
+  if (tab === 'details') {
+    return (
+      <a className="active">{detailsMessage}</a>
+    );
+  }
+
+  return (
+    <Link to={to} activeClassName="active">{detailsMessage}</Link>
+  );
+}
+
+export default function FilterBarNavigation({ section, tab }, { params }) {
   if (!section) {
     return null;
   }
@@ -12,14 +39,10 @@ export default function FilterBarNavigation({ section }, { params }) {
   return (
     <ul className="left top-bar--inner tab--inverted">
       <li className="top-bar--inner tab--inverted__title">
-        <Link to={`/${role}/${identity}/${section}/overview`} activeClassName="active">
-          <FormattedMessage id="overview" defaultMessage="Overview" />
-        </Link>
+        {renderOverview(tab, `/${role}/${identity}/${section}/overview`)}
       </li>
       <li className="top-bar--inner tab--inverted__title">
-        <Link to={`/${role}/${identity}/${section}/details`} activeClassName="active">
-          <FormattedMessage id="detailsReport" defaultMessage="Details Report" />
-        </Link>
+        {renderDetails(tab, `/${role}/${identity}/${section}/details`)}
       </li>
     </ul>
   );
@@ -31,4 +54,5 @@ FilterBarNavigation.contextTypes = {
 
 FilterBarNavigation.propTypes = {
   section: PropTypes.string.isRequired,
+  tab: PropTypes.string.isRequired,
 };

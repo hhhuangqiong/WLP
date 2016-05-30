@@ -9,7 +9,7 @@ export default function SmsOverview() {
   return (
     <div className="row">
       <FilterBar.Wrapper>
-        <FilterBarNavigation section="sms" />
+        <FilterBarNavigation section="sms" tab="overview" />
       </FilterBar.Wrapper>
 
       <div className="large-24 columns">

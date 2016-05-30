@@ -2,11 +2,9 @@ import _ from 'lodash';
 import moment from 'moment';
 
 import React, { PropTypes } from 'react';
-import { Link } from 'react-router';
 import { FluxibleMixin } from 'fluxible-addons-react';
 
 import {
-  FormattedMessage,
   injectIntl,
 } from 'react-intl';
 
@@ -20,6 +18,7 @@ import i18nMessages from '../../../main/constants/i18nMessages';
 import * as FilterBar from './../../../main/components/FilterBar';
 import DateRangePicker from './../../../main/components/DateRangePicker';
 import SearchBox from './../../../main/components/Searchbox';
+import FilterBarNavigation from '../../../main/filter-bar/components/FilterBarNavigation';
 
 import config from './../../../main/config';
 const { inputDateFormat: DATE_FORMAT } = config;
@@ -136,20 +135,7 @@ const SMS = React.createClass({
     return (
       <div className="row">
         <FilterBar.Wrapper>
-          <FilterBar.NavigationItems>
-            <Link
-              to={`/${role}/${identity}/sms/overview`}
-              activeClassName="active"
-            >
-              <FormattedMessage id="overview" defaultMessage="Overview" />
-            </Link>
-            <Link
-              to={`/${role}/${identity}/sms/details`}
-              activeClassName="active"
-            >
-              <FormattedMessage id="detailsReport" defaultMessage="Details Report" />
-            </Link>
-          </FilterBar.NavigationItems>
+          <FilterBarNavigation section="sms" tab="details" />
           <FilterBar.LeftItems>
             <DateRangePicker
               withIcon

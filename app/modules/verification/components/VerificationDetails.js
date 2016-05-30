@@ -29,6 +29,7 @@ import VerificationFilter from './VerificationFilter';
 
 import SearchButton from '../../../main/search-button/SearchButton';
 import i18nMessages from '../../../main/constants/i18nMessages';
+import FilterBarNavigation from '../../../main/filter-bar/components/FilterBarNavigation';
 
 const debug = require('debug')('app:modules/verification/components/VerificationDetails');
 
@@ -395,20 +396,7 @@ const VerificationDetails = React.createClass({
     return (
       <div className="row verification-details">
         <FilterBar.Wrapper>
-          <FilterBar.NavigationItems>
-            <Link
-              to={`/${role}/${identity}/verification/overview`}
-              activeClassName="active"
-            >
-              <FormattedMessage id="overview" defaultMessage="Overview" />
-            </Link>
-            <Link
-              to={`/${role}/${identity}/verification/details`}
-              activeClassName="active"
-            >
-              <FormattedMessage id="detailsReport" defaultMessage="Details Report" />
-            </Link>
-          </FilterBar.NavigationItems>
+          <FilterBarNavigation section="verification" tab="details" />
           <FilterBar.LeftItems>
             <VerificationFilter
               appId={this.state.appId}
