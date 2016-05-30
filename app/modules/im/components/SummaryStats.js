@@ -5,7 +5,7 @@ import classNames from 'classnames';
 import moment from 'moment';
 import * as Panel from './../../../main/components/Panel';
 import * as DataGrid from '../../../main/statistics/components/DataGrid';
-import LastUpdateTime from '../../../main/statistics/components/LastUpdateTime';
+import LastUpdateTime, { TIME_TYPES } from '../../../main/statistics/components/LastUpdateTime';
 import CombinationChart from '../../../main/components/CombinationChart';
 import TimeFramePicker from '../../../main/components/TimeFramePicker';
 import { parseTimeRange } from '../../../utils/timeFormatter';
@@ -91,8 +91,8 @@ const SummaryStats = props => {
     onSelectedTimeFrameChange,
   } = props;
 
-  const Caption = (
-    <LastUpdateTime type="TIME_RANGE" time={selectedTimeFrame} />
+  const lastUpdate = (
+    <LastUpdateTime type={TIME_TYPES.TIME_RANGE} time={selectedTimeFrame} />
   );
 
   return (
@@ -101,7 +101,7 @@ const SummaryStats = props => {
         <Panel.Header
           customClass="narrow"
           title={formatMessage(MESSAGES.summaryStatistic)}
-          caption={Caption}
+          caption={lastUpdate}
         >
           <div className={classNames('tiny-spinner', { active: isLoading })}></div>
           <TimeFramePicker

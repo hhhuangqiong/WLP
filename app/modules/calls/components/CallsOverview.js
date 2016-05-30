@@ -9,12 +9,12 @@ import { FormattedMessage, defineMessages, injectIntl } from 'react-intl';
 
 import { FluxibleMixin } from 'fluxible-addons-react';
 
-import LastUpdateTime from '../../../main/statistics/components/LastUpdateTime';
+import LastUpdateTime, { TIME_TYPES } from '../../../main/statistics/components/LastUpdateTime';
 import * as FilterBar from '../../../main/components/FilterBar';
 import * as Panel from './../../../main/components/Panel';
 import * as DataGrid from '../../../main/statistics/components/DataGrid';
 import TimeFramePicker from '../../../main/components/TimeFramePicker';
-import { parseTimeRange, SHORT_DATE_FORMAT } from '../../../utils/timeFormatter';
+import { parseTimeRange, LAST_UPDATE_TIME_FORMAT, SHORT_DATE_FORMAT } from '../../../utils/timeFormatter';
 import DateSelector from '../../../main/components/DateSelector';
 import CombinationChart from '../../../main/components/CombinationChart';
 import i18nMessages from '../../../main/constants/i18nMessages';
@@ -489,6 +489,7 @@ const CallsOverview = React.createClass({
               title={formatMessage(MESSAGES.monthlyVoiceCallUser)}
               caption={(
                 <LastUpdateTime
+                  type={TIME_TYPES.MONTHLY}
                   time={moment({
                     year: this.state.selectedYear,
                     month: this.state.selectedMonth,
@@ -527,7 +528,7 @@ const CallsOverview = React.createClass({
               customClass="narrow"
               title={formatMessage(MESSAGES.callBehaviourStatistics)}
               caption={(
-                <LastUpdateTime time={this.state.selectedLastXDays} />
+                <LastUpdateTime type={TIME_TYPES.TIME_RANGE} time={this.state.selectedLastXDays} />
               )}
             >
               <div className={classNames('tiny-spinner', { active: this.isTotalStatsLoading() })}></div>

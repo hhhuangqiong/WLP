@@ -11,7 +11,7 @@ import MAP_DATA from '../../../main/statistics/constants/mapData';
 
 import { FluxibleMixin } from 'fluxible-addons-react';
 
-import LastUpdateTime from '../../../main/statistics/components/LastUpdateTime';
+import LastUpdateTime, { TIME_TYPES } from '../../../main/statistics/components/LastUpdateTime';
 import * as FilterBar from '../../../main/components/FilterBar';
 import * as Panel from './../../../main/components/Panel';
 import ColorRadioButton from '../../../main/components/ColorRadioButton';
@@ -22,7 +22,7 @@ import * as DataGrid from '../../../main/statistics/components/DataGrid';
 import PercentageChart from '../../../main/components/PercentageChart';
 import DateSelector from '../../../main/components/DateSelector';
 import i18nMessages from '../../../main/constants/i18nMessages';
-import { SHORT_DATE_FORMAT } from '../../../utils/timeFormatter';
+import { LAST_UPDATE_TIME_FORMAT, SHORT_DATE_FORMAT } from '../../../utils/timeFormatter';
 
 import EndUsersOverviewStore from '../stores/EndUsersOverviewStore';
 import EndUsersRegistrationStatsStore from '../stores/EndUsersRegistrationStatsStore';
@@ -302,7 +302,13 @@ const EndUsersOverview = React.createClass({
               <Panel.Header
                 customClass="narrow"
                 title={formatMessage(MESSAGES.totalUser)}
-                caption={(<LastUpdateTime />)}
+                caption={(
+                  <LastUpdateTime
+                    type={TIME_TYPES.LATEST}
+                    timescale="day"
+                    timeFormat={LAST_UPDATE_TIME_FORMAT}
+                  />
+                )}
               />
               <Panel.Body customClass="narrow no-padding">
                 <DataGrid.Wrapper>
@@ -323,6 +329,7 @@ const EndUsersOverview = React.createClass({
                 title={formatMessage(MESSAGES.monthlyStats)}
                 caption={(
                   <LastUpdateTime
+                    type={TIME_TYPES.MONTHLY}
                     time={moment({
                       year: this.state.selectedYear,
                       month: this.state.selectedMonth,
@@ -370,7 +377,7 @@ const EndUsersOverview = React.createClass({
                 customClass="narrow"
                 title={formatMessage(MESSAGES.dailyStatistics)}
                 caption={(
-                  <LastUpdateTime time={this.state.selectedLastXDays} />
+                  <LastUpdateTime type={TIME_TYPES.TIME_RANGE} time={this.state.selectedLastXDays} />
                 )}
               >
                 <div className={classNames('tiny-spinner', { active: this.isTotalStatsLoading() })}></div>
