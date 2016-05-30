@@ -9,12 +9,11 @@ import EmptyRow from '../../../modules/data-table/components/EmptyRow';
 import Pagination from '../../../modules/data-table/components/Pagination';
 import TableHeader from '../../../modules/data-table/components/TableHeader';
 
-import currencyData from '../../../data/bossCurrencies.json';
-import Converter from '../../../utils/bossCurrencyConverter';
 import config from './../../../main/config';
 
+import Currency from '../../../main/components/Currency';
+
 const { displayDateFormat: DATE_FORMAT } = config;
-const converter = new Converter(currencyData, { default: '840' });
 
 const MESSAGES = defineMessages({
   dateAndTime: {
@@ -81,13 +80,6 @@ const TopUpTable = React.createClass({
 
   _getDisplayUsername(username) {
     return first(username.split('@'));
-  },
-
-  _getFormattedAmount(code, amount) {
-    // toString to prevent from code = 0 returned by API
-    const currency = converter.getCurrencyById(code.toString());
-    return `${(!currency.sign ? '' : currency.sign)}${amount.toFixed(1)}
-${(!currency.code ? '' : currency.code)}`;
   },
 
   renderEmptyRow() {
@@ -234,7 +226,12 @@ ${(!currency.code ? '' : currency.code)}`;
             />)}</span>
           </td>
           <td>{this.getRechargeType(history.rechargeType)}</td>
-          <td>{this._getFormattedAmount(history.currency, history.amount)}</td>
+          <td>
+            <Currency
+              currencyCode={history.currency}
+              amount={history.amount}
+            />
+          </td>
           <td className="remark">
             <If condition={history.status.toLowerCase() !== 'success'}>
               <Tooltip
