@@ -128,6 +128,10 @@ const MESSAGES = defineMessages({
     id: 'topUp.details.purchaseCredit',
     defaultMessage: 'Purchase Credit',
   },
+  voucher: {
+    id: 'topUp.details.voucher',
+    defaultMessage: 'Voucher',
+  },
 });
 
 const TABLE_TITLES = [
@@ -251,7 +255,7 @@ const TopUpTable = React.createClass({
     const restLetters = clonedType.substr(1);
     const messageType = `${firstLetter}${restLetters}`;
 
-    if (!(type in MESSAGES)) {
+    if (!(messageType in MESSAGES)) {
       return type;
     }
 
