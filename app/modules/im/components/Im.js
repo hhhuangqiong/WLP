@@ -3,10 +3,9 @@ import moment from 'moment';
 import classNames from 'classnames';
 
 import React, { PropTypes } from 'react';
-import { Link } from 'react-router';
 import { FluxibleMixin } from 'fluxible-addons-react';
 import DatePicker from 'react-datepicker';
-import { FormattedMessage, defineMessages, injectIntl } from 'react-intl';
+import { FormattedMessage, injectIntl } from 'react-intl';
 
 import ImStore from '../stores/ImStore';
 
@@ -19,6 +18,7 @@ import Searchbox from '../../../main/components/Searchbox';
 import i18nMessages from '../../../main/constants/i18nMessages';
 import Export from '../../../main/file-export/components/Export';
 import ImExportForm from './ImExportForm';
+import FilterBarNavigation from '../../../main/filter-bar/components/FilterBarNavigation';
 
 import MESSAGES from '../constants/i18n';
 
@@ -224,32 +224,14 @@ const Im = React.createClass({
   },
 
   render() {
-    const { intl: { formatMessage } } = this.props;
-    const { role, identity } = this.context.params;
     const query = this.context.location.query;
+    const { formatMessage } = this.props.intl;
 
     return (
       <div className="row">
         <nav className="top-bar top-bar--inner">
           <div className="top-bar-section">
-            <ul className="left top-bar--inner tab--inverted">
-              <li className="top-bar--inner tab--inverted__title">
-                <Link
-                  to={`/${role}/${identity}/im/overview`}
-                  activeClassName="active"
-                >
-                  <FormattedMessage id="overview" defaultMessage="Overview" />
-                </Link>
-              </li>
-              <li className="top-bar--inner tab--inverted__title">
-                <Link
-                  to={`/${role}/${identity}/im/details`}
-                  activeClassName="active"
-                >
-                  <FormattedMessage id="detailsReport" defaultMessage="Details Report" />
-                </Link>
-              </li>
-            </ul>
+            <FilterBarNavigation section="im" tab="details" />
             <ul className="left top-bar--inner">
               <li className="top-bar--inner">
                 <div className="date-range-picker left">

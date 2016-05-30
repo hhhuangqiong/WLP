@@ -2,8 +2,6 @@ import _, { merge, omit, isNull } from 'lodash';
 import moment from 'moment';
 import { concurrent } from 'contra';
 import React, { PropTypes } from 'react';
-import { Link } from 'react-router';
-import { FormattedMessage } from 'react-intl';
 
 import { FluxibleMixin } from 'fluxible-addons-react';
 
@@ -17,6 +15,7 @@ import showNextPage from '../actions/showNextPage';
 import * as FilterBar from './../../../main/components/FilterBar';
 import DateRangePicker from './../../../main/components/DateRangePicker';
 import Export from './../../../main/file-export/components/Export';
+import FilterBarNavigation from '../../../main/filter-bar/components/FilterBarNavigation';
 
 import EndUserTable from './EndUserTable';
 import EndUserProfile from './EndUserProfile';
@@ -85,14 +84,7 @@ const EndUsers = React.createClass({
     return (
       <div className="row">
         <FilterBar.Wrapper>
-          <FilterBar.NavigationItems>
-            <Link to={`/${role}/${identity}/end-users/overview`} activeClassName="active">
-              <FormattedMessage id="overview" defaultMessage="Overview" />
-            </Link>
-            <Link to={`/${role}/${identity}/end-users/details`} activeClassName="active">
-              <FormattedMessage id="detailsReport" defaultMessage="Details Report" />
-            </Link>
-          </FilterBar.NavigationItems>
+          <FilterBarNavigation section="end-users" tab="details" />
           <FilterBar.LeftItems>
             <DateRangePicker
               withIcon

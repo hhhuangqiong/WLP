@@ -30,6 +30,7 @@ import { normalizeDurationInMS, timeFromNow } from '../../../utils/StringFormatt
 import MAP_DATA from '../../../main/statistics/constants/mapData.js';
 import changeTimeRange from '../actions/changeTimeRange';
 import i18nMessages from '../../../main/constants/i18nMessages';
+import FilterBarNavigation from '../../../main/filter-bar/components/FilterBarNavigation';
 
 const TIME_FRAMES = ['24 hours', '7 days', '30 days', '60 days', '90 days'];
 const DEFAULT_TIME_RANGE = '30 days';
@@ -283,14 +284,7 @@ const VerificationOverview = React.createClass({
     return (
       <div className="row">
         <FilterBar.Wrapper>
-          <FilterBar.NavigationItems>
-            <Link to={`/${role}/${identity}/verification/overview`} activeClassName="active">
-              <FormattedMessage id="overview" defaultMessage="Overview" />
-            </Link>
-            <Link to={`/${role}/${identity}/verification/details`} activeClassName="active">
-              <FormattedMessage id="detailsReport" defaultMessage="Details Report" />
-            </Link>
-          </FilterBar.NavigationItems>
+          <FilterBarNavigation section="verification" tab="overview" />
           <FilterBar.LeftItems>
             {/* Need not to provide selection when there is only one single selected options to avoid confusion */}
             <If condition={options.length > 1}>

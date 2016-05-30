@@ -15,6 +15,7 @@ import { FluxibleMixin } from 'fluxible-addons-react';
 
 import * as FilterBar from '../../../main/components/FilterBar';
 import DatePicker from '../../../main/components/DatePicker';
+import FilterBarNavigation from '../../../main/filter-bar/components/FilterBarNavigation';
 
 import i18nMessages from '../../../main/constants/i18nMessages';
 import fetchCalls from '../actions/fetchCalls';
@@ -237,14 +238,7 @@ const Calls = React.createClass({
     return (
       <div className="row">
         <FilterBar.Wrapper>
-          <FilterBar.NavigationItems>
-            <Link to={`/${role}/${identity}/calls/overview`} activeClassName="active">
-              <FormattedMessage id="overview" defaultMessage="Overview" />
-            </Link>
-                  <Link to={`/${role}/${identity}/calls/details`} activeClassName="active">
-              <FormattedMessage id="detailsReport" defaultMessage="Details Report" />
-            </Link>
-          </FilterBar.NavigationItems>
+          <FilterBarNavigation section="calls" tab="details" />
           <FilterBar.LeftItems>
             <a
               className={classNames({ active: this.state.type === CALL_TYPE.ALL })}

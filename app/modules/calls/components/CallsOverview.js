@@ -20,6 +20,7 @@ import CombinationChart from '../../../main/components/CombinationChart';
 import i18nMessages from '../../../main/constants/i18nMessages';
 import CallsOverviewStore from '../stores/CallsOverviewStore';
 import ApplicationStore from '../../../main/stores/ApplicationStore';
+import FilterBarNavigation from '../../../main/filter-bar/components/FilterBarNavigation';
 
 import fetchCallsStatsMonthly from '../actions/fetchCallsStatsMonthly';
 import fetchCallsStatsTotal from '../actions/fetchCallsStatsTotal';
@@ -450,14 +451,7 @@ const CallsOverview = React.createClass({
     return (
       <div className="row">
         <FilterBar.Wrapper>
-          <FilterBar.NavigationItems>
-            <Link to={`/${role}/${identity}/calls/overview`} activeClassName="active">
-              <FormattedMessage id="overview" defaultMessage="Overview" />
-            </Link>
-            <Link to={`/${role}/${identity}/calls/details`} activeClassName="active">
-              <FormattedMessage id="detailsReport" defaultMessage="Details Report" />
-            </Link>
-          </FilterBar.NavigationItems>
+          <FilterBarNavigation section="calls" tab="overview" />
           <FilterBar.LeftItems>
             <a
               className={classNames({ active: this.state.type === CALL_TYPE.ALL })}

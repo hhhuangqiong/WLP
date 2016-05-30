@@ -19,6 +19,7 @@ import fetchVSFTransactions from '../actions/fetchVSFTransactions';
 import clearVSFTransaction from '../actions/clearVSFTransaction';
 
 import i18nMessages from '../../../main/constants/i18nMessages';
+import FilterBarNavigation from '../../../main/filter-bar/components/FilterBarNavigation';
 
 const SUBMIT_KEY = 13;
 const PAGE_SIZE = 100;
@@ -169,30 +170,12 @@ const VsfDetails = createClass({
 
   render() {
     const { intl: { formatMessage } } = this.props;
-    const { role, identity } = this.context.params;
 
     return (
       <div className="row">
         <nav className="top-bar top-bar--inner">
           <div className="top-bar-section">
-            <ul className="left top-bar--inner tab--inverted">
-              <li className="top-bar--inner tab--inverted__title">
-                <Link
-                  to={`/${role}/${identity}/vsf/overview`}
-                  activeClassName="active"
-                >
-                  <FormattedMessage id="overview" defaultMessage="Overview" />
-                </Link>
-              </li>
-              <li className="top-bar--inner tab--inverted__title">
-                <Link
-                  to={`/${role}/${identity}/vsf/details`}
-                  activeClassName="active"
-                >
-                  <FormattedMessage id="detailsReport" defaultMessage="Details Report" />
-                </Link>
-              </li>
-            </ul>
+            <FilterBarNavigation section="vsf" tab="details" />
             <ul className="left top-bar--inner">
               <li className="top-bar--inner">
                 <DateRangePicker

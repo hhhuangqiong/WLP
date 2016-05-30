@@ -36,6 +36,8 @@ import fetchDeviceStats from '../actions/fetchDeviceStats';
 import fetchGeographicStats from '../actions/fetchGeographicStats';
 import clearEndUsersStats from '../actions/clearEndUsersStats';
 
+import FilterBarNavigation from '../../../main/filter-bar/components/FilterBarNavigation';
+
 const MESSAGES = defineMessages({
   totalUser: {
     id: 'endUser.overview.totalUser',
@@ -269,14 +271,7 @@ const EndUsersOverview = React.createClass({
     return (
       <div className="row">
         <FilterBar.Wrapper>
-          <FilterBar.NavigationItems>
-            <Link to={`/${role}/${identity}/end-users/overview`} activeClassName="active">
-              <FormattedMessage id="overview" defaultMessage="Overview" />
-            </Link>
-            <Link to={`/${role}/${identity}/end-users/details`} activeClassName="active">
-              <FormattedMessage id="detailsReport" defaultMessage="Details Report" />
-            </Link>
-          </FilterBar.NavigationItems>
+          <FilterBarNavigation section="end-users" tab="overview" />
           <FilterBar.LeftItems>
 
           </FilterBar.LeftItems>
