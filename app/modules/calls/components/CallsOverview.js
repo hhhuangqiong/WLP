@@ -344,11 +344,21 @@ const CallsOverview = React.createClass({
     const { thisMonthUser, lastMonthUser } = this.state;
     const userChange = thisMonthUser - lastMonthUser;
 
+    let direction;
+
+    if (userChange > 0) {
+      direction = 'up';
+    } else if (userChange < 0) {
+      direction = 'down';
+    } else {
+      direction = 'flat';
+    }
+
     return {
       total: thisMonthUser,
       change: userChange,
       percent: userChange && lastMonthUser ? Math.round((userChange / lastMonthUser) * 100) : '-',
-      direction: (userChange > 0) ? 'up' : 'down',
+      direction,
     };
   },
 

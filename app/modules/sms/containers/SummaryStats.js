@@ -51,7 +51,7 @@ class SummaryStatsContainer extends Component {
     });
   }
 
-  parseData(data) {
+  parseData(data, effect) {
     if (!data) {
       return data;
     }
@@ -59,13 +59,23 @@ class SummaryStatsContainer extends Component {
     const { value, oldValue, change } = data;
     const percentageChange = (change / oldValue) * 100;
 
+    let direction;
+
+    if (change > 0) {
+      direction = 'up';
+    } else if (change < 0) {
+      direction = 'down';
+    } else {
+      direction = 'flat';
+    }
+
     // TODO: standardize the data structure
     return {
       value,
       change: {
         value: change,
-        direction: change > 0 ? 'up' : 'down',
-        effect: 'positive',
+        direction,
+        effect,
         percentage: percentageChange,
       },
     };
@@ -101,8 +111,9 @@ class SummaryStatsContainer extends Component {
     } = this.props;
 
     const summaryData = reduce(pick(stats, SUMMARY_TYPES), (result, value, key) => {
+      const effect = (key === 'undelivered' || key === 'rejected') ? 'negative' : 'positive';
       // eslint-disable-next-line no-param-reassign
-      result[key] = this.parseData(value);
+      result[key] = this.parseData(value, effect);
       return result;
     }, {});
 

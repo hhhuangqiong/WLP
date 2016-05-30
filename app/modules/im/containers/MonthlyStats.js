@@ -64,12 +64,22 @@ class Container extends Component {
     const { value, oldValue, change } = data;
     const percentageChange = (change / oldValue) * 100;
 
+    let direction;
+
+    if (change > 0) {
+      direction = 'up';
+    } else if (change < 0) {
+      direction = 'down';
+    } else {
+      direction = 'flat';
+    }
+
     // TODO: standardize the data structure
     return {
       value,
       change: {
         value: change,
-        direction: change > 0 ? 'up' : 'down',
+        direction,
         effect: 'positive',
         percentage: percentageChange,
       },

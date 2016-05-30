@@ -204,7 +204,11 @@ DataCell.propTypes = {
   ]),
   unit: PropTypes.string,
   decimalPlace: PropTypes.number,
-  changeDir: PropTypes.string,
+  changeDir: PropTypes.oneOf([
+    'up',
+    'down',
+    'flat',
+  ]),
   changeAmount: PropTypes.oneOfType([
     PropTypes.string,
     PropTypes.number,
@@ -233,6 +237,7 @@ DataCell.defaultProps = {
     return data;
   },
   isLoading: false,
+  changeDir: 'flat',
 };
 
 export {
