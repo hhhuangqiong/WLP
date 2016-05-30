@@ -1,6 +1,7 @@
 html, body {
   height: 100% !important;
-  overflow-x: hidden;
+  // changed from hidden to scroll as body has min-width of 1280px
+  overflow-x: scroll;
 }
 
 body {
