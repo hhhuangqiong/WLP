@@ -30,15 +30,21 @@ buildImSolrQueryString(params, cb) {
   }
 
   if (params.sender) {
-    qb.where('sender', params.sender);
+    qb.any({
+      sender: params.sender,
+    }, { contains: true });
   }
 
   if (params.recipient) {
     qb
       .begin()
-      .where('recipient', params.recipient)
+      .any({
+        recipient: params.recipient,
+      }, { contains: true })
       .or()
-      .where('recipients', params.recipient)
+      .any({
+        recipients: params.recipient,
+      }, { contains: true })
       .end();
   }
 
