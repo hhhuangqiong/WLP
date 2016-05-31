@@ -8,9 +8,14 @@ import { handleError } from '../helper';
 
 import {
   findDataBySegment,
-  sumData,
   mapStatsToDataGrid,
 } from '../../../server/parser/stats';
+
+import {
+  getSegmentsByProperties,
+  getTotalFromSegments,
+  getTotalFromSegmentData,
+} from '../../../server/utils/statsParseHelper';
 
 import {
   MILLISECOND_DATE_FORMAT,
@@ -79,20 +84,16 @@ export default class VsfStatsRequest {
   }
 
   parseSummaryStatsResponses(data) {
-    const stickerData = findDataBySegment(data.results, ITEM_CATEGORY_SEGMENT, STICKER);
-    const creditData = findDataBySegment(data.results, ITEM_CATEGORY_SEGMENT, CREDIT);
-    const animationData = findDataBySegment(data.results, ITEM_CATEGORY_SEGMENT, ANIMATION);
-    const voiceStickerData = findDataBySegment(
-      data.results,
-      ITEM_CATEGORY_SEGMENT,
-      VOICE_STICKER
-    );
+    const stickerData = getSegmentsByProperties(data.results, { [ITEM_CATEGORY_SEGMENT]: STICKER });
+    const creditData = getSegmentsByProperties(data.results, { [ITEM_CATEGORY_SEGMENT]: CREDIT });
+    const animationData = getSegmentsByProperties(data.results, { [ITEM_CATEGORY_SEGMENT]: ANIMATION });
+    const voiceStickerData = getSegmentsByProperties(data.results, { [ITEM_CATEGORY_SEGMENT]: VOICE_STICKER });
 
     return {
-      sticker: sumData(stickerData),
-      credit: sumData(creditData),
-      animation: sumData(animationData),
-      voiceSticker: sumData(voiceStickerData),
+      sticker: getTotalFromSegments(stickerData),
+      credit: getTotalFromSegments(creditData),
+      animation: getTotalFromSegments(animationData),
+      voiceSticker: getTotalFromSegments(voiceStickerData),
     };
   }
 
@@ -131,7 +132,7 @@ export default class VsfStatsRequest {
   fetchMonthlyTotal(params) {
     return this
       .sendRequest(ENDPOINTS.COMMON, params)
-      .then(data => sumData(data.results[0].data));
+      .then(data => getTotalFromSegmentData(data.results[0].data));
   }
 
   sendRequest(endpoint, params) {
