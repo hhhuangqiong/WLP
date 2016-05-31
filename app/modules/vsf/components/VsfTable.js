@@ -9,6 +9,8 @@ import TableHeader from '../../../modules/data-table/components/TableHeader';
 import Pagination from '../../../modules/data-table/components/Pagination';
 import i18nMessages from '../../../main/constants/i18nMessages';
 
+import Currency from '../../../main/components/Currency';
+
 const NO_VALUE_LABEL = i18nMessages.unknownLabel;
 const IOS_PLATFORM = 'com.maaii.platform.ios';
 const ANDROID_PLATFORM = 'com.maaii.platform.android';
@@ -146,7 +148,12 @@ const VsfTable = React.createClass({
               />
             </If>
             <If condition={transaction.paymentType === 'Paid'}>
-              <span>{transaction.currency} ${transaction.amount}</span>
+              <span>
+                <Currency
+                  currencyCode={transaction.currency}
+                  amount={transaction.amount}
+                />
+              </span>
             </If>
           </td>
 
