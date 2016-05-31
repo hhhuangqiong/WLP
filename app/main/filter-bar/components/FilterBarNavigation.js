@@ -8,24 +8,24 @@ const detailsMessage = <FormattedMessage id="detailsReport" defaultMessage="Deta
 function renderOverview(tab, to) {
   if (tab === 'overview') {
     return (
-      <a className="active">{overviewMessage}</a>
+      <a id="overview-link" className="active">{overviewMessage}</a>
     );
   }
 
   return (
-    <Link to={to} activeClassName="active">{overviewMessage}</Link>
+    <Link id="overview-link" to={to} activeClassName="active">{overviewMessage}</Link>
   );
 }
 
 function renderDetails(tab, to) {
   if (tab === 'details') {
     return (
-      <a className="active">{detailsMessage}</a>
+      <a id="details-report-link" className="active">{detailsMessage}</a>
     );
   }
 
   return (
-    <Link to={to} activeClassName="active">{detailsMessage}</Link>
+    <Link id="details-report-link" to={to} activeClassName="active">{detailsMessage}</Link>
   );
 }
 

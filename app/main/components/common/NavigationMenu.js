@@ -155,7 +155,7 @@ const Navigation = React.createClass({
                   defaultMessage="Hi"
                 />
                 <span>, </span>
-                {this.state.displayName}
+                <span id="navigation-bar-display-name">{this.state.displayName}</span>
               </span>
               <i className="icon-more" />
             </a>

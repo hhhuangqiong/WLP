@@ -32,7 +32,7 @@ const Sidebar = props => {
           <a className="item mainmenu-bar__item" href="#">
             <label>
               <i><img src={logoSrc} /></i>
-              <span>{ currentCompany && currentCompany.name }</span>
+              <span id="sidebar-company-name">{ currentCompany && currentCompany.name }</span>
             </label>
           </a>
         </li>
@@ -41,10 +41,8 @@ const Sidebar = props => {
             <Permit action="view" resource={section.page}>
               <li key={idx}>
                 <Link
-                  className={classnames(
-                    'item',
-                    'mainmenu-bar__item',
-                  )}
+                  id={`${section.page}-section-link`}
+                  className="item mainmenu-bar__item"
                   to={userPath(role, identity, section.path)}
                   activeClassName="active"
                 >
