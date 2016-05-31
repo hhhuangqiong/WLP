@@ -20,6 +20,7 @@ const { displayDateFormat: DATE_FORMAT } = require('./../../../main/config');
 import { getCountryName } from '../../../utils/StringFormatter';
 
 import getPlatformInfo from '../utils/getPlatformInfo';
+import i18nMessages from '../../../main/constants/i18nMessages';
 
 const MESSAGES = defineMessages({
   walletTitle: {
@@ -85,10 +86,6 @@ const MESSAGES = defineMessages({
   female: {
     id: 'endUser.profile.gender.female',
     defaultMessage: 'Female',
-  },
-  empty: {
-    id: 'endUser.profile.empty',
-    defaultMessage: 'N/A',
   },
 });
 
@@ -181,7 +178,7 @@ const EndUserProfile = React.createClass({
 
   renderAccountPanel() {
     const { intl: { formatMessage } } = this.props;
-    const EMPTY_STRING = formatMessage(MESSAGES.empty)
+    const EMPTY_STRING = formatMessage(i18nMessages.unknownLabel);
     const gender = get(this.props, 'user.userDetails.gender');
     const creationDate = moment(this.props.user.userDetails.creationDate).format(DATE_FORMAT);
     const countryCode = (this.props.user.userDetails.countryCode || '').toLowerCase();
@@ -213,7 +210,7 @@ const EndUserProfile = React.createClass({
         <Item label={formatMessage(MESSAGES.country)}>
           <div className="country-label">
             <CountryFlag code={countryCode} />
-            {getCountryName(countryCode)}
+            {getCountryName(countryCode) || EMPTY_STRING}
           </div>
         </Item>
         <Item label={formatMessage(MESSAGES.username)}>{this.props.user.userDetails.jid}</Item>
@@ -235,7 +232,7 @@ const EndUserProfile = React.createClass({
 
   renderDevicePanel() {
     const { intl: { formatMessage } } = this.props;
-    const EMPTY_STRING = formatMessage(MESSAGES.empty);
+    const EMPTY_STRING = formatMessage(i18nMessages.unknownLabel);
 
     return this.props.user.userDetails.devices.map((device) => {
       return (
