@@ -1459,6 +1459,7 @@ export function getOverviewSummaryStats(req, res, next) {
 }
 
 export function getVsfMonthlyStats(req, res, next) {
+  req.checkParams('carrierId').notEmpty();
   req.checkQuery('from').notEmpty();
   req.checkQuery('to').notEmpty();
 
@@ -1469,10 +1470,11 @@ export function getVsfMonthlyStats(req, res, next) {
     return;
   }
 
+  const { carrierId } = req.params;
   const { from, to } = req.query;
 
   vsfStatsRequest
-    .getMonthlyStats({ from, to, timescale: 'day' })
+    .getMonthlyStats({ carriers: carrierId, from, to, timescale: 'day' })
     .then(stats => res.json({ stats }))
     .catch(sendRequestError => {
       next(new dataError.TransactionError(sendRequestError.message, sendRequestError));
@@ -1480,6 +1482,7 @@ export function getVsfMonthlyStats(req, res, next) {
 }
 
 export function getVsfSummaryStats(req, res, next) {
+  req.checkParams('carrierId').notEmpty();
   req.checkQuery('from').notEmpty();
   req.checkQuery('to').notEmpty();
   req.checkQuery('timescale').notEmpty();
@@ -1491,11 +1494,12 @@ export function getVsfSummaryStats(req, res, next) {
     return;
   }
 
+  const { carrierId } = req.params;
   const { from, to, timescale } = req.query;
   const breakdown = 'itemCategory';
 
   vsfStatsRequest
-    .getSummaryStats({ from, to, timescale, breakdown })
+    .getSummaryStats({ carriers: carrierId, from, to, timescale, breakdown })
     .then(stats => res.json({ stats }))
     .catch(sendRequestError => {
       next(new dataError.TransactionError(sendRequestError.message, sendRequestError));

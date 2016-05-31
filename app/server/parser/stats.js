@@ -19,7 +19,7 @@ export function findDataBySegment(results, key, value) {
 export function sumData(data) {
   return data
     .map(value => value.v)
-    .reduce((total, value) => total + value);
+    .reduce((total, value) => total + value, 0);
 }
 
 export function mapStatsToDataGrid(total, lastTotal) {

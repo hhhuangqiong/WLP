@@ -7,8 +7,6 @@ import qs from 'qs';
 
 import { constructOpts, handleError } from '../helper';
 
-const LONG_DATE_FORMAT = 'YYYY-MM-DDTHH:MM:ss[Z]';
-
 export default class VSFTransactionRequest {
   constructor(baseUrl, timeout) {
     const opts = {
@@ -27,12 +25,12 @@ export default class VSFTransactionRequest {
 
   formatQueryData(params, cb) {
     // transform local L format date to UTC time with proper date range
-    const fromTime = moment(params.fromTime, 'L').startOf('day').toISOString();
-    const toTime = moment(params.toTime, 'L').endOf('day').toISOString();
+    const fromTime = moment(params.fromTime, 'L').startOf('day');
+    const toTime = moment(params.toTime, 'L').endOf('day');
 
     // parse the date object and render it as predefined time string
-    params.fromTime = moment.utc(fromTime).format(LONG_DATE_FORMAT);
-    params.toTime = moment.utc(toTime).format(LONG_DATE_FORMAT);
+    params.fromTime = moment.utc(fromTime).toISOString();
+    params.toTime = moment.utc(toTime).toISOString();
 
     return cb(null, params);
   }

@@ -96,9 +96,9 @@ describe('mvsRequest', function() {
         let toTime = moment(params.toTime).endOf('day').toISOString();
 
         expect(val.fromTime)
-        .to.equal(moment.utc(fromTime).format('YYYY-MM-DDTHH:MM:ss[Z]'));
+        .to.equal(moment.utc(fromTime).toISOString());
         return expect(val.toTime)
-        .to.equal(moment.utc(toTime).format('YYYY-MM-DDTHH:MM:ss[Z]'));
+        .to.equal(moment.utc(toTime).toISOString());
       })
     );
 
