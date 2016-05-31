@@ -1,13 +1,13 @@
 import { expect } from 'chai';
 
 export default function goToDetails() {
-  this.waitForVisible('a=Details Report');
-  this.click('a=Details Report');
+  const detailsReportSelector = '#details-report-link';
 
-  const className = this.getAttribute('a=Details Report', 'class');
-  expect(className).to.contain('active');
+  browser.waitForVisible(detailsReportSelector);
+  browser.click(detailsReportSelector);
 
-  this.waitForVisible('.data-table');
+  expect(browser.hasClass(detailsReportSelector, 'active')).to.be.true;
 
-  return this;
+  browser.waitForVisible('.data-table');
+  browser.waitForVisible('.ui-state-normal');
 }
