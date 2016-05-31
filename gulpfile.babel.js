@@ -14,13 +14,24 @@ import webpack from 'webpack';
 import WebpackDevServer from 'webpack-dev-server';
 import spriteSmith from 'gulp.spritesmith';
 import merge from 'merge-stream';
-import { argv } from 'yargs';
+import Q from 'q';
+import {
+  argv
+} from 'yargs';
 import browserSync from 'browser-sync';
 import * as fs from 'fs';
 import * as path from 'path';
-import { sync as globSync } from 'glob';
+import {
+  sync as globSync
+} from 'glob';
 import onesky from 'onesky-utils';
 import m800Locale from 'm800-user-locale';
+import {
+  ONE_SKY as oneSkyConfig
+} from './app/config/credentials';
+import {
+  LOCALES as supportedLangs
+} from './app/config';
 
 const defaultTasks = ['nodemon', 'watch', 'scss', 'webpack'];
 const webpackConfig = require('./webpack.config');
@@ -225,21 +236,58 @@ gulp.task('browser-sync', () => {
   });
 });
 
-gulp.task('download-translation', (done) => {
-  const supportedLangs = require('./app/config').LOCALES;
-  const oneSkyConfig = require('./app/config/credentials').ONE_SKY;
-
+gulp.task('download-translation', () =>
   Promise.all(supportedLangs.map((lang) => {
     const locale = m800Locale.util.toOneSkyLocale(lang);
 
     gutil.log(`Downloading for language ${lang} by ${locale}...`);
-    return onesky.getFile(Object.assign({ language: locale }, oneSkyConfig))
+    return onesky.getFile(Object.assign({
+      language: locale,
+    }, oneSkyConfig))
       .then((content) => {
         gutil.log(`Done download for ${lang}.`);
 
-        gfile(`${lang}.json`, content, { src: true })
-         .pipe(gulp.dest(dest.intl));
+        gfile(`${lang}.json`, content, {
+          src: true,
+        })
+        .pipe(gulp.dest(dest.intl));
       });
   }))
-  .then(() => {done();}, done);
+);
+
+gulp.task('upload-translation', () => {
+  const language = 'en';
+  const defaultFile = path.join(dest.intl, DEFAULT_LANGUAGE_FILE_NAME);
+  const downloadedLanguageFile = path.join(dest.intl, `${language}.json`);
+
+  function readDefaultFile(originalData) {
+    gutil.log('Reading the default.json');
+    return Q.ninvoke(fs, 'readFile', defaultFile)
+      .then((data) => Object.assign(JSON.parse(data), originalData));
+  }
+
+  function readDownloadedLanguageFile() {
+    gutil.log(`Reading the ${language}.json`);
+    return Q.ninvoke(fs, 'readFile', downloadedLanguageFile)
+      .then((data) => JSON.parse(data))
+      .catch((err) => {
+        if (err.code === 'ENOENT') {
+          return {};
+        }
+        throw err;
+      });
+  }
+
+  function uploadFile(finalData) {
+    gutil.log('Uploading the data', finalData);
+    return onesky.postFile(Object.assign({
+      content: JSON.stringify(finalData),
+    }, {
+      language, // upload content language
+      keepStrings: true, // keep the uploaded strings not present
+      format: 'HIERARCHICAL_JSON', // content format
+    }, oneSkyConfig));
+  }
+
+  return readDownloadedLanguageFile().then(readDefaultFile).then(uploadFile);
 });
