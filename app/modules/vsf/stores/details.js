@@ -8,6 +8,7 @@ export default createStore({
   handlers: {
     FETCH_VSF_SUCCESS: 'handleTransactionsFetch',
     FETCH_VSF_START: 'handleTransactionsFetching',
+    FETCH_VSF_FAILURE: 'handleTransactionsFetchFailure',
     CLEAR_VSF: 'handleClearTransaction',
   },
 
@@ -40,6 +41,13 @@ export default createStore({
     this.pageIndex = +payload.dateRange.pageNumberIndex;
     this.isLoadingMore = false;
 
+    this.emitChange();
+  },
+
+  handleTransactionsFetchFailure() {
+    this.transactions = [];
+    this.hasNextPage = false;
+    this.isLoadingMore = false;
     this.emitChange();
   },
 

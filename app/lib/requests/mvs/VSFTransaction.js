@@ -1,9 +1,11 @@
+import _ from 'lodash';
 import logger from 'winston';
 import moment from 'moment';
 import Q from 'q';
 import request from 'superagent';
 import util from 'util';
 import qs from 'qs';
+import { OutOfMemoryError } from 'common-errors';
 
 import { constructOpts, handleError } from '../helper';
 
@@ -48,12 +50,23 @@ export default class VSFTransactionRequest {
       .timeout(this.timeout)
       .end((err, res) => {
         if (err) {
-          cb(handleError(err, err.status || 400));
+          let error = new Error('internal server error');
+
+          const apiError = _.get(err, 'response.body.error');
+
+          if (apiError && apiError.code === 30000) {
+            // eslint-disable-next-line max-len
+            error = new OutOfMemoryError('Maximum memory size exceeded. Please try again with smaller time range', apiError);
+          }
+
+          // eslint-disable-next-line max-len
+          logger.error('error occurred when fetching MVS data', _.get(apiError, 'message')) || _.get(error, 'message');
+          cb(handleError(error, error.status || 500));
           return;
         }
 
         if (res.status >= 400) {
-          cb(handleError(res.body.error.message, res.body.error.httpStatus));
+          cb(handleError(_.get(res, 'body.error.message'), _.get(res, 'body.error.status')));
           return;
         }
 
