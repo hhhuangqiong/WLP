@@ -8,7 +8,8 @@ describe('IM', () => {
     browser.url(DEFAULT_URL);
     browser.signIn(ROOT_LOGIN.name, ROOT_LOGIN.password);
     browser.switchCompany('Maaii');
-    browser.goTo('IM');
+
+    browser.goTo('im');
     browser.goToDetails();
   });
 
@@ -52,7 +53,7 @@ describe('IM', () => {
   });
 
   it('should filter remote data correctly', () => {
-    browser.filterChatItem('remote', 'sharing');
+    browser.filterChatItem('remote');
   });
 
   it('should filter animation data correctly', () => {
@@ -60,11 +61,11 @@ describe('IM', () => {
   });
 
   it('should filter voice sticker data correctly', () => {
-    browser.filterChatItem('voice_sticker', 'voice sticker');
+    browser.filterChatItem('voice_sticker');
   });
 
   it('should filter ephemeral image data correctly', () => {
-    browser.filterChatItem('ephemeral_image', 'ephemeral image');
+    browser.filterChatItem('ephemeral_image');
   });
 
   it('should filter with text and sender', () => {
