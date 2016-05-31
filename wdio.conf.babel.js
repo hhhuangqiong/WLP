@@ -48,7 +48,6 @@ const COMMANDS = {
   validateDateRange: './test/browser/commands/report/validateDateRange',
   changeDateRange: './test/browser/commands/report/changeDateRange',
   clickFirstAvailableDate: './test/browser/commands/report/clickFirstAvailableDate',
-  expectToHaveData: './test/browser/commands/report/expectToHaveData',
   validateSearch: './test/browser/commands/report/validateSearch',
   clearSearch: './test/browser/commands/report/clearSearch',
   exportCsv: './test/browser/commands/report/exportCsv',
