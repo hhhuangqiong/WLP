@@ -49,6 +49,14 @@ const MESSAGES = defineMessages({
     id: 'systemMessage',
     defaultMessage: 'System Message',
   },
+  longMessage: {
+    id: 'longMessage',
+    defaultMessage: 'Long',
+  },
+  shortMessage: {
+    id: 'shortMessage',
+    defaultMessage: 'Short',
+  },
 });
 
 const TABLE_TITLES = [
@@ -108,9 +116,13 @@ const SMSTable = React.createClass({
   },
 
   _renderTypeIcon(type) {
+    const { formatMessage } = this.props.intl;
+    const _type = type && type.toLowerCase();
+    const message = formatMessage(MESSAGES[`${_type}Message`]);
+
     return (
-      <Tooltip placement="right" trigger={['hover']} overlay={<span>{type}</span>}>
-        <i className={`icon-${type.toLowerCase()}`}></i>
+      <Tooltip placement="right" trigger={['hover']} overlay={<span>{message}</span>}>
+        <i className={`icon-${_type}`}></i>
       </Tooltip>
     );
   },
