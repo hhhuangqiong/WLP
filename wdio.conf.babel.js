@@ -29,7 +29,7 @@ function getSpecs(selectedFeatures = '**') {
 
 function addCommand(browser, commands) {
   for (const key of Object.keys(commands)) {
-    browser.addCommand(key, require(commands[key]));
+    browser.addCommand(key, require(commands[key]).default);
   }
 }
 
@@ -41,6 +41,7 @@ const COMMANDS = {
   goTo: './test/browser/commands/goTo',
   goToDetails: './test/browser/commands/goToDetails',
   switchCompany: './test/browser/commands/switchCompany',
+  hasClass: './test/browser/commands/hasClass',
 
   // details report related commands
   waitForTableFetching: './test/browser/commands/report/waitForTableFetching',
@@ -166,9 +167,6 @@ export default {
   //
   // Gets executed before all workers get launched.
   onPrepare() {
-    log.info(`Connect to selenium server:
-      ${process.env.REMOTE ? (process.env.SELENIUM_HOST || 'deploy.dev.maaii.com') :
-      'localhost'}: ${process.env.SELENIUM_PORT}`);
     log.info('Start running browser test');
 
     /* Ensure no previous result left inside reports dir */
