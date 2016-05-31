@@ -48,14 +48,16 @@ class VerificationExportForm extends Component {
 
   transformMethodToId(method) {
     switch (method) {
+      case 'call-in':
+        return 'vsdk.details.callIn';
       case 'call-out':
         return 'vsdk.details.callOut';
-      case 'SMS':
+      case 'sms':
         return 'vsdk.details.sms';
-      case 'IVR':
+      case 'ivr':
         return 'vsdk.details.ivr';
       default:
-        return 'vsdk.details.callIn';
+        return '';
     }
   }
 
