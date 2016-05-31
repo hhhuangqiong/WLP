@@ -11,12 +11,8 @@ describe('SMS', () => {
     // Maaii is the only company that contains SMS section
     browser.switchCompany('Maaii');
 
-    browser.goTo('SMS');
+    browser.goTo('sms');
     browser.goToDetails();
-  });
-
-  after(() => {
-    browser.signOut();
   });
 
   it('should display data correctly', () => {
@@ -32,4 +28,8 @@ describe('SMS', () => {
   // it('should search mobile number correctly', () => {
   //   browser.searchAndValidate('.callee');
   // });
+  //
+  after(() => {
+    browser.signOut();
+  });
 });

@@ -7,7 +7,8 @@ describe('End User', () => {
     browser.url(DEFAULT_URL);
     browser.signIn();
     browser.switchCompany('Maaii');
-    browser.goTo('Users');
+    browser.goTo('end-user');
+
     browser.goToDetails();
   });
 
