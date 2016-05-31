@@ -7,7 +7,7 @@ describe('Call', () => {
     browser.url(DEFAULT_URL);
     browser.signIn();
     browser.switchCompany('Pateo');
-    browser.goTo('Calls');
+    browser.goTo('call');
     browser.goToDetails();
   });
 

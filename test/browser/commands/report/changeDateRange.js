@@ -1,6 +1,5 @@
 export default function changeDateRange() {
-  this.click('.date-input-wrap');
-  this.clickFirstAvailableDate();
-
-  return this;
+  browser.click('.date-input-wrap');
+  browser.clickFirstAvailableDate();
+  browser.waitForVisible('.ui-state-normal');
 }

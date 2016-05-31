@@ -1,17 +1,17 @@
 import { expect } from 'chai';
 
 export default function validateSearch(targetSelector) {
-  this.waitForTableFetching();
+  browser.waitForTableFetching();
 
-  const mobileNumbers = this.getText(targetSelector);
+  const mobileNumbers = browser.getText(targetSelector);
   expect(mobileNumbers).to.not.be.empty;
 
-  this.setValue('.top-bar-section__query-input', mobileNumbers[0]);
-  this.keys('Enter');
+  browser.setValue('.top-bar-section__query-input', mobileNumbers[0]);
+  browser.keys('Enter');
 
-  this.waitForTableFetching();
+  browser.waitForTableFetching();
 
-  const filteredMobileNumbers = this.getText(targetSelector);
+  const filteredMobileNumbers = browser.getText(targetSelector);
   expect(filteredMobileNumbers).to.not.be.empty;
 
   if (Array.isArray(filteredMobileNumbers)) {
@@ -20,10 +20,8 @@ export default function validateSearch(targetSelector) {
       expect(filteredMobileNumber).to.be.equal(mobileNumbers[0]);
     });
 
-    return this;
+    return browser;
   }
 
   expect(filteredMobileNumbers).to.be.equal(mobileNumbers[0]);
-
-  return this;
 }
