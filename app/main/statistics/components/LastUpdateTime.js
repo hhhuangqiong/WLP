@@ -35,7 +35,7 @@ const LastUpdateTime = props => {
   }
 
   return (
-    <span className="caption inline">
+    <span className="panel-last-update-time caption inline">
       {`${formatMessage(MESSAGES.dataUpdatedTill)}: ${lastUpdate}`}
     </span>
   );
