@@ -260,7 +260,7 @@ const ImTable = React.createClass({
           <If condition={!isEmpty(ims)}>
             <Pagination
               colSpan={TABLE_TITLES.length + 1}
-              hasMoreData={(this.props.totalPages - 1) > this.props.page}
+              hasMoreData={this.props.totalPages > this.props.page}
               onLoadMore={this.props.onDataLoad}
               isLoading={this.props.isLoadingMore}
             />
