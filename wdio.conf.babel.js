@@ -42,6 +42,7 @@ const COMMANDS = {
   goToDetails: './test/browser/commands/goToDetails',
   switchCompany: './test/browser/commands/switchCompany',
   hasClass: './test/browser/commands/hasClass',
+  switchLanguage: './test/browser/commands/switchLanguage',
 
   // details report related commands
   waitForTableFetching: './test/browser/commands/report/waitForTableFetching',
