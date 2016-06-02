@@ -1,4 +1,4 @@
-import { remove, get, max, assign, forEach } from 'lodash';
+import { remove, get, max, min, assign, forEach } from 'lodash';
 import { createStore } from 'fluxible/addons';
 import config from './../../../main/config';
 
@@ -33,7 +33,18 @@ const EndUserStore = createStore({
   },
 
   _getStartIndex() {
-    return max([(+this.currentPage - 1), 0]) * +this.pageRec;
+    // the user list API will not always return number of records = pageRec
+    // i.e. pageRec = 100, actual record returned could be 9x
+    // so we cannot take start index with pageRec * number of page, i.e. 50, 100, 150, 200
+    // it should be based on actual number of user displayed, i.e. 50, 9x, 14x, 18x
+    let index = max([(+this.currentPage - 1), 0]) * +this.pageRec;
+    const actualStartIndex = get(this, 'displayUsers.length');
+
+    if (actualStartIndex) {
+      index = actualStartIndex;
+    }
+
+    return index;
   },
 
   _getLastIndex() {
@@ -155,6 +166,7 @@ const EndUserStore = createStore({
   },
 
   getNeedMoreData() {
+    console.log(this.displayUsers.length, this.users.length);
     return this.displayUsers.length === this.users.length;
   },
 
