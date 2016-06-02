@@ -16,7 +16,7 @@ export default function switchCompany(companyName) {
   // TODO: there is no identifier of switching company at browser moment
   // and there are refactoring works on going
   // therefore it is necessary to keep a pause to avoid the test is too fast before the UI changes
-  browser.pause(2000);
+  browser.pause(5000);
 
   expect(browser.getText('#sidebar-company-name')).to.be.equal(companyName);
 }

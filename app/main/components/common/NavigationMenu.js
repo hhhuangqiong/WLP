@@ -150,10 +150,12 @@ const Navigation = React.createClass({
           <li className="has-dropdown not-click navigation-bar__item">
             <a>
               <span>
-                <FormattedMessage
-                  id="hi"
-                  defaultMessage="Hi"
-                />
+                <span id="navigation-bar-hello-message">
+                  <FormattedMessage
+                    id="hi"
+                    defaultMessage="Hi"
+                  />
+                </span>
                 <span>, </span>
                 <span id="navigation-bar-display-name">{this.state.displayName}</span>
               </span>
