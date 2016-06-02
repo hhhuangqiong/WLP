@@ -169,7 +169,10 @@ const ImTable = React.createClass({
               className={classNames('im-message-type-icon', imType.className, u.message_type)}
             ></span>
             <div className="im-message-type-info">
-              <span className={"im-message-type-text dark"}>{imTypeTitle}</span>
+              <span
+                data-im-message-type={u.message_type}
+                className="im-message-type-text dark"
+              >{imTypeTitle}</span>
               <br />
               <span className={"im-message-type-size"}>{typeSize}</span>
             </div>

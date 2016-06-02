@@ -1,19 +1,15 @@
 import { expect } from 'chai';
 
-export default function filterChatItem(itemType, itemText) {
-  this.selectByValue('.top-bar-section__message-type-select', itemType);
+export default function filterChatItem(itemType) {
+  browser.selectByValue('.top-bar-section__message-type-select', itemType);
 
-  this.waitForTableFetching();
+  browser.waitForTableFetching();
 
-  const messageTypes = this.getText('.im-message-type-text');
+  const messageType = browser.getAttribute('.im-message-type-text', 'data-im-message-type');
 
-  if (Array.isArray(messageTypes)) {
-    messageTypes.forEach(messageType => {
-      expect(messageType).to.be.eql(itemText || itemType);
-    });
-  } else {
-    expect(messageTypes).to.be.eql(itemText || itemType);
-  }
+  const messageTypes = Array.isArray(messageType) ? messageType : [messageType];
 
-  return this;
+  messageTypes.forEach(eachType => {
+    expect(eachType).to.be.eql(itemType);
+  });
 }
