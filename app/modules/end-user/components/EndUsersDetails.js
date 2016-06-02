@@ -221,7 +221,7 @@ const EndUsers = React.createClass({
     this.context.executeAction(showNextPage);
 
     if (this.getStore(EndUserStore).getNeedMoreData()) {
-      const params = this.context.location.query;
+      const { params } = this.context;
 
       this.context.executeAction(fetchEndUsers, {
         carrierId: params.identity,
