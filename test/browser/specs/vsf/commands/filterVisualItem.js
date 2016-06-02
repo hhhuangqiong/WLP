@@ -2,13 +2,13 @@ import { expect } from 'chai';
 
 export default function filterVisualItem(itemType) {
   // click the button by item type
-  this.click(`.icon-${itemType}.vsf-type-filtering`);
-  this.waitForTableFetching();
+  browser.click(`.icon-${itemType}.vsf-type-filtering`);
+  browser.waitForTableFetching();
 
-  expect(this.isVisible(`.icon-${itemType}.vsf-type-filtering--active`)).to.be.true;
+  expect(browser.isVisible(`.icon-${itemType}.vsf-type-filtering--active`)).to.be.true;
 
   // validate items that should align with selected item type
-  const virtualItemsClasses = this.getAttribute('.data-table__virtual-item', 'class');
+  const virtualItemsClasses = browser.getAttribute('.data-table__virtual-item', 'class');
 
   if (Array.isArray(virtualItemsClasses)) {
     virtualItemsClasses.forEach(vistualItemClasses => {
@@ -17,10 +17,8 @@ export default function filterVisualItem(itemType) {
   }
 
   // unclick the button
-  this.click(`.icon-${itemType}.vsf-type-filtering--active`);
-  this.waitForTableFetching();
+  browser.click(`.icon-${itemType}.vsf-type-filtering--active`);
+  browser.waitForTableFetching();
 
-  expect(this.isVisible(`.icon-${itemType}.vsf-type-filtering--active`)).to.be.false;
-
-  return this;
+  expect(browser.isVisible(`.icon-${itemType}.vsf-type-filtering--active`)).to.be.false;
 }
