@@ -572,7 +572,13 @@ const VerificationOverview = React.createClass({
   },
 
   handleTimeFrameChange(timeRange) {
-    /* Add timeRange value to query */
+    const { timeRange: currentTimeRange } = this.state;
+
+    // if selected timeRange is the same, change should not be applied
+    if (timeRange === currentTimeRange) {
+      return;
+    }
+
     this.context.router.push({
       pathname: this.context.location.pathname,
       query: { timeRange },
