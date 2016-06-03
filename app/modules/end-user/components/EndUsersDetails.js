@@ -157,7 +157,8 @@ const EndUsers = React.createClass({
     const nextEndDate = this.getRequestBodyFromQuery().endDate;
 
     if ( nextStartDate && nextEndDate && (prevStartDate !== nextStartDate || prevEndDate !== nextEndDate) ) {
-      this.executeAction(fetchEndUsers, _.merge(_.clone(this.getDefaultQuery()), this.getRequestBodyFromState(), this.getRequestBodyFromQuery()));
+      const params = _.merge(_.clone(this.getDefaultQuery()), this.getRequestBodyFromState(), this.getRequestBodyFromQuery());
+      this.executeAction(fetchEndUsers, params);
     }
   },
 
@@ -207,13 +208,13 @@ const EndUsers = React.createClass({
 
   handleStartDateChange(momentDate) {
     const date = moment(momentDate).format(DATE_FORMAT);
-    this.setState({ startDate: date });
+    this.setState({ startDate: date, page: INITIAL_PAGE_NUMBER });
     this.handleQueryChange({ startDate: date, page: INITIAL_PAGE_NUMBER });
   },
 
   handleEndDateChange(momentDate) {
     const date = moment(momentDate).format(DATE_FORMAT);
-    this.setState({ endDate: date });
+    this.setState({ endDate: date, page: INITIAL_PAGE_NUMBER });
     this.handleQueryChange({ endDate: date, page: INITIAL_PAGE_NUMBER });
   },
 
