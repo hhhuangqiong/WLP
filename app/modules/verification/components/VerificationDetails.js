@@ -36,24 +36,7 @@ const debug = require('debug')('app:modules/verification/components/Verification
 const ENTER_KEY = 13;
 const LABEL_OF_ALL = i18nMessages.all;
 
-const MESSAGES = defineMessages({
-  callIn: {
-    id: 'vsdk.details.callIn',
-    defaultMessage: 'call-in',
-  },
-  callOut: {
-    id: 'vsdk.details.callOut',
-    defaultMessage: 'call-out',
-  },
-  sms: {
-    id: 'vsdk.details.sms',
-    defaultMessage: 'sms',
-  },
-  ivr: {
-    id: 'vsdk.details.ivr',
-    defaultMessage: 'ivr',
-  },
-});
+import MESSAGES from '../../../main/constants/i18nMessages';
 
 const VERIFICATION_TYPES = [
   MESSAGES.callIn,
@@ -288,6 +271,21 @@ const VerificationDetails = React.createClass({
     this.handleQueryChange({ method });
   },
 
+  transformMethodToId(method) {
+    switch (method) {
+      case 'call-in':
+        return 'vsdk.details.callIn';
+      case 'call-out':
+        return 'vsdk.details.callOut';
+      case 'sms':
+        return 'vsdk.details.sms';
+      case 'ivr':
+        return 'vsdk.details.ivr';
+      default:
+        return '';
+    }
+  },
+
   handleOsTypeChange(event) {
     const { intl: { formatMessage } } = this.props;
     const value = event.target.value;
@@ -405,7 +403,7 @@ const VerificationDetails = React.createClass({
               os={this.state.os}
               osTypes={OS_TYPES}
               osChange={this.handleOsTypeChange}
-              method={this.state.method}
+              method={this.transformMethodToId(this.state.method)}
               methods={VERIFICATION_TYPES}
               methodChange={this.handleVerificationMethodChange}
               defaultOption={formatMessage(LABEL_OF_ALL)}
@@ -429,7 +427,7 @@ const VerificationDetails = React.createClass({
               <VerificationExportForm
                 fromTime={this.state.startDate}
                 toTime={this.state.endDate}
-                verificationType={this.state.method}
+                verificationType={this.transformMethodToId(this.state.method)}
                 verificationTypes={VERIFICATION_TYPES}
                 osType={this.state.os}
                 osTypes={OS_TYPES}

@@ -1,6 +1,6 @@
 import React, { PropTypes, Component } from 'react';
 import moment from 'moment';
-import { FormattedMessage, injectIntl } from 'react-intl';
+import { FormattedMessage, injectIntl, intlShape } from 'react-intl';
 
 import DateTimePicker from '../../../main/components/DateTimePicker';
 import ExportSubmitControls from '../../../main/file-export/components/ExportSubmitControls';
@@ -44,21 +44,6 @@ class VerificationExportForm extends Component {
 
     this.props.handleExport(params);
     this._resetState(this.props);
-  }
-
-  transformMethodToId(method) {
-    switch (method) {
-      case 'call-in':
-        return 'vsdk.details.callIn';
-      case 'call-out':
-        return 'vsdk.details.callOut';
-      case 'sms':
-        return 'vsdk.details.sms';
-      case 'ivr':
-        return 'vsdk.details.ivr';
-      default:
-        return '';
-    }
   }
 
   render() {
@@ -122,7 +107,7 @@ class VerificationExportForm extends Component {
           </label>
           <select
             className="large export-countries-dropdown radius"
-            value={this.transformMethodToId(this.props.verificationType)}
+            value={this.props.verificationType}
             onChange={this.props.handleVerificationMethodChange}
           >
             <option>{this.props.defaultOption}</option>
@@ -168,6 +153,7 @@ class VerificationExportForm extends Component {
 }
 
 VerificationExportForm.propTypes = {
+  intl: intlShape.isRequired,
   verificationType: PropTypes.string,
   osType: PropTypes.string,
   handleExport: PropTypes.func.isRequired,

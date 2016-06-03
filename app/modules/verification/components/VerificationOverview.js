@@ -9,13 +9,14 @@ import {
   FormattedMessage,
   defineMessages,
   injectIntl,
+  intlShape,
 } from 'react-intl';
 
 import { FluxibleMixin } from 'fluxible-addons-react';
 
 import * as FilterBar from './../../../main/components/FilterBar';
 import * as Panel from './../../../main/components/Panel';
-import getMapConfig from '../constants/mapOfAttempts';
+import getMapConfig from '../../../main/statistics/utils/getMapConfig';
 import ColorRadioButton from '../../../main/components/ColorRadioButton';
 import TimeFramePicker from '../../../main/components/TimeFramePicker';
 import { parseTimeRange } from '../../../utils/timeFormatter';
@@ -52,6 +53,8 @@ function fromTimeslot(collection, fromTime, timeframe) {
   return subtractedFromTime.add(maxIndex, timeframe.indexOf('hours') > -1 ? 'hours' : 'days');
 }
 
+import METHOD_MESSAGES from '../../../main/constants/i18nMessages';
+
 const MESSAGES = defineMessages({
   totalNumbersOfVerificationAttempts: {
     id: 'verification.overview.totalNumbersOfVerificationAttempts',
@@ -65,12 +68,21 @@ const MESSAGES = defineMessages({
     id: 'verification.overview.successVerificationRate',
     defaultMessage: 'Success verification rate',
   },
+  successVerificationUnit: {
+    id: 'verification.overview.successVerificationUnit',
+    defaultMessage: 'success',
+  },
+  numberOfVerificationAttempts: {
+    id: 'verification.overview.numberOfAttempt',
+    defaultMessage: 'Number of attempts',
+  },
 });
 
 const VerificationOverview = React.createClass({
   displayName: 'VerificationOverview',
 
   propTypes: {
+    intl: intlShape.isRequired,
     appIds: PropTypes.array,
   },
 
@@ -139,6 +151,8 @@ const VerificationOverview = React.createClass({
   },
 
   onVerificationOverviewChange() {
+    const { formatMessage } = this.props.intl;
+
     const summaryAttempts = this.getStore(VerificationOverviewStore).getSummaryAttempts();
     const countryAttempts = this.getStore(VerificationOverviewStore).getCountryAttempts();
     const osAttempts = this.getStore(VerificationOverviewStore).getOsAttempts();
@@ -159,7 +173,13 @@ const VerificationOverview = React.createClass({
 
     // Copy source data to be a new one for Highmap to avoid the behavior of changing source data
     const maxValue = max(countryAttempts.countriesData, country => country.value).value;
-    new Highcharts.Map(getMapConfig('verificationCountrySection', (countryAttempts.countriesData || []).slice(0), maxValue));
+    const mapConfig = getMapConfig(
+      'verificationCountrySection',
+      (countryAttempts.countriesData || []).slice(0),
+      maxValue,
+      formatMessage(MESSAGES.numberOfVerificationAttempts)
+    );
+    new Highcharts.Map(mapConfig);
   },
 
   onAppIdChange(appId) {
@@ -280,6 +300,11 @@ const VerificationOverview = React.createClass({
     this.props.appIds.forEach(item => {
       options.push({ value: item, label: item });
     });
+
+    const methodStats = this.state.types.map(type => ({
+      name: this.getMethodHeaderByMethodType(type.name),
+      value: type.value,
+    }));
 
     return (
       <div className="row">
@@ -409,7 +434,7 @@ const VerificationOverview = React.createClass({
                 <Panel.Body>
                   <DonutChartPanel
                     className="method-donut"
-                    data={this.state.types}
+                    data={methodStats}
                     size={150}
                     bars={4}
                     unit={formatMessage(i18nMessages.attempts)}
@@ -503,6 +528,8 @@ const VerificationOverview = React.createClass({
   },
 
   setSuccessRates() {
+    const { formatMessage } = this.props.intl;
+
     this.setState({
       attemptToggle: SUCCESS_ATTEMPTS_RATE,
       busiestAttempts: max(this.state.successAttempts),
@@ -517,8 +544,8 @@ const VerificationOverview = React.createClass({
             return `
               <div style="text-align: center">
                 <div>${moment(x).local().format(TOOLTIP_TIME_FORMAT)}</div>
-                <div>${this.state.successAttempts[xIndex]}/${this.state.totalAttempts[xIndex]} success</div>
-                <div>Success Rate: ${normalizeDurationInMS(y)}%</div>
+                <div>${this.state.successAttempts[xIndex]}/${this.state.totalAttempts[xIndex]} ${formatMessage(MESSAGES.successVerificationUnit)}</div>
+                <div>${formatMessage(MESSAGES.successVerificationRate)}: ${normalizeDurationInMS(y)}%</div>
               </div>
             `;
           },
@@ -529,6 +556,8 @@ const VerificationOverview = React.createClass({
   },
 
   setAttemptsLines() {
+    const { formatMessage } = this.props.intl;
+
     this.setState({
       lines: [
         {
@@ -539,7 +568,7 @@ const VerificationOverview = React.createClass({
             return `
               <div style="text-align: center">
                 <div>${moment(x).local().format(TOOLTIP_TIME_FORMAT)}</div>
-                <div>Total Attempts: ${y}</div>
+                <div>${formatMessage(MESSAGES.totalNumbersOfVerificationAttempts)}: ${y}</div>
               </div>
             `;
           },
@@ -552,7 +581,7 @@ const VerificationOverview = React.createClass({
             return `
               <div style="text-align: center">
                 <div>${moment(x).local().format(TOOLTIP_TIME_FORMAT)}</div>
-                <div>Success Attempts: ${y}</div>
+                <div>${formatMessage(MESSAGES.successVerificationAttempts)}: ${y}</div>
               </div>
             `;
           },
@@ -606,6 +635,27 @@ const VerificationOverview = React.createClass({
     ], errorObj => !isNull(errorObj));
 
     return pendingFetched && !hasError;
+  },
+
+  getMethodHeaderByMethodType(type) {
+    const { formatMessage } = this.props.intl;
+
+    switch (type) {
+      case 'Call-in':
+        return formatMessage(METHOD_MESSAGES.callIn);
+
+      case 'Call-out':
+        return formatMessage(METHOD_MESSAGES.callOut);
+
+      case 'SMS':
+        return formatMessage(METHOD_MESSAGES.sms);
+
+      case 'IVR':
+        return formatMessage(METHOD_MESSAGES.ivr);
+
+      default:
+        return type;
+    }
   },
 });
 

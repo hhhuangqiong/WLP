@@ -85,4 +85,20 @@ export default defineMessages({
     id: 'windowsPhone',
     defaultMessage: 'Windows Phone',
   },
+  callIn: {
+    id: 'vsdk.details.callIn',
+    defaultMessage: 'call-in',
+  },
+  callOut: {
+    id: 'vsdk.details.callOut',
+    defaultMessage: 'call-out',
+  },
+  sms: {
+    id: 'vsdk.details.sms',
+    defaultMessage: 'sms',
+  },
+  ivr: {
+    id: 'vsdk.details.ivr',
+    defaultMessage: 'ivr',
+  },
 });
