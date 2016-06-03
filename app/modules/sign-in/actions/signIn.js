@@ -10,16 +10,6 @@ import { MESSAGES } from '../../../main/system-message/constants/messages';
 
 const debug = require('debug')('app:main/actions/signIn');
 
-export function changePassword(context, payload) {
-  const { password } = payload;
-  context.dispatch(CHANGE_PASSWORD, password);
-}
-
-export function changeUsername(context, payload) {
-  const { username } = payload;
-  context.dispatch(CHANGE_USERNAME, username);
-}
-
 export function signIn(context, payload, done) {
   const { apiClient } = context;
   const { username, password } = payload;

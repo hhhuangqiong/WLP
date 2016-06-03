@@ -28,11 +28,13 @@ var config =  {
         ],
         loader: 'babel',
         query: {
+          // Control the cacheDirectory by ourself for better control
+          cacheDirectory: path.join(__dirname, 'build', 'babel'),
           presets: ['es2015', 'stage-0', 'react'],
           plugins: [
             'transform-decorators-legacy',
             'jsx-control-statements',
-            //@workaround duplicated babelrc config with addition of react-intl
+            // @workaround duplicated babelrc config with addition of react-intl
             ['react-intl', { messagesDir: './build/intl/' }],
           ],
         },
@@ -42,6 +44,14 @@ var config =  {
   },
   resolve: {
     fallback: path.join(__dirname, 'node_modules'),
+    // React somehow requires all components to be instantiate with
+    // the same library reference. therefore this forces the
+    // m800-user-locale module resolve same react package at top-level.
+    // @todo can be removed after this project is upgrade to npm 3
+    alias: {
+      react: `${__dirname}/node_modules/react`,
+      'react/addons': `${__dirname}/node_modules/react/addons`,
+    },
   },
   plugins: [],
   output: {
@@ -58,7 +68,7 @@ var config =  {
   }
 };
 
-if (nodeEnv==="production") {
+if (nodeEnv === "production") {
   config.plugins.push(new webpack.DefinePlugin({
       'process.env': {NODE_ENV: '"production"'}
     }));
