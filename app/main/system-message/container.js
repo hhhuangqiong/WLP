@@ -50,7 +50,10 @@ SystemMessageContainer.contextTypes = {
 
 SystemMessageContainer.propTypes = {
   intl: intlShape.isRequired,
-  id: PropTypes.string,
+  id: PropTypes.oneOfType([
+    PropTypes.string,
+    PropTypes.number,
+  ]),
   type: PropTypes.oneOf(['error', 'info']),
   message: PropTypes.oneOfType([
     PropTypes.shape({
@@ -66,7 +69,7 @@ SystemMessageContainer.propTypes = {
   hidden: PropTypes.bool,
   timeout: PropTypes.number,
   autoDismiss: PropTypes.bool,
-  handleDismiss: PropTypes.func.isRequired,
+  handleDismiss: PropTypes.func,
 };
 
 SystemMessageContainer = connectToStores(
