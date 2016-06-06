@@ -8,6 +8,7 @@ import EmptyRow from '../../../modules/data-table/components/EmptyRow';
 import TableHeader from '../../../modules/data-table/components/TableHeader';
 import Pagination from '../../../modules/data-table/components/Pagination';
 import i18nMessages from '../../../main/constants/i18nMessages';
+import Icon from '../../../main/components/Icon';
 
 import getPlatformInfo from '../utils/getPlatformInfo.js';
 
@@ -195,7 +196,7 @@ const EndUserTable = React.createClass({
             </span>
           </td>
           <td className="device-modal">
-            <i className={classNames(getPlatformInfo(platform).iconClass)} />
+            <Icon symbol={getPlatformInfo(platform).iconClass} />
             {device.deviceModel || formatMessage(NOT_FOUND_LABEL)}
           </td>
           <td>{device.appBundleId || formatMessage(NOT_FOUND_LABEL)}</td>

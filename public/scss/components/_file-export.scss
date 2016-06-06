@@ -70,9 +70,8 @@ $positioning: -150px;
   cursor: pointer;
 
   .icon-download {
-    color: inherit !important;
-    line-height: inherit !important;
-
+    width: rem-calc(14);
+    height: rem-calc(14);
     margin: 0 rem-calc(5);
   }
 }

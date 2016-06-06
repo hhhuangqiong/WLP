@@ -2,6 +2,7 @@ import React, { PropTypes } from 'react';
 import moment from 'moment';
 
 import DatePicker from 'react-datepicker';
+import Icon from '../components/Icon';
 
 const DateRangePicker = React.createClass({
   propTypes: {
@@ -29,7 +30,7 @@ const DateRangePicker = React.createClass({
   render() {
     return (
       <div className="date-range-picker left">
-        <i className="date-range-picker__icon icon-calendar left" />
+        <Icon className="date-range-picker__icon left" symbol="icon-calendar" />
         <div className="date-range-picker__start date-input-wrap left" onClick={this.handleStartDateClick}>
           <span
             className="interactive-button left date-range-picker__date-span"

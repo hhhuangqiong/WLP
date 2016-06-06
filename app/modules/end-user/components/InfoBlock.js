@@ -1,5 +1,6 @@
 import React, { PropTypes } from 'react';
 import classNames from 'classnames';
+import Icon from '../../../main/components/Icon';
 
 const InfoBlock = React.createClass({
   propTypes: {
@@ -36,9 +37,9 @@ const InfoBlock = React.createClass({
               )}
               >
                 <If condition={this.props.verified}>
-                  <i className="icon-tick" />
+                  <Icon symbol="icon-tick" />
                 <Else />
-                  <i className="icon-error" />
+                  <Icon symbol="icon-error" />
                 </If>
               </span>
             </If>

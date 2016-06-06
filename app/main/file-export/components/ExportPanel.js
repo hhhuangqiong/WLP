@@ -1,5 +1,6 @@
 import React, { createClass, PropTypes } from 'react';
 import { FluxibleMixin } from 'fluxible-addons-react';
+import Icon from '../../components/Icon';
 
 import {
   FormattedMessage,
@@ -66,7 +67,7 @@ const ExportPanel = createClass({
 
           <li>
             <a className="right button" onClick={this.props.cancel}>
-              <i className="icon-error left" />
+              <Icon symbol="icon-error" className="left" />
             </a>
           </li>
         </ul>
@@ -78,7 +79,7 @@ const ExportPanel = createClass({
             id="download"
             defaultMessage="Download"
           />
-          <span className="icon-download"></span>
+          <Icon symbol="icon-download" />
         </div>
       );
     } else if (isInProgress) {
@@ -100,7 +101,7 @@ const ExportPanel = createClass({
 
           <li>
             <a className="right button" onClick={this.props.cancel}>
-              <i className="icon-error left" />
+              <Icon symbol="icon-error" className="left" />
             </a>
           </li>
         </ul>
@@ -112,7 +113,7 @@ const ExportPanel = createClass({
         className="interactive-button export-download-button export-ie-fix"
         onClick={this.props.openModal}
       >
-        <span className="icon-download"></span>
+        <Icon symbol="icon-download" />
       </div>
     );
   },

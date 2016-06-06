@@ -12,6 +12,7 @@ import reactivateEndUser from '../actions/reactivateEndUser';
 import * as Accordion from '../../../main/components/Accordion';
 import * as Panel from '../../../main/components/Panel';
 import CountryFlag from '../../../main/components/CountryFlag';
+import Icon from '../../../main/components/Icon';
 
 import WalletInfoItem from './WalletInfoItem';
 import Item from './InfoItem';
@@ -119,7 +120,7 @@ const EndUserProfile = React.createClass({
       <Accordion.Navigation title={formatMessage(MESSAGES.walletTitle)}>
         <div className="error text-center">
           <div className="error-description full-width">
-            <i className="error-icon icon-error3" />
+            <Icon className="error-icon" symbol="icon-error3" />
             <span className="error-message">
               <FormattedMessage
                 id="endUser.details.walletInfoUnavailable"
@@ -134,7 +135,7 @@ const EndUserProfile = React.createClass({
             // otherwise, it will always be an array even an empty one
             isNull(this.props.user.wallets) ? (
               <div className="error-button" onClick={this.handleRefreshButtonClick}>
-                <i className="icon-refresh" />
+                <Icon symbol="icon-refresh" />
               </div>
             ) : null
           }
@@ -219,11 +220,12 @@ const EndUserProfile = React.createClass({
         <Item label={formatMessage(MESSAGES.dateOfBirth)}>{this.props.user.userDetails.birthDate || EMPTY_STRING}</Item>
         <Item label={formatMessage(MESSAGES.gender)} capitalize>
           <span className="gender-label">
-            <i
-              className={classNames({ 'icon-male': this.props.user.userDetails.gender === 'male', 'icon-female': this.props.user.userDetails.gender === 'female' })} />
-            {
-              !!gender ? formatMessage(MESSAGES[gender.toLowerCase()]) : EMPTY_STRING
-            }
+            <If condition={!!gender}>
+              <Icon symbol={`icon-${gender.toLowerCase()}`} />
+              {formatMessage(MESSAGES[gender.toLowerCase()])}
+              <Else />
+                {EMPTY_STRING}
+            </If>
           </span>
         </Item>
       </Accordion.Navigation>
@@ -239,7 +241,7 @@ const EndUserProfile = React.createClass({
         <Accordion.Navigation title={formatMessage(MESSAGES.appTitle)}>
           <Item label={formatMessage(MESSAGES.device)}>
             <span className="device-label">
-              <i className={classNames(getPlatformInfo(device.platform).iconClass)} />
+              <Icon symbol={getPlatformInfo(device.platform).iconClass} />
               {formatMessage(getPlatformInfo(device.platform).name)}
             </span>
           </Item>
