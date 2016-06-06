@@ -8,6 +8,7 @@ import { FormattedMessage, defineMessages, injectIntl } from 'react-intl';
 import EmptyRow from '../../../modules/data-table/components/EmptyRow';
 import Pagination from '../../../modules/data-table/components/Pagination';
 import TableHeader from '../../../modules/data-table/components/TableHeader';
+import Icon from '../../../main/components/Icon';
 
 import config from './../../../main/config';
 
@@ -270,7 +271,7 @@ const TopUpTable = React.createClass({
     const {
         formatMessage
     } = this.props.intl;
-    
+
     switch (type) {
       case 'Invalid voucher no':
         return formatMessage(MESSAGES.invalidVoucher);
@@ -328,7 +329,7 @@ const TopUpTable = React.createClass({
                 trigger={['hover']}
                 overlay={<span>{this.getErrorDescription(history.errorDescription)}</span>}
               >
-                <i className="icon-error6" />
+                <Icon symbol="icon-error6" />
               </Tooltip>
             </If>
           </td>
