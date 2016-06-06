@@ -48,7 +48,7 @@
                       padding-right: rem-calc(20) !important;
                       display: flex;
                       align-items: center;
-                      i {
+                      .icon {
                           line-height: 1rem;
                           position: relative;
                       }
@@ -70,12 +70,12 @@
                         line-height: rem-calc(50);
                         min-width: 100%;
                         min-height: initial;
-                        i{
+                        .icon {
                             margin-right: rem-calc(20);
                             // display: inline-block;
                             // float: left;
                         }
-                        i,span{
+                        .icon ,span{
                             line-height: 3.5rem;
                             display: inline-block;
                             float: left;

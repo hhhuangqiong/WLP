@@ -6,6 +6,8 @@ import { browserHistory } from 'react-router';
 import { userPath } from '../../../utils/paths';
 import ApplicationStore from '../../stores/ApplicationStore';
 
+import Icon from '../Icon';
+
 const DEFAULT_LOGO_SRC = '/images/default-logo.png';
 
 const CompanySwitcher = React.createClass({
@@ -65,7 +67,7 @@ const CompanySwitcher = React.createClass({
       <If condition={!_.isEmpty(this.state.companies)}>
         <li className="has-dropdown not-click navigation-bar__item">
           <a className="company-switcher">
-            <span className="icon-companymenu" />
+            <Icon symbol="icon-companymenu" />
           </a>
           <ul className="dropdown dropdown--company-switcher">
             {buttons}
