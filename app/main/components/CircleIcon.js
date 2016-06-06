@@ -1,4 +1,5 @@
 import React from 'react';
+import Icon from './Icon';
 
 export const SMALL = 'small';
 export const MEDIUM = 'medium';
@@ -47,7 +48,7 @@ export default React.createClass({
 
     return (
       <div className="circle-icon" style={boxStyle}>
-        <span className={this.props.icon}></span>
+        <Icon symbol={this.props.icon} />
       </div>
     );
   },

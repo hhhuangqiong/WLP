@@ -2,6 +2,7 @@ import _ from 'lodash';
 import React, { PropTypes } from 'react';
 import { Link } from 'react-router';
 import classNames from 'classnames';
+import Icon from '../../../main/components/Icon';
 
 import { getCountryName } from '../../../utils/StringFormatter';
 
@@ -108,11 +109,12 @@ const CompanyList = React.createClass({
     return (
       <div className="company-sidebar">
         <nav className="top-bar company-sidebar__search" data-topbar role="navigation">
-          <input className="round"
+          <input
+            className="round"
             type="text" placeholder="search company"
             onChange={this._handleSearchChange}
           />
-          <i className="icon-search" />
+          <Icon symbol="icon-search" />
         </nav>
         <ul className="company-sidebar__list">
           {this._getFilteredCompanies(this.props.companies).map(this.renderCompanyListItem)}
