@@ -10,6 +10,7 @@ import config from '../config';
 import { isDev } from '../utils/env';
 import { createContext, createMarkupElement, intlPolyfill } from '../utils/fluxible';
 import getRoutes from '../routes';
+import svg4everybody from 'svg4everybody';
 
 const debug = require('debug');
 const bootstrapDebug = debug('app:client');
@@ -56,7 +57,8 @@ Q.nfcall(intlPolyfill)
   .then(() => Q.nfcall(createContext, app, dehydratedState, contextOptions))
   .then(context => {
     const routes = getRoutes(context);
-
+    // enable the svg4everybody to be loaded on all browser
+    svg4everybody();
     let children = React.createElement(Router, {
       routes,
       history: browserHistory,

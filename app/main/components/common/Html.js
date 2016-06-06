@@ -27,7 +27,6 @@ const Html = props => (
         rel="stylesheet"
         type="text/css"
       />
-      <link rel="stylesheet" href="/stylesheets/iconic-fonts.css" />
       <link rel="stylesheet" href="/stylesheets/main.css" />
       <link rel="stylesheet" href="/vendor/react-date-picker/dist/react-datepicker.min.css" />
       <link rel="stylesheet" href="/stylesheets/map-sprite.css" />
