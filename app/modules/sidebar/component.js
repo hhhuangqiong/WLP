@@ -3,6 +3,7 @@ import classnames from 'classnames';
 import { Link } from 'react-router';
 import { injectIntl } from 'react-intl';
 import Permit from '../../main/components/common/Permit';
+import Icon from '../../main/components/Icon';
 import navSections from '../../main/constants/navSection';
 import { userPath } from '../../utils/paths';
 
@@ -47,7 +48,7 @@ const Sidebar = props => {
                   activeClassName="active"
                 >
                   <label>
-                    <i className={section.icon} />
+                    <Icon symbol={section.icon} />
                     {formatMessage(section.name)}
                   </label>
                 </Link>
