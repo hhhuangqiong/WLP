@@ -24,6 +24,7 @@
             li {
               background-color: $topbar-link-bg;
               > a {
+                 align-items: center;
                   text-transform: capitalize;
                   min-height: rem-calc(60);
                   padding-left: rem-calc(0 30) !important;
@@ -180,6 +181,12 @@
                         &.active{
                             color: $topbar-inner-link-color-active;
                         }
+                    }
+                    .icon{
+                      fill: $topbar-inner-link-color;
+                      &.active{
+                          color: $topbar-inner-link-color-active;
+                      }
                     }
                     &:before {
                         display: none;

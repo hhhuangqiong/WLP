@@ -8,6 +8,7 @@ import EmptyRow from '../../../modules/data-table/components/EmptyRow';
 import TableHeader from '../../../modules/data-table/components/TableHeader';
 import Pagination from '../../../modules/data-table/components/Pagination';
 import i18nMessages from '../../../main/constants/i18nMessages';
+import Icon from '../../../main/components/Icon';
 
 import Currency from '../../../main/components/Currency';
 
@@ -71,11 +72,7 @@ const VsfTable = React.createClass({
     return classNames({
       'icon-apple': platform === IOS_PLATFORM,
     }, {
-      'icon-apple-hack': platform === IOS_PLATFORM,
-    }, {
       'icon-android': platform === ANDROID_PLATFORM,
-    }, {
-      'icon-android-hack': platform === ANDROID_PLATFORM,
     });
   },
 
@@ -86,7 +83,7 @@ const VsfTable = React.createClass({
       return formatMessage(NO_VALUE_LABEL);
     }
 
-    return <span className={this.getStyleByStoreType(platform)}></span>;
+    return <Icon symbol={this.getStyleByStoreType(platform)} />;
   },
 
   renderRows() {
@@ -126,16 +123,16 @@ const VsfTable = React.createClass({
 
           <td className="vsf-table--cell text-center">
             <If condition={transaction.categories.indexOf('voice_sticker') >= 0}>
-              <span className="data-table__virtual-item icon-audio icon-virtual-item"></span>
+              <Icon className="data-table__virtual-item icon-virtual-item" symbol="icon-audio" />
             </If>
             <If condition={transaction.categories.indexOf('animation') >= 0}>
-              <span className="data-table__virtual-item icon-animation icon-virtual-item"></span>
+              <Icon className="data-table__virtual-item icon-virtual-item" symbol="icon-animation" />
             </If>
             <If condition={transaction.categories.indexOf('sticker') >= 0}>
-              <span className="data-table__virtual-item icon-sticker icon-virtual-item"></span>
+              <Icon className="data-table__virtual-item icon-virtual-item" symbol="icon-sticker" />
             </If>
             <If condition={transaction.categories.indexOf('credit') >= 0}>
-              <span className="data-table__virtual-item icon-credit icon-virtual-item"></span>
+              <Icon className="data-table__virtual-item icon-virtual-item" symbol="icon-credit" />
             </If>
              id: {transaction.virtualItemId}
           </td>
@@ -207,7 +204,7 @@ const VsfTable = React.createClass({
 
   render() {
     return (
-      <table className="large-24 clickable data-table" key="vsf-table">
+      <table className="large-24 clickable data-table vsf-table" key="vsf-table">
         <TableHeader headers={TABLE_TITLES} />
         {this.renderTableBody()}
         <tfoot>

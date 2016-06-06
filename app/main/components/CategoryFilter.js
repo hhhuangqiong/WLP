@@ -1,5 +1,6 @@
 import React from 'react';
 import classNames from 'classnames';
+import Icon from './Icon';
 
 const CategoryFilter = React.createClass({
   propTypes: {
@@ -10,53 +11,29 @@ const CategoryFilter = React.createClass({
     handleCreditFilterToggle: React.PropTypes.func,
   },
 
+  renderFilterItem(category, action, icon) {
+    return (
+      <li>
+        <a className="button" onClick={action} >
+          <Icon
+            className={classNames(this.props.category,
+              'vsf-type-filtering',
+              { 'vsf-type-filtering--active': this.props.category === category }
+            )}
+            symbol={icon}
+          />
+        </a>
+      </li>
+    );
+  },
+
   render() {
     return (
       <ul className="button-group round">
-        <li>
-          <a className="button" onClick={this.props.handleVoiceFilterToggle}>
-            <i className={
-              classNames(
-                'icon-audio',
-                'vsf-type-filtering',
-                { 'vsf-type-filtering--active': this.props.category === 'voice_sticker' }
-              )}
-            ></i>
-          </a>
-        </li>
-        <li>
-          <a className="button" onClick={this.props.handleAnimationFilterToggle}>
-            <i className={
-              classNames(
-                'icon-animation',
-                'vsf-type-filtering',
-                { 'vsf-type-filtering--active': this.props.category === 'animation' }
-              )}
-            ></i>
-          </a>
-        </li>
-        <li>
-          <a className="button" onClick={this.props.handleStickerFilterToggle}>
-            <i className={
-              classNames(
-                'icon-sticker',
-                'vsf-type-filtering',
-                { 'vsf-type-filtering--active': this.props.category === 'sticker' }
-              )}
-            ></i>
-          </a>
-        </li>
-        <li>
-          <a className="button" onClick={this.props.handleCreditFilterToggle}>
-            <i className={
-              classNames(
-                'icon-credit',
-                'vsf-type-filtering',
-                { 'vsf-type-filtering--active': this.props.category === 'credit' }
-              )}
-            ></i>
-          </a>
-        </li>
+        {this.renderFilterItem('voice_sticker', this.props.handleVoiceFilterToggle, 'icon-audio')}
+        {this.renderFilterItem('animation', this.props.handleAnimationFilterToggle, 'icon-animation')}
+        {this.renderFilterItem('sticker', this.props.handleStickerFilterToggle, 'icon-sticker')}
+        {this.renderFilterItem('credit', this.props.handleCreditFilterToggle, 'icon-credit')}
       </ul>
     );
   },
