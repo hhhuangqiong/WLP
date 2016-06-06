@@ -19,6 +19,7 @@ import i18nMessages from '../../../main/constants/i18nMessages';
 import Export from '../../../main/file-export/components/Export';
 import ImExportForm from './ImExportForm';
 import FilterBarNavigation from '../../../main/filter-bar/components/FilterBarNavigation';
+import Icon from '../../../main/components/Icon';
 
 import MESSAGES from '../constants/i18n';
 
@@ -235,7 +236,7 @@ const Im = React.createClass({
             <ul className="left top-bar--inner">
               <li className="top-bar--inner">
                 <div className="date-range-picker left">
-                  <i className="date-range-picker__icon icon-calendar left" />
+                  <Icon className="date-range-picker__icon left" symbol="icon-calendar" />
                   <div className="date-input-wrap left" onClick={this._handleStartDateClick}>
                     <span
                       className="interactive-button left date-range-picker__start"
