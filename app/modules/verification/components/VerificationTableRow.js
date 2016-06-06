@@ -5,6 +5,7 @@ import moment from 'moment';
 import classNames from 'classnames';
 
 import Tooltip from 'rc-tooltip';
+import Icon from '../../../main/components/Icon';
 
 import { getCountryName } from '../../../utils/StringFormatter';
 import CountryFlag from '../../../main/components/CountryFlag';
@@ -340,21 +341,21 @@ const VerificationTableRow = React.createClass({
           </div>
         </td>
         <td>{method}</td>
-        <td><span className={classNames(`icon-${os}`, `icon-${os}-hack`)} /></td>
+        <td><Icon symbol={`icon-${os}`} /></td>
         <td>{deviceModel || '-'}</td>
         <td>{operator || '-'}</td>
         <td><span className={statusFlagClasses}>{this.getResult(status)}</span></td>
         <td className="text-center">
           <If condition={!success}>
             <Tooltip placement="left" trigger={['hover']} overlay={<span>{remarks}</span>}>
-              <span className="icon-error6" />
+              <Icon symbol="icon-error6" />
             </Tooltip>
           </If>
         </td>
         <td>
           <If condition={showDetails}>
             <a onClick={_.bindKey(this.props, 'onClickProfile', details)}>
-              <span className="icon-arrow" />
+              <Icon symbol="icon-arrow" />
             </a>
           </If>
         </td>

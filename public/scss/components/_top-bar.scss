@@ -182,12 +182,6 @@
                             color: $topbar-inner-link-color-active;
                         }
                     }
-                    .icon{
-                      fill: $topbar-inner-link-color;
-                      &.active{
-                          color: $topbar-inner-link-color-active;
-                      }
-                    }
                     &:before {
                         display: none;
                     }

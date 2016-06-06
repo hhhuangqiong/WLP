@@ -7,6 +7,7 @@ import {
 } from 'react-intl';
 
 import Dropdown from '../../../main/dropdown';
+import Icon from '../../../main/components/Icon';
 
 class VerificationFilter extends Component {
   transformMethodToId(method) {
@@ -48,7 +49,7 @@ class VerificationFilter extends Component {
                 defaultMessage="Filter"
               />
             </span>
-            <span className="icon-dropdown" />
+            <Icon symbol="icon-dropdown" />
           </nav>
         </Dropdown.Trigger>
         <Dropdown.Content className="verification-dropdown">

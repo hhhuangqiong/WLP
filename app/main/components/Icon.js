@@ -1,9 +1,9 @@
 import React, { PropTypes } from 'react';
 import classNames from 'classnames';
 
-export default function Icon({ symbol, svgFile, className }) {
+export default function Icon({ symbol, svgFile, className, ...props }) {
   return (
-    <svg className={classNames('icon', className, symbol)}>
+    <svg className={classNames('icon', className, symbol)} {...props} >
       <use xlinkHref={`${svgFile}#${symbol}`}></use>
     </svg>
   );

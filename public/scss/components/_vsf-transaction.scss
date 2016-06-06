@@ -1,7 +1,8 @@
-.vsf-type-filtering {
+.icon.vsf-type-filtering {
+  fill: $topbar-inner-link-color;
   line-height: 1rem;
   &--active{
-    fill: white !important;
+    fill: white;
   }
 }
 .vsf-table{
