@@ -2,6 +2,7 @@ import moment from 'moment';
 import React, { PropTypes } from 'react';
 import ReactDatePicker from 'react-datepicker';
 import classNames from 'classnames';
+import Icon from '../components/Icon';
 
 // TODO verify and extend the compatibility of `selectDate` DateFormat input
 // this component assume users will always input/output date with same format
@@ -55,7 +56,7 @@ const DatePicker = React.createClass({
         )}
         >
           <If condition={this.props.type === 'button'}>
-            <span className="date-range-picker__icon icon-calendar left"></span>
+            <Icon className="date-range-picker__icon left" symbol="icon-calendar" />
           </If>
           <If condition={this.props.type === 'button' || this.props.type === 'range'}>
             <span className="date-range-picker__date-text left">{this.props.selectedDate}</span>
