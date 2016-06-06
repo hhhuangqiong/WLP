@@ -1,11 +1,12 @@
 import React, { PropTypes } from 'react';
 import { FormattedMessage, injectIntl, intlShape } from 'react-intl';
 import Tooltip from 'rc-tooltip';
+import Icon from '../../../main/components/Icon';
 
 const renderHelpText = message => (
   <Tooltip overlay={message}>
     <a href="#" className="field-set--indicator">
-      <i className="icon-error6" />
+      <Icon symbol="icon-error6" />
     </a>
   </Tooltip>
 );
