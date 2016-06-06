@@ -6,6 +6,7 @@ import Select from 'react-select';
 import FormField from '../../../main/components/FormField';
 import PredefinedGroups from '../constants/PredefinedGroups';
 import ConfirmationDialog from '../../../main/components/ConfirmationDialog';
+import Icon from '../../../main/components/Icon';
 
 export default class AccountForm extends Component {
   static propTypes = {
@@ -48,7 +49,7 @@ export default class AccountForm extends Component {
   renderUserGroupDisplay(data) {
     return (
       <div>
-        <span className={`icon-${data.label}`}></span>
+        <Icon symbol={`icon-${data.label}`} />
         <span className="account-form__select_label">{data.value}</span>
       </div>
     );
