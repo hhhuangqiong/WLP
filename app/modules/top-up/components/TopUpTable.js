@@ -136,6 +136,30 @@ const MESSAGES = defineMessages({
     id: 'topUp.details.invalidVoucher',
     defaultMessage: 'Invalid voucher number',
   },
+  unionPay: {
+    id: 'topUp.details.unionPay',
+    defaultMessage: 'UnionPay',
+  },
+  mumsRecharge: {
+    id: 'topUp.details.mumsRecharge',
+    defaultMessage: 'mumsRecharge',
+  },
+  apiServerTopUpWallet: {
+    id: 'topUp.details.apiServerTopUpWallet',
+    defaultMessage: 'ApiServerTopUpWallet',
+  },
+  randomRetention: {
+    id: 'topUp.details.randomRetention',
+    defaultMessage: 'RandomRetention',
+  },
+  manual: {
+    id: 'topUp.details.manual',
+    defaultMessage: 'Manual',
+  },
+  adColony: {
+    id: 'topUp.details.adColony',
+    defaultMessage: 'AdColony',
+  },
 });
 
 const TABLE_TITLES = [
@@ -270,7 +294,7 @@ const TopUpTable = React.createClass({
     const {
         formatMessage
     } = this.props.intl;
-    
+
     switch (type) {
       case 'Invalid voucher no':
         return formatMessage(MESSAGES.invalidVoucher);
