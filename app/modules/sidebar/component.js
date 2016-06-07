@@ -32,7 +32,7 @@ const Sidebar = props => {
         <li>
           <a className="item mainmenu-bar__item" href="#">
             <label>
-              <i><img src={logoSrc} /></i>
+              <div className="sidebar-logo"><img src={logoSrc} /></div>
               <span id="sidebar-company-name">{ currentCompany && currentCompany.name }</span>
             </label>
           </a>

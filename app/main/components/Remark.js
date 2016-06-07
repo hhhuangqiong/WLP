@@ -1,5 +1,6 @@
 import React, { PropTypes } from 'react';
 import classNames from 'classnames';
+import Icon from './Icon';
 
 const Remark = React.createClass({
   propTypes: {
@@ -35,7 +36,7 @@ const Remark = React.createClass({
         onMouseEnter={this._handleMouseEnter}
         onMouseLeave={this._handleMouseLeave}
       >
-        <i className="icon-error6" />
+        <Icon symbol="icon-error6" />
         <span
           ref="tooltip"
           className={classNames(

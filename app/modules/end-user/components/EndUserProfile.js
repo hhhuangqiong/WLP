@@ -113,6 +113,29 @@ const EndUserProfile = React.createClass({
     return { carrierId, username };
   },
 
+  renderGenderInfo(type) {
+    const { intl: { formatMessage } } = this.props;
+    const EMPTY_STRING = formatMessage(i18nMessages.unknownLabel);
+    if (!type) {
+      return (EMPTY_STRING);
+    }
+
+    const gender = type.toLowerCase();
+
+    switch (gender) {
+      case 'male':
+      case 'female':
+        return (
+          <span>
+            <Icon key={gender} symbol={`icon-${gender}`} />
+            {formatMessage(MESSAGES[gender])}
+          </span>
+        );
+      default:
+        return (<span>EMPTY_STRING</span>);
+    }
+  },
+
   renderWalletPanel() {
     const { intl: { formatMessage } } = this.props;
 
@@ -220,12 +243,7 @@ const EndUserProfile = React.createClass({
         <Item label={formatMessage(MESSAGES.dateOfBirth)}>{this.props.user.userDetails.birthDate || EMPTY_STRING}</Item>
         <Item label={formatMessage(MESSAGES.gender)} capitalize>
           <span className="gender-label">
-            <If condition={!!gender}>
-              <Icon symbol={`icon-${gender.toLowerCase()}`} />
-              {formatMessage(MESSAGES[gender.toLowerCase()])}
-              <Else />
-                {EMPTY_STRING}
-            </If>
+            {this.renderGenderInfo(this.props.user.userDetails.gender)}
           </span>
         </Item>
       </Accordion.Navigation>
@@ -241,7 +259,7 @@ const EndUserProfile = React.createClass({
         <Accordion.Navigation title={formatMessage(MESSAGES.appTitle)}>
           <Item label={formatMessage(MESSAGES.device)}>
             <span className="device-label">
-              <Icon symbol={getPlatformInfo(device.platform).iconClass} />
+              <Icon key={getPlatformInfo(device.platform).iconClass} symbol={getPlatformInfo(device.platform).iconClass} />
               {formatMessage(getPlatformInfo(device.platform).name)}
             </span>
           </Item>

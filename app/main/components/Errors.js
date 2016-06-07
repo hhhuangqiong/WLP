@@ -8,6 +8,7 @@ import {
 
 import { HOME } from '../../utils/paths';
 import Menu from './common/NavigationMenu';
+import Icon from './Icon';
 
 const ERROR_NAMES = defineMessages({
   401: {
@@ -68,8 +69,20 @@ const ErrorTemplate = React.createClass({
     return ERRORS['500'];
   },
 
+  renderErrorIcon(code) {
+    switch (code) {
+      case 401:
+      case 404:
+      case 500:
+        return (<Icon key={code} className="system-error__icon" symbol={code} />);
+      default:
+        return (<span className="system-error__icon"></span>);
+    }
+  },
+
   render() {
     const { intl: { formatMessage } } = this.props;
+
 
     return (
       <div className="full-height">
@@ -86,15 +99,7 @@ const ErrorTemplate = React.createClass({
             <div className="large-10 columns large-centered">
               <div className="system-error">
                 <div className="large-6 columns text-center">
-                  <i className={
-                    classNames(
-                      'system-error__icon',
-                      {
-                        'icon-error': this.props.code === 401,
-                        'icon-error3': this.props.code === 404,
-                        'icon-error4': this.props.code === 500,
-                      }
-                    )}
+                  {this.renderErrorIcon(this.props.code)}
                   />
                 </div>
                 <div className="system-error__message large-18 columns">
