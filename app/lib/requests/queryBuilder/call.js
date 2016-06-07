@@ -1,5 +1,6 @@
 import SolrQueryBuilder from 'solr-query-builder';
 import moment from 'moment';
+import { ALL_TYPES_EXCEPT_TESTING } from '../constants/call';
 
 const DEFAULT_SORT_ORDER = 'start_time desc';
 
@@ -51,6 +52,21 @@ export function buildCallSolrQueryString(params, cb) {
 
   if (params.type) {
     qb.where('type', params.type);
+  } else {
+    // WLP-914
+    // data with type `TEST_CALL` should not be included
+    qb.begin();
+
+    ALL_TYPES_EXCEPT_TESTING.forEach((type, idx) => {
+      qb.where('type', type);
+
+      // do not call qb.or() for the last iteration
+      if (idx !== ALL_TYPES_EXCEPT_TESTING.length - 1) {
+        qb.or();
+      }
+    });
+
+    qb.end();
   }
 
   // callee_country was once not working

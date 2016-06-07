@@ -7,6 +7,7 @@ import _ from 'lodash';
 import qs from 'qs';
 import { ConnectionError } from 'common-errors';
 
+import { ALL_TYPES_EXCEPT_TESTING } from '../constants/call';
 import { constructOpts, swapDate, handleError } from '../helper';
 import equals from 'shallow-equals';
 
@@ -59,7 +60,13 @@ export default class CallStatsRequest {
         if (data.status) query.status = data.status;
         if (data.countries) query.countries = data.countries;
         if (data.stat_type) query.stat_type = data.stat_type;
-        if (data.type) query.type = data.type;
+        if (data.type) {
+          query.type = data.type;
+        } else {
+          // WLP-914
+          // data with type `TEST_CALL` should not be included
+          query.type = ALL_TYPES_EXCEPT_TESTING.join(',');
+        }
 
         return _.omit(query, (value) => { return !value; });
       })
