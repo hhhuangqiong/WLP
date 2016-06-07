@@ -3,6 +3,7 @@ import moment from 'moment';
 import React, { PropTypes } from 'react';
 import classnames from 'classnames';
 import DatePicker from 'react-datepicker';
+import Icon from '../components/Icon';
 
 import TimePicker from './TimePicker';
 
@@ -40,7 +41,7 @@ export default React.createClass({
 
     return (
       <div className={classnames('date-range-picker', className)}>
-        <i className="date-range-picker__icon icon-calendar left" />
+        <Icon className="date-range-picker__icon left" symbol="icon-calendar" />
 
         <div className="date-input-wrap left" onClick={this._handleFocus}>
           <span className="left date-range-picker__date-span">{date.format('L')}</span>
@@ -60,7 +61,7 @@ export default React.createClass({
           &nbsp;&nbsp;|&nbsp;&nbsp;
         </span>
 
-        <i className="date-range-picker__icon icon-clock left" />
+        <Icon className="date-range-picker__icon left" symbol="icon-clock" />
 
         <TimePicker
           timePickerId={name}

@@ -11,10 +11,11 @@
 
 @mixin inputBoxWithIcon() {
 	padding-left: rem-calc(40);
-	~ [class^="icon-"]{
-		color: $place-holder-color;
-		font-size: rem-calc(20);
+	~ .icon{
 		position: absolute;
+		fill: $place-holder-color;
+		width: rem-calc(20);
+		height: rem-calc(20);
 		left: rem-calc(36);
 		top: rem-calc(18);
 	}

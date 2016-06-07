@@ -12,6 +12,7 @@ import Tooltip from 'rc-tooltip';
 import TopBar from './TopBar';
 import BasicInformation from './BasicInformation';
 import Contacts from './Contacts';
+import Icon from '../../../main/components/Icon';
 
 import CompanyStore from '../stores/CompanyStore';
 
@@ -154,7 +155,9 @@ const CompanyProfile = React.createClass({
   _renderHelpText(message) {
     return (
       <Tooltip overlay={message}>
-        <a href="#" className="field-set--indicator"><span className="icon-error6" /></a>
+        <a href="#" className="field-set--indicator">
+          <Icon symbol="icon-error6" />
+        </a>
       </Tooltip>
     );
   },

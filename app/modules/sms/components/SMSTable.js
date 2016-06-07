@@ -11,6 +11,7 @@ import CountryFlag from '../../../main/components/CountryFlag';
 import EmptyRow from '../../../modules/data-table/components/EmptyRow';
 import TableHeader from '../../../modules/data-table/components/TableHeader';
 import Pagination from '../../../modules/data-table/components/Pagination';
+import Icon from '../../../main/components/Icon';
 
 import {
   UI_STATE_LOADING,
@@ -122,7 +123,7 @@ const SMSTable = React.createClass({
 
     return (
       <Tooltip placement="right" trigger={['hover']} overlay={<span>{message}</span>}>
-        <i className={`icon-${_type}`}></i>
+        <Icon symbol={`icon-${_type}`} />
       </Tooltip>
     );
   },
@@ -163,7 +164,7 @@ const SMSTable = React.createClass({
                 </div>
                 <div className="large-1 columns">
                   <div className="calls-table__arrow">
-                    <i className="icon-arrow" />
+                    <Icon symbol="icon-arrow" />
                   </div>
                 </div>
                 <div className="large-11 columns">
@@ -188,7 +189,7 @@ const SMSTable = React.createClass({
                 trigger={['hover']}
                 overlay={<span>{sms.errorDescription}</span>}
               >
-                <i className="icon-error6" />
+                <Icon symbol="icon-error6" />
               </Tooltip>
             </If>
           </td>
@@ -227,7 +228,7 @@ const SMSTable = React.createClass({
 
   render() {
     return (
-      <table className="data-table large-24 clickable">
+      <table className="data-table large-24 clickable sms-table">
         <TableHeader headers={TABLE_TITLES} />
         {this.renderTableBody()}
         <tfoot>

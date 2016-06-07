@@ -34,7 +34,7 @@
         align-items: center;
         label {
             text-align: left;
-            .icon {
+            .icon, .sidebar-logo{
                 text-align: center;
                 display: inline-block;
                 width: $menu-sidebar-offcanvas-width;
@@ -45,6 +45,9 @@
                 + span {
                     text-transform: capitalize;
                 }
+            }
+            .sidebar-logo{
+              vertical-align: middle;
             }
         }
         &:hover, &.active {

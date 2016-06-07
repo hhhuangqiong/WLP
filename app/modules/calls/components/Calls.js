@@ -16,6 +16,7 @@ import { FluxibleMixin } from 'fluxible-addons-react';
 import * as FilterBar from '../../../main/components/FilterBar';
 import DatePicker from '../../../main/components/DatePicker';
 import FilterBarNavigation from '../../../main/filter-bar/components/FilterBarNavigation';
+import Icon from '../../../main/components/Icon';
 
 import i18nMessages from '../../../main/constants/i18nMessages';
 import fetchCalls from '../actions/fetchCalls';
@@ -270,7 +271,7 @@ const Calls = React.createClass({
             {/* <DropdownFilter /> */}
 
             <div className="date-range-picker left">
-              <i className="date-range-picker__icon icon-calendar left" />
+              <Icon className="date-range-picker__icon left" symbol="icon-calendar"/ >
               <div
                 className="date-input-wrap date-range-picker__start left"
                 onClick={this._handleStartDateClick}

@@ -6,6 +6,7 @@ import { FormattedMessage } from 'react-intl';
 import CountryFlag from '../../../main/components/CountryFlag';
 import { getCountryName } from '../../../utils/StringFormatter';
 import i18nMessages from '../../../main/constants/i18nMessages';
+import Icon from '../../../main/components/Icon';
 
 const EMPTY_CELL = i18nMessages.unknownLabel;
 const maxColumns = 5;
@@ -183,7 +184,7 @@ export default React.createClass({
             <div className="large-24 columns">
               <h5>
                 <a className="back-button" onClick={this.props.onClickBack}>
-                  <span className="icon-arrow" />
+                  <Icon symbol="icon-arrow" />
                 </a>
                 <span>
                   <FormattedMessage

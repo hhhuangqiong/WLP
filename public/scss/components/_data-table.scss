@@ -43,6 +43,11 @@
       font-size: rem-calc(18);
       color: $alert-color;
     }
+    .icon{
+      fill: $alert-color;
+      width: rem-calc(18);
+      height: rem-calc(18);
+    }
   }
 
   .status-label {

@@ -8,6 +8,7 @@ import updateCompanyService from '../actions/updateCompanyService';
 
 import Tooltip from 'rc-tooltip';
 import TopBar from './TopBar';
+import Icon from '../../../main/components/Icon';
 import IOSApplication from './ApplicationiOS';
 import AndroidApplication from './ApplicationAndroid';
 import * as Panel from '../../../main/components/Panel';
@@ -138,7 +139,9 @@ const CompanyService = React.createClass({
   _renderHelpText(message) {
     return (
       <Tooltip placement="left" overlay={message}>
-        <a href="#" className="field-set--indicator"><span className="icon-error6" /></a>
+        <a href="#" className="field-set--indicator">
+          <Icon symbol="icon-error6" />
+        </a>
       </Tooltip>
     );
   },

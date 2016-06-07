@@ -5,6 +5,7 @@ import classNames from 'classnames';
 import Tooltip from 'rc-tooltip';
 import { FormattedMessage, defineMessages, injectIntl } from 'react-intl';
 
+
 import { getCountryName } from '../../../utils/StringFormatter';
 import { DATETIME_FORMAT_WITH_SECONDS } from '../../../utils/timeFormatter';
 import CountryFlag from '../../../main/components/CountryFlag';
@@ -12,6 +13,7 @@ import EmptyRow from '../../../modules/data-table/components/EmptyRow';
 import TableHeader from '../../../modules/data-table/components/TableHeader';
 import Pagination from '../../../modules/data-table/components/Pagination';
 import i18nMessages from '../../../main/constants/i18nMessages';
+import Icon from '../../../main/components/Icon';
 
 import IM_MESSAGES from '../constants/i18n';
 
@@ -165,9 +167,10 @@ const ImTable = React.createClass({
             </div>
           </td>
           <td className="im-table--cell">
-            <span
-              className={classNames('im-message-type-icon', imType.className, u.message_type)}
-            ></span>
+            <Icon
+              className={classNames('im-message-type-icon', u.message_type)}
+              symbol={imType.className}
+            />
             <div className="im-message-type-info">
               <span
                 data-im-message-type={u.message_type}
@@ -186,13 +189,12 @@ const ImTable = React.createClass({
             </div>
           </td>
           <td className="im-table--cell">
-            <div className="icon-arrow">
-            </div>
+            <Icon symbol="icon-arrow" />
           </td>
           <td className="im-table--cell">
             <If condition={Array.isArray(u.recipients)}>
               <div className="recipient_info">
-                <div className="icon-multiuser"></div>
+                <Icon symbol="icon-multiuser" />
                 <Tooltip
                   placement="right"
                   trigger={['hover']}

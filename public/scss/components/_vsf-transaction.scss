@@ -1,23 +1,15 @@
-.vsf-type-filtering {
-  line-height: 0.9rem !important;
-
-  &--active {
-    color: white;
+.icon.vsf-type-filtering {
+  fill: $topbar-inner-link-color;
+  line-height: 1rem;
+  &--active{
+    fill: white;
   }
 }
-
-.icon-apple-hack {
-  color: #C0C0C0;
-  font-size: 22px;
-}
-
-.icon-android-hack {
-  color: #A5C63B;
-  font-size: 22px;
-}
-
-.icon-virtual-item {
-  color: #696969;
-  padding: 0 5px;
-  font-size: 18px;
+.vsf-table{
+  .icon-virtual-item {
+    fill: #696969;
+    width: 18px;
+    height: 18px;
+    margin-right: 5px;
+  }
 }

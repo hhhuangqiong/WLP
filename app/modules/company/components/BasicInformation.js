@@ -8,6 +8,7 @@ import * as Panel from '../../../main/components/Panel';
 import * as InputGroup from '../../../main/components/InputGroup';
 import DatePicker from '../../../main/components/DatePicker';
 import CountrySelectBox from '../../../main/components/CountrySelectBox';
+import Icon from '../../../main/components/Icon';
 
 import config from './../../../main/config';
 
@@ -164,7 +165,7 @@ const BasicInformation = React.createClass({
         <If condition={this.props.logo}>
           <img src={logo} onClick={this._handleClickOnLogo} />
         <Else />
-          <span className="icon-upload" onClick={this._handleClickOnLogo}></span>
+          <Icon symbol="icon-upload" onClick={this._handleClickOnLogo}></Icon>
         </If>
       </p>
     );

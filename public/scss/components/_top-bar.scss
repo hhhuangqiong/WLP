@@ -24,6 +24,7 @@
             li {
               background-color: $topbar-link-bg;
               > a {
+                 align-items: center;
                   text-transform: capitalize;
                   min-height: rem-calc(60);
                   padding-left: rem-calc(0 30) !important;

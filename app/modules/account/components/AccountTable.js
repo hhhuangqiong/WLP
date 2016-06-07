@@ -5,6 +5,7 @@ import classNames from 'classnames';
 
 import CircleIcon from '../../../main/components/CircleIcon';
 import PredefinedGroups from '../constants/PredefinedGroups';
+import Icon from '../../../main/components/Icon';
 
 export default React.createClass({
   displayName: 'AccountTable',
@@ -40,7 +41,7 @@ export default React.createClass({
           placeholder="Search"
           onChange={this.handleSearchAccount}
         />
-        <span className="icon-search"></span>
+        <Icon symbol="icon-search" />
       </nav>
     );
   },
