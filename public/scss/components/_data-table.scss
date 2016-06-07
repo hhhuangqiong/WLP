@@ -62,14 +62,16 @@
 
   .device-modal {
     .icon-apple {
-      font-size: rem-calc(16);
+      width: rem-calc(16);
+      height: rem-calc(16);
       margin-right: rem-calc(5);
-      color: $icon-apple-color;
+      fill: $icon-apple-color;
     }
     .icon-android {
-      font-size: rem-calc(16);
+      width: rem-calc(16);
+      height: rem-calc(16);
       margin-right: rem-calc(5);
-      color: $icon-android-color;
+      fill: $icon-android-color;
     }
   }
 

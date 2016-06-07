@@ -1,6 +1,7 @@
 import React, { PropTypes } from 'react';
 import Invariant from 'invariant';
 import classNames from 'classnames';
+import Icon from './Icon';
 
 /**
  * Creates an Accordion Wrapper
@@ -107,9 +108,9 @@ const AccordionNavigation = React.createClass({
               )}
             >
               <If condition={this.props.status}>
-                <span className="icon-tick" />
+                <Icon symbol="icon-tick" />
                 <Else />
-                <span className="icon-error" />
+                <Icon symbol="icon-error" />
               </If>
             </span>
           </If>

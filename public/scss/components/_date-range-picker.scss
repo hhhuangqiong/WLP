@@ -25,10 +25,10 @@
     }
   }
 
-  &__icon {
-    font-size: rem-calc(18);
-    line-height: rem-calc(26);
+  &__icon.icon {
     margin-right: rem-calc(10);
+    width: rem-calc(18) ;
+    height: rem-calc(26);
   }
 
   &__separator {

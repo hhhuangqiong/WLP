@@ -9,6 +9,7 @@ import CompanySwitcher from './CompanySwitcher';
 import signOut from '../../actions/signOut';
 import Modal from '../../../main/components/Modal';
 import ChangePasswordForm from '../../../modules/account/components/ChangePasswordForm';
+import Icon from '../Icon';
 
 import AuthStore from '../../stores/AuthStore';
 
@@ -159,7 +160,7 @@ const Navigation = React.createClass({
                 <span>, </span>
                 <span id="navigation-bar-display-name">{this.state.displayName}</span>
               </span>
-              <i className="icon-more" />
+              <Icon symbol="icon-more" />
             </a>
             <ul className="dropdown">
 
@@ -168,7 +169,7 @@ const Navigation = React.createClass({
                 <a onClick={this.handleOpenChangePasswordDialog}>
                 <li className="navigation-bar__item change-password">
                   <a onClick={this.handleOpenChangePasswordDialog}>
-                    <i className="icon-change-password"></i>
+                    <Icon symbol="icon-change-password" />
                     <FormattedMessage
                       id="changePassword"
                       defaultMessage="Change Password"
@@ -178,7 +179,7 @@ const Navigation = React.createClass({
                 */}
               <li className="navigation-bar__item">
                 <a onClick={this.handleSignOut}>
-                  <i className="icon-logout"></i>
+                  <Icon symbol="icon-logout" />
                   <FormattedMessage
                     id="logout"
                     defaultMessage="Logout"
