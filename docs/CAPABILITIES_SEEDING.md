@@ -4,12 +4,12 @@ This is now an operational process, and it **MUST NOT** be done via project scri
 
 **IMPORTANT:** script `npm run seed:capabilities` is deprecated
 
-**DO NOT** run `npm run seed:capabilties` or all the changes made towards `capabilties` field in `Company` collection directly on mongoDB admin client **WILL BE ERASED**.
+**DO NOT** run `npm run seed:capabilities` or all the changes made towards `capabilities` field in `Company` collection directly on MongoDB admin client **WILL BE ERASED**.
 
-1. log into the mongoDB admin client;
+1. log into the MongoDB admin client;
 2. go to the Mongo Document with the carrierId you want to edit;
 3. edit the `capabilities` field;
-4. save the changes;
+4. save the changes;g
 
 ### Capabilities combinations
 
@@ -26,47 +26,21 @@ verification | 'service.sdk', 'verification-sdk'
 
 ### Capabilities details
 
-Remarks: Except for "Serivce type", all other features are assumed to be OFF
+Remarks: Except for "Service type", all other features are assumed to be OFF
 
 |     Category     |            Name           |                         Description                         |
 |:----------------:|:-------------------------:|:-----------------------------------------------------------:|
-|      Service     | service.white_label       |                                                             |
-|                  | service.sdk               |                                                             |
-|      Device      | device.ios                | Allow to filter iOS data only                               |
-|                  | device.android            | Allow to filter Android data only                           |
-|    Portal User   | sign_up.flow.standard     | Allow to go through a standard sign up flow                 |
-|                  | sign_up.flow.customized   | Allow to go through a customized sign up flow               |
-|                  | sign_up.verification.ivr  |                                                             |
-|                  | sign_up.verification.sms  |                                                             |
-|                  | sign_up.verification.none |                                                             |
+|      Service     | service.white_label       | Indicate a carrier as a white-label client                  |
+|                  | service.sdk               | Indicate a carrier as a sdk client                          |
 |     End User     | end-user                  | Allow all functions under end-user to be accessible         |
-|       Call       | call.onnet_call           | Allow to filter call's data by onnet call toggle            |
-|                  | call.offnet_call          | Allow to filter call's data by offnet call toggle           |
-|                  | call                      | Allow all functions under call to be accessible             |
-|        IM        | im.im_to_sms              |                                                             |
-|                  | im.client_to_client       |                                                             |
-|                  | im.server_to_client       |                                                             |
-|                  | im.client_to_server       |                                                             |
+|       Call       | call                      | Allow all functions under call to be accessible             |
+|        IM        | im.im_to_sms              | Indicate a carrier has sms feature                          |
 |                  | im                        | Allow all functions under im to be accessible               |
-|        SMS       | sms                       | Allow all functions under sms to be accessible              |
-|        VSF       | vsf.item.sticker          | Allow to filter vsf's data by sticker toggle                |
-|                  | vsf.item.animation        | Allow to filter vsf's data by animation toggle              |
-|                  | vsf.item.audio_effect     | Allow to filter vsf's data by audio toggle                  |
-|                  | vsf.item.credit           | Allow to filter vsf's data by credit toggle                 |
-|                  | vsf.item.customized       |                                                             |
-|                  | vsf                       | Allow all functions under vsf to be accessible              |
-|      Top Up      | top_up                    | Allow all functions under top_up to be accessible           |
+|        SMS       | sms                       | Indicate a carrier has sms feature                          |
+|        VSF       | vsf                       | Allow all functions under vsf to be accessible              |
 | Verification SDK | verification-sdk          | Allow all functions under verification-sdk to be accessible |
-|                  | verification-sdk.mt       |                                                             |
-|                  | verification-sdk.mo       |                                                             |
-|                  | verification-sdk.sms      |                                                             |
-|                  | verification-sdk.ivr      |                                                             |
 |                  | verification-sdk.report   | Allow to export verification sdk's data into CSV format     |
-|      Wallet      | wallet.none               |                                                             |
-|                  | wallet.single             |                                                             |
-|                  | wallet.multiple           |                                                             |
-|                  | wallet.shared             |                                                             |
-|                  | wallet                    | Allow all functions under wallet to be accessible           |
+|      Wallet      | wallet                    | Indicate a carrier has wallet feature                       |
 |                  |                           |                                                             |
 
 ### Company (Carrier) details
