@@ -20,6 +20,7 @@ import Export from '../../../main/file-export/components/Export';
 import ImExportForm from './ImExportForm';
 import FilterBarNavigation from '../../../main/filter-bar/components/FilterBarNavigation';
 import Icon from '../../../main/components/Icon';
+import * as dateLocale from '../../../utils/dateLocale';
 
 import MESSAGES from '../constants/i18n';
 
@@ -227,7 +228,7 @@ const Im = React.createClass({
   render() {
     const query = this.context.location.query;
     const { formatMessage } = this.props.intl;
-
+    const lang = dateLocale.getLocale();
     return (
       <div className="row">
         <nav className="top-bar top-bar--inner">
@@ -249,6 +250,7 @@ const Im = React.createClass({
                       minDate={moment().subtract(1, 'years')}
                       maxDate={moment(this.state.toTime, 'L')}
                       onChange={this.handleStartDateChange}
+                      locale={lang}
                     />
                   </div>
                   <i className="date-range-picker__separator left">-</i>
@@ -264,6 +266,7 @@ const Im = React.createClass({
                       minDate={moment(this.state.fromTime, 'L')}
                       maxDate={moment()}
                       onChange={this.handleEndDateChange}
+                      locale={lang}
                     />
                   </div>
                 </div>

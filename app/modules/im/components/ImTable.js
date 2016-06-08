@@ -16,6 +16,7 @@ import i18nMessages from '../../../main/constants/i18nMessages';
 import Icon from '../../../main/components/Icon';
 
 import IM_MESSAGES from '../constants/i18n';
+import * as dateLocale from '../../../utils/dateLocale';
 
 const LABEL_FOR_NULL = i18nMessages.unknownLabel;
 

@@ -33,6 +33,8 @@ import CallsExportForm from './CallsExportForm';
 import config from '../../../config';
 import CALL_TYPE from '../constants/callType';
 
+import * as dateLocale from '../../../utils/dateLocale';
+
 const Calls = React.createClass({
   contextTypes: {
     executeAction: PropTypes.func.isRequired,
@@ -235,7 +237,7 @@ const Calls = React.createClass({
       { name: i18nMessages.caller, value: 'caller' },
       { name: i18nMessages.callee, value: 'callee' },
     ];
-
+    const lang = dateLocale.getLocale();
     return (
       <div className="row">
         <FilterBar.Wrapper>
@@ -286,6 +288,7 @@ const Calls = React.createClass({
                   selectedDate={moment(this.state.startDate, 'L')}
                   maxDate={moment(this.state.endDate, 'L')}
                   onChange={this.handleStartDateChange}
+                  locale={lang}
                 />
               </div>
               <i className="date-range-picker__separator left">-</i>
@@ -304,6 +307,7 @@ const Calls = React.createClass({
                   minDate={moment(this.state.startDate, 'L')}
                   maxDate={moment()}
                   onChange={this.handleEndDateChange}
+                  locale={lang}
                 />
               </div>
             </div>
