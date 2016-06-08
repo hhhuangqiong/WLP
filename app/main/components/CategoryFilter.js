@@ -16,6 +16,7 @@ const CategoryFilter = React.createClass({
       <li>
         <a className="button" onClick={action} >
           <Icon
+            key={this.props.category}
             className={classNames(this.props.category,
               'vsf-type-filtering',
               { 'vsf-type-filtering--active': this.props.category === category }

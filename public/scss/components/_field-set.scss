@@ -6,10 +6,17 @@
 
   &--indicator {
     position: absolute;
-    top: 3px;
+    top: 0px;
     right: 15px;
     font-size: 20px;
     color: rgb(226, 82, 115);
+
+    .icon {
+      fill: rgb(226, 82, 115);
+      &:hover {
+        fill: rgb(82, 205, 234);
+      }
+    }
 
     &:hover {
       color: rgb(82, 205, 234);
