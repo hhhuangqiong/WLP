@@ -22,6 +22,8 @@ import { getCountryName } from '../../../utils/StringFormatter';
 
 import getPlatformInfo from '../utils/getPlatformInfo';
 import i18nMessages from '../../../main/constants/i18nMessages';
+import * as dateLocale from '../../../utils/dateLocale';
+
 
 const MESSAGES = defineMessages({
   walletTitle: {
@@ -204,7 +206,7 @@ const EndUserProfile = React.createClass({
     const { intl: { formatMessage } } = this.props;
     const EMPTY_STRING = formatMessage(i18nMessages.unknownLabel);
     const gender = get(this.props, 'user.userDetails.gender');
-    const creationDate = moment(this.props.user.userDetails.creationDate).format(DATE_FORMAT);
+    const creationDate = dateLocale.format(moment(this.props.user.userDetails.creationDate), DATE_FORMAT);
     const countryCode = (this.props.user.userDetails.countryCode || '').toLowerCase();
 
     return (

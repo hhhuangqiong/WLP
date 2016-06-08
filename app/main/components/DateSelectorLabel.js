@@ -1,5 +1,6 @@
 import moment from 'moment';
 import React, { Component, PropTypes } from 'react';
+import * as dateLocale from '../../utils/dateLocale';
 
 export default class DateSelectorLabel extends Component {
   static propTypes = {
@@ -50,7 +51,7 @@ export default class DateSelectorLabel extends Component {
       date, displayFormat, parseFormat, timescale,
     } = this.props;
 
-    const currentDate = moment(date, parseFormat).format(displayFormat);
+    const currentDate = dateLocale.format(moment(date, parseFormat), displayFormat);
 
     return (
       <div className="date-selector-label">
