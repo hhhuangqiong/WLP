@@ -5,8 +5,9 @@
   "scripts": {
     "jenkins": "bower -f install && npm prune && npm i && npm run build",
     "jenkins:commit": "npm run jenkins && npm run test:report",
-    "jenkins:merge": "npm run jenkins && gitbook build && npm run i18n:download && npm prune --production ",
+    "jenkins:merge": "npm run jenkins && gitbook build && npm run i18n:download && npm run i18n:upload && npm prune --production ",
     "build": "npm run clean && npm run transpile && gulp scss:production",
+    "i18n:upload": "gulp upload-translation",
     "i18n:download": "gulp download-translation",
     "clean": "gulp clean",
     "docs:api": "npm run transpile && jsdoc -r node_modules/app -d build/docs",
