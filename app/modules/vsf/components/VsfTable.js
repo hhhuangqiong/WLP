@@ -16,7 +16,6 @@ const NO_VALUE_LABEL = i18nMessages.unknownLabel;
 const IOS_PLATFORM = 'com.maaii.platform.ios';
 const ANDROID_PLATFORM = 'com.maaii.platform.android';
 
-
 import * as dateLocale from '../../../utils/dateLocale';
 import { LONG_DATE_TIME_FORMAT } from '../../../utils/timeFormatter';
 

@@ -14,6 +14,8 @@ import config from './../../../main/config';
 
 import Currency from '../../../main/components/Currency';
 
+import * as dateLocale from '../../../utils/dateLocale';
+
 const { displayDateFormat: DATE_FORMAT } = config;
 
 const MESSAGES = defineMessages({
@@ -196,7 +198,7 @@ const TopUpTable = React.createClass({
   },
 
   _getDisplayTimestamp(timestamp) {
-    return moment(timestamp).format(this.props.dateFormat || DATE_FORMAT);
+    return dateLocale.format(moment(timestamp), this.props.dateFormat || DATE_FORMAT);
   },
 
   _getDisplayUsername(username) {

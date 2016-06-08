@@ -1,6 +1,8 @@
 .interactive-button {
   vertical-align: top;
   cursor: pointer;
+  z-index: 10;
+  position: relative;
 
   &:hover {
     padding-top: rem-calc(1);
