@@ -119,41 +119,10 @@ export default {
   //
   // Default timeout for all waitForXXX commands.
   waitforTimeout: process.env.TEST_WAITFOR_TIMEOUT || 15000,
-  //
-  // Initialize the browser instance with a WebdriverIO plugin. The object should have the
-  // plugin name as key and the desired plugin options as property. Make sure you have
-  // the plugin installed before running any tests. The following plugins are currently
-  // available:
-  // WebdriverCSS: https://github.com/webdriverio/webdrivercss
-  // WebdriverRTC: https://github.com/webdriverio/webdriverrtc
-  // Browserevent: https://github.com/webdriverio/browserevent
-  // plugins: {
-  //     webdrivercss: {
-  //         screenshotRoot: 'my-shots',
-  //         failedComparisonsRoot: 'diffs',
-  //         misMatchTolerance: 0.05,
-  //         screenWidth: [320,480,640,1024]
-  //     },
-  //     webdriverrtc: {},
-  //     browserevent: {}
-  // },
 
-  framework: 'mocha',
-  // see also: http://webdriver.io/guide/testrunner/reporters.html
-  reporter: 'xunit',
-
-  //
-  // Some reporter require additional information which should get defined here
-  reporterOptions: {
-    //
-    // If you are using the "xunit" reporter you should define the directory where
-    // WebdriverIO should save all unit reports.
-    outputDir: './test/browser/reports',
-  },
-
-  //
   // Options to be passed to Mocha.
   // See the full list at http://mochajs.org/
+  framework: 'mocha',
   mochaOpts: {
     ui: 'bdd',
     compilers: ['js:babel-core/register'],
