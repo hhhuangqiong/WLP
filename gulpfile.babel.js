@@ -15,23 +15,15 @@ import WebpackDevServer from 'webpack-dev-server';
 import spriteSmith from 'gulp.spritesmith';
 import merge from 'merge-stream';
 import Q from 'q';
-import {
-  argv
-} from 'yargs';
+import { argv } from 'yargs';
 import browserSync from 'browser-sync';
 import * as fs from 'fs';
 import * as path from 'path';
-import {
-  sync as globSync
-} from 'glob';
+import { sync as globSync } from 'glob';
 import onesky from 'onesky-utils';
 import m800Locale from 'm800-user-locale';
-import {
-  ONE_SKY as oneSkyConfig
-} from './app/config/credentials';
-import {
-  LOCALES as supportedLangs
-} from './app/config';
+import { ONE_SKY as oneSkyConfig } from './app/config/credentials';
+import { LOCALES as supportedLangs } from './app/config';
 
 const defaultTasks = ['nodemon', 'watch', 'scss', 'webpack'];
 const webpackConfig = require('./webpack.config');
@@ -54,6 +46,7 @@ const dest = {
   css: 'public/stylesheets',
   image: 'public/images',
   intl: 'public/locale-data',
+  babel: './build/babel',
 };
 
 gulp.task('test', (cb) => {
@@ -103,7 +96,7 @@ gulp.task('watch', () => {
   gulp.watch('public/scss/**/*.scss', ['scss']);
 });
 
-gulp.task('clean', () => del([dest.app, `${dest.build}/**/*`, dest.intl]));
+gulp.task('clean', () => del([dest.app, `${dest.build}/**/*`, dest.intl, dest.babel]));
 
 const autoprefixerOpts = {
   browsers: ['last 3 versions'],
@@ -194,6 +187,8 @@ gulp.task('intl', () => {
   // write this file into pure key value json format into single file
   // in order to work with OneSky workflow easily
   const filename = path.join(dest.intl, DEFAULT_LANGUAGE_FILE_NAME);
+
+  // Write default.json
   fs.writeFileSync(filename, JSON.stringify(namespacedMessages, null, 2));
 });
 
