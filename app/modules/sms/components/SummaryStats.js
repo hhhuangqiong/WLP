@@ -12,6 +12,7 @@ import LocationTable from '../../../main/statistics/components/LocationTable';
 import HighMap from '../../../main/statistics/components/HighMap';
 import LastUpdateTime, { TIME_TYPES } from '../../../main/statistics/components/LastUpdateTime';
 import { parseTimeRange, LAST_UPDATE_TIME_FORMAT } from '../../../utils/timeFormatter';
+import * as dateLocale from '../../../utils/dateLocale';
 
 import { SUMMARY_TYPES } from '../constants/index';
 
@@ -156,7 +157,9 @@ export default function SummaryStats({
                 formatter={function tooltipFormatter() {
                   return `
                   <div style="text-align: center">
-                  <div>${moment(this.x).local().format(TOOLTIP_TIME_FORMAT)}</div>
+                  <div>
+                    ${dateLocale.format(moment(this.x).local(),TOOLTIP_TIME_FORMAT)}
+                  </div>
                   <div>${this.y.toLocaleString()}</div>
                   <div>${formatMessage(MESSAGES.smsUnitSent)}</div>
                   </div>

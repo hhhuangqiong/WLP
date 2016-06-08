@@ -10,6 +10,7 @@ import CombinationChart from '../../../main/components/CombinationChart';
 import TimeFramePicker from '../../../main/components/TimeFramePicker';
 import { parseTimeRange } from '../../../utils/timeFormatter';
 import { SUMMARY_TYPES } from '../constants/index';
+import * as dateLocale from '../../../utils/dateLocale';
 
 const MESSAGES = defineMessages({
   summaryStatistic: {
@@ -157,7 +158,9 @@ const SummaryStats = props => {
                   formatter={function tooltipFormatter() {
                     return `
                             <div style="text-align: center">
-                              <div>${moment(this.x).local().format(TOOLTIP_TIME_FORMAT)}</div>
+                              <div>
+                                ${dateLocale.format(moment(this.x).local(), TOOLTIP_TIME_FORMAT)}
+                              </div>
                               <div>${this.y.toLocaleString()}</div>
                               <div>${formatMessage(MESSAGES.imUnitSent)}</div>
                             </div>

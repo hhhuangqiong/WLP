@@ -1,6 +1,7 @@
 import _ from 'lodash';
 import React, { PropTypes } from 'react';
 import moment from 'moment';
+import * as dateLocale from '../../utils/dateLocale';
 
 const ID_MAX = 100000;
 const DEFAULT_LINE_WIDTH = 1;
@@ -236,6 +237,9 @@ export default React.createClass({
     Highcharts.setOptions({
       global: { useUTC: false },
     });
+
+    // inject locale into high charts
+    dateLocale.injectHighcharts(Highcharts);
 
     this.chart = new Highcharts.Chart({
       chart: {

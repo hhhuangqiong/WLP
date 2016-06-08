@@ -32,6 +32,7 @@ import MAP_DATA from '../../../main/statistics/constants/mapData.js';
 import changeTimeRange from '../actions/changeTimeRange';
 import i18nMessages from '../../../main/constants/i18nMessages';
 import FilterBarNavigation from '../../../main/filter-bar/components/FilterBarNavigation';
+import * as dateLocale from '../../../utils/dateLocale';
 
 const TIME_FRAMES = ['24 hours', '7 days', '30 days', '60 days', '90 days'];
 const DEFAULT_TIME_RANGE = '30 days';
@@ -248,8 +249,8 @@ const VerificationOverview = React.createClass({
         <div className="large-6 columns verification-overview__attempt__datetime">
           <If condition={this.state.busiestTime}>
             <div>
-              <div>{moment(this.state.busiestTime).format('DD MMM YYYY')}</div>
-              <div>{moment(this.state.busiestTime).format('h:mma')}</div>
+              <div>{dateLocale.format(moment(this.state.busiestTime), 'DD MMM YYYY')}</div>
+              <div>{dateLocale.format(moment(this.state.busiestTime), 'h:mma')}</div>
             </div>
           <Else />
             <FormattedMessage
@@ -543,7 +544,7 @@ const VerificationOverview = React.createClass({
           tooltipFormatter: (x, y, xIndex) => {
             return `
               <div style="text-align: center">
-                <div>${moment(x).local().format(TOOLTIP_TIME_FORMAT)}</div>
+                <div>${dateLocale.format(moment(x).local(), TOOLTIP_TIME_FORMAT)}</div>
                 <div>${this.state.successAttempts[xIndex]}/${this.state.totalAttempts[xIndex]} ${formatMessage(MESSAGES.successVerificationUnit)}</div>
                 <div>${formatMessage(MESSAGES.successVerificationRate)}: ${normalizeDurationInMS(y)}%</div>
               </div>
@@ -567,7 +568,7 @@ const VerificationOverview = React.createClass({
           tooltipFormatter: (x, y) => {
             return `
               <div style="text-align: center">
-                <div>${moment(x).local().format(TOOLTIP_TIME_FORMAT)}</div>
+                <div>${dateLocale.format(moment(x).local(), TOOLTIP_TIME_FORMAT)}</div>
                 <div>${formatMessage(MESSAGES.totalNumbersOfVerificationAttempts)}: ${y}</div>
               </div>
             `;
@@ -580,7 +581,7 @@ const VerificationOverview = React.createClass({
           tooltipFormatter: (x, y) => {
             return `
               <div style="text-align: center">
-                <div>${moment(x).local().format(TOOLTIP_TIME_FORMAT)}</div>
+                <div>${dateLocale.format(moment(x).local(), TOOLTIP_TIME_FORMAT)}</div>
                 <div>${formatMessage(MESSAGES.successVerificationAttempts)}: ${y}</div>
               </div>
             `;
