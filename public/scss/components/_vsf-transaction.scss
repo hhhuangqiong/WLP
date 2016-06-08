@@ -1,7 +1,7 @@
 .icon.vsf-type-filtering {
   fill: $topbar-inner-link-color;
   line-height: 1rem;
-  &--active{
+  &--active, &:hover{
     fill: white;
   }
 }
