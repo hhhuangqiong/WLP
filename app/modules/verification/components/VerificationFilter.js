@@ -10,21 +10,6 @@ import Dropdown from '../../../main/dropdown';
 import Icon from '../../../main/components/Icon';
 
 class VerificationFilter extends Component {
-  transformMethodToId(method) {
-    switch (method) {
-      case 'call-in':
-        return 'vsdk.details.callIn';
-      case 'call-out':
-        return 'vsdk.details.callOut';
-      case 'sms':
-        return 'vsdk.details.sms';
-      case 'ivr':
-        return 'vsdk.details.ivr';
-      default:
-        return '';
-    }
-  }
-
   render() {
     const {
       appId,
@@ -84,7 +69,7 @@ class VerificationFilter extends Component {
             </label>
             <select
               className="radius"
-              value={this.transformMethodToId(method)}
+              value={method}
               onChange={methodChange}
             >
               <option>{this.props.defaultOption}</option>
