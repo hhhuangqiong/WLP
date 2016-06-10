@@ -27,7 +27,10 @@ const SystemMessage = props => (
 );
 
 SystemMessage.propTypes = {
-  id: PropTypes.string,
+  id: PropTypes.oneOfType([
+    PropTypes.string,
+    PropTypes.number,
+  ]),
   type: PropTypes.oneOf(['error', 'info']),
   message: PropTypes.string,
   buttons: PropTypes.array,
