@@ -21,7 +21,7 @@ import { parseTimeRange } from '../../../utils/timeFormatter';
 import * as DataGrid from '../../../main/statistics/components/DataGrid';
 import PercentageChart from '../../../main/components/PercentageChart';
 import DateSelector from '../../../main/components/DateSelector';
-import { LAST_UPDATE_TIME_FORMAT, SHORT_DATE_FORMAT } from '../../../utils/timeFormatter';
+import { SHORT_DATE_TIME_FORMAT, SHORT_DATE_FORMAT } from '../../../utils/timeFormatter';
 
 import EndUsersOverviewStore from '../stores/EndUsersOverviewStore';
 import EndUsersRegistrationStatsStore from '../stores/EndUsersRegistrationStatsStore';
@@ -295,7 +295,7 @@ const EndUsersOverview = React.createClass({
                   <LastUpdateTime
                     type={TIME_TYPES.LATEST}
                     timescale="day"
-                    timeFormat={LAST_UPDATE_TIME_FORMAT}
+                    timeFormat={SHORT_DATE_TIME_FORMAT}
                   />
                 )}
               />

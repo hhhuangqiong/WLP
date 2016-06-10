@@ -12,10 +12,10 @@ import CountryFlag from '../../../main/components/CountryFlag';
 import EmptyRow from '../../../modules/data-table/components/EmptyRow';
 import TableHeader from '../../../modules/data-table/components/TableHeader';
 
-const EMPTY_STRING = i18nMessages.unknownLabel;
+import * as dateLocale from '../../../utils/dateLocale';
+import { LONG_DATE_FORMAT, NUMERAL_TIME_FORMAT } from '../../../utils/timeFormatter';
 
-const DATE_FORMAT = 'MMMM DD YYYY';
-const TIME_FORMAT = 'H:mm:ss';
+const EMPTY_STRING = i18nMessages.unknownLabel;
 
 const MESSAGES = defineMessages({
   caller: {
@@ -163,14 +163,14 @@ const CallsTable = React.createClass({
     const { intl: { formatMessage } } = this.props;
 
     return records.map(u => {
-      const callStartDate = moment(u.start_time).format(DATE_FORMAT);
+      const callStartDate = dateLocale.format(moment(u.start_time), LONG_DATE_FORMAT);
       const callEndDate = (u.end_time > 0) ?
-        moment(u.end_time).format(DATE_FORMAT) :
+        dateLocale.format(moment(u.end_time), LONG_DATE_FORMAT) :
         callStartDate;
 
-      const callStartTime = moment(u.start_time).format(TIME_FORMAT);
+      const callStartTime = dateLocale.format(moment(u.start_time), NUMERAL_TIME_FORMAT);
       const callEndTime = (u.end_time > 0) ?
-        moment(u.end_time).format(TIME_FORMAT) :
+        dateLocale.format(moment(u.end_time), NUMERAL_TIME_FORMAT) :
         callStartTime;
 
       return (

@@ -10,7 +10,7 @@ import * as DataGrid from '../../../main/statistics/components/DataGrid';
 import LastUpdateTime, { TIME_TYPES } from '../../../main/statistics/components/LastUpdateTime';
 
 import {
-  LAST_UPDATE_TIME_FORMAT,
+  SHORT_DATE_TIME_FORMAT,
 } from '../../../utils/timeFormatter';
 
 const MESSAGES = defineMessages({
@@ -27,7 +27,7 @@ const MESSAGES = defineMessages({
 function MonthlyStats({ intl, isLoading, onChange, date, stats }) {
   const { formatMessage } = intl;
   const lastUpdate = (
-    <LastUpdateTime type={TIME_TYPES.MONTHLY} time={date} timeFormat={LAST_UPDATE_TIME_FORMAT} />
+    <LastUpdateTime type={TIME_TYPES.MONTHLY} time={date} timeFormat={SHORT_DATE_TIME_FORMAT} />
   );
 
   return (

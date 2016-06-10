@@ -5,6 +5,9 @@ import { FormattedMessage, injectIntl, intlShape } from 'react-intl';
 import DateTimePicker from '../../../main/components/DateTimePicker';
 import ExportSubmitControls from '../../../main/file-export/components/ExportSubmitControls';
 
+import * as dateLocale from '../../../utils/dateLocale';
+import { TIME_FORMAT } from '../../../utils/timeFormatter';
+
 class VerificationExportForm extends Component {
   constructor(props) {
     super();
@@ -76,7 +79,7 @@ class VerificationExportForm extends Component {
             dataPickerRef="startExportDatePicker"
             dateOnChange={this._handleStartDateChange}
             dateFormat="MM/DD/YYYY"
-            timeFormat="h:mm a"
+            timeFormat={TIME_FORMAT}
           />
         </div>
         <div className="export-row">
@@ -95,7 +98,7 @@ class VerificationExportForm extends Component {
             dateOnChange={this._handleEndDateChange}
             minDate={this.state.fromTime}
             dateFormat="MM/DD/YYYY"
-            timeFormat="h:mm a"
+            timeFormat={TIME_FORMAT}
           />
         </div>
         <div className="export-row">

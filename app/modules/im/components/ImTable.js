@@ -7,7 +7,7 @@ import { FormattedMessage, defineMessages, injectIntl } from 'react-intl';
 
 
 import { getCountryName } from '../../../utils/StringFormatter';
-import { DATETIME_FORMAT_WITH_SECONDS } from '../../../utils/timeFormatter';
+import { LONG_DATE_TIME_FORMAT } from '../../../utils/timeFormatter';
 import CountryFlag from '../../../main/components/CountryFlag';
 import EmptyRow from '../../../modules/data-table/components/EmptyRow';
 import TableHeader from '../../../modules/data-table/components/TableHeader';
@@ -147,7 +147,7 @@ const ImTable = React.createClass({
     const { intl: { formatMessage } } = this.props;
 
     return this.props.ims.map((u, key) => {
-      const imDate = moment(u.timestamp).format(DATETIME_FORMAT_WITH_SECONDS);
+      const imDate = dateLocale.format(moment(u.timestamp), LONG_DATE_TIME_FORMAT);
       const imType = get(MESSAGE_TYPES, u.message_type);
       const imTypeTitle = this.getImTypeTitle(u.message_type);
       const typeSize = this.getTypeSize(u, imTypeTitle);

@@ -10,6 +10,8 @@ import {
 import DateTimePicker from '../../../main/components/DateTimePicker';
 import ExportCountriesDropdown from '../../../main/file-export/components/ExportCountriesDropdown';
 import ExportSubmitControls from '../../../main/file-export/components/ExportSubmitControls';
+import * as dateLocale from '../../../utils/dateLocale';
+import { TIME_FORMAT } from '../../../utils/timeFormatter';
 
 const MESSAGES = defineMessages({
   origin: {
@@ -113,7 +115,7 @@ const ImExportForm = React.createClass({
             dataPickerRef="startExportDatePicker"
             dateOnChange={this.handleStartDateChange}
             dateFormat="MM/DD/YYYY"
-            timeFormat="h:mm a"
+            timeFormat={TIME_FORMAT}
           />
         </div>
 
@@ -134,7 +136,7 @@ const ImExportForm = React.createClass({
             dateOnChange={this.handleEndDateChange}
             minDate={this.state.fromTime}
             dateFormat="MM/DD/YYYY"
-            timeFormat="h:mm a"
+            timeFormat={TIME_FORMAT}
           />
         </div>
 

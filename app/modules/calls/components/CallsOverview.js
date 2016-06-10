@@ -14,7 +14,7 @@ import * as FilterBar from '../../../main/components/FilterBar';
 import * as Panel from './../../../main/components/Panel';
 import * as DataGrid from '../../../main/statistics/components/DataGrid';
 import TimeFramePicker from '../../../main/components/TimeFramePicker';
-import { parseTimeRange, LAST_UPDATE_TIME_FORMAT, SHORT_DATE_FORMAT } from '../../../utils/timeFormatter';
+import { parseTimeRange, SHORT_DATE_FORMAT } from '../../../utils/timeFormatter';
 import DateSelector from '../../../main/components/DateSelector';
 import CombinationChart from '../../../main/components/CombinationChart';
 import i18nMessages from '../../../main/constants/i18nMessages';

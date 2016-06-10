@@ -9,7 +9,7 @@ import * as Panel from '../../../../main/components/Panel';
 import * as DataGrid from '../../../../main/statistics/components/DataGrid';
 import CombinationChart from '../../../../main/components/CombinationChart';
 import LastUpdateTime, { TIME_TYPES } from '../../../../main/statistics/components/LastUpdateTime';
-import { parseTimeRange, LAST_UPDATE_TIME_FORMAT } from '../../../../utils/timeFormatter';
+import { parseTimeRange, SHORT_DATE_TIME_FORMAT } from '../../../../utils/timeFormatter';
 import * as dateLocale from '../../../../utils/dateLocale';
 
 const TIME_FRAMES = ['24 hours', '7 days', '30 days'];
@@ -94,7 +94,7 @@ export default function VsfSummaryStats({
     <LastUpdateTime
       type={TIME_TYPES.TIME_RANGE}
       time={timeFrame}
-      timeFormat={LAST_UPDATE_TIME_FORMAT}
+      timeFormat={SHORT_DATE_TIME_FORMAT}
     />
   );
 

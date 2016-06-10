@@ -11,7 +11,7 @@ import CombinationChart from '../../../main/components/CombinationChart';
 import LocationTable from '../../../main/statistics/components/LocationTable';
 import HighMap from '../../../main/statistics/components/HighMap';
 import LastUpdateTime, { TIME_TYPES } from '../../../main/statistics/components/LastUpdateTime';
-import { parseTimeRange, LAST_UPDATE_TIME_FORMAT } from '../../../utils/timeFormatter';
+import { parseTimeRange, SHORT_DATE_TIME_FORMAT } from '../../../utils/timeFormatter';
 import * as dateLocale from '../../../utils/dateLocale';
 
 import { SUMMARY_TYPES } from '../constants/index';
@@ -92,7 +92,7 @@ export default function SummaryStats({
     <LastUpdateTime
       type={TIME_TYPES.TIME_RANGE}
       time={timeFrame}
-      timeFormat={LAST_UPDATE_TIME_FORMAT}
+      timeFormat={SHORT_DATE_TIME_FORMAT}
     />
   );
 

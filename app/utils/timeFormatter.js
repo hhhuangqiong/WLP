@@ -7,8 +7,14 @@ export const YEAR_FORMAT_LABLE = 'year';
 
 export const MILLISECOND_DATE_FORMAT = 'x';
 export const SHORT_DATE_FORMAT = 'L';
+export const LONG_DATE_FORMAT = 'LL';
+export const TIME_FORMAT = 'LT';
+export const TIME_WITH_SECOND_FORMAT = 'LTS';
+export const SHORT_DATE_TIME_FORMAT = 'lll';
+export const LONG_DATE_TIME_FORMAT = 'LL LTS';
+
+export const NUMERAL_TIME_FORMAT = 'H:mm:ss';
 export const LAST_UPDATE_TIME_FORMAT = 'MMM DD, YYYY H:mm';
-export const DATETIME_FORMAT_WITH_SECONDS = 'MMMM DD YYYY, hh:mm:ss a';
 
 // Buffer time in minutes
 const BUFFER_TIME_FOR_PROXY_HOURLY = 60;

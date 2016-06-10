@@ -8,6 +8,9 @@ import { getCountryName } from '../../../utils/StringFormatter';
 import i18nMessages from '../../../main/constants/i18nMessages';
 import Icon from '../../../main/components/Icon';
 
+import * as dateLocale from '../../../utils/dateLocale';
+import { TIME_WITH_SECOND_FORMAT, LONG_DATE_FORMAT } from '../../../utils/timeFormatter';
+
 const EMPTY_CELL = i18nMessages.unknownLabel;
 const maxColumns = 5;
 
@@ -217,8 +220,12 @@ export default React.createClass({
                 </p>
                 <If condition={_.get(hlr, 'time')}>
                   <div>
-                    <span>{ moment(_.get(hlr, 'time')).format('h:mm:ss a') }</span>
-                    <span>{ moment(_.get(hlr, 'time')).format('DD MMMM YYYY') }</span>
+                    <span>
+                      {dateLocale.format(moment(_.get(hlr, 'time')), TIME_WITH_SECOND_FORMAT)}
+                    </span>
+                    <span>
+                      {dateLocale.format(moment(_.get(hlr, 'time')), LONG_DATE_FORMAT)}
+                    </span>
                   </div>
                 <Else />
                   <span>{formatMessage(EMPTY_CELL)}</span>

@@ -13,7 +13,6 @@ import MonthlyStatsStore from '../stores/monthlyStats';
 
 import {
   SHORT_DATE_FORMAT,
-  LAST_UPDATE_TIME_FORMAT,
   MILLISECOND_DATE_FORMAT,
   MONTH_FORMAT_LABLE,
 } from '../../../utils/timeFormatter';

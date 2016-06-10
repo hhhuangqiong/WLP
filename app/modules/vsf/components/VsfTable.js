@@ -16,6 +16,10 @@ const NO_VALUE_LABEL = i18nMessages.unknownLabel;
 const IOS_PLATFORM = 'com.maaii.platform.ios';
 const ANDROID_PLATFORM = 'com.maaii.platform.android';
 
+
+import * as dateLocale from '../../../utils/dateLocale';
+import { LONG_DATE_TIME_FORMAT } from '../../../utils/timeFormatter';
+
 const MESSAGES = defineMessages({
   dateAndTime: {
     id: 'details.dateAndTime',
@@ -105,10 +109,10 @@ const VsfTable = React.createClass({
             <div className="left timestamp">
               {/* parse purchaseDate as it is in UTC time and display it as local time */}
               <span className="call_date data-table__datetime">{
-                Moment
+                dateLocale.format(Moment
                   .utc(transaction.purchaseDate)
                   .local()
-                  .format('MMMM Do YYYY, h:mm:ss a')
+                  , LONG_DATE_TIME_FORMAT)
               }</span>
             </div>
           </td>

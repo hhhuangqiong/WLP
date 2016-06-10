@@ -7,6 +7,8 @@ import DateTimePicker from '../../../main/components/DateTimePicker';
 import ExportSubmitControls from '../../../main/file-export/components/ExportSubmitControls';
 
 import CALL_TYPE from '../constants/callType';
+import * as dateLocale from '../../../utils/dateLocale';
+import { TIME_FORMAT } from '../../../utils/timeFormatter';
 
 export default React.createClass({
   propTypes: {
@@ -102,7 +104,7 @@ export default React.createClass({
             dataPickerRef="startExportDatePicker"
             dateOnChange={this.handleStartDateChange}
             dateFormat="MM/DD/YYYY"
-            timeFormat="h:mm a"
+            timeFormat={TIME_FORMAT}
           />
         </div>
 
@@ -123,7 +125,7 @@ export default React.createClass({
             dateOnChange={this.handleEndDateChange}
             dateFormat="MM/DD/YYYY"
             minDate={this.state.startDate}
-            timeFormat="h:mm a"
+            timeFormat={TIME_FORMAT}
           />
         </div>
 

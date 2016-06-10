@@ -19,7 +19,7 @@ import * as Panel from './../../../main/components/Panel';
 import getMapConfig from '../../../main/statistics/utils/getMapConfig';
 import ColorRadioButton from '../../../main/components/ColorRadioButton';
 import TimeFramePicker from '../../../main/components/TimeFramePicker';
-import { parseTimeRange } from '../../../utils/timeFormatter';
+import { parseTimeRange, LONG_DATE_FORMAT, TIME_FORMAT } from '../../../utils/timeFormatter';
 import LineChart from '../../../main/components/LineChart';
 import DonutChartPanel from '../../../main/components/DonutChartPanel';
 import SummaryCells from './SummaryCells';
@@ -249,8 +249,8 @@ const VerificationOverview = React.createClass({
         <div className="large-6 columns verification-overview__attempt__datetime">
           <If condition={this.state.busiestTime}>
             <div>
-              <div>{dateLocale.format(moment(this.state.busiestTime), 'DD MMM YYYY')}</div>
-              <div>{dateLocale.format(moment(this.state.busiestTime), 'h:mma')}</div>
+              <div>{dateLocale.format(moment(this.state.busiestTime), LONG_DATE_FORMAT)}</div>
+              <div>{dateLocale.format(moment(this.state.busiestTime), TIME_FORMAT)}</div>
             </div>
           <Else />
             <FormattedMessage

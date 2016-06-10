@@ -7,7 +7,7 @@ import DateSelector from '../../../../main/components/DateSelector';
 import * as Panel from './../../../../main/components/Panel';
 import * as DataGrid from '../../../../main/statistics/components/DataGrid';
 import LastUpdateTime, { TIME_TYPES } from '../../../../main/statistics/components/LastUpdateTime';
-import { LAST_UPDATE_TIME_FORMAT } from '../../../../utils/timeFormatter';
+import { SHORT_DATE_TIME_FORMAT } from '../../../../utils/timeFormatter';
 
 const MESSAGES = defineMessages({
   monthlyStatistic: {
@@ -30,7 +30,7 @@ function VsfMonthlyStats({ intl, isLoading, onChange, date, stats }) {
     <LastUpdateTime
       type={TIME_TYPES.MONTHLY}
       time={date}
-      timeFormat={LAST_UPDATE_TIME_FORMAT}
+      timeFormat={SHORT_DATE_TIME_FORMAT}
     />
   );
 

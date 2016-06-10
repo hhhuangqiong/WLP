@@ -10,6 +10,9 @@ import Icon from '../../../main/components/Icon';
 import { getCountryName } from '../../../utils/StringFormatter';
 import CountryFlag from '../../../main/components/CountryFlag';
 
+import * as dateLocale from '../../../utils/dateLocale';
+import { TIME_WITH_SECOND_FORMAT, LONG_DATE_FORMAT } from '../../../utils/timeFormatter';
+
 const mobileOperators = require('../../../data/mobileOperators.json');
 
 import {
@@ -218,8 +221,8 @@ const VerificationTableRow = React.createClass({
     const verification = this.props.verification;
 
     const time = moment(verification.timestamp);
-    const dateString = time.format('D MMM YYYY');
-    const timeString = time.format('h:mm:ss a');
+    const dateString = dateLocale.format(time, LONG_DATE_FORMAT);
+    const timeString = dateLocale.format(time, TIME_WITH_SECOND_FORMAT);
 
     const success = verification.success;
     const status = (success ? 'success' : 'failure');

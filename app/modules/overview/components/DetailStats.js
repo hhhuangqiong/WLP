@@ -6,7 +6,7 @@ import * as Panel from '../../../main/components/Panel';
 import LocationTable from '../../../main/statistics/components/LocationTable';
 import HighMap from '../../../main/statistics/components/HighMap';
 import LastUpdateTime, { TIME_TYPES } from '../../../main/statistics/components/LastUpdateTime';
-import { LAST_UPDATE_TIME_FORMAT } from '../../../utils/timeFormatter';
+import { SHORT_DATE_TIME_FORMAT } from '../../../utils/timeFormatter';
 
 const MESSAGES = defineMessages({
   registeredUsersByCountry: {
@@ -29,7 +29,7 @@ function DetailStats({
     <LastUpdateTime
       type={TIME_TYPES.LATEST}
       timescale="day"
-      timeFormat={LAST_UPDATE_TIME_FORMAT}
+      timeFormat={SHORT_DATE_TIME_FORMAT}
     />
   );
 

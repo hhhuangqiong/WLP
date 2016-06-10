@@ -5,7 +5,7 @@ import { defineMessages, injectIntl } from 'react-intl';
 import * as Panel from '../../../main/components/Panel';
 import * as DataGrid from '../../../main/statistics/components/DataGrid';
 import LastUpdateTime, { TIME_TYPES } from '../../../main/statistics/components/LastUpdateTime';
-import { LAST_UPDATE_TIME_FORMAT } from '../../../utils/timeFormatter';
+import { SHORT_DATE_TIME_FORMAT } from '../../../utils/timeFormatter';
 
 const MESSAGES = defineMessages({
   summary: {
@@ -48,7 +48,7 @@ function OverviewSummaryStats({
     <LastUpdateTime
       type={TIME_TYPES.LATEST}
       timescale="day"
-      timeFormat={LAST_UPDATE_TIME_FORMAT}
+      timeFormat={SHORT_DATE_TIME_FORMAT}
     />
   );
 

@@ -9,6 +9,7 @@ import Converter from '../../../utils/bossCurrencyConverter';
 import { getCurrencyTranslation } from '../../../main/components/Currency';
 import i18nMessages from '../../../main/constants/i18nMessages';
 import * as dateLocale from '../../../utils/dateLocale';
+import { LONG_DATE_TIME_FORMAT } from '../../../utils/timeFormatter';
 
 const MESSAGES = defineMessages({
   overview: {
@@ -45,12 +46,12 @@ const WalletItem = React.createClass({
     const currency = CurrencyConverter.getCurrencyById(this.props.wallet.currency);
     const expiryDate = moment(this.props.wallet.expiryDate, 'yyyymmddhh24miss').isValid() ?
       dateLocale.format(moment(this.props.wallet.expiryDate, 'yyyymmddhh24miss')
-        , 'MMMM DD, YYYY h:mm:ss a') :
+        , LONG_DATE_TIME_FORMAT) :
       formatMessage(i18nMessages.unknownLabel);
 
     const lastTopUpDate = moment(this.props.wallet.lastTopupDate, 'yyyymmddhh24miss').isValid() ?
       dateLocale.format(moment(this.props.wallet.lastTopupDate, 'yyyymmddhh24miss')
-        , 'MMMM DD,YYYY h:mm:ss a') :
+        , LONG_DATE_TIME_FORMAT) :
       formatMessage(i18nMessages.unknownLabel);
 
     return (

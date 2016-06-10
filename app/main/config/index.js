@@ -1,6 +1,6 @@
 module.exports = {
   inputDateFormat: process.env.INPUT_DATE_FORMAT || 'L',
-  displayDateFormat: process.env.DISPLAY_DATE_FORMAT || 'MMMM DD YYYY, hh:mm:ss a',
+  displayDateFormat: process.env.DISPLAY_DATE_FORMAT || 'LL LTS',
   pages: {
     topUp: {
       pageRec: 50,
