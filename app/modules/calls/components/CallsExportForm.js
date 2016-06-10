@@ -10,6 +10,8 @@ import CALL_TYPE from '../constants/callType';
 import * as dateLocale from '../../../utils/dateLocale';
 import { TIME_FORMAT } from '../../../utils/timeFormatter';
 
+const defaultLocale = dateLocale.getDefaultLocale();
+
 export default React.createClass({
   propTypes: {
     startDate: PropTypes.string,
@@ -37,11 +39,11 @@ export default React.createClass({
   },
 
   handleStartDateChange(newDate) {
-    this.setState({ startDate: moment.isMoment(newDate) ? newDate : moment(newDate) });
+    this.setState({ startDate: moment.isMoment(newDate) ? newDate.locale(defaultLocale) : moment(newDate) });
   },
 
   handleEndDateChange(newDate) {
-    this.setState({ endDate: moment.isMoment(newDate) ? newDate : moment(newDate) });
+    this.setState({ endDate: moment.isMoment(newDate) ? newDate.locale(defaultLocale) : moment(newDate) });
   },
 
   handleToggleOnnet(e) {

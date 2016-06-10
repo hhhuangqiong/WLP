@@ -13,6 +13,8 @@ import ExportSubmitControls from '../../../main/file-export/components/ExportSub
 import * as dateLocale from '../../../utils/dateLocale';
 import { TIME_FORMAT } from '../../../utils/timeFormatter';
 
+const defaultLocale = dateLocale.getDefaultLocale();
+
 const MESSAGES = defineMessages({
   origin: {
     id: 'im.details.origin',
@@ -58,11 +60,11 @@ const ImExportForm = React.createClass({
   },
 
   handleStartDateChange(newDate) {
-    this.setState({ fromTime: moment.isMoment(newDate) ? newDate : moment(newDate) });
+    this.setState({ fromTime: moment.isMoment(newDate) ? newDate.locale(defaultLocale) : moment(newDate) });
   },
 
   handleEndDateChange(newDate) {
-    this.setState({ toTime: moment.isMoment(newDate) ? newDate : moment(newDate) });
+    this.setState({ toTime: moment.isMoment(newDate) ? newDate.locale(defaultLocale) : moment(newDate) });
   },
 
   handleOriginChange(event) {

@@ -3,8 +3,11 @@ import moment from 'moment';
 
 import DateRangePicker from '../../../main/components/DateRangePicker';
 import ExportSubmitControls from '../../../main/file-export/components/ExportSubmitControls';
+import * as dateLocale from '../../../utils/dateLocale';
 
 import { FormattedMessage } from 'react-intl';
+
+const defaultLocale = dateLocale.getDefaultLocale();
 
 export default React.createClass({
   propTypes: {
@@ -27,11 +30,11 @@ export default React.createClass({
   },
 
   handleStartDateChange(newDate) {
-    this.setState({ startDate: moment.isMoment(newDate) ? newDate : moment(newDate) });
+    this.setState({ startDate: moment.isMoment(newDate) ? newDate.locale(defaultLocale) : moment(newDate) });
   },
 
   handleEndDateChange(newDate) {
-    this.setState({ endDate: moment.isMoment(newDate) ? newDate : moment(newDate) });
+    this.setState({ endDate: moment.isMoment(newDate) ? newDate.locale(defaultLocale) : moment(newDate) });
   },
 
   handleExport() {
