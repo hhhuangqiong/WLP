@@ -3,6 +3,7 @@ import moment from 'moment';
 import { util } from 'm800-user-locale';
 
 let currentLocale = null;
+const DEFAULT_LOCALE = 'en';
 
 export function format(momentTime, formatStyle) {
   let targetStyle;
@@ -14,11 +15,13 @@ export function format(momentTime, formatStyle) {
   }
   // centralize the conversion on the formatStyle on different locales
   switch (formatStyle) {
+    case 'DD MMM YYYY':
     case 'D MMM YYYY':
     case 'MMMM DD YYYY':
       targetStyle = 'LL';
       break;
     case 'h:mm a':
+    case 'h:mma':
       targetStyle = 'LT';
       break;
     case 'h:mm:ss a':
@@ -57,7 +60,7 @@ export function injectHighcharts(highchart) {
   });
 
   // set the global locale back to en
-  moment.locale('en');
+  moment.locale(DEFAULT_LOCALE);
 }
 
 export function getLocale() {

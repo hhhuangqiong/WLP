@@ -10,6 +10,7 @@ import * as DataGrid from '../../../../main/statistics/components/DataGrid';
 import CombinationChart from '../../../../main/components/CombinationChart';
 import LastUpdateTime, { TIME_TYPES } from '../../../../main/statistics/components/LastUpdateTime';
 import { parseTimeRange, LAST_UPDATE_TIME_FORMAT } from '../../../../utils/timeFormatter';
+import * as dateLocale from '../../../../utils/dateLocale';
 
 const TIME_FRAMES = ['24 hours', '7 days', '30 days'];
 const TOOLTIP_TIME_FORMAT = 'lll';
@@ -181,7 +182,9 @@ export default function VsfSummaryStats({
                 formatter={function tooltipFormatter() {
                   return `
                           <div style="text-align: center">
-                            <div>${moment(this.x).local().format(TOOLTIP_TIME_FORMAT)}</div>
+                            <div>
+                              ${dateLocale.format(moment(this.x).local(), TOOLTIP_TIME_FORMAT)}
+                            </div>
                             <div>${this.y.toLocaleString()}</div>
                             <div>${formatMessage(MESSAGES.vsfPurchase)}</div>
                           </div>

@@ -37,6 +37,7 @@ import clearEndUsersStats from '../actions/clearEndUsersStats';
 
 import FilterBarNavigation from '../../../main/filter-bar/components/FilterBarNavigation';
 import getPlatformInfo from '../utils/getPlatformInfo';
+import * as dateLocale from '../../../utils/dateLocale';
 
 const MESSAGES = defineMessages({
   totalUser: {
@@ -600,7 +601,7 @@ const EndUsersOverview = React.createClass({
     function tooltipFormatter (label, x, y) {
       return `
               <div style="text-align: center">
-                <div>${moment(x).local().format(TOOLTIP_TIME_FORMAT)}</div>
+                <div>${dateLocale.format(moment(x).local(), TOOLTIP_TIME_FORMAT)}</div>
                 <div>${label}: ${y}</div>
               </div>
             `;
