@@ -12,11 +12,22 @@ export function format(momentTime, formatStyle) {
   if (!formatStyle) {
     return moment(momentTime).locale(currentLocale);
   }
-  // centralize the conversion on the formatStyle on different locale
+  // centralize the conversion on the formatStyle on different locales
   switch (formatStyle) {
+    case 'D MMM YYYY':
+    case 'MMMM DD YYYY':
+      targetStyle = 'LL';
+      break;
+    case 'h:mm a':
+      targetStyle = 'LT';
+      break;
+    case 'h:mm:ss a':
+      targetStyle = 'LTS';
+      break;
     case 'MMM DD, YYYY H:mm':
       targetStyle = 'lll';
       break;
+    case 'MMMM Do YYYY, h:mm:ss a':
     case 'MMMM DD YYYY, hh:mm:ss a':
     case 'MMMM DD,YYYY h:mm:ss a':
       targetStyle = 'LL LTS';

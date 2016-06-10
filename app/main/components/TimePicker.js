@@ -1,6 +1,8 @@
 import moment from 'moment';
 import React, { PropTypes } from 'react';
 
+import * as dateLocale from '../../utils/dateLocale';
+
 const TimePicker = React.createClass({
   propTypes: {
     onChange: PropTypes.func.isRequired,
@@ -69,15 +71,15 @@ const TimePicker = React.createClass({
     const { datetime, format, timePickerId, className } = this.props;
 
     return (
-      <div>
+      <div className="left">
         <div
           data-dropdown={timePickerId}
           aria-controls={timePickerId}
           aria-expanded="false"
           className={className}
         >
-          <span className="left date-range-picker__date-span">
-            {datetime.format(format)}
+          <span className="left interactive-button date-range-picker__date-span">
+            {dateLocale.format(datetime, format)}
           </span>
         </div>
 

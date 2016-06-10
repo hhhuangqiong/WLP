@@ -3,6 +3,7 @@ import React, { PropTypes } from 'react';
 import ReactDatePicker from 'react-datepicker';
 import classNames from 'classnames';
 import Icon from '../components/Icon';
+import * as dateLocale from '../../utils/dateLocale';
 
 // TODO verify and extend the compatibility of `selectDate` DateFormat input
 // this component assume users will always input/output date with same format
@@ -40,6 +41,7 @@ const DatePicker = React.createClass({
   },
 
   render() {
+    const lang = dateLocale.getLocale();
     return (
       <div className={
         classNames(
@@ -69,6 +71,7 @@ const DatePicker = React.createClass({
             minDate={this.props.minDate}
             maxDate={moment(this.props.maxDate, this.props.dateFormat)}
             onChange={this.props.onChange}
+            locale={lang}
           />
         </div>
       </div>

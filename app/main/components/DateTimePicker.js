@@ -6,6 +6,7 @@ import DatePicker from 'react-datepicker';
 import Icon from '../components/Icon';
 
 import TimePicker from './TimePicker';
+import * as dateLocale from '../../utils/dateLocale';
 
 export default React.createClass({
   propTypes: {
@@ -44,7 +45,7 @@ export default React.createClass({
         <Icon className="date-range-picker__icon left" symbol="icon-calendar" />
 
         <div className="date-input-wrap left" onClick={this._handleFocus}>
-          <span className="left date-range-picker__date-span">{date.format('L')}</span>
+          <span className="interactive-button left date-range-picker__date-span">{date.format('L')}</span>
 
           <DatePicker
             ref={dataPickerRef}
@@ -54,6 +55,7 @@ export default React.createClass({
             onChange={dateOnChange}
             minDate={minDate}
             maxDate={moment()}
+            locale={dateLocale.getLocale()}
           />
         </div>
 

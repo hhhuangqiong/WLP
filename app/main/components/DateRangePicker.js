@@ -4,6 +4,8 @@ import moment from 'moment';
 import DatePicker from 'react-datepicker';
 import Icon from '../components/Icon';
 
+import * as dateLocale from '../../utils/dateLocale';
+
 const DateRangePicker = React.createClass({
   propTypes: {
     displayFormat: PropTypes.string,
@@ -28,6 +30,7 @@ const DateRangePicker = React.createClass({
   },
 
   render() {
+    const locale = dateLocale.getLocale();
     return (
       <div className="date-range-picker left">
         <Icon className="date-range-picker__icon left" symbol="icon-calendar" />
@@ -42,6 +45,7 @@ const DateRangePicker = React.createClass({
             selected={moment(this.props.startDate, 'L')}
             maxDate={moment(this.props.endDate, 'L')}
             onChange={this.props.handleStartDateChange}
+            locale={locale}
           />
         </div>
         <i className="date-range-picker__separator left">-</i>
@@ -57,6 +61,7 @@ const DateRangePicker = React.createClass({
             minDate={moment(this.props.startDate, 'L')}
             maxDate={moment()}
             onChange={this.props.handleEndDateChange}
+            locale={locale}
           />
         </div>
       </div>
