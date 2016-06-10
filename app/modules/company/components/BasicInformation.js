@@ -11,6 +11,7 @@ import CountrySelectBox from '../../../main/components/CountrySelectBox';
 import Icon from '../../../main/components/Icon';
 
 import config from './../../../main/config';
+import * as dateLocale from '../../../utils/dateLocale';
 
 const { inputDateFormat: DATE_FORMAT } = config;
 
@@ -403,6 +404,7 @@ const BasicInformation = React.createClass({
                     moment().format(DATE_FORMAT)
                 }
                 onChange={this.props.onDateChange}
+                locale={dateLocale.getLocale()}
               />
               <input
                 className="radius"

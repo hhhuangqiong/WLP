@@ -51,6 +51,7 @@ class VerificationExportForm extends Component {
 
   render() {
     const { intl: { formatMessage } } = this.props;
+    const lang = dateLocale.getLocale();
 
     return (
       <form onSubmit={this._export} noValidate>

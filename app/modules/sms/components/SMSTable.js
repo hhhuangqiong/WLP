@@ -13,6 +13,8 @@ import TableHeader from '../../../modules/data-table/components/TableHeader';
 import Pagination from '../../../modules/data-table/components/Pagination';
 import Icon from '../../../main/components/Icon';
 
+import * as dateLocale from '../../../utils/dateLocale';
+
 import {
   UI_STATE_LOADING,
   UI_STATE_EMPTY,
@@ -148,7 +150,9 @@ const SMSTable = React.createClass({
               { alert: sms.status.toLowerCase() === 'rejected' })}
             />
           </td>
-          <td className="data-table__datetime">{moment(sms.request_date).format(DATE_FORMAT)}</td>
+          <td className="data-table__datetime">
+            {dateLocale.format(moment(sms.request_date), DATE_FORMAT)}
+          </td>
           <td>
             {this._renderTypeIcon(sms.type2)}
           </td>
