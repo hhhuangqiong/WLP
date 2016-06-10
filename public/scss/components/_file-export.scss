@@ -7,7 +7,7 @@ $positioning: -150px;
 .export-datetime-picker {
   color: white;
   background-color: $brand-primary;
-  width: $control-width;
+  min-width: $control-width;
   margin: 0 !important;
   margin-left: $positioning !important;
 }

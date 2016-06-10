@@ -1,8 +1,11 @@
 .timepicker-dropdown-table {
+  position: absolute;
   background-color: white;
   z-index: 9999;
   color: black;
   width: 100%;
+  // workaround for the time picker to have right position without expanding the label
+  left: -58px;
 
   tr {
     border: 0;

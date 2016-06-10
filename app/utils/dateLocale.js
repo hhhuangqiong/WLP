@@ -43,6 +43,23 @@ export function setLocale(locale) {
   currentLocale = util.toOneSkyLocale(locale);
 }
 
+export function injectHighcharts(highchart) {
+  // temp set the moment to get the weekdays and month translation
+  moment.locale(currentLocale);
+
+  highchart.setOptions({
+    lang: {
+      months: moment.months(),
+      shortMonths: moment.monthsShort(),
+      weekdays: moment.weekdays(),
+      shortWeekdays: moment.weekdaysShort(),
+    },
+  });
+
+  // set the global locale back to en
+  moment.locale('en');
+}
+
 export function getLocale() {
   return currentLocale;
 }
