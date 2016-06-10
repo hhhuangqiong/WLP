@@ -21,6 +21,8 @@ import SearchBox from './../../../main/components/Searchbox';
 import FilterBarNavigation from '../../../main/filter-bar/components/FilterBarNavigation';
 
 import config from './../../../main/config';
+import * as dateLocale from '../../../utils/dateLocale';
+
 const { inputDateFormat: DATE_FORMAT } = config;
 const { pages: { topUp: { pageRec: PAGE_REC } } } = config;
 
@@ -28,6 +30,7 @@ const { pages: { topUp: { pageRec: PAGE_REC } } } = config;
 // page = 0 1st page
 const INITIAL_PAGE_NUMBER = 0;
 const MONTHS_BEFORE_TODAY = 1;
+const defaultLocale = dateLocale.getDefaultLocale();
 
 function getInitialQueryFromURL(params, query = {}) {
   return {
@@ -192,14 +195,14 @@ const SMS = React.createClass({
   },
 
   handleStartDateChange(momentDate) {
-    const date = moment(momentDate).format(DATE_FORMAT);
+    const date = moment(momentDate.locale(defaultLocale)).format(DATE_FORMAT);
 
     this.setState({ startDate: date });
     this.handleQueryChange({ startDate: date, page: INITIAL_PAGE_NUMBER });
   },
 
   handleEndDateChange(momentDate) {
-    const date = moment(momentDate).format(DATE_FORMAT);
+    const date = moment(momentDate.locale(defaultLocale)).format(DATE_FORMAT);
 
     this.setState({ endDate: date });
     this.handleQueryChange({ endDate: date, page: INITIAL_PAGE_NUMBER });

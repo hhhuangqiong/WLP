@@ -35,6 +35,8 @@ import CALL_TYPE from '../constants/callType';
 
 import * as dateLocale from '../../../utils/dateLocale';
 
+const defaultLocale = dateLocale.getDefaultLocale();
+
 const Calls = React.createClass({
   contextTypes: {
     executeAction: PropTypes.func.isRequired,
@@ -165,12 +167,12 @@ const Calls = React.createClass({
   },
 
   handleStartDateChange(momentDate) {
-    const date = moment(momentDate).format('L');
+    const date = moment(momentDate.locale(defaultLocale)).format('L');
     this.handleQueryChange({ startDate: date, page: 0 });
   },
 
   handleEndDateChange(momentDate) {
-    const date = moment(momentDate).format('L');
+    const date = moment(momentDate.locale(defaultLocale)).format('L');
     this.handleQueryChange({ endDate: date, page: 0 });
   },
 

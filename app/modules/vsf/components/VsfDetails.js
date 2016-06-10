@@ -20,9 +20,11 @@ import clearVSFTransaction from '../actions/clearVSFTransaction';
 
 import i18nMessages from '../../../main/constants/i18nMessages';
 import FilterBarNavigation from '../../../main/filter-bar/components/FilterBarNavigation';
+import * as dateLocale from '../../../utils/dateLocale';
 
 const SUBMIT_KEY = 13;
 const PAGE_SIZE = 100;
+const defaultLocale = dateLocale.getDefaultLocale();
 
 const VsfDetails = createClass({
   contextTypes: {
@@ -122,13 +124,13 @@ const VsfDetails = createClass({
   },
 
   handleStartDateChange(date) {
-    const changes = { fromTime: moment(date).startOf('day').format('L') };
+    const changes = { fromTime: moment(date.locale(defaultLocale)).startOf('day').format('L') };
     this.setState(changes);
     this.handleQueryChange(changes);
   },
 
   handleEndDateChange(date) {
-    const changes = { toTime: moment(date).endOf('day').format('L') };
+    const changes = { toTime: moment(date.locale(defaultLocale)).endOf('day').format('L') };
     this.setState(changes);
     this.handleQueryChange(changes);
   },

@@ -37,6 +37,7 @@ const ENTER_KEY = 13;
 const LABEL_OF_ALL = i18nMessages.all;
 
 import MESSAGES from '../../../main/constants/i18nMessages';
+import * as dateLocale from '../../../utils/dateLocale';
 
 const VERIFICATION_TYPES = [
   MESSAGES.callIn,
@@ -49,6 +50,8 @@ const OS_TYPES = [
   'ios',
   'android',
 ];
+
+const defaultLocale = dateLocale.getDefaultLocale();
 
 const { inputDateFormat: DATE_FORMAT } = require('./../../../main/config');
 
@@ -207,12 +210,12 @@ const VerificationDetails = React.createClass({
   },
 
   handleStartDateChange(dateString) {
-    const date = moment(dateString).format(DATE_FORMAT);
+    const date = moment(dateString.locale(defaultLocale)).format(DATE_FORMAT);
     this.handleQueryChange({ startDate: date, page: 0 });
   },
 
   handleEndDateChange(dateString) {
-    const date = moment(dateString).format(DATE_FORMAT);
+    const date = moment(dateString.locale(defaultLocale)).format(DATE_FORMAT);
     this.handleQueryChange({ endDate: date, page: 0 });
   },
 

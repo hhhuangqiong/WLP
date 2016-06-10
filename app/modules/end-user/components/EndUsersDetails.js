@@ -16,6 +16,7 @@ import * as FilterBar from './../../../main/components/FilterBar';
 import DateRangePicker from './../../../main/components/DateRangePicker';
 import Export from './../../../main/file-export/components/Export';
 import FilterBarNavigation from '../../../main/filter-bar/components/FilterBarNavigation';
+import * as dateLocale from '../../../utils/dateLocale';
 
 import EndUserTable from './EndUserTable';
 import EndUserProfile from './EndUserProfile';
@@ -29,6 +30,7 @@ const { inputDateFormat: DATE_FORMAT } = config;
 // page = 0 1st page
 const INITIAL_PAGE_NUMBER = 0;
 const MONTHS_BEFORE_TODAY = 1;
+const defaultLocale = dateLocale.getDefaultLocale();
 
 const EndUsers = React.createClass({
   contextTypes: {
@@ -207,13 +209,13 @@ const EndUsers = React.createClass({
   },
 
   handleStartDateChange(momentDate) {
-    const date = moment(momentDate).format(DATE_FORMAT);
+    const date = moment(momentDate.locale(defaultLocale)).format(DATE_FORMAT);
     this.setState({ startDate: date, page: INITIAL_PAGE_NUMBER });
     this.handleQueryChange({ startDate: date, page: INITIAL_PAGE_NUMBER });
   },
 
   handleEndDateChange(momentDate) {
-    const date = moment(momentDate).format(DATE_FORMAT);
+    const date = moment(momentDate.locale(defaultLocale)).format(DATE_FORMAT);
     this.setState({ endDate: date, page: INITIAL_PAGE_NUMBER });
     this.handleQueryChange({ endDate: date, page: INITIAL_PAGE_NUMBER });
   },

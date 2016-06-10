@@ -38,3 +38,7 @@ export function injectHighcharts(highchart) {
 export function getLocale() {
   return currentLocale;
 }
+
+export function getDefaultLocale() {
+  return DEFAULT_LOCALE;
+}

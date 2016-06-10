@@ -20,6 +20,7 @@ import * as FilterBar from './../../../main/components/FilterBar';
 import DateRangePicker from './../../../main/components/DateRangePicker';
 import SearchBox from './../../../main/components/Searchbox';
 import i18nMessages from '../../../main/constants/i18nMessages';
+import * as dateLocale from '../../../utils/dateLocale';
 
 const { inputDateFormat: DATE_FORMAT } = require('./../../../main/config');
 const { pages: { topUp: { pageRec: PAGE_REC } } } = require('./../../../main/config');
@@ -31,6 +32,7 @@ const INITIAL_PAGE_NUMBER = 1;
 
 // WLP-323
 const MAX_QUERY_DATE_RANGE = 7;
+const defaultLocale = dateLocale.getDefaultLocale();
 
 function getInitialQueryFromURL(params, query = {}) {
   return {
@@ -225,7 +227,7 @@ const TopUp = React.createClass({
   },
 
   handleStartDateChange(momentDate) {
-    const date = moment(momentDate).format(DATE_FORMAT);
+    const date = moment(momentDate.locale(defaultLocale)).format(DATE_FORMAT);
 
     const updates = { startDate: date };
 
@@ -241,7 +243,7 @@ const TopUp = React.createClass({
   },
 
   handleEndDateChange(momentDate) {
-    const date = moment(momentDate).format(DATE_FORMAT);
+    const date = moment(momentDate.locale(defaultLocale)).format(DATE_FORMAT);
 
     const updates = { endDate: date };
 

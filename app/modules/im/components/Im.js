@@ -31,6 +31,8 @@ const searchTypes = [
   { name: i18nMessages.recipient, value: 'recipient' },
 ];
 
+const defaultLocale = dateLocale.getDefaultLocale();
+
 const Im = React.createClass({
   contextTypes: {
     router: PropTypes.object.isRequired,
@@ -182,12 +184,12 @@ const Im = React.createClass({
   },
 
   handleStartDateChange(momentDate) {
-    const date = moment(momentDate).format('L');
+    const date = moment(momentDate.locale(defaultLocale)).format('L');
     this.handleQueryChange({ fromTime: date, page: 0 });
   },
 
   handleEndDateChange(momentDate) {
-    const date = moment(momentDate).format('L');
+    const date = moment(momentDate.locale(defaultLocale)).format('L');
     this.handleQueryChange({ toTime: date, page: 0 });
   },
 
