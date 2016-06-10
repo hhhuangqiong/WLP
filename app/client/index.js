@@ -12,6 +12,8 @@ import { createContext, createMarkupElement, intlPolyfill } from '../utils/fluxi
 import getRoutes from '../routes';
 import svg4everybody from 'svg4everybody';
 
+import { setLocale } from '../utils/dateLocale';
+
 const debug = require('debug');
 const bootstrapDebug = debug('app:client');
 
@@ -68,6 +70,7 @@ Q.nfcall(intlPolyfill)
     // assuming that value in localStorage has higher priority
     // than the lang attribute from server
     const locale = store.get('locale') || document.documentElement.getAttribute('lang');
+    setLocale(locale);
     children = React.createElement(IntlProvider, { locale, messages }, children);
 
     const markupElement = createMarkupElement(context, children);

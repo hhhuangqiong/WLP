@@ -9,6 +9,7 @@ import TableHeader from '../../../modules/data-table/components/TableHeader';
 import Pagination from '../../../modules/data-table/components/Pagination';
 import i18nMessages from '../../../main/constants/i18nMessages';
 import Icon from '../../../main/components/Icon';
+import * as dateLocale from '../../../utils/dateLocale';
 
 import getPlatformInfo from '../utils/getPlatformInfo.js';
 
@@ -165,7 +166,7 @@ const EndUserTable = React.createClass({
     return content.map(u => {
       const device = get(u, 'devices.0') || {};
 
-      const creationDate = moment(u.creationDate).format(DATE_FORMAT);
+      const creationDate = dateLocale.format(moment(u.creationDate), DATE_FORMAT);
       const handleOnClick = bindKey(this.props, 'onUserClick', u.username.trim());
 
       const platform = device.platform || formatMessage(NOT_FOUND_LABEL);

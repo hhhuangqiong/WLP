@@ -2,6 +2,7 @@ import moment from 'moment';
 import React, { PropTypes } from 'react';
 import { defineMessages, injectIntl, intlShape } from 'react-intl';
 import { parseTimeRange, LAST_UPDATE_TIME_FORMAT } from '../../../utils/timeFormatter';
+import * as dateLocale from '../../../utils/dateLocale';
 
 const MESSAGES = defineMessages({
   dataUpdatedTill: {
@@ -24,14 +25,14 @@ const LastUpdateTime = props => {
   let lastUpdate;
 
   if (type === TIME_TYPES.MONTHLY) {
-    lastUpdate = moment(time, 'L').endOf('month').format(timeFormat);
+    lastUpdate = dateLocale.format(moment(time, 'L').endOf('month'), timeFormat);
   } else if (type === TIME_TYPES.TIME_RANGE) {
     const { to, timescale: _timescale } = parseTimeRange(time);
     timescale = _timescale;
     lastUpdate = timescale === 'hour' ? moment(to).subtract(1, timescale) : moment(to);
-    lastUpdate = lastUpdate.endOf(timescale).format(timeFormat);
+    lastUpdate = dateLocale.format(lastUpdate.endOf(timescale), timeFormat);
   } else if (type === TIME_TYPES.LATEST) {
-    lastUpdate = moment().subtract(1, timescale).endOf(timescale).format(timeFormat);
+    lastUpdate = dateLocale.format(moment().subtract(1, timescale).endOf(timescale), timeFormat);
   }
 
   return (

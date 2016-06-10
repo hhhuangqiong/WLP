@@ -13,6 +13,7 @@ import getRoutes from '../routes';
 import { getRedirectPath } from '../utils/reactRouter';
 import { createMarkupElement, getInitialData } from '../utils/fluxible';
 import { getLocaleDataFromPath } from '../utils/intl';
+import { setLocale } from '../utils/dateLocale';
 
 import loadSession from '../main/actions/loadSession';
 import getAccessibleCompanies from '../main/actions/getAccessibleCompanies';
@@ -118,6 +119,7 @@ export default function renderer(app, config) {
 
             // TODO: check and take locale preference from user session if available
             const locale = req.locale;
+            setLocale(locale);
             logger.debug(`locale is set as ${locale}`);
 
 

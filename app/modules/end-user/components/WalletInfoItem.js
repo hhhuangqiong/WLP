@@ -8,6 +8,7 @@ import currencyData from '../../../data/bossCurrencies.json';
 import Converter from '../../../utils/bossCurrencyConverter';
 import { getCurrencyTranslation } from '../../../main/components/Currency';
 import i18nMessages from '../../../main/constants/i18nMessages';
+import * as dateLocale from '../../../utils/dateLocale';
 
 const MESSAGES = defineMessages({
   overview: {
@@ -43,13 +44,13 @@ const WalletItem = React.createClass({
     const walletType = get(this.props, 'wallet.walletType');
     const currency = CurrencyConverter.getCurrencyById(this.props.wallet.currency);
     const expiryDate = moment(this.props.wallet.expiryDate, 'yyyymmddhh24miss').isValid() ?
-      moment(this.props.wallet.expiryDate, 'yyyymmddhh24miss')
-        .format('MMMM DD, YYYY h:mm:ss a') :
+      dateLocale.format(moment(this.props.wallet.expiryDate, 'yyyymmddhh24miss')
+        , 'MMMM DD, YYYY h:mm:ss a') :
       formatMessage(i18nMessages.unknownLabel);
 
     const lastTopUpDate = moment(this.props.wallet.lastTopupDate, 'yyyymmddhh24miss').isValid() ?
-      moment(this.props.wallet.lastTopupDate, 'yyyymmddhh24miss')
-        .format('MMMM DD,YYYY h:mm:ss a') :
+      dateLocale.format(moment(this.props.wallet.lastTopupDate, 'yyyymmddhh24miss')
+        , 'MMMM DD,YYYY h:mm:ss a') :
       formatMessage(i18nMessages.unknownLabel);
 
     return (
