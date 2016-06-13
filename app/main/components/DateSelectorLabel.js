@@ -64,7 +64,7 @@ export default class DateSelectorLabel extends Component {
             {this.props.options.map(option =>
               (
                 <option
-                  value={option.label}
+                  value={option.value}
                   selected={+option.value === moment(date, parseFormat).get(timescale)}
                 >{option.label}</option>
               )

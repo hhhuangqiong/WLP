@@ -6,6 +6,8 @@ import React, { Component, PropTypes } from 'react';
 import DateSelectorLabel from './DateSelectorLabel';
 import DateSelectorArrow from './DateSelectorArrow';
 
+import * as dateLocale from '../../utils/dateLocale';
+
 const YEARS_BACKWARD = 5;
 
 export default class DateSelector extends Component {
@@ -13,7 +15,7 @@ export default class DateSelector extends Component {
     const monthArray = Array.apply(0, Array(12)).map((_, i) => i);
 
     return reduce(monthArray, (result, n) => {
-      const option = { value: n, label: moment().month(n).format('MMMM') };
+      const option = { value: n, label: dateLocale.format(moment().month(n), 'MMMM') };
       result.push(option);
       return result;
     }, []);
