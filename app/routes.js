@@ -1,5 +1,5 @@
 import React from 'react';
-import { Route, IndexRedirect } from 'react-router';
+import { Route, IndexRedirect, IndexRoute } from 'react-router';
 import modules from './constants/moduleId';
 
 import App from './main/components/common/App';
@@ -28,6 +28,8 @@ import CallsOverview from './modules/calls/components/CallsOverview';
 import Calls from './modules/calls/components/Calls';
 import EndUsersOverview from './modules/end-user/components/EndUsersOverview';
 import EndUsersDetails from './modules/end-user/components/EndUsersDetails';
+import WhitelistList from './modules/end-user/containers/Whitelist/List';
+import WhitelistNew from './modules/end-user/containers/Whitelist/AddNew';
 import ImOverview from './modules/im/components/Overview';
 import Im from './modules/im/components/Im';
 import SmsOverview from './modules/sms/components/Overview';
@@ -145,6 +147,8 @@ export default (context) => {
           <IndexRedirect to="overview" />
           <Route path="overview" component={EndUsersOverview} />
           <Route path="details" component={EndUsersDetails} />
+          <Route path="whitelist" component={WhitelistList} />
+          <Route path="whitelist/new" component={WhitelistNew} />
         </Route>
 
         <Route path={`:role/:identity/${modules.IM}`}>

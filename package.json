@@ -85,6 +85,7 @@
     "nodemailer-smtp-transport": "^1.0.0",
     "object-assign": "^2.x.x",
     "owasp-password-strength-test": "^1.1.0",
+    "papaparse": "^4.1.2",
     "passport": "^0.2.1",
     "passport-local": "^1.0.0",
     "phantomjs": "^1.9.19",

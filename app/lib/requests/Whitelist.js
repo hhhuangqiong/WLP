@@ -3,7 +3,7 @@
 import _ from 'lodash';
 import assign from 'object-assign';
 import request from 'superagent';
-
+import logger from 'winston';
 import errorMixin from '../requests/mixins/mumsErrorResponse';
 
 export const OPERATION_TYPE_ADD = 'ADD';
@@ -13,13 +13,27 @@ export const OPERATION_TYPE_REMOVE = 'REMOVE';
  * @mixes mixins/mumsErrorResponse
  */
 export class WhitelistRequest {
-  constructor(opts) {
-    if (!opts.baseUrl) throw new Error('`baseUrl is required`');
-    this._baseUrl = opts.baseUrl;
+  constructor(baseUrl, timeout) {
+    if (!baseUrl) {
+      throw new Error('`baseUrl` is required');
+    }
+
+    if (!timeout) {
+      throw new Error('`timeout` is required');
+    }
+
+    this._baseUrl = baseUrl;
+    this._timeout = timeout;
   }
 
-  _processPath(carrierId) {
-    return `${this._baseUrl}/1.0/carriers/${carrierId}/whitelist`;
+  _processPath(carrierId, username) {
+    let endpoint = `${this._baseUrl}/1.0/carriers/${carrierId}/users/whitelist`;
+
+    if (username) {
+      endpoint = `${endpoint}/${username}`;
+    }
+
+    return endpoint;
   }
 
   /**
@@ -81,7 +95,7 @@ export class WhitelistRequest {
    * @see {@link: http://issuetracking.maaii.com:8090/display/MAAIIP/MUMS+User+Management+by+Carrier+HTTP+API#MUMSUserManagementbyCarrierHTTPAPI-6.WhitelistManagement}
    */
   remove(carrierId, usernames, cb) {
-    this._put(carrirerId, usernames, OPERATION_TYPE_REMOVE, cb);
+    this._put(carrierId, usernames, OPERATION_TYPE_REMOVE, cb);
   }
 
   /**
@@ -112,7 +126,7 @@ export class WhitelistRequest {
       throw new Error('`cb` is required');
     }
 
-    const path = this._processPath(carrierId);
+    const path = this._processPath(carrierId, opts.username);
     const scope = request.get(path);
 
     // allow 0
@@ -123,6 +137,8 @@ export class WhitelistRequest {
     if (opts.to) {
       scope.query({ to: opts.to });
     }
+
+    logger.debug('get user whitelist from path with option:', path, opts);
 
     scope.end((err, res) => {
       // TODO DRY this

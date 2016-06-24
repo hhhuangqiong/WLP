@@ -15,6 +15,7 @@
 @import 'layouts/content-frame';
 @import 'layouts/header';
 @import 'layouts/company-sidebar';
+@import 'layouts/page';
 
 //import all components
 @import 'components/language-switcher';
@@ -68,6 +69,7 @@
 @import 'components/date-selector';
 @import 'components/icon';
 @import 'components/sms-table';
+@import 'components/text';
 
 //page specific style
 @import 'pages/company';

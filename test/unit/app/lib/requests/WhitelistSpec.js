@@ -1,3 +1,5 @@
+/* eslint-disable prefer-arrow-callback, func-names */
+
 import { expect } from 'chai';
 import nock from 'nock';
 import sinon from 'sinon';
@@ -7,108 +9,113 @@ import request from 'superagent';
 
 import { OPERATION_TYPE_ADD, WhitelistRequest } from 'app/lib/requests/Whitelist';
 
-describe('Whitelist Request', function() {
-  let wl        = null;
-  let hostPart  = 'http://localhost';
-  let carrierId = 'carrierId';
-  let path      = `/1.0/carriers/${carrierId}/whitelist`;
-  let usernames = ['username1'];
-  let opts      =
-    {baseUrl: hostPart};
+describe('Whitelist Request', function () {
+  let wl = null;
+  const hostPart = 'http://localhost';
+  const timeout = 3000;
+  const carrierId = 'carrierId';
+  const path = `/1.0/carriers/${carrierId}/users/whitelist`;
+  const usernames = ['username1'];
 
-  let requestPath = `${hostPart}${path}`;
+  const requestPath = `${hostPart}${path}`;
 
   describe('constructor', () =>
 
-    it('should throw Error if no baseUrl is passed', function() {
-      let regex = /baseurl/i;
+    it('should throw Error if no baseUrl or timeout is passed', function () {
+      const baseUrlRegex = /baseurl/i;
+      const timeoutRegex = /timeout/i;
 
       expect(() => new WhitelistRequest())
-      .to.throw(Error, regex);
+      .to.throw(Error, baseUrlRegex);
 
-      return expect(() => new WhitelistRequest({baseUrl: '/whatever'}))
-      .to.not.throw(Error, regex);
+      expect(() => new WhitelistRequest(hostPart))
+        .to.throw(Error, timeoutRegex);
+
+      return expect(() => new WhitelistRequest(hostPart, timeout))
+      .to.not.throw(Error);
     })
   );
 
-  describe('#add', function() {
-    let addPayload = {
+  describe('#add', function () {
+    const addPayload = {
       operationType: OPERATION_TYPE_ADD,
-      usernames
+      usernames,
     };
 
-    beforeEach(function() {
-      wl = new WhitelistRequest(opts);
+    beforeEach(function () {
+      wl = new WhitelistRequest(hostPart, timeout);
       return;
     });
 
-    it('should throw Error on missing required arguments', function() {
-      expect(function() {
+    it('should throw Error on missing required arguments', function () {
+      expect(function () {
         wl.add();
         return wl.add(carrierId);
       })
       .to.throw(Error, /required/i);
 
-      expect(function() {
+      expect(function () {
         wl.add(carrierId, usernames);
         return wl.add(carrierId, usernames, {});
       })
       .to.throw(Error, /function/i);
 
-      expect(() => wl.add(carrierId, usernames, function() {}))
+      expect(() => wl.add(carrierId, usernames, function () {}))
       .to.not.throw(Error);
     });
 
-    it('should request with correct method, url, & payload', function(done) {
-      let usernamesApplied = ['john'];
+    it('should request with correct method, url, & payload', function (done) {
+      const usernamesApplied = ['john'];
       nock(hostPart)
         .put(path, addPayload)
         .reply(200, {
           carrierId,
           usernamesApplied,
-          usernamesNotApplied: []
+          usernamesNotApplied: [],
         });
 
-      let spy = sinon.spy(request, 'put');
+      const spy = sinon.spy(request, 'put');
 
-      return wl.add(carrierId, usernames, function(err, applied, notApplied) {
-        expect( spy.firstCall.args[0] )
-          .to.match(new RegExp(requestPath));
-
-        expect( applied ).to.eql(usernamesApplied);
-        expect( notApplied ).to.be.empty;
+      return wl.add(carrierId, usernames, function (err, applied, notApplied) {
+        expect(spy.firstCall.args[0]).to.match(new RegExp(requestPath));
+        expect(applied).to.be.an('array');
+        expect(applied).to.have.lengthOf(usernamesApplied.length);
+        expect(applied[0]).to.equal(usernamesApplied[0]);
+        // eslint-disable-next-line no-unused-expressions
+        expect(notApplied).to.be.empty;
 
         spy.reset();
         return done();
       });
     });
 
-    it('should handle error correctly', function(done) {
+    it('should handle error correctly', function (done) {
       nock(hostPart)
         .put(path, addPayload)
         .reply(400, {
           error: {
-            status:  500,
-            code:    30000,
-            message: "Internal Server Error"
-          }
+            status: 500,
+            code: 30000,
+            message: 'Internal Server Error',
+          },
         });
 
-      return wl.add(carrierId, usernames, function(err){
-        expect( err ).to.not.be.undefined;
+      return wl.add(carrierId, usernames, function (err) {
+        // eslint-disable-next-line no-unused-expressions
+        expect(err).to.not.be.undefined;
         return done();
       });
     });
   });
 
-  describe('#get', function() {
-    let getOpts = {
+  describe('#get', function () {
+    const getOpts = {
       from: 0,
-      to:   4
+      to: 4,
     };
 
     it('should throw Error on missing required parameters', () =>
-      expect(function() {
+      expect(function () {
         wl.get();
         return wl.get(carrierId);
       })
@@ -116,49 +123,53 @@ describe('Whitelist Request', function() {
     );
 
     it('should allow for optional parameters', () =>
-      expect(function() {
-        wl.get(carrierId, function() {});
-        return wl.get(carrierId, getOpts, function() {});
+      expect(function () {
+        wl.get(carrierId, function () {});
+        return wl.get(carrierId, getOpts, function () {});
       })
       .to.not.throw(Error)
     );
 
-    it('should not send optional parameter if not present', function() {
-      return nock(hostPart)
+    it('should not send optional parameter if not present', function () {
+      nock(hostPart)
         // could i do this better?
         .get(`${path}?from=#{getOpts.from}&to=#{getOpts.to}`)
         .reply(200, {
-          "carrierId": carrierId,
-          "userCount": 5,
-          "indexRange": {
-            "from": getOpts.from,
-            "to": getOpts.to,
-            "pageNumberIndex": 0
+          carrierId,
+          userCount: 5,
+          indexRange: {
+            from: getOpts.from,
+            to: getOpts.to,
+            pageNumberIndex: 0,
           },
-          "whitelist": [
-            "+85291111111",
-            "+85291111112",
-            "+85291111113",
-            "+85291111114",
-            "+85291111115"]
+          whitelist: [
+            '+85291111111',
+            '+85291111112',
+            '+85291111113',
+            '+85291111114',
+            '+85291111115',
+          ],
         });
 
-        let spy = sinon.spy(request, 'get');
+      const spy = sinon.spy(request, 'get');
 
-        // NB: no need to check querystring for nock won't reply
-        // with the corresponding payload if querystring not match
-        return wl.get(carrierId, getOpts, function(err, result) {
-          expect( spy.firstCall.args[0] )
-            .to.match(new RegExp(requestPath));
+      // NB: no need to check querystring for nock won't reply
+      // with the corresponding payload if querystring not match
+      return wl.get(carrierId, getOpts, function (err, result) {
+        expect(spy.firstCall.args[0])
+          .to.match(new RegExp(requestPath));
 
-          // to make sure not mistakenly getting another payload
-          expect( result.userCount ).to.eql(5);
-          let found = result.whitelist;
-          expect(found).to.be.not.empty;
-          expect(found).to.have.length.of(5);
+        // to make sure not mistakenly getting another payload
+        expect(result.userCount).to.eql(5);
+        const found = result.whitelist;
+        // eslint-disable-next-line no-unused-expressions
+        expect(found).to.be.not.empty;
+        expect(found).to.have.length.of(5);
 
-          spy.reset();
-        });
+        spy.reset();
+      });
     });
   });
 });
+
+/* eslint-enable prefer-arrow-callback, func-names */

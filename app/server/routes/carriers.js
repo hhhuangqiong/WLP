@@ -15,6 +15,7 @@ import {
 import { ValidationError, data as dataError } from 'common-errors';
 
 const endUserRequest = fetchDep(nconf.get('containerName'), 'EndUserRequest');
+const whitelistRequest = fetchDep(nconf.get('containerName'), 'WhitelistRequest');
 const walletRequest = fetchDep(nconf.get('containerName'), 'WalletRequest');
 const callsRequest = fetchDep(nconf.get('containerName'), 'CallsRequest');
 const topUpRequest = fetchDep(nconf.get('containerName'), 'TopUpRequest');
@@ -75,6 +76,42 @@ function prepareWildcard(search) {
  */
 function prepareValidationMessage(validationErrors) {
   return validationErrors.map(issue => `${issue.msg}: ${issue.param}`).join(', ');
+}
+
+function getWhitelist(req, res) {
+  req.checkParams('carrierId').notEmpty();
+  req.checkQuery('from').notEmpty();
+  req.checkQuery('to').notEmpty();
+
+  const { carrierId, username } = req.params;
+  const { from, to } = req.query;
+  const queries = {
+    from,
+    to,
+  };
+
+  Q.ninvoke(whitelistRequest, 'get', carrierId, {
+      username,
+      from,
+      to
+    })
+    .then(result => {
+      res.json({
+        success: true,
+        ...result,
+      });
+    })
+    .catch(err => {
+      res.apiError(err.status || 500, err);
+    });
+}
+
+function addWhitelist(req, res) {
+  // TODO: implementation with whitelistRequest.add
+}
+
+function removeWhitelist(req, res) {
+  // TODO: implementation with whitelistRequest.remove
 }
 
 // '/carriers/:carrierId/users'
@@ -1843,6 +1880,9 @@ function getIMSummaryStats(req, res) {
 }
 
 export {
+  getWhitelist,
+  addWhitelist,
+  removeWhitelist,
   getCalls,
   getCallUserStatsMonthly,
   getCallUserStatsTotal,

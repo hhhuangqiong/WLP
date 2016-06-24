@@ -3,6 +3,10 @@
    width: 1.375rem;
    fill: #ffffff;
    vertical-align: middle;
+
+  &.flipped {
+    transform: rotate(-180deg);
+  }
 }
 
 .icon-android{

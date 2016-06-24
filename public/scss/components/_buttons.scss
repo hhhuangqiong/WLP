@@ -21,6 +21,31 @@
     }
 }
 
+.button--no-background {
+  background: none !important;
+  border: 1px solid $brand-primary;
+  color: $brand-primary;
+
+  &:hover,
+  &:focus {
+    color: $brand-primary;
+  }
+
+  &.disabled {
+    opacity: 0.5;
+    color: $brand-primary;
+
+    &:hover,
+    &:focus {
+      color: $brand-primary;
+    }
+  }
+}
+
+.button--extended {
+  padding: 0.375rem 2.5rem 0.4375rem;
+}
+
 $button-circle-diameter: 35;
 
 &.button--circle {
