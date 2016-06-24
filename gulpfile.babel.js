@@ -21,7 +21,7 @@ import * as fs from 'fs';
 import * as path from 'path';
 import { sync as globSync } from 'glob';
 import onesky from 'onesky-utils';
-import m800Locale from 'm800-user-locale';
+import injectM800LocaleGulpTasks from 'm800-user-locale/gulpTasks';
 import { ONE_SKY as oneSkyConfig } from './app/config/credentials';
 import { LOCALES as supportedLangs } from './app/config';
 
@@ -162,7 +162,7 @@ gulp.task('webpack', (cb) => {
   return;
 });
 
-gulp.task('webpack-dev-server', ['scss', 'webpack', 'intl'], (callback) => {
+gulp.task('webpack-dev-server', ['scss', 'webpack'], (callback) => {
   const hotLoadPort = webpackConfig.custom.hotLoadPort;
   const devServer = new WebpackDevServer(webpack(webpackConfig), {
     contentBase: webpackConfig.output.path,
@@ -201,7 +201,7 @@ gulp.task('browser-sync', () => {
   });
 });
 
-m800Locale.injectGulpTasks(gulp, {
+injectM800LocaleGulpTasks(gulp, {
   messages: [INTL_MESSAGES_PATTERN],
   source: dest.intl,
   languages: supportedLangs,
