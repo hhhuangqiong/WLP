@@ -4,6 +4,9 @@ import { FormattedMessage } from 'react-intl';
 
 const overviewMessage = <FormattedMessage id="overview" defaultMessage="Overview" />;
 const detailsMessage = <FormattedMessage id="detailsReport" defaultMessage="Details Report" />;
+const userActivationMessage = (
+  <FormattedMessage id="userActivation" defaultMessage="User Activation" />
+);
 
 function renderOverview(tab, to) {
   if (tab === 'overview') {
@@ -29,6 +32,20 @@ function renderDetails(tab, to) {
   );
 }
 
+function renderUserActivation(tab, to) {
+  if (tab === 'whitelist') {
+    return (
+      <a id="whitelist-link" className="active">{userActivationMessage}</a>
+    );
+  }
+
+  return (
+    <Link id="whitelist-link" to={to} activeClassName="active">
+      {userActivationMessage}
+    </Link>
+  );
+}
+
 export default function FilterBarNavigation({ section, tab }, { params }) {
   if (!section) {
     return null;
@@ -44,6 +61,13 @@ export default function FilterBarNavigation({ section, tab }, { params }) {
       <li className="top-bar--inner tab--inverted__title">
         {renderDetails(tab, `/${role}/${identity}/${section}/details`)}
       </li>
+      {
+        section === 'end-user' ? (
+          <li className="top-bar--inner tab--inverted__title">
+            {renderUserActivation(tab, `/${role}/${identity}/${section}/whitelist`)}
+          </li>
+        ) : null
+      }
     </ul>
   );
 }

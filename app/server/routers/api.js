@@ -25,6 +25,9 @@ router
   .get('/carriers/:carrierId/overview/detailStats', carriers.getOverviewDetailStats)
   .get('/carriers/:carrierId/authority', authority.getCapabilityList)
   .get('/carriers/:carrierId/users', carriers.getUsers)
+  .get('/carriers/:carrierId/users/whitelist/:username?', carriers.getWhitelist)
+  .post('/carriers/:carrierId/users/whitelist', carriers.addWhitelist)
+  .delete('/carriers:/:carrierId/users/whitelist', carriers.removeWhitelist)
   // TODO: change userStatsTotal and userStatsMonthly
   .get('/carriers/:carrierId/userStatsTotal', carriers.getEndUsersStatsTotal)
   .get('/carriers/:carrierId/userStatsMonthly', carriers.getEndUsersStatsMonthly)

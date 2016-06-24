@@ -28,6 +28,8 @@ import ExportStore from './main/file-export/stores/ExportStore';
 import EndUsersOverviewStore from './modules/end-user/stores/EndUsersOverviewStore';
 import EndUsersRegistrationStatsStore from './modules/end-user/stores/EndUsersRegistrationStatsStore';
 import EndUsersGeographicStatsStore from './modules/end-user/stores/EndUsersGeographicStatsStore';
+import EndUsersWhitelistStore from './modules/end-user/stores/Whitelist';
+import EndUsersCreateWhitelistStore from './modules/end-user/stores/CreateWhitelist';
 
 import OverviewSummaryStatsStore from './modules/overview/stores/summaryStats';
 import OverviewDetailStatsStore from './modules/overview/stores/detailStats';
@@ -75,6 +77,8 @@ app.registerStore(ExportStore);
 app.registerStore(EndUsersOverviewStore);
 app.registerStore(EndUsersRegistrationStatsStore);
 app.registerStore(EndUsersGeographicStatsStore);
+app.registerStore(EndUsersWhitelistStore);
+app.registerStore(EndUsersCreateWhitelistStore);
 
 app.registerStore(OverviewSummaryStatsStore);
 app.registerStore(OverviewDetailStatsStore);

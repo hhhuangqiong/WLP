@@ -12,12 +12,16 @@
   &:not(.verification-profile) {
     tbody {
       tr {
-        &:not(.empty):nth-child(odd) {
+        &:not(.empty):not(.row--error):nth-child(odd) {
           background: #f1f1f1;
         }
 
         &.selected {
           background: scale-color($brand-primary, $lightness: 90%) !important;
+        }
+
+        &.row--error {
+          background: #fceeee;
         }
 
         &.empty {

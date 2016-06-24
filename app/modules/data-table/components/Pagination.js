@@ -2,14 +2,7 @@ import classnames from 'classnames';
 import React, { Component, PropTypes } from 'react';
 import { FormattedMessage } from 'react-intl';
 
-export default class Pagination extends Component {
-  static propTypes = {
-    hasMoreData: PropTypes.bool.isRequired,
-    colSpan: PropTypes.string.isRequired,
-    onLoadMore: PropTypes.func.isRequired,
-    isLoading: PropTypes.bool.isRequired,
-  };
-
+class Pagination extends Component {
   renderFooter() {
     if (this.props.isLoading) {
       return (
@@ -72,3 +65,12 @@ export default class Pagination extends Component {
     );
   }
 }
+
+Pagination.propTypes = {
+  hasMoreData: PropTypes.bool.isRequired,
+  colSpan: PropTypes.string.isRequired,
+  onLoadMore: PropTypes.func.isRequired,
+  isLoading: PropTypes.bool.isRequired,
+};
+
+export default Pagination;

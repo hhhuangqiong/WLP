@@ -101,4 +101,8 @@ export default defineMessages({
     id: 'vsdk.details.ivr',
     defaultMessage: 'ivr',
   },
+  control: {
+    id: 'control',
+    defaultMessage: 'Control',
+  },
 });
