@@ -9,7 +9,7 @@ module.exports = {
   API_PATH_PREFIX: '/api',
   FILE_UPLOAD_PATH_PREFIX: '/data',
   DISABLE_ISOMORPHISM: Boolean(process.env.DISABLE_ISOMORPHISM) || false,
-  LOCALES: ['en', 'zh-hant', 'zh-hans'],
+  LOCALES: ['en', 'zh-hant', 'zh-hans', 'it'],
   COOKIE: {
     // in seconds
     MAX_AGE: 60 * 30,
