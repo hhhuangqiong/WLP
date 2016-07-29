@@ -8,8 +8,7 @@ export const ERROR_401 = '/error/access-denied';
 export const ERROR_404 = '/error/not-found';
 export const ERROR_500 = '/error/internal-server-error';
 
-import { get } from 'lodash';
-import path from 'path';
+import { get, trim } from 'lodash';
 import { isURL } from 'validator';
 
 /**
@@ -21,12 +20,12 @@ import { isURL } from 'validator';
  * @return {string} generated path
  */
 export function userPath(role, identity, targetPath) {
-  const result = path
-    .normalize([role, identity, targetPath]
+  const result = [role, identity, targetPath]
     .filter(p => !!p)
-    .join('/'));
+    .map(x => trim(x, '/'))
+    .join('/');
 
-  return path.normalize(`/${result}`);
+  return `/${result}`;
 }
 
 /**
