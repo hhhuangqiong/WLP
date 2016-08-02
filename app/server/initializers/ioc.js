@@ -7,6 +7,9 @@ import ensureAuthenticated from '../middlewares/ensureAuthenticated';
 
 import CallsRequest from '../../lib/requests/dataProviders/Call';
 
+import { IamServiceClientMock } from '../../lib/requests/iam/IamServiceClient';
+import { createFetchPermissionsMiddleware } from '../../server/middlewares/authorization';
+
 /**
  * Initialize the IoC container
  * The registered factory(s) seems to be lazied loaded.
@@ -109,6 +112,13 @@ export default function init(nconf) {
 
     return new AclManager(nodeAcl, carrierQuerier);
   });
+
+  ioc.constant('IamServiceClientOptions', {
+    baseUrl: nconf.get('iamApi:baseUrl'),
+  });
+  ioc.service('IamServiceClient', IamServiceClientMock, 'IamServiceClientOptions');
+  ioc.service('FetchPermissionsMiddleware', createFetchPermissionsMiddleware, 'IamServiceClient');
+
 
   return ioc;
 }
