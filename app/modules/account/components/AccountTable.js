@@ -16,6 +16,7 @@ export default React.createClass({
 
   contextTypes: {
     router: PropTypes.object.isRequired,
+    params: PropTypes.object.isRequired,
   },
 
   getInitialState() {
@@ -26,13 +27,7 @@ export default React.createClass({
     return _.groupBy(this.props.accounts, account => account.assignedGroup);
   },
 
-  getFilteredGroups() {
-    return _.intersection(Object.keys(this.getGroups()), Object.keys(PredefinedGroups));
-  },
-
   renderSearchBar() {
-    if (!this.props.accounts.length) return null;
-
     return (
       <nav className="top-bar company-sidebar__search" data-topbar role="navigation">
         <input
@@ -48,9 +43,10 @@ export default React.createClass({
 
   renderSearchResults() {
     const searchItems = [];
+    const groups = this.getGroups();
 
-    _.forEach(this.getFilteredGroups(), group => {
-      const filteredAccounts = _.filter(this.getGroups()[group], account => {
+    _.forEach(groups, (accounts) => {
+      const filteredAccounts = _.filter(accounts, account => {
         const accountName = `${account.name.first} ${account.name.last}`;
         return _.includes(accountName.toLowerCase(), this.state.searchItem.toLowerCase());
       });
@@ -75,26 +71,26 @@ export default React.createClass({
       return this.renderSearchResults();
     }
 
-    return this.getFilteredGroups().map(group => {
-      return (
-        <ul className="account-table__list">
-          <li className="account-table__item-catagory">{group}</li>
-          {this.renderAccountItems(this.getGroups()[group])}
+    const groups = this.getGroups();
+    return _.map(groups, group =>
+      (<ul className="account-table__list">
+          <li className="account-table__item-catagory">{group[0].assignedGroup}</li>
+          {this.renderAccountItems(group)}
           <li className="divider"></li>
-        </ul>
-      );
-    });
+        </ul>)
+    );
   },
 
   renderAccountItems(accounts) {
     const { role, identity, accountId } = this.context.params;
 
     return accounts.map(account => {
-      const groupSettings = PredefinedGroups[account.assignedGroup];
+      // const groupSettings = PredefinedGroups[account.assignedGroup];
+      const groupSettings = PredefinedGroups.default;
 
       return (
         <li className={classNames('account-table__item', { active: account._id === accountId })} key={account.Id}>
-          <Link to="account-profile" params={{ accountId: account._id, role, identity }}>
+          <Link to={`/${role}/${identity}/account/${account._id}/profile`} params={{ accountId: account._id, role, identity }}>
             <div className="account-icon left">
               <CircleIcon
                 size="small"

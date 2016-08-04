@@ -16,4 +16,10 @@ export default {
     iconColor: DEFAULT_ICON_COLOR,
     icon: 'icon-marketer',
   },
+  // use a default group for all, as group are now dynamic
+  default: {
+    backgroundColor: '#E33238',
+    iconColor: DEFAULT_ICON_COLOR,
+    icon: 'icon-administrator',
+  },
 };

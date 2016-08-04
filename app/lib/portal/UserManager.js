@@ -3,6 +3,7 @@ import moment from 'moment';
 import nconf from 'nconf';
 import url from 'url';
 import request from 'superagent';
+import logger from 'winston';
 
 import {
   MongoDBError,
@@ -48,45 +49,28 @@ export default class PortalUserManager {
    * @param {PortalUserModel} user
    */
   formatUserResponse(user) {
-    const isVerified = user.tokens.find(token => token.event === CHANGE_PASSWORD_TOKEN) === undefined;
+    const token = user.tokens.find(_token =>
+        _token.event === CHANGE_PASSWORD_TOKEN
+      );
+    const isVerified = token === undefined;
 
     const formattedUser = {
       _id: user._id,
       username: user.username,
       name: user.name,
-      status: user.status,
       assignedGroup: user.assignedGroup,
       affiliatedCompany: user.affiliatedCompany,
       assignedCompanies: user.assignedCompanies,
-      parentCompany: user.parentCompany,
-      carrierDomain: user.carrierDomain,
-      carrierId: user.carrierId,
-      createBy: user.createBy,
+      parentCompany: user.affiliatedCompany.parentCompany,
+      carrierId: user.affiliatedCompany.carrierId,
       isVerified,
 
       // date formatting could be left to view layer
       createdAt: moment(user.createdAt).format('LLL'),
       updateAt: moment(user.updateAt).format('LLL'),
-      updateBy: user.updateBy,
     };
 
     return formattedUser;
-  }
-
-  /**
-   * Extract company carrier to user field for easily identification
-   *
-   * @method
-   * @param {String} carrierId
-   * @param {Array of PortalUserModel} users
-   */
-  formatUsersByCarrier(carrierId, users) {
-    return users.map(user => {
-      let carrierId = user.affiliatedCompany.carrierId;
-      user.affiliatedCompany = user.affiliatedCompany._id;
-      user.carrierId = carrierId;
-      return user;
-    });
   }
 
   /**
@@ -97,11 +81,21 @@ export default class PortalUserManager {
    */
   getCompanyByCarrierId(carrierId) {
     return new Promise((resolve, reject) => {
-      if (!carrierId) return reject(new ArgumentNullError('carrierId'));
+      if (!carrierId) {
+        reject(new ArgumentNullError('carrierId'));
+        return;
+      }
 
       Company.findOne({ carrierId }, (err, company) => {
-        if (err) return reject(new MongoDBError('Encounter error when finding company by carrierId', err));
-        if (!company) return reject(new NotFoundError(`Cannot find company with carrierId: ${carrierId}`));
+        if (err) {
+          reject(new MongoDBError('Encounter error when finding company by carrierId', err));
+          return;
+        }
+
+        if (!company) {
+          reject(new NotFoundError(`Cannot find company with carrierId: ${carrierId}`));
+          return;
+        }
 
         resolve(company);
       });
@@ -113,20 +107,23 @@ export default class PortalUserManager {
    */
   getFormattedUsers() {
     return new Promise((resolve, reject) => {
-      PortalUser
-        .find({ isRoot: false })
-        .populate('createBy', 'name')
-        .populate('affiliatedCompany', 'carrierId')
-        .populate({
-          path: 'carrierDomain',
-          match: { domain: { $in: ['m800.maaii.com'] } },
-          select: 'name',
+      const query = PortalUser
+        .find({
+          isRoot: false,
         })
-        .exec((err, users) => {
-          if (err) return reject(new MongoDBError('Database error during getting users', err));
-          const formattedUsers = users.map(user => this.formatUserResponse(user));
-          resolve(formattedUsers);
-        });
+        .populate('createBy', 'name')
+        .populate('affiliatedCompany', 'carrierId');
+
+
+      query.exec((err, users) => {
+        if (err) {
+          reject(new MongoDBError('Database error during getting users', err));
+          return;
+        }
+        const formattedUsers = users.map(user => this.formatUserResponse(user));
+
+        resolve(formattedUsers);
+      });
     });
   }
 
@@ -139,10 +136,16 @@ export default class PortalUserManager {
    */
   getManagingUsers(users, companyId) {
     return new Promise((resolve, reject) => {
-      if (!companyId) return reject(new ArgumentNullError('companyId'));
+      if (!companyId) {
+        reject(new ArgumentNullError('companyId'));
+        return;
+      }
 
       Company.getManagingCompany(companyId, (err, companies) => {
-        if (err) return reject(new MongoDBError('Database error during getting managing companies', err));
+        if (err) {
+          reject(new MongoDBError('Database error during getting managing companies', err));
+          return;
+        }
 
         const carrierIds = companies.map(company => company.carrierId);
         const filteredUsers = users.filter(user => carrierIds.includes(user.carrierId));
@@ -153,21 +156,17 @@ export default class PortalUserManager {
   }
 
   /**
-   * Get all users except Root
+   * Get all users except Root for carrier
    *
    * @method
-   * @param {PortalUserModel} conditions
+   * @param {String} carrierId
    * @param {Function} cb
    */
   async getUsers(carrierId) {
-    const users = await this.getFormattedUsers();
-    const usersWithCarrierId = this.formatUsersByCarrier(carrierId, users);
-    const company = await this.getCompanyByCarrierId(carrierId);
-    const companyUsers = usersWithCarrierId.filter(user => user.carrierId === company.carrierId);
-    const managingUsers = await this.getManagingUsers(usersWithCarrierId, company._id);
+    logger.debug(`Retrieve users for carrier ${carrierId}`);
 
-    if (!_.isEmpty(managingUsers)) return managingUsers;
-
+    const users = await this.getFormattedUsers(carrierId);
+    const companyUsers = _.filter(users, { carrierId });
     return companyUsers;
   }
 
@@ -230,12 +229,19 @@ export default class PortalUserManager {
    */
   sendCreatePasswordConfirmation(email) {
     return new Promise((resolve, reject) => {
-      if (!email) return reject(new ArgumentNullError('email'));
+      if (!email) {
+        reject(new ArgumentNullError('email'));
+        return;
+      }
 
       const emailConfig = _.merge(CREATE_USER_EMAIL_CONFIG, { to: email });
 
       emailClient.send(emailConfig, CREATE_USER_TEMPLATE_DATA, { recipient: email }, (err, token) => {
-        if (err) return reject(new ConnectionError(EMAIL_SENT_ERROR, err));
+        if (err) {
+          reject(new ConnectionError(EMAIL_SENT_ERROR, err));
+          return;
+        }
+
         resolve(token);
       });
     });
@@ -250,15 +256,24 @@ export default class PortalUserManager {
    */
   addChangePasswordToken(user, token) {
     return new Promise((resolve, reject) => {
-      if (!user) return reject(new ArgumentNullError('user'));
-      if (!token) return reject(new ArgumentNullError('token'));
+      if (!user) {
+        reject(new ArgumentNullError('user'));
+        return;
+      }
+      if (!token) {
+        reject(new ArgumentNullError('token'));
+        return;
+      }
 
       // TODO: detect the token
 
       user.addToken(CHANGE_PASSWORD_TOKEN, token);
-      user.save((err, user) => {
-        if (err) return reject(err);
-        resolve(user);
+      user.save((err, _user) => {
+        if (err) {
+          reject(err);
+          return;
+        }
+        resolve(_user);
       });
     });
   }
@@ -271,14 +286,23 @@ export default class PortalUserManager {
    */
   validateDuplicatedUsername(username) {
     return new Promise((resolve, reject) => {
-      if (!username) return reject(new ArgumentNullError('username'));
+      if (!username) {
+        reject(new ArgumentNullError('username'));
+        return;
+      }
 
-      PortalUser.findOne({ username: username }).exec((err, user) => {
-        if (err) return reject(new MongoDBError(`Encounter error when finding user ${username}`, err));
-        if (user) return reject(new AlreadyInUseError(`Target user ${username} already exists`, username));
-
-        resolve();
-      });
+      PortalUser.findOne({ username })
+        .exec((err, user) => {
+          if (err) {
+            reject(new MongoDBError(`Encounter error when finding user ${username}`, err));
+            return;
+          }
+          if (user) {
+            reject(new AlreadyInUseError(`Target user ${username} already exists`, username));
+            return;
+          }
+          resolve();
+        });
     });
   }
 
@@ -291,7 +315,10 @@ export default class PortalUserManager {
   createUser(data) {
     return new Promise((resolve, reject) => {
       PortalUser.newPortalUser(data, (err, user) => {
-        if (err || !user) return reject(new MongoDBError(`Fail to create user ${data.username}`, err));
+        if (err || !user) {
+          reject(new MongoDBError(`Fail to create user ${data.username}`, err));
+          return;
+        }
         resolve(user);
       });
     });
@@ -312,7 +339,7 @@ export default class PortalUserManager {
 
     const toFind = { _id: params.userId };
     const toModify = { $set: params };
-    const options = { 'new': true };
+    const options = { new: true };
 
     let user = await PortalUser.findOneAndUpdate(toFind, toModify, options).exec();
 
@@ -333,12 +360,18 @@ export default class PortalUserManager {
     */
   saveUser(user) {
     return new Promise((resolve, reject) => {
-      if (!user) return reject(new NotFoundError('User does not exist when saving user'));
+      if (!user) {
+        reject(new NotFoundError('User does not exist when saving user'));
+        return;
+      }
 
-      user.save((err, user) => {
-          if (err) return reject(new MongoDBError('Fail to save user', err));
-          resolve(user);
-        });
+      user.save((err, _user) => {
+        if (err) {
+          reject(new MongoDBError('Fail to save user', err));
+          return;
+        }
+        resolve(_user);
+      });
     });
   }
 
@@ -353,8 +386,12 @@ export default class PortalUserManager {
     const user = { _id: params.userId };
 
     return new Promise((resolve, reject) => {
-      PortalUser.findOneAndRemove(user).exec(err => {
-          if (err) return reject(err);
+      PortalUser.findOneAndRemove(user)
+        .exec(err => {
+          if (err) {
+            reject(err);
+            return;
+          }
           resolve();
         });
     });
@@ -396,15 +433,24 @@ export default class PortalUserManager {
    */
   setPassword(user, password) {
     return new Promise((resolve, reject) => {
-      if (!user) return reject(new ArgumentNullError('user'));
-      if (!password) return reject(new ArgumentNullError('password'));
+      if (!user) {
+        reject(new ArgumentNullError('user'));
+        return;
+      }
+      if (!password) {
+        reject(new ArgumentNullError('password'));
+        return;
+      }
 
       user.removeToken(CHANGE_PASSWORD_TOKEN);
       user.set('password', password);
 
-      user.save((err, user) => {
-        if (err) return reject(new MongoDBError('Fail to save user', err));
-        resolve(user);
+      user.save((err, _user) => {
+        if (err) {
+          reject(new MongoDBError('Fail to save user', err));
+          return;
+        }
+        resolve(_user);
       });
     });
   }
@@ -418,21 +464,37 @@ export default class PortalUserManager {
    */
   getUserByTokenAndRecipient(recipient, token) {
     return new Promise((resolve, reject) => {
-      PortalUser.findOne({ 'username': recipient }).exec((err, user) => {
-        if (err) return reject(new MongoDBError('Encounter problem when finding recipient', err));
-        if (!user) return reject(new NotFoundError(`recipient:${recipient}`));
+      PortalUser.findOne({ username: recipient })
+        .exec((err, user) => {
+          if (err) {
+            reject(new MongoDBError('Encounter problem when finding recipient', err));
+            return;
+          }
+          if (!user) {
+            reject(new NotFoundError(`recipient:${recipient}`));
+            return;
+          }
 
-        const userToken = user.tokenOf(CHANGE_PASSWORD_TOKEN);
+          const userToken = user.tokenOf(CHANGE_PASSWORD_TOKEN);
 
-        if (!userToken) return reject(new NotFoundError(`token:${CHANGE_PASSWORD_TOKEN}`));
+          if (!userToken) {
+            reject(new NotFoundError(`token:${CHANGE_PASSWORD_TOKEN}`));
+            return;
+          }
 
-        const daysBefore = moment(userToken.createdAt).diff(moment(), 'days');
+          const daysBefore = moment(userToken.createdAt).diff(moment(), 'days');
 
-        if (daysBefore > 3) return reject(new RangeError('"change-password" token is expired'));
+          if (daysBefore > 3) {
+            reject(new RangeError('"change-password" token is expired'));
+            return;
+          }
 
-        if (userToken.value !== token) return reject(new NotPermittedError(`Token ${userToken.value} does not match with "change-password" token ${token} for ${recipient}`));
-        resolve(user);
-      });
+          if (userToken.value !== token) {
+            reject(new NotPermittedError(`Token ${userToken.value} does not match with "change-password" token ${token} for ${recipient}`));
+            return;
+          }
+          resolve(user);
+        });
     });
   }
 
@@ -447,13 +509,17 @@ export default class PortalUserManager {
       const targetUrl = url.resolve(emailUrl, `/tokens/${token}`);
 
       const emailCb = (err, res) => {
-        if (err) return reject(err);
+        if (err) {
+          reject(err);
+          return;
+        }
 
         try {
           const { appMeta } = res.body;
 
           if (!appMeta || !appMeta.recipient) {
-            return reject(new NotFoundError('appMeta'));
+            reject(new NotFoundError('appMeta'));
+            return;
           }
 
           resolve(appMeta.recipient);

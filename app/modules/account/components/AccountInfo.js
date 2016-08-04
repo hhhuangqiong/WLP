@@ -25,7 +25,7 @@ export default createClass({
     const assignedGroup = this.props.assignedGroup || DEFAULT_GROUP;
     const createdAt = this.props.createdAt;
     const status = this.props.isVerified ? SUCCESS_LABEL : FAIL_LABEL;
-    const groupSettings = PredefinedGroups[assignedGroup];
+    const groupSettings = PredefinedGroups.default;
 
     return (
       <div className="profile-info">

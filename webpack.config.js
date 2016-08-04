@@ -12,7 +12,7 @@ var config =  {
     'babel-polyfill',
     './app/client/index.js',
   ],
-  devtool: 'source-map',
+  devtool: 'eval-source-map',
   module: {
     loaders: [
       { test: /\.js$/,

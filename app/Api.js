@@ -1,6 +1,11 @@
 import _ from 'lodash';
-import assign from 'object-assign';
 import superagent from 'superagent';
+
+import authRouter from './server/api/auth';
+import sessionRouter from './server/api/session';
+import accountsRouter from './server/api/accounts';
+import exportRouter from './server/api/export';
+import vsfRouter from './server/api/vsf';
 
 import { API_PATH_PREFIX, EXPORT_PATH_PREFIX } from './config';
 import * as saUtil from './utils/superagent';
@@ -73,7 +78,8 @@ Api.prototype.getCompanyService = function getCompanyService(params, cb) {
 
 Api.prototype.getCarrierManagingCompanies = function getCarrierManagingCompanies(params, cb) {
   superagent
-    .get(`${this._getHost()}/api/companies/${params.carrierId}/managingCompanies`)
+    .get(`${this._getHost()}/api/accounts/managingCompanies`)
+    .query(_.pick(params,['carrierId']))
     .accept('json')
     .end(genericHandler(cb));
 };
@@ -353,13 +359,7 @@ Api.prototype.getVsfMonthlyStats = function monthlyStats(params, cb) {
     .end(genericHandler(cb));
 };
 
-import authRouter from './server/api/auth';
-import sessionRouter from './server/api/session';
-import accountsRouter from './server/api/accounts';
-import exportRouter from './server/api/export';
-import vsfRouter from './server/api/vsf';
-
-assign(
+_.assign(
   Api.prototype,
   authRouter(API_PATH_PREFIX),
   sessionRouter(API_PATH_PREFIX),

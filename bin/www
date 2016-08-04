@@ -1,7 +1,4 @@
 #!/usr/bin/env node
-require('source-map-support').install();
-require('babel-core/register')();
-require('babel-polyfill');
 
 // although from http://formatjs.io/guides/runtime-environments
 // it says that Node.js 0.12 has built-in Intl APIs,
@@ -15,7 +12,8 @@ if (!global.Intl) {
 
 const http = require('http');
 const port = process.env.PORT || 3000;
-const server = (require('../app/server').default)(port);
+// run transpiled code
+const server = (require('../dist/server').default)(port);
 const debug = require('debug')('app');
 
 // eslint-disable-next-line prefer-arrow-callback

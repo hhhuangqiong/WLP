@@ -52,7 +52,6 @@ SidebarContainer.contextTypes = {
 };
 
 SidebarContainer.propTypes = {
-  carrierId: PropTypes.string.isRequired,
   currentCompany: PropTypes.object.isRequired,
   isAuthorityReady: PropTypes.bool.isRequired,
   isOffCanvas: PropTypes.bool.isRequired,

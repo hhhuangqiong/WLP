@@ -1,14 +1,17 @@
+const debug = require('debug')('app:controllers/api');
+
 export default class AccountController {
   constructor(portalUserManager) {
     this.portalUserManager = portalUserManager;
   }
 
   getAccounts(req, res, next) {
+    debug('retrieve account via user manager');
     this
       .portalUserManager
       .getUsers(req.query.carrierId)
       .then(users => res.json({ result: users || {} }))
-      .catch(error => next(error));
+      .catch(next);
   }
 
   createAccount(req, res, next) {

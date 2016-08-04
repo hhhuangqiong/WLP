@@ -7,7 +7,12 @@ import { FluxibleMixin } from 'fluxible-addons-react';
 import ApplicationStore from '../../../main/stores/ApplicationStore';
 import AccountStore from '../stores/AccountStore';
 
-import fetchCarrierManagingCompanies from '../actions/fetchCarrierManagingCompanies';
+// Commented our as there's no longer need to fetch managing companies as of new
+// requirement, while this is blocking the view to initialize (due to legacy code).
+// Portal User will need to switch to the corresponding company to manage
+// accounts.
+//
+// import fetchCarrierManagingCompanies from '../actions/fetchCarrierManagingCompanies';
 import createAccount from '../actions/createAccount';
 import updateAccount from '../actions/updateAccount';
 import deleteAccount from '../actions/deleteAccount';
@@ -29,6 +34,8 @@ export default React.createClass({
   contextTypes: {
     executeAction: PropTypes.func.isRequired,
     router: PropTypes.object.isRequired,
+    params: PropTypes.object.isRequired,
+    location: PropTypes.object.isRequired,
   },
 
   mixins: [FluxibleMixin],
@@ -42,8 +49,13 @@ export default React.createClass({
   },
 
   componentDidMount() {
-    const params = this.context.params;
-    this.context.executeAction(fetchCarrierManagingCompanies, { carrierId: params.identity });
+    // Commented our as there's no longer need to fetch managing companies as of new
+    // requirement, while this is blocking the view to initialize (due to legacy code).
+    // Portal User will need to switch to the corresponding company to manage
+    // accounts.
+    //
+    // const params = this.context.params;
+    // this.context.executeAction(fetchCarrierManagingCompanies, { carrierId: params.identity });
   },
 
   onChange() {
@@ -64,15 +76,16 @@ export default React.createClass({
     const carrierManagingCompanies = this.getStore(AccountStore).getCarrierManagingCompanies();
     const currentCompany = this.getStore(ApplicationStore).getCurrentCompany();
 
+    let affiliatedCompany;
     if (this.isCreate() && currentCompany) {
-      var affiliatedCompany = currentCompany._id;
+      affiliatedCompany = currentCompany._id;
     }
 
     return _.merge(stateFromStores, { carrierManagingCompanies, currentCompany, affiliatedCompany });
   },
 
   isCreate() {
-    return this.context.location.pathname.indexOf(NEW_ACCOUNT_ROUTE_NAME) > -1
+    return this.context.location.pathname.indexOf(NEW_ACCOUNT_ROUTE_NAME) > -1;
   },
 
   handleFirstNameChange(e) {

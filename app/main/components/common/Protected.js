@@ -11,7 +11,7 @@ import classnames from 'classnames';
 
 const Protected = React.createClass({
   propTypes: {
-    pageTitle: PropTypes.string.isRequired,
+    pageTitle: PropTypes.string,
   },
 
   getInitialState() {

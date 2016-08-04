@@ -3,76 +3,58 @@ import babel from 'gulp-babel';
 import del from 'del';
 import gulp from 'gulp';
 import gutil from 'gulp-util';
-import istanbul from 'gulp-istanbul';
-import mocha from 'gulp-mocha';
 import nodemon from 'gulp-nodemon';
 import sass from 'gulp-sass';
 import bless from 'gulp-bless';
-import gfile from 'gulp-file';
 import sourcemaps from 'gulp-sourcemaps';
+import Cache from 'gulp-file-cache';
 import webpack from 'webpack';
 import WebpackDevServer from 'webpack-dev-server';
 import spriteSmith from 'gulp.spritesmith';
 import merge from 'merge-stream';
-import Q from 'q';
 import { argv } from 'yargs';
 import browserSync from 'browser-sync';
-import * as fs from 'fs';
-import * as path from 'path';
-import { sync as globSync } from 'glob';
-import onesky from 'onesky-utils';
 import injectM800LocaleGulpTasks from 'm800-user-locale/gulpTasks';
 import { ONE_SKY as oneSkyConfig } from './app/config/credentials';
 import { LOCALES as supportedLangs } from './app/config';
 
-const defaultTasks = ['nodemon', 'watch', 'scss', 'webpack'];
+const gulpSequence = require('gulp-sequence').use(gulp);
+const defaultTasks = ['copy', ['nodemon', 'watch', 'scss', 'webpack']];
 const webpackConfig = require('./webpack.config');
 
-const DEFAULT_LANGUAGE_FILE_NAME = 'default.json';
 const INTL_MESSAGES_PATTERN = './build/intl/**/*.json';
 
 if (webpackConfig.custom.hotLoadPort) {
   defaultTasks.push('webpack-dev-server');
 }
 
+const babelCache = new Cache();
+
 const src = {
-  allJS: 'app/**/*.js',
+  allJs: 'app/**/*.js',
+  all: 'app/**/*.json',
   scss: 'public/scss/main.scss',
 };
 
 const dest = {
   build: './build',
-  app: './node_modules/app',
+  app: './dist',
   css: 'public/stylesheets',
   image: 'public/images',
   intl: 'public/locale-data',
   babel: './build/babel',
 };
 
-gulp.task('test', (cb) => {
-  require('babel-polyfill');
+function _continueOnError(fn) {
+  const _fn = fn();
+  _fn.on('error', (e) => {
+    gutil.log(e);
+    _fn.end();
+  });
+  return _fn;
+}
 
-  gulp.src([`${dest.app}/**/*.js`])
-    .pipe(istanbul())
-    .pipe(istanbul.hookRequire())
-    .on('finish', () => gulp.src(
-      [
-        'test/unit/**/*.js',
-        'test/scss/**/*.js',
-        'test/component/**/*.js',
-      ]
-    )
-      .pipe(mocha())
-      .pipe(istanbul.writeReports({
-        dir: `${dest.build}/coverage`,
-      }))
-      .on('end', cb)
-    );
-});
-
-gulp.task('default', defaultTasks, () => {
-  gutil.log('[default] done \uD83D\uDE80');
-});
+gulp.task('default', gulpSequence(...defaultTasks));
 
 gulp.task('sprite', () => {
   const spriteData = gulp.src(`${dest.image}/flag_256/*png`)
@@ -113,32 +95,32 @@ gulp.task('scss:production', () =>
 );
 
 gulp.task('scss', () =>
-  gulp.src(src.scss).pipe(sourcemaps.init()).pipe(sass({
-    onError(e) {
-      return gutil.log(e);
-    },
-  }))
-  .pipe(autoprefixer(autoprefixerOpts))
-  .pipe(sourcemaps.write('.'))
-  .pipe(gulp.dest(dest.css))
-  .pipe(((browserSync !== null) && browserSync.active ? browserSync.reload({
-    stream: true,
-  }) : gutil.noop()))
+  gulp.src(src.scss)
+    .pipe(sourcemaps.init())
+    .pipe(sass({
+      onError(e) {
+        return gutil.log(e);
+      },
+    }))
+    .pipe(autoprefixer(autoprefixerOpts))
+    .pipe(sourcemaps.write('.'))
+    .pipe(gulp.dest(dest.css))
+    .pipe(((browserSync !== null) && browserSync.active ? browserSync.reload({
+      stream: true,
+    }) : gutil.noop()))
 );
 
-function _continueOnError(fn) {
-  const _fn = fn();
-  _fn.on('error', (e) => {
-    gutil.log(e);
-    _fn.end();
-  });
-  return _fn;
-}
+gulp.task('copy', () =>
+  gulp.src(src.all)
+    .pipe(gulp.dest(dest.app))
+);
 
 gulp.task('babel', () => {
   const b = /^watch/.test(argv._[0]) ? _continueOnError(babel) : babel();
-  return gulp.src(src.allJS)
+  return gulp.src(src.allJs)
+    .pipe(babelCache.filter())
     .pipe(b)
+    .pipe(babelCache.cache())
     .pipe(sourcemaps.init())
     .pipe(sourcemaps.write('.'))
     .pipe(gulp.dest(dest.app));
@@ -184,9 +166,11 @@ gulp.task('webpack-dev-server', ['scss', 'webpack'], (callback) => {
   });
 });
 
-gulp.task('nodemon', () =>
+gulp.task('nodemon', ['babel'], () =>
   nodemon({
     script: 'bin/www',
+    watch: 'app/',
+    tasks: ['babel'],
     nodeArgs: [argv.debug ? '--debug' : ''],
   }).on('restart', () => {
     gutil.log('nodemon restarted! \uD83D\uDE80');
