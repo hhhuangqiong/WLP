@@ -3,6 +3,7 @@ import { FluxibleMixin } from 'fluxible-addons-react';
 import fetchCompanies from '../actions/fetchCompanies';
 import CompanyList from './CompanyList';
 import CompanyStore from '../stores/CompanyStore';
+import Icon from '../../../main/components/Icon';
 
 const Companies = React.createClass({
   propTypes: {
@@ -22,11 +23,14 @@ const Companies = React.createClass({
 
   getInitialState() {
     return this.getStateFromStores();
-},
+  },
 
   componentDidMount() {
     const { executeAction, params } = this.context;
-    executeAction(fetchCompanies, { carrierId: params.identity });
+
+    executeAction(fetchCompanies,
+      { carrierId: params.identity, searchCompany: '' }
+    );
   },
 
   onChange() {
@@ -38,18 +42,31 @@ const Companies = React.createClass({
       companies: this.getStore(CompanyStore).getCompanies(),
     };
   },
+  _handleSearchChange(e) {
+    if (e.keyCode === 13) {
+      const { executeAction, params } = this.context;
+      executeAction(
+      fetchCompanies,
+      { carrierId: params.identity, searchCompany: e.target.value.trim() }
+    );
+    }
+  },
 
   render() {
     return (
-      <div className="row" data-equalizer>
-        <div className="large-6 columns" data-equalizer-watch>
-          <CompanyList companies={this.state.companies} />
+      <div className="company" data-equalizer>
+        <nav className="top-bar company-sidebar__search" data-topbar role="navigation">
+          <div>
+          <input
+            className="round"
+            type="text"
+            placeholder="search company"
+            onKeyDown={this._handleSearchChange}
+          />
+          <Icon symbol="icon-search" />
         </div>
-        <div className="large-18 columns" data-equalizer-watch>
-          <div className="row">
-            {this.props.children}
-          </div>
-        </div>
+        </nav>
+        <CompanyList companies={this.state.companies} />
       </div>
     );
   },

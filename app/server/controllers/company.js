@@ -8,6 +8,7 @@ import nconf from 'nconf';
 
 import config from '../../config';
 import { ApplicationRequest } from '../../lib/requests/Application';
+import { ACTIVE, INPROGRESS, SUSPENDED, UNKNOWN } from '../../modules/company/constants/status';
 
 const Company = require('../../collections/company');
 const PortalUser = require('../../collections/portalUser');
@@ -237,27 +238,68 @@ export default class CompanyController {
    */
   getCompanies(req, res) {
     const criteria = this.getCriteria(req.params);
+    let companies = {
+      companies: [
+        {
+          companyName: 'Etam LTd.',
+          domain: 'etam.maaii.com',
+          createDate: '23/06/2016',
+          status: ACTIVE,
+        },
+        {
+          companyName: 'Gucci',
+          domain: 'etam.maaii.com',
+          createDate: '23/06/2015',
+          status: ACTIVE,
+        },
+        {
+          companyName: 'Etam LTd.',
+          domain: 'etam.maaii.com',
+          createDate: '23/06/2016',
+          status: INPROGRESS,
+        },
+        {
+          companyName: 'Gucci',
+          domain: 'etam.maaii.com',
+          createDate: '23/06/2015',
+          status: SUSPENDED,
+        },
+        {
+          companyName: 'Array',
+          domain: 'etam.maaii.com',
+          createDate: '23/06/2015',
+          status: UNKNOWN,
+        }],
+    };
+    const searchCompany = req.query.searchCompany;
+    const resultCompany = companies.companies.filter((item) => (
+      item.companyName.indexOf(searchCompany) !== -1
+    ));
+    companies = {
+      companies: resultCompany,
+    };
+    res.status(200).json(companies);
 
-    Q
-      .ninvoke(Company, 'find', criteria)
-      .then(companies => {
-        const _companies = _(companies).reduce((prev, current) => {
-          prev[current.carrierId] = current.toObject();
-          return prev;
-        }, {});
+    // Q
+    //   .ninvoke(Company, 'find', criteria)
+    //   .then(companies => {
+    //     const _companies = _(companies).reduce((prev, current) => {
+    //       prev[current.carrierId] = current.toObject();
+    //       return prev;
+    //     }, {});
 
-        return _companies;
-      })
-      .then(companies => res.status(200).json({
-        companies,
-      }))
-      .catch(err => {
-        logger.error(err);
-        res.status(err.status).json({
-          error: err,
-        });
-      })
-      .done();
+    //     return _companies;
+    //   })
+    //   .then(companies => res.status(200).json({
+    //     companies,
+    //   }))
+    //   .catch(err => {
+    //     logger.error(err);
+    //     res.status(err.status).json({
+    //       error: err,
+    //     });
+    //   })
+    //   .done();
   }
 
   /**

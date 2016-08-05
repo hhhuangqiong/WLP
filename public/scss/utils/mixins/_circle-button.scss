@@ -1,0 +1,10 @@
+@mixin circle-button($color: black, $size: 10) {
+  width: rem-calc($size);
+  height: rem-calc($size);
+  border: 1px solid $color;
+  display: inline-block;
+  cursor: pointer;
+  border-radius: 50%;
+  vertical-align: middle;
+  margin-right: rem-calc($size);
+}

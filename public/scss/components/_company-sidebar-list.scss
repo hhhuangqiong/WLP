@@ -12,6 +12,18 @@
                 display: flex;
                 align-items: center;
             }
+            .active {
+                color: greenyellow;
+            }
+            .in-progress {
+                color: blue;
+            }
+            .suspended {
+                color: red;
+            }
+            .unknown {
+                color: grey;
+            }
             &__logo {
                 width: rem-calc(70);
                 img {

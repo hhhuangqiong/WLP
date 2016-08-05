@@ -7,6 +7,7 @@ import App from './main/components/common/App';
 import Protected from './main/components/common/Protected';
 
 import Companies from './modules/company/components/Companies';
+//import Company from './modules/company/components/Company';
 import { NewProfile, EditProfile } from './modules/company/components/Profile';
 import Service from './modules/company/components/Service';
 

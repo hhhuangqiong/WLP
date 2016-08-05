@@ -1,0 +1,21 @@
+.circle-button {
+  &.red {
+    background: red;
+    @include circle-button(red);
+  }
+
+  &.green {
+    background: greenyellow;
+    @include circle-button(greenyellow);
+  }
+
+  &.blue {
+    background: blue;
+    @include circle-button(blue);
+  }
+
+  &.grey {
+    background: grey;
+    @include circle-button(grey);
+  }
+}

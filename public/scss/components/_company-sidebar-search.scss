@@ -1,16 +1,25 @@
 .company-sidebar {
   &__search {
-    background: $gray-dark;
+    background: $gray-table;
     padding: 0 $fieldset-padding;
     height: $company-sidebar-height;
-
-    > input {
+    > div {
+      position: relative;
+      float: right;
+    }  
+    input {
       @include inputBoxReset;
       @include inputBoxWithIcon;
-
+    
+      ~ .icon {
+        left: 1.00rem;
+      }
       &.round {
         border-radius: $company-sidebar-height;
       }
     }
   }
+}
+table tr.even, table tr.alt, table tr:nth-of-type(even) {
+    background: $gray-table;
 }

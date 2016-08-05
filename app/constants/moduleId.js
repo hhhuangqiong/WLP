@@ -10,4 +10,8 @@ export default {
   TOP_UP: 'top-up',
   VERIFICATION_SDK: 'verification-sdk',
   ACCESS_MANAGEMENT: 'access-management',
+  ACTIVE: 'Active',
+  INPROGRESS: 'In Progress',
+  SUSPENDED: 'Suspended',
+  NONE: 'None',
 };
