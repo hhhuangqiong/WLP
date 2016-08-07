@@ -5,7 +5,7 @@ const ApplicationStore = createStore({
 
   handlers: {
     FETCH_MANGAING_COMPANIES_SUCCESS: 'loadedCompanies',
-    SIGN_OUT_SUCCESS: 'resetCompanies',
+    SIGN_OUT: 'resetCompanies',
     FETCH_COMPANY_INFO_SUCCESS: 'loadedCurrentCompany',
     FETCH_APP_IDS_SUCCESS: 'handleAppIdsFetched',
     LANGUAGE_CHANGED: 'handleLanguageChanged',

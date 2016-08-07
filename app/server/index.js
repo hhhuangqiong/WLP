@@ -14,6 +14,7 @@ import config from '../config';
 import render from './render';
 import apiResponse from './utils/apiResponse';
 import { apiErrorHandler } from './middlewares/errorHandler';
+import authRouter from './routers/auth';
 
 const PROJ_ROOT = path.join(__dirname, '../..');
 
@@ -100,6 +101,7 @@ export default function (port) {
   server.use(apiResponse({ logger }));
 
   // as API server
+  server.use(authRouter);
   server.use(require('./routers/hlr').default);
   server.use(config.EXPORT_PATH_PREFIX, require('./routers/export').default);
   server.use(config.FILE_UPLOAD_PATH_PREFIX, require('./routers/data').default);

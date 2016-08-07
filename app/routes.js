@@ -1,12 +1,8 @@
 import React from 'react';
-import { Route, IndexRedirect, IndexRoute } from 'react-router';
+import { Route, IndexRedirect } from 'react-router';
 import modules from './constants/moduleId';
 
 import App from './main/components/common/App';
-import Public from './main/components/common/Public';
-import SignIn from './modules/sign-in/container';
-import ForgotPassword from './modules/account/components/ForgotPassword';
-import CreatePassword from './modules/account/components/CreatePassword';
 
 import Protected from './main/components/common/Protected';
 
@@ -57,61 +53,53 @@ import { userPath } from './utils/paths';
 const debug = require('debug')('app:routes');
 
 export default (context) => {
-  function requireAuth(nextState, replace, cb) {
+  function checkAuth(nextState, replace, cb) {
     const isAuthenticated = context.getStore(AuthStore).isAuthenticated();
 
     if (!isAuthenticated) {
       debug('user is not authenticated, redirecting to /sign-in');
       replace('/sign-in');
+      cb();
+      return;
     }
 
+    let role;
+    let carrierId;
+
+    // get the capability of the user
     const capability = context.getStore(AuthorityStore).getCapability();
-    const { role, identity: carrierId } = nextState.params;
+    // get the authority checker
     const { authorityChecker } = context.getActionContext();
-    authorityChecker.reset(carrierId, capability);
-    if (!authorityChecker.canAccessPath(nextState.location.pathname)) {
-      const defaultPath = authorityChecker.getDefaultPath();
-      replace(userPath(role, carrierId, defaultPath));
-    }
-
-    cb();
-  }
-
-  function alreadyAuth(nextState, replace, cb) {
-    const isAuthenticated = context.getStore(AuthStore).isAuthenticated();
-
-    if (isAuthenticated) {
-      try {
-        const role = context.getStore(AuthStore).getUserRole();
-        const carrierId = context.getStore(AuthStore).getCarrierId();
-        const capability = context.getStore(AuthorityStore).getCapability();
-        const { authorityChecker } = context.getActionContext();
-        authorityChecker.reset(carrierId, capability);
-        const defaultPath = authorityChecker.getDefaultPath();
-        const path = userPath(role, carrierId, defaultPath);
-        debug('user is already authenticated, redirecting to landing page %s', path);
-        replace(path);
-      } catch (err) {
-        debug('error occurred when getting landing path', err);
-        debug(`redirecting to ${path500}`);
-        replace(path500);
+    // since it is in the root domain, it expects to get user role and carrier from the user info
+    if (nextState.location.pathname === '/') {
+      role = context.getStore(AuthStore).getUserRole();
+      carrierId = context.getStore(AuthStore).getCarrierId();
+      authorityChecker.reset(carrierId, capability);
+    } else {
+      // get the information from the params and check for the accessibility
+      role = nextState.params.role;
+      carrierId = nextState.params.identity;
+      authorityChecker.reset(carrierId, capability);
+      // user can access the path, no redirection needed
+      if (authorityChecker.canAccessPath(nextState.location.pathname)) {
+        debug('user is authorised to enter the page');
+        cb();
+        return;
       }
     }
-
+    // when user hasn't define the page or enter the website at the first time,
+    // it will get the default path and redirect to it
+    const defaultPath = authorityChecker.getDefaultPath();
+    const path = userPath(role, carrierId, defaultPath);
+    debug(`user is already authenticated and redirect to ${defaultPath}`);
+    replace(path);
     cb();
   }
 
   return (
-    <Route path="/" component={App}>
-      <IndexRedirect from="/" to="sign-in" />
+    <Route path="/" component={App} onEnter={checkAuth}>
 
-      <Route component={Public}>
-        <Route path="sign-in" component={SignIn} onEnter={alreadyAuth} />
-        <Route path="forgot-password" component={ForgotPassword} />
-        <Route path="verify/sign-up" component={CreatePassword} />
-      </Route>
-
-      <Route component={Protected} onEnter={requireAuth} >
+      <Route component={Protected} >
         <Route path={`:role/:identity/${modules.OVERVIEW}`} component={Overview} />
 
         <Route path={`:role/:identity/${modules.COMPANY}`} component={Companies}>
