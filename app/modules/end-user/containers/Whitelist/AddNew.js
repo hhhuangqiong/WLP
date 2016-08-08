@@ -15,6 +15,7 @@ import {
   changeNewWhitelistPage,
   changeNewWhitelistPageRec,
   updateWhitelistUser,
+  deleteWhitelistUser,
   clearNewWhitelist,
   startImportFile,
   completeImportFile,
@@ -42,6 +43,7 @@ class CreateWhiteListContainer extends Component {
       'updateUserAtIndex',
       'handleUploadButtonClick',
       'handleUploadFileChange',
+      'deleteWhitelistUser',
       'validateUsername',
       'propmptUnsavedChangeOnTransit',
       'propmptUnsavedChangeOnClose',
@@ -174,6 +176,10 @@ class CreateWhiteListContainer extends Component {
       index,
       user,
     });
+  }
+
+  deleteWhitelistUser(index) {
+    this.context.executeAction(deleteWhitelistUser, index);
   }
 
   /**
@@ -465,6 +471,7 @@ class CreateWhiteListContainer extends Component {
                             error={user.error}
                             handleTextValidation={this.validateUsername}
                             handleTextUpdate={this.updateUserAtIndex}
+                            handleTextDelete={this.deleteWhitelistUser}
                           />
                         </td>
                       </tr>

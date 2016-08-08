@@ -264,5 +264,26 @@
       flex: 1;
       align-items: center;
     }
+
+    &__control {
+      margin: 0 2em;
+
+      > span {
+        padding: 0 0.3em;
+      }
+    }
+
+    &__icon {
+      cursor: pointer;
+      fill: gray;
+      fill-opacity: 0.5;
+
+      width: 1.2em;
+      height: 1.2em;
+
+      &:hover {
+        fill-opacity: 1;
+      }
+    }
   }
 }

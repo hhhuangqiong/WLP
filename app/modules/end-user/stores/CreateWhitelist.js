@@ -1,4 +1,4 @@
-import { get, isArray, isNumber, has, filter } from 'lodash';
+import { get, isArray, has, filter } from 'lodash';
 const createStore = require('fluxible/addons/createStore');
 
 import {
@@ -10,6 +10,7 @@ import {
   COMPLETE_IMPORT_FILE,
   START_IMPORT_FILE,
   UPDATE_WHITELIST_USER,
+  DELETE_WHITELIST_USER,
 } from '../constants/actionTypes';
 
 const createWhiteListStore = createStore({
@@ -18,6 +19,7 @@ const createWhiteListStore = createStore({
   handlers: {
     [ADD_WHITELIST_USER]: 'handleAddWhitelistUser',
     [UPDATE_WHITELIST_USER]: 'handleUpdateWhitelistUser',
+    [DELETE_WHITELIST_USER]: 'handleDeleteWhitelistUser',
     [CHANGE_FILTER]: 'handleChangeFilter',
     [CHANGE_NEW_WHITELIST_PAGE]: 'handleChangePage',
     [CHANGE_NEW_WHITELIST_PAGE_REC]: 'handleChangePageRec',
@@ -37,10 +39,21 @@ const createWhiteListStore = createStore({
   },
 
   handleUpdateWhitelistUser({ index, user }) {
-    if (isNumber(index) && this.isValidUser(user)) {
+    if (Number.isFinite(index) && this.isValidUser(user)) {
       this.users[index] = user;
       this.emitChange();
     }
+  },
+
+  handleDeleteWhitelistUser(index) {
+    const isValid = Number.isFinite(index);
+
+    if (!isValid) {
+      return;
+    }
+
+    this.users = this.users.filter((user, userIndex) => userIndex !== index);
+    this.emitChange();
   },
 
   handleChangeFilter(filterValue) {

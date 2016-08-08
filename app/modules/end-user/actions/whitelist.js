@@ -13,6 +13,7 @@ import {
   FETCH_WHITELIST_FAILURE,
   START_IMPORT_FILE,
   UPDATE_WHITELIST_USER,
+  DELETE_WHITELIST_USER,
 } from '../constants/actionTypes';
 
 export function fetchWhitelist(context, payload, done) {
@@ -61,6 +62,10 @@ export function addWhitelistUser(context) {
 
 export function updateWhitelistUser(context, payload) {
   context.dispatch(UPDATE_WHITELIST_USER, payload);
+}
+
+export function deleteWhitelistUser(context, payload) {
+  context.dispatch(DELETE_WHITELIST_USER, payload);
 }
 
 export function startImportFile(context, filename) {

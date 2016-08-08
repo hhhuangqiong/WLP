@@ -1,6 +1,15 @@
-import { isEmpty } from 'lodash';
+import { isEmpty, bindAll } from 'lodash';
 import cx from 'classnames';
 import React, { Component, PropTypes } from 'react';
+import { injectIntl, intlShape, FormattedMessage, defineMessages } from 'react-intl';
+import Icon from '../../../../main/components/Icon';
+
+const MESSAGES = defineMessages({
+  deleteText: {
+    id: 'message.deleteText',
+    defaultMessage: 'Are you sure to delete {value}?',
+  },
+});
 
 class EditableText extends Component {
   constructor(props) {
@@ -8,12 +17,18 @@ class EditableText extends Component {
 
     this.state = {
       isEditing: isEmpty(props.value) || props.error,
+      displayControl: false,
     };
 
-    this.handleStartEditing = this.handleStartEditing.bind(this);
-    this.handleExitEditing = this.handleExitEditing.bind(this);
-    this.handleKeyPress = this.handleKeyPress.bind(this);
-    this.handleTextUpdate = this.handleTextUpdate.bind(this);
+    bindAll(this, [
+      'handleStartEditing',
+      'handleExitEditing',
+      'handleKeyPress',
+      'handleTextUpdate',
+      'handleTextDelete',
+      'displayControl',
+      'removeControl',
+    ]);
   }
 
   componentDidMount() {
@@ -25,13 +40,14 @@ class EditableText extends Component {
   shouldComponentUpdate(nextProps, nextState) {
     const { index: prevIndex, value: prevValue, error: prevError } = this.props;
     const { index: currentIndex, value: currentValue, error: currentError } = nextProps;
-    const { isEditing: prevIsEditing } = this.state;
-    const { isEditing: currentIsEditing } = nextState;
+    const { isEditing: prevIsEditing, displayControl: prevDisplayControl } = this.state;
+    const { isEditing: currentIsEditing, displayControl: currentDisplayControl } = nextState;
 
     return prevIndex !== currentIndex ||
         prevValue !== currentValue ||
         prevError !== currentError ||
-        prevIsEditing !== currentIsEditing;
+        prevIsEditing !== currentIsEditing ||
+        prevDisplayControl !== currentDisplayControl;
   }
 
   handleTextUpdate() {
@@ -49,6 +65,17 @@ class EditableText extends Component {
     this.props.handleTextUpdate(index, { value, error });
   }
 
+  handleTextDelete() {
+    const { value, intl } = this.props;
+    const { formatMessage } = intl;
+
+    if (!confirm(formatMessage(MESSAGES.deleteText, { value }))) {
+      return;
+    }
+
+    this.props.handleTextDelete(this.props.index);
+  }
+
   handleKeyPress(e) {
     if (e.which === 13) {
       this.handleTextUpdate();
@@ -64,6 +91,18 @@ class EditableText extends Component {
   handleExitEditing() {
     this.setState({
       isEditing: false,
+    });
+  }
+
+  displayControl() {
+    this.setState({
+      displayControl: true,
+    });
+  }
+
+  removeControl() {
+    this.setState({
+      displayControl: false,
     });
   }
 
@@ -89,7 +128,12 @@ class EditableText extends Component {
                 <button
                   className="button--no-background button--extended radius"
                   onClick={this.handleTextUpdate}
-                >OK</button>
+                >
+                  <FormattedMessage
+                    id="ok"
+                    defaultMessage="OK"
+                  />
+                </button>
                 {
                   // TODO: add EDIT & DELETE controls
                 }
@@ -103,7 +147,21 @@ class EditableText extends Component {
               </div>
             </div>
           ) : (
-            <span>+{ value }</span>
+            <div onMouseEnter={this.displayControl} onMouseLeave={this.removeControl}>
+              <span>+{ value }</span>
+              {
+                this.state.displayControl && (
+                  <span className="editable-text__control">
+                    <span onClick={this.handleStartEditing}>
+                      <Icon className="editable-text__icon" symbol="icon-menusetting" />
+                    </span>
+                    <span onClick={this.handleTextDelete}>
+                      <Icon className="editable-text__icon" symbol="icon-delete" />
+                    </span>
+                  </span>
+                )
+              }
+            </div>
           )
         }
       </div>
@@ -112,12 +170,14 @@ class EditableText extends Component {
 }
 
 EditableText.propTypes = {
+  intl: intlShape.isRequired,
   isEditing: PropTypes.bool,
   index: PropTypes.string,
   error: PropTypes.object,
   value: PropTypes.string,
   handleTextValidation: PropTypes.func,
   handleTextUpdate: PropTypes.func,
+  handleTextDelete: PropTypes.func,
 };
 
-export default EditableText;
+export default injectIntl(EditableText);
