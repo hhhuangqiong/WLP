@@ -5,7 +5,7 @@ import { NotFoundError } from 'common-errors';
 
 import nconf from '../app/server/initializers/nconf';
 import Company from '../app/collections/company';
-import capabilityList from '../app/main/authority/data/capabilities';
+import capabilityList from '../app/modules/authority/data/capabilities';
 
 
 let nodeEnv = process.env.NODE_ENV;
