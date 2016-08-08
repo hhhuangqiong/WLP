@@ -8,7 +8,5 @@ export const router = new Router();
 router.get(SIGN_IN, auth.signIn);
 router.get(SIGN_OUT, auth.signOut);
 router.get('/callback', passport.authenticate('openid-connect', {
-  failureRedirect: SIGN_IN }), (req, res) => {
-    res.redirect('/');
-  });
+  failureRedirect: SIGN_IN, successReturnToOrRedirect: '/' }));
 export default router;

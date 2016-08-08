@@ -8,6 +8,7 @@ import methodOverride from 'method-override';
 import morgan from 'morgan';
 import session from 'express-session';
 import userLocale from 'm800-user-locale';
+import { ensureLoggedIn } from 'connect-ensure-login';
 
 import app from '../app';
 import config from '../config';
@@ -110,7 +111,7 @@ export default function (port) {
 
   const aclMiddlewares = require('./middlewares/aclMiddleware');
   // eslint-disable-next-line prefer-arrow-callback
-  server.use(aclMiddlewares.default, aclMiddlewares.errorHandler, function handler(req, res, next) {
+  server.use(ensureLoggedIn('/sign-in'), aclMiddlewares.default, aclMiddlewares.errorHandler, function handler(req, res, next) {
     render(app, config)(req, res, next);
   });
 
