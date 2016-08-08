@@ -4,7 +4,7 @@ import { isEmpty, find, reduce, bindAll } from 'lodash';
 
 import React, { PropTypes, Component } from 'react';
 import { Link, withRouter } from 'react-router';
-import { injectIntl, intlShape } from 'react-intl';
+import { injectIntl, intlShape, FormattedMessage } from 'react-intl';
 import { connectToStores } from 'fluxible-addons-react';
 import Papa from 'papaparse';
 import invariant from 'invariant';
@@ -247,16 +247,37 @@ class CreateWhiteListContainer extends Component {
                     <Link to={`/${role}/${identity}/end-user/whitelist`}>
                       <Icon className="flipped" symbol="icon-arrow" />
                     </Link>
-                    Create New User
+                    <FormattedMessage
+                      id="createNewUser"
+                      defaultMessage="Create New User"
+                    />
                   </h5>
                 </div>
                 <div className="large-12 columns text-right">
-                  <span className="summary">
-                    Number of error(s): { totalError }
-                  </span>
-                  <span className="summary">
-                    Number of user(s): { totalUsers }
-                  </span>
+                  {
+                    totalError > 0 && (
+                      <span className="summary">
+                        <FormattedMessage
+                          id="numberOfError"
+                          defaultMessage="Number of error(s)"
+                        />
+                      <span>: </span>
+                      { totalError }
+                      </span>
+                    )
+                  }
+                  {
+                    totalUsers > 0 && (
+                      <span className="summary">
+                        <FormattedMessage
+                          id="numberOfUser"
+                          defaultMessage="Number of users(s)"
+                        />
+                        <span>: </span>
+                        { totalUsers }
+                      </span>
+                    )
+                  }
                   <span>
                     <button
                       className={cx(
@@ -264,7 +285,12 @@ class CreateWhiteListContainer extends Component {
                         'radius',
                         { disabled: hasError || totalUsers === 0 }
                       )}
-                    >Create</button>
+                    >
+                      <FormattedMessage
+                        id="create"
+                        defaultMessage="Create"
+                      />
+                    </button>
                   </span>
                 </div>
               </div>
@@ -275,13 +301,23 @@ class CreateWhiteListContainer extends Component {
               <div className="row">
                 <div className="large-4 columns">
                   <span className="compressed-text">
-                    <span>Batch Creation</span>
+                    <span>
+                      <FormattedMessage
+                        id="batchCreation"
+                        defaultMessage="Batch Creation"
+                      />
+                    </span>
                     <span>
                       <a
                         className="resource"
                         target="_blank"
                         href="/static/whitelist-template.csv"
-                      >Download Template</a>
+                      >
+                        <FormattedMessage
+                          id="downloadTemplate"
+                          defaultMessage="Download Template"
+                        />
+                      </a>
                     </span>
                   </span>
                 </div>
@@ -292,7 +328,10 @@ class CreateWhiteListContainer extends Component {
                         className="button--no-background button--extended radius"
                         onClick={this.handleUploadButtonClick}
                       >
-                        Upload CSV
+                        <FormattedMessage
+                          id="uploadCsv"
+                          defaultMessage="Upload CSV"
+                        />
                       </button>
                       <form ref={c => { this.uploadInputForm = c; }}>
                         <input
@@ -308,7 +347,13 @@ class CreateWhiteListContainer extends Component {
                       {
                         uploadedFiles ? (
                           <span className="compressed-text">
-                            <span>Uploaded Files: { uploadedFiles.length }</span>
+                            <span>
+                              <FormattedMessage
+                                id="uploadedFiles"
+                                defaultMessage="Uploaded Files"
+                              />
+                              : { uploadedFiles.length }
+                            </span>
                             <span>
                               <a className="resource">
                                 { this.getUploadedFilename() }
@@ -329,19 +374,38 @@ class CreateWhiteListContainer extends Component {
                 <thead>
                   <tr>
                     <th className="column--username">
-                      Phone Number
+                      <FormattedMessage
+                        id="phoneNumber"
+                        defaultMessage="Phone Number"
+                      />
                     </th>
                     <th className="column--controls text-right">
                       <div className="row">
                         <div className="large-12 columns">
                           <div className="row">
                             <div className="large-6 columns">
-                              <label>Filter:</label>
+                              <label>
+                                <FormattedMessage
+                                  id="filter"
+                                  defaultMessage="Filter"
+                                />
+                                <span>:</span>
+                              </label>
                             </div>
                             <div className="large-18 columns">
                               <select value={filterValue} onChange={this.handleChangeFilter}>
-                                <option value="all">All records</option>
-                                <option value="error">Error records</option>
+                                <option value="all">
+                                  <FormattedMessage
+                                    id="allRecords"
+                                    defaultMessage="All records"
+                                  />
+                                </option>
+                                <option value="error">
+                                  <FormattedMessage
+                                    id="errorRecords"
+                                    defaultMessage="Error records"
+                                  />
+                                </option>
                               </select>
                             </div>
                           </div>
@@ -356,7 +420,12 @@ class CreateWhiteListContainer extends Component {
                                 { disabled: hasError }
                               )}
                               onClick={this.handleAddNewUserClick}
-                            >Add User</button>
+                            >
+                              <FormattedMessage
+                                id="addUser"
+                                defaultMessage="Add User"
+                              />
+                            </button>
                           </div>
                         </div>
                       </div>
@@ -371,7 +440,13 @@ class CreateWhiteListContainer extends Component {
                         <p className="text-center">
                           {
                             !isEmpty(uploadingFile) ? (
-                              <span>Processing ...</span>
+                              <span>
+                                <FormattedMessage
+                                  id="processing"
+                                  defaultMessage="Processing"
+                                />
+                                ...
+                              </span>
                             ) : null
                           }
                         </p>

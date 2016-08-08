@@ -79,12 +79,18 @@ class WhiteList extends Component {
             <thead>
             <tr>
               <th className="column--username">
-                Username
+                <FormattedMessage
+                  id="username"
+                  defaultMessage="Username"
+                />
               </th>
               <th className="column--controls">
                 <Link to={`/${role}/${identity}/end-user/whitelist/new`}>
                   <button className="right">
-                    Create New User
+                    <FormattedMessage
+                      id="createNewUser"
+                      defaultMessage="Create New User"
+                    />
                   </button>
                 </Link>
               </th>
