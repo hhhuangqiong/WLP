@@ -1,10 +1,14 @@
 import cx from 'classnames';
-import { isEmpty, find, reduce } from 'lodash';
+
+import { isEmpty, find, reduce, bindAll } from 'lodash';
+
 import React, { PropTypes, Component } from 'react';
-import { Link } from 'react-router';
+import { Link, withRouter } from 'react-router';
 import { injectIntl, intlShape } from 'react-intl';
 import { connectToStores } from 'fluxible-addons-react';
-import createWhiteListStore from '../../stores/CreateWhitelist';
+import Papa from 'papaparse';
+import invariant from 'invariant';
+
 import {
   addWhitelistUser,
   changeFilter,
@@ -15,29 +19,43 @@ import {
   startImportFile,
   completeImportFile,
 } from '../../actions/whitelist';
+
 import EditableText from '../../components/Whitelist/EditableText';
+import createWhiteListStore from '../../stores/CreateWhitelist';
 import Icon from '../../../../main/components/Icon';
 import * as FilterBar from '../../../../main/components/FilterBar';
 import FilterBarNavigation from '../../../../main/filter-bar/components/FilterBarNavigation';
 import NumericPagination from '../../../data-table/components/NumericPagination';
-import Papa from 'papaparse';
+
+const LEAVE_MESSAGE = 'Leave with unsaved change?';
 
 class CreateWhiteListContainer extends Component {
   constructor(props) {
     super(props);
 
-    this.handleAddNewUserClick = this.handleAddNewUserClick.bind(this);
-    this.handleChangeFilter = this.handleChangeFilter.bind(this);
-    this.handlePageChange = this.handlePageChange.bind(this);
-    this.handlePageRecChange = this.handlePageRecChange.bind(this);
-    this.getUploadedFilename = this.getUploadedFilename.bind(this);
-    this.updateUserAtIndex = this.updateUserAtIndex.bind(this);
-    this.handleUploadButtonClick = this.handleUploadButtonClick.bind(this);
-    this.handleUploadFileChange = this.handleUploadFileChange.bind(this);
-    this.validateUsername = this.validateUsername.bind(this);
+    bindAll(this, [
+      'handleAddNewUserClick',
+      'handleChangeFilter',
+      'handlePageChange',
+      'handlePageRecChange',
+      'getUploadedFilename',
+      'updateUserAtIndex',
+      'handleUploadButtonClick',
+      'handleUploadFileChange',
+      'validateUsername',
+      'propmptUnsavedChangeOnTransit',
+      'propmptUnsavedChangeOnClose',
+      'isDirty',
+    ]);
+  }
+
+  componentDidUpdate() {
+    window.onbeforeunload = this.propmptUnsavedChangeOnClose;
+    this.propmptUnsavedChangeOnTransit(this.isDirty());
   }
 
   componentWillUnmount() {
+    window.onbeforeunload = null;
     this.context.executeAction(clearNewWhitelist);
   }
 
@@ -56,6 +74,32 @@ class CreateWhiteListContainer extends Component {
     }, []);
 
     return filenames.join(', ');
+  }
+
+  // TODO: handle unsaved chnages from EditableText and API request
+  isDirty() {
+    return true;
+  }
+
+  propmptUnsavedChangeOnTransit(isUnsaved = false) {
+    const errorMessage = 'A higher order function withRouter should be used';
+
+    invariant(this.props.router, errorMessage);
+    invariant(this.props.route, errorMessage);
+
+    // Detecting page transition (prevent leaving by setting true)
+    this.props.router.setRouteLeaveHook(
+      this.props.route,
+      () => isUnsaved && confirm(LEAVE_MESSAGE)
+    );
+  }
+
+  propmptUnsavedChangeOnClose() {
+    if (this.isDirty()) {
+      return LEAVE_MESSAGE;
+    }
+
+    return null;
   }
 
   handlePageChange(page) {
@@ -83,7 +127,7 @@ class CreateWhiteListContainer extends Component {
       beforeFirstChunk: () => {
         this.context.executeAction(startImportFile, file.name);
       },
-      step: (results) => {
+      step: results => {
         // TODO: change results.data[0][1] to get the correct
         // column based on the actual CSV template
         // it is now getting the second column
@@ -95,6 +139,7 @@ class CreateWhiteListContainer extends Component {
         }
 
         const error = this.validateUsername(username);
+
         uploadedData.push({
           value: username,
           error,
@@ -384,6 +429,8 @@ CreateWhiteListContainer.propTypes = {
   })),
   uploadedFiles: PropTypes.array,
   uploadingFile: PropTypes.object,
+  router: PropTypes.object.isRequired,
+  route: PropTypes.object.isRequired,
 };
 
 CreateWhiteListContainer.defaultProps = {
@@ -392,7 +439,7 @@ CreateWhiteListContainer.defaultProps = {
 };
 
 export default connectToStores(
-  injectIntl(CreateWhiteListContainer),
+  withRouter(injectIntl(CreateWhiteListContainer)),
   [createWhiteListStore],
     context => context.getStore(createWhiteListStore).getState()
 );
