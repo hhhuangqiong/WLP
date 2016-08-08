@@ -277,7 +277,11 @@ class CreateWhiteListContainer extends Component {
                   <span className="compressed-text">
                     <span>Batch Creation</span>
                     <span>
-                      <a className="resource">Download Template</a>
+                      <a
+                        className="resource"
+                        target="_blank"
+                        href="/static/whitelist-template.csv"
+                      >Download Template</a>
                     </span>
                   </span>
                 </div>
@@ -288,7 +292,7 @@ class CreateWhiteListContainer extends Component {
                         className="button--no-background button--extended radius"
                         onClick={this.handleUploadButtonClick}
                       >
-                        Upload CSV file
+                        Upload CSV
                       </button>
                       <form ref={c => { this.uploadInputForm = c; }}>
                         <input
