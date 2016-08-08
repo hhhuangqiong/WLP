@@ -1,0 +1,79 @@
+$roles-table-control-color: #3B95CC;
+
+.roles-table-container {
+  padding: 0 !important;
+}
+
+.roles-table {
+  width: 100%;
+  margin-top: 0;
+  border-radius: 0;
+
+  &__header {
+    .roles-table__role-cell {
+      padding: 0.5rem;
+      text-align: center;
+      vertical-align: middle;
+    }
+    button {
+      margin: 0;
+    }
+    input[type="text"] {
+      margin: 0;
+      padding: 0;
+      height: auto;
+      font-size: 13px;
+      line-height: 1.8;
+      text-align: center;
+      background-color: transparent;
+      border-color: $roles-table-control-color;
+      border-radius: 3px;
+    }
+  }
+
+  &__control-group {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    button {
+      margin: 0;
+      padding: 0.375rem 0.75rem 0.375rem 0.75rem;
+    }
+    i {
+      margin-left: 5px;
+    }
+  }
+
+  &__role-cell {
+    width: 150px;
+    padding: 10px;
+    text-align: center;
+    vertical-align: middle;
+
+    input[type=checkbox] {
+      margin: 0;
+    }
+
+    &--hovered {
+      background-color: rgba(darken($gray-lightest, 5%), 0.5);
+    }
+    &--edited {
+      background-color: rgba(darken($gray-lightest, 10%), 0.5);
+    }
+  }
+
+  &__title-cell {
+    padding: 10px 10px 10px 40px;
+    width: 250px;
+  }
+
+  &__row-group {
+    border-bottom: 1px solid $gray-lightest;
+    tr {
+      border-bottom: 0;
+      &:first-child td {
+        font-weight: bold;
+      }
+    }
+  }
+}

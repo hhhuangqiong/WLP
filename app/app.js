@@ -37,6 +37,8 @@ import OverviewDetailStatsStore from './modules/overview/stores/detailStats';
 import SMSStore from './modules/sms/stores/SMSStore';
 import SmsSummaryStatsStore from './modules/sms/stores/summaryStats';
 import SmsMonthlyStatsStore from './modules/sms/stores/monthlyStats';
+
+import RolesStore from './modules/access-management/stores/RoleStore';
 /* eslint-enable max-len */
 
 import getRoutes from './routes';
@@ -86,5 +88,7 @@ app.registerStore(OverviewDetailStatsStore);
 app.registerStore(SMSStore);
 app.registerStore(SmsSummaryStatsStore);
 app.registerStore(SmsMonthlyStatsStore);
+
+app.registerStore(RolesStore);
 
 export default app;

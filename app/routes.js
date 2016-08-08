@@ -36,6 +36,8 @@ import SmsOverview from './modules/sms/components/Overview';
 import SMS from './modules/sms/components/SMS';
 import TopUp from './modules/top-up/components/TopUp';
 
+import RolesTablePage from './modules/access-management/components/RolesPage';
+
 import {
   Error401,
   Error404,
@@ -166,6 +168,11 @@ export default (context) => {
         <Route path={`:role/:identity/${modules.TOP_UP}`}>
           <IndexRedirect to="details" />
           <Route path="details" component={TopUp} />
+        </Route>
+
+        <Route path={`:role/:identity/${modules.ACCESS_MANAGEMENT}`}>
+          <IndexRedirect to="roles" />
+          <Route path="roles" component={RolesTablePage} />
         </Route>
       </Route>
 
