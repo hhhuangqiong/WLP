@@ -51,8 +51,13 @@ class EditableText extends Component {
   }
 
   handleTextUpdate() {
-    const { index } = this.props;
+    const { index, value: originalValue } = this.props;
     const { value } = this.textInput;
+
+    if (originalValue === value) {
+      this.handleExitEditing();
+      return;
+    }
 
     const error = this.props.handleTextValidation(value);
 
