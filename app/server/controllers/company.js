@@ -5,13 +5,14 @@ import logger from 'winston';
 import mongoose from 'mongoose';
 import Q from 'q';
 import nconf from 'nconf';
-
+import util from 'util';
 import config from '../../config';
 import { ApplicationRequest } from '../../lib/requests/Application';
 import { ACTIVE, INPROGRESS, SUSPENDED, UNKNOWN } from '../../modules/company/constants/status';
 
 const Company = require('../../collections/company');
 const PortalUser = require('../../collections/portalUser');
+const PER_PAGE = 5;
 
 export default class CompanyController {
   /**
@@ -241,31 +242,121 @@ export default class CompanyController {
     let companies = {
       companies: [
         {
-          companyName: 'Etam LTd.',
+          companyName: 'Etam LTd.1',
           domain: 'etam.maaii.com',
           createDate: '23/06/2016',
           status: ACTIVE,
         },
         {
-          companyName: 'Gucci',
+          companyName: 'Gucci2',
           domain: 'etam.maaii.com',
           createDate: '23/06/2015',
           status: ACTIVE,
         },
         {
-          companyName: 'Etam LTd.',
+          companyName: 'Etam LTd3.',
           domain: 'etam.maaii.com',
           createDate: '23/06/2016',
           status: INPROGRESS,
         },
         {
-          companyName: 'Gucci',
+          companyName: 'Gucci4',
           domain: 'etam.maaii.com',
           createDate: '23/06/2015',
           status: SUSPENDED,
         },
         {
-          companyName: 'Array',
+          companyName: 'Array5',
+          domain: 'etam.maaii.com',
+          createDate: '23/06/2015',
+          status: UNKNOWN,
+        },
+        {
+          companyName: 'Etam LTd.6',
+          domain: 'etam.maaii.com',
+          createDate: '23/06/2016',
+          status: ACTIVE,
+        },
+        {
+          companyName: 'Gucci7',
+          domain: 'etam.maaii.com',
+          createDate: '23/06/2015',
+          status: ACTIVE,
+        },
+        {
+          companyName: 'Etam LTd.8',
+          domain: 'etam.maaii.com',
+          createDate: '23/06/2016',
+          status: INPROGRESS,
+        },
+        {
+          companyName: 'Gucci9',
+          domain: 'etam.maaii.com',
+          createDate: '23/06/2015',
+          status: SUSPENDED,
+        },
+        {
+          companyName: 'Array10',
+          domain: 'etam.maaii.com',
+          createDate: '23/06/2015',
+          status: UNKNOWN,
+        },
+        {
+          companyName: 'Etam LTd.11',
+          domain: 'etam.maaii.com',
+          createDate: '23/06/2016',
+          status: ACTIVE,
+        },
+        {
+          companyName: 'Gucci12',
+          domain: 'etam.maaii.com',
+          createDate: '23/06/2015',
+          status: ACTIVE,
+        },
+        {
+          companyName: 'Etam LTd.13',
+          domain: 'etam.maaii.com',
+          createDate: '23/06/2016',
+          status: INPROGRESS,
+        },
+        {
+          companyName: 'Gucci14',
+          domain: 'etam.maaii.com',
+          createDate: '23/06/2015',
+          status: SUSPENDED,
+        },
+        {
+          companyName: 'Array15',
+          domain: 'etam.maaii.com',
+          createDate: '23/06/2015',
+          status: UNKNOWN,
+        },
+        {
+          companyName: 'Etam LTd.16',
+          domain: 'etam.maaii.com',
+          createDate: '23/06/2016',
+          status: ACTIVE,
+        },
+        {
+          companyName: 'Gucci17',
+          domain: 'etam.maaii.com',
+          createDate: '23/06/2015',
+          status: ACTIVE,
+        },
+        {
+          companyName: 'Etam LTd.18',
+          domain: 'etam.maaii.com',
+          createDate: '23/06/2016',
+          status: INPROGRESS,
+        },
+        {
+          companyName: 'Gucci19',
+          domain: 'etam.maaii.com',
+          createDate: '23/06/2015',
+          status: SUSPENDED,
+        },
+        {
+          companyName: 'Array20',
           domain: 'etam.maaii.com',
           createDate: '23/06/2015',
           status: UNKNOWN,
@@ -278,28 +369,20 @@ export default class CompanyController {
     companies = {
       companies: resultCompany,
     };
-    res.status(200).json(companies);
+    const limit = req.query.limit ? parseInt(req.query.limit, 10) : PER_PAGE;
+    const offset = req.query.offset ? parseInt(req.query.offset, 10) : 0;
 
-    // Q
-    //   .ninvoke(Company, 'find', criteria)
-    //   .then(companies => {
-    //     const _companies = _(companies).reduce((prev, current) => {
-    //       prev[current.carrierId] = current.toObject();
-    //       return prev;
-    //     }, {});
-
-    //     return _companies;
-    //   })
-    //   .then(companies => res.status(200).json({
-    //     companies,
-    //   }))
-    //   .catch(err => {
-    //     logger.error(err);
-    //     res.status(err.status).json({
-    //       error: err,
-    //     });
-    //   })
-    //   .done();
+    function getPaginatedItems(items, off) {
+      return items.slice(off, off + limit);
+    }
+    const json = {
+      pageNum: Math.ceil(companies.companies.length / limit),
+      companies: getPaginatedItems(companies.companies, offset),
+      searchCompany,
+      offset,
+      limit,
+    };
+    res.json(json);
   }
 
   /**

@@ -42,8 +42,7 @@ Api.prototype.getAuthorityList = function getAuthorityList(carrierId, cb) {
 Api.prototype.getCompanies = function getCompanies(params, cb) {
   superagent
     .get(`${this._getHost()}/api/companies/`)
-    // .query(params.searchCompany)
-    .query({ searchCompany: params.searchCompany })
+    .query({ searchCompany: params.searchCompany, limit: params.limit, offset: params.offset })
     .accept('json')
     .end(genericHandler(cb));
 };

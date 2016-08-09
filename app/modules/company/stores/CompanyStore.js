@@ -48,6 +48,22 @@ const CompanyStore = createStore({
     return this.companies;
   },
 
+  getPageNumn() {
+    return this.pageNum;
+  },
+
+  getSearchCompany() {
+    return this.searchCompany;
+  },
+
+  getOffSet() {
+    return this.offset;
+  },
+
+  getLimit() {
+    return this.limit;
+  },
+
   getNewCompany() {
     return _.clone(defaultCompanyObject, true);
   },
@@ -95,8 +111,12 @@ const CompanyStore = createStore({
     this.emitChange();
   },
 
-  receiveCompanies({ companies }) {
+  receiveCompanies({ companies, pageNum, searchCompany, offset, limit }) {
     this.companies = companies;
+    this.pageNum = pageNum;
+    this.searchCompany = searchCompany;
+    this.offset = offset;
+    this.limit = limit;
     this.emitChange();
   },
 

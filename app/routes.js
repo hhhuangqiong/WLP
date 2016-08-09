@@ -5,9 +5,7 @@ import modules from './constants/moduleId';
 import App from './main/components/common/App';
 
 import Protected from './main/components/common/Protected';
-
-import Companies from './modules/company/components/Companies';
-//import Company from './modules/company/components/Company';
+import Company from './modules/company/components/Company';
 import { NewProfile, EditProfile } from './modules/company/components/Profile';
 import Service from './modules/company/components/Service';
 
@@ -105,7 +103,7 @@ export default (context) => {
       <Route component={Protected} >
         <Route path={`:role/:identity/${modules.OVERVIEW}`} component={Overview} />
 
-        <Route path={`:role/:identity/${modules.COMPANY}`} component={Companies}>
+        <Route path={`:role/:identity/${modules.COMPANY}`} component={Company}>
           <Route path="create" component={NewProfile} />
           <Route path=":carrierId/profile" component={EditProfile} />
           <Route path=":carrierId/service" component={Service} />
