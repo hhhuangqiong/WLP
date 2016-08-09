@@ -137,7 +137,6 @@ class Authority {
                 if (!hasFeature('end-user')) return removeFeatures();
                 break;
 
-              case ACCOUNT:
               case COMPANY:
                 if (!this._isRootCompany()) return removeFeatures();
                 break;
@@ -171,7 +170,11 @@ class Authority {
                 if (!hasFeature('verification-sdk')) return removeFeatures();
                 break;
 
-              default: break;
+              // @todo Removed permission checking temporary for UI work in
+              // accounts section
+              case ACCOUNT:
+              default:
+                break;
             }
           });
 

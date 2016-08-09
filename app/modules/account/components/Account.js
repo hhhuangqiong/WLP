@@ -1,51 +1,56 @@
-import React, { PropTypes } from 'react';
+import React, { PropTypes, Component } from 'react';
 
-import { FluxibleMixin } from 'fluxible-addons-react';
+import { connectToStores } from 'fluxible-addons-react';
 
 import fetchAccounts from '../actions/fetchAccounts';
 import AccountStore from '../stores/AccountStore';
 import AccountTable from './AccountTable';
 
-export default React.createClass({
-  displayName: 'Account',
+class Account extends Component {
 
-  propTypes: {
-    children: PropTypes.element.isRequired,
-  },
+  static propTypes = {
+    accounts: PropTypes.array.isRequired,
+    children: PropTypes.element,
+  }
 
-  contextTypes: {
+  static contextTypes = {
     executeAction: PropTypes.func.isRequired,
-    router: PropTypes.object.isRequired,
-  },
+    params: PropTypes.object.isRequired,
+    context: PropTypes.object.isRequired,
+  }
 
-  mixins: [FluxibleMixin],
+  constructor() {
+    super();
+    this.fetchData = this.fetchData.bind(this);
+  }
 
-  statics: {
-    storeListeners: [AccountStore],
+  componentDidMount() {
+    this.fetchData();
+  }
 
-    fetchData: (context, params, query, done = Function.prototype) => {
-      context.executeAction(fetchAccounts, { carrierId: params.identity }, done);
-    },
-  },
+  fetchData() {
+    const { executeAction, params } = this.context;
 
-  getInitialState() {
-    return this.getStateFromStores();
-  },
-
-  onChange() {
-    this.setState(this.getStateFromStores());
-  },
-
-  getStateFromStores() {
-    return this.getStore(AccountStore).getAccounts();
-  },
+    executeAction(fetchAccounts, {
+      carrierId: params.identity,
+    });
+  }
 
   render() {
     return (
       <div className="row">
-        <AccountTable accounts={this.state.accounts} />
+        <AccountTable accounts={this.props.accounts} />
         {this.props.children}
       </div>
     );
-  },
-});
+  }
+}
+
+
+Account = connectToStores(
+  Account,
+  [AccountStore],
+  context => (context.getStore(AccountStore).getAccounts())
+);
+
+export default Account;

@@ -122,7 +122,7 @@ export default (context) => {
 
         <Route path={`:role/:identity/${modules.ACCOUNT}`} component={Account}>
           <Route path="create" component={AccountProfile} />
-          <Route path=":accountId" component={AccountProfile} />
+          <Route path=":accountId/profile" component={AccountProfile} />
         </Route>
 
         <Route path={`:role/:identity/${modules.VERIFICATION_SDK}`} component={Verification}>

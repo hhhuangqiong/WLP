@@ -72,19 +72,11 @@ const saveService = function (req, res) {
 
 // '/application/companies'
 const getApplicationCompanies = function (req, res) {
-  const { user } = res.locals.user;
-
-  if (!user) {
-    return res.status(401).json({
-      error: 'missing parameter',
-    });
-  }
-
-  Q.ninvoke(PortalUser, 'findOne', { _id: user })
+  Q.ninvoke(PortalUser, 'findOne', { _id: req.user.id })
     .then(user => {
       if (!user) {
         return res.status(401).json({
-          error: 'invalid identity',
+          error: `invalid identity ${user}`,
         });
       }
 

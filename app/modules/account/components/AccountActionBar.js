@@ -12,13 +12,19 @@ export default React.createClass({
     handleDelete: PropTypes.func.isRequired,
     isEnabled: PropTypes.bool.isRequired,
     isCreate: PropTypes.bool.isRequired,
-    deleteDialogOpened: PropTypes.bool.isRequired,
+    deleteDialogOpened: PropTypes.bool,
     handleOpenDeleteDialog: PropTypes.func.isRequired,
     handleCloseDeleteDialog: PropTypes.func.isRequired,
     accountId: PropTypes.string.isRequired,
   },
 
   mixins: [FluxibleMixin],
+
+  getDefaultProps() {
+    return {
+      deleteDialogOpened: false,
+    };
+  },
 
   render() {
     const loggedInUserId = this
@@ -47,7 +53,7 @@ export default React.createClass({
                   tabIndex="2"
                   className="account-top-bar__button-secondary button round icon-delete"
                   onClick={this.props.handleOpenDeleteDialog}
-                ></div>
+                >Delete</div>
               </If>
             </li>
           </ul>

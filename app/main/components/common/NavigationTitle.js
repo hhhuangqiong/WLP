@@ -2,7 +2,7 @@ import React, { PropTypes } from 'react';
 
 const NavigationTitle = React.createClass({
   propTypes: {
-    title: PropTypes.string.isRequired,
+    title: PropTypes.string,
   },
 
   render() {

@@ -39,7 +39,7 @@ const Sidebar = props => {
         </li>
         {
           isAuthorityReady ? navSections.map((section, idx) => (
-            <Permit action="view" resource={section.page}>
+            <Permit action="view" resource={section.page} key={idx}>
               <li key={idx}>
                 <Link
                   id={`${section.page}-section-link`}
