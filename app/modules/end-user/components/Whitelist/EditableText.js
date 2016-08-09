@@ -16,7 +16,7 @@ class EditableText extends Component {
     super(props);
 
     this.state = {
-      isEditing: isEmpty(props.value) || props.error,
+      isEditing: isEmpty(props.value),
       displayControl: false,
     };
 
@@ -106,64 +106,71 @@ class EditableText extends Component {
     });
   }
 
-  render() {
-    const { isEditing } = this.state;
+  renderField() {
+    const { isEditing, displayControl } = this.state;
     const { value, error } = this.props;
 
+    if (isEditing) {
+      return (
+        <div className="row">
+          <div className="large-12 columns">
+            <input
+              ref={c => { this.textInput = c; }}
+              className={cx({ error: !!error })}
+              type="text"
+              defaultValue={value}
+              onKeyPress={this.handleKeyPress}
+            />
+          </div>
+          <div className="large-12 columns">
+            <button
+              className="button--no-background button--extended radius"
+              onClick={this.handleTextUpdate}
+            >
+              <FormattedMessage
+                id="ok"
+                defaultMessage="OK"
+              />
+            </button>
+          </div>
+        </div>
+      );
+    }
+
     return (
-      <div className={cx('editable-text', { 'editable-text--editing': isEditing })}>
+      <div
+        onMouseEnter={this.displayControl}
+        onMouseLeave={this.removeControl}
+      >
+        <span>+{ value }</span>
         {
-          isEditing ? (
-            <div className="row">
-              <div className="large-4 columns">
-                <input
-                  ref={c => { this.textInput = c; }}
-                  className={cx({ error: !!error })}
-                  type="text"
-                  defaultValue={value}
-                  onKeyPress={this.handleKeyPress}
-                />
-              </div>
-              <div className="large-4 columns">
-                <button
-                  className="button--no-background button--extended radius"
-                  onClick={this.handleTextUpdate}
-                >
-                  <FormattedMessage
-                    id="ok"
-                    defaultMessage="OK"
-                  />
-                </button>
-                {
-                  // TODO: add EDIT & DELETE controls
-                }
-              </div>
-              <div className="large-16 columns">
-                {
-                  error ? (
-                    <span className="error-text right">{ error.message }</span>
-                  ) : null
-                }
-              </div>
-            </div>
-          ) : (
-            <div onMouseEnter={this.displayControl} onMouseLeave={this.removeControl}>
-              <span>+{ value }</span>
-              {
-                this.state.displayControl && (
-                  <span className="editable-text__control">
-                    <span onClick={this.handleStartEditing}>
-                      <Icon className="editable-text__icon" symbol="icon-menusetting" />
-                    </span>
-                    <span onClick={this.handleTextDelete}>
-                      <Icon className="editable-text__icon" symbol="icon-delete" />
-                    </span>
-                  </span>
-                )
-              }
-            </div>
+          displayControl && (
+            <span className="editable-text__control">
+              <span onClick={this.handleStartEditing}>
+                <Icon className="editable-text__icon" symbol="icon-menusetting" />
+              </span>
+              <span onClick={this.handleTextDelete}>
+                <Icon className="editable-text__icon" symbol="icon-delete" />
+              </span>
+            </span>
           )
         }
+      </div>
+    );
+  }
+
+  render() {
+    const { isEditing } = this.state;
+    const { error } = this.props;
+
+    return (
+      <div className={cx('row', 'editable-text', { 'editable-text--editing': isEditing })}>
+        <div className="large-8 columns">
+          {this.renderField()}
+        </div>
+        <div className="large-16 columns">
+          {error && <span className="error-text right">{ error.message }</span>}
+        </div>
       </div>
     );
   }

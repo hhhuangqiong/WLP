@@ -28,6 +28,18 @@ const createWhiteListStore = createStore({
     [COMPLETE_IMPORT_FILE]: 'handleCompleteUploadFile',
   },
 
+  initialize() {
+    this.isLoading = false;
+    this.isImporting = null;
+    this.page = 1;
+    this.pageRec = 10;
+    this.uploadedFiles = [];
+    this.uploadingFile = {};
+    this.users = [];
+    this.totalUsers = 0;
+    this.totalError = 0;
+  },
+
   handleAddWhitelistUser() {
     const newUser = this.createNewUser();
 
@@ -92,6 +104,7 @@ const createWhiteListStore = createStore({
       name: filename,
       results: [],
     };
+
     this.emitChange();
   },
 
@@ -102,18 +115,6 @@ const createWhiteListStore = createStore({
     this.users = results.concat(this.users);
     this.page = 1;
     this.emitChange();
-  },
-
-  initialize() {
-    this.isLoading = false;
-    this.isImporting = null;
-    this.page = 1;
-    this.pageRec = 10;
-    this.uploadedFiles = [];
-    this.uploadingFile = {};
-    this.users = [];
-    this.totalUsers = 0;
-    this.totalError = 0;
   },
 
   getUser() {
