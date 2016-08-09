@@ -34,6 +34,10 @@ class CreateWhiteListContainer extends Component {
   constructor(props) {
     super(props);
 
+    this.state = {
+      percentage: null,
+    };
+
     bindAll(this, [
       'handleAddNewUserClick',
       'handleChangeFilter',
@@ -45,6 +49,8 @@ class CreateWhiteListContainer extends Component {
       'handleUploadFileChange',
       'deleteWhitelistUser',
       'validateUsername',
+      'updatePercentage',
+      'clearPercentage',
       'propmptUnsavedChangeOnTransit',
       'propmptUnsavedChangeOnClose',
       'isDirty',
@@ -104,6 +110,14 @@ class CreateWhiteListContainer extends Component {
     return null;
   }
 
+  updatePercentage(percentage) {
+    this.setState({ percentage });
+  }
+
+  clearPercentage() {
+    this.setState({ percentage: null });
+  }
+
   handlePageChange(page) {
     this.context.executeAction(changeNewWhitelistPage, page);
   }
@@ -125,15 +139,26 @@ class CreateWhiteListContainer extends Component {
 
     const uploadedData = [];
 
+    this.updatePercentage(0);
+
     Papa.parse(file, {
       beforeFirstChunk: () => {
         this.context.executeAction(startImportFile, file.name);
       },
       step: results => {
-        // TODO: change results.data[0][1] to get the correct
+        const { size } = file;
+
+        const progress = results.meta.cursor;
+        const percentage = Math.round(progress / size * 100);
+
+        this.updatePercentage(percentage);
+
+        // TODO: change results.data[0][0] to get the correct
         // column based on the actual CSV template
         // it is now getting the second column
-        const username = this.parseUsername(results.data[0][1]);
+        const currentRow = results.data[0];
+        const currentColumnByRow = currentRow[0];
+        const username = this.parseUsername(currentColumnByRow);
 
         // DO NOT push the empty data during file import
         if (!username) {
@@ -148,6 +173,7 @@ class CreateWhiteListContainer extends Component {
         });
       },
       complete: () => {
+        this.clearPercentage();
         this.context.executeAction(completeImportFile, uploadedData);
       },
     });
@@ -227,6 +253,9 @@ class CreateWhiteListContainer extends Component {
   render() {
     // TODO: move this whole block to a component
     const { role, identity } = this.context.params;
+
+    const { percentage } = this.state;
+
     const {
       filter: filterValue,
       page,
@@ -235,9 +264,11 @@ class CreateWhiteListContainer extends Component {
       totalUsers,
       users,
       uploadedFiles,
-      uploadingFile,
     } = this.props;
+
     const hasError = totalError > 0;
+
+    const isUploading = Number.isFinite(percentage);
 
     return (
       <div className="row">
@@ -440,20 +471,21 @@ class CreateWhiteListContainer extends Component {
                 </thead>
                 <tbody>
                 {
-                  !isEmpty(uploadingFile) || isEmpty(users) ? (
+                  isUploading || isEmpty(users) ? (
                     <tr className="empty">
                       <td colSpan="2">
                         <p className="text-center">
                           {
-                            !isEmpty(uploadingFile) ? (
-                              <span>
-                                <FormattedMessage
-                                  id="processing"
-                                  defaultMessage="Processing"
-                                />
-                                ...
-                              </span>
-                            ) : null
+                            isUploading && (
+                              <div className="whitelist-progress">
+                                <div className="whitelist-progress__text">{percentage}%</div>
+                                <progress
+                                  className="whitelist-progress__bar"
+                                  max="100"
+                                  value={percentage}
+                                ></progress>
+                              </div>
+                            )
                           }
                         </p>
                       </td>

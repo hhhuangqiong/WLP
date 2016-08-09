@@ -9,7 +9,6 @@ import {
 
 import { HOME } from '../../utils/paths';
 import Menu from './common/NavigationMenu';
-import Icon from './Icon';
 
 const ERROR_NAMES = defineMessages({
   401: {

@@ -235,7 +235,7 @@
 
         tr.empty {
           > td {
-            height: 400px;
+            height: 300px;
           }
         }
 
@@ -255,6 +255,20 @@
           margin-bottom: 0;
         }
       }
+    }
+  }
+
+  .whitelist-progress {
+    display: flex;
+    flex-flow: column;
+    align-items: center;
+
+    &__text {
+      font-size: 2em;
+    }
+
+    progress {
+      width: 50%;
     }
   }
 
