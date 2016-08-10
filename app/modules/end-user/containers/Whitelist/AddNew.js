@@ -4,7 +4,7 @@ import { isEmpty, find, reduce, bindAll } from 'lodash';
 
 import React, { PropTypes, Component } from 'react';
 import { Link, withRouter } from 'react-router';
-import { injectIntl, intlShape, FormattedMessage } from 'react-intl';
+import { injectIntl, intlShape, FormattedMessage, defineMessages } from 'react-intl';
 import { connectToStores } from 'fluxible-addons-react';
 import Papa from 'papaparse';
 import invariant from 'invariant';
@@ -29,6 +29,14 @@ import FilterBarNavigation from '../../../../main/filter-bar/components/FilterBa
 import NumericPagination from '../../../data-table/components/NumericPagination';
 
 const LEAVE_MESSAGE = 'Leave with unsaved change?';
+const UPLOAD_LIMIT = 1000;
+
+const MESSAGES = defineMessages({
+  uploadLimitReached: {
+    id: 'message.uploadLimitReached',
+    defaultMessage: 'Total records should not be more than {limit}',
+  },
+});
 
 class CreateWhiteListContainer extends Component {
   constructor(props) {
@@ -131,13 +139,14 @@ class CreateWhiteListContainer extends Component {
   }
 
   handleUploadFileChange(e) {
+    const { formatMessage } = this.props.intl;
     const file = e.target.files[0];
 
     if (!file) {
       return;
     }
 
-    const uploadedData = [];
+    let uploadedData = [];
 
     this.updatePercentage(0);
 
@@ -174,6 +183,18 @@ class CreateWhiteListContainer extends Component {
       },
       complete: () => {
         this.clearPercentage();
+
+        const recordLimitReach = (this.props.users.length + uploadedData.length) > UPLOAD_LIMIT;
+
+        if (recordLimitReach) {
+          uploadedData = [];
+
+          // TODO: Make a nice looking UI dialog instead
+          alert(formatMessage(MESSAGES.uploadLimitReached, { limit: UPLOAD_LIMIT }));
+
+          return;
+        }
+
         this.context.executeAction(completeImportFile, uploadedData);
       },
     });
