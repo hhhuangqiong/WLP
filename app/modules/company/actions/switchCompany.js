@@ -13,6 +13,6 @@ export default function (context, params) {
       return;
     }
 
-    context.router.push(userPath(params.role, params.identity, defaultPath));
+    context.router.push(userPath(params.identity, defaultPath));
   });
 }

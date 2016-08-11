@@ -133,7 +133,6 @@ const SMS = React.createClass({
 
   render() {
     const { intl: { formatMessage } } = this.props;
-    const { role, identity } = this.context.params;
 
     return (
       <div className="row">

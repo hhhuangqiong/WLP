@@ -89,7 +89,7 @@ describe('fluxible Utils', () => {
     };
     const serverSidePayload = {
       req: {
-        url: `/w/${identity}`,
+        url: `/${identity}`,
       },
     };
     const unrecognisedPayload = {};

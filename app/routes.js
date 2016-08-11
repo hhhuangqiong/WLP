@@ -64,21 +64,18 @@ export default (context) => {
       return;
     }
 
-    let role;
     let carrierId;
 
     // get the capability of the user
     const capability = context.getStore(AuthorityStore).getCapability();
     // get the authority checker
     const { authorityChecker } = context.getActionContext();
-    // since it is in the root domain, it expects to get user role and carrier from the user info
+    // since it is in the root domain, it expects to get user carrier from the user info
     if (nextState.location.pathname === '/') {
-      role = context.getStore(AuthStore).getUserRole();
       carrierId = context.getStore(AuthStore).getCarrierId();
       authorityChecker.reset(carrierId, capability);
     } else {
       // get the information from the params and check for the accessibility
-      role = nextState.params.role;
       carrierId = nextState.params.identity;
       authorityChecker.reset(carrierId, capability);
       // user can access the path, no redirection needed
@@ -91,7 +88,7 @@ export default (context) => {
     // when user hasn't define the page or enter the website at the first time,
     // it will get the default path and redirect to it
     const defaultPath = authorityChecker.getDefaultPath();
-    const path = userPath(role, carrierId, defaultPath);
+    const path = userPath(carrierId, defaultPath);
     debug(`user is already authenticated and redirect to ${defaultPath}`);
     replace(path);
     cb();
@@ -100,39 +97,38 @@ export default (context) => {
   return (
     <Route path="/" component={App} onEnter={checkAuth}>
 
-      <Route component={Protected} >
-        <Route path={`:role/:identity/${modules.OVERVIEW}`} component={Overview} />
-
-        <Route path={`:role/:identity/${modules.COMPANY}`} component={Company}>
+      <Route component={Protected}>
+        <Route path={`:identity/${modules.OVERVIEW}`} component={Overview} />
+        <Route path={`:identity/${modules.COMPANY}`} component={Company}>
           <Route path="create" component={NewProfile} />
           <Route path=":carrierId/profile" component={EditProfile} />
           <Route path=":carrierId/service" component={Service} />
         </Route>
 
-        <Route path={`:role/:identity/${modules.ACCOUNT}`} component={Account}>
+        <Route path={`:identity/${modules.ACCOUNT}`} component={Account}>
           <Route path="create" component={AccountProfile} />
           <Route path=":accountId/profile" component={AccountProfile} />
         </Route>
 
-        <Route path={`:role/:identity/${modules.VERIFICATION_SDK}`} component={Verification}>
+        <Route path={`:identity/${modules.VERIFICATION_SDK}`} component={Verification}>
           <IndexRedirect to="overview" />
           <Route path="overview" component={VerificationOverview} />
           <Route path="details" component={VerificationDetails} />
         </Route>
 
-        <Route path={`:role/:identity/${modules.VSF}`}>
+        <Route path={`:identity/${modules.VSF}`}>
           <IndexRedirect to="overview" />
           <Route path="overview" component={VsfOverview} />
           <Route path="details" component={VsfDetails} />
         </Route>
 
-        <Route path={`:role/:identity/${modules.CALL}`}>
+        <Route path={`:identity/${modules.CALL}`}>
           <IndexRedirect to="overview" />
           <Route path="overview" component={CallsOverview} />
           <Route path="details" component={Calls} />
         </Route>
 
-        <Route path={`:role/:identity/${modules.END_USER}`}>
+        <Route path={`:identity/${modules.END_USER}`}>
           <IndexRedirect to="overview" />
           <Route path="overview" component={EndUsersOverview} />
           <Route path="details" component={EndUsersDetails} />
@@ -140,24 +136,24 @@ export default (context) => {
           <Route path="whitelist/new" component={WhitelistNew} />
         </Route>
 
-        <Route path={`:role/:identity/${modules.IM}`}>
+        <Route path={`:identity/${modules.IM}`}>
           <IndexRedirect to="overview" />
           <Route path="overview" component={ImOverview} />
           <Route path="details" component={Im} />
         </Route>
 
-        <Route path={`:role/:identity/${modules.SMS}`}>
+        <Route path={`:identity/${modules.SMS}`}>
           <IndexRedirect to="overview" />
           <Route path="overview" component={SmsOverview} />
           <Route path="details" component={SMS} />
         </Route>
 
-        <Route path={`:role/:identity/${modules.TOP_UP}`}>
+        <Route path={`:identity/${modules.TOP_UP}`}>
           <IndexRedirect to="details" />
           <Route path="details" component={TopUp} />
         </Route>
 
-        <Route path={`:role/:identity/${modules.ACCESS_MANAGEMENT}`}>
+        <Route path={`:identity/${modules.ACCESS_MANAGEMENT}`}>
           <IndexRedirect to="roles" />
           <Route path="roles" component={RolesTablePage} />
         </Route>

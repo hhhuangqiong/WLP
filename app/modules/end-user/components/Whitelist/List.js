@@ -69,7 +69,7 @@ class WhiteList extends Component {
 
   render() {
     const props = this.props;
-    const { role, identity } = this.context.params;
+    const { identity } = this.context.params;
     const { page, pageRec, totalUsers } = props;
 
     return (
@@ -85,7 +85,7 @@ class WhiteList extends Component {
                 />
               </th>
               <th className="column--controls">
-                <Link to={`/${role}/${identity}/end-user/whitelist/new`}>
+                <Link to={`/${identity}/end-user/whitelist/new`}>
                   <button className="right">
                     <FormattedMessage
                       id="createNewUser"

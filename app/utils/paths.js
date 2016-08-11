@@ -14,13 +14,12 @@ import { isURL } from 'validator';
 /**
  * userPath
  *
- * @param {string} role role key, possible values: 'a', 'r', or 'w'
  * @param {string} identity identifier
  * @param {string} targetPath target path
  * @return {string} generated path
  */
-export function userPath(role, identity, targetPath) {
-  const result = [role, identity, targetPath]
+export function userPath(identity, targetPath) {
+  const result = [identity, targetPath]
     .filter(p => !!p)
     .map(x => trim(x, '/'))
     .join('/');
@@ -31,7 +30,7 @@ export function userPath(role, identity, targetPath) {
 /**
  * @method getCarrierIdFromUrl
  * to resolve the carrierId from a url based on our routes structure.
- * http://domain.name/{role}/{identity}/{module}/{section}
+ * http://domain.name/{identity}/{module}/{section}
  *
  * @param url {String}
  * @returns {String | Null}
@@ -41,8 +40,8 @@ export function getCarrierIdFromUrl(url) {
     throw new Error('missing `url` argument');
   }
 
-  const carrierId = get(url.split('/'), 2);
 
+  const carrierId = get(url.split('/'), 1);
   // TODO: try make m800 not a corner case add capabilities & authorities to m800
   // m800 is a corner case
   // return null to escape from permission checking
@@ -55,7 +54,7 @@ export function getCarrierIdFromUrl(url) {
 /**
  * @method getModuleIdFromUrl
  * to resolve the moduleId from a url based on our routes structure.
- * http://domain.name/{role}/{identity}/{module}/{section}
+ * http://domain.name/{identity}/{module}/{section}
  *
  * @param url
  * @returns {String | undefined}
@@ -65,7 +64,7 @@ export function getModuleIdFromUrl(url) {
     throw new Error('missing `url` argument');
   }
 
-  const moduleId = get(url.split('/'), 3);
 
+  const moduleId = get(url.split('/'), 2);
   return moduleId;
 }

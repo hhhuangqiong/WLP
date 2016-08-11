@@ -82,7 +82,7 @@ export default React.createClass({
   },
 
   renderAccountItems(accounts) {
-    const { role, identity, accountId } = this.context.params;
+    const { identity, accountId } = this.context.params;
 
     return accounts.map(account => {
       // const groupSettings = PredefinedGroups[account.assignedGroup];
@@ -90,7 +90,7 @@ export default React.createClass({
 
       return (
         <li className={classNames('account-table__item', { active: account._id === accountId })} key={account.Id}>
-          <Link to={`/${role}/${identity}/account/${account._id}/profile`} params={{ accountId: account._id, role, identity }}>
+          <Link to={`/${identity}/account/${account._id}/profile`} params={{ accountId: account._id, identity }}>
             <div className="account-icon left">
               <CircleIcon
                 size="small"

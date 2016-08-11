@@ -35,10 +35,6 @@ const AuthStore = createStore({
     return this.user && this.user._id;
   },
 
-  getUserRole() {
-    return get(this, 'user.affiliatedCompany.role');
-  },
-
   getCarrierId() {
     return get(this, 'user.affiliatedCompany.carrierId');
   },

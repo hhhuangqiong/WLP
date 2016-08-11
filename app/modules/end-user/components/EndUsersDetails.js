@@ -80,7 +80,6 @@ const EndUsers = React.createClass({
   },
 
   render() {
-    const { role, identity } = this.context.params;
     const selectedUser = this.getStore(EndUserStore).getCurrentUser();
 
     return (

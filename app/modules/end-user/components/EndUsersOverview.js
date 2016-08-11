@@ -256,7 +256,6 @@ const EndUsersOverview = React.createClass({
 
   render() {
     const { intl: { formatMessage } } = this.props;
-    const { role, identity } = this.context.params;
     const totalRegisteredUser = this._getTotalRegisteredUser();
     const monthlyRegisteredUserStats = this._getMonthlyRegisteredUserStats();
     const monthlyActiveUserStats = this._getMonthlyActiveUserStats();

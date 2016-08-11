@@ -295,7 +295,6 @@ const VerificationOverview = React.createClass({
 
   render() {
     const { intl: { formatMessage } } = this.props;
-    const { role, identity } = this.context.params;
     const options = [];
 
     this.props.appIds.forEach(item => {

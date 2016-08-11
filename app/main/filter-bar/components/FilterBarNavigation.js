@@ -51,20 +51,20 @@ export default function FilterBarNavigation({ section, tab }, { params }) {
     return null;
   }
 
-  const { role, identity } = params;
+  const { identity } = params;
 
   return (
     <ul className="left top-bar--inner tab--inverted">
       <li className="top-bar--inner tab--inverted__title">
-        {renderOverview(tab, `/${role}/${identity}/${section}/overview`)}
+        {renderOverview(tab, `/${identity}/${section}/overview`)}
       </li>
       <li className="top-bar--inner tab--inverted__title">
-        {renderDetails(tab, `/${role}/${identity}/${section}/details`)}
+        {renderDetails(tab, `/${identity}/${section}/details`)}
       </li>
       {
         section === 'end-user' ? (
           <li className="top-bar--inner tab--inverted__title">
-            {renderUserActivation(tab, `/${role}/${identity}/${section}/whitelist`)}
+            {renderUserActivation(tab, `/${identity}/${section}/whitelist`)}
           </li>
         ) : null
       }

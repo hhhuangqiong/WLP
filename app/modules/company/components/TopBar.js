@@ -50,7 +50,6 @@ const CompanyTopBar = React.createClass({
       .context
       .params;
 
-    const role = navParams.role || null;
     const identity = navParams.identity || null;
     const carrierId = navParams.carrierId || null;
 
@@ -60,19 +59,19 @@ const CompanyTopBar = React.createClass({
           <FilterBar.NavigationItems>
             <Link
               to="company-create"
-              params={{ role, identity }}
+              params={{ identity }}
             >company profile</Link>
           </FilterBar.NavigationItems>
         <Else />
           <FilterBar.NavigationItems>
             <Link
-              to={`/${role}/${identity}/companies/${carrierId}/profile`}
+              to={`/${identity}/companies/${carrierId}/profile`}
             >company profile</Link>
             <Link
-              to={`/${role}/${identity}/companies/${carrierId}/service`}
+              to={`/${identity}/companies/${carrierId}/service`}
             >service config</Link>
             <Link
-              to={`/${role}/${identity}/companies/${carrierId}/widget`}
+              to={`/${identity}/companies/${carrierId}/widget`}
             >widget config</Link>
           </FilterBar.NavigationItems>
         </If>

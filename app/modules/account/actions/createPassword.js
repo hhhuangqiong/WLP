@@ -23,7 +23,7 @@ export default function (context, params, done) {
 
       context.dispatch('SIGN_IN_SUCCESS', session);
 
-      const { role, carrierId: identity } = session;
+      const { carrierId: identity } = session;
 
       context.api.getAuthorityList(identity, (getAuthorityErr, { carrierId, capability }) => {
         if (getAuthorityErr) {
@@ -39,7 +39,7 @@ export default function (context, params, done) {
 
         if (defaultPath) {
           try {
-            window.location.assign(userPath(role, carrierId, defaultPath));
+            window.location.assign(userPath(carrierId, defaultPath));
           } catch (error) {
             throw error;
           }

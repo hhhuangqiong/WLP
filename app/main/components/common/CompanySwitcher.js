@@ -32,12 +32,12 @@ const CompanySwitcher = React.createClass({
   },
 
   switchCompany(params) {
-    const { role, identity } = params;
+    const { identity } = params;
 
     // redirecting to an existing module will work
     // a proper landing path will be checked on server-side
     // ideally it should reconstruct the defaultPath by authorityChecker
-    const destination = userPath(role, identity, '/overview');
+    const destination = userPath(identity, '/overview');
 
     // it should always be a client side process
     // let's refresh the page at this moment, until we
@@ -51,12 +51,12 @@ const CompanySwitcher = React.createClass({
     const buttons = this
       .state
       .companies
-      .map(({ attributes: { name, carrierId, logo, role, identity } }) => {
+      .map(({ attributes: { name, carrierId, logo, identity } }) => {
         const logoSrc = logo ? `/data/${logo}` : DEFAULT_LOGO_SRC;
 
         return (
           <li className="navigation-bar__item" title={name} key={carrierId}>
-            <a href="#" onClick={this.switchCompany.bind(this, { role, identity })}>
+            <a href="#" onClick={this.switchCompany.bind(this, { identity })}>
               <img src={logoSrc} alt={name} />
             </a>
           </li>

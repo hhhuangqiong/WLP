@@ -44,7 +44,7 @@ const Sidebar = props => {
                 <Link
                   id={`${section.page}-section-link`}
                   className="item mainmenu-bar__item"
-                  to={userPath(role, identity, section.path)}
+                  to={userPath(identity, section.path)}
                   activeClassName="active"
                 >
                   <label>

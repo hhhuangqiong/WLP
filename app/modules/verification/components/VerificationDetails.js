@@ -379,9 +379,6 @@ const VerificationDetails = React.createClass({
 
   render() {
     const { intl: { formatMessage } } = this.props;
-    const { role, identity } = this
-      .context
-      .params;
 
     const options = [];
 

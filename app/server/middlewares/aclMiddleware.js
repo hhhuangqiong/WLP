@@ -15,21 +15,13 @@ const AuthorityChecker = require('../../modules/authority/plugin').default;
 function getUserId(req) {
   // this middleware is for React server-side-rendering
   // so we don't need to fetch username from redis
-  return req.user && req.user.username;
+  return req.user && req.user.id;
 }
 
 /* Extract and parse the carrierId from current url (when we cannot use req.params) */
 function getCarrierId(req) {
   const { url } = req;
   return getCarrierIdFromUrl(url);
-}
-
-function getRole(req) {
-  const role = req
-    .url
-    .split('/')[1];
-
-  return role;
 }
 
 // this middleware is just for carrier access checking for now
@@ -51,7 +43,7 @@ export function errorHandler(err, req, res, next) {
     return;
   }
 
-  let { carrierId, role } = user.affiliatedCompany;
+  let { carrierId } = user.affiliatedCompany;
 
   const targetCarrierId = getCarrierId(req);
 
@@ -62,7 +54,6 @@ export function errorHandler(err, req, res, next) {
   } else {
     if (!isNull(targetCarrierId)) {
       carrierId = targetCarrierId;
-      role = getRole(req);
     }
   }
 
@@ -84,7 +75,7 @@ export function errorHandler(err, req, res, next) {
         throw new Error(`cannot resolve default path for carrier ${carrierId}`);
       }
 
-      const landingPath = userPath(role, carrierId, defaultPath);
+      const landingPath = userPath(carrierId, defaultPath);
 
       debug('resolved the landing path for carrier ', carrierId, landingPath);
 

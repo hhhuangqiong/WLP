@@ -233,8 +233,6 @@ const Calls = React.createClass({
 
   render() {
     const { intl: { formatMessage } } = this.props;
-    const { role, identity } = this.context.params;
-
     const searchTypes = [
       { name: i18nMessages.caller, value: 'caller' },
       { name: i18nMessages.callee, value: 'callee' },

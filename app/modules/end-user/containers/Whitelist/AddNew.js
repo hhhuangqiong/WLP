@@ -368,10 +368,8 @@ class CreateWhiteListContainer extends Component {
 
   render() {
     // TODO: move this whole block to a component
-    const { role, identity } = this.context.params;
-
-    const { percentage } = this.state;
-
+    const { percentage } = this.state
+    const { identity } = this.context.params;
     const {
       filter: filterValue,
       totalUsers,
@@ -395,7 +393,7 @@ class CreateWhiteListContainer extends Component {
               <div className="row">
                 <div className="large-12 columns">
                   <h5>
-                    <Link to={`/${role}/${identity}/end-user/whitelist`}>
+                    <Link to={`/${identity}/end-user/whitelist`}>
                       <Icon className="flipped" symbol="icon-arrow" />
                     </Link>
                     <FormattedMessage

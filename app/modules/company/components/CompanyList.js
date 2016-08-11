@@ -25,4 +25,3 @@ CompanyList.propTypes = {
 };
 
 export default CompanyList;
-

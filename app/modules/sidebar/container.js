@@ -29,14 +29,13 @@ class SidebarContainer extends Component {
     // if context.params is unavailable,
     // it will fall back to that in store which is the user company
     const contextSource = this.context.params || this.props;
-    const { identity: carrierId, role } = contextSource;
+    const { identity: carrierId } = contextSource;
 
     return (
       <Sidebar
         carrierId={carrierId}
         currentCompany={currentCompany}
         logo={logo}
-        role={role}
         isAuthorityReady={isAuthorityReady}
         isOffCanvas={isOffCanvas}
         handleOffCanvas={handleOffCanvas}
@@ -56,14 +55,12 @@ SidebarContainer.propTypes = {
   isAuthorityReady: PropTypes.bool.isRequired,
   isOffCanvas: PropTypes.bool.isRequired,
   handleOffCanvas: PropTypes.func.isRequired,
-  role: PropTypes.string.isRequired,
 };
 
 SidebarContainer = connectToStores(
   SidebarContainer,
   [AuthStore, AuthorityStore, ApplicationStore],
   context => ({
-    role: context.getStore(AuthStore).getUserRole(),
     identity: context.getStore(AuthStore).getCarrierId(),
     currentCompany: context.getStore(ApplicationStore).getCurrentCompany(),
     // eslint-disable-next-line max-len

@@ -443,7 +443,6 @@ const CallsOverview = React.createClass({
   },
 
   render() {
-    const { role, identity } = this.context.params;
     const monthlyUserStats = this._getMonthlyUser();
     const appIds = this._getAppIdSelectOptions();
     const { formatMessage } = this.props.intl;
