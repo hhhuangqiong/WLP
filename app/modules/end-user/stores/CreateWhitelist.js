@@ -31,7 +31,7 @@ const createWhiteListStore = createStore({
   initialize() {
     this.isLoading = false;
     this.isImporting = null;
-    this.page = 1;
+    this.page = 0;
     this.pageRec = 10;
     this.uploadedFiles = [];
     this.uploadingFile = {};
@@ -44,27 +44,42 @@ const createWhiteListStore = createStore({
     const newUser = this.createNewUser();
 
     if (this.users) {
-      this.users = [newUser].concat(this.users);
+      this.users = [newUser, ...this.users];
     }
+
+    this.page = 0;
 
     this.emitChange();
   },
 
   handleUpdateWhitelistUser({ index, user }) {
-    if (Number.isFinite(index) && this.isValidUser(user)) {
-      this.users[index] = user;
+    const indexOfTotalUsers = this.getIndexByTotalUsers(index);
+
+    if (Number.isFinite(indexOfTotalUsers) && this.isValidUser(user)) {
+      this.users[indexOfTotalUsers] = user;
       this.emitChange();
     }
   },
 
   handleDeleteWhitelistUser(index) {
-    const isValid = Number.isFinite(index);
+    const indexOfTotalUsers = this.getIndexByTotalUsers(index);
+
+    const isValid = Number.isFinite(indexOfTotalUsers);
 
     if (!isValid) {
       return;
     }
 
-    this.users = this.users.filter((user, userIndex) => userIndex !== index);
+    this.users = this.users.filter((user, userIndex) => userIndex !== indexOfTotalUsers);
+
+    const currentPage = this.page;
+    const lastPage = this.getLastPage();
+
+    // jump to last page if there is no element left in current page
+    if (currentPage > lastPage) {
+      this.page = lastPage;
+    }
+
     this.emitChange();
   },
 
@@ -80,7 +95,7 @@ const createWhiteListStore = createStore({
 
   handleChangePageRec(pageRec) {
     // TODO: calculate the current page based on new pageRec?
-    this.page = 1;
+    this.page = 0;
     this.pageRec = pageRec;
     this.emitChange();
   },
@@ -89,7 +104,7 @@ const createWhiteListStore = createStore({
     this.filter = 'all';
     this.isLoading = false;
     this.isImporting = null;
-    this.page = 1;
+    this.page = 0;
     this.pageRec = 10;
     this.uploadedFiles = [];
     this.uploadingFile = null;
@@ -113,15 +128,23 @@ const createWhiteListStore = createStore({
     this.uploadedFiles.push(this.uploadingFile);
     this.uploadingFile = null;
     this.users = results.concat(this.users);
-    this.page = 1;
+    this.page = 0;
     this.emitChange();
   },
 
-  getUser() {
+  getIndexByTotalUsers(index) {
+    return (this.page * this.pageRec) + index;
+  },
+
+  getLastPage() {
+    return Math.ceil(this.users.length / this.pageRec) - 1;
+  },
+
+  getUserByPage() {
     if (isArray(this.users)) {
       const page = this.page;
       const pageRec = this.pageRec;
-      const start = (page - 1) * pageRec;
+      const start = page * pageRec;
       const end = start + pageRec;
       let displayUsers = this.users;
 
@@ -148,7 +171,7 @@ const createWhiteListStore = createStore({
       pageRec: this.pageRec,
       uploadedFiles: this.uploadedFiles,
       uploadingFile: this.uploadingFile,
-      users: this.getUser(),
+      users: this.getUserByPage(),
       totalUsers: this.users.length,
       totalError: this.getErrorCount(),
     };

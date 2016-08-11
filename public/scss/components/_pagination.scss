@@ -1,14 +1,44 @@
+$light-gray: #e3e3e3;
+
 ul.pagination {
-    @include pagination;
-    > li {
-        > a {
-            // text-align: center;
-            width: rem-calc(36);
-            height: rem-calc(36);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            @include border-radius($global-rounded);
-        }
+  @include pagination;
+
+  > li {
+    background-color: white;
+    color: black;
+    border: 1px solid #ccc;
+    height: 100%;
+
+    padding: 0;
+    margin: 0;
+
+    > a {
+        width: rem-calc(36);
+        height: rem-calc(36);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        @include border-radius($global-rounded);
     }
+
+    &.hover {
+      > a {
+        color: black;
+      }
+    }
+
+    &.active {
+      height: 100%;
+      background-color: $light-gray;
+
+      > a {
+        color: black;
+        font-weight: bolder;
+      }
+    }
+
+    .disabled {
+      opacity: 0.5;
+    }
+  }
 }

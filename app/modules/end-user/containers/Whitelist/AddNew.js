@@ -8,6 +8,7 @@ import { injectIntl, intlShape, FormattedMessage, defineMessages } from 'react-i
 import { connectToStores } from 'fluxible-addons-react';
 import Papa from 'papaparse';
 import invariant from 'invariant';
+import Paginate from 'react-paginate';
 
 import {
   addWhitelistUser,
@@ -26,7 +27,6 @@ import createWhiteListStore from '../../stores/CreateWhitelist';
 import Icon from '../../../../main/components/Icon';
 import * as FilterBar from '../../../../main/components/FilterBar';
 import FilterBarNavigation from '../../../../main/filter-bar/components/FilterBarNavigation';
-import NumericPagination from '../../../data-table/components/NumericPagination';
 
 const LEAVE_MESSAGE = 'Leave with unsaved change?';
 const UPLOAD_LIMIT = 1000;
@@ -37,6 +37,8 @@ const MESSAGES = defineMessages({
     defaultMessage: 'Total records should not be more than {limit}',
   },
 });
+
+const DEFAULT_PAGE_RANGE = [5, 10, 15];
 
 class CreateWhiteListContainer extends Component {
   constructor(props) {
@@ -52,6 +54,7 @@ class CreateWhiteListContainer extends Component {
       'handlePageChange',
       'handlePageRecChange',
       'getUploadedFilename',
+      'getTotalPageNumber',
       'updateUserAtIndex',
       'handleUploadButtonClick',
       'handleUploadFileChange',
@@ -59,6 +62,8 @@ class CreateWhiteListContainer extends Component {
       'validateUsername',
       'updatePercentage',
       'clearPercentage',
+      'renderEmptyRecord',
+      'renderPageControl',
       'propmptUnsavedChangeOnTransit',
       'propmptUnsavedChangeOnClose',
       'isDirty',
@@ -126,12 +131,12 @@ class CreateWhiteListContainer extends Component {
     this.setState({ percentage: null });
   }
 
-  handlePageChange(page) {
-    this.context.executeAction(changeNewWhitelistPage, page);
+  handlePageChange({ selected }) {
+    this.context.executeAction(changeNewWhitelistPage, selected);
   }
 
-  handlePageRecChange(pageRec) {
-    this.context.executeAction(changeNewWhitelistPageRec, pageRec);
+  handlePageRecChange(event) {
+    this.context.executeAction(changeNewWhitelistPageRec, +event.target.value);
   }
 
   handleUploadButtonClick() {
@@ -184,9 +189,9 @@ class CreateWhiteListContainer extends Component {
       complete: () => {
         this.clearPercentage();
 
-        const recordLimitReach = (this.props.users.length + uploadedData.length) > UPLOAD_LIMIT;
+        const newNumberAfterInsert = (this.props.totalUsers + uploadedData.length);
 
-        if (recordLimitReach) {
+        if (newNumberAfterInsert > UPLOAD_LIMIT) {
           uploadedData = [];
 
           // TODO: Make a nice looking UI dialog instead
@@ -271,6 +276,96 @@ class CreateWhiteListContainer extends Component {
     return null;
   }
 
+  getTotalPageNumber() {
+    const {
+      pageRec,
+      totalUsers,
+    } = this.props;
+
+    return totalUsers / pageRec;
+  }
+
+  renderEmptyRecord() {
+    const { percentage } = this.state;
+    const isUploading = Number.isFinite(percentage);
+
+    return (
+      <p className="text-center">
+        {
+          isUploading && (
+            <div className="whitelist-progress">
+              <div className="whitelist-progress__text">{percentage}%</div>
+              <progress
+                className="whitelist-progress__bar"
+                max="100"
+                value={percentage}
+              ></progress>
+            </div>
+          )
+        }
+      </p>
+    );
+  }
+
+  renderPagination() {
+    const hasPage = this.getTotalPageNumber() > 1;
+
+    if (!hasPage) {
+      return null;
+    }
+
+    return (
+      <Paginate
+        pageNum={this.getTotalPageNumber()}
+        forceSelected={page}
+        clickCallback={this.handlePageChange}
+        marginPagesDisplayed={2}
+        pageRangeDisplayd={5}
+        previousLabel="<"
+        nextLabel=">"
+        containerClassName="pagination"
+        subContainerClassName="pages pagination"
+        activeClassName="active"
+      />
+    );
+  }
+
+  renderPageControl() {
+    const {
+      pageRec,
+      totalUsers,
+      page,
+    } = this.props;
+
+    if (totalUsers === 0) {
+      return null;
+    }
+
+    return (
+      <div className="end-users-whitelist__page-control">
+        <div className="row end-users-whitelist__page-control__select">
+          <div className="large-10 columns large-collapse">
+            <select onChange={this.handlePageRecChange} value={pageRec}>
+              {
+                DEFAULT_PAGE_RANGE.map(pageRange => (
+                  <option value={pageRange}>{pageRange}</option>
+                ))
+              }
+            </select>
+          </div>
+          <div className="large-14 columns">
+            <FormattedMessage
+              id="records"
+              defaultMessage="records"
+            />
+          </div>
+        </div>
+
+        {this.renderPagination()}
+      </div>
+    );
+  }
+
   render() {
     // TODO: move this whole block to a component
     const { role, identity } = this.context.params;
@@ -279,10 +374,8 @@ class CreateWhiteListContainer extends Component {
 
     const {
       filter: filterValue,
-      page,
-      pageRec,
-      totalError,
       totalUsers,
+      totalError,
       users,
       uploadedFiles,
     } = this.props;
@@ -495,20 +588,7 @@ class CreateWhiteListContainer extends Component {
                   isUploading || isEmpty(users) ? (
                     <tr className="empty">
                       <td colSpan="2">
-                        <p className="text-center">
-                          {
-                            isUploading && (
-                              <div className="whitelist-progress">
-                                <div className="whitelist-progress__text">{percentage}%</div>
-                                <progress
-                                  className="whitelist-progress__bar"
-                                  max="100"
-                                  value={percentage}
-                                ></progress>
-                              </div>
-                            )
-                          }
-                        </p>
+                        {this.renderEmptyRecord()}
                       </td>
                     </tr>
                   ) : (
@@ -533,13 +613,9 @@ class CreateWhiteListContainer extends Component {
                 }
                 </tbody>
               </table>
-              <NumericPagination
-                pageRec={pageRec}
-                totalRec={totalUsers}
-                current={page}
-                onPageChange={this.handlePageChange}
-                onPageRecChange={this.handlePageRecChange}
-              />
+
+              {this.renderPageControl()}
+
             </section>
           </div>
         </section>
@@ -573,7 +649,7 @@ CreateWhiteListContainer.propTypes = {
 };
 
 CreateWhiteListContainer.defaultProps = {
-  page: 1,
+  page: 0,
   pageRec: 10,
 };
 

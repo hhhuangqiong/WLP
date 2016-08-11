@@ -204,6 +204,15 @@
       }
     }
   }
+
+  &__page-control {
+    display: flex;
+    justify-content: space-between;
+
+    &__select {
+      min-width: 15%;
+    }
+  }
 }
 
 .end-users-whitelist--create {

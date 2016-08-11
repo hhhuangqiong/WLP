@@ -938,9 +938,9 @@ $label-font-color: $gray;
 // $pagination-li-margin: rem-calc(5);
 
 // We use these for the pagination anchor links
-$pagination-link-pad: rem-calc(0);
+// $pagination-link-pad: rem-calc(0);
 // $pagination-link-font-color: $aluminum;
-$pagination-link-active-bg: scale-color($white, $lightness: -10%);
+// $pagination-link-active-bg: scale-color($white, $lightness: -10%);
 
 // We use these for disabled anchor links
 // $pagination-link-unavailable-cursor: default;
@@ -948,11 +948,11 @@ $pagination-link-active-bg: scale-color($white, $lightness: -10%);
 // $pagination-link-unavailable-bg-active: transparent;
 
 // We use these for currently selected anchor links
-$pagination-link-current-background: $link-secondary;
+// $pagination-link-current-background: $link-secondary;
 // $pagination-link-current-font-color: $white;
 // $pagination-link-current-font-weight: $font-weight-bold;
 // $pagination-link-current-cursor: default;
-$pagination-link-current-active-bg: $link-secondary;
+// $pagination-link-current-active-bg: $link-secondary;
 
 // 21. Panels
 // - - - - - - - - - - - - - - - - - - - - - - - - -
