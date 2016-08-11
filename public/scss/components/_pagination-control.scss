@@ -1,0 +1,54 @@
+.react-select {
+  width: 15%;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  align-items: baseline;
+}
+.pagination-wrapper {
+  display: flex;
+  align-items: baseline;
+}
+.button-pagination {
+
+  background: white;
+  color: black;
+  padding: 12px;
+  margin-left: 10px;
+  margin-right: 10px;
+
+  &:visited {
+    background-color: white;
+  }
+  &:hover {
+    background-color: $gray-light;
+  }
+  &:active {
+    background-color: white;
+  }
+  &:focus {
+    background-color: $gray-light;
+  }
+
+}
+.pagination-page-break {
+  display: flex;
+  padding: 0;
+  margin: 0;
+  list-style: none;
+  li {
+    color: black;
+    padding: 8px 16px;
+    border: 1px solid $gray-light;
+    background: white;
+    cursor:pointer;
+    &.active {
+      background-color: grey;
+      color: white;
+      border: 1px solid grey;
+      }
+    &:hover:not(.active) {
+      background-color: $gray-light;
+      }
+  }
+}

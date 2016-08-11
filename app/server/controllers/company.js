@@ -369,18 +369,18 @@ export default class CompanyController {
     companies = {
       companies: resultCompany,
     };
-    const limit = req.query.limit ? parseInt(req.query.limit, 10) : PER_PAGE;
-    const offset = req.query.offset ? parseInt(req.query.offset, 10) : 0;
+    const pageSize = req.query.pageSize ? parseInt(req.query.pageSize, 10) : PER_PAGE;
+    const pageNumber = req.query.pageNumber ? parseInt(req.query.pageNumber, 10) : 0;
 
-    function getPaginatedItems(items, off) {
-      return items.slice(off, off + limit);
+    function getPaginatedItems(items, current) {
+      return items.slice(current * pageSize, current * pageSize + pageSize);
     }
     const json = {
-      pageNum: Math.ceil(companies.companies.length / limit),
-      companies: getPaginatedItems(companies.companies, offset),
+      total: Math.ceil(companies.companies.length / pageSize),
+      companies: getPaginatedItems(companies.companies, pageNumber),
       searchCompany,
-      offset,
-      limit,
+      pageNumber,
+      pageSize,
     };
     res.json(json);
   }

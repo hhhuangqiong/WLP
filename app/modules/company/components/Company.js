@@ -15,10 +15,12 @@ class Company extends React.Component {
   constructor(props) {
     super(props);
     this.state = { selected: 0 };
-    this._setPageRange = this._setPageRange.bind(this);
-    this._handleSearchChange = this._handleSearchChange.bind(this);
-    this._setPageNum = this._setPageNum.bind(this);
-    this._handlePageClick = this._handlePageClick.bind(this);
+    this.setPageRange = this.setPageRange.bind(this);
+    this.handleSearchChange = this.handleSearchChange.bind(this);
+    this.setPageNumber = this.setPageNumber.bind(this);
+    this.handlePageClick = this.handlePageClick.bind(this);
+    this.handleFirstPageClick = this.handleFirstPageClick.bind(this);
+    this.handleLastPageClick = this.handleLastPageClick.bind(this);
   }
 
   componentDidMount() {
@@ -27,13 +29,13 @@ class Company extends React.Component {
       {
         carrierId: params.identity,
         searchCompany: '',
-        limit: this.props.limit,
-        offset: 0,
+        pageSize: this.props.pageSize,
+        pageNumber: 0,
       }
     );
   }
 
-  _setPageRange(start, end) {
+  setPageRange(start, end) {
     const rangeArray = [];
     for (let i = start; i < end + 1; i++) {
       rangeArray.push({
@@ -44,7 +46,26 @@ class Company extends React.Component {
     return rangeArray;
   }
 
-  _handleSearchChange(e) {
+  setPageNumber(val) {
+    let selectedPage;
+    const { executeAction, params } = this.context;
+    const currentPageSum = Math.ceil(this.props.companies.length / val.value);
+    if (currentPageSum < this.state.selected) {
+      selectedPage = 0;
+    } else {
+      selectedPage = this.state.selected;
+    }
+    executeAction(fetchCompanies,
+      {
+        carrierId: params.identity,
+        searchCompany: this.props.searchCompany,
+        pageSize: val.value,
+        pageNumber: selectedPage,
+      }
+    );
+  }
+
+  handleSearchChange(e) {
     if (e.keyCode === ENTER_KEY) {
       const { executeAction, params } = this.context;
       executeAction(
@@ -52,48 +73,47 @@ class Company extends React.Component {
         {
           carrierId: params.identity,
           searchCompany: e.target.value.trim(),
+          pageSize: this.props.pageSize,
+          pageNumber: 0,
         }
     );
     }
   }
 
-  _setPageNum(val) {
-    const { executeAction, params } = this.context;
-    executeAction(fetchCompanies,
-      {
-        carrierId: params.identity,
-        searchCompany: this.props.searchCompany,
-        limit: val.value,
-        offset: this.state.selected ? this.state.selected * val.value : 0,
-      }
-    );
-  }
-
-  _handlePageClick(data) {
+  handlePageClick(data) {
     const selected = data.selected;
-    const { limit, searchCompany } = this.props;
+    const { pageSize, searchCompany } = this.props;
     this.setState({ selected });
     const { executeAction, params } = this.context;
     executeAction(fetchCompanies,
       {
         carrierId: params.identity,
         searchCompany,
-        limit,
-        offset: Math.ceil(selected * this.props.limit),
+        pageSize,
+        pageNumber: Math.ceil(selected),
       }
     );
+  }
+
+  handleFirstPageClick() {
+    this.handlePageClick({ selected: 0 });
+  }
+
+  handleLastPageClick() {
+    this.handlePageClick({ selected: this.props.total - 1 });
   }
 
   render() {
     return (
       <div className="company" data-equalizer>
         <nav className="top-bar company-sidebar__search" data-topbar role="navigation">
+          <button className="button-create">Create New Company</button>
           <div>
           <input
             className="round"
             type="text"
             placeholder="search company"
-            onKeyDown={this._handleSearchChange}
+            onKeyDown={this.handleSearchChange}
           />
           <Icon symbol="icon-search" />
         </div>
@@ -104,26 +124,30 @@ class Company extends React.Component {
         <div className="pagination-select">
           <div className="react-select">
             <Select
-              value={this.props.limit}
+              value={this.props.pageSize}
               name="select-range"
-              options={this._setPageRange(0, 10)}
-              onChange={this._setPageNum}
+              options={this.setPageRange(1, 10)}
+              onChange={this.setPageNumber}
             />
+            <FormattedMessage id="recordsPerPage" defaultMessage="records per page" />
           </div>
-          <FormattedMessage id="recordsPerPage" defaultMessage="records per page" />
-          <ReactPaginate
-            previousLabel="previous"
-            nextLabel="next"
-            breakLabel={<a href="">...</a>}
-            breakClassName="break-me"
-            pageNum={this.props.pageNum}
-            marginPagesDisplayed={2}
-            pageRangeDisplayed={PER_PAGE}
-            clickCallback={this._handlePageClick}
-            containerClassName="pagination-company"
-            subContainerClassName="pages pagination-company"
-            activeClassName="active"
-          />
+          <div className="pagination-wrapper">
+            <button className="button-pagination" onClick={this.handleFirstPageClick}>First</button>
+            <ReactPaginate
+              previousLabel="<"
+              nextLabel=">"
+              breakLabel={<a href="">...</a>}
+              breakClassName="break-me"
+              pageNum={this.props.total}
+              marginPagesDisplayed={2}
+              pageRangeDisplayed={PER_PAGE}
+              clickCallback={this.handlePageClick}
+              containerClassName="pagination-page-break"
+              subContainerClassName="pages pagination-page-break"
+              activeClassName="active"
+            />
+            <button className="button-pagination" onClick={this.handleLastPageClick}>Last</button>
+          </div>
         </div>
       </div>
     );
@@ -132,10 +156,10 @@ class Company extends React.Component {
 
 Company.propTypes = {
   companies: PropTypes.array,
-  pageNum: PropTypes.number,
+  total: PropTypes.number,
   searchCompany: PropTypes.string.isRequired,
-  offset: PropTypes.number,
-  limit: PropTypes.string,
+  pageNumber: PropTypes.number,
+  pageSize: PropTypes.number,
 };
 Company.contextTypes = {
   executeAction: PropTypes.func.isRequired,
@@ -145,10 +169,10 @@ Company.contextTypes = {
 
 Company = connectToStores(Company, [CompanyStore], (context) => ({
   companies: context.getStore(CompanyStore).getCompanies(),
-  pageNum: context.getStore(CompanyStore).getPageNumn(),
+  total: context.getStore(CompanyStore).getTotal(),
   searchCompany: context.getStore(CompanyStore).getSearchCompany(),
-  offset: context.getStore(CompanyStore).getOffSet(),
-  limit: context.getStore(CompanyStore).getLimit(),
+  pageNumber: context.getStore(CompanyStore).getPageNumber(),
+  pageSize: context.getStore(CompanyStore).getPageSize(),
 }));
 
 export default Company;

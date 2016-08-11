@@ -3,14 +3,14 @@
     background: $gray-table;
     padding: 0 $fieldset-padding;
     height: $company-sidebar-height;
+    display: flex;
+    justify-content: flex-end;
     > div {
       position: relative;
-      float: right;
-    }  
+    }
     input {
       @include inputBoxReset;
       @include inputBoxWithIcon;
-    
       ~ .icon {
         left: 1.00rem;
       }
@@ -20,6 +20,12 @@
     }
   }
 }
+
+.button-create{
+  margin-right: rem-calc(30);
+  border-radius: rem-calc(2);
+}
+
 table tr.even, table tr.alt, table tr:nth-of-type(even) {
     background: $gray-table;
 }

@@ -48,20 +48,20 @@ const CompanyStore = createStore({
     return this.companies;
   },
 
-  getPageNumn() {
-    return this.pageNum;
+  getTotal() {
+    return this.total;
   },
 
   getSearchCompany() {
     return this.searchCompany;
   },
 
-  getOffSet() {
-    return this.offset;
+  getPageNumber() {
+    return this.pageNumber;
   },
 
-  getLimit() {
-    return this.limit;
+  getPageSize() {
+    return this.pageSize;
   },
 
   getNewCompany() {
@@ -111,12 +111,12 @@ const CompanyStore = createStore({
     this.emitChange();
   },
 
-  receiveCompanies({ companies, pageNum, searchCompany, offset, limit }) {
+  receiveCompanies({ companies, total, searchCompany, pageNumber, pageSize }) {
     this.companies = companies;
-    this.pageNum = pageNum;
+    this.total = total;
     this.searchCompany = searchCompany;
-    this.offset = offset;
-    this.limit = limit;
+    this.pageNumber = pageNumber;
+    this.pageSize = pageSize;
     this.emitChange();
   },
 
