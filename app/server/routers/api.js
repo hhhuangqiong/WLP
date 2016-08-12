@@ -1,8 +1,6 @@
 import { Router } from 'express';
 import nconf from 'nconf';
 
-import { SIGN_IN, SIGN_OUT } from '../../utils/paths';
-
 import * as auth from '../routes/auth';
 import * as carriers from '../routes/carriers';
 import * as companies from '../routes/companies';
@@ -25,8 +23,6 @@ const fetchPermissions = fetchDep(nconf.get('containerName'), 'FetchPermissionsM
 router
   .use(cacheControl)
   .use(fetchPermissions)
-  .post(SIGN_IN, auth.signIn)
-  .get(SIGN_OUT, auth.signOut)
   .get('/session', auth.getSession)
   .get('/accounts/verify/:token', accounts.verifyToken)
   .put('/accounts/verify/:token', accounts.createPassword)

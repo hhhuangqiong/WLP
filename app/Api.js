@@ -1,7 +1,6 @@
 import _ from 'lodash';
 import superagent from 'superagent';
 
-import authRouter from './server/api/auth';
 import sessionRouter from './server/api/session';
 import accountsRouter from './server/api/accounts';
 import exportRouter from './server/api/export';
@@ -361,7 +360,6 @@ Api.prototype.getVsfMonthlyStats = function monthlyStats(params, cb) {
 
 _.assign(
   Api.prototype,
-  authRouter(API_PATH_PREFIX),
   sessionRouter(API_PATH_PREFIX),
   accountsRouter(API_PATH_PREFIX),
   exportRouter(EXPORT_PATH_PREFIX),
