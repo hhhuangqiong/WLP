@@ -3,7 +3,7 @@ import { defineMessages } from 'react-intl';
 
 const {
   OVERVIEW, ACCOUNT, COMPANY, END_USER, CALL,
-  IM, SMS, VSF, TOP_UP, VERIFICATION_SDK,
+  IM, SMS, VSF, TOP_UP, VERIFICATION_SDK, ACCESS_MANAGEMENT
 } = moduleId;
 
 const MESSAGES = defineMessages({
@@ -46,6 +46,10 @@ const MESSAGES = defineMessages({
   verification: {
     id: 'verification',
     defaultMessage: 'Verification',
+  },
+  accessManagement: {
+    id: 'accessManagement',
+    defaultMessage: 'Access Management',
   },
 });
 
@@ -109,5 +113,11 @@ export default [
     icon: 'icon-menuverification',
     page: VERIFICATION_SDK,
     path: `/${VERIFICATION_SDK}`,
+  },
+  {
+    name: MESSAGES.accessManagement,
+    icon: 'icon-menuaccount', // TODO: use appropriate icon
+    page: ACCESS_MANAGEMENT,
+    path: `/${ACCESS_MANAGEMENT}`,
   },
 ];

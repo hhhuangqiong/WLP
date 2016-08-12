@@ -9,4 +9,5 @@ export default {
   VSF: 'vsf',
   TOP_UP: 'top-up',
   VERIFICATION_SDK: 'verification-sdk',
+  ACCESS_MANAGEMENT: 'access-management',
 };
