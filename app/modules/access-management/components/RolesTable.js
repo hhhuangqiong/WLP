@@ -1,4 +1,5 @@
 import React, { Component, PropTypes } from 'react';
+import { injectIntl } from 'react-intl';
 import { isString, all, uniq } from 'lodash';
 import onClickOutside from 'react-onclickoutside';
 
@@ -6,9 +7,12 @@ import RolesTableHeader from './RolesTableHeader';
 import PermissionRowGroup from './PermissionRowGroup';
 import PermissionRow from './PermissionRow';
 
+import { MESSAGES } from './../constants/i18n';
+
 class RolesTable extends Component {
   static propTypes() {
     return {
+      intl: PropTypes.object,
       roles: PropTypes.arrayOf(PropTypes.object),
       permissions: PropTypes.arrayOf(PropTypes.object),
       editedRoleIndex: PropTypes.number,
@@ -69,7 +73,7 @@ class RolesTable extends Component {
   renderPermission(permission, isChild = false) {
     const roles = this.props.roles;
     const permissionValues = roles
-      .map(x => x.permissions)
+      .map(x => x.permissions || {})
       .map(x => x[permission.resource] || [])
       .map(x => x.indexOf(permission.action) >= 0);
     const key = `${permission.resource}:${permission.action}`;
@@ -77,7 +81,7 @@ class RolesTable extends Component {
       <PermissionRow
         isChild={isChild}
         key={key}
-        title={permission.title}
+        title={this.props.intl.formatMessage(MESSAGES[permission.intlKey])}
         hoveredRoleIndex={this.props.hoveredRoleIndex}
         editedRoleIndex={this.props.editedRoleIndex}
         permissionValues={permissionValues}
@@ -94,8 +98,8 @@ class RolesTable extends Component {
       const childRows = permission.children.map(child => this.renderPermission(child, true));
       return (
         <PermissionRowGroup
-          key={permission.title}
-          title={permission.title}
+          key={permission.intlKey}
+          title={this.props.intl.formatMessage(MESSAGES[permission.intlKey])}
           showEditControls={index === 0}
           canSave={isValid}
           rolesCount={this.props.roles.length}
@@ -134,6 +138,6 @@ class RolesTable extends Component {
   }
 }
 
-RolesTable = onClickOutside(RolesTable);
+RolesTable = injectIntl(onClickOutside(RolesTable));
 
 export default RolesTable;

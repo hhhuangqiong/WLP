@@ -1,7 +1,6 @@
-import { pick, isString, get } from 'lodash';
+import { pick, isString, get, extend, isNumber, defaults } from 'lodash';
 import Q from 'q';
-import qs from 'query-string';
-import fetch from 'isomorphic-fetch';
+import request from 'superagent';
 import logger from 'winston';
 import { HttpStatusError } from 'common-errors';
 
@@ -29,31 +28,64 @@ export class IamServiceClientMock {
   }
 }
 
-export default class IamServiceClient {
+export class IamServiceClient {
   constructor(options) {
     this._options = options;
+    this._SERVICE_NAME = 'wlp';
   }
   getUserPermissions(params) {
-    const query = qs.stringify(pick(params, ['service', 'company']));
-    const url = `${this._options.baseUrl}/access/users/${params.username}/permissions?${query}`;
-    return this._request(url);
+    const query = pick(params, ['service', 'company']);
+    const url = `${this._options.baseUrl}/access/users/${params.username}/permissions`;
+    const req = request.get(url).query(query);
+    return this._handle(req, url);
   }
-  _request(url, config) {
-    return fetch(url, config)
-      .then(response => {
-        const data = response.json();
-        if (response.ok) {
-          return data;
-        }
+  getRoles(query) {
+    query = defaults(query, { service: this._SERVICE_NAME });
+    const url = `${this._options.baseUrl}/access/roles`;
+    const req = request.get(url).query(query);
+    return this._handle(req, url);
+  }
+  createRole(role) {
+    const url = `${this._options.baseUrl}/access/roles`;
+    // Ensure service code is passed
+    const body = extend({}, role, { service: this._SERVICE_NAME });
+    const req = request.post(url).send(body);
+    return this._handle(req, url);
+  }
+  updateRole(role) {
+    const url = `${this._options.baseUrl}/access/roles/${role.id}`;
+    // Ensure service code is passed
+    const body = extend({}, role, { service: this._SERVICE_NAME });
+    const req = request.put(url).send(body);
+    return this._handle(req, url);
+  }
+  deleteRole(role) {
+    const url = `${this._options.baseUrl}/access/roles/${role.id}`;
+    // Ensure service code is passed
+    const req = request.delete(url);
+    return this._handle(req, url);
+  }
+  async _handle(superagentRequest, url) {
+    try {
+      const res = await superagentRequest;
+      return res.body;
+    } catch (err) {
+      // Wrap HTTP errors
+      if (isNumber(err.status)) {
+        const errorBody = err.response.body;
         const errorMessages = ['message', 'error.message', 'msg']
-          .map(x => get(data, x))
+          .map(x => get(errorBody, x))
           .filter(m => isString(m) && m.length > 0);
         const errorMessage = errorMessages[0] || '[Empty message]';
-        const message = `Request to IAM (${url}) failed with ${response.status}. Message was: ${errorMessage}`;
-        logger.error(message, data);
-        const error = new HttpStatusError(response.status, message);
-        error.response = response;
+        const message = `Request to IAM (${url}) failed with ${err.status}. Message was: ${errorMessage}`;
+        logger.error(message, err.response.body);
+        const error = new HttpStatusError(err.status, message);
+        error.response = errorBody;
         return Q.reject(error);
-      });
+      }
+      throw err;
+    }
   }
 }
+
+export default IamServiceClient;

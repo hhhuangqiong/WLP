@@ -13,6 +13,7 @@ import fetchRoles from './../actions/fetchRoles';
 
 import { MESSAGES } from './../constants/i18n';
 import RoleStore from './../stores/RoleStore';
+import ApplicationStore from './../../../main/stores/ApplicationStore';
 
 export class RolesPage extends Component {
   static get contextTypes() {
@@ -24,6 +25,7 @@ export class RolesPage extends Component {
     return {
       roles: PropTypes.arrayOf(PropTypes.object),
       permissions: PropTypes.arrayOf(PropTypes.object),
+      company: PropTypes.object.isRequired,
     };
   }
   constructor(props) {
@@ -36,7 +38,10 @@ export class RolesPage extends Component {
     };
   }
   componentDidMount() {
-    this.context.executeAction(fetchRoles);
+    const query = {
+      company: this.props.company.id,
+    };
+    this.context.executeAction(fetchRoles, query);
   }
   componentWillReceiveProps(nextProps) {
     this.state.displayedRoles = nextProps.roles;
@@ -45,6 +50,7 @@ export class RolesPage extends Component {
   addRole() {
     const role = {
       name: null,
+      company: this.props.company.id,
       permissions: {},
     };
     const roles = [...this.state.displayedRoles, role];
@@ -83,7 +89,9 @@ export class RolesPage extends Component {
       return;
     }
     const roles = [...this.state.displayedRoles];
-    let actions = roles[index].permissions[resource] || [];
+    const role = roles[index];
+    role.permissions = role.permissions || {};
+    let actions = role.permissions[resource] || [];
     actions = operation === 'add'
       ? [...actions, action]
       : without(actions, action);
@@ -165,8 +173,12 @@ export class RolesPage extends Component {
 RolesPage = injectIntl(RolesPage);
 RolesPage = connectToStores(
   RolesPage,
-  [RoleStore],
-  (context) => context.getStore(RoleStore).getState()
+  [RoleStore, ApplicationStore],
+  (context) => {
+    const state = context.getStore(RoleStore).getState();
+    state.company = context.getStore(ApplicationStore).getCurrentCompany();
+    return state;
+  }
 );
 
 export default RolesPage;

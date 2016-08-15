@@ -180,7 +180,7 @@ const getAccessibleCompanies = (req, res, next) => {
 
   carrierCompaniesHandler(carrierId)
     .then(companies => {
-      logger.debug('fetched accessible companies for carrier: %s', carrierId, companies);
+      logger.debug('fetched accessible companies for carrier: %s', carrierId, companies.map(x => x.name));
 
       res.apiResponse(200, {
         success: true,

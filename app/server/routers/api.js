@@ -16,7 +16,9 @@ import { fetchDep } from '../utils/bottle';
 const multipart = require('connect-multiparty')();
 const router = new Router();
 
+// TODO: refactor api.js to be a factory function with dependencies
 const fetchPermissions = fetchDep(nconf.get('containerName'), 'FetchPermissionsMiddleware');
+const roleController = fetchDep(nconf.get('containerName'), 'RoleController');
 
 // eslint:max-len 0
 
@@ -210,7 +212,7 @@ router
   ])
   .get('/accessibleCompanies', [
     authorize('company:read'),
-    companies.getAccessibleCompanies
+    companies.getAccessibleCompanies,
   ])
   .get('/companies/parent', [
     authorize('company:read'),
@@ -223,6 +225,22 @@ router
   .put('/companies/:carrierId/suspension', [
     authorize('company:delete'),
     companies.reactivateCompany,
+  ])
+  .get('/roles', [
+    authorize('role:read'),
+    roleController.list,
+  ])
+  .post('/roles', [
+    authorize('role:create'),
+    roleController.create,
+  ])
+  .put('/roles/:id', [
+    authorize('role:update'),
+    roleController.update,
+  ])
+  .delete('/roles/:id', [
+    authorize('role:delete'),
+    roleController.remove,
   ])
   .use('*', (req, res) => res.status(400).json({
     error: {

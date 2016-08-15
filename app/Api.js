@@ -5,6 +5,7 @@ import sessionRouter from './server/api/session';
 import accountsRouter from './server/api/accounts';
 import exportRouter from './server/api/export';
 import vsfRouter from './server/api/vsf';
+import roleRouter from './server/api/roles';
 
 import { API_PATH_PREFIX, EXPORT_PATH_PREFIX } from './config';
 import * as saUtil from './utils/superagent';
@@ -363,7 +364,8 @@ _.assign(
   sessionRouter(API_PATH_PREFIX),
   accountsRouter(API_PATH_PREFIX),
   exportRouter(EXPORT_PATH_PREFIX),
-  vsfRouter(API_PATH_PREFIX)
+  vsfRouter(API_PATH_PREFIX),
+  roleRouter(API_PATH_PREFIX),
 );
 
 module.exports = Api;
