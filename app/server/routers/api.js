@@ -26,9 +26,9 @@ router
   .use(cacheControl)
   .use(fetchPermissions)
   .get('/session', auth.getSession)
-  .get('/accounts/verify/:token', accounts.verifyToken)
-  .put('/accounts/verify/:token', accounts.createPassword)
-  .put('/accounts/reverify/:username', accounts.reverifyAccount)
+  .get('/carriers/:carrierId/company',
+    carriers.getCompany,
+  )
   .get('/carriers/:carrierId/overview/summaryStats', [
     authorize('wlp:generalOverview:read'),
     carriers.getOverviewSummaryStats,
@@ -151,9 +151,12 @@ router
     // TODO: define authorization resources and actions
     carriers.getVerificationStatistics,
   ])
+  .get('/carriers/:carrierId/info', [
+    carriers.getCompany,
+  ])
   .get('/companies', [
     authorize('company:read'),
-    companies.list,
+    companies.getCompanies,
   ])
   .get('/accounts', [
     authorize('user:read'),
@@ -163,68 +166,68 @@ router
     authorize('user:create'),
     accounts.createAccount,
   ])
-  .post('/accounts/change-password', [
-    authorize('user:update'),
-    accounts.changePassword,
-  ])
-  .get('/accounts/managingCompanies', [
+  .get('/accounts/accessibleCompanies', [
     authorize('user:read'),
-    companies.getApplicationCompanies,
+    accounts.getAccessibleCompanies,
   ])
-  .put('/accounts/:userId', [
+  .get('/accounts/:id', [
+    authorize('user:read'),
+    accounts.getAccount,
+  ])
+  .put('/accounts/:id', [
     authorize('user:update'),
     accounts.updateAccount,
   ])
-  .delete('/accounts/:userId', [
+  .delete('/accounts/:id', [
     authorize('user:delete'),
     accounts.deleteAccount,
   ])
   .post('/companies', [
     authorize('company:create'),
     multipart,
-    companies.createProfile,
+    companies.createCompany,
   ])
-  .get('/companies/:carrierId/info', [
+  .get('/companies/:companyId/info', [
     authorize('company:read'),
-    companies.getInfo,
+    companies.getCompany,
   ])
-  .get('/companies/:carrierId/service', [
+  .get('/companies/:companyId/managingCompanies', [
+    authorize('company:read'),
+    companies.getManagingCompanies,
+  ])
+  .get('/companies/:companyId/service', [
     authorize('company:read'),
     companies.getService,
   ])
-  .get('/companies/:carrierId/applications', [
+  .get('/companies/:companyId/applications', [
     authorize('company:read'),
     companies.getApplications,
   ])
-  .get('/companies/:carrierId/applicationIds', [
+  .get('/companies/:companyId/applicationIds', [
     authorize('company:read'),
     companies.getApplicationIds,
   ])
-  .put('/companies/:carrierId/profile', [
+  .put('/companies/:companyId/profile', [
     authorize('company:update'),
     multipart,
-    companies.updateProfile,
+    companies.updateCompany,
   ])
-  .put('/companies/:carrierId/service', [
+  .put('/companies/:companyId/service', [
     authorize('company:update'),
     multipart,
-    companies.saveService,
+    companies.updateService,
   ])
-  .get('/accessibleCompanies', [
-    authorize('company:read'),
-    companies.getAccessibleCompanies,
-  ])
-  .get('/companies/parent', [
-    authorize('company:read'),
-    companies.getParents,
-  ])
-  .post('/companies/:carrierId/suspension', [
+  .post('/companies/:companyId/suspension', [
     authorize('company:delete'),
     companies.deactivateCompany,
   ])
-  .put('/companies/:carrierId/suspension', [
+  .put('/companies/:companyId/suspension', [
     authorize('company:delete'),
     companies.reactivateCompany,
+  ])
+  .get('/companies/:companyId/roles', [
+    authorize('company:read'),
+    companies.getCompanyRoles,
   ])
   .get('/roles', [
     authorize('role:read'),

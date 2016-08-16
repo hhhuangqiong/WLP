@@ -10,7 +10,10 @@ import CallsRequest from '../../lib/requests/dataProviders/Call';
 import { IamServiceClientMock, IamServiceClient } from '../../lib/requests/iam/IamServiceClient';
 import { createFetchPermissionsMiddleware } from '../../server/middlewares/authorization';
 import roleController from '../../server/controllers/role';
-
+import AccountController from '../../server/controllers/account';
+import CompanyController from '../../server/controllers/company';
+import { ApplicationRequest } from '../../lib/requests/Application';
+import MpsClient from '../../lib/requests/mps/MpsClient';
 /**
  * Initialize the IoC container
  * The registered factory(s) seems to be lazied loaded.
@@ -27,9 +30,8 @@ export default function init(nconf) {
   ioc.constant('MAIL_TMPL_DIR', path.resolve(__dirname, '../../../mail/templates'));
   ioc.constant('MAIL_TMPL_CONFIG', { templatesDir: ioc.container.MAIL_TMPL_DIR });
 
-  ioc.factory('middlewares.ensureAuthenticated', () => {
-    return ensureAuthenticated(nconf.get('landing:unauthenticated:path'));
-  });
+  ioc.factory('middlewares.ensureAuthenticated', () =>
+    ensureAuthenticated(nconf.get('landing:unauthenticated:path')));
 
   ioc.factory('middlewares.flash', () => {
     return (require('../middlewares/flash').default)();
@@ -53,8 +55,6 @@ export default function init(nconf) {
     basePath: '/emails',
   });
   ioc.service('EmailClient', require('m800-mail-service-client'), 'M800_MAIL_SERVICE_CLIENT_CONFIG');
-
-  ioc.service('PortalUserManager', require('../../lib/portal/UserManager').default);
 
   ioc.constant('DATAPROVIDER_API_BASE_URL', nconf.get('dataProviderApi:baseUrl'));
   ioc.constant('DATAPROVIDER_API_TIMEOUT', nconf.get('dataProviderApi:timeout'));
@@ -117,9 +117,24 @@ export default function init(nconf) {
   ioc.constant('IamServiceClientOptions', {
     baseUrl: nconf.get('iamApi:baseUrl'),
   });
+
   ioc.service('IamServiceClientMock', IamServiceClientMock);
   ioc.service('FetchPermissionsMiddleware', createFetchPermissionsMiddleware, 'IamServiceClientMock');
   ioc.service('IamServiceClient', IamServiceClient, 'IamServiceClientOptions');
   ioc.service('RoleController', roleController, 'IamServiceClient');
+  ioc.constant('MpsClientOptions', {
+    baseUrl: nconf.get('mpsApi:baseUrl'),
+  });
+
+  ioc.service('MpsClient', MpsClient, 'MpsClientOptions');
+  ioc.constant('ApplicationOptions', {
+    baseUrl: nconf.get('mumsApi:baseUrl'),
+    timeout: nconf.get('mumsApi:timeout'),
+  });
+
+  ioc.service('ApplicationRequest', ApplicationRequest, 'ApplicationOptions');
+  ioc.service('AccountController', AccountController, 'IamServiceClient', 'MpsClient');
+  ioc.service('CompanyController', CompanyController, 'IamServiceClient', 'ApplicationRequest', 'MpsClient');
+
   return ioc;
 }

@@ -14,7 +14,13 @@ export default function (apiPrefix = '') {
         .accept('json')
         .end(genericHandler(cb));
     },
-
+    getAccount(params, cb) {
+      superagent
+        .get(`${this._getHost()}${apiPrefix}/accounts/${params.id}`)
+        .query(params)
+        .accept('json')
+        .end(genericHandler(cb));
+    },
     createAccount(params, cb) {
       superagent
         .post(`${this._getHost()}${apiPrefix}/accounts`)
@@ -25,9 +31,9 @@ export default function (apiPrefix = '') {
 
     updateAccount(params, cb) {
       superagent
-        .put(`${this._getHost()}${apiPrefix}/accounts/${params.data.userId}`)
+        .put(`${this._getHost()}${apiPrefix}/accounts/${params.data.id}`)
         .accept('json')
-        .send(params)
+        .send(_.omit(params.data, 'id'))
         .end(genericHandler(cb));
     },
 
@@ -65,14 +71,6 @@ export default function (apiPrefix = '') {
       superagent
         .put(`${this._getHost()}${apiPrefix}/accounts/reverify/${params.data.username}`)
         .accept('json')
-        .end(genericHandler(cb));
-    },
-
-    getManagingCompanies(params, cb) {
-      superagent
-        .get(`${this._getHost()}${apiPrefix}/accounts/managingCompanies`)
-        .accept('json')
-        .query({ userId: params.userId })
         .end(genericHandler(cb));
     },
   };
