@@ -1,25 +1,24 @@
-import _ from 'lodash';
 import React, { PropTypes, Component } from 'react';
-import classnames from 'classnames';
 import Select from 'react-select';
+import classnames from 'classnames';
+import _ from 'lodash';
+import { injectIntl, intlShape } from 'react-intl';
 
 import FormField from '../../../main/components/FormField';
-import PredefinedGroups from '../constants/PredefinedGroups';
 import ConfirmationDialog from '../../../main/components/ConfirmationDialog';
-import Icon from '../../../main/components/Icon';
+import { MESSAGES } from './../constants/i18n';
 
-export default class AccountForm extends Component {
+class AccountForm extends Component {
   static propTypes = {
+    intl: intlShape.isRequired,
     isVerified: PropTypes.bool.isRequired,
     isCreate: PropTypes.bool.isRequired,
     firstName: PropTypes.string.isRequired,
     lastName: PropTypes.string.isRequired,
     email: PropTypes.string.isRequired,
-    assignedGroup: PropTypes.string.isRequired,
-    assignedCompanies: PropTypes.array,
-    carrierManagingCompanies: PropTypes.object,
-    affiliatedCompany: PropTypes.string,
-    currentCompany: PropTypes.string.isRequired,
+    managingCompanies: PropTypes.array.isRequired,
+    selectedCompany: PropTypes.string.isRequired,
+    selectedRoles: PropTypes.array.isRequired,
     firstNameError: PropTypes.func,
     lastNameError: PropTypes.func,
     emailError: PropTypes.func,
@@ -29,14 +28,13 @@ export default class AccountForm extends Component {
     handleFirstNameChange: PropTypes.func.isRequired,
     handleLastNameChange: PropTypes.func.isRequired,
     handleEmailChange: PropTypes.func.isRequired,
-    handleGroupChange: PropTypes.func.isRequired,
-    handleAssignedCompanyChange: PropTypes.func.isRequired,
+    handleSelectedCompanyChange: PropTypes.func.isRequired,
+    handleSelectedRoleChange: PropTypes.func.isRequired,
     handleSave: PropTypes.func.isRequired,
     reverifyDialogOpened: PropTypes.bool,
     handleReverify: PropTypes.func.isRequired,
     handleOpenReverifyDialog: PropTypes.func.isRequired,
     handleCloseReverifyDialog: PropTypes.func.isRequired,
-    handleCompanyChange: PropTypes.func.isRequired,
   };
 
   onSubmit = (e) => {
@@ -46,54 +44,43 @@ export default class AccountForm extends Component {
     }
   }
 
-  renderUserGroupDisplay(data) {
-    return (
-      <div>
-        <Icon symbol={`icon-${data.label}`} />
-        <span className="account-form__select_label">{data.value}</span>
-      </div>
-    );
-  }
-
-  renderCompaniesDisplay(data) {
-    return <div>{data.label}</div>;
-  }
-
-  renderCompanyValueDisplay = ({ label, value }) => {
-    const { carrierManagingCompanies } = this.props;
-
-    if (_.isEmpty(carrierManagingCompanies)) {
-      return null;
-    }
-
-    const selectedCompany = carrierManagingCompanies.find(company => company._id === value);
-
-    if (!selectedCompany) {
-      return null;
-    }
-
-    return <div>{selectedCompany.name}</div>;
-  }
-
   render() {
     const {
-      firstName, lastName, email, assignedGroup,
-      carrierManagingCompanies, currentCompany,
-      affiliatedCompany, assignedCompanies,
-      handleCompanyChange,
-    } = this.props;
+      firstName,
+      lastName,
+      email,
+      managingCompanies,
+      selectedCompany,
+      handleSelectedCompanyChange,
+      selectedRoles,
+      handleSelectedRoleChange,
+   } = this.props;
 
-    const companyOptions = _.isEmpty(carrierManagingCompanies) ?
-      [{ label: currentCompany.name, value: currentCompany._id }] :
-      carrierManagingCompanies.map(company => ({ label: company.name, value: company._id }));
+    const { formatMessage } = this.props.intl;
+    const companyOptions = _.map(managingCompanies, company => ({
+      label: company.name,
+      value: company.id,
+    }));
 
+    let roleOptions;
+    // render options when selected company
+    if (selectedCompany) {
+      const selectedCompanyObject = _.find(managingCompanies, company =>
+        company.id === selectedCompany);
+      roleOptions = _.map(selectedCompanyObject.roles, role => ({
+        label: role.name,
+        value: role._id,
+      }));
+    } else {
+      roleOptions = [];
+    }
     return (
       <form className="account-form" onSubmit={this.props.handleSave}>
         <ConfirmationDialog
           isOpen={this.props.reverifyDialogOpened}
           onConfirm={this.props.handleReverify}
           onCancel={this.props.handleCloseReverifyDialog}
-          confirmLabel="Reverify"
+          confirmLabel={formatMessage(MESSAGES.reverify)}
         >
           <div>Are you sure want to send reverify email to this user?</div>
         </ConfirmationDialog>
@@ -106,7 +93,7 @@ export default class AccountForm extends Component {
                 name="firstName"
                 className={classnames('radius', { error: this.props.firstNameError })}
                 type="text"
-                placeholder="First Name"
+                placeholder={formatMessage(MESSAGES.firstName)}
                 value={firstName}
                 onBlur={this.props.validateFirstName}
                 onChange={this.props.handleFirstNameChange}
@@ -123,7 +110,7 @@ export default class AccountForm extends Component {
                 name="lastName"
                 className={classnames('radius', { error: this.props.lastNameError })}
                 type="text"
-                placeholder="Last Name"
+                placeholder={formatMessage(MESSAGES.lastName)}
                 value={lastName}
                 onBlur={this.props.validateLastName}
                 onChange={this.props.handleLastNameChange}
@@ -137,16 +124,17 @@ export default class AccountForm extends Component {
         </FormField>
 
         <FormField label="Email">
+          {/* No requirement for reverify, user can go to forgot password page to request again
           <If condition={!this.props.isVerified && !this.props.isCreate}>
             <span
               className="account-reverify-email"
               onClick={this.props.handleOpenReverifyDialog}
             >Reverify</span>
-          </If>
+          </If>*/}
           <input
             ref="email"
             name="email"
-            placeholder="Email"
+            placeholder={formatMessage(MESSAGES.email)}
             className={classnames('radius', { error: this.props.emailError })}
             type="email"
             value={email}
@@ -159,61 +147,33 @@ export default class AccountForm extends Component {
           </label>
         </FormField>
 
-        <FormField label="User Group">
+        <FormField label="Company">
           <Select
-            ref="assignedGroup"
             className="account-form__select large radius"
             searchable={false}
             clearable={false}
-            options={Object.keys(PredefinedGroups).map(group => ({ label: group, value: group }))}
-            value={assignedGroup}
-            valueRenderer={this.renderUserGroupDisplay}
-            optionRenderer={this.renderUserGroupDisplay}
-            onChange={this.props.handleGroupChange}
+            options={companyOptions}
+            value={selectedCompany}
+            onChange={handleSelectedCompanyChange}
+            placeholder={formatMessage(MESSAGES.selectCompany)}
           />
         </FormField>
 
-        <If condition={!_.isEmpty(carrierManagingCompanies)}>
-          <div>
-            <FormField label="Company">
-              <Select
-                ref="affiliatedCompany"
-                className="account-form__select large radius"
-                searchable={false}
-                clearable={false}
-                options={companyOptions}
-                value={affiliatedCompany}
-                valueRenderer={this.renderCompanyValueDisplay}
-                optionRenderer={this.renderCompaniesDisplay}
-                onChange={handleCompanyChange}
-              />
-            </FormField>
-
-            <div className="row">
-              <div className="large-24 columns">
-                <label>Company Management</label>
-
-                <ul className="medium-block-grid-2 large-block-grid-3 account-form__company-management">
-                  {
-                    carrierManagingCompanies.map(company => (
-                      <li key={company._id}>
-                        <input
-                          id={company._id}
-                          type="checkbox"
-                          checked={assignedCompanies.indexOf(company._id) >= 0}
-                          onChange={this.props.handleAssignedCompanyChange}
-                        />
-                        <label htmlFor={company._id}>{company.name}</label>
-                      </li>
-                    ))
-                  }
-                </ul>
-              </div>
-            </div>
-          </div>
-        </If>
-
+        <FormField label="Role">
+          <Select
+            className="account-form__select large radius"
+            searchable={false}
+            clearable={false}
+            multi
+            options={roleOptions}
+            value={selectedRoles}
+            onChange={handleSelectedRoleChange}
+            placeholder={formatMessage(MESSAGES.selectRole)}
+          />
+        </FormField>
       </form>
     );
   }
 }
+
+export default injectIntl(AccountForm);

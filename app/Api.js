@@ -52,17 +52,11 @@ Api.prototype.getCompanies = function getCompanies(params, cb) {
     .end(genericHandler(cb));
 };
 
-Api.prototype.getParentCompanies = function getParentCompanies(params, cb) {
+Api.prototype.getManagingCompanies = function getManagingCompanies(params, cb) {
   superagent
-    .get(`${this._getHost()}/api/companies/parent`)
+    .get(`${this._getHost()}/api/companies/${params.companyId}/managingCompanies`)
     .accept('json')
-    .end((err, res) => {
-      if (err) {
-        debug('error', err);
-      }
-
-      cb(err, res && res.body);
-    });
+    .end(genericHandler(cb));
 };
 
 Api.prototype.createCompany = function createCompany(params, cb) {
@@ -83,8 +77,7 @@ Api.prototype.getCompanyService = function getCompanyService(params, cb) {
 
 Api.prototype.getCarrierManagingCompanies = function getCarrierManagingCompanies(params, cb) {
   superagent
-    .get(`${this._getHost()}/api/accounts/managingCompanies`)
-    .query(_.pick(params,['carrierId']))
+    .get(`${this._getHost()}/api/companies/${params.companyId}/managingCompanies`)
     .accept('json')
     .end(genericHandler(cb));
 };
@@ -287,7 +280,7 @@ Api.prototype.getVerificationStatsByCountry = function getVerificationStatsByCou
 
 Api.prototype.getCurrentCompanyInfo = function getCurrentCompanyInfo(params, cb) {
   return superagent
-    .get(`${this._getHost()}/api/companies/${params.carrierId}/info`)
+    .get(`${this._getHost()}/api/carriers/${params.carrierId}/info`)
     .accept('json')
     .end(genericHandler(cb));
 };

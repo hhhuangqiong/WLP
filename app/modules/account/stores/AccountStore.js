@@ -18,8 +18,7 @@ const DEFAULT_ACCOUNT_PROPERTIES = {
   firstName: '',
   lastName: '',
   email: '',
-  assignedGroup: 'administrator',
-  assignedCompanies: [],
+  roles: [],
   isVerified: false,
 };
 
@@ -28,107 +27,104 @@ export default createStore({
 
   handlers: {
     FETCH_ACCOUNTS_SUCCESS: 'fetchAccounts',
+    FETCH_ACCOUNT_SUCCESS: 'fetchAccount',
     CREATE_ACCOUNT_SUCCESS: 'createAccount',
     UPDATE_ACCOUNT_SUCCESS: 'updateAccount',
     DELETE_ACCOUNT_SUCCESS: 'deleteAccount',
+    REDIRECT_TO_ACCOUNT_HOME: 'redirectToAccountHome',
+    REDIRECTED_TO_ACCOUNT_HOME: 'redirectedToAccountHome',
     FETCH_CARRIER_MANAGING_COMPANIES_SUCCESS: 'fetchCarrierManagingCompanies',
   },
 
   initialize() {
     this.accounts = [];
     this.selectedAccount = {};
-    this.carrierManagingCompanies = [];
-  },
-
-  fetchCarrierManagingCompanies(payload) {
-    if (!payload || !payload.result) return;
-
-    this.carrierManagingCompanies = payload.result;
-    this.emitChange();
+    this.managingCompanies = [];
+    this.redirectToHome = false;
   },
 
   fetchAccounts(payload) {
-    if (!payload) return;
-
-    const { result } = payload;
-
-    if (!result) return;
-
-    const accounts = Object.keys(result).map(key => result[key]);
-
-    this.accounts = accounts;
-    this.emitChange();
-  },
-
-  createAccount(account) {
-    this.selectedAccount = account;
-
-    const accounts = this.accounts;
-    accounts.push(this.selectedAccount);
-    this.accounts = accounts;
+    if (!payload || !payload.items) return;
+    this.accounts = payload.items;
 
     this.emitChange();
   },
 
-  updateAccount(result) {
-    this.selectedAccount = result;
-
-    const accounts = this.accounts.filter(account => account._id !== this.selectedAccount._id);
-    accounts.push(this.selectedAccount);
-    this.accounts = accounts;
-
+  redirectToAccountHome() {
+    this.redirectToHome = true;
     this.emitChange();
   },
 
-  deleteAccount(payload) {
-    const user = payload.result;
+  redirectedToAccountHome() {
+    this.redirectToHome = false;
+  },
 
+  fetchAccount(account) {
+    this.selectedAccount = _.merge(this.getNewAccount(), {
+      accountId: account.id,
+      firstName: account.name.firstName,
+      lastName: account.name.lastName,
+      email: account.id,
+      affiliatedCompany: account.affiliatedCompany,
+      createdAt: account.createdAt,
+      isVerified: account.isVerified,
+    });
+    this.emitChange();
+  },
+
+  createAccount() {
+    // if null will show empty area
     this.selectedAccount = {};
-    this.accounts = _.clone(this.accounts.filter(account => account._id !== user._id), true);
-
+    this.redirectToHome = true;
     this.emitChange();
   },
 
-  getCarrierManagingCompanies() {
-    return this.carrierManagingCompanies || [];
+  updateAccount() {
+    this.selectedAccount = {};
+    this.redirectToHome = true;
+    this.emitChange();
+  },
+
+  deleteAccount() {
+    this.selectedAccount = {};
+    this.redirectToHome = true;
+    this.emitChange();
+  },
+
+  fetchCarrierManagingCompanies(payload) {
+    this.managingCompanies = payload;
+    this.emitChange();
+  },
+
+  getManagingCompanies() {
+    return this.managingCompanies;
   },
 
   getAccounts() {
-    return { accounts: this.accounts };
+    return this.accounts;
   },
 
   getNewAccount() {
     return _.clone(DEFAULT_ACCOUNT_PROPERTIES, true);
   },
 
-  getAccountByAccountId(accountId) {
-    const account = this.accounts.find(account => account._id === accountId);
+  getSelectedAccount() {
+    return this.selectedAccount;
+  },
 
-    if (!account) return {};
-
-    return _.merge(this.getNewAccount(), {
-      accountId: account._id,
-      firstName: account.name.first,
-      lastName: account.name.last,
-      email: account.username,
-      assignedGroup: account.assignedGroup,
-      assignedCompanies: account.assignedCompanies,
-      affiliatedCompany: account.affiliatedCompany,
-      parentCompany: account.parentCompany,
-      createdAt: account.createdAt,
-      tokens: account.tokens,
-      selectedAccount: account,
-      isVerified: account.isVerified,
-    });
+  getRedirectToHome() {
+    return this.redirectToHome;
   },
 
   dehydrate() {
-    return this.getAccounts();
+    return {
+      accounts: this.getAccounts(),
+      selectedAccount: this.getSelectedAccount(),
+    };
   },
 
   rehydrate(state) {
     this.accounts = state.accounts;
     this.selectedAccount = state.selectedAccount;
-    this.carrierManagingCompanies = state.carrierManagingCompanies;
   },
 });

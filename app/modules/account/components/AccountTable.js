@@ -1,17 +1,19 @@
-import _ from 'lodash';
 import React, { PropTypes } from 'react';
 import { Link } from 'react-router';
 import classNames from 'classnames';
+import { injectIntl, intlShape, FormattedMessage } from 'react-intl';
 
 import CircleIcon from '../../../main/components/CircleIcon';
-import PredefinedGroups from '../constants/PredefinedGroups';
 import Icon from '../../../main/components/Icon';
+import { MESSAGES } from './../constants/i18n';
 
-export default React.createClass({
+const AccountTable = React.createClass({
   displayName: 'AccountTable',
 
   propTypes: {
+    intl: intlShape.isRequired,
     accounts: PropTypes.array.isRequired,
+    handleSearch: PropTypes.func.isRequired,
   },
 
   contextTypes: {
@@ -19,46 +21,37 @@ export default React.createClass({
     params: PropTypes.object.isRequired,
   },
 
-  getInitialState() {
-    return { searchItem: '' };
-  },
-
-  getGroups() {
-    return _.groupBy(this.props.accounts, account => account.assignedGroup);
-  },
-
   renderSearchBar() {
+    const { formatMessage } = this.props.intl;
     return (
       <nav className="top-bar company-sidebar__search" data-topbar role="navigation">
         <input
           className="round"
           type="text"
-          placeholder="Search"
-          onChange={this.handleSearchAccount}
+          placeholder={formatMessage(MESSAGES.search)}
+          onChange={this.props.handleSearch}
         />
         <Icon symbol="icon-search" />
       </nav>
     );
   },
 
-  renderSearchResults() {
-    const searchItems = [];
-    const groups = this.getGroups();
-
-    _.forEach(groups, (accounts) => {
-      const filteredAccounts = _.filter(accounts, account => {
-        const accountName = `${account.name.first} ${account.name.last}`;
-        return _.includes(accountName.toLowerCase(), this.state.searchItem.toLowerCase());
-      });
-
-      searchItems.push(filteredAccounts);
-    });
-
+  renderHeader() {
+    const { identity } = this.context.params;
+    const userNo = this.props.accounts.length;
     return (
-      <ul className="account-table__list">
-        {this.renderAccountItems(_.flatten(searchItems))}
-        <li className="divider"></li>
-      </ul>
+      <div className="header inline-with-space narrow">
+        <h5 className="title inline text-center">
+          <FormattedMessage
+            id="users"
+            defaultMessage="Users"
+          />
+        ({userNo})
+        </h5>
+        <Link to={`/${identity}/account/create`}>
+          <Icon symbol="icon-user-management" className="right" />
+        </Link>
+      </div>
     );
   },
 
@@ -67,64 +60,50 @@ export default React.createClass({
       return null;
     }
 
-    if (this.state.searchItem.length > 0) {
-      return this.renderSearchResults();
-    }
-
-    const groups = this.getGroups();
-    return _.map(groups, group =>
-      (<ul className="account-table__list">
-          <li className="account-table__item-catagory">{group[0].assignedGroup}</li>
-          {this.renderAccountItems(group)}
-          <li className="divider"></li>
-        </ul>)
+    return (
+      <ul className="account-table__list">
+        <li className="account-table__item-catagory"></li>
+        {this.renderAccountItems(this.props.accounts)}
+        <li className="divider"></li>
+      </ul>
     );
   },
 
   renderAccountItems(accounts) {
     const { identity, accountId } = this.context.params;
+    return accounts.map(account => (
+      <li className={classNames('account-table__item', { active: account.id === accountId }, 'clearfix')} key={account.Id}>
+        <Link to={`/${identity}/account/${account.id}/profile`} params={{ id: account.id, identity }}>
+          <div className="account-icon left">
+            {/* @TODO update the icon with new user icon */}
+            <CircleIcon
+              size="small"
+              backgroundColor="#E33238"
+              icon="icon-person"
+            />
+          </div>
 
-    return accounts.map(account => {
-      // const groupSettings = PredefinedGroups[account.assignedGroup];
-      const groupSettings = PredefinedGroups.default;
-
-      return (
-        <li className={classNames('account-table__item', { active: account._id === accountId })} key={account.Id}>
-          <Link to={`/${identity}/account/${account._id}/profile`} params={{ accountId: account._id, identity }}>
-            <div className="account-icon left">
-              <CircleIcon
-                size="small"
-                backgroundColor={groupSettings.backgroundColor}
-                iconColor={groupSettings.iconColor}
-                icon={groupSettings.icon}
-              />
-            </div>
-
-            <div className="account-table__item__username">
-              {account.name.first} {account.name.last}
-            </div>
-
-            <div className="account-table__item__role">
-              {account.assignedGroup}
-            </div>
-          </Link>
-        </li>
-      );
-    });
+          <div className="account-table__item__username">
+            {account.name.firstName} {account.name.lastName}
+          </div>
+          <div className="account-table__item__email">
+            {account.id}
+          </div>
+        </Link>
+      </li>
+      )
+    );
   },
 
   render() {
     return (
       <div className="account-table">
+        {this.renderHeader()}
         {this.renderSearchBar()}
         {this.renderRoleSections()}
       </div>
     );
   },
-
-  handleSearchAccount(e) {
-    this.setState({
-      searchItem: e.target.value.trim(),
-    });
-  },
 });
+
+export default injectIntl(AccountTable);

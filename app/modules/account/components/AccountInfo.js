@@ -1,31 +1,28 @@
 import React, { createClass, PropTypes } from 'react';
+import { injectIntl, intlShape, FormattedMessage } from 'react-intl';
 
 import classNames from 'classnames';
-import PredefinedGroups from '../constants/PredefinedGroups';
 import CircleIcon from '../../../main/components/CircleIcon';
 
 const SUCCESS_LABEL = 'Verified';
 const FAIL_LABEL = 'Inactive';
-const DEFAULT_GROUP = 'technical';
 
-export default createClass({
+const AccountInfo = createClass({
   displayName: 'AccountInfo',
 
   propTypes: {
+    intl: intlShape.isRequired,
     isVerified: PropTypes.string,
     firstName: PropTypes.string,
     lastName: PropTypes.string,
     createdAt: PropTypes.string,
-    assignedGroup: PropTypes.string,
   },
 
   render() {
     const firstName = this.props.firstName || '<First Name>';
     const lastName = this.props.lastName || '<Last Name>';
-    const assignedGroup = this.props.assignedGroup || DEFAULT_GROUP;
     const createdAt = this.props.createdAt;
     const status = this.props.isVerified ? SUCCESS_LABEL : FAIL_LABEL;
-    const groupSettings = PredefinedGroups.default;
 
     return (
       <div className="profile-info">
@@ -49,11 +46,11 @@ export default createClass({
 
         <div className="profile-info__icon">
           <div>
+            {/* @TODO update the icon when it is ready */}
             <CircleIcon
               size="large"
-              backgroundColor={groupSettings.backgroundColor}
-              iconColor={groupSettings.iconColor}
-              icon={groupSettings.icon}
+              backgroundColor="#E33238"
+              icon="icon-person"
             />
           </div>
         </div>
@@ -62,7 +59,12 @@ export default createClass({
 
         <If condition={createdAt}>
           <div className="profile-info__time">
-            <span className="profile-info__created_on">Created on</span>
+            <span className="profile-info__created_on">
+              <FormattedMessage
+                id="createdOn"
+                defaultMessage="Created on"
+              />
+            </span>
             <span>{createdAt}</span>
           </div>
         </If>
@@ -70,3 +72,5 @@ export default createClass({
     );
   },
 });
+
+export default injectIntl(AccountInfo);

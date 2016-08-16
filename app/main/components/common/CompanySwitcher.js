@@ -1,7 +1,6 @@
 import _ from 'lodash';
 import React, { PropTypes } from 'react';
 import { FluxibleMixin } from 'fluxible-addons-react';
-import { browserHistory } from 'react-router';
 
 import { userPath } from '../../../utils/paths';
 import ApplicationStore from '../../stores/ApplicationStore';
@@ -26,18 +25,17 @@ const CompanySwitcher = React.createClass({
   },
 
   getStateFromStore() {
+    const currentCompany = this.getStore(ApplicationStore).getCurrentCompany();
     return {
-      companies: this.getStore(ApplicationStore).getManagingCompanies() || [],
+      companies: [currentCompany].concat(this.getStore(ApplicationStore).getManagingCompanies() || []),
     };
   },
 
-  switchCompany(params) {
-    const { identity } = params;
-
+  switchCompany(carrierId) {
     // redirecting to an existing module will work
     // a proper landing path will be checked on server-side
     // ideally it should reconstruct the defaultPath by authorityChecker
-    const destination = userPath(identity, '/overview');
+    const destination = userPath(carrierId, '/overview');
 
     // it should always be a client side process
     // let's refresh the page at this moment, until we
@@ -51,12 +49,12 @@ const CompanySwitcher = React.createClass({
     const buttons = this
       .state
       .companies
-      .map(({ attributes: { name, carrierId, logo, identity } }) => {
-        const logoSrc = logo ? `/data/${logo}` : DEFAULT_LOGO_SRC;
-
+      .map(({ name, carrierId, logo }) => {
+        const logoSrc = !!logo ? logo : DEFAULT_LOGO_SRC;
+        const switchCompany = this.switchCompany.bind(this, carrierId);
         return (
           <li className="navigation-bar__item" title={name} key={carrierId}>
-            <a href="#" onClick={this.switchCompany.bind(this, { identity })}>
+            <a href="#" onClick={switchCompany}>
               <img src={logoSrc} alt={name} />
             </a>
           </li>

@@ -8,9 +8,9 @@ export default function getAccessibleCompanies(context, params, done) {
   context.dispatch('FETCH_MANAGING_COMPANIES_START');
 
   apiClient
-    .get('accessibleCompanies')
-    .then(result => {
-      context.dispatch('FETCH_MANGAING_COMPANIES_SUCCESS', result.data);
+    .get('accounts/accessibleCompanies')
+    .then(companies => {
+      context.dispatch('FETCH_MANGAING_COMPANIES_SUCCESS', companies);
       done();
     })
     .catch(err => {

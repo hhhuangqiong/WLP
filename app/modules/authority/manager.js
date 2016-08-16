@@ -1,11 +1,11 @@
 import _ from 'lodash';
-import logger from 'winston';
-import { NotFoundError } from 'common-errors';
+import nconf from 'nconf';
 
+import { fetchDep } from '../../server/utils/bottle';
 import { getAclString } from './utils';
-import Company from '../../collections/company';
-
 import modules from '../../constants/moduleId';
+
+const mpsClient = fetchDep(nconf.get('containerName'), 'MpsClient');
 const {
   OVERVIEW, ACCOUNT, COMPANY, END_USER, CALL,
   IM, SMS, VSF, TOP_UP, VERIFICATION_SDK,
@@ -59,27 +59,7 @@ class Authority {
    * @private
    */
   _getCapabilities() {
-    return new Promise((resolve, reject) => {
-      Company.getCompanyByCarrierId(this._carrierId, (err, company) => {
-        if (err) {
-          reject(new Error(
-            `Encounter error when finding company by carrierId ${this._carrierId}`,
-            err
-          ));
-
-          return;
-        }
-
-        if (!company) {
-          reject(new NotFoundError('company'));
-          return;
-        }
-
-        const { capabilities } = company;
-
-        resolve(capabilities || []);
-      });
-    });
+    return mpsClient.getCapabilityByCarrierId(this._carrierId);
   }
 
   /**

@@ -13,7 +13,7 @@ class AuthorityChecker {
     this._carrierId = null;
 
     if (options.req) {
-      this._carrierId = _.get(options, 'req.user.affiliatedCompany.carrierId');
+      this._carrierId = _.get(options, 'req.user.carrierId');
     }
 
     this._capability = (options && options.capability) || [];

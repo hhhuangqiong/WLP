@@ -14,7 +14,7 @@ export default function (context, payload, cb) {
 
   if (!carrierId) {
     debug('carrierId data cannot be found in url, returns to user session');
-    carrierId = get(payload, 'req.user.affiliatedCompany.carrierId');
+    carrierId = get(payload, 'req.user.carrierId');
   }
 
   // if carrierId does not exists

@@ -15,7 +15,6 @@ const Sidebar = props => {
     isAuthorityReady,
     isOffCanvas,
     logo: logoSrc,
-    role,
     intl,
   } = props;
   const { formatMessage } = intl;
@@ -68,7 +67,6 @@ Sidebar.propTypes = {
   isAuthorityReady: PropTypes.bool.isRequired,
   isOffCanvas: PropTypes.bool.isRequired,
   logo: PropTypes.string.isRequired,
-  role: PropTypes.string.isRequired,
 };
 
 export default injectIntl(Sidebar);

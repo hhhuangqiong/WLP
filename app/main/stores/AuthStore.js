@@ -36,7 +36,7 @@ const AuthStore = createStore({
   },
 
   getCarrierId() {
-    return get(this, 'user.affiliatedCompany.carrierId');
+    return get(this, 'user.carrierId');
   },
 
   dehydrate() {

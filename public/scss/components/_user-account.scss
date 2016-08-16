@@ -13,6 +13,26 @@ $account-table-width: rem-calc(320);
 
   background-color: $account-page-color;
   box-shadow: 2px 0 2px #888888;
+  .header {
+    padding: rem-calc(15);
+  }
+
+  .icon-user-management{
+    fill: black;
+    width: rem-calc(24);
+    height: rem-calc(24);
+  }
+
+  .icon-search.icon{
+    left: rem-calc(30);
+  }
+
+  .account-icon .icon {
+    fill: white;
+    height: rem-calc(30);
+    width: rem-calc(30);
+    margin-bottom: rem-calc(16);
+  }
 
   .active {
     background-color: #FDF5E6;
@@ -120,6 +140,11 @@ $account-table-width: rem-calc(320);
   overflow: hidden;
   min-height: $account-page-height;
 
+  .icon {
+    height: rem-calc(60);
+    width: rem-calc(60);
+    margin-bottom: rem-calc(16);
+  }
   &__container {
     background-color: $account-page-color;
     border-radius: 10px;

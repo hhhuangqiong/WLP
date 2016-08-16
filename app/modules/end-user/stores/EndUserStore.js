@@ -166,7 +166,6 @@ const EndUserStore = createStore({
   },
 
   getNeedMoreData() {
-    console.log(this.displayUsers.length, this.users.length);
     return this.displayUsers.length === this.users.length;
   },
 

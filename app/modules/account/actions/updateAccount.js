@@ -1,3 +1,5 @@
+import fetchAccounts from './fetchAccounts';
+
 export default function (context, params, done) {
   context.api.updateAccount(params, (err, { error, result }) => {
     if (err) {
@@ -11,10 +13,11 @@ export default function (context, params, done) {
       context.dispatch('ERROR_MESSAGE', error);
       return;
     }
-
-    context.dispatch('UPDATE_ACCOUNT_SUCCESS', result);
     context.dispatch('INFO_MESSAGE', { message: 'Successfully update user' });
-
-    done();
+    context.executeAction(fetchAccounts, { affiliatedCompany: params.companyId })
+     .then(() => {
+       context.dispatch('UPDATE_ACCOUNT_SUCCESS', result);
+       done();
+     });
   });
 }

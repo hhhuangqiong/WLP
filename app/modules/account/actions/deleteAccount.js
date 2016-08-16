@@ -8,14 +8,10 @@ export default function (context, params, done) {
       context.dispatch('DELETE_ACCOUNT_FAILURE', err);
       return;
     }
-
-    context.executeAction(fetchAccounts, { carrierId: params.carrierId }, () => {
-      context.dispatch('DELETE_ACCOUNT_SUCCESS', result);
-      context.router.push({
-        pathname: 'account',
+    context.executeAction(fetchAccounts, { affiliatedCompany: params.companyId })
+      .then(() => {
+        context.dispatch('DELETE_ACCOUNT_SUCCESS', result);
+        done();
       });
-
-      done();
-    });
   });
 }

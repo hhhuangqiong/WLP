@@ -1,12 +1,15 @@
 import React, { PropTypes } from 'react';
 import classNames from 'classnames';
 import { FluxibleMixin } from 'fluxible-addons-react';
+import { injectIntl, intlShape, FormattedMessage } from 'react-intl';
 
 import AuthStore from '../../../main/stores/AuthStore';
 import ConfirmationDialog from '../../../main/components/ConfirmationDialog';
+import { MESSAGES } from './../constants/i18n';
 
-export default React.createClass({
+const AccountActionBar = React.createClass({
   propTypes: {
+    intl: intlShape.isRequired,
     handleSave: PropTypes.func.isRequired,
     handleDiscard: PropTypes.func.isRequired,
     handleDelete: PropTypes.func.isRequired,
@@ -27,6 +30,7 @@ export default React.createClass({
   },
 
   render() {
+    const { formatMessage } = this.props.intl;
     const loggedInUserId = this
       .context
       .getStore(AuthStore)
@@ -38,9 +42,14 @@ export default React.createClass({
           isOpen={this.props.deleteDialogOpened}
           onConfirm={this.props.handleDelete}
           onCancel={this.props.handleCloseDeleteDialog}
-          confirmLabel="Delete"
+          confirmLabel={formatMessage(MESSAGES.delete)}
         >
-          <div>Are you sure want to delete this user?</div>
+          <div>
+            <FormattedMessage
+              id="account.deleteUserMessage"
+              defaultMessage="Are you sure want to delete this user?"
+            />
+          </div>
         </ConfirmationDialog>
 
         <div className="top-bar-section">
@@ -53,7 +62,12 @@ export default React.createClass({
                   tabIndex="2"
                   className="account-top-bar__button-secondary button round icon-delete"
                   onClick={this.props.handleOpenDeleteDialog}
-                >Delete</div>
+                >
+                  <FormattedMessage
+                    id="Delete"
+                    defaultMessage="Delete"
+                  />
+                </div>
               </If>
             </li>
           </ul>
@@ -72,7 +86,12 @@ export default React.createClass({
                     { disabled: !this.props.isEnabled })
                   }
                   onClick={this.props.handleDiscard}
-                >Discard</div>
+                >
+                <FormattedMessage
+                  id="Discard"
+                  defaultMessage="Discard"
+                />
+                </div>
               </If>
             </li>
             <li className="top-bar--inner">
@@ -88,7 +107,12 @@ export default React.createClass({
                   { disabled: !this.props.isEnabled })
                 }
                 onClick={this.props.handleSave}
-              >Save</div>
+              >
+              <FormattedMessage
+                id="Save"
+                defaultMessage="Save"
+              />
+              </div>
             </li>
           </ul>
 
@@ -97,3 +121,5 @@ export default React.createClass({
     );
   },
 });
+
+export default injectIntl(AccountActionBar);

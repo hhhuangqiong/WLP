@@ -1,126 +1,121 @@
-import _ from 'lodash';
-import React, { PropTypes } from 'react';
-import Joi from 'joi';
+import { connectToStores } from 'fluxible-addons-react';
+import React, { PropTypes, Component } from 'react';
 
-import { FluxibleMixin } from 'fluxible-addons-react';
+import _ from 'lodash';
+import { injectIntl } from 'react-intl';
+import Joi from 'joi';
 
 import ApplicationStore from '../../../main/stores/ApplicationStore';
 import AccountStore from '../stores/AccountStore';
+import { MESSAGES } from './../constants/i18n';
 
-// Commented our as there's no longer need to fetch managing companies as of new
-// requirement, while this is blocking the view to initialize (due to legacy code).
-// Portal User will need to switch to the corresponding company to manage
-// accounts.
-//
-// import fetchCarrierManagingCompanies from '../actions/fetchCarrierManagingCompanies';
 import createAccount from '../actions/createAccount';
 import updateAccount from '../actions/updateAccount';
 import deleteAccount from '../actions/deleteAccount';
+import fetchAccount from '../actions/fetchAccount';
+import redirectToAccountHome from '../actions/redirectToAccountHome';
+import redirectedToAccountHome from '../actions/redirectedToAccountHome';
 import resendCreatePassword from '../actions/resendCreatePassword';
 
 import AccountForm from './AccountForm';
 import AccountActionBar from './AccountActionBar';
 import AccountInfo from './AccountInfo';
 
-const NEW_ACCOUNT_ROUTE_NAME = 'account-create';
-const EDIT_ACCOUNT_TITLE = 'ACCOUNT INFORMATION';
-const CREATE_ACCOUNT_TITLE = 'CREATE ACCOUNT';
 const NAME_VALIDATION = Joi.string().min(1).max(30).required().label('Name');
 const EMAIL_VALIDATION = Joi.string().email().required().label('Email');
 
-export default React.createClass({
-  displayName: 'AccountProfile',
+class AccountProfile extends Component {
+  static propTypes = {
+    intl: PropTypes.object.isRequired,
+    currentCompany: PropTypes.object,
+    managingCompanies: PropTypes.array.isRequired,
+    account: PropTypes.object,
+    mode: PropTypes.string.isRequired,
+  }
 
-  contextTypes: {
+  static contextTypes = {
     executeAction: PropTypes.func.isRequired,
     router: PropTypes.object.isRequired,
     params: PropTypes.object.isRequired,
     location: PropTypes.object.isRequired,
-  },
+  }
 
-  mixins: [FluxibleMixin],
-
-  statics: {
-    storeListeners: [ApplicationStore, AccountStore],
-  },
-
-  getInitialState() {
-    return this.getStateFromStores();
-  },
+  constructor(props) {
+    super(props);
+    // default values for state
+    this.state = {
+      deleteDialogOpened: false,
+      selectedCompany: '',
+      selectedRoles: [],
+      currentRoles: {},
+    };
+    this.handleFirstNameChange = this.handleFirstNameChange.bind(this);
+    this.handleLastNameChange = this.handleLastNameChange.bind(this);
+    this.handleEmailChange = this.handleEmailChange.bind(this);
+    this.handleSave = this.handleSave.bind(this);
+    this.handleDelete = this.handleDelete.bind(this);
+    this.handleOpenDeleteDialog = this.handleOpenDeleteDialog.bind(this);
+    this.handleCloseDeleteDialog = this.handleCloseDeleteDialog.bind(this);
+    this.handleSelectedCompanyChange = this.handleSelectedCompanyChange.bind(this);
+    this.handleSelectedRoleChange = this.handleSelectedRoleChange.bind(this);
+    this.validateFirstName = this.validateFirstName.bind(this);
+    this.validateLastName = this.validateLastName.bind(this);
+    this.validateEmail = this.validateEmail.bind(this);
+    this.handleDiscard = this.handleDiscard.bind(this);
+  }
 
   componentDidMount() {
-    // Commented our as there's no longer need to fetch managing companies as of new
-    // requirement, while this is blocking the view to initialize (due to legacy code).
-    // Portal User will need to switch to the corresponding company to manage
-    // accounts.
-    //
-    // const params = this.context.params;
-    // this.context.executeAction(fetchCarrierManagingCompanies, { carrierId: params.identity });
-  },
-
-  onChange() {
-    this.setState(this.getStateFromStores());
-  },
-
-  getStateFromStores() {
-    let stateFromStores = {};
-
-    const { accountId } = this.context.params;
-
-    if (this.isCreate()) {
-      stateFromStores = this.getStore(AccountStore).getNewAccount();
-    } else if (accountId) {
-      stateFromStores = this.getStore(AccountStore).getAccountByAccountId(accountId);
+    const { accountId } = this.props.params;
+    // fetch the account
+    if (accountId) {
+      this.context.executeAction(fetchAccount, { id: accountId });
     }
+  }
 
-    const carrierManagingCompanies = this.getStore(AccountStore).getCarrierManagingCompanies();
-    const currentCompany = this.getStore(ApplicationStore).getCurrentCompany();
-
-    let affiliatedCompany;
-    if (this.isCreate() && currentCompany) {
-      affiliatedCompany = currentCompany._id;
+  componentWillReceiveProps(nextProps) {
+    const { accountId, identity } = this.props.params;
+    if (nextProps.redirectToAccountHome) {
+      this.context.router.push(`/${identity}/account`);
+      this.context.executeAction(redirectedToAccountHome);
+      return;
     }
+    if (nextProps.params.accountId && nextProps.params.accountId !== accountId) {
+      this.context.executeAction(fetchAccount, { id: nextProps.params.accountId });
+    }
+    this.updateState(nextProps);
+  }
 
-    return _.merge(stateFromStores, { carrierManagingCompanies, currentCompany, affiliatedCompany });
-  },
-
-  isCreate() {
-    return this.context.location.pathname.indexOf(NEW_ACCOUNT_ROUTE_NAME) > -1;
-  },
+  updateState(props) {
+    this.state.firstName = props.account.firstName;
+    this.state.lastName = props.account.lastName;
+    this.state.email = props.account.email;
+    this.state.createdAt = props.account.createdAt;
+    // convert into current roles format in form of object
+    if (props.account.roles) {
+      _.each(props.account.roles, role => {
+        this.state.currentRoles[role.company] = this.state.currentRoles[role.company] || [];
+        this.state.currentRoles[role.company].push(role._id);
+      });
+    }
+  }
 
   handleFirstNameChange(e) {
     e.preventDefault();
     if (this.state.firstNameError) this.validateFirstName(e);
     this.setState({ firstName: e.target.value });
-  },
+  }
 
   handleLastNameChange(e) {
     e.preventDefault();
     if (this.state.lastNameError) this.validateLastName(e);
     this.setState({ lastName: e.target.value });
-  },
+  }
 
   handleEmailChange(e) {
     e.preventDefault();
     if (this.state.emailError) this.validateEmail(e);
     this.setState({ email: e.target.value });
-  },
-
-  handleGroupChange(assignedGroup) {
-    this.setState({ assignedGroup });
-  },
-
-  handleCompanyChange(companyId) {
-    const { carrierManagingCompanies } = this.state;
-
-    if (_.isEmpty(carrierManagingCompanies)) return;
-
-    const selectedCompany = carrierManagingCompanies.find(company => company._id === companyId);
-
-    if (!selectedCompany) return;
-
-    this.setState({ affiliatedCompany: selectedCompany._id });
-  },
+  }
 
   containErrors() {
     const {
@@ -128,202 +123,242 @@ export default React.createClass({
     } = this.state;
 
     return firstNameError || lastNameError || emailError;
-  },
+  }
 
   validateFirstName(e) {
     e.preventDefault();
     const result = NAME_VALIDATION.validate(this.state.firstName);
     this.setState({ firstNameError: result.error ? result.error.message : null });
-  },
+  }
 
   validateLastName(e) {
     e.preventDefault();
     const result = NAME_VALIDATION.validate(this.state.lastName);
     this.setState({ lastNameError: result.error ? result.error.message : null });
-  },
+  }
 
   validateEmail(e) {
     e.preventDefault();
     const result = EMAIL_VALIDATION.validate(this.state.email);
     this.setState({ emailError: result.error ? result.error.message : null });
-  },
+  }
 
   handleSave(e) {
     e.preventDefault();
-
     this.validateFirstName(e);
     this.validateLastName(e);
     this.validateEmail(e);
 
     if (this.containErrors()) return;
-
+    let roles = [];
+    _.each(this.state.currentRoles, role => {
+      roles = roles.concat(role);
+    });
     const data = {
       name: {
-        first: this.state.firstName,
-        last: this.state.lastName,
+        firstName: this.state.firstName,
+        lastName: this.state.lastName,
       },
-      username: this.state.email,
-      assignedGroup: this.state.assignedGroup,
-      assignedCompanies: this.state.assignedCompanies,
-      affiliatedCompany: this.state.affiliatedCompany,
+      id: this.state.email,
+      // either current affiliated id or current company id
+      affiliatedCompany: this.props.account.affiliatedCompany || this.props.currentCompany.id,
+      roles,
     };
-
     if (this.isCreate()) {
-      this.context.executeAction(createAccount, { data });
+      this.context.executeAction(createAccount, { data, companyId: this.props.currentCompany.id });
     } else {
-      data.userId = this.state.accountId;
-      this.context.executeAction(updateAccount, { data });
+      data.id = this.state.email;
+      // missing roles after update
+      data.removeRoles = _.difference(this.props.account.roles, roles);
+      // extra roles after update
+      data.roles = _.difference(roles, this.props.account.roles);
+      this.context.executeAction(updateAccount, { data, companyId: this.props.currentCompany.id });
     }
-  },
-
-  isValueChanged() {
-    const {
-      firstName,
-      lastName,
-      email,
-    } = this.state;
-
-    return firstName.length && lastName.length && email.length;
-  },
+  }
 
   handleDiscard() {
-    if (!this.isValueChanged()) return;
-    this.setState(this.getStateFromStores());
-  },
+    this.context.executeAction(redirectToAccountHome);
+  }
 
   handleDelete() {
-    const params = this.context.params;
-
     this.context.executeAction(deleteAccount, {
-      accountId: this.state.accountId,
-      carrierId: params.identity,
+      accountId: this.state.email,
+      companyId: this.props.currentCompany.id,
     });
 
     this.handleCloseDeleteDialog();
-  },
+  }
 
   handleOpenDeleteDialog() {
     this.setState({ deleteDialogOpened: true });
-  },
+  }
 
   handleCloseDeleteDialog() {
     this.setState({ deleteDialogOpened: false });
-  },
+  }
 
   handleReverify() {
     this.context.executeAction(resendCreatePassword, {
-      data: { username: this.state.selectedAccount.username },
+      data: { username: this.state.email },
     });
 
     this.handleCloseReverifyDialog();
-  },
+  }
 
   handleOpenReverifyDialog() {
     this.setState({ reverifyDialogOpened: true });
-  },
+  }
 
   handleCloseReverifyDialog() {
     this.setState({ reverifyDialogOpened: false });
-  },
+  }
 
-  handleAssignedCompanyChange(e) {
-    const { id, checked } = e.target;
-    let { assignedCompanies } = this.state;
-
-    assignedCompanies = assignedCompanies.filter(companyId => companyId !== id).slice();
-
-    if (checked) {
-      assignedCompanies.push(id);
-      assignedCompanies = assignedCompanies.slice();
+  handleSelectedCompanyChange(item) {
+    if (!item.value) {
+      return;
     }
+    this.state.currentRoles[this.state.selectedCompany] = this.state.selectedRoles;
+    this.setState({
+      currentRoles: this.state.currentRoles,
+      selectedCompany: item.value,
+      selectedRoles: this.state.currentRoles[item.value] || [],
+    });
+  }
 
-    this.setState({ assignedCompanies });
-  },
+  handleSelectedRoleChange(items) {
+    const selectedValues = _.map(items, item => item.value);
+    this.setState({ selectedRoles: selectedValues });
+  }
 
-  render() {
-    if (_.isEmpty(this.state.selectedAccount) && !this.isCreate()) return null;
+  isCreate() {
+    return this.props.mode === 'create';
+  }
 
+  renderActionBar() {
+    return (
+      <AccountActionBar
+        handleSave={this.handleSave}
+        handleDiscard={this.handleDiscard}
+        handleDelete={this.handleDelete}
+        deleteDialogOpened={this.state.deleteDialogOpened}
+        handleOpenDeleteDialog={this.handleOpenDeleteDialog}
+        handleCloseDeleteDialog={this.handleCloseDeleteDialog}
+        isEnabled={!this.containErrors()}
+        isCreate={this.isCreate()}
+        accountId={this.props.account.email}
+      />
+    );
+  }
+
+  renderAccountInfo() {
     const {
-      accountId,
       firstName,
       lastName,
-      email,
       createdAt,
-      assignedGroup,
-      assignedCompanies,
-      affiliatedCompany,
-      currentCompany,
-      isVerified,
-      carrierManagingCompanies,
+    } = this.state;
+    return (
+      <AccountInfo
+        isVerified={this.props.account.isVerified}
+        firstName={firstName}
+        lastName={lastName}
+        createdAt={createdAt}
+      />
+    );
+  }
+
+  renderAccountForm() {
+    const {
+      email,
+      firstName,
+      lastName,
+      firstNameError,
+      lastNameError,
+      emailError,
+      selectedCompany,
+      selectedRoles,
     } = this.state;
 
+    const {
+       managingCompanies,
+     } = this.props;
     return (
-      <div className="account-profile">
+      <AccountForm
+        ref="AccountForm"
+        accountId={email}
+        firstName={firstName}
+        lastName={lastName}
+        email={email}
+        managingCompanies={managingCompanies}
+        selectedCompany={selectedCompany}
+        selectedRoles={selectedRoles}
+        firstNameError={firstNameError}
+        lastNameError={lastNameError}
+        emailError={emailError}
+        isCreate={this.isCreate()}
+        validateFirstName={this.validateFirstName}
+        validateLastName={this.validateLastName}
+        validateEmail={this.validateEmail}
+        handleFirstNameChange={this.handleFirstNameChange}
+        handleLastNameChange={this.handleLastNameChange}
+        handleEmailChange={this.handleEmailChange}
+        handleSelectedCompanyChange={this.handleSelectedCompanyChange}
+        handleSelectedRoleChange={this.handleSelectedRoleChange}
+        handleSave={this.handleSave}
+        reverifyDialogOpened={this.state.reverifyDialogOpened}
+        handleReverify={this.handleReverify}
+        handleOpenReverifyDialog={this.handleOpenReverifyDialog}
+        handleCloseReverifyDialog={this.handleCloseReverifyDialog}
+      />
+    );
+  }
 
-        <AccountActionBar
-          handleSave={this.handleSave}
-          handleDiscard={this.handleDiscard}
-          handleDelete={this.handleDelete}
-          deleteDialogOpened={this.state.deleteDialogOpened}
-          handleOpenDeleteDialog={this.handleOpenDeleteDialog}
-          handleCloseDeleteDialog={this.handleCloseDeleteDialog}
-          isEnabled={!this.containErrors()}
-          isCreate={this.isCreate()}
-          accountId={accountId}
-        />
-
-        <div className="account-profile__container">
-          <div className="panel callout radius">
-            <h4 className="account-profile__header">
-              {this.isCreate() ? CREATE_ACCOUNT_TITLE : EDIT_ACCOUNT_TITLE }
-            </h4>
-
-            <hr />
-
-            <If condition={!this.isCreate()}>
-              <AccountInfo
-                isVerified={isVerified}
-                firstName={firstName}
-                lastName={lastName}
-                createdAt={createdAt}
-                assignedGroup={assignedGroup}
-              />
-            </If>
-
-            <AccountForm
-              ref="AccountForm"
-              isVerified={isVerified}
-              isCreate={this.isCreate()}
-              carrierManagingCompanies={carrierManagingCompanies}
-              accountId={accountId}
-              firstName={firstName}
-              lastName={lastName}
-              email={email}
-              affiliatedCompany={affiliatedCompany}
-              currentCompany={currentCompany}
-              firstNameError={this.state.firstNameError}
-              lastNameError={this.state.lastNameError}
-              emailError={this.state.emailError}
-              validateFirstName={this.validateFirstName}
-              validateLastName={this.validateLastName}
-              validateEmail={this.validateEmail}
-              assignedGroup={assignedGroup}
-              assignedCompanies={assignedCompanies}
-              handleFirstNameChange={this.handleFirstNameChange}
-              handleLastNameChange={this.handleLastNameChange}
-              handleEmailChange={this.handleEmailChange}
-              handleGroupChange={this.handleGroupChange}
-              handleCompanyChange={this.handleCompanyChange}
-              handleAssignedCompanyChange={this.handleAssignedCompanyChange}
-              handleSave={this.handleSave}
-              reverifyDialogOpened={this.state.reverifyDialogOpened}
-              handleReverify={this.handleReverify}
-              handleOpenReverifyDialog={this.handleOpenReverifyDialog}
-              handleCloseReverifyDialog={this.handleCloseReverifyDialog}
-            />
-          </div>
+  renderInfoContainer() {
+    const { formatMessage } = this.props.intl;
+    return (
+      <div className="account-profile__container">
+        <div className="panel callout radius">
+          <h4 className="account-profile__header">
+            { formatMessage(this.isCreate() ? MESSAGES.createNewUser : MESSAGES.accountInformation)}
+          </h4>
+          <hr />
+          <If condition={!this.isCreate()}>
+            {this.renderAccountInfo()}
+          </If>
+          {this.renderAccountForm()}
         </div>
       </div>
     );
-  },
-});
+  }
+
+  render() {
+    return (
+      <div className="account-profile">
+        {this.renderActionBar()}
+        {this.renderInfoContainer()}
+      </div>
+    );
+  }
+}
+
+AccountProfile = injectIntl(AccountProfile);
+AccountProfile = connectToStores(
+  AccountProfile,
+  [AccountStore, ApplicationStore],
+ (context, props) => {
+   // read from the props to see if it is create or edit
+   const { accountId } = props.params;
+   const defaultState = {};
+   if (accountId) {
+     defaultState.account = context.getStore(AccountStore).getSelectedAccount();
+     defaultState.mode = 'edit';
+   } else {
+     defaultState.account = context.getStore(AccountStore).getNewAccount();
+     defaultState.mode = 'create';
+   }
+   defaultState.currentCompany = context.getStore(ApplicationStore).getCurrentCompany();
+   defaultState.managingCompanies = context.getStore(AccountStore).getManagingCompanies();
+   defaultState.redirectToAccountHome = context.getStore(AccountStore).getRedirectToHome();
+   return defaultState;
+ });
+
+export default AccountProfile;
