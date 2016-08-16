@@ -38,3 +38,10 @@
 #export NODE_ENV=production
 #export bossApi__baseUrl=192.168.56.42:8080
 #export mvsApi__baseUrl=192.168.56.12:9125
+
+#set up for the IAM 
+export APP_URL=http://127.0.0.1:3000
+export iamApi__baseUrl=http://127.0.0.1:3001
+export openid__issuer=http://127.0.0.1:3001/openid/core/.well-known/openid-configuration
+export openid__clientId=wlp
+export openid__clientSecret=7GnoS1vf5HqM1b8B4ZKDJQA6BvXa38ltUoFFVQ4cloR4GICEuWQk50S60pIVK16b

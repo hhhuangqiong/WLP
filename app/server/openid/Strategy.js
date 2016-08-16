@@ -1,6 +1,8 @@
 import { Strategy as baseStrategy } from 'passport-strategy';
 import { ArgumentNullError } from 'common-errors';
 import { loadClient, getAuthorizationUrl, getUserInfo, authorizationCallback } from './manager';
+import { fetchDep } from '../utils/bottle';
+import nconf from 'nconf';
 
 export class OpenIdStrategy extends baseStrategy {
   constructor(options = {}, verify) {
@@ -54,7 +56,19 @@ export class OpenIdStrategy extends baseStrategy {
           // get user info
           return getUserInfo(tokens)
             .then(userInfo => {
-              this._verify(tokens, userInfo, verified);
+              // fetch the user info via identity
+              const iamClient = fetchDep(nconf.get('containerName'), 'IamServiceClient');
+              const mpsClient = fetchDep(nconf.get('containerName'), 'MpsClient');
+              return iamClient.getUser({ id: userInfo.sub }).then(user =>
+                mpsClient.getCarrierIdByCompanyId(user.affiliatedCompany)
+                  .then(carrierId => {
+                    const mUser = user;
+                    mUser.carrierId = carrierId;
+                    return mUser;
+                  })
+              ).then(user => {
+                this._verify(tokens, user, verified);
+              });
             });
         }).catch(ex => {
           this.error(ex);

@@ -2,7 +2,9 @@ import passport from 'passport';
 import nconf from 'nconf';
 
 import { OpenIdStrategy } from '../openid/Strategy';
-import PortalUser from '../../collections/portalUser';
+import { baseUrl } from '../../utils/url';
+import superagent from 'superagent';
+
 /**
  * Set up the de-/serializer for passport
  *
@@ -11,39 +13,15 @@ import PortalUser from '../../collections/portalUser';
 export default function setup() {
   passport.serializeUser((data, done) => {
     done(null, {
-      username: data.user.sub,
+      username: data.user.id,
+      carrierId: data.user.carrierId,
+      affiliatedCompany: data.user.affiliatedCompany,
       tokens: data.tokens,
     });
   });
 
   passport.deserializeUser((obj, done) => {
-    // @TODO update the flow to get the permission information based on the user id
-    PortalUser
-    .findOne({ username: obj.username })
-    .populate('affiliatedCompany', 'carrierId role')
-    .exec((err, user) => {
-      if (err) {
-        done(err);
-        return;
-      }
-
-      if (!user) {
-        done(new Error('user not found'));
-        return;
-      }
-
-      try {
-        // SHOULD NOT return the a mongoose document, but an object
-        const userObject = user.toObject({ virtuals: true });
-        userObject.tokens = obj.tokens;
-        delete userObject.hashedPassword;
-        delete userObject.salt;
-
-        done(null, userObject);
-      } catch (error) {
-        done(error);
-      }
-    });
+    done(null, obj);
   });
 
   // set up the open id strategy
