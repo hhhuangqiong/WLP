@@ -124,6 +124,7 @@ class Company extends React.Component {
         <div className="pagination-select">
           <div className="react-select">
             <Select
+              className="pagination-size"
               value={this.props.pageSize}
               name="select-range"
               options={this.setPageRange(1, 10)}

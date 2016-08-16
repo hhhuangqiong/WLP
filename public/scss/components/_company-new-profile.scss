@@ -1,0 +1,46 @@
+.company__new-profile {
+  .title-inline{
+    display: inline-block;
+  }
+  .input-name{
+    width: 100%;
+  }
+  .inline {
+    display:inline-block;
+    width: 50%;
+  }
+  .header__sub {
+    padding-top:5px;
+  }
+  .inline-with-space {
+    background: $white;
+    padding: 15px 50px 10px 10px;
+  }
+  .rc-collapse-header {
+    text-indent: 0;
+    text-align: right;
+    padding-right: 3%;
+  }
+}
+.company-profile {
+  width: 50%;
+  margin-left: 15%;
+  display:flex;
+}
+.company-description {
+  width: 50%;
+  margin-left: 15%;
+  display:flex;
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+.company-capabilities {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  width: 70%;
+  margin-left: 15%;
+  .checkbox-capabilities {
+    width: 20%;
+  }
+}
