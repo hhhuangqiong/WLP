@@ -28,6 +28,9 @@
       "timestamp": "x"
     }
   },
+  "iamApi": {
+    "baseUrl": "http://127.0.0.1:3001"
+  },
   "mongodb": {
     "uri": "mongodb://localhost/m800-whitelabel-portal",
     "options": {

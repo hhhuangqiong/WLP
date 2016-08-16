@@ -1,68 +1,15 @@
 import { findIndex } from 'lodash';
 import createStore from 'fluxible/addons/createStore';
+import { PERMISSIONS } from './../constants/permissions';
 
-import {
-  FETCH_ROLES_SUCCESS,
-  ADD_ROLE_SUCCESS,
-  UPDATE_ROLE_SUCCESS,
-  REMOVE_ROLE_SUCCESS,
-} from './../constants/actionTypes';
-
-const PERMISSIONS = [{
-  title: 'Company Management',
-  children: [{
-    title: 'Create',
-    resource: 'company',
-    action: 'create',
-  }, {
-    title: 'Update',
-    resource: 'company',
-    action: 'update',
-  }, {
-    title: 'Read',
-    resource: 'company',
-    action: 'read',
-  }, {
-    title: 'Delete',
-    resource: 'company',
-    action: 'delete',
-  }],
-}, {
-  title: 'User Management',
-  children: [{
-    title: 'Create',
-    resource: 'user',
-    action: 'create',
-  }, {
-    title: 'Update',
-    resource: 'user',
-    action: 'update',
-  }, {
-    title: 'Read',
-    resource: 'user',
-    action: 'read',
-  }, {
-    title: 'Delete',
-    resource: 'user',
-    action: 'delete',
-  }],
-}, {
-  title: 'General Overview',
-  resource: 'wlp:generalOverview',
-  action: 'read',
-}, {
-  title: 'User Overview',
-  resource: 'wlp:endUser',
-  action: 'read',
-}];
 
 const RoleStore = createStore({
   storeName: 'RoleStore',
   handlers: {
-    [FETCH_ROLES_SUCCESS]: 'handleRolesReceived',
-    [ADD_ROLE_SUCCESS]: 'handleRoleAdded',
-    [UPDATE_ROLE_SUCCESS]: 'handleRoleUpdated',
-    [REMOVE_ROLE_SUCCESS]: 'handleRoleRemoved',
+    FETCH_ROLES_SUCCESS: 'handleRolesReceived',
+    ADD_ROLE_SUCCESS: 'handleRoleAdded',
+    UPDATE_ROLE_SUCCESS: 'handleRoleUpdated',
+    REMOVE_ROLE_SUCCESS: 'handleRoleRemoved',
   },
   initialize() {
     this.roles = [];

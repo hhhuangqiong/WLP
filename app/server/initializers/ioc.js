@@ -7,8 +7,9 @@ import ensureAuthenticated from '../middlewares/ensureAuthenticated';
 
 import CallsRequest from '../../lib/requests/dataProviders/Call';
 
-import { IamServiceClientMock } from '../../lib/requests/iam/IamServiceClient';
+import { IamServiceClientMock, IamServiceClient } from '../../lib/requests/iam/IamServiceClient';
 import { createFetchPermissionsMiddleware } from '../../server/middlewares/authorization';
+import roleController from '../../server/controllers/role';
 
 /**
  * Initialize the IoC container
@@ -116,9 +117,9 @@ export default function init(nconf) {
   ioc.constant('IamServiceClientOptions', {
     baseUrl: nconf.get('iamApi:baseUrl'),
   });
-  ioc.service('IamServiceClient', IamServiceClientMock, 'IamServiceClientOptions');
-  ioc.service('FetchPermissionsMiddleware', createFetchPermissionsMiddleware, 'IamServiceClient');
-
-
+  ioc.service('IamServiceClientMock', IamServiceClientMock);
+  ioc.service('FetchPermissionsMiddleware', createFetchPermissionsMiddleware, 'IamServiceClientMock');
+  ioc.service('IamServiceClient', IamServiceClient, 'IamServiceClientOptions');
+  ioc.service('RoleController', roleController, 'IamServiceClient');
   return ioc;
 }

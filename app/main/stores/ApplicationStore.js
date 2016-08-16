@@ -17,6 +17,10 @@ const ApplicationStore = createStore({
 
   loadedCurrentCompany(company) {
     this.currentCompany = company;
+    // Remove this when IAM api is used
+    if (!this.currentCompany.id) {
+      this.currentCompany.id = this.currentCompany._id;
+    }
     this.emitChange();
   },
 

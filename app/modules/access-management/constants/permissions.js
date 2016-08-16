@@ -1,0 +1,104 @@
+// Documentation: https://issuetracking.maaii.com:9443/display/WLP/Identity+Access+Management+Service
+export const PERMISSIONS = [{
+  intlKey: 'companyManagement',
+  children: [{
+    intlKey: 'create',
+    resource: 'company',
+    action: 'create',
+  }, {
+    intlKey: 'update',
+    resource: 'company',
+    action: 'update',
+  }, {
+    intlKey: 'read',
+    resource: 'company',
+    action: 'read',
+  }, {
+    intlKey: 'delete',
+    resource: 'company',
+    action: 'delete',
+  }],
+}, {
+  intlKey: 'userManagement',
+  children: [{
+    intlKey: 'create',
+    resource: 'user',
+    action: 'create',
+  }, {
+    intlKey: 'update',
+    resource: 'user',
+    action: 'update',
+  }, {
+    intlKey: 'read',
+    resource: 'user',
+    action: 'read',
+  }, {
+    intlKey: 'delete',
+    resource: 'user',
+    action: 'delete',
+  }],
+}, {
+  intlKey: 'permissionManagement',
+  children: [{
+    intlKey: 'create',
+    resource: 'role',
+    action: 'create',
+  }, {
+    intlKey: 'update',
+    resource: 'role',
+    action: 'update',
+  }, {
+    intlKey: 'read',
+    resource: 'role',
+    action: 'read',
+  }, {
+    intlKey: 'delete',
+    resource: 'role',
+    action: 'delete',
+  }],
+}, {
+  intlKey: 'endUserManagement',
+  children: [{
+    intlKey: 'create',
+    resource: 'wlp:endUser',
+    action: 'create',
+  }, {
+    intlKey: 'update',
+    resource: 'wlp:endUser',
+    action: 'update',
+  }, {
+    intlKey: 'read',
+    resource: 'wlp:endUser',
+    action: 'read',
+  }, {
+    intlKey: 'delete',
+    resource: 'wlp:endUser',
+    action: 'delete',
+  }],
+}, {
+  intlKey: 'generalOverview',
+  resource: 'wlp:generalOverview',
+  action: 'read',
+}, {
+  intlKey: 'topUp',
+  resource: 'wlp:topUp',
+  action: 'read',
+}, {
+  intlKey: 'vsf',
+  resource: 'wlp:vsf',
+  action: 'read',
+}, {
+  intlKey: 'call',
+  resource: 'wlp:call',
+  action: 'read',
+}, {
+  intlKey: 'im',
+  resource: 'wlp:im',
+  action: 'read',
+}, {
+  intlKey: 'sms',
+  resource: 'wlp:sms',
+  action: 'read',
+}];
+
+export default PERMISSIONS;

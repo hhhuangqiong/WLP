@@ -1,12 +1,6 @@
-import Q from 'q';
-import { clone } from 'lodash';
-
-import { UPDATE_ROLE_SUCCESS } from './../constants/actionTypes';
-
-export default function updateRole(context, payload) {
-  context.dispatch('UPDATE_ROLE_START');
-  return Q.timeout(500)
-    .then(() => {
-      context.dispatch(UPDATE_ROLE_SUCCESS, clone(payload));
-    });
+import { omit } from 'lodash';
+import actionCreator from '../../../main/utils/apiActionCreator';
+const action = actionCreator('UPDATE_ROLE', 'updateRole');
+export default function updateRole(context, payload, done) {
+  return action(context, omit(payload, ['createdAt', 'updatedAt']), done);
 }
