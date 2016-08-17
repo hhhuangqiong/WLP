@@ -1,225 +1,80 @@
-import Q from 'q';
-import _ from 'lodash';
-import logger from 'winston';
+import nconf from 'nconf';
 
-import Controller from '../controllers/company';
-import Company from '../../collections/company';
-import PortalUser from '../../collections/portalUser';
+import { fetchDep } from '../utils/bottle';
 
-import {
-  MongoDBError,
-  NotFoundError,
-  ArgumentError,
-  ArgumentNullError,
-} from 'common-errors';
-
-const controller = new Controller();
+const companyController = fetchDep(nconf.get('containerName'), 'CompanyController');
 
 // '/companies'
-const list = function (req, res) {
-  return controller.getCompanies(req, res);
-};
+const getCompanies = (req, res, next) => (
+  companyController.getCompanies(req, res, next)
+);
 
 // '/companies'
-const createProfile = function (req, res) {
-  return controller.saveProfile(req, res);
-};
-
-// '/companies/parent'
-const getParents = function (req, res) {
-  return controller.getParentCompanies(req, res);
-};
+const createCompany = (req, res, next) => (
+  companyController.createCompany(req, res, next)
+);
 
 // '/companies/:carrierId/suspension'
-const deactivateCompany = function (req, res) {
-  return controller.deactivateCompany(req, res);
-};
+const deactivateCompany = (req, res, next) => (
+  companyController.deactivateCompany(req, res, next)
+);
 
 // .put('/companies/:carrierId/suspension',
-const reactivateCompany = function (req, res) {
-  return controller.reactivateCompany(req, res);
-};
+const reactivateCompany = (req, res, next) => (
+  companyController.reactivateCompany(req, res, next)
+);
 
 // '/companies/:carrierId/info'
-const getInfo = function (req, res) {
-  return controller.getInfo(req, res);
-};
+const getCompany = (req, res, next) => (
+  companyController.getCompany(req, res, next)
+);
 
+// @TODO no service in the company, where to check now?
 // '/companies/:carrierId/service'
-const getService = function (req, res) {
-  return controller.getApplications(req, res);
-};
+const getService = (req, res, next) => (
+  companyController.getApplications(req, res, next)
+);
 
 // '/companies/:carrierId/applications'
-const getApplications = function (req, res) {
-  return controller.getApplications(req, res);
-};
+const getApplications = (req, res, next) => (
+  companyController.getApplications(req, res, next)
+);
 
 // '/companies/:carrierId/applicationIds'
-const getApplicationIds = function (req, res) {
-  return controller.getApplicationIds(req, res);
-};
+const getApplicationIds = (req, res, next) => (
+  companyController.getApplicationIds(req, res, next)
+);
+
+const getManagingCompanies = (req, res, next) => (
+  companyController.getManagingCompanies(req, res, next)
+);
 
 // '/companies/:carrierId/profile'
-const updateProfile = function (req, res) {
-  return controller.saveProfile(req, res);
-};
+const updateCompany = (req, res, next) => (
+  companyController.updateCompany(req, res, next)
+);
 
+// @TODO no service in the company, where to check now?
 // '/companies/:carrierId/service'
-const saveService = function (req, res) {
-  return controller.saveService(req, res);
-};
+const updateService = (req, res, next) => (
+  companyController.updateService(req, res, next)
+);
 
-// '/application/companies'
-const getApplicationCompanies = function (req, res) {
-  Q.ninvoke(PortalUser, 'findOne', { _id: req.user.id })
-    .then(user => {
-      if (!user) {
-        return res.status(401).json({
-          error: `invalid identity ${user}`,
-        });
-      }
-
-      return Q.ninvoke(Company, 'getManagingCompany', user.affiliatedCompany)
-        .then(companies => {
-          return res.json({
-            companies: _.reduce(companies, (result, company) => {
-              // to turn a mongoose document to object,
-              // and append the `virtual` field of `role` and `identity`
-              result.push(_.merge(company.toObject(), { role: company.role, identity: company.identity }));
-              return result;
-            }, []),
-          });
-        });
-    })
-    .catch(err => {
-      if (err) {
-        return res.status(err.status || 500).json({
-          error: err,
-        });
-      }
-    })
-    .done();
-};
-
-const getCompanyByCarrierId = carrierId => {
-  return new Promise((resolve, reject) => {
-    if (!carrierId) {
-      return reject(new ArgumentNullError('carrierId'));
-    }
-
-    Company.getCompanyByCarrierId(carrierId, (err, company) => {
-      if (err) {
-        return reject(new MongoDBError('Database error when getting company by carrierId', err));
-      }
-
-      if (!company) {
-        return reject(new NotFoundError('Cannot find company by carrierId'));
-      }
-
-      resolve(company);
-    });
-  });
-};
-
-const getManagingCompany = companyId => {
-  return new Promise((resolve, reject) => {
-    if (!companyId) {
-      return reject(new ArgumentNullError('companyId'));
-    }
-
-    Company.getManagingCompany(companyId, (err, companies) => {
-      if (err) {
-        return reject(new MongoDBError('Database error when getting managing company', err));
-      }
-
-      resolve(companies);
-    });
-  });
-};
-
-const carrierCompaniesHandler = async (carrierId) => {
-  return await getManagingCompany(carrierId);
-};
-
-/**
- * @method getAccessibleCompanies
- * to get accessible companies by to user session
- *
- * @param req {Object} Express req
- * @param res {Object} Express res
- * @param next {Function} Express next
- */
-const getAccessibleCompanies = (req, res, next) => {
-  const { user } = req;
-
-  logger.debug('fetching accessible companies');
-
-  if (!user) {
-    logger.debug('user is not logged in');
-    res.apiResponse(200, {
-      success: true,
-      status: 200,
-      data: [],
-    });
-    return;
-  }
-
-  const carrierId = _.get(req, 'user.affiliatedCompany.carrierId');
-
-  if (!carrierId) {
-    res.apiError(500, {
-      success: false,
-      status: 500,
-      errors: new ArgumentError('req.user.affiliatedCompany.carrierId'),
-    });
-    return;
-  }
-
-  logger.debug('fetching accessible companies for carrier: %s', carrierId);
-
-  carrierCompaniesHandler(carrierId)
-    .then(companies => {
-      logger.debug('fetched accessible companies for carrier: %s', carrierId, companies.map(x => x.name));
-
-      res.apiResponse(200, {
-        success: true,
-        data: _.reduce(companies, (result, company) => {
-          const { _id, ...attributes } = company.toObject({ virtuals: true });
-
-          const document = {
-            type: 'company',
-            id: _id,
-            attributes,
-          };
-
-          result.push(document);
-          return result;
-        }, []),
-      });
-    })
-    .catch(err => {
-      logger.error('error occurred when fetching accessible companies for carrier: %s', carrierId, err);
-      res.apiError(500, {
-        success: false,
-        status: 500,
-        errors: err,
-      });
-    });
-};
+const getCompanyRoles = (req, res, next) => (
+  companyController.getCompanyRoles(req, res, next)
+);
 
 export {
-  getAccessibleCompanies,
-  getApplicationCompanies,
   getApplications,
   getApplicationIds,
-  getInfo,
+  getManagingCompanies,
+  getCompanyRoles,
+  getCompany,
   getService,
-  list,
-  updateProfile,
-  saveService,
-  createProfile,
-  getParents,
+  getCompanies,
+  updateCompany,
+  updateService,
+  createCompany,
   deactivateCompany,
   reactivateCompany,
 };

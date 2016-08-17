@@ -29,6 +29,8 @@ const userStatsRequest = fetchDep(nconf.get('containerName'), 'UserStatsRequest'
 const redisClient = fetchDep(nconf.get('containerName'), 'RedisClient');
 const vsfStatsRequest = fetchDep(nconf.get('containerName'), 'VsfStatsRequest');
 const overviewStatsRequest = fetchDep(nconf.get('containerName'), 'OverviewStatsRequest');
+const mpsClient = fetchDep(nconf.get('containerName'), 'MpsClient');
+const iamClient = fetchDep(nconf.get('containerName'), 'IamServiceClient');
 
 import SmsRequest from '../../lib/requests/dataProviders/SMS';
 
@@ -1879,6 +1881,29 @@ function getIMSummaryStats(req, res) {
     });
 }
 
+async function getCompany(req, res, next) {
+  logger.debug('loading user from compange request');
+
+  const { user } = req;
+  logger.debug('user', user);
+  req.checkParams('carrierId').notEmpty();
+  const error = req.validationErrors();
+
+  if (error) {
+    res.apiError(400, new ValidationError(prepareValidationMessage(error)));
+    return;
+  }
+  try {
+    const companyId = await mpsClient.getCompanyIdByCarrierId(req.params.carrierId);
+    const company = await iamClient.getCompany({ id: companyId });
+    // append the carrier into the company
+    company.carrierId = req.params.carrierId;
+    res.json(company);
+  } catch (ex) {
+    next(ex);
+  }
+}
+
 export {
   getWhitelist,
   addWhitelist,
@@ -1904,6 +1929,7 @@ export {
   getVSF,
   getVerifications,
   getVerificationStatistics,
+  getCompany,
   reactivateUser,
   suspendUser,
 };

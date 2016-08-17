@@ -26,7 +26,7 @@ export function createFetchPermissionsMiddleware(iamServiceClient) {
     const params = {
       username,
       service: 'wlp',
-      company: affiliatedCompany.carrierId,
+      company: affiliatedCompany,
     };
     iamServiceClient.getUserPermissions(params)
       .then(permissions => {

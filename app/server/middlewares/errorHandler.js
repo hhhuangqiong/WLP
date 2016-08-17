@@ -1,19 +1,25 @@
 import logger from 'winston';
+import _ from 'lodash';
 
 const ERROR_LABEL = 'error';
 const INNER_ERROR_FIELDS = ['message', 'arguments', 'type', 'name'];
 
 function filteredMessage(err) {
+  let errorMessage;
   switch (err.name) {
     case 'ArgumentNullError':
     case 'NotFoundError':
     case 'AlreadyInUseError':
       return err.message;
-
     default:
+      // superagent error from IAM
+      errorMessage = _.get(err, 'response.error.message');
+      if (errorMessage) {
+        return errorMessage;
+      }
       // Show only manually typed message instead of
       // the generated one to reduce redundant message
-      return err.args['0'];
+      return err.args && err.args['0'];
   }
 }
 
