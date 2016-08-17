@@ -1,55 +1,64 @@
-import React from 'react';
+import React, { PropTypes } from 'react';
+import { injectIntl, intlShape, FormattedMessage } from 'react-intl';
 import SwitchButtonGroup from '../../../main/components/SwitchButtonGroup';
 
-const COMPANY_TYPE = {
-  SDK: 'SDK',
-  WHITE_LABEL: 'WHITE_LABEL',
-};
-const PAYMENT_TYPE = {
-  PRE_PAID: 'Pre-Paid',
-  POST_PAID: 'Post Paid',
-};
-
-class CompanyProfileInfo extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = { selectedCompanyType: COMPANY_TYPE[0], selectedPaymentType: PAYMENT_TYPE[0] };
-    this.companyTypeChange = this.companyTypeChange.bind(this);
-    this.paymentTypeChange = this.paymentTypeChange.bind(this);
-  }
-  companyTypeChange(type) {
-    this.setState({ selectedCompanyType: type });
-  }
-  paymentTypeChange(type) {
-    this.setState({ selectedPaymentType: type });
-  }
-
-  render() {
-    return (
-      <div>
-        <div className="company-profile " defaultActiveKey = "2">
-          <span className="inline header__sub">Company Name:</span>
-          <input className="input-name" type="text" />
-        </div>
-        <div className="company-profile">
-          <span className="inline header__sub">Company Type:</span>
-          <SwitchButtonGroup
-            types={COMPANY_TYPE}
-            currentType={this.state.selectedCompanyType}
-            onChange={this.companyTypeChange}
-          />
-        </div>
-        <div className="company-profile">
-          <span className="inline header__sub">Payment Type:</span>
-          <SwitchButtonGroup
-            types={PAYMENT_TYPE}
-            currentType={this.state.selectedPaymentType}
-            onChange={this.paymentTypeChange}
-          />
-        </div>
+const CompanyProfileInfo = (props) => {
+  const {
+    companyName,
+    companyType,
+    paymentType,
+    companyTypeOption,
+    paymentTypeOption,
+    onCompanyNameChange,
+    onCompanyTypeChange,
+    onPaymentTypeChange,
+   } = props;
+  return (
+    <div>
+      <div className="company-profile " defaultActiveKey = "2">
+        <span className="inline header__sub">
+          <FormattedMessage id="companyName" defaultMessage="Company Name" />:
+        </span>
+        <input className="input-name"
+          type="text"
+          value={companyName}
+          onChange={onCompanyNameChange}
+        />
       </div>
-    );
-  }
-}
+      <div className="company-profile">
+        <span className="inline header__sub">
+          <FormattedMessage id="companyType" defaultMessage="Company Type" />:
+        </span>
+        <SwitchButtonGroup
+          types={companyTypeOption}
+          currentType={companyType}
+          onChange={onCompanyTypeChange}
+        />
+      </div>
+      <div className="company-profile">
+        <span className="inline header__sub">
+          <FormattedMessage id="paymentType" defaultMessage="Payment Type" />:
+        </span>
+        <SwitchButtonGroup
+          types={paymentTypeOption}
+          currentType={paymentType}
+          onChange={onPaymentTypeChange}
+        />
+      </div>
+    </div>
+  );
+};
 
-export default CompanyProfileInfo;
+CompanyProfileInfo.propTypes = {
+  intl: intlShape.isRequired,
+  companyName: PropTypes.string,
+  companyType: PropTypes.string,
+  paymentType: PropTypes.string,
+  companyTypeOption: PropTypes.object,
+  paymentTypeOption: PropTypes.object,
+  onCompanyNameChange: PropTypes.func,
+  onCompanyTypeChange: PropTypes.func,
+  onPaymentTypeChange: PropTypes.func,
+};
+
+export default injectIntl(CompanyProfileInfo);

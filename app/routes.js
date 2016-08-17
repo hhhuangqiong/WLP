@@ -7,7 +7,6 @@ import App from './main/components/common/App';
 import Protected from './main/components/common/Protected';
 import Company from './modules/company/components/Company';
 import CompanyProfile from './modules/company/components/CompanyProfile';
-import { EditProfile } from './modules/company/components/Profile';
 import Service from './modules/company/components/Service';
 
 import Account from './modules/account/components/Account';
@@ -101,11 +100,9 @@ export default (context) => {
       <Route component={Protected}>
         <Route path={`:identity/${modules.OVERVIEW}`} component={Overview} />
         <Route path={`:identity/${modules.COMPANY}`}>
-          <IndexRedirect to="list" />
-          <Route path="list" component={Company} />
+          <IndexRedirect to="overview" />
+          <Route path="overview" component={Company} />
           <Route path="create" component={CompanyProfile} />
-          <Route path=":carrierId/profile" component={EditProfile} />
-          <Route path=":carrierId/service" component={Service} />
         </Route>
 
         <Route path={`:identity/${modules.ACCOUNT}`} component={Account}>

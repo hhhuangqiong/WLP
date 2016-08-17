@@ -1,72 +1,91 @@
-import React, { PropTypes, Component } from 'react';
+import React, { PropTypes } from 'react';
 import Select from 'react-select';
+import { injectIntl, defineMessages, intlShape, FormattedMessage } from 'react-intl';
 
-const options = [
-    { value: 'one', label: 'One' },
-    { value: 'two', label: 'Two' },
-];
-function logChange(val) {
-    console.log("Selected: " + val);
-}
+const MESSAGES = defineMessages({
+  selectCountry: {
+    id: 'company.selectCountry',
+    defaultMessage: 'Select a country',
+  },
+  selectTimezone: {
+    id: 'company.selectTimezone',
+    defaultMessage: 'Select a timezone',
+  },
+});
 
-class CompanyDescription extends Component {
-  constructor(props) {
-    super(props);
-    this.state = { country: '', timeZone: '' };
-    this.changeCountry = this.changeCountry.bind(this);
-    this.changeTimeZone = this.changeTimeZone.bind(this);
-  }
-  changeCountry(val) {
-    this.setState({ country: val });
-  }
-  changeTimeZone(val) {
-    this.setState({ timeZone: val });
-  }
-  render() {
-    return (
-      <div>
-  <div className="company-description">
-    <span className="inline header__sub">Country:</span>
-    <Select
-      value="one"
-      name="select-range"
-      value={this.state.country}
-      options={this.props.countries}
-      onChange={this.changeCountry}
-    />
-  </div>
-  <div className="company-description">
-    <span className="inline header__sub">Time Zone:</span>
-    <Select
-      value="one"
-      name="select-range"
-      value={this.state.timeZone}
-      options={this.props.timeZone}
-      onChange={this.changeTimeZone}
-    />
-  </div>
-  <div className="company-description " defaultActiveKey = "2">
-    <span className="inline header__sub">Contact Details:</span>
-    <input className="input-name" type="text" />
-  </div>
-</div>
-    );
-  }
-}
-
-CompanyDescription.propTypes = {
-  countries: PropTypes.arrayOf(
-    PropTypes.shape({
-      value: PropTypes.string,
-      label: PropTypes.string,
-    })
-  ),
-  timeZone: PropTypes.arrayOf(
-    PropTypes.shape({
-      value: PropTypes.string,
-      label: PropTypes.string,
-    })
-  ),
+const CompanyDescription = (props) => {
+  const {
+    country,
+    timezone,
+    contactDetail,
+    countryOption,
+    timezoneOption,
+    onCountryChange,
+    onTimezoneChange,
+    onContactDetailChange,
+    intl: { formatMessage },
+   } = props;
+  return (
+    <div>
+      <div className="company-description">
+        <span className="inline header__sub">
+          <FormattedMessage id="country" defaultMessage="Country" />:
+        </span>
+        <Select
+          name="select-country"
+          value={country}
+          placeholder={formatMessage(MESSAGES.selectCountry)}
+          options={countryOption}
+          onChange={onCountryChange}
+        />
+      </div>
+      <div className="company-description">
+        <span className="inline header__sub">
+          <FormattedMessage id="timezone" defaultMessage="Timezone" />:
+        </span>
+        <Select
+          name="select-timezone"
+          value={timezone}
+          placeholder={formatMessage(MESSAGES.selectTimezone)}
+          options={timezoneOption}
+          onChange={onTimezoneChange}
+        />
+      </div>
+      <div className="company-description " defaultActiveKey = "2">
+        <span className="inline header__sub">
+          <FormattedMessage id="contactDetail" defaultMessage="Contact Detail" />:
+        </span>
+        <input
+          className="input-name"
+          value={contactDetail}
+          type="text"
+          onChange={onContactDetailChange}
+        />
+      </div>
+    </div>
+  );
 };
 
-export default CompanyDescription;
+CompanyDescription.propTypes = {
+  intl: intlShape.isRequired,
+  country: PropTypes.string,
+  timezone: PropTypes.string,
+  contactDetail: PropTypes.string,
+  countryOption: PropTypes.arrayOf(
+    PropTypes.shape({
+      value: PropTypes.string,
+      label: PropTypes.string,
+    })
+  ),
+  timezoneOption: PropTypes.arrayOf(
+    PropTypes.shape({
+      value: PropTypes.string,
+      label: PropTypes.string,
+    })
+  ),
+  onCountryChange: PropTypes.func,
+  onTimezoneChange: PropTypes.func,
+  onContactDetailChange: PropTypes.func,
+};
+
+export default injectIntl(CompanyDescription);

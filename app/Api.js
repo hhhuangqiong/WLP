@@ -62,8 +62,9 @@ Api.prototype.getManagingCompanies = function getManagingCompanies(params, cb) {
 Api.prototype.createCompany = function createCompany(params, cb) {
   superagent
     .post(`${this._getHost()}/api/companies`)
-    .accept('json')
+    .set('Content-Type', 'application/json')
     .send(params.data)
+    .accept('json')
     .end(genericHandler(cb));
 };
 
