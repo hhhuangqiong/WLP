@@ -12,24 +12,7 @@ export default function (context, params, done) {
         return apiClient
           .get(`companies/${company.id}/roles`)
           .then(roles => {
-            mCompany.roles = [{
-                "_id": "5774d238efb2f0535997eeca",
-                 "name": "Sales Manager",
-                 "service": "iam",
-                 "company": "company-1"
-             },
-             {
-                 "_id": "5774d238efb2f0535997eecb",
-                 "name": "Sales Director",
-                 "service": "wlp",
-                 "company": "company-1"
-             },
-             {
-                 "_id": "5774d238efb2f0535997eecc",
-                 "name": "Admin",
-                 "service": "wlp",
-                 "company": "m800"
-             }];//roles;
+            mCompany.roles = roles;
             return mCompany;
           })
           .catch(() => {

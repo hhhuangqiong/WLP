@@ -7,8 +7,6 @@ import App from './main/components/common/App';
 import Protected from './main/components/common/Protected';
 import Company from './modules/company/components/Company';
 import CompanyProfile from './modules/company/components/CompanyProfile';
-import Service from './modules/company/components/Service';
-
 import Account from './modules/account/components/Account';
 import AccountProfile from './modules/account/components/AccountProfile';
 import Verification from './modules/verification/components/Verification';
@@ -99,6 +97,7 @@ export default (context) => {
 
       <Route component={Protected}>
         <Route path={`:identity/${modules.OVERVIEW}`} component={Overview} />
+
         <Route path={`:identity/${modules.COMPANY}`}>
           <IndexRedirect to="overview" />
           <Route path="overview" component={Company} />

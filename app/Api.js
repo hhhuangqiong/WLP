@@ -68,14 +68,6 @@ Api.prototype.createCompany = function createCompany(params, cb) {
     .end(genericHandler(cb));
 };
 
-Api.prototype.getCompanyService = function getCompanyService(params, cb) {
-  superagent
-    .get(`${this._getHost()}/api/companies/${params.carrierId}/service`)
-    .accept('json')
-    .query({ userId: params.userId })
-    .end(genericHandler(cb));
-};
-
 Api.prototype.getCarrierManagingCompanies = function getCarrierManagingCompanies(params, cb) {
   superagent
     .get(`${this._getHost()}/api/companies/${params.companyId}/managingCompanies`)
@@ -83,31 +75,9 @@ Api.prototype.getCarrierManagingCompanies = function getCarrierManagingCompanies
     .end(genericHandler(cb));
 };
 
-Api.prototype.getApplications = function getApplications(params, cb) {
-  superagent
-    .get(`${this._getHost()}/api/companies/${params.carrierId}/applications`)
-    .accept('json')
-    .end(genericHandler(cb));
-};
-
-Api.prototype.getApplicationIds = function getApplicationIds(params, cb) {
-  superagent
-    .get(`${this._getHost()}/api/companies/${params.carrierId}/applicationIds`)
-    .accept('json')
-    .end(genericHandler(cb));
-};
-
 Api.prototype.updateCompanyProfile = function updateCompanyProfile(params, cb) {
   superagent
-    .put(`${this._getHost()}/api/companies/${params.carrierId}/profile`)
-    .accept('json')
-    .send(params.data)
-    .end(genericHandler(cb));
-};
-
-Api.prototype.updateCompanyService = function updateCompanyService(params, cb) {
-  superagent
-    .put(`${this._getHost()}/api/companies/${params.carrierId}/service`)
+    .put(`${this._getHost()}/api/companies/${params.companyId}/profile`)
     .accept('json')
     .send(params.data)
     .end(genericHandler(cb));
@@ -115,7 +85,7 @@ Api.prototype.updateCompanyService = function updateCompanyService(params, cb) {
 
 Api.prototype.deactivateCompany = function deactivateCompany(params, cb) {
   superagent
-    .post(`${this._getHost()}/api/companies/${params.carrierId}/suspension`)
+    .post(`${this._getHost()}/api/companies/${params.companyId}/suspension`)
     .accept('json')
     .end((err, res) => {
       if (err) {
@@ -128,7 +98,7 @@ Api.prototype.deactivateCompany = function deactivateCompany(params, cb) {
 
 Api.prototype.reactivateCompany = function reactivateCompany(params, cb) {
   superagent
-    .put(`${this._getHost()}/api/companies/${params.carrierId}/suspension`)
+    .put(`${this._getHost()}/api/companies/${params.companyId}/suspension`)
     .accept('json')
     .end((err, res) => {
       if (err) {
@@ -137,6 +107,20 @@ Api.prototype.reactivateCompany = function reactivateCompany(params, cb) {
 
       cb(err, res && res.body);
     });
+};
+
+Api.prototype.getApplications = function getApplications(params, cb) {
+  superagent
+    .get(`${this._getHost()}/api/carriers/${params.carrierId}/applications`)
+    .accept('json')
+    .end(genericHandler(cb));
+};
+
+Api.prototype.getApplicationIds = function getApplicationIds(params, cb) {
+  superagent
+    .get(`${this._getHost()}/api/carriers/${params.carrierId}/applicationIds`)
+    .accept('json')
+    .end(genericHandler(cb));
 };
 
 Api.prototype.getEndUserWallet = function getEndUserWallet(params, cb) {

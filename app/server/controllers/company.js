@@ -125,84 +125,11 @@ export default function companyController(iamServiceClient, applicationRequest, 
     });
   }
 
-  /**
-   * Acquire the application ID's with carrierId.
-   * The `carrierId` must be embedded in the request object's params.
-   * The `userId` must be embedded in the request object's query.
-   *
-   * @method
-   * @param {Request} req  The node request object
-   * @param {Response} res  The node response object
-   */
-  async function getApplicationIds(req, res, next) {
-    try {
-      const { carrierId } = req.params;
-      // result can be an object or array depends on the number of applications
-      // object if 1, array if multiple
-      // therefore we unify the structure here to array
-      const result = [].concat(await applicationRequest.getApplications(carrierId));
-      const appIds = _.map(result, app => app.applicationId);
-      res.json(appIds);
-    } catch (ex) {
-      next(ex);
-    }
-  }
-
-  /**
-   * Acquire the application service configs with carrierId
-   *
-   * @method
-   * @param {Request} req  The node request object
-   * @param {Response} res  The node response object
-   */
-  async function getApplications(req, res, next) {
-    try {
-      const { carrierId } = req.params;
-      const applications = await applicationRequest.getApplications(carrierId);
-      const services = await applicationRequest.getApiService(carrierId);
-      const result = {
-        applicationId: null,
-        developerKey: null,
-        developerSecret: null,
-        applications: {
-          ios: {},
-          android: {},
-        },
-      };
-
-      if (services.value) {
-        _.filter(services.value, service => {
-          if (service.type === 'API') {
-            _.merge(result, {
-              developerKey: service.key,
-              developerSecret: service.secret,
-            });
-          }
-        });
-      }
-
-      if (applications.value) {
-        result.applicationId = applications.value.applicationId;
-        _.filter(applications.value.applications, application => {
-          if (application.platform.match(/.ios$/)) {
-            result.applications.ios = application;
-          } else if (application.platform.match(/.android$/)) {
-            result.applications.android = application;
-          }
-        });
-      }
-
-      res.json(result);
-    } catch (ex) {
-      next(ex);
-    }
-  }
-
   async function updateCompany(req, res, next) {
     try {
       const command = _.extend({}, req.body, req.params);
       await iamServiceClient.putCompany(command);
-      const company = await iamServiceClient.getCompany({ id: command.id });
+      const company = await iamServiceClient.getCompany({ id: command.companyId });
       res.json(company);
     } catch (ex) {
       next(ex);
@@ -253,8 +180,6 @@ export default function companyController(iamServiceClient, applicationRequest, 
     getCompanies,
     getManagingCompanies,
     updateCompany,
-    getApplications,
-    getApplicationIds,
     reactivateCompany,
     deactivateCompany,
   };

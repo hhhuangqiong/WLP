@@ -154,6 +154,14 @@ router
   .get('/carriers/:carrierId/info', [
     carriers.getCompany,
   ])
+  .get('/carriers/:carrierId/applicationIds', [
+    authorize('company:read'),
+    carriers.getApplicationIds,
+  ])
+  .get('/carriers/:carrierId/applications', [
+    authorize('company:read'),
+    carriers.getApplications,
+  ])
   .get('/companies', [
     authorize('company:read'),
     companies.getCompanies,
@@ -187,7 +195,7 @@ router
     multipart,
     companies.createCompany,
   ])
-  .get('/companies/:companyId/info', [
+  .get('/companies/:companyId/profile', [
     authorize('company:read'),
     companies.getCompany,
   ])
@@ -195,27 +203,10 @@ router
     authorize('company:read'),
     companies.getManagingCompanies,
   ])
-  .get('/companies/:companyId/service', [
-    authorize('company:read'),
-    companies.getService,
-  ])
-  .get('/companies/:companyId/applications', [
-    authorize('company:read'),
-    companies.getApplications,
-  ])
-  .get('/companies/:companyId/applicationIds', [
-    authorize('company:read'),
-    companies.getApplicationIds,
-  ])
   .put('/companies/:companyId/profile', [
     authorize('company:update'),
     multipart,
     companies.updateCompany,
-  ])
-  .put('/companies/:companyId/service', [
-    authorize('company:update'),
-    multipart,
-    companies.updateService,
   ])
   .post('/companies/:companyId/suspension', [
     authorize('company:delete'),
