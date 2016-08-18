@@ -1,6 +1,8 @@
 import React from 'react';
 import { Route, IndexRedirect } from 'react-router';
+import { startsWith, includes, rest } from 'lodash';
 import modules from './constants/moduleId';
+import navigationSections from './main/constants/navSection';
 
 import App from './main/components/common/App';
 
@@ -49,52 +51,103 @@ import AuthStore from './main/stores/AuthStore';
 import AuthorityStore from './modules/authority/store';
 
 import { userPath } from './utils/paths';
+import createDebug from 'debug';
 
-const debug = require('debug')('app:routes');
+const debug = createDebug('app:routes');
 
 export default (context) => {
-  function checkAuth(nextState, replace, cb) {
-    const isAuthenticated = context.getStore(AuthStore).isAuthenticated();
+  function requireAuthentication(nextState, replace, cb) {
+    const path = nextState.location.pathname;
+    const pathParts = path.split('/').filter(x => !!x);
+    debug(`Starting authentication check for path: ${path}. Path parts: `, pathParts);
+    // Omit carrier id from url
+    const sectionPath = `/${rest(pathParts).join('/')}`;
+    debug(`Authentication path will be ${sectionPath}`);
 
-    if (!isAuthenticated) {
-      debug('user is not authenticated, redirecting to /sign-in');
+    const store = context.getStore(AuthStore);
+    const user = store.getUser();
+    if (!user) {
+      debug('There is no user in AuthStore, redirecting to sign-in');
       replace('/sign-in');
       cb();
       return;
     }
+    // There is hope user.permissions will contain actual permissions for the company
+    // he is acting from. CompanySwitcher reloads the entire page, so AuthStore should
+    // contain relevant information from req.user already including permissions and capabilities
+    const hasCarrierIdInPath = pathParts.length > 1;
+    debug(`Carrier id found in path: ${hasCarrierIdInPath}.`);
+    const carrierId = hasCarrierIdInPath ? pathParts[0] : user.carrierId;
+    const permissions = user.permissions || [];
+    console.log('user permissions', user.permissions);
 
-    let carrierId;
-
-    // get the capability of the user
-    const capability = context.getStore(AuthorityStore).getCapability();
-    // get the authority checker
-    const { authorityChecker } = context.getActionContext();
-    // since it is in the root domain, it expects to get user carrier from the user info
-    if (nextState.location.pathname === '/') {
-      carrierId = context.getStore(AuthStore).getCarrierId();
-      authorityChecker.reset(carrierId, capability);
-    } else {
-      // get the information from the params and check for the accessibility
-      carrierId = nextState.params.identity;
-      authorityChecker.reset(carrierId, capability);
-      // user can access the path, no redirection needed
-      if (authorityChecker.canAccessPath(nextState.location.pathname)) {
-        debug('user is authorised to enter the page');
+    const currentSection = navigationSections.find(x => startsWith(sectionPath, x.path));
+    if (currentSection) {
+      debug(`Starting permission check with permissions: ${permissions.join(', ')}.`);
+      if (includes(permissions, currentSection.permission)) {
+        debug(`User ${user.username} is allowed to view the page: ${sectionPath}`);
+        if (!hasCarrierIdInPath) {
+          replace(`${carrierId}${sectionPath}`);
+        }
         cb();
         return;
       }
     }
-    // when user hasn't define the page or enter the website at the first time,
-    // it will get the default path and redirect to it
-    const defaultPath = authorityChecker.getDefaultPath();
-    const path = userPath(carrierId, defaultPath);
-    debug(`user is already authenticated and redirect to ${defaultPath}`);
-    replace(path);
+    debug(`Will need to determine default page for user ${user.username} because he is not allowed to go to ${sectionPath}`);
+    const defaultSection = navigationSections.find(x => includes(user.permissions, x.permission));
+    if (defaultSection) {
+      debug(`Redirecting ${user.username} to default path: ${defaultSection.path}.`);
+      replace(`${carrierId}${defaultSection.path}`);
+      cb();
+      return;
+    }
+
+    debug(`Redirecting to sign in, failed to determine default page for ${user.username}.`);
+    // Redirect to sign in otherwise
+    replace('/sign-in');
     cb();
+
+    // HERE IS PREVIOUS IMPLEMENTATION FOR REFERENCE
+    // const isAuthenticated = context.getStore(AuthStore).isAuthenticated();
+    //
+    // if (!isAuthenticated) {
+    //   debug('user is not authenticated, redirecting to /sign-in');
+    //   replace('/sign-in');
+    //   cb();
+    //   return;
+    // }
+    // let carrierId;
+    //
+    // // get the capability of the user
+    // const capability = context.getStore(AuthorityStore).getCapability();
+    // // get the authority checker
+    // const { authorityChecker } = context.getActionContext();
+    // // since it is in the root domain, it expects to get user carrier from the user info
+    // if (nextState.location.pathname === '/') {
+    //   carrierId = context.getStore(AuthStore).getCarrierId();
+    //   authorityChecker.reset(carrierId, capability);
+    // } else {
+    //   // get the information from the params and check for the accessibility
+    //   carrierId = nextState.params.identity;
+    //   authorityChecker.reset(carrierId, capability);
+    //   // user can access the path, no redirection needed
+    //   if (authorityChecker.canAccessPath(nextState.location.pathname)) {
+    //     debug('user is authorised to enter the page');
+    //     cb();
+    //     return;
+    //   }
+    // }
+    // // when user hasn't define the page or enter the website at the first time,
+    // // it will get the default path and redirect to it
+    // const defaultPath = authorityChecker.getDefaultPath();
+    // const path = userPath(carrierId, defaultPath);
+    // debug(`user is already authenticated and redirect to ${defaultPath}`);
+    // replace(path);
+    // cb();
   }
 
   return (
-    <Route path="/" component={App} onEnter={checkAuth}>
+    <Route path="/" component={App} onEnter={requireAuthentication}>
 
       <Route component={Protected}>
         <Route path={`:identity/${modules.OVERVIEW}`} component={Overview} />

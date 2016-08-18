@@ -12,142 +12,141 @@ import cacheControl from '../middlewares/cacheControl';
 import {
   createAuthorizationMiddleware as authorize,
 } from '../middlewares/authorization';
-import { fetchDep } from '../utils/bottle';
+import { permission, RESOURCE, ACTION } from './../../main/acl/acl-enums';
+import { fetchDep } from './../utils/bottle';
 
 const router = new Router();
 
 // TODO: refactor api.js to be a factory function with dependencies
-const fetchPermissions = fetchDep(nconf.get('containerName'), 'FetchPermissionsMiddleware');
 const roleController = fetchDep(nconf.get('containerName'), 'RoleController');
 
 // eslint:max-len 0
 router
   .use(cacheControl)
-  .use(fetchPermissions)
   .get('/session', auth.getSession)
   .get('/carriers/:carrierId/company',
     carriers.getCompany,
   )
   .get('/carriers/:carrierId/overview/summaryStats', [
-    authorize('wlp:generalOverview:read'),
+    authorize(permission(RESOURCE.GENERAL)),
     carriers.getOverviewSummaryStats,
   ])
   .get('/carriers/:carrierId/overview/detailStats', [
-    authorize('wlp:generalOverview:read'),
+    authorize(permission(RESOURCE.GENERAL)),
     carriers.getOverviewDetailStats,
   ])
   .get('/carriers/:carrierId/authority', authority.getCapabilityList)
   .get('/carriers/:carrierId/users', [
-    authorize('wlp:endUser:read'),
+    authorize(permission(RESOURCE.END_USER)),
     carriers.getUsers,
   ])
   .get('/carriers/:carrierId/users/whitelist/:username?', [
-    authorize('wlp:endUser:read'),
+    authorize(permission(RESOURCE.END_USER)),
     carriers.getWhitelist,
   ])
   .post('/carriers/:carrierId/users/whitelist', [
-    authorize('wlp:endUser:update'),
+    authorize(permission(RESOURCE.END_USER, ACTION.CREATE)),
     carriers.addWhitelist,
   ])
   .delete('/carriers:/:carrierId/users/whitelist', [
-    authorize('wlp:endUser:update'),
+    authorize(permission(RESOURCE.END_USER, ACTION.DELETE)),
     carriers.removeWhitelist,
   ])
   // TODO: change userStatsTotal and userStatsMonthly
   .get('/carriers/:carrierId/userStatsTotal', [
-    authorize('wlp:endUser:read'),
+    authorize(permission(RESOURCE.END_USER)),
     carriers.getEndUsersStatsTotal,
   ])
   .get('/carriers/:carrierId/userStatsMonthly', [
-    authorize('wlp:endUser:read'),
+    authorize(permission(RESOURCE.END_USER)),
     carriers.getEndUsersStatsMonthly,
   ])
   .get('/carriers/:carrierId/stat/user/query', [
-    authorize('wlp:endUser:read'),
+    authorize(permission(RESOURCE.END_USER)),
     carriers.getEndUsersStats,
   ])
   .get('/carriers/:carrierId/users/:username', [
-    authorize('wlp:endUser:read'),
+    authorize(permission(RESOURCE.END_USER)),
     carriers.getUsername,
   ])
   .get('/carriers/:carrierId/users/:username/wallet', [
-    authorize('wlp:endUser:read'),
+    authorize(permission(RESOURCE.END_USER)),
     carriers.getUserWallet,
   ])
   .post('/carriers/:carrierId/users/:username/suspension', [
-    authorize('wlp:endUser:update'),
+    authorize(permission(RESOURCE.END_USER, ACTION.UPDATE)),
     carriers.suspendUser,
   ])
   .delete('/carriers/:carrierId/users/:username/suspension', [
-    authorize('wlp:endUser:update'),
+    authorize(permission(RESOURCE.END_USER, ACTION.UPDATE)),
     carriers.reactivateUser,
   ])
   .get('/carriers/:carrierId/calls', [
-    authorize('wlp:callDetails:read'),
+    authorize(permission(RESOURCE.CALL)),
     carriers.getCalls,
   ])
   .get('/carriers/:carrierId/callUserStatsMonthly', [
-    authorize('wlp:callOverview:read'),
+    authorize(permission(RESOURCE.CALL)),
     carriers.getCallUserStatsMonthly,
   ])
   .get('/carriers/:carrierId/callUserStatsTotal', [
-    authorize('wlp:callOverview:read'),
+    authorize(permission(RESOURCE.CALL)),
     carriers.getCallUserStatsTotal,
   ])
   .get('/carriers/:carrierId/im', [
-    authorize('wlp:imDetails:read'),
+    authorize(permission(RESOURCE.IM)),
     carriers.getIM,
   ])
   .get('/carriers/:carrierId/stats/im', [
-    authorize('wlp:imOverview:read'),
+    authorize(permission(RESOURCE.IM)),
     carriers.getIMStats,
   ])
   .get('/carriers/:carrierId/stats/im/monthly', [
-    authorize('wlp:imOverview:read'),
+    authorize(permission(RESOURCE.IM)),
     carriers.getIMMonthlyStats,
   ])
   .get('/carriers/:carrierId/stats/im/summary', [
-    authorize('wlp:imOverview:read'),
+    authorize(permission(RESOURCE.IM)),
     carriers.getIMSummaryStats,
   ])
   .get('/carriers/:carrierId/sms', [
-    authorize('wlp:smsDetails:read'),
+    authorize(permission(RESOURCE.SMS)),
     carriers.getSMS,
   ])
   .get('/carriers/:carrierId/stats/sms', [
-    authorize('wlp:smsOverview:read'),
+    authorize(permission(RESOURCE.SMS)),
     carriers.getSMSStats,
   ])
   .get('/carriers/:carrierId/stats/sms/monthly', [
-    authorize('wlp:smsOverview:read'),
+    authorize(permission(RESOURCE.SMS)),
     carriers.getSMSMonthlyStats,
   ])
   .get('/carriers/:carrierId/stats/sms/summary', [
-    authorize('wlp:smsOverview:read'),
+    authorize(permission(RESOURCE.SMS)),
     carriers.getSMSSummaryStats,
   ])
   .get('/carriers/:carrierId/topup', [
-    authorize('wlp:topUp:read'),
+    authorize(permission(RESOURCE.TOP_UP)),
     carriers.getTopUp,
   ])
   .get('/carriers/:carrierId/vsf', [
-    authorize('wlp:vsfDetails:read'),
+    authorize(permission(RESOURCE.VSF)),
     carriers.getVSF,
   ])
   .get('/carriers/:carrierId/vsf/overview/summaryStats', [
-    authorize('wlp:vsfOverview:read'),
+    authorize(permission(RESOURCE.VSF)),
     carriers.getVsfSummaryStats,
   ])
   .get('/carriers/:carrierId/vsf/overview/monthlyStats', [
-    authorize('wlp:vsfOverview:read'),
+    authorize(permission(RESOURCE.VSF)),
     carriers.getVsfMonthlyStats,
   ])
   .get('/carriers/:carrierId/verifications', [
-    // TODO: define authorization resources and actions
+    authorize(permission(RESOURCE.VERIFICATION_SDK)),
     carriers.getVerifications,
   ])
   .get('/carriers/:carrierId/verificationStats', [
-    // TODO: define authorization resources and actions
+    authorize(permission(RESOURCE.VERIFICATION_SDK)),
     carriers.getVerificationStatistics,
   ])
   .get('/carriers/:carrierId/info', [
@@ -165,15 +164,12 @@ router
     carriers.getPreset,
   ])
   .get('/accounts', [
-    authorize('user:read'),
     accounts.getAccounts,
   ])
   .post('/accounts', [
-    authorize('user:create'),
     accounts.createAccount,
   ])
   .get('/accounts/accessibleCompanies', [
-    authorize('user:read'),
     accounts.getAccessibleCompanies,
   ])
   .get('/accounts/:id', [
@@ -193,7 +189,6 @@ router
     companies.getCompany,
   ])
   .get('/companies/:companyId/managingCompanies', [
-    authorize('company:read'),
     companies.getManagingCompanies,
   ])
   .put('/companies/:companyId/profile', [
@@ -201,15 +196,12 @@ router
     companies.updateCompany,
   ])
   .post('/companies/:companyId/suspension', [
-    authorize('company:delete'),
     companies.deactivateCompany,
   ])
   .put('/companies/:companyId/suspension', [
-    authorize('company:delete'),
     companies.reactivateCompany,
   ])
   .get('/companies/:companyId/roles', [
-    authorize('company:read'),
     companies.getCompanyRoles,
   ])
   .post('/provisioning', [
@@ -229,19 +221,19 @@ router
     provision.putProvision,
   ])
   .get('/roles', [
-    authorize('role:read'),
+    authorize(permission(RESOURCE.ROLE)),
     roleController.list,
   ])
   .post('/roles', [
-    authorize('role:create'),
+    authorize(permission(RESOURCE.ROLE, ACTION.CREATE)),
     roleController.create,
   ])
   .put('/roles/:id', [
-    authorize('role:update'),
+    authorize(permission(RESOURCE.ROLE, ACTION.UPDATE)),
     roleController.update,
   ])
   .delete('/roles/:id', [
-    authorize('role:delete'),
+    authorize(permission(RESOURCE.ROLE, ACTION.DELETE)),
     roleController.remove,
   ])
   .use('*', (req, res) => res.status(400).json({

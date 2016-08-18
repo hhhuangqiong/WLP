@@ -49,6 +49,13 @@
 //
 //============================================================
 
+// Custom function added because of deprecation warning cluttering the console window
+@function unquote_if_string($arg){
+  @if type-of($arg) == string {
+    $arg: unquote($arg);
+  }
+  @return $arg;
+}
 
 
 // Default Browser Support
@@ -138,7 +145,7 @@ $defaultOperaSupport: true;
 //============================================================
 
 @mixin box-orient($arguments) {
-  @include prefix-property(box-orient, unquote($arguments));
+  @include prefix-property(box-orient, unquote_if_string($arguments));
 }
 
 
@@ -158,7 +165,7 @@ $defaultOperaSupport: true;
 //============================================================
 
 @mixin box-pack($arguments) {
-  @include prefix-property(box-pack, unquote($arguments));
+  @include prefix-property(box-pack, unquote_if_string($arguments));
 }
 
 
@@ -179,7 +186,7 @@ $defaultOperaSupport: true;
 //============================================================
 
 @mixin box-align($arguments) {
-  @include prefix-property(box-align, unquote($arguments));
+  @include prefix-property(box-align, unquote_if_string($arguments));
 }
 
 
@@ -196,7 +203,7 @@ $defaultOperaSupport: true;
 //============================================================
 
 @mixin box-flex($arguments) {
-  @include prefix-property(box-flex, unquote($arguments));
+  @include prefix-property(box-flex, unquote_if_string($arguments));
 }
 
 
@@ -215,7 +222,7 @@ $defaultOperaSupport: true;
 //============================================================
 
 @mixin box-sizing($arguments) {
-  @include prefix-property(box-sizing, unquote($arguments));
+  @include prefix-property(box-sizing, unquote_if_string($arguments));
 }
 
 
@@ -237,8 +244,8 @@ $defaultOperaSupport: true;
 //============================================================
 
 @mixin user-select($arguments) {
-  @include prefix-property(user-select, unquote($arguments));
-  @include prefix-property(touch-callout, unquote($arguments), true, false, false, false);
+  @include prefix-property(user-select, unquote_if_string($arguments));
+  @include prefix-property(touch-callout, unquote_if_string($arguments), true, false, false, false);
 }
 
 
@@ -269,7 +276,7 @@ $defaultOperaSupport: true;
 //============================================================
 
 @mixin appearance($arguments) {
-  @include prefix-property(appearance, unquote($arguments), true, true, false, false);
+  @include prefix-property(appearance, unquote_if_string($arguments), true, true, false, false);
 }
 
 
@@ -288,7 +295,7 @@ $defaultOperaSupport: true;
 //============================================================
 
 @mixin border-radius($arguments) {
-  @include prefix-property(border-radius, unquote($arguments));
+  @include prefix-property(border-radius, unquote_if_string($arguments));
   @include prefix-property(background-clip, padding-box, true, true, false, false);
 }
 
@@ -310,7 +317,7 @@ $defaultOperaSupport: true;
 //============================================================
 @mixin box-shadow($arguments1,$arguments2:false, $arguments3:false, $arguments4:false, $arguments5:false) {
   $params: $arguments1;
-  @if $arguments2 
+  @if $arguments2
     { $params: $arguments1, $arguments2; }
     @if $arguments3 != false
       { $params: $arguments1, $arguments2, $arguments3; }
@@ -319,7 +326,7 @@ $defaultOperaSupport: true;
         @if $arguments5 != false
           { $params: $arguments1, $arguments2, $arguments3, $arguments4, $arguments5; }
 
-  @include prefix-property(box-shadow, unquote($params));
+  @include prefix-property(box-shadow, unquote_if_string($params));
 }
 
 
@@ -339,7 +346,7 @@ $defaultOperaSupport: true;
 
 @mixin text-shadow($arguments1,$arguments2:false, $arguments3:false, $arguments4:false, $arguments5:false) {
   $params: $arguments1;
-  @if $arguments2 
+  @if $arguments2
     { $params: $arguments1, $arguments2; }
     @if $arguments3 != false
       { $params: $arguments1, $arguments2, $arguments3; }
@@ -348,7 +355,7 @@ $defaultOperaSupport: true;
         @if $arguments5 != false
           { $params: $arguments1, $arguments2, $arguments3, $arguments4, $arguments5; }
 
-  @include prefix-property(text-shadow, unquote($params), false, false, false, false);
+  @include prefix-property(text-shadow, unquote_if_string($params), false, false, false, false);
 }
 
 
@@ -369,7 +376,7 @@ $defaultOperaSupport: true;
 //============================================================
 
 @mixin linear-gradient($arguments) {
-  @include prefix-value(background-image, linear-gradient(unquote($arguments)));
+  @include prefix-value(background-image, linear-gradient(unquote_if_string($arguments)));
 }
 
 
@@ -395,7 +402,7 @@ $defaultOperaSupport: true;
 //============================================================
 
 @mixin radial-gradient($arguments) {
-  @include prefix-value(background-image, radial-gradient(unquote($arguments)));
+  @include prefix-value(background-image, radial-gradient(unquote_if_string($arguments)));
 }
 
 
@@ -415,7 +422,7 @@ $defaultOperaSupport: true;
 //============================================================
 
 @mixin transform($arguments) {
-  @include prefix-property(transform, unquote($arguments));
+  @include prefix-property(transform, unquote_if_string($arguments));
 }
 
 
@@ -437,7 +444,7 @@ $defaultOperaSupport: true;
 //============================================================
 
 @mixin transform-origin($arguments) {
-  @include prefix-property(transform-origin, unquote($arguments));
+  @include prefix-property(transform-origin, unquote_if_string($arguments));
 }
 
 
@@ -453,7 +460,7 @@ $defaultOperaSupport: true;
 //============================================================
 
 @mixin transform-style($arguments) {
-  @include prefix-property(transform-style, unquote($arguments));
+  @include prefix-property(transform-style, unquote_if_string($arguments));
 }
 
 
@@ -469,7 +476,7 @@ $defaultOperaSupport: true;
 //============================================================
 
 @mixin perspective($arguments) {
-  @include prefix-property(perspective, unquote($arguments));
+  @include prefix-property(perspective, unquote_if_string($arguments));
 }
 
 
@@ -490,7 +497,7 @@ $defaultOperaSupport: true;
 //============================================================
 
 @mixin perspective-origin($arguments) {
-  @include prefix-property(perspective-origin, unquote($arguments));
+  @include prefix-property(perspective-origin, unquote_if_string($arguments));
 }
 
 
@@ -506,7 +513,7 @@ $defaultOperaSupport: true;
 //============================================================
 
 @mixin backface-visibility($arguments) {
-  @include prefix-property(backface-visibility, unquote($arguments));
+  @include prefix-property(backface-visibility, unquote_if_string($arguments));
 }
 
 
@@ -527,7 +534,7 @@ $defaultOperaSupport: true;
 //============================================================
 
 @mixin matrix($arguments) {
-  @include transform(matrix(unquote($arguments)));
+  @include transform(matrix(unquote_if_string($arguments)));
 }
 
 
@@ -544,7 +551,7 @@ $defaultOperaSupport: true;
 //============================================================
 
 @mixin translate($arguments) {
-  @include transform(translate(unquote($arguments)));
+  @include transform(translate(unquote_if_string($arguments)));
 }
 
 
@@ -561,7 +568,7 @@ $defaultOperaSupport: true;
 //============================================================
 
 @mixin scale($arguments) {
-  @include transform(scale(unquote($arguments)));
+  @include transform(scale(unquote_if_string($arguments)));
 }
 
 
@@ -577,7 +584,7 @@ $defaultOperaSupport: true;
 //============================================================
 
 @mixin rotate($arguments) {
-  @include transform(rotate(unquote($arguments)));
+  @include transform(rotate(unquote_if_string($arguments)));
 }
 
 
@@ -594,7 +601,7 @@ $defaultOperaSupport: true;
 //============================================================
 
 @mixin skew($arguments) {
-  @include transform(skew(unquote($arguments)));
+  @include transform(skew(unquote_if_string($arguments)));
 }
 
 
@@ -613,7 +620,7 @@ $defaultOperaSupport: true;
 //============================================================
 
 @mixin transition($arguments) {
-  @include prefix-property(transition, unquote($arguments));
+  @include prefix-property(transition, unquote_if_string($arguments));
 }
 
 
@@ -649,7 +656,7 @@ $defaultOperaSupport: true;
 //============================================================
 
 @mixin animation($arguments) {
-  @include prefix-property(animation, unquote($arguments));
+  @include prefix-property(animation, unquote_if_string($arguments));
 }
 
 

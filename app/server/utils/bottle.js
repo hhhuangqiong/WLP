@@ -1,4 +1,5 @@
 import Bottle from 'bottlejs';
+import { isUndefined } from 'lodash';
 
 /**
  * Retrieve the container with the specified name
@@ -25,8 +26,12 @@ export function fetchDep(name, depIdentifer) {
 
   if (ioc) {
     // TODO prevent the 'identifier.' case
-    return depIdentifer.split('.').reduce((result, key) => {
+    const dependency = depIdentifer.split('.').reduce((result, key) => {
       return result[key];
     }, ioc.container);
+    if (isUndefined(dependency)) {
+      throw new Error(`Failed to resolve from IOC container: ${name}.`);
+    }
+    return dependency;
   }
 }
