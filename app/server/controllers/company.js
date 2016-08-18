@@ -1,6 +1,6 @@
 import _ from 'lodash';
 
-export default function companyController(iamServiceClient, applicationRequest, mpsClient) {
+export default function companyController(iamServiceClient, applicationRequest, provisionHelper) {
   // @TODO need to verify when integrate with company
 
   /**
@@ -26,103 +26,6 @@ export default function companyController(iamServiceClient, applicationRequest, 
   function reactivateCompany(req, res) {
       // @TODO @IAM check if user is able to reactivate the company
     res.json();
-  }
-
-  /**
-   * Controller Middleware
-   * get all user managing Companies resource in JSON format
-   *
-   * @param req
-   * @param res
-   */
-  async function getCompanies(req, res, next) {
-    try {
-      const command = req.query;
-      command.pageSize = command.pageSize ? parseInt(command.pageSize, 10) : 5;
-      command.pageNo = command.pageNumber ? parseInt(command.pageNumber, 10) : 0;
-      if (command.searchCompany) {
-        command.search = command.searchCompany;
-        delete command.searchCompany;
-      }
-      const { total, pageSize, pageNo, items } = await iamServiceClient.getCompanies(command);
-      res.json({
-        total,
-        companies: items,
-        pageNumber: pageNo,
-        pageSize,
-      });
-    } catch (ex) {
-      next(ex);
-    }
-  }
-
-  async function createCompany(req, res, next) {
-    // @TODO check in the MPS service
-    const isValid = await applicationRequest.validateCarrier(req.params.companyId);
-
-    if (!isValid) {
-      throw new Error('invalid carrier id');
-    }
-
-    /**
-     * Normalize payload object
-     *
-     * @param provisioningData {Object} provisioning data received via Api
-     * @returns {*|promise} return a normalized payload object
-     */
-    const normalizeParams = _.bind(function bind(provisioningData) {
-      const params = _.assign({
-        name: this.data.companyName,
-        carrierId: this.data.carrierId,
-        reseller: this.data.reseller,
-        address: this.data.address,
-        categoryID: this.data.categoryId,
-        country: this.data.country,
-        timezone: this.data.timezone,
-        accountManager: this.data.accountManager,
-        billCode: this.data.billCode,
-        expectedServiceDate: this.data.expectedServiceData,
-        businessContact: {
-          name: this.data.bcName,
-          email: this.data.bcEmail,
-          phone: this.data.bcPhone,
-        },
-        technicalContact: {
-          name: this.data.tcName,
-          email: this.data.tcEmail,
-          phone: this.data.tcPhone,
-        },
-        supportContact: {
-          name: this.data.scName,
-          email: this.data.scEmail,
-          phone: this.data.scPhone,
-        },
-        createBy: req.user._id,
-        createAt: new Date(),
-        updateBy: req.user._id,
-        updateAt: new Date(),
-      }, provisioningData);
-
-      // if logo is not uploaded, this.data.logo will not exist
-      // do not overwrite logo if logo is not uploaded
-      _.merge(params, { logo: this.data.logo });
-
-      // params.parentCompany = req.user.affiliatedCompany;
-      return params;
-    }, { data: req.body });
-
-    // normalizeParams
-    const param = normalizeParams(req.body);
-    // provisioning
-    // create company
-    // upload logo
-    // get company info
-    // @TODO update the company id
-    const company = await iamServiceClient.getCompany();
-    res.status(200).json({
-      company,
-      carrierId: req.params.carrierId,
-    });
   }
 
   async function updateCompany(req, res, next) {
@@ -152,13 +55,20 @@ export default function companyController(iamServiceClient, applicationRequest, 
       // find all the companies that under affiliated company
       // @TODO pagination handling for pageSize, expect to get all companies
       const result = await iamServiceClient.getCompanies({ parent: company.id, pageSize: 200 });
+      // include the company itself
+      result.items.unshift(company);
       const companyIds = _.map(result.items, item => item.id);
-      const carrierIds = await mpsClient.getCarrierIdsByCompanyIds(companyIds);
-      result.items = _.map(result.items, item => {
-        const mItem = item;
-        mItem.carrierId = carrierIds[item.id];
+      const carrierIds = await provisionHelper.getCarrierIdsByCompanyIds(companyIds);
+      const resultArray = [];
+      _.forEach(result.items, (item, index) => {
+        // only filter the companies with carrier Id
+        if (carrierIds[index]) {
+          const mItem = item;
+          mItem.carrierId = carrierIds[index];
+          resultArray.push(mItem);
+        }
       });
-      res.json([company].concat(result.items));
+      res.json(resultArray);
     } catch (ex) {
       next(ex);
     }
@@ -176,8 +86,6 @@ export default function companyController(iamServiceClient, applicationRequest, 
   return {
     getCompanyRoles,
     getCompany,
-    createCompany,
-    getCompanies,
     getManagingCompanies,
     updateCompany,
     reactivateCompany,

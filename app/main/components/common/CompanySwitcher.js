@@ -25,9 +25,8 @@ const CompanySwitcher = React.createClass({
   },
 
   getStateFromStore() {
-    const currentCompany = this.getStore(ApplicationStore).getCurrentCompany();
     return {
-      companies: [currentCompany].concat(this.getStore(ApplicationStore).getManagingCompanies() || []),
+      companies: this.getStore(ApplicationStore).getManagingCompanies(),
     };
   },
 

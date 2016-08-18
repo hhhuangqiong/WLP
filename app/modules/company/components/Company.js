@@ -3,6 +3,7 @@ import Select from 'react-select';
 import ReactPaginate from 'react-paginate';
 import classNames from 'classnames';
 import { FormattedMessage } from 'react-intl';
+import { Link } from 'react-router';
 
 import CompanyList from './CompanyList';
 import Icon from '../../../main/components/Icon';
@@ -105,29 +106,30 @@ class Company extends React.Component {
   }
 
   render() {
+    const { identity } = this.context.params;
     return (
       <div className="company" data-equalizer>
         <nav className="top-bar company-sidebar__search" data-topbar role="navigation">
-          <div
-            role="button"
-            tabIndex="0"
-            className={classNames(
-            'account-top-bar__button-primary',
-            'button',
-            'round',
-            'large',
-            'item',
-            'button-create',
-            )
-          }
-          >
-          <a href="create">
-            <FormattedMessage
-              id="createNewCompany"
-              defaultMessage="Create New Company"
-            />
-          </a>
-        </div>
+          <Link to={`/${identity}/company/create`}>
+            <div
+              role="button"
+              tabIndex="0"
+              className={classNames(
+              'account-top-bar__button-primary',
+              'button',
+              'round',
+              'large',
+              'item',
+              'button-create',
+              )
+            }
+            >
+              <FormattedMessage
+                id="createNewCompany"
+                defaultMessage="Create New Company"
+              />
+            </div>
+          </Link>
           <div>
           <input
             className="round"

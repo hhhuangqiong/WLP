@@ -6,6 +6,7 @@ import * as carriers from '../routes/carriers';
 import * as companies from '../routes/companies';
 import * as authority from '../routes/authority';
 import * as accounts from '../routes/accounts';
+import * as provision from '../routes/provision';
 
 import cacheControl from '../middlewares/cacheControl';
 import {
@@ -13,7 +14,6 @@ import {
 } from '../middlewares/authorization';
 import { fetchDep } from '../utils/bottle';
 
-const multipart = require('connect-multiparty')();
 const router = new Router();
 
 // TODO: refactor api.js to be a factory function with dependencies
@@ -21,7 +21,6 @@ const fetchPermissions = fetchDep(nconf.get('containerName'), 'FetchPermissionsM
 const roleController = fetchDep(nconf.get('containerName'), 'RoleController');
 
 // eslint:max-len 0
-
 router
   .use(cacheControl)
   .use(fetchPermissions)
@@ -162,9 +161,8 @@ router
     authorize('company:read'),
     carriers.getApplications,
   ])
-  .get('/companies', [
-    authorize('company:read'),
-    companies.getCompanies,
+  .get('/carriers/:carrierId/preset', [
+    carriers.getPreset,
   ])
   .get('/accounts', [
     authorize('user:read'),
@@ -190,11 +188,6 @@ router
     authorize('user:delete'),
     accounts.deleteAccount,
   ])
-  .post('/companies', [
-    authorize('company:create'),
-    multipart,
-    companies.createCompany,
-  ])
   .get('/companies/:companyId/profile', [
     authorize('company:read'),
     companies.getCompany,
@@ -205,7 +198,6 @@ router
   ])
   .put('/companies/:companyId/profile', [
     authorize('company:update'),
-    multipart,
     companies.updateCompany,
   ])
   .post('/companies/:companyId/suspension', [
@@ -219,6 +211,22 @@ router
   .get('/companies/:companyId/roles', [
     authorize('company:read'),
     companies.getCompanyRoles,
+  ])
+  .post('/provisioning', [
+    authorize('company:write'),
+    provision.createProvision,
+  ])
+  .get('/provisioning', [
+    authorize('company:read'),
+    provision.getProvisions,
+  ])
+  .get('/provisioning/:provisionId', [
+    authorize('company:read'),
+    provision.getProvision,
+  ])
+  .put('/provisioning/:provisionId', [
+    authorize('company:write'),
+    provision.putProvision,
   ])
   .get('/roles', [
     authorize('role:read'),

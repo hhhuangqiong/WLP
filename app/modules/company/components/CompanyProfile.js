@@ -5,12 +5,14 @@ import classNames from 'classnames';
 import * as timezoneData from 'timezones.json';
 import { injectIntl, intlShape, defineMessages, FormattedMessage } from 'react-intl';
 import _ from 'lodash';
+import connectToStores from 'fluxible-addons-react/connectToStores';
 
 import Icon from '../../../main/components/Icon';
 import createCompany from '../actions/createCompany';
 import CompanyProfileInfo from './CompanyProfileInfo';
 import CompanyDescription from './CompanyDescription';
 import CompanyCapabilities from './CompanyCapabilities';
+import ApplicationStore from '../../../main/stores/ApplicationStore';
 
 const countries = countryData.countries.all.map((item) => ({
   value: item.name,
@@ -42,16 +44,20 @@ const MESSAGES = defineMessages({
 });
 
 const CAPABILITIES = {
-  IM: 'IM',
-  ON_NET: 'On-Net',
-  IM_SMS: 'IM-SMS',
-  PUSH: 'Push',
-  TOP_UP: 'Top Up',
-  VOICE: 'Voice',
-  OFF_NET: 'Off-Net',
-  SMS: 'SMS',
-  API: 'API',
-  MAAII_IN: 'Maaii-in',
+  'platform.android': 'Android',
+  'platform.ios': 'IOS',
+  'platform.web': 'Web',
+  'call.offnet': 'Off-Net Call',
+  'call.onnet': 'On-Net Call',
+  'call.maaii--in': 'Maii-in Call',
+  im: 'IM',
+  'im.im_tosms': 'IM To SMS',
+  'verification.mo': 'MO Verification',
+  'verification.mt': 'MT Verification',
+  'verification.sms': 'SMS Verification',
+  'verification.ivr': 'IVR Verification',
+  push: 'PUSH',
+  vsf: 'VSF',
 };
 
 const COMPANY_TYPE = {
@@ -66,15 +72,18 @@ const PAYMENT_TYPE = {
 class CompanyProfile extends Component {
   static propTypes = {
     intl: intlShape.isRequired,
+    currentCompany: React.PropTypes.object,
   }
   static contextTypes = {
     executeAction: React.PropTypes.func.isRequired,
+    params: React.PropTypes.object.isRequired,
   }
   constructor(props) {
     super(props);
 
     // default values
     this.state = {
+      companyCode: '',
       companyName: '',
       contactDetail: '',
       country: '',
@@ -84,6 +93,7 @@ class CompanyProfile extends Component {
       capabilities: [],
     };
     this.createCompany = this.createCompany.bind(this);
+    this.onCompanyCodeChange = this.onCompanyCodeChange.bind(this);
     this.onCompanyNameChange = this.onCompanyNameChange.bind(this);
     this.onCompanyTypeChange = this.onCompanyTypeChange.bind(this);
     this.onPaymentTypeChange = this.onPaymentTypeChange.bind(this);
@@ -91,6 +101,11 @@ class CompanyProfile extends Component {
     this.onTimezoneChange = this.onTimezoneChange.bind(this);
     this.onContactDetailChange = this.onContactDetailChange.bind(this);
     this.onCapabilitiesChange = this.onCapabilitiesChange.bind(this);
+  }
+  onCompanyCodeChange(e) {
+    // from input
+    const value = e.target.value;
+    this.setState({ companyCode: value });
   }
   onCompanyNameChange(e) {
     // from input
@@ -139,9 +154,12 @@ class CompanyProfile extends Component {
   }
   createCompany() {
     const companyInfo = {
+      resellerCompanyId: this.props.currentCompany.id,
+      resellerCarrierId: this.props.currentCompany.carrierId,
+      code: this.state.companyCode,
       name: this.state.companyName,
-      companyType: this.state.companyType,
-      paymentType: this.state.paymentType,
+      companyType: _.invert(COMPANY_TYPE)[this.state.companyType],
+      paymentType: _.invert(PAYMENT_TYPE)[this.state.paymentType],
       country: this.state.country,
       timezone: this.state.timezone,
       contactDetail: this.state.contactDetail,
@@ -184,9 +202,11 @@ class CompanyProfile extends Component {
       <Collapse accordion={false} defaultActiveKey="0">
         <Panel header={`1.${formatMessage(MESSAGES.companyProfile)}`} >
           <CompanyProfileInfo
+            companyCode={this.state.companyCode}
             companyName={this.state.companyName}
             companyType={this.state.companyType}
             paymentType={this.state.paymentType}
+            onCompanyCodeChange={this.onCompanyCodeChange}
             onCompanyNameChange={this.onCompanyNameChange}
             onCompanyTypeChange={this.onCompanyTypeChange}
             onPaymentTypeChange={this.onPaymentTypeChange}
@@ -217,5 +237,9 @@ class CompanyProfile extends Component {
     );
   }
 }
+
+CompanyProfile = connectToStores(CompanyProfile, [ApplicationStore], (context) => ({
+  currentCompany: context.getStore(ApplicationStore).getCurrentCompany(),
+}));
 
 export default injectIntl(CompanyProfile);

@@ -2,8 +2,6 @@ import passport from 'passport';
 import nconf from 'nconf';
 
 import { OpenIdStrategy } from '../openid/Strategy';
-import { baseUrl } from '../../utils/url';
-import superagent from 'superagent';
 
 /**
  * Set up the de-/serializer for passport

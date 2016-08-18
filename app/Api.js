@@ -40,9 +40,18 @@ Api.prototype.getAuthorityList = function getAuthorityList(carrierId, cb) {
     });
 };
 
-Api.prototype.getCompanies = function getCompanies(params, cb) {
+Api.prototype.createProvision = function createProvision(params, cb) {
   superagent
-    .get(`${this._getHost()}/api/companies/`)
+    .post(`${this._getHost()}/api/provisioning`)
+    .set('Content-Type', 'application/json')
+    .send(params.data)
+    .accept('json')
+    .end(genericHandler(cb));
+};
+
+Api.prototype.getProvisions = function getProvisions(params, cb) {
+  superagent
+    .get(`${this._getHost()}/api/provisioning/`)
     .query({
       searchCompany: params.searchCompany,
       pageSize: params.pageSize,
@@ -52,18 +61,16 @@ Api.prototype.getCompanies = function getCompanies(params, cb) {
     .end(genericHandler(cb));
 };
 
-Api.prototype.getManagingCompanies = function getManagingCompanies(params, cb) {
+Api.prototype.getProvision = function getProvision(params, cb) {
   superagent
-    .get(`${this._getHost()}/api/companies/${params.companyId}/managingCompanies`)
+    .get(`${this._getHost()}/api/provisioning/${params.provisionId}`)
     .accept('json')
     .end(genericHandler(cb));
 };
 
-Api.prototype.createCompany = function createCompany(params, cb) {
+Api.prototype.getManagingCompanies = function getManagingCompanies(params, cb) {
   superagent
-    .post(`${this._getHost()}/api/companies`)
-    .set('Content-Type', 'application/json')
-    .send(params.data)
+    .get(`${this._getHost()}/api/companies/${params.companyId}/managingCompanies`)
     .accept('json')
     .end(genericHandler(cb));
 };

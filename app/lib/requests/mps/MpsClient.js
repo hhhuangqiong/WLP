@@ -1,70 +1,61 @@
 import Q from 'q';
-import _ from 'lodash';
-// @TODO need to update when integrating with MPS service
+import request from 'superagent';
+import { HttpStatusError } from 'common-errors';
+import { isString, get, isNumber } from 'lodash';
+import logger from 'winston';
 
-// local mapping between carrier and company id,
-// key is company id and value is carrier id.
-const carrierIdMapping = {
-  '57a950b9cdf9005630e797f8': 'bolter.maaiii.org',
-  '57b03e91121a6ac6664b51a5': 'bolter-child.maaiii.org',
-  '57a950b9cdf9005630e797fc': 'm800',
-  '57a950b9cdf9005630e797fd': 'maaiii.org',
-};
-
-export function getCarrierIdByCompanyId(id) {
-  // @TODO update when get the mapping of company id to carrier id
-  function fetchCompanyMapping(companyId) {
-    carrierIdMapping[companyId] = 'carrierA';
-    return carrierIdMapping[companyId];
-  }
-  return Q.resolve(carrierIdMapping[id] || fetchCompanyMapping(id));
-}
-
+const serviceFilter = ['SDK', 'WHITE_LABEL'];
 export default class MpsClient {
-  getCompanyIdByCarrierId(id) {
-    const companyId = _.invert(carrierIdMapping)[id];
-    return Q.resolve(companyId);
+  constructor(options) {
+    this._options = options;
+    this.basePath = this._options.baseUrl;
   }
-  getCarrierIdByCompanyId(id) {
-    return Q.resolve(carrierIdMapping[id]);
+
+  getProvision(query) {
+    const mQuery = query;
+    mQuery.serviceType = serviceFilter.toString();
+    const url = `${this.basePath}/provisioning`;
+    const req = request.get(url).query(mQuery);
+    return this._handle(req, url);
   }
-  getCarrierIdsByCompanyIds(ids) {
-    const result = {};
-    const resultPromise = _.map(ids, id => this.getCarrierIdByCompanyId(id)
-      .then(carrierId => {
-        result[id] = carrierId;
-      }));
-    return Q.all(resultPromise).then(() => result);
+
+  getProvisionById(command) {
+    const url = `${this.basePath}/provisioning/${command.id}`;
+    const req = request.get(url);
+    return this._handle(req, url);
   }
-  getCapabilityByCarrierId() {
-    return Q.resolve([
-      'service.white_label',
-      'device.ios',
-      'device.android',
-      'sign_up.flow.standard',
-      'sign_up.flow.customized',
-      'end-user',
-      'call.onnet_call',
-      'call.offnet_call',
-      'call',
-      'im.im_to_sms',
-      'im.client_to_client',
-      'im.server_to_client',
-      'im.client_to_server',
-      'im',
-      'sms',
-      'vsf.item.sticker',
-      'vsf.item.animation',
-      'vsf.item.audio_effect',
-      'vsf.item.credit',
-      'vsf.item.customized',
-      'vsf',
-      'top_up',
-      'wallet',
-      'wallet.none',
-      'wallet.single',
-      'wallet.multiple',
-      'wallet.shared',
-    ]);
+
+  postProvision(command) {
+    const url = `${this.basePath}/provisioning`;
+    const req = request.post(url).send(command);
+    return this._handle(req, url);
+  }
+
+  getPreset(query) {
+    const url = `${this.basePath}/preset/${query.carrierId}`;
+    const req = request.get(url).query(query);
+    return this._handle(req, url);
+  }
+
+  async _handle(superagentRequest, url) {
+    try {
+      const res = await superagentRequest;
+      return res.body;
+    } catch (err) {
+      // Wrap HTTP errors
+      if (isNumber(err.status)) {
+        const errorBody = err.response.body;
+        const errorMessages = ['message', 'error.message', 'msg']
+          .map(x => get(errorBody, x))
+          .filter(m => isString(m) && m.length > 0);
+        const errorMessage = errorMessages[0] || '[Empty message]';
+        const message = `Request to IAM (${url}) failed with ${err.status}. Message was: ${errorMessage}`;
+        logger.error(message, err.response.body);
+        const error = new HttpStatusError(err.status, message);
+        error.response = errorBody;
+        return Q.reject(error);
+      }
+      throw err;
+    }
   }
 }

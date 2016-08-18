@@ -1,6 +1,9 @@
 import React, { PropTypes } from 'react';
-import { ACTIVE, INPROGRESS, SUSPENDED, UNKNOWN } from '../constants/status';
+import moment from 'moment';
 
+import * as dateLocale from '../../../utils/dateLocale';
+import { SHORT_DATE_FORMAT } from '../../../utils/timeFormatter';
+import { ACTIVE, INPROGRESS, SUSPENDED, UNKNOWN, CREATED, ERROR, UPDATING } from '../constants/status';
 
 const CompanyDetail = (props) => {
   const { companyName, domain, createDate, status } = props;
@@ -8,7 +11,7 @@ const CompanyDetail = (props) => {
     <tr>
       <td>{companyName}</td>
       <td>{domain}</td>
-      <td>{createDate}</td>
+      <td>{dateLocale.format(moment(createDate), SHORT_DATE_FORMAT)}</td>
       {
         (() => {
           switch (status) {
@@ -18,12 +21,15 @@ const CompanyDetail = (props) => {
                   <span className="circle-button green"></span>{status}
                 </td>
               );
+            case CREATED:
+            case UPDATING:
             case INPROGRESS:
               return (
                 <td className="in-progress">
                   <span className="circle-button blue"></span>{status}
                 </td>
               );
+            case ERROR:
             case SUSPENDED:
               return (
                 <td className="suspended">

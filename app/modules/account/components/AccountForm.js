@@ -69,7 +69,7 @@ class AccountForm extends Component {
         company.id === selectedCompany);
       roleOptions = _.map(selectedCompanyObject.roles, role => ({
         label: role.name,
-        value: role._id,
+        value: role.id,
       }));
     } else {
       roleOptions = [];

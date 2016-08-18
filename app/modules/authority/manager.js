@@ -5,7 +5,7 @@ import { fetchDep } from '../../server/utils/bottle';
 import { getAclString } from './utils';
 import modules from '../../constants/moduleId';
 
-const mpsClient = fetchDep(nconf.get('containerName'), 'MpsClient');
+const provisionHelper = fetchDep(nconf.get('containerName'), 'ProvisionHelper');
 const {
   OVERVIEW, ACCOUNT, COMPANY, END_USER, CALL,
   IM, SMS, VSF, TOP_UP, VERIFICATION_SDK,
@@ -59,7 +59,7 @@ class Authority {
    * @private
    */
   _getCapabilities() {
-    return mpsClient.getCapabilityByCarrierId(this._carrierId);
+    return provisionHelper.getCapabilityByCarrierId(this._carrierId);
   }
 
   /**
@@ -189,7 +189,6 @@ class Authority {
           menuItem => this._getAclString('view', menuItem)
         )))
         .catch(err => {
-          logger.error(err.message, err.stack);
           reject(err);
         });
     });

@@ -30,14 +30,14 @@ function formatAccountResult(user) {
       lastName: user.name && user.name.familyName || '',
     },
     affiliatedCompany: user.affiliatedCompany,
-    isVerified: user.active,
+    isVerified: user.isVerified,
     createdAt: moment(user.createdAt).format('LLL'),
     updatedAt: moment(user.updatedAt).format('LLL'),
   };
   return userInfo;
 }
 
-export default function accountController(iamServiceClient, mpsClient) {
+export default function accountController(iamServiceClient, provisionHelper) {
   // get Accounts result will return simple data without carrierId and role
   async function getAccounts(req, res, next) {
     debug('get accounts via account controller');
@@ -66,7 +66,7 @@ export default function accountController(iamServiceClient, mpsClient) {
       const user = await iamServiceClient.getUser({ id: result.id });
       const userInfo = formatAccountResult(user);
       // get the carrier
-      userInfo.carrierId = await mpsClient.getCarrierIdByCompanyId(user.affiliatedCompany);
+      userInfo.carrierId = await provisionHelper.getCarrierIdByCompanyId(user.affiliatedCompany);
       // add the roles
       if (req.body.roles) {
         await iamServiceClient.setUserRoles({ userId: user.id, roles: req.body.roles });
@@ -83,8 +83,9 @@ export default function accountController(iamServiceClient, mpsClient) {
       const user = await iamServiceClient.getUser(req.params);
       const userInfo = formatAccountResult(user);
       // get the carrier
-      userInfo.carrierId = await mpsClient.getCarrierIdByCompanyId(user.affiliatedCompany);
-      userInfo.roles = await iamServiceClient.getUserRoles({ userId: user.id });
+      userInfo.carrierId = await provisionHelper.getCarrierIdByCompanyId(user.affiliatedCompany);
+      const roles = await iamServiceClient.getUserRoles({ userId: user.id });
+      userInfo.roles = _.map(roles, role => ({ company: role.company, id: role.id }));
       res.json(userInfo);
     } catch (ex) {
       next(ex);
@@ -101,7 +102,7 @@ export default function accountController(iamServiceClient, mpsClient) {
       const user = await iamServiceClient.getUser({ id: command.id });
       const userInfo = formatAccountResult(user);
       // get the carrier
-      userInfo.carrierId = await mpsClient.getCarrierIdByCompanyId(user.affiliatedCompany);
+      userInfo.carrierId = await provisionHelper.getCarrierIdByCompanyId(user.affiliatedCompany);
       // @TODO plan to update by 1 request
       if (command.roles && command.roles.length > 0) {
         await iamServiceClient.setUserRoles({ userId: user.id, roles: command.roles });
@@ -150,11 +151,20 @@ export default function accountController(iamServiceClient, mpsClient) {
       // find all the companies that under affiliated company
       // @TODO pagination handling for pageSize, expect to get all companies
       const result = await iamServiceClient.getCompanies({ parent: company.id, pageSize: 200 });
-      for (const mCompany of result.items) {
-        mCompany.carrierId = await mpsClient.getCarrierIdByCompanyId(mCompany.id);
-      }
-      // including itself
-      res.json(result.items);
+      // append the current company at the front
+      result.items.unshift(company);
+      const companyIds = _.map(result.items, item => item.id);
+      const carrierIds = await provisionHelper.getCarrierIdsByCompanyIds(companyIds);
+      const resultArray = [];
+      _.forEach(result.items, (item, index) => {
+        // only filter the companies with carrier Id
+        if (carrierIds[index]) {
+          const mItem = item;
+          mItem.carrierId = carrierIds[index];
+          resultArray.push(mItem);
+        }
+      });
+      res.json(resultArray);
     } catch (ex) {
       next(ex);
     }

@@ -58,17 +58,16 @@ export class OpenIdStrategy extends baseStrategy {
             .then(userInfo => {
               // fetch the user info via identity
               const iamClient = fetchDep(nconf.get('containerName'), 'IamServiceClient');
-              const mpsClient = fetchDep(nconf.get('containerName'), 'MpsClient');
+              const provisionHelper = fetchDep(nconf.get('containerName'), 'ProvisionHelper');
               return iamClient.getUser({ id: userInfo.sub }).then(user =>
-                mpsClient.getCarrierIdByCompanyId(user.affiliatedCompany)
+                provisionHelper.getCarrierIdByCompanyId(user.affiliatedCompany)
                   .then(carrierId => {
                     const mUser = user;
                     mUser.carrierId = carrierId;
                     return mUser;
-                  })
-              ).then(user => {
-                this._verify(tokens, user, verified);
-              });
+                  })).then(user => {
+                    this._verify(tokens, user, verified);
+                  });
             });
         }).catch(ex => {
           this.error(ex);

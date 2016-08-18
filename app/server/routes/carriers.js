@@ -29,7 +29,7 @@ const userStatsRequest = fetchDep(nconf.get('containerName'), 'UserStatsRequest'
 const redisClient = fetchDep(nconf.get('containerName'), 'RedisClient');
 const vsfStatsRequest = fetchDep(nconf.get('containerName'), 'VsfStatsRequest');
 const overviewStatsRequest = fetchDep(nconf.get('containerName'), 'OverviewStatsRequest');
-const mpsClient = fetchDep(nconf.get('containerName'), 'MpsClient');
+const provisionHelper = fetchDep(nconf.get('containerName'), 'ProvisionHelper');
 const iamClient = fetchDep(nconf.get('containerName'), 'IamServiceClient');
 const applicationRequest = fetchDep(nconf.get('containerName'), 'ApplicationRequest');
 
@@ -1895,7 +1895,7 @@ async function getCompany(req, res, next) {
     return;
   }
   try {
-    const companyId = await mpsClient.getCompanyIdByCarrierId(req.params.carrierId);
+    const companyId = await provisionHelper.getCompanyIdByCarrierId(req.params.carrierId);
     const company = await iamClient.getCompany({ id: companyId });
     // append the carrier into the company
     company.carrierId = req.params.carrierId;
@@ -1921,7 +1921,6 @@ function getApplicationIds(req, res) {
       // result can be an object or array depends on the number of applications
       // object if 1, array if multiple
       // therefore we unify the structure here to array
-      console.log('>>> get application id', result);
       const mResult = [].concat(result);
       const appIds = _.map(mResult, app => app.applicationId);
       res.json(appIds);
@@ -1977,6 +1976,16 @@ function getApplications(req, res) {
   });
 }
 
+async function getPreset(req, res, next) {
+  try {
+    const presetValue = await mpsClient.getPreset(req);
+    res.json(presetValue);
+  } catch (ex) {
+    next(ex);
+  }
+}
+
+
 export {
   getWhitelist,
   addWhitelist,
@@ -2007,4 +2016,5 @@ export {
   suspendUser,
   getApplicationIds,
   getApplications,
+  getPreset,
 };

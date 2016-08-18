@@ -88,6 +88,13 @@ export class IamServiceClient {
       .send(omit(command, 'id'));
     return this._handle(req, url);
   }
+  postLogo(command) {
+    const url = `${this.companyPath}/company/${command.id}/logo`;
+    const req = request.post(url)
+      .set('Content-Type', 'multipart/form-data')
+      .attach('logo', command.file);
+    return this._handle(req, url);
+  }
 
   // access
   getUserPermissions(params) {

@@ -4,11 +4,13 @@ import SwitchButtonGroup from '../../../main/components/SwitchButtonGroup';
 
 const CompanyProfileInfo = (props) => {
   const {
+    companyCode,
     companyName,
     companyType,
     paymentType,
     companyTypeOption,
     paymentTypeOption,
+    onCompanyCodeChange,
     onCompanyNameChange,
     onCompanyTypeChange,
     onPaymentTypeChange,
@@ -26,6 +28,20 @@ const CompanyProfileInfo = (props) => {
             type="text"
             value={companyName}
             onChange={onCompanyNameChange}
+          />
+        </div>
+      </div>
+      <div className="row">
+        <div className="large-10 columns">
+          <label>
+            <FormattedMessage id="companyCode" defaultMessage="Company Code" />:
+          </label>
+        </div>
+        <div className="large-14 columns">
+          <input className="radius"
+            type="text"
+            value={companyCode}
+            onChange={onCompanyCodeChange}
           />
         </div>
       </div>
@@ -65,11 +81,13 @@ const CompanyProfileInfo = (props) => {
 
 CompanyProfileInfo.propTypes = {
   intl: intlShape.isRequired,
+  companyCode: PropTypes.string,
   companyName: PropTypes.string,
   companyType: PropTypes.string,
   paymentType: PropTypes.string,
   companyTypeOption: PropTypes.object,
   paymentTypeOption: PropTypes.object,
+  onCompanyCodeChange: PropTypes.func,
   onCompanyNameChange: PropTypes.func,
   onCompanyTypeChange: PropTypes.func,
   onPaymentTypeChange: PropTypes.func,

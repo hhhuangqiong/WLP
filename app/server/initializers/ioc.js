@@ -12,6 +12,8 @@ import { createFetchPermissionsMiddleware } from '../../server/middlewares/autho
 import roleController from '../../server/controllers/role';
 import AccountController from '../../server/controllers/account';
 import CompanyController from '../../server/controllers/company';
+import ProvisionHelper from '../../server/utils/provisionHelper';
+import provisionController from '../../server/controllers/provision';
 import { ApplicationRequest } from '../../lib/requests/Application';
 import MpsClient from '../../lib/requests/mps/MpsClient';
 /**
@@ -133,8 +135,10 @@ export default function init(nconf) {
   });
 
   ioc.service('ApplicationRequest', ApplicationRequest, 'ApplicationOptions');
-  ioc.service('AccountController', AccountController, 'IamServiceClient', 'MpsClient');
-  ioc.service('CompanyController', CompanyController, 'IamServiceClient', 'ApplicationRequest', 'MpsClient');
+  ioc.service('ProvisionHelper', ProvisionHelper, 'MpsClient');
+  ioc.service('CompanyController', CompanyController, 'IamServiceClient', 'ApplicationRequest', 'ProvisionHelper');
+  ioc.service('AccountController', AccountController, 'IamServiceClient', 'ProvisionHelper');
+  ioc.service('ProvisionController', provisionController, 'IamServiceClient', 'ProvisionHelper');
 
   return ioc;
 }
