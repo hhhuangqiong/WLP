@@ -1,3 +1,4 @@
+
 .company-sidebar {
     &__list {
         margin: 0;
@@ -13,13 +14,13 @@
                 align-items: center;
             }
             .active {
-                color: greenyellow;
+                color: $success-color;
             }
             .in-progress {
-                color: blue;
+                color: $info-color;
             }
             .suspended {
-                color: red;
+                color: $alert-color;
             }
             .unknown {
                 color: grey;

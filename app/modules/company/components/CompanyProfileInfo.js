@@ -14,36 +14,50 @@ const CompanyProfileInfo = (props) => {
     onPaymentTypeChange,
    } = props;
   return (
-    <div>
-      <div className="company-profile " defaultActiveKey = "2">
-        <span className="inline header__sub">
-          <FormattedMessage id="companyName" defaultMessage="Company Name" />:
-        </span>
-        <input className="input-name"
-          type="text"
-          value={companyName}
-          onChange={onCompanyNameChange}
-        />
+    <div className="company-profile">
+      <div className="row" defaultActiveKey = "2">
+        <div className="large-10 columns">
+          <label>
+            <FormattedMessage id="companyName" defaultMessage="Company Name" />:
+          </label>
+        </div>
+        <div className="large-14 columns">
+          <input className="radius"
+            type="text"
+            value={companyName}
+            onChange={onCompanyNameChange}
+          />
+        </div>
       </div>
-      <div className="company-profile">
-        <span className="inline header__sub">
-          <FormattedMessage id="companyType" defaultMessage="Company Type" />:
-        </span>
-        <SwitchButtonGroup
-          types={companyTypeOption}
-          currentType={companyType}
-          onChange={onCompanyTypeChange}
-        />
+      <div className="row">
+        <div className="large-10 columns">
+          <label>
+            <FormattedMessage id="companyType" defaultMessage="Company Type" />:
+          </label>
+        </div>
+        <div className="large-14 columns">
+          <SwitchButtonGroup
+            className="radius"
+            types={companyTypeOption}
+            currentType={companyType}
+            onChange={onCompanyTypeChange}
+          />
+        </div>
       </div>
-      <div className="company-profile">
-        <span className="inline header__sub">
-          <FormattedMessage id="paymentType" defaultMessage="Payment Type" />:
-        </span>
-        <SwitchButtonGroup
-          types={paymentTypeOption}
-          currentType={paymentType}
-          onChange={onPaymentTypeChange}
-        />
+      <div className="row">
+          <div className="large-10 columns">
+          <label>
+            <FormattedMessage id="paymentType" defaultMessage="Payment Type" />:
+          </label>
+        </div>
+        <div className="large-14 columns">
+          <SwitchButtonGroup
+            className="radius"
+            types={paymentTypeOption}
+            currentType={paymentType}
+            onChange={onPaymentTypeChange}
+          />
+        </div>
       </div>
     </div>
   );

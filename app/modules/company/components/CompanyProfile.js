@@ -1,10 +1,12 @@
 import React, { Component } from 'react';
 import Collapse, { Panel } from 'rc-collapse';
 import countryData from 'country-data';
+import classNames from 'classnames';
 import * as timezoneData from 'timezones.json';
 import { injectIntl, intlShape, defineMessages, FormattedMessage } from 'react-intl';
 import _ from 'lodash';
 
+import Icon from '../../../main/components/Icon';
 import createCompany from '../actions/createCompany';
 import CompanyProfileInfo from './CompanyProfileInfo';
 import CompanyDescription from './CompanyDescription';
@@ -25,13 +27,13 @@ timezoneArray = timezoneArray.map((item) => ({
 }));
 
 const MESSAGES = defineMessages({
-  companyDescription: {
-    id: 'companyDescription',
-    defaultMessage: 'Company Description',
-  },
   companyProfile: {
     id: 'companyProfile',
     defaultMessage: 'Company Profile',
+  },
+  companyDescription: {
+    id: 'companyDescription',
+    defaultMessage: 'Company Description',
   },
   companyCapabilities: {
     id: 'companyCapabilities',
@@ -103,13 +105,21 @@ class CompanyProfile extends Component {
   }
   onCountryChange(val) {
     // from react-select
-    const value = val.value;
-    this.setState({ country: value });
+    if (val) {
+      const value = val.value;
+      this.setState({ country: value });
+    } else {
+      this.setState({ country: '' });
+    }
   }
   onTimezoneChange(val) {
     // from react-select
-    const value = val.value;
-    this.setState({ timezone: value });
+    if (val) {
+      const value = val.value;
+      this.setState({ timezone: value });
+    } else {
+      this.setState({ timezone: '' });
+    }
   }
   onContactDetailChange(e) {
     // from input
@@ -147,17 +157,32 @@ class CompanyProfile extends Component {
     <div className="company__new-profile">
       <div className="header inline-with-space narrow">
         <div>
-          <button></button>
+          <a href="overview"><Icon symbol="icon-previous" /></a>
           <h4 className="title-inline">
             <FormattedMessage id="createNewCompany" defaultMessage="Create New Company" />
-            </h4>
+          </h4>
         </div>
-        <button onClick={this.createCompany}>
-          <FormattedMessage id="create" defaultMessage="Create" />
-        </button>
+        <div
+          role="button"
+          tabIndex="0"
+          className={classNames(
+            'account-top-bar__button-primary',
+            'button',
+            'round',
+            'large',
+            'item',
+            )
+          }
+          onClick={this.createCompany}
+        >
+          <FormattedMessage
+            id="create"
+            defaultMessage="Create"
+          />
+        </div>
       </div>
       <Collapse accordion={false} defaultActiveKey="0">
-        <Panel header={formatMessage(MESSAGES.companyProfile)}>
+        <Panel header={`1.${formatMessage(MESSAGES.companyProfile)}`} >
           <CompanyProfileInfo
             companyName={this.state.companyName}
             companyType={this.state.companyType}
@@ -169,7 +194,7 @@ class CompanyProfile extends Component {
             paymentTypeOption={PAYMENT_TYPE}
           />
         </Panel>
-        <Panel header={formatMessage(MESSAGES.companyDescription)}>
+        <Panel header={`2.${formatMessage(MESSAGES.companyDescription)}`} >
           <CompanyDescription
             country={this.state.country}
             timezone={this.state.timezone}
@@ -181,7 +206,7 @@ class CompanyProfile extends Component {
             onContactDetailChange={this.onContactDetailChange}
           />
         </Panel>
-        <Panel header={formatMessage(MESSAGES.companyCapabilities)}>
+        <Panel header={`3.${formatMessage(MESSAGES.companyCapabilities)}`} >
           <CompanyCapabilities
             capabilities={CAPABILITIES}
             onCapabilitiesChange={this.onCapabilitiesChange}

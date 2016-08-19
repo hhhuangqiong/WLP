@@ -1,8 +1,9 @@
 .company__new-profile {
-  .title-inline{
+  .title-inline {
     display: inline-block;
+    margin-left: 2.5rem;
   }
-  .input-name{
+  .input-name {
     width: 100%;
   }
   .inline {
@@ -14,25 +15,53 @@
   }
   .inline-with-space {
     background: $white;
-    padding: 15px 50px 10px 10px;
+    padding: 15px 50px 0px 10px;
+    align-items: baseline;
   }
   .rc-collapse-header {
     text-indent: 0;
     text-align: right;
     padding-right: 3%;
   }
+  .icon {
+    fill:#999;
+    position: absolute;
+    top:1.35rem;
+    left: 1.70rem;
+    cursor: pointer;
+  }
+  .button {
+    font-size: 0.875rem;
+    padding: 0.6rem 2.25rem 0.6rem 2.25rem;
+  }
+  .rc-collapse {
+    border-top:1px solid #d9d9d9;
+    > .rc-collapse-item {
+      >.rc-collapse-header {
+        span {
+          left: 4%;
+        }
+      }
+    }
+  }
+  .rc-collapse-header {
+    font-weight: 400;
+    color: $black-header;
+  }
 }
 .company-profile {
-  width: 50%;
-  margin-left: 15%;
-  display:flex;
+  width: 60%;
+  margin-left: 5%;
 }
 .company-description {
-  width: 50%;
-  margin-left: 15%;
-  display:flex;
-  margin-top: 10px;
-  margin-bottom: 10px;
+  width: 60%;
+  margin-left: 5%;
+  .row {
+    margin-bottom: 1rem;
+  }
+  .Select-control {
+    padding: 0px;
+  }
 }
 .company-capabilities {
   display: flex;
@@ -44,3 +73,4 @@
     width: 20%;
   }
 }
+

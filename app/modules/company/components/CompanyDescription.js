@@ -26,41 +26,53 @@ const CompanyDescription = (props) => {
     intl: { formatMessage },
    } = props;
   return (
-    <div>
-      <div className="company-description">
-        <span className="inline header__sub">
-          <FormattedMessage id="country" defaultMessage="Country" />:
-        </span>
-        <Select
-          name="select-country"
-          value={country}
-          placeholder={formatMessage(MESSAGES.selectCountry)}
-          options={countryOption}
-          onChange={onCountryChange}
-        />
+    <div className="company-description">
+      <div className="row">
+        <div className="large-10 columns">
+          <label>
+            <FormattedMessage id="country" defaultMessage="Country" />:
+          </label>
+        </div>
+        <div className="large-14 columns">
+          <Select
+            name="select-country"
+            value={country}
+            placeholder={formatMessage(MESSAGES.selectCountry)}
+            options={countryOption}
+            onChange={onCountryChange}
+          />
+        </div>
       </div>
-      <div className="company-description">
-        <span className="inline header__sub">
-          <FormattedMessage id="timezone" defaultMessage="Timezone" />:
-        </span>
-        <Select
-          name="select-timezone"
-          value={timezone}
-          placeholder={formatMessage(MESSAGES.selectTimezone)}
-          options={timezoneOption}
-          onChange={onTimezoneChange}
-        />
+      <div className="row">
+        <div className="large-10 columns">
+          <label>
+            <FormattedMessage id="timezone" defaultMessage="Timezone" />:
+          </label>
+        </div>
+        <div className="large-14 columns">
+          <Select
+            name="select-timezone"
+            value={timezone}
+            placeholder={formatMessage(MESSAGES.selectTimezone)}
+            options={timezoneOption}
+            onChange={onTimezoneChange}
+          />
+        </div>
       </div>
-      <div className="company-description " defaultActiveKey = "2">
-        <span className="inline header__sub">
-          <FormattedMessage id="contactDetail" defaultMessage="Contact Detail" />:
-        </span>
-        <input
-          className="input-name"
-          value={contactDetail}
-          type="text"
-          onChange={onContactDetailChange}
-        />
+      <div className="row" defaultActiveKey = "2">
+        <div className="large-10 columns">
+          <label>
+            <FormattedMessage id="contactDetail" defaultMessage="Contact Detail" />:
+          </label>
+        </div>
+        <div className="large-14 columns">
+          <input
+            className="radius"
+            value={contactDetail}
+            type="text"
+            onChange={onContactDetailChange}
+          />
+        </div>
       </div>
     </div>
   );
