@@ -68,6 +68,7 @@ export default createStore({
       affiliatedCompany: account.affiliatedCompany,
       createdAt: account.createdAt,
       isVerified: account.isVerified,
+      roles: account.roles,
     });
     this.emitChange();
   },

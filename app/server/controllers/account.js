@@ -96,21 +96,13 @@ export default function accountController(iamServiceClient, provisionHelper) {
   async function updateAccount(req, res, next) {
     debug('update account via account controller');
     try {
-      // separate into a few request
-      const command = _.omit(_.extend({}, req.body, req.params), 'roles', 'removeRoles');
+      const command = _.omit(_.extend({}, formatAccountData(req.body), req.params), 'roles');
       await iamServiceClient.putUser(command);
-      const user = await iamServiceClient.getUser({ id: command.id });
-      const userInfo = formatAccountResult(user);
-      // get the carrier
-      userInfo.carrierId = await provisionHelper.getCarrierIdByCompanyId(user.affiliatedCompany);
-      // @TODO plan to update by 1 request
-      if (command.roles && command.roles.length > 0) {
-        await iamServiceClient.setUserRoles({ userId: user.id, roles: command.roles });
+      // add the roles
+      if (req.body.roles) {
+        await iamServiceClient.setUserRoles({ userId: command.id, roles: req.body.roles });
       }
-      if (command.removeRoles && command.removeRoles.length > 0) {
-        await iamServiceClient.deleteUserRoles({ userId: user.id, roles: command.removeRoles });
-      }
-      res.json(userInfo);
+      res.json(204);
     } catch (ex) {
       next(ex);
     }

@@ -90,6 +90,8 @@ class Authority {
    * @private
    */
   _filterMenuItemsByCarrier() {
+    // @TODO temporary don't filter the menu items and resolve directly
+    return Promise.resolve();
     return new Promise((resolve, reject) => {
       this
         ._getCapabilities()

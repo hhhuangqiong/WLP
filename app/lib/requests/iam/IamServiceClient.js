@@ -1,4 +1,4 @@
-import { pick, isString, get, extend, isNumber, defaults, omit } from 'lodash';
+import { pick, isString, get, extend, isNumber, defaults, omit, map } from 'lodash';
 import Q from 'q';
 import request from 'superagent';
 import logger from 'winston';
@@ -136,22 +136,12 @@ export class IamServiceClient {
     return this._handle(req, url);
   }
 
-  // @TODO wait IAM to update in order to send with one request to set and remove
   async setUserRoles(command) {
-    for (const roleId of command.roles) {
-      // @TODO add back error handling
-      const url = `${this._options.baseUrl}/access/roles/${roleId}/users`;
-      await request.post(url)
-        .set('Content-Type', 'application/json')
-        .send({ username: command.userId });
-    }
-  }
-  async deleteUserRoles(command) {
-    for (const roleId of command.roles) {
-      // @TODO add back error handling
-      const url = `${this._options.baseUrl}/access/users/${roleId}/users/${command.userId}`;
-      await request.delete(url);
-    }
+    const url = `${this._options.baseUrl}/access/users/${command.userId}/roles`;
+    const query = { service: this._SERVICE_NAME };
+    const body = map(command.roles, role => ({ id: role }));
+    const req = request.put(url).query(query).send(body);
+    return this._handle(req, url);
   }
 
   async _handle(superagentRequest, url) {

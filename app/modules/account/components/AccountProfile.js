@@ -29,14 +29,25 @@ class AccountProfile extends Component {
     intl: PropTypes.object.isRequired,
     currentCompany: PropTypes.object,
     managingCompanies: PropTypes.array.isRequired,
-    account: PropTypes.object,
+    account: PropTypes.shape({
+      lastName: PropTypes.string,
+      firstName: PropTypes.string,
+      email: PropTypes.string,
+      createdAt: PropTypes.string,
+      roles: PropTypes.array,
+      affiliatedCompany: PropTypes.string,
+      isVerified: PropTypes.boolean,
+    }),
     mode: PropTypes.string.isRequired,
   }
 
   static contextTypes = {
     executeAction: PropTypes.func.isRequired,
     router: PropTypes.object.isRequired,
-    params: PropTypes.object.isRequired,
+    params: PropTypes.shape({
+      identity: PropTypes.string.isRequired,
+      accountId: PropTypes.string.isRequired,
+    }),
     location: PropTypes.object.isRequired,
   }
 
@@ -65,7 +76,7 @@ class AccountProfile extends Component {
   }
 
   componentDidMount() {
-    const { accountId } = this.props.params;
+    const { accountId } = this.context.params;
     // fetch the account
     if (accountId) {
       this.context.executeAction(fetchAccount, { id: accountId });
@@ -73,7 +84,7 @@ class AccountProfile extends Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    const { accountId, identity } = this.props.params;
+    const { accountId, identity } = this.context.params;
     if (nextProps.redirectToAccountHome) {
       this.context.router.push(`/${identity}/account`);
       this.context.executeAction(redirectedToAccountHome);
@@ -90,11 +101,14 @@ class AccountProfile extends Component {
     this.state.lastName = props.account.lastName;
     this.state.email = props.account.email;
     this.state.createdAt = props.account.createdAt;
+    this.state.selectedRoles = [];
+    this.state.selectedCompany = '';
+    this.state.currentRoles = {};
     // convert into current roles format in form of object
     if (props.account.roles) {
       _.each(props.account.roles, role => {
         this.state.currentRoles[role.company] = this.state.currentRoles[role.company] || [];
-        this.state.currentRoles[role.company].push(role._id);
+        this.state.currentRoles[role.company].push(role.id);
       });
     }
   }
@@ -168,10 +182,6 @@ class AccountProfile extends Component {
       this.context.executeAction(createAccount, { data, companyId: this.props.currentCompany.id });
     } else {
       data.id = this.state.email;
-      // missing roles after update
-      data.removeRoles = _.difference(this.props.account.roles, roles);
-      // extra roles after update
-      data.roles = _.difference(roles, this.props.account.roles);
       this.context.executeAction(updateAccount, { data, companyId: this.props.currentCompany.id });
     }
   }
@@ -217,7 +227,6 @@ class AccountProfile extends Component {
     if (!item.value) {
       return;
     }
-    this.state.currentRoles[this.state.selectedCompany] = this.state.selectedRoles;
     this.setState({
       currentRoles: this.state.currentRoles,
       selectedCompany: item.value,
@@ -227,6 +236,7 @@ class AccountProfile extends Component {
 
   handleSelectedRoleChange(items) {
     const selectedValues = _.map(items, item => item.value);
+    this.state.currentRoles[this.state.selectedCompany] = selectedValues;
     this.setState({ selectedRoles: selectedValues });
   }
 
