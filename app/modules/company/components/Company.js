@@ -1,6 +1,7 @@
 import React, { PropTypes } from 'react';
 import Select from 'react-select';
 import ReactPaginate from 'react-paginate';
+import classNames from 'classnames';
 import { FormattedMessage } from 'react-intl';
 
 import CompanyList from './CompanyList';
@@ -107,7 +108,26 @@ class Company extends React.Component {
     return (
       <div className="company" data-equalizer>
         <nav className="top-bar company-sidebar__search" data-topbar role="navigation">
-          <button className="button-create">Create New Company</button>
+          <div
+            role="button"
+            tabIndex="0"
+            className={classNames(
+            'account-top-bar__button-primary',
+            'button',
+            'round',
+            'large',
+            'item',
+            'button-create',
+            )
+          }
+          >
+          <a href="create">
+            <FormattedMessage
+              id="createNewCompany"
+              defaultMessage="Create New Company"
+            />
+          </a>
+        </div>
           <div>
           <input
             className="round"
@@ -122,7 +142,7 @@ class Company extends React.Component {
           <CompanyList companies={this.props.companies} />
         </div>
         <div className="pagination-select">
-          <div className="react-select">
+          <div className="select-number">
             <Select
               className="pagination-size"
               value={this.props.pageSize}

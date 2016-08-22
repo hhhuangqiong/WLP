@@ -43,14 +43,17 @@ ul.pagination {
   }
 }
 .pagination-select {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  width: 100%;
+  .select-number {
     display: flex;
+    width: 13%;
     justify-content: space-between;
-    align-items: center;
-    width: 100%;
-}
-.pagination-select {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    width: 100%;
+    align-items: baseline;
+  }
+  .Select {
+    width: 40%;
+  }
 }

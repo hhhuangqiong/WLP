@@ -8,6 +8,13 @@
     > div {
       position: relative;
     }
+    .button-create {
+      height: 1.95rem;
+      top: 0.8rem;
+      > a {
+        color: white;
+      }
+    }
     input {
       @include inputBoxReset;
       @include inputBoxWithIcon;
