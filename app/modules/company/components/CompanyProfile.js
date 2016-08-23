@@ -2,12 +2,14 @@ import React, { Component } from 'react';
 import Collapse, { Panel } from 'rc-collapse';
 import countryData from 'country-data';
 import classNames from 'classnames';
+import { Link } from 'react-router';
 import * as timezoneData from 'timezones.json';
 import { injectIntl, intlShape, defineMessages, FormattedMessage } from 'react-intl';
 import _ from 'lodash';
 import connectToStores from 'fluxible-addons-react/connectToStores';
 
 import Icon from '../../../main/components/Icon';
+import { arrayToObject } from '../../../main/components/arrayToObject';
 import createCompany from '../actions/createCompany';
 import CompanyProfileInfo from './CompanyProfileInfo';
 import CompanyDescription from './CompanyDescription';
@@ -23,10 +25,7 @@ let timezoneArray = [];
 _.each(timezoneData, (item) => {
   timezoneArray = timezoneArray.concat(item.utc);
 });
-timezoneArray = timezoneArray.map((item) => ({
-  value: item,
-  label: item,
-}));
+timezoneArray = arrayToObject(timezoneArray);
 
 const MESSAGES = defineMessages({
   companyProfile: {
@@ -65,8 +64,8 @@ const COMPANY_TYPE = {
   WHITE_LABEL: 'WHITE LABEL',
 };
 const PAYMENT_TYPE = {
-  PRE_PAID: 'Pre-Paid',
-  POST_PAID: 'Post Paid',
+  PRE_PAID: 'PRE_PAID',
+  POST_PAID: 'POST_PAID',
 };
 
 class CompanyProfile extends Component {
@@ -163,14 +162,16 @@ class CompanyProfile extends Component {
 
   render() {
     const { intl: { formatMessage } } = this.props;
+    const { identity } = this.context.params;
     return (
-    <div className="company__new-profile">
-      <div className="header inline-with-space narrow">
+    <div className="company__new-profile panel">
+      <div className="header inline-with-space">
         <div>
-          <a href="overview"><Icon symbol="icon-previous" /></a>
+          <Link to={`/${identity}/company/overview`}><Icon symbol="icon-previous" />
           <h4 className="title-inline">
             <FormattedMessage id="createNewCompany" defaultMessage="Create New Company" />
           </h4>
+          </Link>
         </div>
         <div
           role="button"
@@ -200,8 +201,8 @@ class CompanyProfile extends Component {
             onCompanyCodeChange={this.onCompanyCodeChange}
             onCompanyTypeChange={this.onCompanyTypeChange}
             onPaymentTypeChange={this.onPaymentTypeChange}
-            companyTypeOption={COMPANY_TYPE}
-            paymentTypeOption={PAYMENT_TYPE}
+            companyTypeOption={_.values(COMPANY_TYPE)}
+            paymentTypeOption={_.values(PAYMENT_TYPE)}
           />
         </Panel>
         <Panel header={`2.${formatMessage(MESSAGES.companyDescription)}`} >
