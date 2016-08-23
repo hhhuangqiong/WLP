@@ -3,7 +3,7 @@ import Collapse, { Panel } from 'rc-collapse';
 import countryData from 'country-data';
 import classNames from 'classnames';
 import { Link } from 'react-router';
-import * as timezoneData from 'timezones.json';
+import timezoneData from 'timezones.json';
 import { injectIntl, intlShape, defineMessages, FormattedMessage } from 'react-intl';
 import _ from 'lodash';
 import connectToStores from 'fluxible-addons-react/connectToStores';
@@ -193,7 +193,7 @@ class CompanyProfile extends Component {
         </div>
       </div>
       <Collapse accordion={false} defaultActiveKey="0">
-        <Panel header={`1.${formatMessage(MESSAGES.companyProfile)}`} >
+        <Panel header={formatMessage(MESSAGES.companyProfile)} >
           <CompanyProfileInfo
             companyCode={this.state.companyCode}
             companyType={this.state.companyType}
@@ -205,7 +205,7 @@ class CompanyProfile extends Component {
             paymentTypeOption={_.values(PAYMENT_TYPE)}
           />
         </Panel>
-        <Panel header={`2.${formatMessage(MESSAGES.companyDescription)}`} >
+        <Panel header={formatMessage(MESSAGES.companyDescription)} >
           <CompanyDescription
             companyName={this.state.companyName}
             country={this.state.country}
@@ -217,7 +217,7 @@ class CompanyProfile extends Component {
             onTimezoneChange={this.onTimezoneChange}
           />
         </Panel>
-        <Panel header={`3.${formatMessage(MESSAGES.companyCapabilities)}`} >
+        <Panel header={formatMessage(MESSAGES.companyCapabilities)} >
           <CompanyCapabilities
             capabilities={CAPABILITIES}
             onCapabilitiesChange={this.onCapabilitiesChange}
