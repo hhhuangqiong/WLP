@@ -64,8 +64,8 @@ const COMPANY_TYPE = {
   WHITE_LABEL: 'WHITE LABEL',
 };
 const PAYMENT_TYPE = {
-  PRE_PAID: 'PRE_PAID',
-  POST_PAID: 'POST_PAID',
+  PRE_PAID: 'Pre_Paid',
+  POST_PAID: 'Post_Paid',
 };
 
 class CompanyProfile extends Component {
@@ -201,8 +201,8 @@ class CompanyProfile extends Component {
             onCompanyCodeChange={this.onCompanyCodeChange}
             onCompanyTypeChange={this.onCompanyTypeChange}
             onPaymentTypeChange={this.onPaymentTypeChange}
-            companyTypeOption={_.values(COMPANY_TYPE)}
-            paymentTypeOption={_.values(PAYMENT_TYPE)}
+            companyTypeOption={COMPANY_TYPE}
+            paymentTypeOption={PAYMENT_TYPE}
           />
         </Panel>
         <Panel header={`2.${formatMessage(MESSAGES.companyDescription)}`} >
@@ -220,6 +220,7 @@ class CompanyProfile extends Component {
         <Panel header={`3.${formatMessage(MESSAGES.companyCapabilities)}`} >
           <CompanyCapabilities
             capabilities={CAPABILITIES}
+            capabilitiesChecked={this.state.capabilities}
             onCapabilitiesChange={this.onCapabilitiesChange}
           />
         </Panel>

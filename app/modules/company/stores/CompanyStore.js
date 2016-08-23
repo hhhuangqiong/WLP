@@ -26,6 +26,7 @@ const CompanyStore = createStore({
     FETCH_COMPANY_SUCCESS: 'receiveCompany',
     FETCH_COMPANY_APPLICATION_SUCCESS: 'receiveCompanyApplications',
     FETCH_COMPANY_SERVICE_SUCCESS: 'receiveCompanyService',
+    FETCH_COMPANY_DETAIL_SUCCESS: 'receiveCompanyDetail',
     FETCH_PARENT_COMPANIES_SUCCESS: 'receiveParentCompanies',
     CREATE_COMPANY_SUCCESS: 'handleCompanyCreated',
     UPDATE_COMPANY_PROFILE_SUCCESS: 'handleCompanyUpdated',
@@ -70,6 +71,22 @@ const CompanyStore = createStore({
 
   getCompanyByCarrierId(carrierId) {
     return _.merge(_.clone(defaultCompanyObject, true), this.companies[carrierId]);
+  },
+
+  getCompanyDetail() {
+    return this.companyDetail;
+  },
+
+  getProfileAccess() {
+    return this.profileAccess;
+  },
+
+  getDescriptionAccess() {
+    return this.descriptionAccess;
+  },
+
+  getCapabilitiesAccess() {
+    return this.capabilitiesAccess;
   },
 
   handleCompanyReset() {
@@ -135,6 +152,27 @@ const CompanyStore = createStore({
     this.emitChange();
   },
 
+  receiveCompanyDetail(detail) {
+    this.companyDetail = detail;
+    switch (this.companyDetail.status) {
+      case 'IN_PROGRESS':
+        this.profileAccess = true;
+        this.descriptionAccess = true;
+        this.capabilitiesAccess = true;
+        break;
+      case 'ACTIVE':
+        this.profileAccess = true;
+        this.descriptionAccess = false;
+        this.capabilitiesAccess = true;
+        break;
+      default:
+        this.profileAccess = true;
+        this.descriptionAccess = true;
+        this.capabilitiesAccess = true;
+    }
+    this.emitChange();
+  },
+
   getState() {
     return {
       companies: this.companies,
@@ -149,8 +187,12 @@ const CompanyStore = createStore({
 
   rehydrate(state) {
     this.companies = state.companies;
+    this.companyDetail = state.companyDetail;
     this.parentCompanies = state.parentCompanies;
     this.currentCompany = state.currentCompany;
+    this.profileAccess = state.profileAccess;
+    this.descriptionAccess = state.descriptionAccess;
+    this.capabilitiesAccess = state.capabilitiesAccess;
   },
 });
 

@@ -1,5 +1,5 @@
 import React, { PropTypes } from 'react';
-import map from 'lodash/collection/map';
+import _ from 'lodash';
 import classNames from 'classnames';
 
 const SwitchButtonGroup = (props) => {
@@ -7,13 +7,18 @@ const SwitchButtonGroup = (props) => {
   return (
       <div className="switch-button-group">
       {
-        map(types, (item) => (
+        _.map(_.keys(types), (item, index) => (
           <span
             key={item}
-            className={ classNames('item', { active: currentType === item })}
+            className={ classNames(
+              'item',
+              { active: currentType === item },
+              { left: index === 0 },
+              { right: index === _.keys(types).length - 1 })
+          }
             onClick= {() => onChange(item)}
           >
-          {item}
+          {types[item]}
           </span>
         ))
       }
@@ -26,7 +31,7 @@ SwitchButtonGroup.propTypes = {
    * The array of the optional types.
    * @type {Array}
    */
-  types: PropTypes.arrayOf(PropTypes.string),
+  types: PropTypes.object,
   /**
    * The value of the current active type.
    * @type {String}

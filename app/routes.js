@@ -7,6 +7,7 @@ import App from './main/components/common/App';
 import Protected from './main/components/common/Protected';
 import Company from './modules/company/components/Company';
 import CompanyProfile from './modules/company/components/CompanyProfile';
+import CompanyEditForm from './modules/company/components/CompanyEditForm';
 import Account from './modules/account/components/Account';
 import AccountProfile from './modules/account/components/AccountProfile';
 import Verification from './modules/verification/components/Verification';
@@ -102,6 +103,7 @@ export default (context) => {
           <IndexRedirect to="overview" />
           <Route path="overview" component={Company} />
           <Route path="create" component={CompanyProfile} />
+          <Route path=":companyId/edit" component={CompanyEditForm} />
         </Route>
 
         <Route path={`:identity/${modules.ACCOUNT}`} component={Account}>

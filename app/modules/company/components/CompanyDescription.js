@@ -18,13 +18,12 @@ const CompanyDescription = (props) => {
     companyName,
     country,
     timezone,
-    contactDetail,
     countryOption,
     timezoneOption,
     onCountryChange,
     onCompanyNameChange,
     onTimezoneChange,
-    onContactDetailChange,
+    disabled,
     intl: { formatMessage },
    } = props;
   return (
@@ -40,6 +39,7 @@ const CompanyDescription = (props) => {
           type="text"
           value={companyName}
           onChange={onCompanyNameChange}
+          disabled={disabled}
         />
       </div>
     </div>
@@ -56,6 +56,7 @@ const CompanyDescription = (props) => {
             placeholder={formatMessage(MESSAGES.selectCountry)}
             options={countryOption}
             onChange={onCountryChange}
+            disabled={disabled}
           />
         </div>
       </div>
@@ -72,6 +73,7 @@ const CompanyDescription = (props) => {
             placeholder={formatMessage(MESSAGES.selectTimezone)}
             options={timezoneOption}
             onChange={onTimezoneChange}
+            disabled={disabled}
           />
         </div>
       </div>
@@ -96,6 +98,7 @@ CompanyDescription.propTypes = {
       label: PropTypes.string,
     })
   ),
+  disabled: PropTypes.bool,
   onCountryChange: PropTypes.func,
   onCompanyNameChange: PropTypes.func,
   onTimezoneChange: PropTypes.func,

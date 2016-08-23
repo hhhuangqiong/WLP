@@ -12,6 +12,7 @@ const CompanyProfileInfo = (props) => {
     onCompanyCodeChange,
     onCompanyTypeChange,
     onPaymentTypeChange,
+    disabled,
    } = props;
   return (
     <div className="company-profile">
@@ -26,6 +27,7 @@ const CompanyProfileInfo = (props) => {
             type="text"
             value={companyCode}
             onChange={onCompanyCodeChange}
+            disabled={disabled}
           />
         </div>
       </div>
@@ -73,6 +75,7 @@ CompanyProfileInfo.propTypes = {
   onCompanyCodeChange: PropTypes.func,
   onCompanyTypeChange: PropTypes.func,
   onPaymentTypeChange: PropTypes.func,
+  disabled: PropTypes.bool,
 };
 
 export default injectIntl(CompanyProfileInfo);

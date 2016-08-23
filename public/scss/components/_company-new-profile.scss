@@ -1,7 +1,8 @@
 .company__new-profile {
+  position: relative;
   .title-inline {
     display: inline-block;
-    margin-left: 2.5rem;
+    margin-left: 4.8rem;
   }
   .input-name {
     width: 100%;
@@ -15,7 +16,7 @@
   }
   .inline-with-space {
     background: $white;
-    padding: 15px 50px 0px 10px;
+    padding: 18px 50px 0px 10px;
     align-items: baseline;
   }
   .rc-collapse-header {
@@ -27,7 +28,7 @@
     fill:#999;
     position: absolute;
     top:1.35rem;
-    left: 1.70rem;
+    left: 2rem;
     cursor: pointer;
   }
   .button {
@@ -36,17 +37,28 @@
   }
   .rc-collapse {
     border-top:1px solid #d9d9d9;
+    border-left: none;
+    border-right: none;
     > .rc-collapse-item {
       >.rc-collapse-header {
         span {
           left: 4%;
         }
       }
+      .rc-collapse-content.rc-collapse-content-active{
+        overflow: visible;
+      }
+      .rc-collapse-content.rc-collapse-anim{
+        overflow: hidden;
+      }
     }
   }
   .rc-collapse-header {
     font-weight: 400;
     color: $black-header;
+  }
+  .rc-collapse-content-box {
+    font-size: rem-calc(13);
   }
 }
 .company-profile {
@@ -56,8 +68,10 @@
 .company-description {
   width: 60%;
   margin-left: 5%;
-  .row {
-    margin-bottom: 1rem;
+  .Select {
+    margin-right: 0px;
+    width: 100%;
+    margin-bottom: rem-calc(13);
   }
   .Select-control {
     padding: 0px;
@@ -69,6 +83,7 @@
   align-items: center;
   width: 70%;
   margin-left: 15%;
+  font-size: rem-calc(13);
   .checkbox-capabilities {
     width: 20%;
   }

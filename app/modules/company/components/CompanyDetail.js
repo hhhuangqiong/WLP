@@ -3,12 +3,20 @@ import moment from 'moment';
 
 import * as dateLocale from '../../../utils/dateLocale';
 import { SHORT_DATE_FORMAT } from '../../../utils/timeFormatter';
-import { ACTIVE, INPROGRESS, SUSPENDED, UNKNOWN, CREATED, ERROR, UPDATING } from '../constants/status';
+import {
+  ACTIVE,
+  INPROGRESS,
+  SUSPENDED,
+  UNKNOWN,
+  CREATED,
+  ERROR,
+  UPDATING,
+} from '../constants/status';
 
 const CompanyDetail = (props) => {
   const { companyName, domain, createDate, status } = props;
   return (
-    <tr>
+    <tr key={companyName}>
       <td>{companyName}</td>
       <td>{domain}</td>
       <td>{dateLocale.format(moment(createDate), SHORT_DATE_FORMAT)}</td>

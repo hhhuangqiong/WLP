@@ -8,6 +8,7 @@
   border: 1px solid $light-gray;
   display: flex;
   margin-bottom: rem-calc(10);
+  font-size: rem-calc(13);
 
   .item {
     cursor: pointer;
@@ -15,15 +16,23 @@
     width: 50%;
     display: inline-block;
     text-align: center;
+    padding: rem-calc(6);
 
     &.active {
       color: $white;
       background: grey;
-      padding: rem-calc(2);
     }
 
     &:hover {
       color: $light-gray;
+    }
+
+    &.left {
+      border-radius: rem-calc($global-radius)  0px 0px rem-calc($global-radius);
+    }
+
+    &.right {
+      border-radius: 0px rem-calc($global-radius) rem-calc($global-radius) 0px;
     }
   }
 }
