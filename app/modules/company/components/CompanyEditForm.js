@@ -2,17 +2,18 @@ import React, { PropTypes, Component } from 'react';
 import { Link } from 'react-router';
 import classNames from 'classnames';
 import Collapse, { Panel } from 'rc-collapse';
-import _ from 'lodash';
 import Joi from 'joi';
 import { injectJoiValidation } from 'm800-user-locale/joi-validation';
 import connectToStores from 'fluxible-addons-react/connectToStores';
 import { injectIntl, intlShape, FormattedMessage } from 'react-intl';
+import _ from 'lodash';
 
 import Icon from '../../../main/components/Icon';
 import CompanyStore from '../stores/CompanyStore';
 import CompanyProfileInfo from './CompanyProfileInfo';
 import CompanyDescription from './CompanyDescription';
 import CompanyCapabilities from './CompanyCapabilities';
+import resetCompanyDetail from '../actions/resetCompanyDetail';
 import fetchCompanyDetail from '../actions/fetchCompanyDetail';
 import updateProfile from '../actions/updateProfile';
 import updateCompany from '../actions/updateCompany';
@@ -43,21 +44,12 @@ class CompanyEditForm extends Component {
   }
   constructor(props) {
     super(props);
-    // default values
-    this.state = {
-      companyCode: '',
-      companyName: '',
-      contactDetail: '',
-      country: '',
-      timezone: '',
-      companyType: '',
-      paymentType: '',
-      capabilitiesChecked: [],
-      profileAccess: true,
-      descriptionAccess: true,
-      capabilitiesAccess: true,
-      token: Math.random(),
-    };
+    // set up the initial state when data is not fetched
+    // since it is not fetched, the company state will be default value in the store,
+    // which reset every time
+    this.state = this.getCompanyState(props);
+    this.state.token = Math.random();
+    this.state.fetched = false;
     this.isChecked = this.isChecked.bind(this);
     this.saveCompany = this.saveCompany.bind(this);
     this.onCompanyCodeChange = this.onCompanyCodeChange.bind(this);
@@ -75,27 +67,20 @@ class CompanyEditForm extends Component {
   }
   componentWillReceiveProps(nextProps) {
     const { identity } = this.context.params;
-    if (!_.isEqual(this.props.companyDetail, nextProps.companyDetail)) {
-      this.setState({
-        provisionId: nextProps.companyDetail.id,
-        companyId: nextProps.companyDetail.profile.companyId,
-        companyCode: nextProps.companyDetail.profile.companyCode,
-        companyName: nextProps.companyDetail.company.name,
-        profileAccess: nextProps.profileAccess,
-        descriptionAccess: nextProps.descriptionAccess,
-        capabilitiesAccess: nextProps.capabilitiesAccess,
-        companyType: nextProps.companyDetail.profile.serviceType,
-        paymentType: nextProps.companyDetail.profile.paymentMode,
-        country: nextProps.companyDetail.profile.country,
-        timezone: nextProps.companyDetail.company.timezone,
-        capabilitiesChecked: nextProps.companyDetail.profile.capabilities,
-      });
+    // if it matches the company token, return to the list
+    if (nextProps.companyToken && nextProps.companyToken === this.state.token) {
+      this.context.router.push(`/${identity}/company/overview`);
+      return;
     }
-    if (nextProps.companyToken) {
-      if (nextProps.companyToken === this.state.token) {
-        this.context.router.push(`/${identity}/company/overview`);
-      }
+    // since the company data is fetched and update the init values
+    // seed back the values into the state and only do once
+    if (!this.state.fetched && nextProps.companyDetail) {
+      this.setState(_.merge(this.getCompanyState(nextProps), { fetched: true }));
     }
+  }
+  componentWillUnmount() {
+    const { executeAction } = this.context;
+    executeAction(resetCompanyDetail);
   }
   onCompanyCodeChange(e) {
     // from input
@@ -108,36 +93,32 @@ class CompanyEditForm extends Component {
     this.setState({ companyName: value });
   }
   onCompanyTypeChange(value) {
-    if (!this.state.profileAccess.companyType) {
-      this.setState({ companyType: value });
-    }
+    this.setState({ companyType: value });
   }
   onPaymentTypeChange(value) {
-    if (!this.state.profileAccess.paymentType) {
-      this.setState({ paymentType: value });
-    }
+    this.setState({ paymentType: value });
   }
-  onCountryChange(val) {
+  onCountryChange(val = {}) {
     // from react-select
-    if (!this.state.descriptionAccess) {
-      if (val) {
-        const value = val.value;
-        this.setState({ country: value });
-      } else {
-        this.setState({ country: '' });
-      }
-    }
+    const value = val.value || '';
+    this.setState({ country: value });
   }
-  onTimezoneChange(val) {
+  onTimezoneChange(val = {}) {
     // from react-select
-    if (!this.state.descriptionAccess) {
-      if (val) {
-        const value = val.value;
-        this.setState({ timezone: value });
-      } else {
-        this.setState({ timezone: '' });
-      }
-    }
+    const value = val.value || '';
+    this.setState({ timezone: value });
+  }
+  getCompanyState(props) {
+    // the purpose of the passed down prop is to initialize and seed company values
+    return {
+      companyCode: props.companyDetail.companyCode,
+      companyName: props.companyDetail.companyName,
+      companyType: props.companyDetail.companyType,
+      paymentType: props.companyDetail.paymentType,
+      country: props.companyDetail.country,
+      timezone: props.companyDetail.timezone,
+      capabilitiesChecked: props.companyDetail.capabilities,
+    };
   }
   getValidatorData() {
     return this.state;
@@ -145,7 +126,8 @@ class CompanyEditForm extends Component {
   validatorTypes() {
     const { intl: { formatMessage } } = this.props;
     return {
-      companyCode: Joi.string().required().regex(/^[a-zA-Z0-9]+$/).label(formatMessage(MESSAGES.companyCode)),
+      companyCode: Joi.string().required().regex(/^[a-zA-Z0-9]+$/)
+        .label(formatMessage(MESSAGES.companyCode)),
       companyName: Joi.string().required().label(formatMessage(MESSAGES.companyName)),
       country: Joi.string().required().label(formatMessage(MESSAGES.country)),
       timezone: Joi.string().required().label(formatMessage(MESSAGES.timezone)),
@@ -157,7 +139,7 @@ class CompanyEditForm extends Component {
     };
   }
   saveCompany() {
-    const { companyId, companyName, country, timezone, token } = this.state;
+    const { companyName, country, timezone, token } = this.state;
     this.props.validate((error) => {
       if (!error) {
         const companyInfo = {
@@ -165,7 +147,7 @@ class CompanyEditForm extends Component {
           country,
           timezone,
           token,
-          companyId,
+          companyId: this.props.companyDetail.companyId,
         };
         const { executeAction } = this.context;
         executeAction(updateProfile, companyInfo);
@@ -174,7 +156,6 @@ class CompanyEditForm extends Component {
   }
   updateCompany() {
     const {
-      provisionId,
       companyCode,
       companyName,
       companyType,
@@ -184,18 +165,25 @@ class CompanyEditForm extends Component {
       capabilitiesChecked,
       token,
     } = this.state;
+    const {
+      resellerCarrierId,
+      resellerCompanyId,
+      id: provisionId,
+   } = this.props.companyDetail;
     this.props.validate((error) => {
       if (!error) {
         const companyInfo = {
           provisionId,
-          code: companyCode,
-          name: companyName,
+          companyCode,
+          companyName,
           companyType,
           paymentType,
           country,
           timezone,
           capabilities: capabilitiesChecked,
           token,
+          resellerCarrierId,
+          resellerCompanyId,
         };
         const { executeAction } = this.context;
         executeAction(updateCompany, companyInfo);
@@ -211,7 +199,6 @@ class CompanyEditForm extends Component {
   render() {
     const { intl: { formatMessage }, errors } = this.props;
     const { identity } = this.context.params;
-
     return (
       <div className="company__new-profile">
         <div className="header inline-with-space narrow">
@@ -270,7 +257,7 @@ class CompanyEditForm extends Component {
               onPaymentTypeChange={this.onPaymentTypeChange}
               companyTypeOption={COMPANY_TYPE}
               paymentTypeOption={PAYMENT_TYPE}
-              disabled={this.props.profileAccess}
+              disabled={this.props.profileDisabled}
               validateField={this.validateField}
               errors={errors}
             />
@@ -285,7 +272,7 @@ class CompanyEditForm extends Component {
               onCompanyNameChange={this.onCompanyNameChange}
               onCountryChange={this.onCountryChange}
               onTimezoneChange={this.onTimezoneChange}
-              disabled={this.state.descriptionAccess}
+              disabled={this.props.descriptionDisabled}
               validateField={this.validateField}
               errors={errors}
             />
@@ -295,7 +282,7 @@ class CompanyEditForm extends Component {
               capabilities={CAPABILITIES}
               onCapabilitiesChange={this.onCapabilitiesChange}
               capabilitiesChecked={this.state.capabilitiesChecked}
-              disabled={this.state.capabilitiesAccess}
+              disabled={this.props.capabilitiesDisabled}
               isChecked={this.isChecked}
             />
           </Panel>
@@ -307,9 +294,13 @@ class CompanyEditForm extends Component {
 
 CompanyEditForm.propTypes = {
   companyDetail: PropTypes.object,
-  profileAccess: PropTypes.object,
-  descriptionAccess: PropTypes.bool,
-  capabilitiesAccess: PropTypes.bool,
+  profileDisabled: PropTypes.shape({
+    companyCode: PropTypes.bool,
+    companyType: PropTypes.bool,
+    paymentType: PropTypes.bool,
+  }),
+  descriptionDisabled: PropTypes.bool,
+  capabilitiesDisabled: PropTypes.bool,
   companyToken: PropTypes.number,
 };
 
@@ -317,9 +308,9 @@ CompanyEditForm = injectIntl(injectJoiValidation(CompanyEditForm));
 
 CompanyEditForm = connectToStores(CompanyEditForm, [CompanyStore], (context) => ({
   companyDetail: context.getStore(CompanyStore).getCompanyDetail(),
-  profileAccess: context.getStore(CompanyStore).getProfileAccess(),
-  descriptionAccess: context.getStore(CompanyStore).getDescriptionAccess(),
-  capabilitiesAccess: context.getStore(CompanyStore).getCapabilitiesAccess(),
+  profileDisabled: context.getStore(CompanyStore).getProfileDisabled(),
+  descriptionDisabled: context.getStore(CompanyStore).getDescriptionDisabled(),
+  capabilitiesDisabled: context.getStore(CompanyStore).getCapabilitiesDisabled(),
   companyToken: context.getStore(CompanyStore).getCompanyToken(),
 }));
 

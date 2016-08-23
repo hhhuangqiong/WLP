@@ -20,11 +20,11 @@ export default function provisionHelper(mpsClient) {
     return result;
   }
 
-  function postProvision(command) {
+  async function postProvision(command) {
     return mpsClient.postProvision(command);
   }
 
-  function putProvision(command) {
+  async function putProvision(command) {
     return mpsClient.putProvision(command);
   }
 
@@ -44,8 +44,13 @@ export default function provisionHelper(mpsClient) {
     return provisionResult.items[0];
   }
 
-  function getPreset(query) {
-    return mpsClient.getPreset(query);
+  async function getPresetByCarrierId(id) {
+    try {
+      return await mpsClient.getPreset({ presetId: id });
+    } catch (ex) {
+      // since it will throw toJSON null at this moment
+      return {};
+    }
   }
 
   async function getCompanyIdByCarrierId(id) {
@@ -81,7 +86,7 @@ export default function provisionHelper(mpsClient) {
   return {
     getProvision,
     postProvision,
-    getPreset,
+    getPresetByCarrierId,
     getCarrierIdByCompanyId,
     getCompanyIdByCarrierId,
     getCarrierIdsByCompanyIds,

@@ -61,11 +61,18 @@ Api.prototype.updateProvision = function updateProvision(params, cb) {
     .end(genericHandler(cb));
 };
 
-
 Api.prototype.getProvision = function getProvision(params, cb) {
   superagent
     .get(`${this._getHost()}/api/provisioning/${params}`)
     .query({ carrierId: this.getCarrierId() })
+    .accept('json')
+    .end(genericHandler(cb));
+};
+
+
+Api.prototype.getPreset = function getPreset(params, cb) {
+  superagent
+    .get(`${this._getHost()}/api/carriers/${params.carrierId}/preset`)
     .accept('json')
     .end(genericHandler(cb));
 };

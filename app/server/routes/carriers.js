@@ -1975,8 +1975,18 @@ function getApplications(req, res) {
 
 async function getPreset(req, res, next) {
   try {
-    const presetValue = await provisionHelper.getPreset(req);
-    res.json(presetValue);
+    const {
+      capabilities,
+      paymentMode,
+      serviceType,
+    } = await provisionHelper.getPresetByCarrierId(req.params.carrierId);
+    // only need the following data for front end, avoid expose billing information
+    // and convert back for the front end
+    res.json({
+      capabilities,
+      paymentType: paymentMode,
+      companyType: serviceType,
+    });
   } catch (ex) {
     next(ex);
   }

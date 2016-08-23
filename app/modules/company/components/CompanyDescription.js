@@ -77,6 +77,7 @@ const CompanyDescription = (props) => {
             options={countryOption}
             onChange={onCountryChange}
             onBlur={validateField('country')}
+            clearable={false}
             disabled={disabled}
           />
           {renderErrorMessages(errors.country)}
@@ -97,6 +98,7 @@ const CompanyDescription = (props) => {
             options={timezoneOption}
             onChange={onTimezoneChange}
             onBlur={validateField('timezone')}
+            clearable={false}
             disabled={disabled}
           />
           {renderErrorMessages(errors.timezone)}
