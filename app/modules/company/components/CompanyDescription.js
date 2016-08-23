@@ -15,18 +15,34 @@ const MESSAGES = defineMessages({
 
 const CompanyDescription = (props) => {
   const {
+    companyName,
     country,
     timezone,
     contactDetail,
     countryOption,
     timezoneOption,
     onCountryChange,
+    onCompanyNameChange,
     onTimezoneChange,
     onContactDetailChange,
     intl: { formatMessage },
    } = props;
   return (
     <div className="company-description">
+    <div className="row" defaultActiveKey = "2">
+      <div className="large-10 columns">
+        <label>
+          <FormattedMessage id="companyName" defaultMessage="Company Name" />:
+        </label>
+      </div>
+      <div className="large-14 columns">
+        <input className="radius"
+          type="text"
+          value={companyName}
+          onChange={onCompanyNameChange}
+        />
+      </div>
+    </div>
       <div className="row">
         <div className="large-10 columns">
           <label>
@@ -59,30 +75,15 @@ const CompanyDescription = (props) => {
           />
         </div>
       </div>
-      <div className="row" defaultActiveKey = "2">
-        <div className="large-10 columns">
-          <label>
-            <FormattedMessage id="contactDetail" defaultMessage="Contact Detail" />:
-          </label>
-        </div>
-        <div className="large-14 columns">
-          <input
-            className="radius"
-            value={contactDetail}
-            type="text"
-            onChange={onContactDetailChange}
-          />
-        </div>
-      </div>
     </div>
   );
 };
 
 CompanyDescription.propTypes = {
   intl: intlShape.isRequired,
+  companyName: PropTypes.string,
   country: PropTypes.string,
   timezone: PropTypes.string,
-  contactDetail: PropTypes.string,
   countryOption: PropTypes.arrayOf(
     PropTypes.shape({
       value: PropTypes.string,
@@ -96,8 +97,8 @@ CompanyDescription.propTypes = {
     })
   ),
   onCountryChange: PropTypes.func,
+  onCompanyNameChange: PropTypes.func,
   onTimezoneChange: PropTypes.func,
-  onContactDetailChange: PropTypes.func,
 };
 
 export default injectIntl(CompanyDescription);

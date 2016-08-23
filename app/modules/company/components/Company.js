@@ -2,7 +2,7 @@ import React, { PropTypes } from 'react';
 import Select from 'react-select';
 import ReactPaginate from 'react-paginate';
 import classNames from 'classnames';
-import { FormattedMessage } from 'react-intl';
+import { injectIntl, intlShape, FormattedMessage, defineMessages } from 'react-intl';
 import { Link } from 'react-router';
 
 import CompanyList from './CompanyList';
@@ -13,6 +13,14 @@ import fetchCompanies from '../actions/fetchCompanies';
 
 const ENTER_KEY = 13;
 const PER_PAGE = 5;
+
+const MESSAGES = defineMessages({
+  searchCompany: {
+    id: 'searchCompany',
+    defaultMessage: 'Search by carrier',
+  },
+});
+
 class Company extends React.Component {
   constructor(props) {
     super(props);
@@ -106,6 +114,7 @@ class Company extends React.Component {
   }
 
   render() {
+    const { intl: { formatMessage } } = this.props;
     const { identity } = this.context.params;
     return (
       <div className="company" data-equalizer>
@@ -134,7 +143,7 @@ class Company extends React.Component {
           <input
             className="round"
             type="text"
-            placeholder="search company"
+            placeholder={formatMessage(MESSAGES.searchCompany)}
             onKeyDown={this.handleSearchChange}
           />
           <Icon symbol="icon-search" />
@@ -178,6 +187,7 @@ class Company extends React.Component {
 }
 
 Company.propTypes = {
+  intl: intlShape.isRequired,
   companies: PropTypes.array,
   total: PropTypes.number,
   searchCompany: PropTypes.string.isRequired,
@@ -198,4 +208,4 @@ Company = connectToStores(Company, [CompanyStore], (context) => ({
   pageSize: context.getStore(CompanyStore).getPageSize(),
 }));
 
-export default Company;
+export default injectIntl(Company);
