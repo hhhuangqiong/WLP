@@ -1978,7 +1978,7 @@ function getApplications(req, res) {
 
 async function getPreset(req, res, next) {
   try {
-    const presetValue = await mpsClient.getPreset(req);
+    const presetValue = await provisionHelper.getPreset(req);
     res.json(presetValue);
   } catch (ex) {
     next(ex);

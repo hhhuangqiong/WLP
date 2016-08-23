@@ -141,14 +141,13 @@ export default function accountController(iamServiceClient, provisionHelper) {
       // Ensure the existence of affiliated company
       const company = await iamServiceClient.getCompany({ id: affiliatedCompany });
       // find all the companies that under affiliated company
-      // @TODO pagination handling for pageSize, expect to get all companies
-      const result = await iamServiceClient.getCompanies({ parent: company.id, pageSize: 200 });
+      const result = await iamServiceClient.getDescendantCompany({ id: company.id });
       // append the current company at the front
-      result.items.unshift(company);
-      const companyIds = _.map(result.items, item => item.id);
+      result.unshift(company);
+      const companyIds = _.map(result, item => item.id);
       const carrierIds = await provisionHelper.getCarrierIdsByCompanyIds(companyIds);
       const resultArray = [];
-      _.forEach(result.items, (item, index) => {
+      _.forEach(result, (item, index) => {
         // only filter the companies with carrier Id
         if (carrierIds[index]) {
           const mItem = item;

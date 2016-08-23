@@ -95,6 +95,11 @@ export class IamServiceClient {
       .attach('logo', command.file);
     return this._handle(req, url);
   }
+  getDescendantCompany(command) {
+    const url = `${this.companyPath}/${command.id}/descendants`;
+    const req = request.get(url);
+    return this._handle(req, url);
+  }
 
   // access
   getUserPermissions(params) {
