@@ -30,9 +30,9 @@ export default function companyController(iamServiceClient, applicationRequest, 
 
   async function updateCompany(req, res, next) {
     try {
-      const command = _.extend({}, req.body, req.params);
+      const command = _.extend({}, req.body, { id: req.params.companyId });
       await iamServiceClient.putCompany(command);
-      const company = await iamServiceClient.getCompany({ id: command.companyId });
+      const company = await iamServiceClient.getCompany({ id: command.id });
       res.json(company);
     } catch (ex) {
       next(ex);
