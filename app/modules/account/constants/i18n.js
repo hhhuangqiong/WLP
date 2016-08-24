@@ -14,8 +14,8 @@ export const MESSAGES = defineMessages({
     defaultMessage: 'Account Information',
   },
   search: {
-    id: 'search',
-    defaultMessage: 'Search',
+    id: 'searchByEmail',
+    defaultMessage: 'Search By Email',
   },
   delete: {
     id: 'delete',
