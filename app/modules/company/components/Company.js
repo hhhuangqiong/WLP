@@ -45,9 +45,9 @@ class Company extends React.Component {
     );
   }
 
-  setPageRange(start, end) {
+  setPageRange(start, end, interval) {
     const rangeArray = [];
-    for (let i = start; i < end + 1; i++) {
+    for (let i = start; i < end + 1; i += interval) {
       rangeArray.push({
         value: i,
         label: i,
@@ -158,7 +158,7 @@ class Company extends React.Component {
               className="pagination-size"
               value={this.props.pageSize}
               name="select-range"
-              options={this.setPageRange(1, 10)}
+              options={this.setPageRange(5, 15, 5)}
               onChange={this.setPageNumber}
             />
             <FormattedMessage id="recordsPerPage" defaultMessage="records per page" />
