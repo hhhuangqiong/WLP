@@ -85,7 +85,6 @@ class CompanyProfile extends Component {
     this.state = {
       companyCode: '',
       companyName: '',
-      contactDetail: '',
       country: '',
       timezone: '',
       companyType: COMPANY_TYPE.SDK,
@@ -99,7 +98,6 @@ class CompanyProfile extends Component {
     this.onPaymentTypeChange = this.onPaymentTypeChange.bind(this);
     this.onCountryChange = this.onCountryChange.bind(this);
     this.onTimezoneChange = this.onTimezoneChange.bind(this);
-    this.onContactDetailChange = this.onContactDetailChange.bind(this);
     this.onCapabilitiesChange = this.onCapabilitiesChange.bind(this);
   }
   onCompanyCodeChange(e) {
@@ -136,11 +134,6 @@ class CompanyProfile extends Component {
       this.setState({ timezone: '' });
     }
   }
-  onContactDetailChange(e) {
-    // from input
-    const value = e.target.value;
-    this.setState({ contactDetail: value });
-  }
   onCapabilitiesChange(e) {
     let capabilities;
     if (e.target.checked) {
@@ -162,7 +155,6 @@ class CompanyProfile extends Component {
       paymentType: _.invert(PAYMENT_TYPE)[this.state.paymentType],
       country: this.state.country,
       timezone: this.state.timezone,
-      contactDetail: this.state.contactDetail,
       capabilities: this.state.capabilities,
     };
     const { executeAction } = this.context;
@@ -203,11 +195,9 @@ class CompanyProfile extends Component {
         <Panel header={`1.${formatMessage(MESSAGES.companyProfile)}`} >
           <CompanyProfileInfo
             companyCode={this.state.companyCode}
-            companyName={this.state.companyName}
             companyType={this.state.companyType}
             paymentType={this.state.paymentType}
             onCompanyCodeChange={this.onCompanyCodeChange}
-            onCompanyNameChange={this.onCompanyNameChange}
             onCompanyTypeChange={this.onCompanyTypeChange}
             onPaymentTypeChange={this.onPaymentTypeChange}
             companyTypeOption={COMPANY_TYPE}
@@ -216,14 +206,14 @@ class CompanyProfile extends Component {
         </Panel>
         <Panel header={`2.${formatMessage(MESSAGES.companyDescription)}`} >
           <CompanyDescription
+            companyName={this.state.companyName}
             country={this.state.country}
             timezone={this.state.timezone}
-            contactDetail={this.state.contactDetail}
             countryOption={countries}
             timezoneOption={timezoneArray}
+            onCompanyNameChange={this.onCompanyNameChange}
             onCountryChange={this.onCountryChange}
             onTimezoneChange={this.onTimezoneChange}
-            onContactDetailChange={this.onContactDetailChange}
           />
         </Panel>
         <Panel header={`3.${formatMessage(MESSAGES.companyCapabilities)}`} >

@@ -36,21 +36,35 @@ export default function provisionController(iamServiceClient, provisionHelper) {
       }
       const provisionResult = await provisionHelper.getProvision(provisioningQuery);
       const companyIds = _.map(provisionResult.items, item => item.profile.companyId);
-      // ask the identity to get all the company information, perform search and pagination
-      const companyResult = await iamServiceClient.getCompanies({
-        ids: companyIds.toString(),
-        page: pageNo,
-        pageSize,
-      });
+      const filterCompanyIds = _.filter(companyIds, id => !!id);
+
+      let companyResult;
+      if (filterCompanyIds.length) {
+        // ask the identity to get all the company information, perform search and pagination
+        companyResult = await iamServiceClient.getCompanies({
+          ids: filterCompanyIds.toString(),
+          pageSize,
+        });
+      }
       // join back the status from iam
       // update the format for the front end
-      const result = _.map(provisionResult.items, (item, index) => ({
-        id: item.id,
-        companyName: companyResult.items[index] && companyResult.items[index].name,
-        domain: item.profile.carrierId,
-        createDate: item.createdAt,
-        status: item.status,
-      }));
+      const result = _.map(provisionResult.items, item => {
+        let targetCompanyName = '';
+        if (item.profile.companyId) {
+          // since they are not in order according to the ids, find it ourself
+          const targetCompany = _.find(companyResult.items, company =>
+            company.id === item.profile.companyId) || {};
+          targetCompanyName = targetCompany.name || targetCompanyName;
+        }
+
+        return {
+          id: item.id,
+          companyName: targetCompanyName,
+          domain: item.profile.carrierId,
+          createDate: item.createdAt,
+          status: item.status,
+        };
+      });
 
       res.json({
         total: provisionResult.pageTotal,
