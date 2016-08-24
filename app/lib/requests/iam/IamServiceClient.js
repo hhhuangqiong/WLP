@@ -2,7 +2,7 @@ import { pick, isString, get, extend, isNumber, defaults, omit, map } from 'loda
 import Q from 'q';
 import request from 'superagent';
 import logger from 'winston';
-import { HttpStatusError } from 'common-errors';
+import { HttpStatusError, ArgumentNullError } from 'common-errors';
 import nconf from 'nconf';
 
 const ALL_PERMISSIONS = ['create', 'update', 'read', 'delete'];
@@ -31,6 +31,9 @@ export class IamServiceClientMock {
 
 export class IamServiceClient {
   constructor(options) {
+    if (!options.baseUrl) {
+      throw new ArgumentNullError('iam client base url');
+    }
     this._options = options;
     this._SERVICE_NAME = 'wlp';
     this.userPath = `${this._options.baseUrl}/identity/users`;

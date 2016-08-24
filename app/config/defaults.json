@@ -29,7 +29,10 @@
     }
   },
   "iamApi": {
-    "baseUrl": "http://127.0.0.1:3001"
+    "baseUrl": "http://deploy.dev.maaii.com:4004"
+  },
+  "mpsApi": {
+    "baseUrl": "http://deploy.dev.maaii.com:4005"
   },
   "mongodb": {
     "uri": "mongodb://localhost/m800-whitelabel-portal",

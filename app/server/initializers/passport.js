@@ -1,5 +1,6 @@
 import passport from 'passport';
 import nconf from 'nconf';
+import { ArgumentNullError } from 'common-errors';
 
 import { OpenIdStrategy } from '../openid/Strategy';
 
@@ -22,13 +23,30 @@ export default function setup() {
     done(null, obj);
   });
 
+  const issuer = nconf.get('openid:issuer');
+  const clientID = nconf.get('openid:clientId');
+  const clientSecret = nconf.get('openid:clientSecret');
+  const appURL = nconf.get('APP_URL');
+
+  if (!issuer) {
+    throw new ArgumentNullError('Open Id issuer(openid:issuer)');
+  }
+  if (!clientID) {
+    throw new ArgumentNullError('Open Id client id(openid:clientId)');
+  }
+  if (!clientSecret) {
+    throw new ArgumentNullError('Open Id client secret(openid:clientSecret)');
+  }
+  if (!appURL) {
+    throw new ArgumentNullError('White label app url(APP_URL)');
+  }
   // set up the open id strategy
   passport.use(new OpenIdStrategy({
-    issuer: nconf.get('openid:issuer'),
-    clientID: nconf.get('openid:clientId'),
-    clientSecret: nconf.get('openid:clientSecret'),
-    redirectURL: `${nconf.get('APP_URL')}/callback`,
-    postLogoutURL: nconf.get('APP_URL'),
+    issuer,
+    clientID,
+    clientSecret,
+    redirectURL: `${appURL}/callback`,
+    postLogoutURL: appURL,
   }, (tokens, user, cb) =>
     cb(null, { tokens, user })
   ));

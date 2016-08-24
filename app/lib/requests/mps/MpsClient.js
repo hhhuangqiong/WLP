@@ -1,6 +1,6 @@
 import Q from 'q';
 import request from 'superagent';
-import { HttpStatusError } from 'common-errors';
+import { HttpStatusError, ArgumentNullError } from 'common-errors';
 import { isString, get, isNumber } from 'lodash';
 import logger from 'winston';
 
@@ -8,6 +8,9 @@ const serviceFilter = ['SDK', 'WHITE_LABEL'];
 export default class MpsClient {
   constructor(options) {
     this._options = options;
+    if (!options.baseUrl) {
+      throw new ArgumentNullError('mps client base url');
+    }
     this.basePath = this._options.baseUrl;
   }
 
