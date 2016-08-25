@@ -86,7 +86,7 @@ export default class ApiClient {
    * on server-side will provide this argument via Fluxible plugin.
    * @param isFromServer {Boolean}
    */
-  constructor(req, isFromServer) {
+  constructor(req, isFromServer, getCarrierId) {
     methods.forEach(method => {
       /**
        * @method get
@@ -111,6 +111,12 @@ export default class ApiClient {
         if (data && (!isObject(data) && !(data instanceof FormData))) {
           reject(new Error('`data` argument must be an object or an instance of FormData'));
           return;
+        }
+
+        // @workaround to append carrierId
+        if (path.indexOf('carriers/') === -1) {
+          query = query || {};
+          query.carrierId = getCarrierId();
         }
 
         let options = {

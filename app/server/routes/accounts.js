@@ -23,15 +23,10 @@ const deleteAccount = (req, res, next) => (
   accountController.deleteAccount(req, res, next)
 );
 
-const getAccessibleCompanies = (req, res, next) => (
-  accountController.getAccessibleCompanies(req, res, next)
-);
-
 export {
   getAccounts,
   getAccount,
   createAccount,
   updateAccount,
   deleteAccount,
-  getAccessibleCompanies,
 };

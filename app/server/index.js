@@ -114,15 +114,6 @@ export default function (port) {
   server.use(config.API_PATH_PREFIX, require('./routers/api').default);
   server.use(config.API_PATH_PREFIX, apiErrorHandler);
 
-  // @TODO since portal user and company is replaced by IAM,
-  // acl would be replaced by new authorization checking and comment out since it has dependency
-  // the current portalUser and company collection
-
-  // const aclMiddlewares = require('./middlewares/aclMiddleware');
-  // eslint-disable-next-line prefer-arrow-callback
-  // server.use(ensureLoggedIn('/sign-in'), aclMiddlewares.default, aclMiddlewares.errorHandler, function handler(req, res, next) {
-  //   render(app, config)(req, res, next);
-  // });
   server.use(ensureLoggedIn('/sign-in'), (req, res, next) => {
     render(app, config)(req, res, next);
   });

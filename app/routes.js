@@ -48,9 +48,7 @@ import {
 } from './utils/paths';
 
 import AuthStore from './main/stores/AuthStore';
-import AuthorityStore from './modules/authority/store';
 
-import { userPath } from './utils/paths';
 import createDebug from 'debug';
 
 const debug = createDebug('app:routes');
@@ -75,11 +73,10 @@ export default (context) => {
     // There is hope user.permissions will contain actual permissions for the company
     // he is acting from. CompanySwitcher reloads the entire page, so AuthStore should
     // contain relevant information from req.user already including permissions and capabilities
-    const hasCarrierIdInPath = pathParts.length > 1;
+    const hasCarrierIdInPath = pathParts.length >= 1;
     debug(`Carrier id found in path: ${hasCarrierIdInPath}.`);
     const carrierId = hasCarrierIdInPath ? pathParts[0] : user.carrierId;
     const permissions = user.permissions || [];
-    console.log('user permissions', user.permissions);
 
     const currentSection = navigationSections.find(x => startsWith(sectionPath, x.path));
     if (currentSection) {
@@ -106,44 +103,6 @@ export default (context) => {
     // Redirect to sign in otherwise
     replace('/sign-in');
     cb();
-
-    // HERE IS PREVIOUS IMPLEMENTATION FOR REFERENCE
-    // const isAuthenticated = context.getStore(AuthStore).isAuthenticated();
-    //
-    // if (!isAuthenticated) {
-    //   debug('user is not authenticated, redirecting to /sign-in');
-    //   replace('/sign-in');
-    //   cb();
-    //   return;
-    // }
-    // let carrierId;
-    //
-    // // get the capability of the user
-    // const capability = context.getStore(AuthorityStore).getCapability();
-    // // get the authority checker
-    // const { authorityChecker } = context.getActionContext();
-    // // since it is in the root domain, it expects to get user carrier from the user info
-    // if (nextState.location.pathname === '/') {
-    //   carrierId = context.getStore(AuthStore).getCarrierId();
-    //   authorityChecker.reset(carrierId, capability);
-    // } else {
-    //   // get the information from the params and check for the accessibility
-    //   carrierId = nextState.params.identity;
-    //   authorityChecker.reset(carrierId, capability);
-    //   // user can access the path, no redirection needed
-    //   if (authorityChecker.canAccessPath(nextState.location.pathname)) {
-    //     debug('user is authorised to enter the page');
-    //     cb();
-    //     return;
-    //   }
-    // }
-    // // when user hasn't define the page or enter the website at the first time,
-    // // it will get the default path and redirect to it
-    // const defaultPath = authorityChecker.getDefaultPath();
-    // const path = userPath(carrierId, defaultPath);
-    // debug(`user is already authenticated and redirect to ${defaultPath}`);
-    // replace(path);
-    // cb();
   }
 
   return (

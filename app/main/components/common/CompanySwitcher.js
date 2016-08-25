@@ -34,7 +34,7 @@ const CompanySwitcher = React.createClass({
     // redirecting to an existing module will work
     // a proper landing path will be checked on server-side
     // ideally it should reconstruct the defaultPath by authorityChecker
-    const destination = userPath(carrierId, '/overview');
+    const destination = userPath(carrierId);
 
     // it should always be a client side process
     // let's refresh the page at this moment, until we

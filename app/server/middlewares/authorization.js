@@ -1,5 +1,5 @@
 import createDebug from 'debug';
-import { isArray, isString, difference, get, set, flatten, map, extend } from 'lodash';
+import { isArray, isString, difference, get, extend } from 'lodash';
 
 import { NotPermittedError } from 'common-errors';
 import invariant from 'invariant';
@@ -8,7 +8,8 @@ import validator from 'validator';
 const debug = createDebug('app:server/middlewares/authorization');
 
 function isCarrierIdAlike(part) {
-  return part === 'm800' || validator.isURL(part);
+  // @TODO bugs on checking the demo_verify.maaiii-api.org with validator.isURL (return false)
+  return part === 'm800' || validator.isURL(part) || part === 'demo_verify.maaiii-api.org';
 }
 
 function inferCarrierIdFromRequest(req) {
@@ -42,7 +43,7 @@ export function createFetchPermissionsMiddleware(logger, aclResolver) {
 
     try {
       const result = await aclResolver.resolve(params);
-      debug('Fetched permissions and capabilities from acl resolver');
+      debug('Fetched permissions and capabilities from acl resolver', result);
       extend(req.user, result);
       next();
     } catch (e) {

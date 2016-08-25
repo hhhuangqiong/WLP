@@ -24,25 +24,13 @@ const noop = Function.prototype;
  */
 function Api(options = {}) {
   this._getHost = options.getHost || noop;
+  this.getCarrierId = options.getCarrierId;
 }
-
-Api.prototype.getAuthorityList = function getAuthorityList(carrierId, cb) {
-  superagent
-    .get(`${this._getHost()}/api/carriers/${carrierId}/authority`)
-    .end((err, res) => {
-      if (err) {
-        cb(err);
-        return;
-      }
-
-      cb(null, res.body);
-      return;
-    });
-};
 
 Api.prototype.createProvision = function createProvision(params, cb) {
   superagent
     .post(`${this._getHost()}/api/provisioning`)
+    .query({ carrierId: this.getCarrierId() })
     .set('Content-Type', 'application/json')
     .send(params.data)
     .accept('json')
@@ -56,6 +44,7 @@ Api.prototype.getProvisions = function getProvisions(params, cb) {
       searchCompany: params.searchCompany,
       pageSize: params.pageSize,
       pageNumber: params.pageNumber,
+      carrierId: this.getCarrierId(),
     })
     .accept('json')
     .end(genericHandler(cb));
@@ -64,6 +53,7 @@ Api.prototype.getProvisions = function getProvisions(params, cb) {
 Api.prototype.getProvision = function getProvision(params, cb) {
   superagent
     .get(`${this._getHost()}/api/provisioning/${params.provisionId}`)
+    .query({ carrierId: this.getCarrierId() })
     .accept('json')
     .end(genericHandler(cb));
 };
@@ -71,6 +61,7 @@ Api.prototype.getProvision = function getProvision(params, cb) {
 Api.prototype.getManagingCompanies = function getManagingCompanies(params, cb) {
   superagent
     .get(`${this._getHost()}/api/companies/${params.companyId}/managingCompanies`)
+    .query({ carrierId: this.getCarrierId() })
     .accept('json')
     .end(genericHandler(cb));
 };
@@ -78,6 +69,7 @@ Api.prototype.getManagingCompanies = function getManagingCompanies(params, cb) {
 Api.prototype.getCarrierManagingCompanies = function getCarrierManagingCompanies(params, cb) {
   superagent
     .get(`${this._getHost()}/api/companies/${params.companyId}/managingCompanies`)
+    .query({ carrierId: this.getCarrierId() })
     .accept('json')
     .end(genericHandler(cb));
 };
@@ -85,6 +77,7 @@ Api.prototype.getCarrierManagingCompanies = function getCarrierManagingCompanies
 Api.prototype.updateCompanyProfile = function updateCompanyProfile(params, cb) {
   superagent
     .put(`${this._getHost()}/api/companies/${params.companyId}/profile`)
+    .query({ carrierId: this.getCarrierId() })
     .accept('json')
     .send(params.data)
     .end(genericHandler(cb));
@@ -93,6 +86,7 @@ Api.prototype.updateCompanyProfile = function updateCompanyProfile(params, cb) {
 Api.prototype.deactivateCompany = function deactivateCompany(params, cb) {
   superagent
     .post(`${this._getHost()}/api/companies/${params.companyId}/suspension`)
+    .query({ carrierId: this.getCarrierId() })
     .accept('json')
     .end((err, res) => {
       if (err) {
@@ -106,6 +100,7 @@ Api.prototype.deactivateCompany = function deactivateCompany(params, cb) {
 Api.prototype.reactivateCompany = function reactivateCompany(params, cb) {
   superagent
     .put(`${this._getHost()}/api/companies/${params.companyId}/suspension`)
+    .query({ carrierId: this.getCarrierId() })
     .accept('json')
     .end((err, res) => {
       if (err) {
@@ -267,13 +262,6 @@ Api.prototype.getVerificationStatsByCountry = function getVerificationStatsByCou
     .get(`${this._getHost()}/api/carriers/${params.carrierId}/verificationStats`)
     .accept('json')
     .query(_.merge(params, { type: 'country' }))
-    .end(genericHandler(cb));
-};
-
-Api.prototype.getCurrentCompanyInfo = function getCurrentCompanyInfo(params, cb) {
-  return superagent
-    .get(`${this._getHost()}/api/carriers/${params.carrierId}/info`)
-    .accept('json')
     .end(genericHandler(cb));
 };
 

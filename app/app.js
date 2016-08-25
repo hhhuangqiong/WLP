@@ -4,7 +4,6 @@ import Fluxible from 'fluxible';
 import InitialDataStore from './main/stores/InitialDataStore';
 import ApplicationStore from './main/stores/ApplicationStore';
 import AuthStore from './main/stores/AuthStore';
-import AuthorityStore from './modules/authority/store';
 import VerificationStore from './modules/verification/stores/VerificationStore';
 import VerificationOverviewStore from './modules/verification/stores/VerificationOverviewStore';
 import CompanyStore from './modules/company/stores/CompanyStore';
@@ -49,11 +48,9 @@ const app = new Fluxible({
 });
 
 app.plug(require('./utils/apiPlugin'));
-//app.plug(require('./utils/authorityPlugin'));
 
 app.registerStore(InitialDataStore);
 app.registerStore(AuthStore);
-app.registerStore(AuthorityStore);
 app.registerStore(ApplicationStore);
 app.registerStore(CompanyStore);
 app.registerStore(VerificationStore);

@@ -1,5 +1,4 @@
 import Q from 'q';
-import { get } from 'lodash';
 import path from 'path';
 import logger from 'winston';
 import React from 'react';
@@ -18,7 +17,6 @@ import { setLocale } from '../utils/dateLocale';
 import loadSession from '../main/actions/loadSession';
 import getAccessibleCompanies from '../main/actions/getAccessibleCompanies';
 import setUserLanguage from '../main/actions/setUserLanguage';
-import getAuthorityList from '../modules/authority/actions/getAuthorityList';
 import fetchCurrentCompanyInfo from '../main/actions/fetchCurrentCompanyInfo';
 
 /**
@@ -72,7 +70,6 @@ export default function renderer(app, config) {
       loadSession,
       getAccessibleCompanies,
       setUserLanguage,
-      getAuthorityList,
       fetchCurrentCompanyInfo,
     ];
 

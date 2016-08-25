@@ -16,6 +16,7 @@ import roleController from '../../server/controllers/role';
 import AccountController from '../../server/controllers/account';
 import CompanyController from '../../server/controllers/company';
 import ProvisionHelper from '../../server/utils/provisionHelper';
+import IamHelper from '../../server/utils/iamHelper';
 import provisionController from '../../server/controllers/provision';
 import { ApplicationRequest } from '../../lib/requests/Application';
 import MpsClient from '../../lib/requests/mps/MpsClient';
@@ -138,6 +139,7 @@ export default function init(nconf) {
 
   // Provision Adapter
   ioc.service('ProvisionHelper', ProvisionHelper, 'MpsClient');
+  ioc.service('IamHelper', IamHelper, 'IamServiceClient', 'ProvisionHelper');
 
   // Core components
   ioc.service('AclResolver', createAclResolver, 'logger', 'IamServiceClient', 'ProvisionHelper');

@@ -79,18 +79,12 @@ export default function provisionController(iamServiceClient, provisionHelper) {
 
   async function getProvision(req, res, next) {
     try {
-      const provision = await provisionHelper.getProvisionById({ id: req.params.provisionId });
-      const item = provision.items[0];
-      // fail to find the provision item
-      if (!item) {
-        res.json({});
-        return;
-      }
+      const provisionItem = await provisionHelper.getProvisionById({ id: req.params.provisionId });
       // append the company data
-      if (item.profile.companyId) {
-        item.company = await iamServiceClient.getCompany({ id: item.profile.companyId });
+      if (provisionItem.profile && provisionItem.profile.companyId) {
+        provisionItem.company = await iamServiceClient.getCompany({ id: provisionItem.profile.companyId });
       }
-      res.json(item);
+      res.json(provisionItem);
     } catch (ex) {
       next(ex);
     }
