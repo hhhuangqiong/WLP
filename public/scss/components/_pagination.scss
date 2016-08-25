@@ -47,6 +47,16 @@ ul.pagination {
   justify-content: space-between;
   align-items: baseline;
   width: 100%;
+  .Select-value {
+    //for overwrite the default style
+    padding: 0px;
+  }
+  .Select-control {
+    width: 80%;
+  }
+  .Select-clear-zone {
+    display: none;
+  }
   .select-number {
     display: flex;
     width: 13%;
