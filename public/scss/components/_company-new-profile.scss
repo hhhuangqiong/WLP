@@ -40,6 +40,7 @@
     border-left: none;
     border-right: none;
     > .rc-collapse-item {
+      padding: rem-calc(10);
       >.rc-collapse-header {
         span {
           left: 4%;

@@ -26,7 +26,7 @@ const CompanyDetail = (props) => {
             case ACTIVE:
               return (
                 <td className="active">
-                  <span className="circle-button green"></span>{status}
+                  <span className="circle-button green">{status}</span>
                 </td>
               );
             case CREATED:
@@ -34,20 +34,20 @@ const CompanyDetail = (props) => {
             case INPROGRESS:
               return (
                 <td className="in-progress">
-                  <span className="circle-button blue"></span>{status}
+                  <span className="circle-button blue">{status}</span>
                 </td>
               );
             case ERROR:
             case SUSPENDED:
               return (
                 <td className="suspended">
-                  <span className="circle-button red"></span>{status}
+                  <span className="circle-button red">{status}</span>
                 </td>
               );
             case UNKNOWN:
               return (
                 <td className="unknown">
-                  <span className="circle-button grey"></span>{status}
+                  <span className="circle-button grey">{status}</span>
                 </td>
               );
             default:
@@ -55,7 +55,6 @@ const CompanyDetail = (props) => {
           }
         })()
       }
-
     </tr>
   );
 };
