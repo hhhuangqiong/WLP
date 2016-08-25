@@ -1,72 +1,25 @@
 import React, { Component } from 'react';
 import Collapse, { Panel } from 'rc-collapse';
-import countryData from 'country-data';
 import classNames from 'classnames';
 import { Link } from 'react-router';
-import timezoneData from 'timezones.json';
-import { injectIntl, intlShape, defineMessages, FormattedMessage } from 'react-intl';
+import { injectIntl, intlShape, FormattedMessage } from 'react-intl';
 import _ from 'lodash';
 import connectToStores from 'fluxible-addons-react/connectToStores';
 
 import Icon from '../../../main/components/Icon';
-import { arrayToObject } from '../../../main/components/arrayToObject';
 import createCompany from '../actions/createCompany';
 import CompanyProfileInfo from './CompanyProfileInfo';
 import CompanyDescription from './CompanyDescription';
 import CompanyCapabilities from './CompanyCapabilities';
 import ApplicationStore from '../../../main/stores/ApplicationStore';
-
-const countries = countryData.countries.all.map((item) => ({
-  value: item.name,
-  label: item.name,
-}));
-
-let timezoneArray = [];
-_.each(timezoneData, (item) => {
-  timezoneArray = timezoneArray.concat(item.utc);
-});
-timezoneArray = arrayToObject(timezoneArray);
-
-const MESSAGES = defineMessages({
-  companyProfile: {
-    id: 'companyProfile',
-    defaultMessage: 'Company Profile',
-  },
-  companyDescription: {
-    id: 'companyDescription',
-    defaultMessage: 'Company Description',
-  },
-  companyCapabilities: {
-    id: 'companyCapabilities',
-    defaultMessage: 'Company Capabilities',
-  },
-});
-
-const CAPABILITIES = {
-  'platform.android': 'Android',
-  'platform.ios': 'IOS',
-  'platform.web': 'Web',
-  'call.offnet': 'Off-Net Call',
-  'call.onnet': 'On-Net Call',
-  'call.maaii--in': 'Maii-in Call',
-  im: 'IM',
-  'im.im_tosms': 'IM To SMS',
-  'verification.mo': 'MO Verification',
-  'verification.mt': 'MT Verification',
-  'verification.sms': 'SMS Verification',
-  'verification.ivr': 'IVR Verification',
-  push: 'PUSH',
-  vsf: 'VSF',
-};
-
-const COMPANY_TYPE = {
-  SDK: 'SDK',
-  WHITE_LABEL: 'WHITE LABEL',
-};
-const PAYMENT_TYPE = {
-  PRE_PAID: 'Pre_Paid',
-  POST_PAID: 'Post_Paid',
-};
+import {
+  COUNTRIES,
+  TIMEZONE,
+  MESSAGES,
+  CAPABILITIES,
+  COMPANY_TYPE,
+  PAYMENT_TYPE,
+} from '../constants/companyOptions';
 
 class CompanyProfile extends Component {
   static propTypes = {
@@ -86,8 +39,8 @@ class CompanyProfile extends Component {
       companyName: '',
       country: '',
       timezone: '',
-      companyType: COMPANY_TYPE.SDK,
-      paymentType: PAYMENT_TYPE.PRE_PAID,
+      companyType: 'SDK',
+      paymentType: 'PRE_PAID',
       capabilities: [],
     };
     this.createCompany = this.createCompany.bind(this);
@@ -210,8 +163,8 @@ class CompanyProfile extends Component {
             companyName={this.state.companyName}
             country={this.state.country}
             timezone={this.state.timezone}
-            countryOption={countries}
-            timezoneOption={timezoneArray}
+            countryOption={COUNTRIES}
+            timezoneOption={TIMEZONE}
             onCompanyNameChange={this.onCompanyNameChange}
             onCountryChange={this.onCountryChange}
             onTimezoneChange={this.onTimezoneChange}
