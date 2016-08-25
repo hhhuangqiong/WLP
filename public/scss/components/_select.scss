@@ -1,18 +1,15 @@
+// overwrite the react-select style
 .pagination-select {
   .Select-menu-outer {
     top:auto;
     bottom: 100%;
-  }
-  .Select-value {
-    padding: 5px 45px 8px 10px;
-  }
-}
-.company-description {
-  .Select {
-    margin-right: 0px;
-    width: 100%;
+    font-size: rem-calc(13);
   }
   .Select-control {
-  padding: 3px 50px 3px 50px;
+    width: 70%;
+    font-size: rem-calc(13);
+  }
+  .Select-clear-zone {
+    display: none;
   }
 }
