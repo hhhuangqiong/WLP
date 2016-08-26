@@ -1,0 +1,35 @@
+export default {
+  m800: [
+    'service.white_label',
+    'service.sdk',
+    'platform.android',
+    'platform.ios',
+    'platform.web',
+    'call.offnet_call',
+    'call.onnet_call',
+    'call.maaii_in',
+    'im',
+    'im.im_to_sms',
+    'wallet.company',
+    'wallet.end-user',
+    'wallet.customer-ocs-integration',
+    'verification.mo',
+    'verification.mt',
+    'verification.sms',
+    'verification.ivr',
+    'push',
+    'vsf',
+  ],
+  'bolter.maaiii.org': [
+    'service.white_label',
+    'service.sdk',
+    'platform.android',
+    'platform.ios',
+    'platform.web',
+    'call.offnet_call',
+    'call.onnet_call',
+    'call.maaii_in',
+  ],
+};
+
+

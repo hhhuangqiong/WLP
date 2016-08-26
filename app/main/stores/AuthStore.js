@@ -31,6 +31,10 @@ const AuthStore = createStore({
     return this.user && this.user.displayName;
   },
 
+  getUser() {
+    return this.user;
+  },
+
   getUserId() {
     return this.user && this.user._id;
   },

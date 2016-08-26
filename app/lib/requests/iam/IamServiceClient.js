@@ -5,31 +5,28 @@ import logger from 'winston';
 import { HttpStatusError, ArgumentNullError } from 'common-errors';
 import nconf from 'nconf';
 
-const ALL_PERMISSIONS = ['create', 'update', 'read', 'delete'];
+import { ACTIONS, RESOURCE } from './../../../main/acl/acl-enums';
+
 const ADMIN_PERMISSIONS = {
-  company: ALL_PERMISSIONS,
-  user: ALL_PERMISSIONS,
-  permissions: ALL_PERMISSIONS,
-  'wlp:endUser': ALL_PERMISSIONS,
-  'wlp:topUp': ALL_PERMISSIONS,
-  'wlp:generalOverview': ALL_PERMISSIONS,
-  'wlp:vsfOverview': ALL_PERMISSIONS,
-  'wlp:vsfDetails': ALL_PERMISSIONS,
-  'wlp:callOverview': ALL_PERMISSIONS,
-  'wlp:callDetails': ALL_PERMISSIONS,
-  'wlp:imOverview': ALL_PERMISSIONS,
-  'wlp:imDetails': ALL_PERMISSIONS,
-  'wlp:smsOverview': ALL_PERMISSIONS,
-  'wlp:smsDetails': ALL_PERMISSIONS,
+  [RESOURCE.COMPANY]: ACTIONS,
+  [RESOURCE.USER]: ACTIONS,
+  [RESOURCE.ROLE]: ACTIONS,
+  [RESOURCE.END_USER]: ACTIONS,
+  [RESOURCE.TOP_UP]: ACTIONS,
+  [RESOURCE.GENERAL]: ACTIONS,
+  [RESOURCE.VSF]: ACTIONS,
+  [RESOURCE.CALL]: ACTIONS,
+  [RESOURCE.IM]: ACTIONS,
+  [RESOURCE.SMS]: ACTIONS,
 };
 
-export class IamServiceClientMock {
+export class IamClientMock {
   getUserPermissions() {
     return Q.resolve(ADMIN_PERMISSIONS);
   }
 }
 
-export class IamServiceClient {
+export class IamClient {
   constructor(options) {
     if (!options.baseUrl) {
       throw new ArgumentNullError('iam client base url');
@@ -175,4 +172,4 @@ export class IamServiceClient {
   }
 }
 
-export default IamServiceClient;
+export default IamClient;

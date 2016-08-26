@@ -1,33 +1,33 @@
 import { PropTypes, Component } from 'react';
 import invariant from 'invariant';
+import connectToStores from 'fluxible-addons-react/connectToStores';
+
+import AuthStore from './../../stores/AuthStore';
 
 class Permit extends Component {
   componentWillMount() {
-    invariant(
-      this.props.children,
-      'Authority should have at least 1 child component'
-    );
+    invariant(this.props.children, 'Authority should have at least 1 child component');
   }
 
-  _hasAuthority() {
-    const { action, resource } = this.props;
-    const { authorityChecker } = this.context;
-    return authorityChecker.scan(action, resource);
+  hasAccess() {
+    const permissions = this.props.user.permissions || [];
+    return permissions.indexOf(this.props.permission) >= 0;
   }
 
   render() {
-    return this._hasAuthority() ? this.props.children : null;
+    return this.hasAccess() ? this.props.children : null;
   }
 }
 
 Permit.propTypes = {
-  children: PropTypes.any.isRequired,
-  action: PropTypes.string.isRequired,
-  resource: PropTypes.string.isRequired,
+  user: PropTypes.object,
+  permission: PropTypes.string,
 };
 
-Permit.contextTypes = {
-  authorityChecker: PropTypes.object.isRequired,
-};
+Permit = connectToStores(Permit, [AuthStore], (context) => {
+  return {
+    user: context.getStore(AuthStore).getUser(),
+  };
+});
 
 export default Permit;

@@ -16,11 +16,13 @@ import render from './render';
 import apiResponse from './utils/apiResponse';
 import { apiErrorHandler } from './middlewares/errorHandler';
 import authRouter from './routers/auth';
+import { fetchDep } from './utils/bottle';
 
 const PROJ_ROOT = path.join(__dirname, '../..');
 
 const debug = require('debug');
 debug.enable('app:*');
+
 
 export default function (port) {
   if (!port) throw new Error('Please specify port');
@@ -103,6 +105,9 @@ export default function (port) {
 
   // as API server
   server.use(authRouter);
+  const fetchPermissionsMiddleware = fetchDep(nconf.get('containerName'), 'FetchPermissionsMiddleware');
+  server.use(fetchPermissionsMiddleware);
+
   server.use(require('./routers/hlr').default);
   server.use(config.EXPORT_PATH_PREFIX, require('./routers/export').default);
   server.use(config.FILE_UPLOAD_PATH_PREFIX, require('./routers/data').default);

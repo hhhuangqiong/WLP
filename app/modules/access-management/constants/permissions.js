@@ -1,104 +1,106 @@
+import { RESOURCE, ACTION } from './../../../main/acl/acl-enums';
+
 // Documentation: https://issuetracking.maaii.com:9443/display/WLP/Identity+Access+Management+Service
 export const PERMISSIONS = [{
   intlKey: 'companyManagement',
   children: [{
     intlKey: 'create',
-    resource: 'company',
-    action: 'create',
+    resource: RESOURCE.COMPANY,
+    action: ACTION.CREATE,
   }, {
     intlKey: 'update',
-    resource: 'company',
-    action: 'update',
+    resource: RESOURCE.COMPANY,
+    action: ACTION.UPDATE,
   }, {
     intlKey: 'read',
-    resource: 'company',
-    action: 'read',
+    resource: RESOURCE.COMPANY,
+    action: ACTION.READ,
   }, {
     intlKey: 'delete',
-    resource: 'company',
-    action: 'delete',
+    resource: RESOURCE.COMPANY,
+    action: ACTION.DELETE,
   }],
 }, {
   intlKey: 'userManagement',
   children: [{
     intlKey: 'create',
-    resource: 'user',
-    action: 'create',
+    resource: RESOURCE.USER,
+    action: ACTION.CREATE,
   }, {
     intlKey: 'update',
-    resource: 'user',
-    action: 'update',
+    resource: RESOURCE.USER,
+    action: ACTION.UPDATE,
   }, {
     intlKey: 'read',
-    resource: 'user',
-    action: 'read',
+    resource: RESOURCE.USER,
+    action: ACTION.READ,
   }, {
     intlKey: 'delete',
-    resource: 'user',
-    action: 'delete',
+    resource: RESOURCE.USER,
+    action: ACTION.DELETE,
   }],
 }, {
   intlKey: 'permissionManagement',
   children: [{
     intlKey: 'create',
-    resource: 'role',
-    action: 'create',
+    resource: RESOURCE.ROLE,
+    action: ACTION.CREATE,
   }, {
     intlKey: 'update',
-    resource: 'role',
-    action: 'update',
+    resource: RESOURCE.ROLE,
+    action: ACTION.UPDATE,
   }, {
     intlKey: 'read',
-    resource: 'role',
-    action: 'read',
+    resource: RESOURCE.ROLE,
+    action: ACTION.READ,
   }, {
     intlKey: 'delete',
-    resource: 'role',
-    action: 'delete',
+    resource: RESOURCE.ROLE,
+    action: ACTION.DELETE,
   }],
 }, {
   intlKey: 'endUserManagement',
   children: [{
     intlKey: 'create',
-    resource: 'wlp:endUser',
-    action: 'create',
+    resource: RESOURCE.END_USER,
+    action: ACTION.CREATE,
   }, {
     intlKey: 'update',
-    resource: 'wlp:endUser',
-    action: 'update',
+    resource: RESOURCE.END_USER,
+    action: ACTION.UPDATE,
   }, {
     intlKey: 'read',
-    resource: 'wlp:endUser',
-    action: 'read',
+    resource: RESOURCE.END_USER,
+    action: ACTION.READ,
   }, {
     intlKey: 'delete',
-    resource: 'wlp:endUser',
-    action: 'delete',
+    resource: RESOURCE.END_USER,
+    action: ACTION.DELETE,
   }],
 }, {
   intlKey: 'generalOverview',
-  resource: 'wlp:generalOverview',
-  action: 'read',
+  resource: RESOURCE.GENERAL,
+  action: ACTION.READ,
 }, {
   intlKey: 'topUp',
-  resource: 'wlp:topUp',
-  action: 'read',
+  resource: RESOURCE.TOP_UP,
+  action: ACTION.READ,
 }, {
   intlKey: 'vsf',
-  resource: 'wlp:vsf',
-  action: 'read',
+  resource: RESOURCE.VSF,
+  action: ACTION.READ,
 }, {
   intlKey: 'call',
-  resource: 'wlp:call',
-  action: 'read',
+  resource: RESOURCE.CALL,
+  action: ACTION.READ,
 }, {
   intlKey: 'im',
-  resource: 'wlp:im',
-  action: 'read',
+  resource: RESOURCE.IM,
+  action: ACTION.READ,
 }, {
   intlKey: 'sms',
-  resource: 'wlp:sms',
-  action: 'read',
+  resource: RESOURCE.SMS,
+  action: ACTION.READ,
 }];
 
 export default PERMISSIONS;

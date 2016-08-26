@@ -1,14 +1,17 @@
 import Bottle from 'bottlejs';
 import path from 'path';
 import NodeAcl from 'acl';
+import logger from 'winston';
+
 
 import makeRedisClient from './redis';
 import ensureAuthenticated from '../middlewares/ensureAuthenticated';
 
 import CallsRequest from '../../lib/requests/dataProviders/Call';
 
-import { IamServiceClientMock, IamServiceClient } from '../../lib/requests/iam/IamServiceClient';
+import { IamClient } from '../../lib/requests/iam/IamServiceClient';
 import { createFetchPermissionsMiddleware } from '../../server/middlewares/authorization';
+import { createAclResolver } from './../../main/acl/acl-resolver';
 import roleController from '../../server/controllers/role';
 import AccountController from '../../server/controllers/account';
 import CompanyController from '../../server/controllers/company';
@@ -25,6 +28,8 @@ import MpsClient from '../../lib/requests/mps/MpsClient';
 export default function init(nconf) {
   // intentionally not calling with `new`; otherwise `fetchContainerInstance` cannot work
   const ioc = Bottle(nconf.get('containerName'));
+
+  ioc.constant('logger', logger);
 
   /* eslint-disable max-len */
 
@@ -116,26 +121,32 @@ export default function init(nconf) {
     return new AclManager(nodeAcl, carrierQuerier);
   });
 
-  ioc.constant('IamServiceClientOptions', {
-    baseUrl: nconf.get('iamApi:baseUrl'),
-  });
-
-  ioc.service('IamServiceClientMock', IamServiceClientMock);
-  ioc.service('FetchPermissionsMiddleware', createFetchPermissionsMiddleware, 'IamServiceClientMock');
-  ioc.service('IamServiceClient', IamServiceClient, 'IamServiceClientOptions');
-  ioc.service('RoleController', roleController, 'IamServiceClient');
+  // Remote service clients (real)
   ioc.constant('MpsClientOptions', {
     baseUrl: nconf.get('mpsApi:baseUrl'),
   });
-
   ioc.service('MpsClient', MpsClient, 'MpsClientOptions');
+  ioc.constant('IamClientOptions', {
+    baseUrl: nconf.get('iamApi:baseUrl'),
+  });
+  ioc.service('IamServiceClient', IamClient, 'IamClientOptions');
   ioc.constant('ApplicationOptions', {
     baseUrl: nconf.get('mumsApi:baseUrl'),
     timeout: nconf.get('mumsApi:timeout'),
   });
-
   ioc.service('ApplicationRequest', ApplicationRequest, 'ApplicationOptions');
+
+  // Provision Adapter
   ioc.service('ProvisionHelper', ProvisionHelper, 'MpsClient');
+
+  // Core components
+  ioc.service('AclResolver', createAclResolver, 'logger', 'IamServiceClient', 'ProvisionHelper');
+
+  // Middleware
+  ioc.service('FetchPermissionsMiddleware', createFetchPermissionsMiddleware, 'logger', 'AclResolver');
+
+  // Controllers
+  ioc.service('RoleController', roleController, 'IamServiceClient');
   ioc.service('CompanyController', CompanyController, 'IamServiceClient', 'ApplicationRequest', 'ProvisionHelper');
   ioc.service('AccountController', AccountController, 'IamServiceClient', 'ProvisionHelper');
   ioc.service('ProvisionController', provisionController, 'IamServiceClient', 'ProvisionHelper');
