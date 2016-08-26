@@ -15,6 +15,17 @@ export default function provisionController(iamServiceClient, provisionHelper) {
         capabilities: req.body.capabilities,
         serviceType: req.body.companyType,
         paymentMode: req.body.paymentType,
+        // @TODO temp workaround, expect to fetch preset and merge with the data
+        smsc: {
+          needBilling: false,
+          defaultRealm: 'WhiteLabel',
+          servicePlanId: 'whitelabel',
+          sourceAddress: 1234567899,
+        },
+        billing: {
+          offnetPackageId: 1,
+          currency: 840,
+        },
       };
       const result = await provisionHelper.postProvision(data);
       res.json(result);
