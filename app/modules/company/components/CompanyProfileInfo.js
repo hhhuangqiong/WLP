@@ -1,6 +1,20 @@
 import React, { PropTypes } from 'react';
+import classNames from 'classnames';
 import { injectIntl, intlShape, FormattedMessage } from 'react-intl';
 import SwitchButtonGroup from '../../../main/components/SwitchButtonGroup';
+
+function renderErrorMessages(errorMessages) {
+  if (!errorMessages) {
+    return null;
+  }
+  return (
+    <label>
+      {errorMessages.map((errorMsg, index) => (
+        <div key={index}>{errorMsg}</div>
+      ))}
+    </label>
+  );
+}
 
 const CompanyProfileInfo = (props) => {
   const {
@@ -13,6 +27,8 @@ const CompanyProfileInfo = (props) => {
     onCompanyTypeChange,
     onPaymentTypeChange,
     disabled,
+    validateField,
+    errors,
    } = props;
   return (
     <div className="company-profile">
@@ -23,12 +39,15 @@ const CompanyProfileInfo = (props) => {
           </label>
         </div>
         <div className="large-14 columns">
-          <input className="radius"
+          <input
+            className={classNames('radius', { error: errors.companyCode })}
             type="text"
             value={companyCode}
             onChange={onCompanyCodeChange}
+            onBlur={validateField('companyCode')}
             disabled={disabled}
           />
+          {renderErrorMessages(errors.companyCode)}
         </div>
       </div>
       <div className="row">
@@ -76,6 +95,8 @@ CompanyProfileInfo.propTypes = {
   onCompanyTypeChange: PropTypes.func,
   onPaymentTypeChange: PropTypes.func,
   disabled: PropTypes.bool,
+  validateField: PropTypes.func,
+  errors: PropTypes.object,
 };
 
 export default injectIntl(CompanyProfileInfo);

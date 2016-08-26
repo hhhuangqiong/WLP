@@ -1,10 +1,12 @@
-import React, { Component } from 'react';
+import React, { Component, PropTypes } from 'react';
 import Collapse, { Panel } from 'rc-collapse';
 import classNames from 'classnames';
 import { Link } from 'react-router';
 import { injectIntl, intlShape, FormattedMessage } from 'react-intl';
 import _ from 'lodash';
 import connectToStores from 'fluxible-addons-react/connectToStores';
+import Joi from 'joi';
+import { injectJoiValidation } from 'm800-user-locale/joi-validation';
 
 import Icon from '../../../main/components/Icon';
 import createCompany from '../actions/createCompany';
@@ -24,11 +26,18 @@ import {
 class CompanyProfile extends Component {
   static propTypes = {
     intl: intlShape.isRequired,
-    currentCompany: React.PropTypes.object,
+    currentCompany: PropTypes.object,
+    // react validation mixin props types
+    errors: PropTypes.object,
+    validate: PropTypes.func,
+    isValid: PropTypes.func,
+    handleValidation: PropTypes.func,
+    getValidationMessages: PropTypes.func,
+    clearValidations: PropTypes.func,
   }
   static contextTypes = {
-    executeAction: React.PropTypes.func.isRequired,
-    params: React.PropTypes.object.isRequired,
+    executeAction: PropTypes.func.isRequired,
+    params: PropTypes.object.isRequired,
   }
   constructor(props) {
     super(props);
@@ -51,6 +60,7 @@ class CompanyProfile extends Component {
     this.onCountryChange = this.onCountryChange.bind(this);
     this.onTimezoneChange = this.onTimezoneChange.bind(this);
     this.onCapabilitiesChange = this.onCapabilitiesChange.bind(this);
+    this.validateField = this.validateField.bind(this);
   }
   onCompanyCodeChange(e) {
     // from input
@@ -97,24 +107,49 @@ class CompanyProfile extends Component {
     }
     this.setState({ capabilities });
   }
-  createCompany() {
-    const companyInfo = {
-      resellerCompanyId: this.props.currentCompany.id,
-      resellerCarrierId: this.props.currentCompany.carrierId,
-      code: this.state.companyCode,
-      name: this.state.companyName,
-      companyType: _.invert(COMPANY_TYPE)[this.state.companyType],
-      paymentType: _.invert(PAYMENT_TYPE)[this.state.paymentType],
-      country: this.state.country,
-      timezone: this.state.timezone,
-      capabilities: this.state.capabilities,
+
+  getValidatorData() {
+    return this.state;
+  }
+
+  validatorTypes() {
+    const { intl: { formatMessage } } = this.props;
+    return {
+      companyCode: Joi.string().required().regex(/^[a-zA-Z0-9]+$/).label(formatMessage(MESSAGES.companyCode)),
+      companyName: Joi.string().required().label(formatMessage(MESSAGES.companyName)),
+      country: Joi.string().required().label(formatMessage(MESSAGES.country)),
+      timezone: Joi.string().required().label(formatMessage(MESSAGES.timezone)),
     };
-    const { executeAction } = this.context;
-    executeAction(createCompany, { data: companyInfo });
+  }
+
+  validateField(field) {
+    return () => {
+      this.props.validate(field);
+    };
+  }
+
+  createCompany() {
+    this.props.validate((error) => {
+      if (!error) {
+        const companyInfo = {
+          resellerCompanyId: this.props.currentCompany.id,
+          resellerCarrierId: this.props.currentCompany.carrierId,
+          code: this.state.companyCode,
+          name: this.state.companyName,
+          companyType: _.invert(COMPANY_TYPE)[this.state.companyType],
+          paymentType: _.invert(PAYMENT_TYPE)[this.state.paymentType],
+          country: this.state.country,
+          timezone: this.state.timezone,
+          capabilities: this.state.capabilities,
+        };
+        const { executeAction } = this.context;
+        executeAction(createCompany, { data: companyInfo });
+      }
+    });
   }
 
   render() {
-    const { intl: { formatMessage } } = this.props;
+    const { intl: { formatMessage }, errors } = this.props;
     const { identity } = this.context.params;
     return (
     <div className="company__new-profile panel">
@@ -156,6 +191,8 @@ class CompanyProfile extends Component {
             onPaymentTypeChange={this.onPaymentTypeChange}
             companyTypeOption={COMPANY_TYPE}
             paymentTypeOption={PAYMENT_TYPE}
+            validateField={this.validateField}
+            errors={errors}
           />
         </Panel>
         <Panel header={formatMessage(MESSAGES.companyDescription)} >
@@ -168,6 +205,8 @@ class CompanyProfile extends Component {
             onCompanyNameChange={this.onCompanyNameChange}
             onCountryChange={this.onCountryChange}
             onTimezoneChange={this.onTimezoneChange}
+            validateField={this.validateField}
+            errors={errors}
           />
         </Panel>
         <Panel header={formatMessage(MESSAGES.companyCapabilities)} >
@@ -183,8 +222,10 @@ class CompanyProfile extends Component {
   }
 }
 
+CompanyProfile = injectIntl(injectJoiValidation(CompanyProfile));
+
 CompanyProfile = connectToStores(CompanyProfile, [ApplicationStore], (context) => ({
   currentCompany: context.getStore(ApplicationStore).getCurrentCompany(),
 }));
 
-export default injectIntl(CompanyProfile);
+export default CompanyProfile;

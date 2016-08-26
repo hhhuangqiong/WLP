@@ -29,6 +29,22 @@ export const MESSAGES = defineMessages({
     id: 'companyCapabilities',
     defaultMessage: 'Company Capabilities',
   },
+  companyCode: {
+    id: 'companyCode',
+    defaultMessage: 'Company Code',
+  },
+  companyName: {
+    id: 'companyName',
+    defaultMessage: 'Company Name',
+  },
+  country: {
+    id: 'country',
+    defaultMessage: 'Country',
+  },
+  timezone: {
+    id: 'timezone',
+    defaultMessage: 'Timezone',
+  },
 });
 
 export const CAPABILITIES = {
