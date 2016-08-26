@@ -36,12 +36,12 @@ class CompanyProfile extends Component {
     clearValidations: PropTypes.func,
   }
   static contextTypes = {
-    executeAction: PropTypes.func.isRequired,
-    params: PropTypes.object.isRequired,
+    executeAction: React.PropTypes.func.isRequired,
+    params: React.PropTypes.object.isRequired,
+    router: React.PropTypes.object.isRequired,
   }
   constructor(props) {
     super(props);
-
     // default values
     this.state = {
       companyCode: '',
@@ -51,6 +51,7 @@ class CompanyProfile extends Component {
       companyType: 'SDK',
       paymentType: 'PRE_PAID',
       capabilities: [],
+      token: Math.random(),
     };
     this.createCompany = this.createCompany.bind(this);
     this.onCompanyCodeChange = this.onCompanyCodeChange.bind(this);
@@ -62,15 +63,23 @@ class CompanyProfile extends Component {
     this.onCapabilitiesChange = this.onCapabilitiesChange.bind(this);
     this.validateField = this.validateField.bind(this);
   }
-  onCompanyCodeChange(e) {
-    // from input
-    const value = e.target.value;
-    this.setState({ companyCode: value });
+  componentWillReceiveProps(nextProps) {
+    const { identity } = this.context.params;
+    if (nextProps.companyToken) {
+      if (nextProps.companyToken === this.state.token) {
+        this.context.router.push(`/${identity}/company/overview`);
+      }
+    }
   }
   onCompanyNameChange(e) {
     // from input
     const value = e.target.value;
     this.setState({ companyName: value });
+  }
+  onCompanyCodeChange(e) {
+    // from input
+    const value = e.target.value;
+    this.setState({ companyCode: value });
   }
   onCompanyTypeChange(value) {
     this.setState({ companyType: value });
@@ -107,19 +116,21 @@ class CompanyProfile extends Component {
     }
     this.setState({ capabilities });
   }
-
-  getValidatorData() {
-    return this.state;
-  }
-
-  validatorTypes() {
-    const { intl: { formatMessage } } = this.props;
-    return {
-      companyCode: Joi.string().required().regex(/^[a-zA-Z0-9]+$/).label(formatMessage(MESSAGES.companyCode)),
-      companyName: Joi.string().required().label(formatMessage(MESSAGES.companyName)),
-      country: Joi.string().required().label(formatMessage(MESSAGES.country)),
-      timezone: Joi.string().required().label(formatMessage(MESSAGES.timezone)),
+  createCompany() {
+    const companyInfo = {
+      resellerCompanyId: this.props.currentCompany.id,
+      resellerCarrierId: this.props.currentCompany.carrierId,
+      token: this.state.token,
+      code: this.state.companyCode,
+      name: this.state.companyName,
+      companyType: this.state.companyType,
+      paymentType: this.state.paymentType,
+      country: this.state.country,
+      timezone: this.state.timezone,
+      capabilities: this.state.capabilities,
     };
+    const { executeAction } = this.context;
+    executeAction(createCompany, companyInfo);
   }
 
   validateField(field) {
@@ -226,6 +237,7 @@ CompanyProfile = injectIntl(injectJoiValidation(CompanyProfile));
 
 CompanyProfile = connectToStores(CompanyProfile, [ApplicationStore], (context) => ({
   currentCompany: context.getStore(ApplicationStore).getCurrentCompany(),
+  companyToken: context.getStore(ApplicationStore).getCompanyToken(),
 }));
 
 export default CompanyProfile;

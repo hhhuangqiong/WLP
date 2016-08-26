@@ -9,6 +9,7 @@ export default function (context, params, done) {
     }
 
     context.dispatch('CREATE_COMPANY_SUCCESS', result);
+    context.dispatch('CREATE_COMPANY_TOKEN', params.token);
     done();
   });
 }

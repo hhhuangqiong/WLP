@@ -32,7 +32,7 @@ Api.prototype.createProvision = function createProvision(params, cb) {
     .post(`${this._getHost()}/api/provisioning`)
     .query({ carrierId: this.getCarrierId() })
     .set('Content-Type', 'application/json')
-    .send(params.data)
+    .send(params)
     .accept('json')
     .end(genericHandler(cb));
 };
