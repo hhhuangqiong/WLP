@@ -1,7 +1,7 @@
 import Q from 'q';
 import { isObject, includes, any, difference, flatten, map } from 'lodash';
 
-import { RESOURCE, CAPABILITY, permission } from './acl-enums';
+import { RESOURCE, CAPABILITY, permission, SERVICE_TYPE, CHARGE_WALLET, PAYMENT_MODE } from './acl-enums';
 
 function flattenPermissions(permissions) {
   return flatten(
@@ -13,7 +13,7 @@ function deriveProhibitions(capabilities) {
   // This defines resource/permission availability depending on capabilities
   // Not sure if this mapping is correct
   const PERMISSION_DEPENDENCIES = {
-    [permission(RESOURCE.GENERAL)]: c => includes(c, CAPABILITY.SERVICE_SDK),
+    [permission(RESOURCE.GENERAL)]: c => !includes(c, CAPABILITY.SERVICE_SDK),
     [permission(RESOURCE.END_USER)]: c => includes(c, CAPABILITY.WALLET_END_USER),
     [permission(RESOURCE.CALL)]: c => any(c, x => /^call/.test(x)),
     [permission(RESOURCE.IM)]: c => includes(c, CAPABILITY.IM),
@@ -28,7 +28,28 @@ function deriveProhibitions(capabilities) {
   return prohibitions;
 }
 
-export function createAclResolver(logger, iamClient, mpsClient) {
+export function createAclResolver(logger, iamClient, provisionHelper) {
+  async function getCapabilities(carrierId) {
+    const item = await provisionHelper.getProvisionByCarrierId(carrierId);
+    if (!item.profile || !item.profile.capabilities) {
+      return [];
+    }
+    const capabilities = item.profile.capabilities;
+    // push those service type and payment type as capability
+    if (SERVICE_TYPE[item.profile.serviceType]) {
+      capabilities.push(SERVICE_TYPE[item.profile.serviceType]);
+    }
+
+    if (PAYMENT_MODE[item.profile.paymentMode]) {
+      capabilities.push(PAYMENT_MODE[item.profile.paymentMode]);
+    }
+    // @TODO chargeWallet is not shown
+    if (CHARGE_WALLET[item.profile.chargeWallet]) {
+      capabilities.push(CHARGE_WALLET[item.profile.chargeWallet]);
+    }
+    return capabilities;
+  }
+
   async function resolve(params) {
     if (!isObject(params)) {
       throw new Error('Expected params to be an object.');
@@ -40,14 +61,22 @@ export function createAclResolver(logger, iamClient, mpsClient) {
       throw new Error('Expected context to contain carrierId');
     }
     /* eslint prefer-const: 0 */
-    const companyId = await mpsClient.getCompanyIdByCarrierId(params.carrierId);
+    const companyId = await provisionHelper.getCompanyIdByCarrierId(params.carrierId);
+    logger.debug('Resolved carrierId to be companyId %s', companyId);
+    // if no companyId, it will be no permission and capabilities
+    if (!companyId) {
+      return {
+        capabilities: [],
+        permissions: [],
+      };
+    }
     let [userPermissions, companyCapabilities] = await Q.all([
       iamClient.getUserPermissions({
         service: 'wlp',
         company: companyId,
         username: params.username,
       }),
-      mpsClient.getCapabilityByCarrierId(params.carrierId),
+      getCapabilities(params.carrierId),
     ]);
     // Flatten user permissions to a single array, e.g. ["resource:read", "resource:create"]
     userPermissions = flattenPermissions(userPermissions);

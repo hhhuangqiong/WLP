@@ -10,8 +10,8 @@ export const CAPABILITY = {
   PLATFORM_IOS: 'platform.ios',
   PLATFORM_WEB: 'platform.web',
 
-  CALL_OFFNET: 'call.offnet_call',
-  CALL_ONNET: 'call.onnet_call',
+  CALL_OFFNET: 'call.offnet',
+  CALL_ONNET: 'call.onnet',
   CALL_MAAII_IN: 'call.maaii_in',
 
   IM: 'im',
@@ -34,6 +34,9 @@ export const CAPABILITY = {
   VSF_ITEM_CREDIT: 'vsf.item.credit',
   VSF_ITEM_CUSTOMIZED: 'vsf.item.customized',
   VSF_ITEM_STICKER: 'vsf.item.sticker',
+
+  PAYMENT_PRE_PAID: 'payment.pre_paid',
+  PAYMENT_POST_PAID: 'payment.post_paid',
 };
 
 export const CAPABILITIES = Object.values(CAPABILITY);
@@ -42,7 +45,7 @@ export const RESOURCE = {
   COMPANY: 'company',
   USER: 'user',
   ROLE: 'role',
-  GENERAL: 'wlp:general',
+  GENERAL: 'wlp:generalOverview',
   END_USER: 'wlp:endUser',
   TOP_UP: 'wlp:topUp',
   VSF: 'wlp:vsf',
@@ -72,3 +75,19 @@ export function permission(resource, action = ACTION.READ) {
   }
   return `${resource}:${action}`;
 }
+
+export const SERVICE_TYPE = {
+  SDK: CAPABILITY.SERVICE_SDK,
+  WHITE_LABEL: CAPABILITY.SERVICE_WHITE_LABEL,
+};
+
+export const CHARGE_WALLET = {
+  WALLET_END_USER: CAPABILITY.WALLET_END_USER,
+  WALLET_COMPANY: CAPABILITY.WALLET_COMPANY,
+  WALLET_OCS_INTEGRATION: CAPABILITY.WALLET_CUSTOMER_OCS_INTEGRATION,
+};
+
+export const PAYMENT_MODE = {
+  PRE_PAID: CAPABILITY.PAYMENT_PRE_PAID,
+  POST_PAID: CAPABILITY.PAYMENT_POST_PAID,
+};

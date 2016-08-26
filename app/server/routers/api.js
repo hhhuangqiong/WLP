@@ -1,10 +1,8 @@
 import { Router } from 'express';
 import nconf from 'nconf';
 
-import * as auth from '../routes/auth';
 import * as carriers from '../routes/carriers';
 import * as companies from '../routes/companies';
-import * as authority from '../routes/authority';
 import * as accounts from '../routes/accounts';
 import * as provision from '../routes/provision';
 
@@ -23,7 +21,6 @@ const roleController = fetchDep(nconf.get('containerName'), 'RoleController');
 // eslint:max-len 0
 router
   .use(cacheControl)
-  .get('/session', auth.getSession)
   .get('/carriers/:carrierId/company',
     carriers.getCompany,
   )
@@ -35,7 +32,6 @@ router
     authorize(permission(RESOURCE.GENERAL)),
     carriers.getOverviewDetailStats,
   ])
-  .get('/carriers/:carrierId/authority', authority.getCapabilityList)
   .get('/carriers/:carrierId/users', [
     authorize(permission(RESOURCE.END_USER)),
     carriers.getUsers,
@@ -149,75 +145,80 @@ router
     authorize(permission(RESOURCE.VERIFICATION_SDK)),
     carriers.getVerificationStatistics,
   ])
-  .get('/carriers/:carrierId/info', [
-    carriers.getCompany,
-  ])
   .get('/carriers/:carrierId/applicationIds', [
-    authorize('company:read'),
+    authorize(permission(RESOURCE.VERIFICATION_SDK)),
     carriers.getApplicationIds,
   ])
   .get('/carriers/:carrierId/applications', [
-    authorize('company:read'),
+    authorize(permission(RESOURCE.VERIFICATION_SDK)),
     carriers.getApplications,
   ])
+  // @expect to use on both update and create, but fail
   .get('/carriers/:carrierId/preset', [
+    authorize(permission(RESOURCE.COMPANY, ACTION.UPDATE)),
     carriers.getPreset,
   ])
   .get('/accounts', [
+    authorize(permission(RESOURCE.USER)),
     accounts.getAccounts,
   ])
   .post('/accounts', [
+    authorize(permission(RESOURCE.USER, ACTION.CREATE)),
     accounts.createAccount,
   ])
-  .get('/accounts/accessibleCompanies', [
-    accounts.getAccessibleCompanies,
-  ])
   .get('/accounts/:id', [
-    authorize('user:read'),
+    authorize(permission(RESOURCE.USER)),
     accounts.getAccount,
   ])
   .put('/accounts/:id', [
-    authorize('user:update'),
+    authorize(permission(RESOURCE.USER, ACTION.UPDATE)),
     accounts.updateAccount,
   ])
   .delete('/accounts/:id', [
-    authorize('user:delete'),
+    authorize(permission(RESOURCE.USER, ACTION.DELETE)),
     accounts.deleteAccount,
   ])
   .get('/companies/:companyId/profile', [
-    authorize('company:read'),
+    authorize(permission(RESOURCE.COMPANY)),
     companies.getCompany,
   ])
+  // it will be used in the account page to get the possible companies under and assign roles
   .get('/companies/:companyId/managingCompanies', [
+    authorize(permission(RESOURCE.USER)),
     companies.getManagingCompanies,
   ])
   .put('/companies/:companyId/profile', [
-    authorize('company:update'),
+    authorize(permission(RESOURCE.COMPANY, ACTION.UPDATE)),
     companies.updateCompany,
   ])
+  // @TODO no such use case and function
   .post('/companies/:companyId/suspension', [
+    authorize(permission(RESOURCE.COMPANY, ACTION.UPDATE)),
     companies.deactivateCompany,
   ])
+  // @TODO no such use case and function
   .put('/companies/:companyId/suspension', [
+    authorize(permission(RESOURCE.COMPANY, ACTION.UPDATE)),
     companies.reactivateCompany,
   ])
   .get('/companies/:companyId/roles', [
+    authorize(permission(RESOURCE.ROLE)),
     companies.getCompanyRoles,
   ])
   .post('/provisioning', [
-    authorize('company:write'),
+    authorize(permission(RESOURCE.COMPANY, ACTION.CREATE)),
     provision.createProvision,
   ])
   .get('/provisioning', [
-    authorize('company:read'),
+    authorize(permission(RESOURCE.COMPANY)),
     provision.getProvisions,
   ])
   .get('/provisioning/:provisionId', [
-    authorize('company:read'),
+    authorize(permission(RESOURCE.COMPANY)),
     provision.getProvision,
   ])
   .put('/provisioning/:provisionId', [
-    authorize('company:write'),
+    authorize(permission(RESOURCE.COMPANY, ACTION.UPDATE)),
     provision.putProvision,
   ])
   .get('/roles', [

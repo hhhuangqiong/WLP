@@ -30,7 +30,7 @@ const redisClient = fetchDep(nconf.get('containerName'), 'RedisClient');
 const vsfStatsRequest = fetchDep(nconf.get('containerName'), 'VsfStatsRequest');
 const overviewStatsRequest = fetchDep(nconf.get('containerName'), 'OverviewStatsRequest');
 const provisionHelper = fetchDep(nconf.get('containerName'), 'ProvisionHelper');
-const iamClient = fetchDep(nconf.get('containerName'), 'IamServiceClient');
+const iamHelper = fetchDep(nconf.get('containerName'), 'IamHelper');
 const applicationRequest = fetchDep(nconf.get('containerName'), 'ApplicationRequest');
 
 import SmsRequest from '../../lib/requests/dataProviders/SMS';
@@ -1895,10 +1895,7 @@ async function getCompany(req, res, next) {
     return;
   }
   try {
-    const companyId = await provisionHelper.getCompanyIdByCarrierId(req.params.carrierId);
-    const company = await iamClient.getCompany({ id: companyId });
-    // append the carrier into the company
-    company.carrierId = req.params.carrierId;
+    const company = iamHelper.getCompanyByCarrierId(req.params.carrierId);
     res.json(company);
   } catch (ex) {
     next(ex);

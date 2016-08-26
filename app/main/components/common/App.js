@@ -1,5 +1,4 @@
 import { PropTypes, Component } from 'react';
-import getAuthorityList from '../../../modules/authority/actions/getAuthorityList';
 
 /**
  * this is the entry point of the whole React application,
@@ -39,4 +38,3 @@ App.propTypes = {
 };
 
 export default App;
-

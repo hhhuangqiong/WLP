@@ -1,20 +1,30 @@
+import { ArgumentError } from 'common-errors';
+import _ from 'lodash';
+import nconf from 'nconf';
+
+import { fetchDep } from '../../server/utils/bottle';
+
 const debug = require('debug')('app:actions/getAccessibleCompanies');
 
 export default function getAccessibleCompanies(context, params, done) {
-  debug('action start');
+  debug('action start get accessible company');
+  const iamHelper = fetchDep(nconf.get('containerName'), 'IamHelper');
 
-  const { apiClient } = context;
+  const user = _.get(params, 'req.user');
+  const affiliatedCompany = _.get(params, 'req.user.affiliatedCompany');
 
-  context.dispatch('FETCH_MANAGING_COMPANIES_START');
+  // if no user, it will manage no company
+  if (!user) {
+    context.dispatch('FETCH_MANAGING_COMPANIES_FAILURE', new ArgumentError('user'));
+    done();
+    return;
+  }
 
-  apiClient
-    .get('accounts/accessibleCompanies')
-    .then(companies => {
-      context.dispatch('FETCH_MANGAING_COMPANIES_SUCCESS', companies);
-      done();
-    })
-    .catch(err => {
-      context.dispatch('FETCH_MANAGING_COMPANIES_FAILURE', err);
-      done();
-    });
+  iamHelper.getManagingCompanies(user, affiliatedCompany).then(companies => {
+    context.dispatch('FETCH_MANGAING_COMPANIES_SUCCESS', companies);
+    done();
+  }).catch(err => {
+    context.dispatch('FETCH_MANAGING_COMPANIES_FAILURE', err);
+    done();
+  });
 }

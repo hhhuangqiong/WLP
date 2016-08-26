@@ -28,8 +28,20 @@ export default function provisionHelper(mpsClient) {
     return mpsClient.putProvision(command);
   }
 
-  function getProvisionById(command) {
-    return mpsClient.getProvisionById(command);
+  async function getProvisionById(command) {
+    const provisionResult = mpsClient.getProvisionById(command);
+    if (!provisionResult.items.length) {
+      return {};
+    }
+    return provisionResult.items[0];
+  }
+
+  async function getProvisionByCarrierId(id) {
+    const provisionResult = await getProvision({ carrierId: id });
+    if (!provisionResult.items.length) {
+      return {};
+    }
+    return provisionResult.items[0];
   }
 
   function getPreset(query) {
@@ -60,17 +72,10 @@ export default function provisionHelper(mpsClient) {
   async function getCarrierIdsByCompanyIds(ids) {
     // since it is heavy to check local and send every time
     // now send it server directly and map it afterward.
-    await getProvision({ companyId: ids.toString() });
+    // @TODO support larger size
+    await getProvision({ companyId: ids.toString(), pageSize: 50 });
     // expect to be loaded into local carrierIdMapping
     return _.map(ids, id => carrierIdMapping[id] || null);
-  }
-
-  async function getCapabilityByCarrierId(id) {
-    const result = await getProvision({ carrierId: id });
-    if (!result.items.length) {
-      return [];
-    }
-    return result.items[0].profile.capabilities || [];
   }
 
   return {
@@ -80,8 +85,8 @@ export default function provisionHelper(mpsClient) {
     getCarrierIdByCompanyId,
     getCompanyIdByCarrierId,
     getCarrierIdsByCompanyIds,
-    getCapabilityByCarrierId,
     putProvision,
     getProvisionById,
+    getProvisionByCarrierId,
   };
 }

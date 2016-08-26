@@ -10,6 +10,9 @@ class Permit extends Component {
   }
 
   hasAccess() {
+    if (!this.props.user) {
+      return false;
+    }
     const permissions = this.props.user.permissions || [];
     return permissions.indexOf(this.props.permission) >= 0;
   }

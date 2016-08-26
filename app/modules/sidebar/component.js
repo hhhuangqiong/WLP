@@ -12,7 +12,6 @@ const Sidebar = props => {
     carrierId: identity,
     currentCompany,
     handleOffCanvas,
-    isAuthorityReady,
     isOffCanvas,
     logo: logoSrc,
     intl,
@@ -37,7 +36,7 @@ const Sidebar = props => {
           </a>
         </li>
         {
-          isAuthorityReady ? navSections.map((section, idx) => (
+          navSections.map((section, idx) => (
             <Permit permission={section.permission} key={idx}>
               <li key={idx}>
                 <Link
@@ -53,7 +52,7 @@ const Sidebar = props => {
                 </Link>
               </li>
             </Permit>
-          )) : null
+          ))
         }
       </ul>
     </div>
@@ -64,7 +63,6 @@ Sidebar.propTypes = {
   carrierId: PropTypes.string.isRequired,
   currentCompany: PropTypes.object.isRequired,
   handleOffCanvas: PropTypes.func.isRequired,
-  isAuthorityReady: PropTypes.bool.isRequired,
   isOffCanvas: PropTypes.bool.isRequired,
   logo: PropTypes.string.isRequired,
 };
