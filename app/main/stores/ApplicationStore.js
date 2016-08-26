@@ -4,6 +4,7 @@ const ApplicationStore = createStore({
   storeName: 'ApplicationStore',
 
   handlers: {
+    CREATE_COMPANY_TOKEN: 'handleCompanyToken',
     FETCH_MANGAING_COMPANIES_SUCCESS: 'loadedCompanies',
     SIGN_OUT: 'resetCompanies',
     FETCH_COMPANY_INFO_SUCCESS: 'loadedCurrentCompany',
@@ -53,8 +54,17 @@ const ApplicationStore = createStore({
     this.emitChange();
   },
 
+  handleCompanyToken(token) {
+    this.companyToken = token;
+    this.emitChange();
+  },
+
   getAppIds() {
     return this.appIds;
+  },
+
+  getCompanyToken() {
+    return this.companyToken;
   },
 
   getDefaultAppId() {
@@ -72,6 +82,7 @@ const ApplicationStore = createStore({
       managingCompanies: this.managingCompanies,
       appIds: this.appIds,
       defaultAppId: this.defaultAppId,
+      companyToken: this.companyToken,
     };
   },
 
@@ -85,6 +96,7 @@ const ApplicationStore = createStore({
     this.managingCompanies = state.managingCompanies;
     this.appIds = state.appIds;
     this.defaultAppId = state.defaultAppId;
+    this.companyToken = state.companyToken;
   },
 });
 

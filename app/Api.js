@@ -44,7 +44,7 @@ Api.prototype.createProvision = function createProvision(params, cb) {
   superagent
     .post(`${this._getHost()}/api/provisioning`)
     .set('Content-Type', 'application/json')
-    .send(params.data)
+    .send(params)
     .accept('json')
     .end(genericHandler(cb));
 };
