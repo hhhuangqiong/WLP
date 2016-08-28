@@ -9,6 +9,11 @@
             border-bottom: 1px solid #e5e5e5;
             padding: rem-calc(10) rem-calc(20);
             overflow: hidden;
+            tbody {
+              tr {
+                cursor: pointer;
+              }
+            }
             a {
                 display: flex;
                 align-items: center;
