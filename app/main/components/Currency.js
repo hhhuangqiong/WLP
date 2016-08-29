@@ -37,7 +37,7 @@ export function getCurrencyTranslation(currency, formatMessage) {
  * will still generate US$ as translated content,
  * therefore the logic of translating currency code will be separated from the FormattedNumber component
  */
-export default function Currency({ currencyCode, amount, intl }) {
+const Currency = ({ currencyCode, amount, intl }) => {
   const currency = converter.getCurrencyById(currencyCode.toString());
 
   const unit = getCurrencyTranslation(currency.code, intl.formatMessage);
@@ -53,7 +53,7 @@ export default function Currency({ currencyCode, amount, intl }) {
       <span> {unit}</span>
     </span>
   );
-}
+};
 
 Currency.propTypes = {
   currencyCode: PropTypes.number.isRequired,

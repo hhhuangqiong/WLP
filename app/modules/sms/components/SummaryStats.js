@@ -78,7 +78,7 @@ function getLineChartXAxis(timeframe) {
   };
 }
 
-export default function SummaryStats({
+const SummaryStats = ({
   intl,
   isLoading,
   onChange,
@@ -86,7 +86,7 @@ export default function SummaryStats({
   summaryData,
   lineChartData,
   geographicChartData,
-}) {
+}) => {
   const { formatMessage } = intl;
   const lastUpdate = (
     <LastUpdateTime
@@ -158,7 +158,7 @@ export default function SummaryStats({
                   return `
                   <div style="text-align: center">
                   <div>
-                    ${dateLocale.format(moment(this.x).local(),TOOLTIP_TIME_FORMAT)}
+                    ${dateLocale.format(moment(this.x).local(), TOOLTIP_TIME_FORMAT)}
                   </div>
                   <div>${this.y.toLocaleString()}</div>
                   <div>${formatMessage(MESSAGES.smsUnitSent)}</div>
@@ -205,7 +205,7 @@ export default function SummaryStats({
       </Panel.Body>
     </Panel.Wrapper>
   );
-}
+};
 
 SummaryStats.propTypes = {
   intl: PropTypes.object.isRequired,

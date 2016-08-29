@@ -74,14 +74,14 @@ function getLineChartXAxis(timeframe) {
   };
 }
 
-export default function VsfSummaryStats({
+const VsfSummaryStats = ({
   intl,
   isLoading,
   onChange,
   timeFrame,
   stats,
   lineChartData,
-}) {
+}) => {
   const { formatMessage } = intl;
   const {
     voiceSticker,
@@ -190,14 +190,14 @@ export default function VsfSummaryStats({
                           </div>
                         `;
                 }}
-                />
+              />
             </div>
           </div>
         </div>
       </Panel.Body>
     </Panel.Wrapper>
   );
-}
+};
 
 VsfSummaryStats.propTypes = {
   intl: PropTypes.object.isRequired,
