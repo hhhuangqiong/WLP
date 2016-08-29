@@ -1,7 +1,8 @@
 export default function (context, params) {
+  const { token, ...companyProfile } = params;
   context.dispatch('UPDATE_COMPANY_PROFILE_START');
 
-  context.api.updateCompanyProfile(params, function (err, result) {
+  context.api.updateCompanyProfile(companyProfile, function (err, result) {
     if (err) {
       debug('Failed');
       context.dispatch('UPDATE_COMPANY_PROFILE_FAILURE', err);
@@ -9,7 +10,7 @@ export default function (context, params) {
     }
 
     debug('Success');
-    context.dispatch('UPDATE_COMPANY_PROFILE_SUCCESS', result);
+    context.dispatch('UPDATE_COMPANY_PROFILE_SUCCESS', token);
 
     // if carrierId is changed
     // change the current Url to new carrierId

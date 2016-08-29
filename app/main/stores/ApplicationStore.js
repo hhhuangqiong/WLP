@@ -4,7 +4,6 @@ const ApplicationStore = createStore({
   storeName: 'ApplicationStore',
 
   handlers: {
-    CREATE_COMPANY_TOKEN: 'handleCompanyToken',
     FETCH_MANGAING_COMPANIES_SUCCESS: 'loadedCompanies',
     SIGN_OUT: 'resetCompanies',
     FETCH_COMPANY_INFO_SUCCESS: 'loadedCurrentCompany',
@@ -51,11 +50,6 @@ const ApplicationStore = createStore({
 
   handleLanguageChanged(langCode) {
     this.currentLanguage = langCode;
-    this.emitChange();
-  },
-
-  handleCompanyToken(token) {
-    this.companyToken = token;
     this.emitChange();
   },
 

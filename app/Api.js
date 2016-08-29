@@ -50,9 +50,21 @@ Api.prototype.getProvisions = function getProvisions(params, cb) {
     .end(genericHandler(cb));
 };
 
+Api.prototype.updateProvision = function updateProvision(params, cb) {
+  const { provisionId, ...restCompanyInfo } = params;
+  superagent
+    .put(`${this._getHost()}/api/provisioning/${provisionId}`)
+    .query({ carrierId: this.getCarrierId() })
+    .set('Content-Type', 'application/json')
+    .send(restCompanyInfo)
+    .accept('json')
+    .end(genericHandler(cb));
+};
+
+
 Api.prototype.getProvision = function getProvision(params, cb) {
   superagent
-    .get(`${this._getHost()}/api/provisioning/${params.provisionId}`)
+    .get(`${this._getHost()}/api/provisioning/${params}`)
     .query({ carrierId: this.getCarrierId() })
     .accept('json')
     .end(genericHandler(cb));
@@ -75,11 +87,12 @@ Api.prototype.getCarrierManagingCompanies = function getCarrierManagingCompanies
 };
 
 Api.prototype.updateCompanyProfile = function updateCompanyProfile(params, cb) {
+  const { companyId, ...restCompanyInfo } = params;
   superagent
-    .put(`${this._getHost()}/api/companies/${params.companyId}/profile`)
+    .put(`${this._getHost()}/api/companies/${companyId}/profile`)
     .query({ carrierId: this.getCarrierId() })
     .accept('json')
-    .send(params.data)
+    .send(restCompanyInfo)
     .end(genericHandler(cb));
 };
 

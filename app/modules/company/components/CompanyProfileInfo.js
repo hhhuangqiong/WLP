@@ -45,12 +45,13 @@ const CompanyProfileInfo = (props) => {
             value={companyCode}
             onChange={onCompanyCodeChange}
             onBlur={validateField('companyCode')}
-            disabled={disabled}
+            disabled={disabled ? disabled.companyCode : false}
           />
           {renderErrorMessages(errors.companyCode)}
         </div>
       </div>
       <div className="row">
+
         <div className="large-10 columns">
           <label>
             <FormattedMessage id="companyType" defaultMessage="Company Type" />:
@@ -94,7 +95,7 @@ CompanyProfileInfo.propTypes = {
   onCompanyCodeChange: PropTypes.func,
   onCompanyTypeChange: PropTypes.func,
   onPaymentTypeChange: PropTypes.func,
-  disabled: PropTypes.bool,
+  disabled: PropTypes.object.isRequired,
   validateField: PropTypes.func,
   errors: PropTypes.object,
 };

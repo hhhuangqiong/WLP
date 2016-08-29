@@ -123,7 +123,7 @@ CompanyDescription.propTypes = {
       label: PropTypes.string,
     })
   ),
-  disabled: PropTypes.bool,
+  disabled: PropTypes.bool.isRequired,
   onCountryChange: PropTypes.func,
   onCompanyNameChange: PropTypes.func,
   onTimezoneChange: PropTypes.func,

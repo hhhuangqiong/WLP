@@ -14,6 +14,7 @@ import CompanyProfileInfo from './CompanyProfileInfo';
 import CompanyDescription from './CompanyDescription';
 import CompanyCapabilities from './CompanyCapabilities';
 import ApplicationStore from '../../../main/stores/ApplicationStore';
+import CompanyStore from '../stores/CompanyStore';
 import {
   COUNTRIES,
   TIMEZONE,
@@ -116,29 +117,23 @@ class CompanyProfile extends Component {
     }
     this.setState({ capabilities });
   }
-  createCompany() {
-    const companyInfo = {
-      resellerCompanyId: this.props.currentCompany.id,
-      resellerCarrierId: this.props.currentCompany.carrierId,
-      token: this.state.token,
-      code: this.state.companyCode,
-      name: this.state.companyName,
-      companyType: this.state.companyType,
-      paymentType: this.state.paymentType,
-      country: this.state.country,
-      timezone: this.state.timezone,
-      capabilities: this.state.capabilities,
-    };
-    const { executeAction } = this.context;
-    executeAction(createCompany, companyInfo);
+  getValidatorData() {
+    return this.state;
   }
-
+  validatorTypes() {
+    const { intl: { formatMessage } } = this.props;
+    return {
+      companyCode: Joi.string().required().regex(/^[a-zA-Z0-9]+$/).label(formatMessage(MESSAGES.companyCode)),
+      companyName: Joi.string().required().label(formatMessage(MESSAGES.companyName)),
+      country: Joi.string().required().label(formatMessage(MESSAGES.country)),
+      timezone: Joi.string().required().label(formatMessage(MESSAGES.timezone)),
+    };
+  }
   validateField(field) {
     return () => {
       this.props.validate(field);
     };
   }
-
   createCompany() {
     this.props.validate((error) => {
       if (!error) {
@@ -147,14 +142,15 @@ class CompanyProfile extends Component {
           resellerCarrierId: this.props.currentCompany.carrierId,
           code: this.state.companyCode,
           name: this.state.companyName,
-          companyType: _.invert(COMPANY_TYPE)[this.state.companyType],
-          paymentType: _.invert(PAYMENT_TYPE)[this.state.paymentType],
+          companyType: this.state.companyType,
+          paymentType: this.state.paymentType,
           country: this.state.country,
           timezone: this.state.timezone,
           capabilities: this.state.capabilities,
+          token: this.state.token,
         };
         const { executeAction } = this.context;
-        executeAction(createCompany, { data: companyInfo });
+        executeAction(createCompany, companyInfo);
       }
     });
   }
@@ -162,6 +158,11 @@ class CompanyProfile extends Component {
   render() {
     const { intl: { formatMessage }, errors } = this.props;
     const { identity } = this.context.params;
+    const profileAccess = {
+      companyCode: false,
+      companyType: false,
+      paymentType: false,
+    };
     return (
     <div className="company__new-profile panel">
       <div className="header inline-with-space">
@@ -204,6 +205,7 @@ class CompanyProfile extends Component {
             paymentTypeOption={PAYMENT_TYPE}
             validateField={this.validateField}
             errors={errors}
+            disable={profileAccess}
           />
         </Panel>
         <Panel header={formatMessage(MESSAGES.companyDescription)} >
@@ -218,6 +220,7 @@ class CompanyProfile extends Component {
             onTimezoneChange={this.onTimezoneChange}
             validateField={this.validateField}
             errors={errors}
+            disable= "false"
           />
         </Panel>
         <Panel header={formatMessage(MESSAGES.companyCapabilities)} >
@@ -225,6 +228,7 @@ class CompanyProfile extends Component {
             capabilities={CAPABILITIES}
             capabilitiesChecked={this.state.capabilities}
             onCapabilitiesChange={this.onCapabilitiesChange}
+            disable= "false"
           />
         </Panel>
       </Collapse>
@@ -235,9 +239,9 @@ class CompanyProfile extends Component {
 
 CompanyProfile = injectIntl(injectJoiValidation(CompanyProfile));
 
-CompanyProfile = connectToStores(CompanyProfile, [ApplicationStore], (context) => ({
+CompanyProfile = connectToStores(CompanyProfile, [ApplicationStore, CompanyStore], (context) => ({
   currentCompany: context.getStore(ApplicationStore).getCurrentCompany(),
-  companyToken: context.getStore(ApplicationStore).getCompanyToken(),
+  companyToken: context.getStore(CompanyStore).getCompanyToken(),
 }));
 
 export default CompanyProfile;

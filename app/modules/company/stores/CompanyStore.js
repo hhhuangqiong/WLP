@@ -22,13 +22,14 @@ const CompanyStore = createStore({
   storeName: 'CompanyStore',
 
   handlers: {
+    CREATE_COMPANY_SUCCESS: 'handleCompanyCreated',
     FETCH_COMPANIES_SUCCESS: 'receiveCompanies',
     FETCH_COMPANY_SUCCESS: 'receiveCompany',
     FETCH_COMPANY_APPLICATION_SUCCESS: 'receiveCompanyApplications',
     FETCH_COMPANY_SERVICE_SUCCESS: 'receiveCompanyService',
     FETCH_COMPANY_DETAIL_SUCCESS: 'receiveCompanyDetail',
     FETCH_PARENT_COMPANIES_SUCCESS: 'receiveParentCompanies',
-    CREATE_COMPANY_SUCCESS: 'handleCompanyCreated',
+    UPDATE_COMPANY_SUCCESS: 'handleProvisionUpdated',
     UPDATE_COMPANY_PROFILE_SUCCESS: 'handleCompanyUpdated',
     UPDATE_COMPANY_SERVICE_SUCCESS: 'handleCompanyServiceUpdated',
     RESET_COMPANY: 'handleCompanyReset',
@@ -89,26 +90,22 @@ const CompanyStore = createStore({
     return this.capabilitiesAccess;
   },
 
+  getCompanyToken() {
+    return this.companyToken;
+  },
+
   handleCompanyReset() {
     this.currentCompany = _.clone(defaultCompanyObject, true);
     this.emitChange();
   },
 
-  handleCompanyCreated(company) {
-    this.companies[company.carrierId] = company;
+  handleCompanyCreated(token) {
+    this.companyToken = token;
     this.emitChange();
   },
 
-  handleCompanyUpdated({ company, carrierId }) {
-    if (company.carrierId !== carrierId) {
-      // if carrierId is changed
-      // update the companies object key
-      this.companies[company.carrierId] = company;
-      delete this.companies[carrierId];
-    } else {
-      this.companies[carrierId] = company;
-    }
-
+  handleCompanyUpdated(token) {
+    this.companyToken = token;
     this.emitChange();
   },
 
@@ -120,6 +117,11 @@ const CompanyStore = createStore({
 
   handleCompanyStatusChanged({ carrierId, status }) {
     this.companies[carrierId].status = status;
+    this.emitChange();
+  },
+
+  handleProvisionUpdated(token) {
+    this.companyToken = token;
     this.emitChange();
   },
 
@@ -154,21 +156,32 @@ const CompanyStore = createStore({
 
   receiveCompanyDetail(detail) {
     this.companyDetail = detail;
+    this.profileAccess = {};
+    // if true means the the input is disbale,while false meeans can be edited
+    this.profileAccess.companyCode = true;
+    this.profileAccess.companyType = true;
+    this.profileAccess.paymentType = true;
+    this.descriptionAccess = true;
+    this.capabilitiesAccess = true;
     switch (this.companyDetail.status) {
       case 'IN_PROGRESS':
-        this.profileAccess = true;
-        this.descriptionAccess = true;
-        this.capabilitiesAccess = true;
         break;
-      case 'ACTIVE':
-        this.profileAccess = true;
+      case 'COMPLETE':
         this.descriptionAccess = false;
-        this.capabilitiesAccess = true;
+        break;
+      case 'ERROR':
+        if (this.companyDetail.error.companyCode) {
+          this.profileAccess.companyCode = false;
+        }
+        if (this.companyDetail.error.companyType) {
+          this.profileAccess.companyType = false;
+        }
+        if (this.companyDetail.error.paymentType) {
+          this.profileAccess.paymentType = false;
+        }
         break;
       default:
-        this.profileAccess = true;
-        this.descriptionAccess = true;
-        this.capabilitiesAccess = true;
+        break;
     }
     this.emitChange();
   },
