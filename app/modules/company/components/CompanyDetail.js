@@ -13,10 +13,11 @@ import {
   UPDATING,
 } from '../constants/status';
 
-const CompanyDetail = (props) => {
-  const { companyName, domain, createDate, status } = props;
+const CompanyDetail = (props, context) => {
+  const { identity } = context.params;
+  const { id, companyName, domain, createDate, status } = props;
   return (
-    <tr key={companyName}>
+    <tr key={companyName} onClick={() => context.router.push(`/${identity}/company/${id}/edit`)}>
       <td>{companyName}</td>
       <td>{domain}</td>
       <td>{dateLocale.format(moment(createDate), SHORT_DATE_FORMAT)}</td>
@@ -61,10 +62,14 @@ const CompanyDetail = (props) => {
 
 export const CompanyDetailShape = PropTypes.shape(CompanyDetail.propTypes);
 CompanyDetail.propTypes = {
-  companyName: PropTypes.string,
-  domain: PropTypes.string,
-  createDate: PropTypes.string,
-  status: PropTypes.string,
+  id: PropTypes.string.isRequired,
+  companyName: PropTypes.string.isRequired,
+  domain: PropTypes.string.isRequired,
+  createDate: PropTypes.string.isRequired,
+  status: PropTypes.string.isRequired,
 };
-
+CompanyDetail.contextTypes = {
+  params: PropTypes.object.isRequired,
+  router: PropTypes.object.isRequired,
+};
 export default CompanyDetail;
