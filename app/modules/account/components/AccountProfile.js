@@ -4,6 +4,7 @@ import React, { PropTypes, Component } from 'react';
 import _ from 'lodash';
 import { injectIntl } from 'react-intl';
 import Joi from 'joi';
+import { injectJoiValidation } from 'm800-user-locale/joi-validation';
 
 import ApplicationStore from '../../../main/stores/ApplicationStore';
 import AccountStore from '../stores/AccountStore';
@@ -13,21 +14,16 @@ import createAccount from '../actions/createAccount';
 import updateAccount from '../actions/updateAccount';
 import deleteAccount from '../actions/deleteAccount';
 import fetchAccount from '../actions/fetchAccount';
-import redirectToAccountHome from '../actions/redirectToAccountHome';
-import redirectedToAccountHome from '../actions/redirectedToAccountHome';
 import resendCreatePassword from '../actions/resendCreatePassword';
 
 import AccountForm from './AccountForm';
 import AccountActionBar from './AccountActionBar';
 import AccountInfo from './AccountInfo';
 
-const NAME_VALIDATION = Joi.string().min(1).max(30).required().label('Name');
-const EMAIL_VALIDATION = Joi.string().email().required().label('Email');
-
 class AccountProfile extends Component {
   static propTypes = {
     intl: PropTypes.object.isRequired,
-    currentCompany: PropTypes.object,
+    currentCompany: PropTypes.object.isRequired,
     managingCompanies: PropTypes.array.isRequired,
     account: PropTypes.shape({
       lastName: PropTypes.string,
@@ -36,9 +32,16 @@ class AccountProfile extends Component {
       createdAt: PropTypes.string,
       roles: PropTypes.array,
       affiliatedCompany: PropTypes.string,
-      isVerified: PropTypes.boolean,
+      isVerified: PropTypes.bool,
     }),
+    actionToken: PropTypes.number,
     mode: PropTypes.string.isRequired,
+    errors: PropTypes.object,
+    validate: PropTypes.func,
+    isValid: PropTypes.func,
+    handleValidation: PropTypes.func,
+    getValidationMessages: PropTypes.func,
+    clearValidations: PropTypes.func,
   }
 
   static contextTypes = {
@@ -46,7 +49,7 @@ class AccountProfile extends Component {
     router: PropTypes.object.isRequired,
     params: PropTypes.shape({
       identity: PropTypes.string.isRequired,
-      accountId: PropTypes.string.isRequired,
+      accountId: PropTypes.string,
     }),
     location: PropTypes.object.isRequired,
   }
@@ -55,10 +58,14 @@ class AccountProfile extends Component {
     super(props);
     // default values for state
     this.state = {
+      firstName: '',
+      lastName: '',
+      email: '',
       deleteDialogOpened: false,
       selectedCompany: '',
       selectedRoles: [],
       currentRoles: {},
+      accountActiontoken: Math.random(),
     };
     this.handleFirstNameChange = this.handleFirstNameChange.bind(this);
     this.handleLastNameChange = this.handleLastNameChange.bind(this);
@@ -84,19 +91,43 @@ class AccountProfile extends Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    const { accountId, identity } = this.context.params;
-    if (nextProps.redirectToAccountHome) {
-      this.context.router.push(`/${identity}/account`);
-      this.context.executeAction(redirectedToAccountHome);
+    const { accountId } = this.context.params;
+    // callback from the previous action and redirect back to the account list page
+    if (this.state.accountActiontoken && this.state.accountActiontoken === nextProps.accountActionToken) {
+      this.redirectToHome();
       return;
     }
+
+    // fetch account since the account id is different from the path
     if (nextProps.params.accountId && nextProps.params.accountId !== accountId) {
       this.context.executeAction(fetchAccount, { id: nextProps.params.accountId });
+      return;
     }
-    this.updateState(nextProps);
+
+    // no need update the state the when the account is the same
+    if (this.props.account === nextProps.account) {
+      return;
+    }
+
+    // update the account
+    this.updateAccountState(nextProps);
   }
 
-  updateState(props) {
+  getValidatorData() {
+    const { firstName, lastName, email } = this.state;
+    return {
+      firstName,
+      lastName,
+      email,
+    };
+  }
+
+  redirectToHome() {
+    const { identity } = this.context.params;
+    this.context.router.push(`/${identity}/account`);
+  }
+
+  updateAccountState(props) {
     this.state.firstName = props.account.firstName;
     this.state.lastName = props.account.lastName;
     this.state.email = props.account.email;
@@ -111,89 +142,106 @@ class AccountProfile extends Component {
         this.state.currentRoles[role.company].push(role.id);
       });
     }
+    props.clearValidations();
+    this.state.accountActiontoken = Math.random();
+  }
+
+  validatorTypes() {
+    const { intl: { formatMessage } } = this.props;
+    return {
+      firstName: Joi.string().max(30).required().label(formatMessage(MESSAGES.firstName)),
+      lastName: Joi.string().max(30).required().label(formatMessage(MESSAGES.lastName)),
+      email: Joi.string().email().required().label(formatMessage(MESSAGES.email)),
+    };
   }
 
   handleFirstNameChange(e) {
     e.preventDefault();
-    if (this.state.firstNameError) this.validateFirstName(e);
     this.setState({ firstName: e.target.value });
+    if (this.props.errors.firstName) this.validateFirstName();
   }
 
   handleLastNameChange(e) {
     e.preventDefault();
-    if (this.state.lastNameError) this.validateLastName(e);
     this.setState({ lastName: e.target.value });
+    if (this.props.errors.lastName) this.validateLastName();
   }
 
   handleEmailChange(e) {
     e.preventDefault();
-    if (this.state.emailError) this.validateEmail(e);
     this.setState({ email: e.target.value });
+    if (this.props.errors.email) this.validateEmail();
   }
 
   containErrors() {
     const {
-      firstNameError, lastNameError, emailError,
-    } = this.state;
+      firstName, lastName, email,
+    } = this.props.errors;
 
-    return firstNameError || lastNameError || emailError;
+    return firstName || lastName || email;
   }
 
-  validateFirstName(e) {
-    e.preventDefault();
-    const result = NAME_VALIDATION.validate(this.state.firstName);
-    this.setState({ firstNameError: result.error ? result.error.message : null });
+  validateField(fieldName, cb) {
+    this.props.validate(fieldName, err => {
+      // return the error when exist
+      if (err[fieldName] && err[fieldName].length) {
+        cb(err[fieldName]);
+        return;
+      }
+      cb();
+    });
   }
 
-  validateLastName(e) {
-    e.preventDefault();
-    const result = NAME_VALIDATION.validate(this.state.lastName);
-    this.setState({ lastNameError: result.error ? result.error.message : null });
+  validateFirstName() {
+    this.props.validate('firstName');
   }
 
-  validateEmail(e) {
-    e.preventDefault();
-    const result = EMAIL_VALIDATION.validate(this.state.email);
-    this.setState({ emailError: result.error ? result.error.message : null });
+  validateLastName() {
+    this.props.validate('lastName');
+  }
+
+  validateEmail() {
+    this.props.validate('email');
   }
 
   handleSave(e) {
     e.preventDefault();
-    this.validateFirstName(e);
-    this.validateLastName(e);
-    this.validateEmail(e);
-
-    if (this.containErrors()) return;
-    let roles = [];
-    _.each(this.state.currentRoles, role => {
-      roles = roles.concat(role);
+    this.props.validate(err => {
+      if (err || this.containErrors()) {
+        return;
+      }
+      let roles = [];
+      _.each(this.state.currentRoles, role => {
+        roles = roles.concat(role);
+      });
+      const data = {
+        name: {
+          firstName: this.state.firstName,
+          lastName: this.state.lastName,
+        },
+        id: this.state.email,
+        // either current affiliated id or current company id
+        affiliatedCompany: this.props.account.affiliatedCompany || this.props.currentCompany.id,
+        roles,
+      };
+      if (this.isCreate()) {
+        this.context.executeAction(createAccount, { token: this.state.accountActiontoken, ...data });
+      } else {
+        data.id = this.state.email;
+        this.context.executeAction(updateAccount, { token: this.state.accountActiontoken, ...data });
+      }
     });
-    const data = {
-      name: {
-        firstName: this.state.firstName,
-        lastName: this.state.lastName,
-      },
-      id: this.state.email,
-      // either current affiliated id or current company id
-      affiliatedCompany: this.props.account.affiliatedCompany || this.props.currentCompany.id,
-      roles,
-    };
-    if (this.isCreate()) {
-      this.context.executeAction(createAccount, { data, companyId: this.props.currentCompany.id });
-    } else {
-      data.id = this.state.email;
-      this.context.executeAction(updateAccount, { data, companyId: this.props.currentCompany.id });
-    }
   }
 
   handleDiscard() {
-    this.context.executeAction(redirectToAccountHome);
+    this.redirectToHome();
   }
 
   handleDelete() {
     this.context.executeAction(deleteAccount, {
       accountId: this.state.email,
       companyId: this.props.currentCompany.id,
+      token: this.state.accountActiontoken,
     });
 
     this.handleCloseDeleteDialog();
@@ -281,15 +329,14 @@ class AccountProfile extends Component {
       email,
       firstName,
       lastName,
-      firstNameError,
-      lastNameError,
-      emailError,
       selectedCompany,
       selectedRoles,
     } = this.state;
 
     const {
        managingCompanies,
+       account,
+       errors,
      } = this.props;
     return (
       <AccountForm
@@ -301,10 +348,11 @@ class AccountProfile extends Component {
         managingCompanies={managingCompanies}
         selectedCompany={selectedCompany}
         selectedRoles={selectedRoles}
-        firstNameError={firstNameError}
-        lastNameError={lastNameError}
-        emailError={emailError}
+        firstNameError={errors.firstName}
+        lastNameError={errors.lastName}
+        emailError={errors.email}
         isCreate={this.isCreate()}
+        isVerified={account.isVerified}
         validateFirstName={this.validateFirstName}
         validateLastName={this.validateLastName}
         validateEmail={this.validateEmail}
@@ -341,6 +389,11 @@ class AccountProfile extends Component {
   }
 
   render() {
+    const { account } = this.props;
+    // not render the form when it is in edit mode and account is not fetched
+    if (!this.isCreate() && !account.email) {
+      return null;
+    }
     return (
       <div className="account-profile">
         {this.renderActionBar()}
@@ -350,7 +403,7 @@ class AccountProfile extends Component {
   }
 }
 
-AccountProfile = injectIntl(AccountProfile);
+AccountProfile = injectIntl(injectJoiValidation(AccountProfile));
 AccountProfile = connectToStores(
   AccountProfile,
   [AccountStore, ApplicationStore],
@@ -367,7 +420,7 @@ AccountProfile = connectToStores(
    }
    defaultState.currentCompany = context.getStore(ApplicationStore).getCurrentCompany();
    defaultState.managingCompanies = context.getStore(AccountStore).getManagingCompanies();
-   defaultState.redirectToAccountHome = context.getStore(AccountStore).getRedirectToHome();
+   defaultState.accountActionToken = context.getStore(AccountStore).getAccountActionToken();
    return defaultState;
  });
 

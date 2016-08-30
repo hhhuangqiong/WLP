@@ -10,14 +10,14 @@ export default function (apiPrefix = '') {
     getAccounts(params, cb) {
       superagent
         .get(`${this._getHost()}${apiPrefix}/accounts`)
-        .query(params)
+        .query({ carrierId: this.getCarrierId(), ...params })
         .accept('json')
         .end(genericHandler(cb));
     },
     getAccount(params, cb) {
       superagent
         .get(`${this._getHost()}${apiPrefix}/accounts/${params.id}`)
-        .query(params)
+        .query({ carrierId: this.getCarrierId(), ...params })
         .accept('json')
         .end(genericHandler(cb));
     },
@@ -25,15 +25,18 @@ export default function (apiPrefix = '') {
       superagent
         .post(`${this._getHost()}${apiPrefix}/accounts`)
         .accept('json')
-        .send(params.data)
+        .query({ carrierId: this.getCarrierId() })
+        .send(params)
         .end(genericHandler(cb));
     },
 
     updateAccount(params, cb) {
+      const { id, ...accountInfo } = params;
       superagent
-        .put(`${this._getHost()}${apiPrefix}/accounts/${params.data.id}`)
+        .put(`${this._getHost()}${apiPrefix}/accounts/${id}`)
         .accept('json')
-        .send(_.omit(params.data, 'id'))
+        .query({ carrierId: this.getCarrierId() })
+        .send(accountInfo)
         .end(genericHandler(cb));
     },
 
@@ -41,35 +44,14 @@ export default function (apiPrefix = '') {
       superagent
         .del(`${this._getHost()}${apiPrefix}/accounts/${params.accountId}`)
         .accept('json')
-        .end(genericHandler(cb));
-    },
-
-    verifyAccountToken(params, cb) {
-      superagent
-        .get(`${this._getHost()}${apiPrefix}/accounts/verify/${params.token}`)
-        .accept('json')
-        .end(genericHandler(cb));
-    },
-
-    setPassword(params, cb) {
-      superagent
-        .put(`${this._getHost()}${apiPrefix}/accounts/verify/${params.token}`)
-        .accept('json')
-        .send(params)
-        .end(genericHandler(cb));
-    },
-
-    changePassword(params, cb) {
-      superagent
-        .post(`${this._getHost()}${apiPrefix}/accounts/change-password`)
-        .accept('json')
-        .send(params)
+        .query({ carrierId: this.getCarrierId() })
         .end(genericHandler(cb));
     },
 
     resendCreatePassword(params, cb) {
       superagent
         .put(`${this._getHost()}${apiPrefix}/accounts/reverify/${params.data.username}`)
+        .query({ carrierId: this.getCarrierId() })
         .accept('json')
         .end(genericHandler(cb));
     },

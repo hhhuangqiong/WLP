@@ -12,7 +12,7 @@ const AccountInfo = createClass({
 
   propTypes: {
     intl: intlShape.isRequired,
-    isVerified: PropTypes.string,
+    isVerified: PropTypes.bool,
     firstName: PropTypes.string,
     lastName: PropTypes.string,
     createdAt: PropTypes.string,

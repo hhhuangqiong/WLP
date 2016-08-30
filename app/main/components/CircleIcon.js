@@ -17,7 +17,6 @@ export default React.createClass({
   propTypes: {
     size: React.PropTypes.string.isRequired,
     backgroundColor: React.PropTypes.string.isRequired,
-    iconColor: React.PropTypes.string.isRequired,
     icon: React.PropTypes.string.isRequired,
   },
 
@@ -35,7 +34,7 @@ export default React.createClass({
   },
 
   render() {
-    const { backgroundColor, iconColor, size } = this.props;
+    const { backgroundColor, size } = this.props;
     const fontSize = this.renderFontSize(size);
 
     const boxStyle = {
@@ -43,7 +42,6 @@ export default React.createClass({
       fontSize,
       width: fontSize * SIZE_RATIO,
       height: fontSize * SIZE_RATIO,
-      color: iconColor,
     };
 
     return (

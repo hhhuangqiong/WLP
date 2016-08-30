@@ -13,7 +13,6 @@ class Account extends Component {
     accounts: PropTypes.array.isRequired,
     currentCompany: PropTypes.object.isRequired,
     children: PropTypes.element,
-    redirectToAccountHome: PropTypes.boolean,
   }
 
   static contextTypes = {
@@ -28,6 +27,14 @@ class Account extends Component {
 
   componentDidMount() {
     this.fetchData();
+  }
+
+  componentWillReceiveProps(nextProps) {
+    // update the list when change from has children to  no children(no display on right hand side)
+    // e.g after create, discard, update, delete account
+    if (this.props.children && !nextProps.children) {
+      this.fetchData();
+    }
   }
 
   fetchData(searchTerm) {

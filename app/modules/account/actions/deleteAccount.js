@@ -1,17 +1,14 @@
-import fetchAccounts from './fetchAccounts';
-
 export default function (context, params, done) {
   context.dispatch('START');
-
-  context.api.deleteAccount(params, (err, result) => {
+  const { token, ...accountDetail } = params;
+  context.api.deleteAccount(accountDetail, (err) => {
     if (err) {
       context.dispatch('DELETE_ACCOUNT_FAILURE', err);
-      return;
+      context.dispatch('ERROR_MESSAGE', err);
+    } else {
+      context.dispatch('DELETE_ACCOUNT_SUCCESS', token);
+      context.dispatch('INFO_MESSAGE', { message: 'Delete account success!' });
     }
-    context.executeAction(fetchAccounts, { affiliatedCompany: params.companyId })
-      .then(() => {
-        context.dispatch('DELETE_ACCOUNT_SUCCESS', result);
-        done();
-      });
+    done();
   });
 }

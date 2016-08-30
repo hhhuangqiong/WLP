@@ -19,9 +19,9 @@ class AccountForm extends Component {
     managingCompanies: PropTypes.array.isRequired,
     selectedCompany: PropTypes.string.isRequired,
     selectedRoles: PropTypes.array.isRequired,
-    firstNameError: PropTypes.func,
-    lastNameError: PropTypes.func,
-    emailError: PropTypes.func,
+    firstNameError: PropTypes.array,
+    lastNameError: PropTypes.array,
+    emailError: PropTypes.array,
     validateFirstName: PropTypes.func.isRequired,
     validateLastName: PropTypes.func.isRequired,
     validateEmail: PropTypes.func.isRequired,
@@ -138,7 +138,7 @@ class AccountForm extends Component {
             className={classnames('radius', { error: this.props.emailError })}
             type="email"
             value={email}
-            disabled={!!this.props.email}
+            disabled={!this.props.isCreate && !!this.props.email}
             onBlur={this.props.validateEmail}
             onChange={this.props.handleEmailChange}
             onKeyPress={this.onSubmit}

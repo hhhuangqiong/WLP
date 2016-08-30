@@ -42,7 +42,7 @@ export default function accountController(iamServiceClient, provisionHelper) {
   async function getAccounts(req, res, next) {
     debug('get accounts via account controller');
     try {
-      const command = req.query;
+      const command = _.omit(req.query, 'carrierId');
       // @TODO temporary set the page size to 50 and expect fetch all users
       // wait IAM to have no pagination support
       command.pageSize = req.query.pageSize || 50;

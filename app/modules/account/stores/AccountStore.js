@@ -20,6 +20,7 @@ const DEFAULT_ACCOUNT_PROPERTIES = {
   email: '',
   roles: [],
   isVerified: false,
+  accountId: '',
 };
 
 export default createStore({
@@ -31,8 +32,6 @@ export default createStore({
     CREATE_ACCOUNT_SUCCESS: 'createAccount',
     UPDATE_ACCOUNT_SUCCESS: 'updateAccount',
     DELETE_ACCOUNT_SUCCESS: 'deleteAccount',
-    REDIRECT_TO_ACCOUNT_HOME: 'redirectToAccountHome',
-    REDIRECTED_TO_ACCOUNT_HOME: 'redirectedToAccountHome',
     FETCH_CARRIER_MANAGING_COMPANIES_SUCCESS: 'fetchCarrierManagingCompanies',
   },
 
@@ -40,7 +39,7 @@ export default createStore({
     this.accounts = [];
     this.selectedAccount = {};
     this.managingCompanies = [];
-    this.redirectToHome = false;
+    this.accountActionToken = null;
   },
 
   fetchAccounts(payload) {
@@ -48,15 +47,6 @@ export default createStore({
     this.accounts = payload.items;
 
     this.emitChange();
-  },
-
-  redirectToAccountHome() {
-    this.redirectToHome = true;
-    this.emitChange();
-  },
-
-  redirectedToAccountHome() {
-    this.redirectToHome = false;
   },
 
   fetchAccount(account) {
@@ -73,22 +63,18 @@ export default createStore({
     this.emitChange();
   },
 
-  createAccount() {
-    // if null will show empty area
-    this.selectedAccount = {};
-    this.redirectToHome = true;
+  createAccount(token) {
+    this.accountActionToken = token;
     this.emitChange();
   },
 
-  updateAccount() {
-    this.selectedAccount = {};
-    this.redirectToHome = true;
+  updateAccount(token) {
+    this.accountActionToken = token;
     this.emitChange();
   },
 
-  deleteAccount() {
-    this.selectedAccount = {};
-    this.redirectToHome = true;
+  deleteAccount(token) {
+    this.accountActionToken = token;
     this.emitChange();
   },
 
@@ -113,19 +99,23 @@ export default createStore({
     return this.selectedAccount;
   },
 
-  getRedirectToHome() {
-    return this.redirectToHome;
+  getAccountActionToken() {
+    return this.accountActionToken;
   },
 
   dehydrate() {
     return {
       accounts: this.getAccounts(),
       selectedAccount: this.getSelectedAccount(),
+      managingCompanies: this.getManagingCompanies(),
+      accountActionToken: this.getActionToken(),
     };
   },
 
   rehydrate(state) {
     this.accounts = state.accounts;
     this.selectedAccount = state.selectedAccount;
+    this.managingCompanies = state.managingCompanies;
+    this.accountActionToken = state.accountActionToken;
   },
 });
