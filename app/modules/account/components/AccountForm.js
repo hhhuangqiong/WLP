@@ -138,6 +138,7 @@ class AccountForm extends Component {
             className={classnames('radius', { error: this.props.emailError })}
             type="email"
             value={email}
+            disabled={!!this.props.email}
             onBlur={this.props.validateEmail}
             onChange={this.props.handleEmailChange}
             onKeyPress={this.onSubmit}
