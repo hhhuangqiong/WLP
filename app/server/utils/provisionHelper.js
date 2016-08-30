@@ -29,7 +29,7 @@ export default function provisionHelper(mpsClient) {
   }
 
   async function getProvisionById(command) {
-    const provisionResult = mpsClient.getProvisionById(command);
+    const provisionResult = await mpsClient.getProvisionById(command);
     if (!provisionResult.items.length) {
       return {};
     }
