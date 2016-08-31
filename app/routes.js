@@ -1,6 +1,7 @@
 import React from 'react';
 import { Route, IndexRedirect } from 'react-router';
 import { startsWith, includes, rest } from 'lodash';
+import validator from 'validator';
 import modules from './constants/moduleId';
 import navigationSections from './main/constants/navSection';
 
@@ -54,94 +55,96 @@ import createDebug from 'debug';
 const debug = createDebug('app:routes');
 
 export default (context) => {
-  function requireAuthentication(nextState, replace, cb) {
-    const path = nextState.location.pathname;
-    const pathParts = path.split('/').filter(x => !!x);
-    debug(`Starting authentication check for path: ${path}. Path parts: `, pathParts);
-    // Omit carrier id from url
-    const sectionPath = `/${rest(pathParts).join('/')}`;
-    debug(`Authentication path will be ${sectionPath}`);
-
+  // handle whether user login or not and redirect to the assigned carrier
+  function checkLogin(nextState, replace) {
     const store = context.getStore(AuthStore);
     const user = store.getUser();
+    // not login, redirect to sign in page on IAM
     if (!user) {
       debug('There is no user in AuthStore, redirecting to sign-in');
       replace('/sign-in');
-      cb();
       return;
     }
-    // There is hope user.permissions will contain actual permissions for the company
-    // he is acting from. CompanySwitcher reloads the entire page, so AuthStore should
-    // contain relevant information from req.user already including permissions and capabilities
-    const hasCarrierIdInPath = pathParts.length >= 1;
-    debug(`Carrier id found in path: ${hasCarrierIdInPath}.`);
-    const carrierId = hasCarrierIdInPath ? pathParts[0] : user.carrierId;
-    const permissions = user.permissions || [];
 
-    const currentSection = navigationSections.find(x => startsWith(sectionPath, x.path));
-    if (currentSection) {
-      debug(`Starting permission check with permissions: ${permissions.join(', ')}.`);
-      if (includes(permissions, currentSection.permission)) {
-        debug(`User ${user.username} is allowed to view the page: ${sectionPath}`);
-        if (!hasCarrierIdInPath) {
-          replace(`${carrierId}${sectionPath}`);
-        }
-        cb();
+    if (nextState.location.pathname === '/') {
+      // only redirect to carrierId path
+      replace(`/${user.carrierId}`);
+    }
+  }
+
+  // check for the permission and set the default path for that carrier(if not mentioned)
+  function checkAuth(nextState, replace) {
+    const { routes, params: { identity: carrierId } } = nextState;
+    // check the carrierId format and return early if not valid carrierid format
+    if (!validator.isURL(carrierId)) {
+      replace(path404);
+      return;
+    }
+
+    const store = context.getStore(AuthStore);
+    const user = store.getUser();
+    // if it doesn't mention the target page, then assign the default section
+    if (routes.length === 2) {
+      const defaultSection = navigationSections.find(x => includes(user.permissions, x.permission));
+      if (defaultSection) {
+        replace(`/${carrierId}${defaultSection.path}`);
         return;
       }
-    }
-    debug(`Will need to determine default page for user ${user.username} because he is not allowed to go to ${sectionPath}`);
-    const defaultSection = navigationSections.find(x => includes(user.permissions, x.permission));
-    if (defaultSection) {
-      debug(`Redirecting ${user.username} to default path: ${defaultSection.path}.`);
-      replace(`${carrierId}${defaultSection.path}`);
-      cb();
+      // no default page and thus no permission to enter this carrierId
+      replace(path401);
       return;
     }
+    // find the current section and validate the permission
+    const sectionPath = routes[2].path;
+    const currentSection = navigationSections.find(x => startsWith(`/${sectionPath}`, x.path));
+    const permissions = user.permissions || [];
 
-    debug(`Redirecting to sign in, failed to determine default page for ${user.username}.`);
-    // Redirect to sign in otherwise
-    replace('/sign-in');
-    cb();
+    // not allow to access
+    if (!includes(permissions, currentSection.permission)) {
+      debug(`User ${user.username} is not allowed to view the page: ${sectionPath}`);
+      replace(path401);
+      return;
+    }
+    debug(`User ${user.username} is allowed to view the page: ${sectionPath}`);
   }
 
   return (
-    <Route path="/" component={App} onEnter={requireAuthentication}>
+    <Route path="/" component={App} onEnter={checkLogin} >
 
-      <Route component={Protected}>
-        <Route path={`:identity/${modules.OVERVIEW}`} component={Overview} />
+      <Route path={':identity'} component={Protected} onEnter={checkAuth}>
+        <Route path={`${modules.OVERVIEW}`} component={Overview} />
 
-        <Route path={`:identity/${modules.COMPANY}`}>
+        <Route path={`${modules.COMPANY}`}>
           <IndexRedirect to="overview" />
           <Route path="overview" component={Company} />
           <Route path="create" component={CompanyProfile} />
           <Route path=":companyId/edit" component={CompanyEditForm} />
         </Route>
 
-        <Route path={`:identity/${modules.ACCOUNT}`} component={Account}>
+        <Route path={`${modules.ACCOUNT}`} component={Account}>
           <Route path="create" component={AccountProfile} />
           <Route path=":accountId/profile" component={AccountProfile} />
         </Route>
 
-        <Route path={`:identity/${modules.VERIFICATION_SDK}`} component={Verification}>
+        <Route path={`${modules.VERIFICATION_SDK}`} component={Verification}>
           <IndexRedirect to="overview" />
           <Route path="overview" component={VerificationOverview} />
           <Route path="details" component={VerificationDetails} />
         </Route>
 
-        <Route path={`:identity/${modules.VSF}`}>
+        <Route path={`${modules.VSF}`}>
           <IndexRedirect to="overview" />
           <Route path="overview" component={VsfOverview} />
           <Route path="details" component={VsfDetails} />
         </Route>
 
-        <Route path={`:identity/${modules.CALL}`}>
+        <Route path={`${modules.CALL}`}>
           <IndexRedirect to="overview" />
           <Route path="overview" component={CallsOverview} />
           <Route path="details" component={Calls} />
         </Route>
 
-        <Route path={`:identity/${modules.END_USER}`}>
+        <Route path={`${modules.END_USER}`}>
           <IndexRedirect to="overview" />
           <Route path="overview" component={EndUsersOverview} />
           <Route path="details" component={EndUsersDetails} />
@@ -149,24 +152,24 @@ export default (context) => {
           <Route path="whitelist/new" component={WhitelistNew} />
         </Route>
 
-        <Route path={`:identity/${modules.IM}`}>
+        <Route path={`${modules.IM}`}>
           <IndexRedirect to="overview" />
           <Route path="overview" component={ImOverview} />
           <Route path="details" component={Im} />
         </Route>
 
-        <Route path={`:identity/${modules.SMS}`}>
+        <Route path={`${modules.SMS}`}>
           <IndexRedirect to="overview" />
           <Route path="overview" component={SmsOverview} />
           <Route path="details" component={SMS} />
         </Route>
 
-        <Route path={`:identity/${modules.TOP_UP}`}>
+        <Route path={`${modules.TOP_UP}`}>
           <IndexRedirect to="details" />
           <Route path="details" component={TopUp} />
         </Route>
 
-        <Route path={`:identity/${modules.ACCESS_MANAGEMENT}`}>
+        <Route path={`${modules.ACCESS_MANAGEMENT}`}>
           <IndexRedirect to="roles" />
           <Route path="roles" component={RolesTablePage} />
         </Route>
