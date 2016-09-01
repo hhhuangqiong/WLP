@@ -1,5 +1,5 @@
 import _ from 'lodash';
-import React, { PropTypes } from 'react';
+import React from 'react';
 import { FluxibleMixin } from 'fluxible-addons-react';
 
 import { userPath } from '../../../utils/paths';
@@ -7,7 +7,7 @@ import ApplicationStore from '../../stores/ApplicationStore';
 
 import Icon from '../Icon';
 
-const DEFAULT_LOGO_SRC = '/images/default-logo.png';
+const DEFAULT_LOGO_SRC = '/images/logo-m800.png';
 
 const CompanySwitcher = React.createClass({
   mixins: [FluxibleMixin],
