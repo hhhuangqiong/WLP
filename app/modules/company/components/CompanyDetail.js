@@ -4,7 +4,7 @@ import moment from 'moment';
 import * as dateLocale from '../../../utils/dateLocale';
 import { SHORT_DATE_FORMAT } from '../../../utils/timeFormatter';
 import {
-  ACTIVE,
+  COMPLETE,
   INPROGRESS,
   SUSPENDED,
   UNKNOWN,
@@ -24,9 +24,9 @@ const CompanyDetail = (props, context) => {
       {
         (() => {
           switch (status) {
-            case ACTIVE:
+            case COMPLETE:
               return (
-                <td className="active">
+                <td className="complete">
                   <span className="circle-button green"></span>{status}
                 </td>
               );
@@ -64,7 +64,7 @@ export const CompanyDetailShape = PropTypes.shape(CompanyDetail.propTypes);
 CompanyDetail.propTypes = {
   id: PropTypes.string.isRequired,
   companyName: PropTypes.string.isRequired,
-  domain: PropTypes.string.isRequired,
+  domain: PropTypes.string,
   createDate: PropTypes.string.isRequired,
   status: PropTypes.string.isRequired,
 };

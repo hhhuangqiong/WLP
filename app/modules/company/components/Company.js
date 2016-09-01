@@ -160,6 +160,7 @@ class Company extends React.Component {
               name="select-range"
               options={this.setPageRange(5, 15, 5)}
               onChange={this.setPageNumber}
+              searchable={false}
             />
             <FormattedMessage id="recordsPerPage" defaultMessage="records per page" />
           </div>
@@ -190,7 +191,7 @@ Company.propTypes = {
   intl: intlShape.isRequired,
   companies: PropTypes.array,
   total: PropTypes.number,
-  searchCompany: PropTypes.string.isRequired,
+  searchCompany: PropTypes.string,
   pageNumber: PropTypes.number,
   pageSize: PropTypes.number,
 };

@@ -8,10 +8,8 @@ export default class Modal extends Component {
     intl: PropTypes.object,
   };
 
-  getDefaultProps() {
-    return {
-      isOpened: false,
-    };
+  static defaultProps = {
+    isOpened: false,
   }
 
   componentWillMount() {

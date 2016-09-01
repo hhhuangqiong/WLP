@@ -16,6 +16,7 @@ const defaultCompanyObject = {
   resellerCompanyId: null,
   capabilities: [],
   preset: {},
+  status: null,
 };
 
 const CompanyStore = createStore({

@@ -1,4 +1,4 @@
-export const ACTIVE = 'COMPLETE';
+export const COMPLETE = 'COMPLETE';
 export const INPROGRESS = 'IN_PROGRESS';
 export const ERROR = 'ERROR';
 export const UPDATING = 'UPDATING';

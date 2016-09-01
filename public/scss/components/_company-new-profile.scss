@@ -65,6 +65,9 @@
 .company-profile {
   width: 60%;
   margin-left: 5%;
+  .status {
+    padding-top: rem-calc(8);
+  }
 }
 .company-description {
   width: 60%;

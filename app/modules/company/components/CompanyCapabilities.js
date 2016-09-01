@@ -32,7 +32,7 @@ CompanyCapabilities.propTypes = {
   onCapabilitiesChange: PropTypes.func,
   isChecked: PropTypes.func,
   capabilitiesChecked: PropTypes.array,
-  disabled: PropTypes.bool.isRequired,
+  disabled: PropTypes.bool,
 };
 
 export default CompanyCapabilities;

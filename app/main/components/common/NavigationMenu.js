@@ -13,13 +13,6 @@ import Icon from '../Icon';
 
 import AuthStore from '../../stores/AuthStore';
 
-defineMessages({
-  changePasswordModal: {
-    id: 'changePassword',
-    defaultMessage: 'Change Password',
-  },
-});
-
 const companyPages = [
   'companies',
   'company-create',
@@ -126,15 +119,6 @@ const Navigation = React.createClass({
 
     return (
       <section className="top-bar-section navigation-bar">
-        <Modal
-          title={formatMessage({ id: 'changePassword' })}
-          isOpen={this.state.isChangePasswordOpened}
-        >
-          <ChangePasswordForm
-            handleClose={this.handleCloseChangePasswordDialog}
-          />
-        </Modal>
-
         <ul className="right">
           <li className="navigation-bar__item">
             <LanguageSwitcher />

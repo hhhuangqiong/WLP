@@ -1,4 +1,3 @@
-
 .company-sidebar {
     &__list {
         margin: 0;
@@ -20,18 +19,6 @@
             }
             td {
                 width: rem-calc(400);
-            }
-            .active {
-                color: $success-color;
-            }
-            .in-progress {
-                color: $info-color;
-            }
-            .suspended {
-                color: $alert-color;
-            }
-            .unknown {
-                color: grey;
             }
             &__logo {
                 width: rem-calc(70);
@@ -59,4 +46,16 @@
             }
         }
     }
+}
+.complete {
+    color: $success-color;
+}
+.in-progress {
+    color: $info-color;
+}
+.suspended {
+    color: $alert-color;
+}
+.unknown {
+    color: grey;
 }

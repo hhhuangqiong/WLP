@@ -12,8 +12,8 @@ const CompanyList = (props) => (
       </tr>
     </thead>
     <tbody>
-      {props.companies.map((item) => (
-        <CompanyDetail {...item} />
+      {props.companies.map((item, index) => (
+        <CompanyDetail {...item} key={index} />
       ))}
     </tbody>
   </table>

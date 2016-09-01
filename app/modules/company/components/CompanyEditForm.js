@@ -259,6 +259,7 @@ class CompanyEditForm extends Component {
               paymentTypeOption={PAYMENT_TYPE}
               disabled={this.props.profileDisabled}
               validateField={this.validateField}
+              status={this.props.companyDetail.status}
               errors={errors}
             />
           </Panel>
