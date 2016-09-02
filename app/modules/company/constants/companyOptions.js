@@ -3,18 +3,17 @@ import { defineMessages } from 'react-intl';
 import countryData from 'country-data';
 import timezoneData from 'timezones.json';
 
-import { arrayToObject } from '../../../main/components/arrayToObject';
-
+// @TODO missing i18n
 export const COUNTRIES = countryData.countries.all.map((item) => ({
   value: item.name,
   label: item.name,
 }));
 
-let timezoneArray = [];
-_.each(timezoneData, (item) => {
-  timezoneArray = timezoneArray.concat(item.utc);
-});
-export const TIMEZONE = arrayToObject(timezoneArray);
+// @TODO missing i18n
+export const TIMEZONE = _.map(timezoneData, (item) => ({
+  value: item.value,
+  label: item.text,
+}));
 
 export const MESSAGES = defineMessages({
   companyProfile: {
