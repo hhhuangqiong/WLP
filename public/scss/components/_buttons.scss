@@ -80,3 +80,7 @@ $button-circle-diameter: 35;
     line-height: rem-calc($button-circle-diameter);
   }
 }
+// overwrite thr button style of foundation
+.button.round {
+  border-radius: 5px;
+}

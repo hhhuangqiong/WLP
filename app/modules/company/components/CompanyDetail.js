@@ -1,21 +1,22 @@
 import React, { PropTypes } from 'react';
 import moment from 'moment';
+import { injectIntl, intlShape } from 'react-intl';
 
 import * as dateLocale from '../../../utils/dateLocale';
 import { SHORT_DATE_FORMAT } from '../../../utils/timeFormatter';
 import {
   COMPLETE,
   INPROGRESS,
-  SUSPENDED,
   UNKNOWN,
   CREATED,
   ERROR,
   UPDATING,
+  STATUS,
 } from '../constants/status';
 
 const CompanyDetail = (props, context) => {
   const { identity } = context.params;
-  const { id, companyName, domain, createDate, status } = props;
+  const { id, companyName, domain, createDate, status, intl: { formatMessage } } = props;
   return (
     <tr key={companyName} onClick={() => context.router.push(`/${identity}/company/${id}/edit`)}>
       <td>{companyName}</td>
@@ -27,7 +28,7 @@ const CompanyDetail = (props, context) => {
             case COMPLETE:
               return (
                 <td className="complete">
-                  <span className="circle-button green"></span>{status}
+                  <span className="circle-button green"></span>{formatMessage(STATUS[status])}
                 </td>
               );
             case CREATED:
@@ -35,20 +36,19 @@ const CompanyDetail = (props, context) => {
             case INPROGRESS:
               return (
                 <td className="in-progress">
-                  <span className="circle-button blue"></span>{status}
+                  <span className="circle-button blue"></span>{formatMessage(STATUS[status])}
                 </td>
               );
             case ERROR:
-            case SUSPENDED:
               return (
                 <td className="suspended">
-                  <span className="circle-button red"></span>{status}
+                  <span className="circle-button red"></span>{formatMessage(STATUS[status])}
                 </td>
               );
             case UNKNOWN:
               return (
                 <td className="unknown">
-                  <span className="circle-button grey"></span>{status}
+                  <span className="circle-button grey"></span>{formatMessage(STATUS[status])}
                 </td>
               );
             default:
@@ -62,6 +62,7 @@ const CompanyDetail = (props, context) => {
 
 export const CompanyDetailShape = PropTypes.shape(CompanyDetail.propTypes);
 CompanyDetail.propTypes = {
+  intl: intlShape.isRequired,
   id: PropTypes.string.isRequired,
   companyName: PropTypes.string.isRequired,
   domain: PropTypes.string,
@@ -72,4 +73,4 @@ CompanyDetail.contextTypes = {
   params: PropTypes.object.isRequired,
   router: PropTypes.object.isRequired,
 };
-export default CompanyDetail;
+export default injectIntl(CompanyDetail);

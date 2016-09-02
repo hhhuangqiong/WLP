@@ -2,16 +2,8 @@ import React, { PropTypes } from 'react';
 import classNames from 'classnames';
 import { injectIntl, intlShape, FormattedMessage } from 'react-intl';
 import SwitchButtonGroup from '../../../main/components/SwitchButtonGroup';
+import StatusDisplay from './StatusDisplay';
 
-import {
-  COMPLETE,
-  INPROGRESS,
-  SUSPENDED,
-  UNKNOWN,
-  CREATED,
-  ERROR,
-  UPDATING,
-} from '../constants/status';
 function renderErrorMessages(errorMessages) {
   if (!errorMessages) {
     return null;
@@ -42,46 +34,11 @@ const CompanyProfileInfo = (props) => {
    } = props;
   return (
     <div className="company-profile">
-      <div className="row">
-        <div className="large-10 columns">
-          <label>Status</label>
-        </div>
-       {
-        (() => {
-          switch (status) {
-            case COMPLETE:
-              return (
-                <div className="complete large-14 columns status">
-                  <span className="circle-button green"></span>{status}
-                </div>
-              );
-            case CREATED:
-            case UPDATING:
-            case INPROGRESS:
-              return (
-                <div className="in-progress">
-                  <span className="circle-button blue"></span>{status}
-                </div>
-              );
-            case ERROR:
-            case SUSPENDED:
-              return (
-                <div className="suspended">
-                  <span className="circle-button red"></span>{status}
-                </div>
-              );
-            case UNKNOWN:
-              return (
-                <div className="unknown">
-                  <span className="circle-button grey"></span>{status}
-                </div>
-              );
-            default:
-              return <div>{status}</div>;
-          }
-        })()
+      {
+        status ?
+        <StatusDisplay status={status} /> :
+        null
       }
-      </div>
       <div className="row">
         <div className="large-10 columns">
           <label>
@@ -101,7 +58,6 @@ const CompanyProfileInfo = (props) => {
         </div>
       </div>
       <div className="row">
-
         <div className="large-10 columns">
           <label>
             <FormattedMessage id="companyType" defaultMessage="Company Type" />:
