@@ -1,7 +1,7 @@
 import _ from 'lodash';
 import createStore from 'fluxible/addons/createStore';
 
-import { ACTIVE, INPROGRESS, ERROR } from '../constants/status';
+import { COMPLETE, INPROGRESS, ERROR } from '../constants/status';
 
 const defaultCompanyObject = {
   provisionId: null,
@@ -106,7 +106,7 @@ const CompanyStore = createStore({
     switch (this.companyDetail.status) {
       case INPROGRESS:
         break;
-      case ACTIVE:
+      case COMPLETE:
         this.descriptionDisabled = false;
         break;
       case ERROR:
