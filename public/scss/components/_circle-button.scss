@@ -1,12 +1,13 @@
 .circle-button {
+  margin-top: rem-calc(-3px);
   &.red {
     background: red;
     @include circle-button(red);
   }
 
   &.green {
-    background: greenyellow;
-    @include circle-button(greenyellow);
+    background: $success-color;
+    @include circle-button($success-color);
   }
 
   &.blue {
