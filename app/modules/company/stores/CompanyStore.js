@@ -1,49 +1,125 @@
 import _ from 'lodash';
 import createStore from 'fluxible/addons/createStore';
 
+import { ACTIVE, INPROGRESS, ERROR } from '../constants/status';
+
 const defaultCompanyObject = {
-  name: null,
-  address: null,
-  carrierId: null,
-  reseller: null,
-  logo: null,
-  accountManager: null,
-  billCode: null,
-  expectedServiceDate: null,
-  categoryID: null,
+  provisionId: null,
+  companyId: null,
+  companyCode: null,
+  companyName: null,
+  companyType: null,
+  paymentType: null,
   country: null,
   timezone: null,
-  businessContact: { name: '', phone: '', email: '' },
-  technicalContact: { name: '', phone: '', email: '' },
-  supportContact: { name: '', phone: '', email: '' },
+  resellerCarrierId: null,
+  resellerCompanyId: null,
+  capabilities: [],
+  preset: {},
 };
 
 const CompanyStore = createStore({
   storeName: 'CompanyStore',
 
   handlers: {
-    CREATE_COMPANY_SUCCESS: 'handleCompanyCreated',
     FETCH_COMPANIES_SUCCESS: 'receiveCompanies',
-    FETCH_COMPANY_SUCCESS: 'receiveCompany',
-    FETCH_COMPANY_APPLICATION_SUCCESS: 'receiveCompanyApplications',
-    FETCH_COMPANY_SERVICE_SUCCESS: 'receiveCompanyService',
     FETCH_COMPANY_DETAIL_SUCCESS: 'receiveCompanyDetail',
-    FETCH_PARENT_COMPANIES_SUCCESS: 'receiveParentCompanies',
-    UPDATE_COMPANY_SUCCESS: 'handleProvisionUpdated',
-    UPDATE_COMPANY_PROFILE_SUCCESS: 'handleCompanyUpdated',
-    UPDATE_COMPANY_SERVICE_SUCCESS: 'handleCompanyServiceUpdated',
-    RESET_COMPANY: 'handleCompanyReset',
-    REACTIVATE_COMPANY_SUCCESS: 'handleCompanyStatusChanged',
-    DEACTIVATE_COMPANY_SUCCESS: 'handleCompanyStatusChanged',
+    FETCH_PRESET_SUCCESS: 'receivePreset',
+    CREATE_COMPANY_SUCCESS: 'handleTokenUpdated',
+    UPDATE_COMPANY_SUCCESS: 'handleTokenUpdated',
+    UPDATE_COMPANY_PROFILE_SUCCESS: 'handleTokenUpdated',
+    RESET_COMPANY_DETAIL: 'handleCompanyDetailReset',
   },
 
   initialize() {
+    // all the companies
     this.companies = [];
-    this.parentCompanies = [];
+    // total number of companies
+    this.total = 0;
+    // search input field
+    this.searchCompany = '';
+    // current page number in companies page
+    this.pageNumber = 0;
+    // page size of company list
+    this.pageSize = 10;
+    // current carrier preset information
+    this.preset = null;
+    // current selected company details
+    this.companyDetail = _.clone(defaultCompanyObject, true);
+    // whether the input is disabled
+    this.profileDisabled = {
+      companyCode: false,
+      companyType: false,
+      paymentType: false,
+    };
+    this.capabilitiesDisabled = false;
+    this.descriptionDisabled = false;
   },
 
-  getParentCompanies() {
-    return this.parentCompanies;
+  handleCompanyDetailReset() {
+    this.companyDetail = _.clone(defaultCompanyObject, true);
+    this.emitChange();
+  },
+
+  handleTokenUpdated(token) {
+    this.companyToken = token;
+    this.emitChange();
+  },
+
+  receiveCompanies({ companies, total, searchCompany, pageNumber, pageSize }) {
+    this.companies = companies;
+    this.total = total;
+    this.searchCompany = searchCompany;
+    this.pageNumber = pageNumber;
+    this.pageSize = pageSize;
+    this.emitChange();
+  },
+
+  errorProvisionDisabledHandling() {
+    // when it is in error state, it expect all the fields can be changed
+    // (but it also depends on the preset).
+    this.profileDisabled.companyCode = false;
+
+    // enable those field if they are not in the preset
+    if (!this.companyDetail.preset.companyType) {
+      this.profileDisabled.companyType = false;
+    }
+    if (!this.companyDetail.preset.paymentType) {
+      this.profileDisabled.paymentType = false;
+    }
+    if (!this.companyDetail.preset.capabilities) {
+      this.capabilitiesDisabled = false;
+    }
+  },
+
+  receiveCompanyDetail(detail) {
+    this.companyDetail = _.merge(_.clone(defaultCompanyObject, true), detail);
+    // if true means the the input is disbale,while false means can be edited
+    this.profileDisabled = {
+      companyCode: true,
+      companyType: true,
+      paymentType: true,
+    };
+    this.descriptionDisabled = true;
+    this.capabilitiesDisabled = true;
+    switch (this.companyDetail.status) {
+      case INPROGRESS:
+        break;
+      case ACTIVE:
+        this.descriptionDisabled = false;
+        break;
+      case ERROR:
+        this.errorProvisionDisabledHandling();
+        break;
+      default:
+        break;
+    }
+    this.emitChange();
+  },
+
+  receivePreset(preset) {
+    this.preset = preset;
+    this.emitChange();
   },
 
   getCompanies() {
@@ -66,132 +142,43 @@ const CompanyStore = createStore({
     return this.pageSize;
   },
 
-  getNewCompany() {
-    return _.clone(defaultCompanyObject, true);
-  },
-
-  getCompanyByCarrierId(carrierId) {
-    return _.merge(_.clone(defaultCompanyObject, true), this.companies[carrierId]);
-  },
-
   getCompanyDetail() {
     return this.companyDetail;
   },
 
-  getProfileAccess() {
-    return this.profileAccess;
+  getProfileDisabled() {
+    return this.profileDisabled;
   },
 
-  getDescriptionAccess() {
-    return this.descriptionAccess;
+  getDescriptionDisabled() {
+    return this.descriptionDisabled;
   },
 
-  getCapabilitiesAccess() {
-    return this.capabilitiesAccess;
+  getCapabilitiesDisabled() {
+    return this.capabilitiesDisabled;
   },
 
   getCompanyToken() {
     return this.companyToken;
   },
 
-  handleCompanyReset() {
-    this.currentCompany = _.clone(defaultCompanyObject, true);
-    this.emitChange();
-  },
-
-  handleCompanyCreated(token) {
-    this.companyToken = token;
-    this.emitChange();
-  },
-
-  handleCompanyUpdated(token) {
-    this.companyToken = token;
-    this.emitChange();
-  },
-
-  handleCompanyServiceUpdated({ company, carrierId }) {
-    _.merge(this.companies[carrierId], company);
-
-    this.emitChange();
-  },
-
-  handleCompanyStatusChanged({ carrierId, status }) {
-    this.companies[carrierId].status = status;
-    this.emitChange();
-  },
-
-  handleProvisionUpdated(token) {
-    this.companyToken = token;
-    this.emitChange();
-  },
-
-  receiveParentCompanies({ companies }) {
-    this.parentCompanies = companies;
-    this.emitChange();
-  },
-
-  receiveCompanies({ companies, total, searchCompany, pageNumber, pageSize }) {
-    this.companies = companies;
-    this.total = total;
-    this.searchCompany = searchCompany;
-    this.pageNumber = pageNumber;
-    this.pageSize = pageSize;
-    this.emitChange();
-  },
-
-  receiveCompany(company) {
-    this.currentCompany = company;
-    this.emitChange();
-  },
-
-  receiveCompanyService({ carrierId, services }) {
-    _.merge(this.companies[carrierId], { serviceConfig: services });
-    this.emitChange();
-  },
-
-  receiveCompanyApplications(carrierId, applications) {
-    _.merge(this.companies[carrierId], applications);
-    this.emitChange();
-  },
-
-  receiveCompanyDetail(detail) {
-    this.companyDetail = detail;
-    this.profileAccess = {};
-    // if true means the the input is disbale,while false meeans can be edited
-    this.profileAccess.companyCode = true;
-    this.profileAccess.companyType = true;
-    this.profileAccess.paymentType = true;
-    this.descriptionAccess = true;
-    this.capabilitiesAccess = true;
-    switch (this.companyDetail.status) {
-      case 'IN_PROGRESS':
-        break;
-      case 'COMPLETE':
-        this.descriptionAccess = false;
-        break;
-      case 'ERROR':
-        if (this.companyDetail.error.companyCode) {
-          this.profileAccess.companyCode = false;
-        }
-        if (this.companyDetail.error.companyType) {
-          this.profileAccess.companyType = false;
-        }
-        if (this.companyDetail.error.paymentType) {
-          this.profileAccess.paymentType = false;
-        }
-        break;
-      default:
-        break;
-    }
-    this.emitChange();
-  },
-
   getState() {
     return {
       companies: this.companies,
-      parentCompanies: this.parentCompanies,
-      currentCompany: this.currentCompany,
+      preset: this.preset,
+      profileDisabled: this.profileDisabled,
+      capabilitiesDisabled: this.capabilitiesDisabled,
+      descriptionDisabled: this.descriptionDisabled,
+      total: this.total,
+      searchCompany: this.searchCompany,
+      pageNumber: this.pageNumber,
+      pageSize: this.pageSize,
+      companyDetail: this.companyDetail,
     };
+  },
+
+  getPreset() {
+    return this.preset;
   },
 
   dehydrate() {
@@ -201,11 +188,14 @@ const CompanyStore = createStore({
   rehydrate(state) {
     this.companies = state.companies;
     this.companyDetail = state.companyDetail;
-    this.parentCompanies = state.parentCompanies;
-    this.currentCompany = state.currentCompany;
-    this.profileAccess = state.profileAccess;
-    this.descriptionAccess = state.descriptionAccess;
-    this.capabilitiesAccess = state.capabilitiesAccess;
+    this.total = state.total;
+    this.searchCompany = state.searchCompany;
+    this.pageNumber = state.pageNumber;
+    this.pageSize = state.pageSize;
+    this.profileDisabled = state.profileDisabled;
+    this.capabilitiesDisabled = state.capabilitiesDisabled;
+    this.descriptionDisabled = state.descriptionDisabled;
+    this.preset = state.preset;
   },
 });
 

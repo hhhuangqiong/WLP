@@ -45,7 +45,7 @@ const CompanyProfileInfo = (props) => {
             value={companyCode}
             onChange={onCompanyCodeChange}
             onBlur={validateField('companyCode')}
-            disabled={disabled ? disabled.companyCode : false}
+            disabled={!!disabled.companyCode}
           />
           {renderErrorMessages(errors.companyCode)}
         </div>
@@ -63,6 +63,7 @@ const CompanyProfileInfo = (props) => {
             types={companyTypeOption}
             currentType={companyType}
             onChange={onCompanyTypeChange}
+            disabled={!!disabled.companyType}
           />
         </div>
       </div>
@@ -78,6 +79,7 @@ const CompanyProfileInfo = (props) => {
             types={paymentTypeOption}
             currentType={paymentType}
             onChange={onPaymentTypeChange}
+            disabled={!!disabled.paymentType}
           />
         </div>
       </div>

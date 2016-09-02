@@ -1,33 +1,55 @@
 import _ from 'lodash';
 
+function buildProvisionData(data) {
+  return {
+    companyInfo: {
+      name: data.companyName,
+      timezone: data.timezone,
+    },
+    companyCode: data.companyCode,
+    country: data.country,
+    resellerCompanyId: data.resellerCompanyId,
+    resellerCarrierId: data.resellerCarrierId,
+    capabilities: data.capabilities,
+    serviceType: data.companyType,
+    paymentMode: data.paymentType,
+  };
+}
+
+function parseResponse(provisionItem, company = {}, preset = {}) {
+  const formatedPreset = {};
+  if (preset.paymentMode) {
+    formatedPreset.paymentType = preset.paymentMode;
+  }
+  if (preset.serviceType) {
+    formatedPreset.companyType = preset.serviceType;
+  }
+  if (preset.capabilities) {
+    formatedPreset.capabilities = preset.capabilities;
+  }
+  // format the response and return the necessary data
+  return {
+    companyId: company.id,
+    companyName: company.name,
+    timezone: company.timezone,
+    country: company.country,
+    companyCode: provisionItem.profile.companyCode,
+    capabilities: provisionItem.profile.capabilities,
+    companyType: provisionItem.profile.serviceType,
+    paymentType: provisionItem.profile.paymentMode,
+    resellerCarrierId: provisionItem.profile.resellerCarrierId,
+    resellerCompanyId: provisionItem.profile.resellerCompanyId,
+    status: provisionItem.status,
+    id: provisionItem.id,
+    preset: formatedPreset,
+  };
+}
+
 export default function provisionController(iamServiceClient, provisionHelper) {
   async function createProvision(req, res, next) {
     try {
-      const data = {
-        companyInfo: {
-          name: req.body.name,
-          timezone: req.body.timezone,
-        },
-        companyCode: req.body.code,
-        country: req.body.country,
-        resellerCompanyId: req.body.resellerCompanyId,
-        resellerCarrierId: req.body.resellerCarrierId,
-        capabilities: req.body.capabilities,
-        serviceType: req.body.companyType,
-        paymentMode: req.body.paymentType,
-        // @TODO temp workaround, expect to fetch preset and merge with the data
-        smsc: {
-          needBilling: false,
-          defaultRealm: 'WhiteLabel',
-          servicePlanId: 'whitelabel',
-          sourceAddress: 1234567899,
-        },
-        billing: {
-          offnetPackageId: 1,
-          currency: 840,
-        },
-      };
-      const result = await provisionHelper.postProvision(data);
+      const provisionData = buildProvisionData(req.body);
+      const result = await provisionHelper.postProvision(provisionData);
       res.json(result);
     } catch (ex) {
       next(ex);
@@ -90,12 +112,20 @@ export default function provisionController(iamServiceClient, provisionHelper) {
 
   async function getProvision(req, res, next) {
     try {
+      let company = {};
+      let preset = {};
       const provisionItem = await provisionHelper.getProvisionById({ id: req.params.provisionId });
       // append the company data
-      if (provisionItem.profile && provisionItem.profile.companyId) {
-        provisionItem.company = await iamServiceClient.getCompany({ id: provisionItem.profile.companyId });
+      if (provisionItem.profile) {
+        if (provisionItem.profile.companyId) {
+          company = await iamServiceClient.getCompany({ id: provisionItem.profile.companyId });
+        }
+        if (provisionItem.profile.resellerCarrierId) {
+          preset = await provisionHelper.getPresetByCarrierId(provisionItem.profile.resellerCarrierId);
+        }
       }
-      res.json(provisionItem);
+      const result = parseResponse(provisionItem, company, preset);
+      res.json(result);
     } catch (ex) {
       next(ex);
     }
@@ -103,9 +133,10 @@ export default function provisionController(iamServiceClient, provisionHelper) {
 
   async function putProvision(req, res, next) {
     try {
-      const command = _.extend({}, req.params, req.query, { roles: req.body });
-      const company = await provisionHelper.putProvision(command);
-      res.json(company);
+      const provisionData = buildProvisionData(req.body);
+      provisionData.id = req.params.provisionId;
+      const result = await provisionHelper.putProvision(provisionData);
+      res.json(result);
     } catch (ex) {
       next(ex);
     }

@@ -1,10 +1,11 @@
 import Q from 'q';
 import request from 'superagent';
-import { HttpStatusError, ArgumentNullError } from 'common-errors';
-import { isString, get, isNumber } from 'lodash';
+import { HttpStatusError, ArgumentNullError, ValidationError, NotFoundError } from 'common-errors';
+import { isString, get, isNumber, omit, forEach, isEqual, merge } from 'lodash';
 import logger from 'winston';
 
 const serviceFilter = ['SDK', 'WHITE_LABEL'];
+
 export default class MpsClient {
   constructor(options) {
     this._options = options;
@@ -12,6 +13,29 @@ export default class MpsClient {
       throw new ArgumentNullError('mps client base url');
     }
     this.basePath = this._options.baseUrl;
+  }
+
+  async mergeAndValidateProvisionData(command) {
+    let mCommand = command;
+    // omit those values to be validated
+    const omitPresetInfo = ['presetId', 'createdAt', 'updatedAt'];
+    let presetData = {};
+    try {
+      presetData = await this.getPreset({ presetId: command.resellerCarrierId });
+    } catch (ex) {
+      // no preset and then no need to check
+      return mCommand;
+    }
+    presetData = omit(presetData, omitPresetInfo);
+    // merge missing field back to provision data
+    mCommand = merge(presetData, mCommand);
+    forEach(presetData, (value, key) => {
+      // check the values whether identical to the preset value
+      if (!isEqual(mCommand[key], value)) {
+        throw new ValidationError(key);
+      }
+    });
+    return mCommand;
   }
 
   getProvision(query) {
@@ -22,21 +46,29 @@ export default class MpsClient {
     return this._handle(req, url);
   }
 
-  getProvisionById(command) {
+  async getProvisionById(command) {
     const url = `${this.basePath}/provisioning/${command.id}`;
     const req = request.get(url);
     return this._handle(req, url);
   }
 
-  postProvision(command) {
+  async postProvision(command) {
     const url = `${this.basePath}/provisioning`;
-    const req = request.post(url).send(command);
+    const updatedCommand = await this.mergeAndValidateProvisionData(command);
+    const req = request.post(url).send(updatedCommand);
     return this._handle(req, url);
   }
 
-  getPreset(query) {
-    const url = `${this.basePath}/preset/${query.carrierId}`;
-    const req = request.get(url).query(query);
+  async putProvision(command) {
+    const url = `${this.basePath}/provisioning/${command.id}`;
+    const updatedCommand = await this.mergeAndValidateProvisionData(command);
+    const req = request.put(url).send(omit(updatedCommand, 'id'));
+    return this._handle(req, url);
+  }
+
+  getPreset(command) {
+    const url = `${this.basePath}/preset/${command.presetId}`;
+    const req = request.get(url);
     return this._handle(req, url);
   }
 

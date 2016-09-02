@@ -3,7 +3,7 @@ import _ from 'lodash';
 import classNames from 'classnames';
 
 const SwitchButtonGroup = (props) => {
-  const { types, currentType, onChange } = props;
+  const { types, currentType, onChange, disabled } = props;
   return (
       <div className="switch-button-group">
       {
@@ -16,7 +16,12 @@ const SwitchButtonGroup = (props) => {
               { left: index === 0 },
               { right: index === _.keys(types).length - 1 })
           }
-            onClick= {() => onChange(item)}
+            onClick= {() => {
+              if (disabled) {
+                return;
+              }
+              onChange(item);
+            }}
           >
           {types[item]}
           </span>
@@ -42,6 +47,11 @@ SwitchButtonGroup.propTypes = {
    * @type {func}
    */
   onChange: PropTypes.func,
+  /**
+   * Disable the button
+   * @type {Boolean}
+   */
+  disabled: PropTypes.bool,
 };
 
 export default SwitchButtonGroup;
