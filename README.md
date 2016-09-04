@@ -4,6 +4,12 @@
 
 Changes of this documentation for releases
 
+### 1.9.0
+- Updated the [application structure](docs/ARCHITECTURE.md) supported with company provision(MPS) and integrated with [IAM/OPENID](docs/IAM_INTEGRATION.md)
+
+### 1.8.0
+- Changed Capabilities details in [Capabilities Seeding](docs/CAPABILITIES_SEEDING.md)
+
 ### 1.7.2
 - Updated Redis Uri configuration using redisUri
 
@@ -73,4 +79,3 @@ mermaid COMPONENTS.md -v
 - [Requirements](http://issuetracking.maaii.com:8090/display/MAAIIPR/WL+Portal+Requirements)
 - [wireframe](http://192.168.118.63/~louislam/m800-white-label-portal-v2/)
 - [layout preview](http://issuetracking.maaii.com:8080/browse/UMWP-45)
-

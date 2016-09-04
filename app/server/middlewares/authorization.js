@@ -13,6 +13,7 @@ function isCarrierIdAlike(part) {
 }
 
 function inferCarrierIdFromRequest(req) {
+  // @TODO to investigate if it is trustable to extract the carrierId from the header Referer
   const url = req.originalUrl;
   const parts = url.split('/');
   const carrierId = [

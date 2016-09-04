@@ -5,14 +5,14 @@
   "scripts": {
     "jenkins": "bower -f install && npm prune && npm i && npm run build",
     "jenkins:commit": "npm run jenkins && npm run test",
-    "jenkins:merge": "npm run jenkins && gitbook build && npm run i18n:download && npm run i18n:upload && npm prune --production ",
-    "build": "npm run clean && npm run copyjson && npm run transpile && gulp scss:production",
+    "jenkins:merge": "npm run jenkins && gitbook install && gitbook build && npm run i18n:download && npm run i18n:upload && npm prune --production ",
+    "build": "npm run clean && npm run copyjson && npm run transpile && gulp scss:production && npm run migrate:build",
     "copyjson": "gulp copy",
     "i18n:upload": "gulp intl:upload",
     "i18n:download": "gulp intl:download",
     "clean": "gulp clean",
     "docs:api": "npm run transpile && jsdoc -r node_modules/app -d build/docs",
-    "docs": "gitbook serve",
+    "docs": "gitbook install && gitbook serve",
     "lint": "eslint app",
     "debug": "npm run build && node-debug bin/www",
     "dev": "gulp",
@@ -23,7 +23,8 @@
     "test:browser": "wdio wdio.conf.js",
     "test:browser:docker": "test/browser/bin/run",
     "test:component": "mocha --require test/component/lib/domSetup.js --compilers js:babel-core/register --recursive test/component/specs",
-    "seed:capabilities": "babel-node bin/capabilitiesSeeding.js"
+    "seed:capabilities": "babel-node bin/capabilitiesSeeding.js",
+    "migrate:build": "cd migrate && npm i && gulp migrate:build"
   },
   "nyc": {
     "include": [
@@ -89,7 +90,7 @@
     "lodash": "^3.10.1",
     "logging": "^2.0.21",
     "m800-mail-service-client": "^1.0.0",
-    "m800-user-locale": "^0.4.2",
+    "m800-user-locale": "0.4.3-snapshot.75",
     "m800-util": "^0.6.2",
     "method-override": "^2.3.1",
     "mime": "^1.3.4",
@@ -152,6 +153,8 @@
   "devDependencies": {
     "babel-cli": "^6.7.5",
     "babel-eslint": "^6.0.0",
+    "babel-plugin-syntax-async-functions": "^6.1.4",
+    "babel-plugin-transform-regenerator": "^6.1.4",
     "babel-plugin-transform-runtime": "^6.12.0",
     "bower": "~1.7.7",
     "browser-sync": "~2.12.0",
@@ -175,6 +178,7 @@
     "gulp-sequence": "^0.4.5",
     "gulp-sourcemaps": "^1.3.0",
     "gulp-util": "^3.0.3",
+    "gulp-zip": "^3.2.0",
     "gulp.spritesmith": "^4.0.0",
     "jsdoc": "^3.3.0",
     "json-loader": "^0.5.1",

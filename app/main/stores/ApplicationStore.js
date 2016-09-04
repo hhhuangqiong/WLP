@@ -13,6 +13,7 @@ const ApplicationStore = createStore({
 
   initialize() {
     this.currentLanguage = null;
+    this.managingCompanies = [];
   },
 
   loadedCurrentCompany(company) {

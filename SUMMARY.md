@@ -1,5 +1,6 @@
 # Summary
 
+* [Architecture](docs/ARCHITECTURE.md)
 * [Development](docs/DEV.md)
   * [Continuous Integration](docs/CONTINUOUS_INTEGRATION.md)
   * [Routes](docs/ROUTES.md)
@@ -9,7 +10,7 @@
   * [E2E Automation](docs/AUTOMATED_BROWSER_TESTING.md)
   * [Component Unit Tests](docs/COMPONENT_UNIT_TEST.md)
 * [Internationalization and Localization](docs/I18N.md)
+* [Migration](migrate/README.md)
 * [Release](docs/RELEASE.md)
-  * [Changes](doc/CHANGES.md)
   * [Docker](docs/DOCKER.md)
-  * [Capabilities Seeding](docs/CAPABILITIES_SEEDING.md)
+  * [Integration with IAM](docs/IAM_INTEGRATION.md)
