@@ -20,7 +20,12 @@ export default class GridFs {
     });
     const writeStream = fs.createWriteStream(`${folder}/${id}_${data.filename}`);
     readstream.pipe(writeStream);
-    return `${id}_${data.filename}`;
+
+    return new Promise(resolve => {
+      writeStream.on('close', () => {
+        resolve(`${id}_${data.filename}`);
+      });
+    });
   }
 
   async upload(filePath) {

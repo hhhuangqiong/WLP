@@ -216,4 +216,4 @@ gulp.task('migrate:package', () =>
 // copy the whole folder to dist
 // babel the src folder
 // zip
-gulp.task('migrate:build', ['migrate:copy', 'migrate:babel', 'migrate:package']);
+gulp.task('migrate:build', gulpSequence('migrate:copy', 'migrate:babel', 'migrate:package'));
