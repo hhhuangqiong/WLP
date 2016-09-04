@@ -5,6 +5,7 @@ export default function (context, params) {
   context.api.updateCompanyProfile(companyProfile, err => {
     if (err) {
       context.dispatch('UPDATE_COMPANY_PROFILE_FAILURE', err);
+      context.dispatch('ERROR_MESSAGE', err);
       return;
     }
 

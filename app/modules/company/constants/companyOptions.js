@@ -4,10 +4,10 @@ import countryData from 'country-data';
 import timezoneData from 'timezones.json';
 
 // @TODO missing i18n
-export const COUNTRIES = countryData.countries.all.map((item) => ({
+export const COUNTRIES = _.sortBy(countryData.countries.all.map((item) => ({
   value: item.name,
   label: item.name,
-}));
+})), country => country.label);
 
 // @TODO missing i18n
 export const TIMEZONE = _.map(timezoneData, (item) => ({
