@@ -1,0 +1,23 @@
+{
+  "export": {
+    "mongo":{
+      "uri": "mongodb://deploy.dev.maaii.com:27018/m800-whitelabel-portal",
+      "options": {}
+    },
+    "buildDir": "./build"
+  },
+  "import": {
+    "iam": {
+      "mongo": {
+        "uri": "mongodb://deploy.dev.maaii.com:27018/maaii-identity-access-mgmt-test",
+        "options": {}
+      }
+    },
+    "mps": {
+      "mongo": {
+        "uri": "mongodb://deploy.dev.maaii.com:27018/maaii-provisioning-service-test",
+        "options": {}
+      }
+    }
+  }
+}

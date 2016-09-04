@@ -15,7 +15,7 @@ export const CAPABILITY = {
   CALL_MAAII_IN: 'call.maaii_in',
 
   IM: 'im',
-  IM_TO_SMS: 'im.im_to_sms',
+  IM_TO_SMS: 'im.im-to-sms',
 
   WALLET_COMPANY: 'wallet.company',
   WALLET_END_USER: 'wallet.end-user',

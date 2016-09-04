@@ -1,6 +1,6 @@
 import React from 'react';
 import { Route, IndexRedirect } from 'react-router';
-import { startsWith, includes, rest } from 'lodash';
+import { startsWith, includes } from 'lodash';
 import validator from 'validator';
 import modules from './constants/moduleId';
 import navigationSections from './main/constants/navSection';
@@ -76,7 +76,9 @@ export default (context) => {
   function checkAuth(nextState, replace) {
     const { routes, params: { identity: carrierId } } = nextState;
     // check the carrierId format and return early if not valid carrierid format
-    if (!validator.isURL(carrierId)) {
+    // @TODO check why demo_verify.maaiii-api.org fail validator.isURL
+    // at this moment it fails because of underscore of demo_verify
+    if (!validator.isURL(carrierId) && carrierId !== 'demo_verify.maaiii-api.org') {
       replace(path404);
       return;
     }

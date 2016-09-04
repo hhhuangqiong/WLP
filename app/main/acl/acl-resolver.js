@@ -14,13 +14,14 @@ function deriveProhibitions(capabilities) {
   // Not sure if this mapping is correct
   const PERMISSION_DEPENDENCIES = {
     [permission(RESOURCE.GENERAL)]: c => !includes(c, CAPABILITY.SERVICE_SDK),
-    [permission(RESOURCE.END_USER)]: c => includes(c, CAPABILITY.WALLET_END_USER),
+    [permission(RESOURCE.END_USER)]: () => true, // all companies will show end user section
     [permission(RESOURCE.CALL)]: c => any(c, x => /^call/.test(x)),
     [permission(RESOURCE.IM)]: c => includes(c, CAPABILITY.IM),
     [permission(RESOURCE.SMS)]: c => includes(c, CAPABILITY.IM_TO_SMS),
     [permission(RESOURCE.VSF)]: c => includes(c, CAPABILITY.VSF),
-    [permission(RESOURCE.TOP_UP)]: c => any(c, x => /^wallet/.test(x)),
-    [permission(RESOURCE.VERIFICATION_SDK)]: c => any(c, x => /^verification/.test(x)),
+    [permission(RESOURCE.TOP_UP)]: c => includes(c, CAPABILITY.PAYMENT_PRE_PAID), // show top up when it is pre-paid
+    [permission(RESOURCE.VERIFICATION_SDK)]: c =>
+      any(c, x => /^verification/.test(x)) || includes(c, CAPABILITY.SERVICE_SDK),
   };
   /* eslint no-confusing-arrow: 0 */
   const prohibitions = map(PERMISSION_DEPENDENCIES, (rule, p) => rule(capabilities) ? null : p)

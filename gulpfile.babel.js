@@ -14,6 +14,7 @@ import spriteSmith from 'gulp.spritesmith';
 import merge from 'merge-stream';
 import { argv } from 'yargs';
 import browserSync from 'browser-sync';
+import zip from 'gulp-zip';
 import injectM800LocaleGulpTasks from 'm800-user-locale/gulpTasks';
 import { ONE_SKY as oneSkyConfig } from './app/config/credentials';
 import { LOCALES as supportedLangs } from './app/config';
@@ -191,3 +192,28 @@ injectM800LocaleGulpTasks(gulp, {
   languages: supportedLangs,
   oneSky: oneSkyConfig,
 });
+
+const migrateFolder = 'migrate';
+const buildMigrateFolder = `${dest.build}/migrate`;
+gulp.task('migrate:copy', () =>
+   gulp.src([`${migrateFolder}/**`, `!${migrateFolder}/src/**`])
+     .pipe(gulp.dest(buildMigrateFolder))
+);
+
+gulp.task('migrate:babel', () =>
+  gulp.src(`${migrateFolder}/src/**/*.js`)
+    .pipe(babel())
+    .pipe(gulp.dest(`${buildMigrateFolder}/src`))
+);
+
+gulp.task('migrate:package', () =>
+  gulp.src(`${buildMigrateFolder}/**`)
+    .pipe(zip('migrateScript.zip'))
+    .pipe(gulp.dest(dest.build))
+);
+
+// before migrate build, it will perform npm i
+// copy the whole folder to dist
+// babel the src folder
+// zip
+gulp.task('migrate:build', ['migrate:copy', 'migrate:babel', 'migrate:package']);

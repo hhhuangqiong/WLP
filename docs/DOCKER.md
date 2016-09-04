@@ -28,6 +28,13 @@ docker.dev.maaii.com/m800/white-label-portal
 |`mvsApi__baseUrl`|Maaii Virtual Store Endpoint|`http://192.168.119.21:9125`|
 |`mvsApi__timeout`|Maaii Virtual Store Timeout|15000|
 |`logging__winston__meta__instance`|Deploy server/instance name, to use to identify from logstash which container the logs is coming from|testbed-wlp-1|
+|`APP_URL`|APP URL which is required, to send along with the login and logout with IAM the exact location to redirect to.|`http://deploy.dev.maaii.com:4002`|
+|`iamApi__baseUrl`|iamApi url which is used to access the user and company identity information|`http://deploy.dev.maaii.com:4004`|
+|`openid__issuer`|iam Open id issuer which is the address to obtain the endpoint url, it will return a json data|`http://deploy.dev.maaii.com:4004/openid/core/.well-known/openid-configuration`|
+|`openid__clientId`|the current client id|wlp|
+|`openid__clientSecret`|the current client secret id|`7GnoS1vf5HqM1b8B4ZKDJQA6BvXa38ltUoFFVQ4cloR4GICEuWQk50S60pIVK16b`|
+|`mpsApi__baseUrl`|the mps service base url|`http://deploy.dev.maaii.com:4005`|
+
 
 Note: Keys defined with __ in between words are due to default setup of [nconf](https://github.com/indexzero/nconf), an npm module that we used to organize application configurations.
 
