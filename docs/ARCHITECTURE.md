@@ -5,8 +5,6 @@ White Label Portal is to provide an integrated management portal for White-Label
 # Architecture
 
 {% plantuml %}
-@startuml
-
 node "White Label Portal" {
   [Company Management] as WLP_COMPANY_MGMT
   [User Management] as WLP_USER_MGMT
@@ -19,12 +17,14 @@ node "Identity Access Management(IAM)" {
   IAM_REST - [User identity]
   IAM_REST -d- [Role access]
   [OPEN_ID]
+  database "IAM mongodb"
 }
 
 node "Maaii Provisioning Service (MPS)" {
   interface "REST API" as MPS_REST
   [Provisioning] - MPS_REST
   MPS_REST - [Preset]
+  database "MPS mongodb"
 }
 
 node "Maaii MUMS" {
@@ -46,9 +46,6 @@ node "Maaii BOSS" {
 [WLP_STAT] --> MUMS_REST
 [WLP_STAT] --> MVS_REST
 [WLP_STAT] --> BOSS_REST
-
-@enduml
-
 {% endplantuml %}
 
 The architecture diagram above demonstrates the connected components from White Label Portal perspective.

@@ -42,6 +42,7 @@ openid__clients__wlp__post_logout_redirect_uris=http://deploy.dev.maaii.com:4002
 
 ## [WLP] 2. Use as client on WLP
 After registered on the IAM, apply the configuration on the WLP.  
+
 Here are the docker env setting related.  
 - `APP_URL`  
 the WLP APP URL which is required, to send along with the login and logout with IAM the exact location to redirect to.(e.g`http://deploy.dev.maaii.com:4002`) which is used to construct the redirect_uris, and post_logout_redirect_uris.
@@ -54,3 +55,10 @@ the client id that registered above (e.g `wlp`)
 
 - `openid__clientSecret`
 the clientSecret registered above (e.g `7GnoS1vf5HqM1b8B4ZKDJQA6BvXa38ltUoFFVQ4cloR4GICEuWQk50S60pIVK16b`)
+
+## Reference
+[Open Connect ID Standard](http://openid.net/connect/)
+[Node Provider used in IAM](https://github.com/panva/node-oidc-provider)
+[NODE OPENID Client applied in WLP](https://github.com/panva/node-openid-client)
+[IAM Doc](http://deploy.dev.maaii.com:9080/maaii-identity-access-mgmt/)
+[IAM Design Guide](https://issuetracking.maaii.com:9443/display/WLP/Identity+Access+Management%28IAM%29+Service)
