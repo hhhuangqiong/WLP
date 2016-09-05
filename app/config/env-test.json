@@ -1,28 +1,11 @@
 {
   "enableHTTPS": false,
-  "email": {
-    "support": "support@M800.com",
-    "no_reply": "No-Reply@M800.com"
-  },
   "queue": {
     "enable": true,
     "prefix": "q",
     "uiPort": 3100
   },
   "trustProxy": true,
-  "smtp": {
-    "sender": {
-      "email": "issue.tracker@maaii.com",
-      "name": "M800"
-    },
-    "transport":{
-      "host": "smtp.m800400.com",
-      "port": 25,
-      "tls": {
-        "rejectUnauthorized": false
-      }
-    }
-  },
   "secret": {
     "session": "fens.me"
   },

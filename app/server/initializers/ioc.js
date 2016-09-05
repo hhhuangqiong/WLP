@@ -1,5 +1,4 @@
 import Bottle from 'bottlejs';
-import path from 'path';
 import logger from 'winston';
 
 import makeRedisClient from './redis';
@@ -29,37 +28,12 @@ export default function init(nconf) {
 
   ioc.constant('logger', logger);
 
-  /* eslint-disable max-len */
-
-  // NB: relative to 'node_modules/'
-  ioc.constant('MAIL_TMPL_DIR', path.resolve(__dirname, '../../../mail/templates'));
-  ioc.constant('MAIL_TMPL_CONFIG', { templatesDir: ioc.container.MAIL_TMPL_DIR });
-
   ioc.factory('middlewares.ensureAuthenticated', () =>
     ensureAuthenticated(nconf.get('landing:unauthenticated:path')));
 
   ioc.factory('middlewares.flash', () => {
     return (require('../middlewares/flash').default)();
   });
-
-  ioc.factory('SmtpTransport', () => {
-    const transport = require('../../lib/mailer/transports/smtp').default;
-    return transport(nconf.get('smtp:transport'));
-  });
-
-  ioc.service('Mailer', require('../../lib/mailer/mailer'), 'SmtpTransport');
-  ioc.service('TemplateMailer', require('../../lib/mailer/templateMailer'), 'Mailer', 'MAIL_TMPL_CONFIG');
-
-  const DEFAULT_MAIL_SERVICE_URL = 'http://deploy.dev.maaii.com:4011';
-
-  // M800 Mail Service
-  ioc.constant('M800_MAIL_SERVICE_URL', process.env.M800_MAIL_SERVICE_URL || DEFAULT_MAIL_SERVICE_URL);
-
-  ioc.constant('M800_MAIL_SERVICE_CLIENT_CONFIG', {
-    baseUrl: ioc.container.M800_MAIL_SERVICE_URL,
-    basePath: '/emails',
-  });
-  ioc.service('EmailClient', require('m800-mail-service-client'), 'M800_MAIL_SERVICE_CLIENT_CONFIG');
 
   ioc.constant('DATAPROVIDER_API_BASE_URL', nconf.get('dataProviderApi:baseUrl'));
   ioc.constant('DATAPROVIDER_API_TIMEOUT', nconf.get('dataProviderApi:timeout'));
