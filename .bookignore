@@ -1,0 +1,8 @@
+bin/
+app/
+docker/
+mail/
+migrate/
+test/
+views/
+public/
