@@ -19,47 +19,30 @@ It will request user to enter the password. If it is correct, it will redirect t
 # Get started / Steps
 
 ## [IAM] 1. Register the WLP as a new Client on IAM
-To add a new client on IAM, developer need to insert a client with the following parameters on the IAM Docker environment variable.
 
-Here is the sample  
- - client_id - the id of client
- - client_secret - the client secret which need to use to verify the client when sending authorization request. You can generate this client secret by [nodejs crypto](https://nodejs.org/api/crypto.html#crypto_crypto_randombytes_size_callback) to generate via
-  `crypto.randomBytes(48).toString('base64')` (go to node env by typing node)
-  ```
-  M800-L-0063:m800-white-label-portal user$ node
-> crypto.randomBytes(48).toString('base64')
-'u77rWchPSnoXXkuhr4cIUSivE+UWsuMZgAUlAD5VvscF5t6wPfkA3M9j6Q/llSZh'
-  ```
- - grant_types - the grant type, in wlp, it will be `["authorization_code"]`
- - redirect_uris - the redirect_uris which read read the authorization code in the authorization request. (In wlp, it will be WLP ip `http://deploy.dev.maaii.com:4002`/callback)
- - post_logout_redirect_uris - the redirect url to after logout the IAM session. (In wlp, it will be the root ip of WLP `http://deploy.dev.maaii.com:4002`)
+Please refer to the IAM documentation about [OPEN ID Connect (Add a new Client)](http://deploy.dev.maaii.com:9080/maaii-identity-access-mgmt/).
+
+The following one is the setting for WLP.
+
+|Key|Description|values|examples|
+| --- | --- | --- |
+|`client_secret`|the client secret is a secret token to indicate the client *|(Generate one)|`u77rWchPSnoXXkuhr4cIUSivE+UWsuMZgAUlAD5VvscF5t6wPfkA3M9j6Q/llSZh`|
+|`grant_types`|the grant type|`authorization_code`|
+|`redirect_uris`|the redirect url|`http://{$ip}/callback`| `http://deploy.dev.maaii.com:4002/callback`|
+|`post_logout_redirect_uris`|the redirect url after logout|`http://{$ip}`|`http://deploy.dev.maaii.com:4002`|
+
+we will apply the wlp as client_id and here is the sample
 ```
-"openid":{
-  "clients": {
-    "wlp": {
-      "client_id": "wlp",
-      "client_secret": "9GnoS1vf5HqM1b8B4ZKDJQA6BvXa35ltUoFFVQ4cloR4GICEuWQk50S60pIVK06b",
-      "grant_types": ["authorization_code"],
-      "redirect_uris": ["http://deploy.dev.maaii.com:4002/callback"],
-      "post_logout_redirect_uris": ["http://deploy.dev.maaii.com:4002"]
-   }
- }
-},
+openid__clients__wlp__client_secret=9GnoS1vf5HqM1b8B4ZKDJQA6BvXa35ltUoFFVQ4cloR4GICEuWQk50S60pIVK06b
+openid__clients__wlp__grant_types=authorization_code
+openid__clients__wlp__redirect_uris=http://deploy.dev.maaii.com:4002/callback
+openid__clients__wlp__post_logout_redirect_uris=http://deploy.dev.maaii.com:4002
 ```
 
-You can also set in the env variable under the openid__clients object.
-```
-export openid__clients__wlp__client_id=wlp
-export openid__clients__wlp__client_secret=9GnoS1vf5HqM1b8B4ZKDJQA6BvXa35ltUoFFVQ4cloR4GICEuWQk50S60pIVK06b
-export openid__clients__wlp__grant_types=authorization_code
-export openid__clients__wlp__redirect_uris=http://deploy.dev.maaii.com:4002/callback
-export openid__clients__wlp__post_logout_redirect_uris=http://deploy.dev.maaii.com:4002
-```
+
 ## [WLP] 2. Use as client on WLP
-
-Since we have registered a client on IAM, we can apply the config and make use of those information.
-In the docker env setting, there are several fields related.
-
+After registered on the IAM, apply the configuration on the WLP.  
+Here are the docker env setting related.  
 - `APP_URL`  
 the WLP APP URL which is required, to send along with the login and logout with IAM the exact location to redirect to.(e.g`http://deploy.dev.maaii.com:4002`) which is used to construct the redirect_uris, and post_logout_redirect_uris.
 
