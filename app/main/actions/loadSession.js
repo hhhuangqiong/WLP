@@ -1,5 +1,8 @@
 import _ from 'lodash';
+import nconf from 'nconf';
 import { introspect } from '../../server/openid/manager';
+import { fetchDep } from '../../server/utils/bottle';
+
 let debug = require('debug');
 debug = debug('app:actions/loadSession');
 
@@ -22,8 +25,17 @@ module.exports = (context, payload, done) => {
   // if user exist, verify the token
   introspect(user.tokens.access_token).then(details => {
     if (details.active) {
-      context.dispatch('LOAD_SESSION', user);
-      done(null, user);
+      const iamServiceClient = fetchDep(nconf.get('containerName'), 'IamServiceClient');
+      iamServiceClient.getUser({ id: user.username })
+        .then(userInfo => {
+          const userDetail = _.merge(userInfo, user);
+          context.dispatch('LOAD_SESSION', userDetail);
+          done(null, userDetail);
+        }).catch(err => {
+          // fail to get the user info
+          context.dispatch('LOAD_SESSION', null);
+          done(err);
+        });
       return;
     }
     // expect the user should logout and redirect to the sign in page.

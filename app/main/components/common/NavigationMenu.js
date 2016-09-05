@@ -2,13 +2,11 @@ import { some } from 'lodash';
 import React, { PropTypes } from 'react';
 import { Link } from 'react-router';
 import { FluxibleMixin } from 'fluxible-addons-react';
-import { FormattedMessage, defineMessages, injectIntl } from 'react-intl';
+import { FormattedMessage, injectIntl } from 'react-intl';
 
 import LanguageSwitcher from './LanguageSwitcher';
 import CompanySwitcher from './CompanySwitcher';
 import signOut from '../../actions/signOut';
-import Modal from '../../../main/components/Modal';
-import ChangePasswordForm from '../../../modules/account/components/ChangePasswordForm';
 import Icon from '../Icon';
 
 import AuthStore from '../../stores/AuthStore';
@@ -40,7 +38,6 @@ const Navigation = React.createClass({
   getInitialState() {
     return {
       modal: 'close',
-      isChangePasswordOpened: false,
       displayName: this
         .context
         .getStore(AuthStore)
@@ -67,52 +64,7 @@ const Navigation = React.createClass({
     this.context.executeAction(signOut, {});
   },
 
-  handleOpenChangePasswordDialog() {
-    this.setState({ isChangePasswordOpened: true });
-  },
-
-  handleCloseChangePasswordDialog(e) {
-    if (e) e.preventDefault();
-    this.setState({ isChangePasswordOpened: false });
-  },
-
-  renderCreateCompany() {
-    if (some(companyPages, page => this.context.location.pathname.indexOf(page) > -1)) {
-      return (
-        <li className="navigation-bar__item no-border">
-          <Link to={`${this.context.location.pathname}/company-create`}>
-            <FormattedMessage
-              id="company.createNewCompany"
-              defaultMessage="Create new company"
-            />
-          </Link>
-        </li>
-      );
-    }
-
-    return null;
-  },
-
-  renderCreateUser() {
-    if (some(accountPages, page => this.context.location.pathname.indexOf(page) > -1)) {
-      return (
-        <li className="navigation-bar__item no-border">
-          <Link to={`${this.context.location.pathname}/account-create`}>
-            <FormattedMessage
-              id="account.createNewUser"
-              defaultMessage="Create new user"
-            />
-          </Link>
-        </li>
-      );
-    }
-
-    return null;
-  },
-
   render() {
-    const { formatMessage } = this.props.intl;
-
     if (!this.state.isAuthenticated) {
       return null;
     }
@@ -147,20 +99,6 @@ const Navigation = React.createClass({
               <Icon symbol="icon-more" />
             </a>
             <ul className="dropdown">
-
-                {/* Disable change password since it is not yet a released function */}
-                {/*
-                <a onClick={this.handleOpenChangePasswordDialog}>
-                <li className="navigation-bar__item change-password">
-                  <a onClick={this.handleOpenChangePasswordDialog}>
-                    <Icon symbol="icon-change-password" />
-                    <FormattedMessage
-                      id="changePassword"
-                      defaultMessage="Change Password"
-                    />
-                  </a>
-                </li>
-                */}
               <li className="navigation-bar__item">
                 <a onClick={this.handleSignOut}>
                   <Icon symbol="icon-logout" />
