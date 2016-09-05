@@ -2,13 +2,11 @@ import { some } from 'lodash';
 import React, { PropTypes } from 'react';
 import { Link } from 'react-router';
 import { FluxibleMixin } from 'fluxible-addons-react';
-import { FormattedMessage, defineMessages, injectIntl } from 'react-intl';
+import { FormattedMessage, injectIntl } from 'react-intl';
 
 import LanguageSwitcher from './LanguageSwitcher';
 import CompanySwitcher from './CompanySwitcher';
 import signOut from '../../actions/signOut';
-import Modal from '../../../main/components/Modal';
-import ChangePasswordForm from '../../../modules/account/components/ChangePasswordForm';
 import Icon from '../Icon';
 
 import AuthStore from '../../stores/AuthStore';
@@ -111,8 +109,6 @@ const Navigation = React.createClass({
   },
 
   render() {
-    const { formatMessage } = this.props.intl;
-
     if (!this.state.isAuthenticated) {
       return null;
     }
@@ -147,20 +143,6 @@ const Navigation = React.createClass({
               <Icon symbol="icon-more" />
             </a>
             <ul className="dropdown">
-
-                {/* Disable change password since it is not yet a released function */}
-                {/*
-                <a onClick={this.handleOpenChangePasswordDialog}>
-                <li className="navigation-bar__item change-password">
-                  <a onClick={this.handleOpenChangePasswordDialog}>
-                    <Icon symbol="icon-change-password" />
-                    <FormattedMessage
-                      id="changePassword"
-                      defaultMessage="Change Password"
-                    />
-                  </a>
-                </li>
-                */}
               <li className="navigation-bar__item">
                 <a onClick={this.handleSignOut}>
                   <Icon symbol="icon-logout" />

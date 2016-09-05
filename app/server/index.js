@@ -41,10 +41,6 @@ export default function (port) {
   // eslint-disable-next-line no-unused-vars
   const logger = require('./initializers/logging')(nconf.get('logging:winston'));
 
-  // database initialization
-  // eslint-disable-next-line max-len
-  require('./initializers/database')(nconf.get('mongodb:uri'), nconf.get('mongodb:options'));
-
   const ioc = (require('./initializers/ioc').default)(nconf);
 
   // initialize the Kue instance to share through the entire process

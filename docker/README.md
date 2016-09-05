@@ -62,17 +62,6 @@ EDITOR /usr/local/etc/redis.conf
 redis-server /usr/local/etc/redis.conf
 ```
 
-## Mongo
-
-for using local Mongo
-
-```
-EDITOR /usr/local/etc/redis.conf
-  > bind 0.0.0.0
-
-mongod --config /usr/local/etc/mongod.conf
-```
-
 # Publish the Docker image
 
 ```

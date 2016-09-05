@@ -83,7 +83,6 @@ describe('fluxible Utils', () => {
     const identity = 'maaii.com';
     const clientSidePayload = {
       params: {
-        role: 'w',
         identity,
       },
     };

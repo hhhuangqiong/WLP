@@ -7,7 +7,6 @@ APP_PORT=3000
 # Do not use `boot2docker ip` or "localhost" below
 # NB: no shell expansion support
 redis__host=<your machine ip>
-mongodb__uri=mongodb://<your machine ip>/m800-whitelabel-portal
 queue__enable=false
 
 # logstash

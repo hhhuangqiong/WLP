@@ -2,9 +2,6 @@
   "timeout": 15000,
   "redisFailoverAttempts": 1,
   "containerName": "m800",
-  "email": {
-    "from": "noreply@m800.com"
-  },
   "redisUri": "redis://localhost:6379/11",
   "mvsApi": {
     "baseUrl": "http://192.168.118.13:9125",
@@ -33,20 +30,5 @@
   },
   "mpsApi": {
     "baseUrl": "http://deploy.dev.maaii.com:4005"
-  },
-  "mongodb": {
-    "uri": "mongodb://localhost/m800-whitelabel-portal",
-    "options": {
-      "mongos": false,
-      "user": "",
-      "pass": "",
-      "server": {
-        "auto_reconnect": true,
-        "socketOptions": {
-          "keepAlive": 1,
-          "connectTimeoutMS": 3000
-        }
-      }
-    }
   }
 }
