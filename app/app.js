@@ -9,8 +9,6 @@ import VerificationOverviewStore from './modules/verification/stores/Verificatio
 import CompanyStore from './modules/company/stores/CompanyStore';
 import EndUserStore from './modules/end-user/stores/EndUserStore';
 import AccountStore from './modules/account/stores/AccountStore';
-import CreatePasswordStore from './modules/account/stores/CreatePasswordStore';
-import ChangePasswordStore from './modules/account/stores/ChangePasswordStore';
 import CallsStore from './modules/calls/stores/CallsStore';
 import CallsOverviewStore from './modules/calls/stores/CallsOverviewStore';
 import TopUpStore from './modules/top-up/stores/TopUpStore';
@@ -57,8 +55,6 @@ app.registerStore(VerificationStore);
 app.registerStore(VerificationOverviewStore);
 app.registerStore(EndUserStore);
 app.registerStore(AccountStore);
-app.registerStore(CreatePasswordStore);
-app.registerStore(ChangePasswordStore);
 app.registerStore(CallsStore);
 app.registerStore(CallsOverviewStore);
 app.registerStore(TopUpStore);
