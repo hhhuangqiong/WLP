@@ -28,6 +28,9 @@ function capabilitiesTransform(value) {
   }
   if (value.indexOf('top_up') > -1) {
     provision.profile.paymentMode = 'PRE_PAID';
+  } else {
+    // if no top up capabilities, it will be all post paid
+    provision.profile.paymentMode = 'POST_PAID';
   }
   if (value.indexOf('device.ios') > -1) {
     provision.profile.capabilities.push('platform.ios');
