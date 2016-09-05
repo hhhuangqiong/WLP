@@ -16,6 +16,12 @@ Company information will be the same in the MPS and IAM. Each company will also 
 
 And users who originally assignedGroup as root will be automatically granted with admin role.
 
+## Where to obtain the migration script ?
+
+To get the migration script, you can go to jenkins and find the last successful artifact called migrateScript.zip
+	
+http://jenkins.dev.maaii.com:8080/view/Web/job/Web/job/White%20Label%20Portal/job/m800-white-label-merge/
+
 ## Flow
 
 1. Export the origin data from current mongodb   
