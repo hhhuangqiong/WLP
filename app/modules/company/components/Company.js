@@ -178,6 +178,7 @@ class Company extends React.Component {
               containerClassName="pagination-page-break"
               subContainerClassName="pages pagination-page-break"
               activeClassName="active"
+              forceSelected={this.state.selected}
             />
             <button className="button-pagination" onClick={this.handleLastPageClick}>Last</button>
           </div>
