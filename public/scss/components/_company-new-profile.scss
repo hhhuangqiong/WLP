@@ -27,7 +27,7 @@
   .icon {
     fill:#999;
     position: absolute;
-    top:1.35rem;
+    top:1.55rem;
     left: 2rem;
     cursor: pointer;
   }
@@ -43,7 +43,7 @@
       padding: rem-calc(10);
       >.rc-collapse-header {
         span {
-          left: 4%;
+          left: rem-calc(63);
         }
       }
       .rc-collapse-content.rc-collapse-content-active{
