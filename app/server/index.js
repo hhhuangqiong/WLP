@@ -106,7 +106,6 @@ export default function (port) {
 
   server.use(require('./routers/hlr').default);
   server.use(config.EXPORT_PATH_PREFIX, require('./routers/export').default);
-  server.use(config.FILE_UPLOAD_PATH_PREFIX, require('./routers/data').default);
   server.use(config.API_PATH_PREFIX, require('./routers/api').default);
   server.use(config.API_PATH_PREFIX, apiErrorHandler);
 

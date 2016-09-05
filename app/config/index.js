@@ -7,7 +7,6 @@ module.exports = {
   DEFAULT_POST_LOGIN_PATH: '/calls',
   EXPORT_PATH_PREFIX: '/export',
   API_PATH_PREFIX: '/api',
-  FILE_UPLOAD_PATH_PREFIX: '/data',
   DISABLE_ISOMORPHISM: Boolean(process.env.DISABLE_ISOMORPHISM) || false,
   LOCALES: ['en', 'zh-hant', 'zh-hans', 'it'],
   COOKIE: {
