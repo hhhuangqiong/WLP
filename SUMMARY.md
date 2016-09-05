@@ -9,7 +9,7 @@
 * [Testing](docs/TESTING.md)
   * [E2E Automation](docs/AUTOMATED_BROWSER_TESTING.md)
   * [Component Unit Tests](docs/COMPONENT_UNIT_TEST.md)
-* [Migration](migrate/README.md)
+* [Migration](docs/MIGRATION.md)
 * [Release](docs/RELEASE.md)
   * [Docker](docs/DOCKER.md)
   * [Integration with IAM](docs/IAM_INTEGRATION.md)

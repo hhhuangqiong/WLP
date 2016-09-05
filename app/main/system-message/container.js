@@ -9,7 +9,6 @@ import dismissMessage from './actions/dismiss';
 class SystemMessageContainer extends Component {
   constructor(props) {
     super(props);
-
     this.handleDismiss = this.handleDismiss.bind(this);
     this.parseMessage = this.parseMessage.bind(this);
   }
@@ -26,14 +25,22 @@ class SystemMessageContainer extends Component {
     } else if (has(message, 'message')) {
       return message.message;
     }
-
+    if (typeof message !== 'string') {
+      return null;
+    }
     return message;
   }
 
   render() {
     const { message, ...restProps } = this.props;
     const formattedMessage = this.parseMessage(message);
-
+    // @TODO investigate why it return object {status:500} as message instead of block those
+    // API errors
+    // since system message and Crouton component only accept string, block those messages
+    // which don't meet the standard.
+    if (!formattedMessage) {
+      return null;
+    }
     return (
       <SystemMessage
         {...restProps}
@@ -72,10 +79,9 @@ SystemMessageContainer.propTypes = {
   handleDismiss: PropTypes.func,
 };
 
-SystemMessageContainer = connectToStores(
-  SystemMessageContainer,
-  [SystemMessageStore],
+SystemMessageContainer = injectIntl(SystemMessageContainer);
+SystemMessageContainer = connectToStores(SystemMessageContainer, [SystemMessageStore],
   context => ({ ...(context.getStore(SystemMessageStore).getState()) })
 );
 
-export default injectIntl(SystemMessageContainer);
+export default SystemMessageContainer;
