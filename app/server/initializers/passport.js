@@ -23,6 +23,7 @@ export default function setup() {
     done(null, obj);
   });
 
+  // @todo: configurations should be injected
   const issuer = nconf.get('openid:issuer');
   const clientID = nconf.get('openid:clientId');
   const clientSecret = nconf.get('openid:clientSecret');

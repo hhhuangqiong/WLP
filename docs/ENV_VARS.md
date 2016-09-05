@@ -1,4 +1,4 @@
-# Environment Variables
+# Development Environment Variables
 
 ## Optional:
 
@@ -64,35 +64,3 @@ Values:
 
 - test
 - production
-
-### TZ (DEFAULT: '')
-
-Description:
-
-- timezone setting of Node application
-
-Values:
-
-- Asia/Hong_Kong
-
-### bufferTimeInMinutes__callStats__dailyFetch (DEFAULT: '')
-
-Description:
-
-- buffering time to determine whether to get latest call stats data or the data from one day before to ensure all data are cached into redis successfully
-- format in seconds
-
-Values:
-
-- 240
-
-### bufferTimeInMinutes__callStats__hourlyFetch (DEFAULT: '')
-
-Description:
-
-- buffering time to determine whether to get latest call stats data or the data from one hour before to ensure all data are cached into redis successfully
-- format in seconds
-
-Values:
-
-- 10
