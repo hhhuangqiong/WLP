@@ -1,14 +1,11 @@
 import Bottle from 'bottlejs';
 import path from 'path';
-import NodeAcl from 'acl';
 import logger from 'winston';
-
 
 import makeRedisClient from './redis';
 import ensureAuthenticated from '../middlewares/ensureAuthenticated';
 
 import CallsRequest from '../../lib/requests/dataProviders/Call';
-
 import { IamClient } from '../../lib/requests/iam/IamServiceClient';
 import { createFetchPermissionsMiddleware } from '../../server/middlewares/authorization';
 import { createAclResolver } from './../../main/acl/acl-resolver';
@@ -111,16 +108,6 @@ export default function init(nconf) {
   ioc.service('WalletRequest', require('../../lib/requests/boss/Wallet').default, 'BOSS_API_BASE_URL', 'BOSS_API_TIMEOUT');
 
   ioc.service('RedisClient', () => makeRedisClient(nconf.get('redisUri')));
-
-  ioc.factory('ACL', () => new NodeAcl(new NodeAcl.memoryBackend()));
-
-  ioc.factory('ACLManager', container => {
-    const AclManager = require('../../main/acl').default;
-    const carrierQuerier = require('../../main/acl/carrierQueryService');
-    const nodeAcl = container.ACL;
-
-    return new AclManager(nodeAcl, carrierQuerier);
-  });
 
   // Remote service clients (real)
   ioc.constant('MpsClientOptions', {

@@ -6,7 +6,6 @@ General Application Structure
 
 app
 |-- actions               # Fluxible actions
-|-- collections           # mongoose db collections
 |-- components            # React components
 |-- config                # configuration to be shared between client/server
 |-- data                  # seed data and form data
@@ -22,4 +21,3 @@ app
 |    `-- routes
 `-- stores                # Fluxible stores
 ```
-

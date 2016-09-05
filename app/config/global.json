@@ -1,8 +1,4 @@
 {
-  "speakeasy": {
-    "encoding": "base32",
-    "name": "M800 Whitelabel Portal Sign Up"
-  },
   "owasp": {
     "allowPassphrases": true,
     "maxLength": 30,

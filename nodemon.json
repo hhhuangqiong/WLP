@@ -3,7 +3,6 @@
     "gulpfile.coffee",
     "nodemon.json",
     "package.json",
-    "app/collections/",
     "app/config/",
     "app/lib/",
     "app/server/",
