@@ -38,7 +38,6 @@ const Navigation = React.createClass({
   getInitialState() {
     return {
       modal: 'close',
-      isChangePasswordOpened: false,
       displayName: this
         .context
         .getStore(AuthStore)
@@ -63,49 +62,6 @@ const Navigation = React.createClass({
     e.preventDefault();
     e.stopPropagation();
     this.context.executeAction(signOut, {});
-  },
-
-  handleOpenChangePasswordDialog() {
-    this.setState({ isChangePasswordOpened: true });
-  },
-
-  handleCloseChangePasswordDialog(e) {
-    if (e) e.preventDefault();
-    this.setState({ isChangePasswordOpened: false });
-  },
-
-  renderCreateCompany() {
-    if (some(companyPages, page => this.context.location.pathname.indexOf(page) > -1)) {
-      return (
-        <li className="navigation-bar__item no-border">
-          <Link to={`${this.context.location.pathname}/company-create`}>
-            <FormattedMessage
-              id="company.createNewCompany"
-              defaultMessage="Create new company"
-            />
-          </Link>
-        </li>
-      );
-    }
-
-    return null;
-  },
-
-  renderCreateUser() {
-    if (some(accountPages, page => this.context.location.pathname.indexOf(page) > -1)) {
-      return (
-        <li className="navigation-bar__item no-border">
-          <Link to={`${this.context.location.pathname}/account-create`}>
-            <FormattedMessage
-              id="account.createNewUser"
-              defaultMessage="Create new user"
-            />
-          </Link>
-        </li>
-      );
-    }
-
-    return null;
   },
 
   render() {
