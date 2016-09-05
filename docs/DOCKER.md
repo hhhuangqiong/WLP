@@ -24,17 +24,19 @@ docker.dev.maaii.com/m80/m800-white-label-portal
 | `dataProviderApi__timeout` | Data Provider API Timeout |60000|
 | `mvsApi__baseUrl` | Maaii Virtual Store Endpoint |`http://192.168.119.21:9125`|
 | `mvsApi__timeout` | Maaii Virtual Store Timeout |15000|
+| `bufferTimeInMinutes__callStats__dailyFetch` | buffering time to determine whether to get latest call stats data or the data from one day before to ensure all data are cached into redis successfully.| 240 |
+| `bufferTimeInMinutes__callStats__hourlyFetch` | buffering time to determine whether to get latest call stats data or the data from one hour before to ensure all data are cached into redis successfully. | 10 |
+| (Deprecated^) `logging__winston__meta__instance`|Deploy server/instance name, to use to identify from logstash which container the logs is coming from | testbed-wlp-1 |
 | `iamApi__baseUrl` | Identity Access Management API Endpoint | http://127.0.0.1:3001 |
 | `mpsApi__baseUrl` | Maaii Provision Service API Endpoint | http://deploy.dev.maaii.com:4005 |
 | `openid__issuer`  | OpenId Issuer Endpoint. In most cases, should be pointed to IAM openid issuer endpoint. See [IAM Integration](docs/IAM_INTEGRATION.md) | http://127.0.0.1:3001/openid/core/.well-known/openid-configuration |
 | `openid__clientId` | OpenId Client Id. See [IAM Integration](docs/IAM_INTEGRATION.md) | wlp |
 | `openid__clientSecret` | OpenId Client Secret. [IAM Integration](docs/IAM_INTEGRATION.md) | 7GnoS1vf5HqM1b8B4ZKDJQA6BvXa38ltUoFFVQ4cloR4GICEuWQk50S60pIVK16b |
-| `bufferTimeInMinutes__callStats__dailyFetch` | buffering time to determine whether to get latest call stats data or the data from one day before to ensure all data are cached into redis successfully.| 240 |
-| `bufferTimeInMinutes__callStats__hourlyFetch` | buffering time to determine whether to get latest call stats data or the data from one hour before to ensure all data are cached into redis successfully. | 10 |
-| (Deprecated^) `logging__winston__meta__instance`|Deploy server/instance name, to use to identify from logstash which container the logs is coming from | testbed-wlp-1 |
 
 
-Note: Keys defined with __ in between words are due to default setup of [nconf](https://github.com/indexzero/nconf), an npm module that we used to organize application configurations.
+Note: Keys defined with __ in between words are due to default setup of [nconf](https://github.com/indexzero/nconf), an npm module that we used to organize application configurations.  
+
+Note: `openid_` prefix should follow the guide in the [IAM integration](docs/IAM_INTEGRATION.md)
 
 ^ Deprecated as this would logs forwarding to logstash will be done through mapping of docker logs
 

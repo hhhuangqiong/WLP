@@ -42,7 +42,7 @@ node "Maaii BOSS" {
 [WLP_COMPANY_MGMT] --> MPS_REST
 [WLP_COMPANY_MGMT] --> IAM_REST
 [WLP_USER_MGMT] --> IAM_REST
-[WLP_USER_MGMT] --> [OPEN_ID] : authenicate flow(login, logout)
+[WLP_USER_MGMT] --> [OPEN_ID] : authenticate flow(login, logout)
 [WLP_STAT] --> MUMS_REST
 [WLP_STAT] --> MVS_REST
 [WLP_STAT] --> BOSS_REST
@@ -65,7 +65,7 @@ Module that manage the company, it connects with MPS to provision the company an
 
 ### Statistic
 
-It connects with other REST API from different service to obtain the statistic information according to the company and carrier.
+It connects with other REST API from different services to obtain the statistic information according to the company and carrier.
 
 ## Identity Access Management
 
