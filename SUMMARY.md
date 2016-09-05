@@ -3,7 +3,6 @@
 * [Architecture](docs/ARCHITECTURE.md)
 * [Development](docs/DEV.md)
   * [Continuous Integration](docs/CONTINUOUS_INTEGRATION.md)
-  * [Routes](docs/ROUTES.md)
   * [Env Vars](docs/ENV_VARS.md)
   * [Logstash](docs/Logstash.md)
   * [Internationalization and Localization](docs/I18N.md)
