@@ -1,5 +1,6 @@
 # Summary
 
+* [Change Log](docs/CHANGES.md)
 * [Architecture](docs/ARCHITECTURE.md)
 * [Development](docs/DEV.md)
   * [Continuous Integration](docs/CONTINUOUS_INTEGRATION.md)

@@ -20,6 +20,11 @@ It will request user to enter the password. If it is correct, it will redirect t
 
 ## [IAM] 1. Register the WLP as a new Client on IAM
 
+In the following steps, there are two ip will be used.  
+
+`{$ip}` - the ip address of the WLP application (e.g `http://deploy.dev.maaii.com:4002`)  
+`{$iamIp}` - the IAM ip address  (e.g `http://deploy.dev.maaii.com:4004`)
+
 Please refer to the IAM documentation about [OPEN ID Connect (Add a new Client)](http://deploy.dev.maaii.com:9080/maaii-identity-access-mgmt/).
 
 The following one is the setting for WLP.
@@ -45,10 +50,11 @@ After registered on the IAM, apply the configuration on the WLP.
 
 Here are the docker env setting related.  
 - `APP_URL`  
-the WLP APP URL which is required, to send along with the login and logout with IAM the exact location to redirect to.(e.g`http://deploy.dev.maaii.com:4002`) which is used to construct the redirect_uris, and post_logout_redirect_uris.
+the WLP APP URL which is required,  
+To send along with the login and logout with IAM the exact location to redirect to.(`{$ip}` e.g`http://deploy.dev.maaii.com:4002`) which is used to construct the redirect_uris, and post_logout_redirect_uris.
 
 - `openid__issuer`  
-iam Open id issuer which is the address to obtain the endpoint url, it will return a json data (e.g.`http://deploy.dev.maaii.com:4004/openid/core/.well-known/openid-configuration`)
+iam Open id issuer which is the address to obtain the endpoint url, it will return a json data (`{$iamIp}/openid/core/.well-known/openid-configuration`  e.g.`http://deploy.dev.maaii.com:4004/openid/core/.well-known/openid-configuration`)
 
 - `openid__clientId`  
 the client id that registered above (e.g `wlp`)
@@ -57,8 +63,8 @@ the client id that registered above (e.g `wlp`)
 the clientSecret registered above (e.g `7GnoS1vf5HqM1b8B4ZKDJQA6BvXa38ltUoFFVQ4cloR4GICEuWQk50S60pIVK16b`)
 
 ## Reference
-[Open Connect ID Standard](http://openid.net/connect/)
-[Node Provider used in IAM](https://github.com/panva/node-oidc-provider)
-[NODE OPENID Client applied in WLP](https://github.com/panva/node-openid-client)
-[IAM Doc](http://deploy.dev.maaii.com:9080/maaii-identity-access-mgmt/)
+[Open Connect ID Standard](http://openid.net/connect/)  
+[Node Provider used in IAM](https://github.com/panva/node-oidc-provider)  
+[NODE OPENID Client applied in WLP](https://github.com/panva/node-openid-client)  
+[IAM Doc](http://deploy.dev.maaii.com:9080/maaii-identity-access-mgmt/)  
 [IAM Design Guide](https://issuetracking.maaii.com:9443/display/WLP/Identity+Access+Management%28IAM%29+Service)
