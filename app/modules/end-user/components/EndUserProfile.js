@@ -266,7 +266,7 @@ const EndUserProfile = React.createClass({
 
     return devices.map((device) =>
       (
-        <Accordion.Navigation title={formatMessage(MESSAGES.appTitle)}>
+        <Accordion.Navigation title={formatMessage(MESSAGES.appTitle)} key={device.platform}>
           <Item label={formatMessage(MESSAGES.device)}>
             <span className="device-label">
               <Icon key={getPlatformInfo(device.platform).iconClass} symbol={getPlatformInfo(device.platform).iconClass} />

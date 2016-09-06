@@ -1,10 +1,10 @@
-import { Strategy as baseStrategy } from 'passport-strategy';
+import { Strategy } from 'passport-strategy';
 import { ArgumentNullError } from 'common-errors';
 import { loadClient, getAuthorizationUrl, getUserInfo, authorizationCallback } from './manager';
 import { fetchDep } from '../utils/bottle';
 import nconf from 'nconf';
 
-export class OpenIdStrategy extends baseStrategy {
+export class OpenIdStrategy extends Strategy {
   constructor(options = {}, verify) {
     super(options, verify);
     this.name = 'openid-connect';
