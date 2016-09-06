@@ -23,8 +23,19 @@ class RolesTable extends Component {
       onRoleEditSuggested: PropTypes.func,
       onRoleEditStarted: PropTypes.func,
       onRoleEditCancelled: PropTypes.func,
+      handleDelete: PropTypes.func,
       onRoleRemoved: PropTypes.func,
+      handleCloseDeleteDialog: PropTypes.func,
+      handleOpenDeleteDialog: PropTypes.func,
+      deleteDialogOpened: PropTypes.bool,
+      roleName: PropTypes.string,
     };
+  }
+  constructor(props) {
+    super(props);
+    this.isValid = this.isValid.bind(this);
+    this.handleTableClick = this.handleTableClick.bind(this);
+    this.handleTableMouseOver = this.handleTableMouseOver.bind(this);
   }
   isValid() {
     if (!this.props.roles) {
@@ -36,6 +47,11 @@ class RolesTable extends Component {
     return isValid;
   }
   handleClickOutside() {
+    // should the onRoleEditCancelled be called
+    // if the dialog is open , the function will not be called.
+    if (this.props.deleteDialogOpened) {
+      return;
+    }
     this.props.onRoleEditCancelled();
   }
   handleTableClick(e) {
@@ -53,7 +69,7 @@ class RolesTable extends Component {
       this.props.onRoleEditCancelled();
       return;
     }
-    this.props.onRoleEditStarted({ index });
+    this.props.onRoleEditStarted(index);
   }
   handleTableMouseOver(e) {
     if (!this.isTableCell(e.target)) {
@@ -65,7 +81,7 @@ class RolesTable extends Component {
     if (index >= this.props.roles.length) {
       return;
     }
-    this.props.onRoleEditSuggested({ index });
+    this.props.onRoleEditSuggested(index);
   }
   isTableCell(node) {
     return node.nodeName === 'TD' || node.nodeName === 'TH';
@@ -82,6 +98,7 @@ class RolesTable extends Component {
         isChild={isChild}
         key={key}
         title={this.props.intl.formatMessage(MESSAGES[permission.intlKey])}
+        editTitle={this.props.intl.formatMessage(MESSAGES.title)}
         hoveredRoleIndex={this.props.hoveredRoleIndex}
         editedRoleIndex={this.props.editedRoleIndex}
         permissionValues={permissionValues}
@@ -105,8 +122,8 @@ class RolesTable extends Component {
           rolesCount={this.props.roles.length}
           hoveredRoleIndex={this.props.hoveredRoleIndex}
           editedRoleIndex={this.props.editedRoleIndex}
-          onSave={() => this.props.onRoleSaved()}
-          onCancel={() => this.props.onRoleEditCancelled()}
+          onSave={this.props.onRoleSaved}
+          onCancel={this.props.onRoleEditCancelled}
         >
           {childRows}
         </PermissionRowGroup>
@@ -119,18 +136,32 @@ class RolesTable extends Component {
     const rows = this.props.permissions.map(
       (permission, index) => this.renderPermissionGroup(permission, index, isValid)
     );
+    const {
+      hoveredRoleIndex,
+      editedRoleIndex,
+      onRoleNameChanged,
+      onRoleRemoved,
+      handleCloseDeleteDialog,
+      handleOpenDeleteDialog,
+      deleteDialogOpened,
+      roleName,
+    } = this.props;
     return (
       <table
         className="roles-table"
-        onMouseOver={ e => this.handleTableMouseOver(e) }
-        onClick={e => this.handleTableClick(e)}
+        onMouseOver={this.handleTableMouseOver}
+        onClick={this.handleTableClick}
       >
         <RolesTableHeader
           roleNames={this.props.roles.map(x => x.name)}
-          hoveredRoleIndex={this.props.hoveredRoleIndex}
-          editedRoleIndex={this.props.editedRoleIndex}
-          onNameChanged={e => this.props.onRoleNameChanged(e)}
-          onRemoved={e => this.props.onRoleRemoved(e)}
+          hoveredRoleIndex={hoveredRoleIndex}
+          editedRoleIndex={editedRoleIndex}
+          onNameChanged={onRoleNameChanged}
+          handleDelete={onRoleRemoved}
+          handleCloseDeleteDialog={handleCloseDeleteDialog}
+          handleOpenDeleteDialog={handleOpenDeleteDialog}
+          deleteDialogOpened={deleteDialogOpened}
+          roleName={roleName}
         />
         {rows}
       </table>

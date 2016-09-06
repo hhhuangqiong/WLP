@@ -1,7 +1,6 @@
 import React, { PropTypes } from 'react';
 import Modal from 'react-modal';
 import { CLIENT } from '../../utils/env';
-
 /**
  * A confirmation dialog that utilizes react-modal.
  * To use, add the message as the child of this component.
@@ -46,6 +45,10 @@ const ConfirmationDialog = React.createClass({
     cancelLabel: PropTypes.string,
     onCancel: PropTypes.func.isRequired,
     onConfirm: PropTypes.func.isRequired,
+    warning: PropTypes.string,
+    dialogHeader: PropTypes.string,
+    dialogMessage: PropTypes.string,
+    name: PropTypes.string,
     children: PropTypes.oneOfType([
       PropTypes.element,
       PropTypes.array,
@@ -64,34 +67,58 @@ const ConfirmationDialog = React.createClass({
   },
 
   render() {
+    const {
+      isOpen,
+      onCancel,
+      onConfirm,
+      confirmLabel,
+      cancelLabel,
+      warning,
+      dialogMessage,
+      dialogHeader,
+      name } = this.props;
     return (
-      <Modal className="confirmation" isOpen={this.props.isOpen}>
+      <Modal
+        className="confirmation"
+        overlayClassName="OverlayClass"
+        isOpen={isOpen}
+      >
         <If condition={this.props.title}>
           <div className="confirmation__header">
             <h4 className="confirmation__header__title">{this.props.title}</h4>
           </div>
         </If>
+          <div className="confirmation__body">
+            <div className="dialog-header">
+            {dialogHeader}
+          </div>
+          <div className="dialog-body">
+            <div className="dialog-info">
+              {dialogMessage}
+              <span className="highLight">" {name} "</span> ?
+            </div>
+            <div className="dialog-warning highLight">
+              {warning}
+            </div>
+            <div className="confirmation__footer">
+              <button
+                className="confirmation__footer__button confirm button confirmation__button--cancel"
+                role="cancel"
+                onClick={onCancel}
+              >
+                {cancelLabel}
+              </button>
+              <button
+                className="confirmation__footer__button confirm button confirmation__button--delete"
+                role="confirm"
+                onClick={onConfirm}
+              >
+                {confirmLabel}
+              </button>
+              </div>
+            </div>
 
-        <div className="confirmation__body">
-          {this.props.children}
-        </div>
-
-        <div className="confirmation__footer">
-          <button
-            className="confirmation__footer__button cancel button--secondary"
-            role="cancel"
-            onClick={this.props.onCancel}
-          >
-            {this.props.cancelLabel}
-          </button>
-          <button
-            className="confirmation__footer__button confirm button--primary"
-            role="confirm"
-            onClick={this.props.onConfirm}
-          >
-            {this.props.confirmLabel}
-          </button>
-        </div>
+          </div>
       </Modal>
     );
   },

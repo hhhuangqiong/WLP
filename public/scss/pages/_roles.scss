@@ -41,6 +41,7 @@ $roles-table-control-color: #3B95CC;
     }
     i {
       margin-left: 5px;
+      cursor: pointer;
     }
   }
 
@@ -63,7 +64,7 @@ $roles-table-control-color: #3B95CC;
   }
 
   &__title-cell {
-    padding: 10px 10px 10px 40px;
+    padding: 17px 10px 17px 40px;
     width: 250px;
   }
 

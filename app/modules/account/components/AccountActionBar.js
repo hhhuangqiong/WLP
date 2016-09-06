@@ -28,8 +28,8 @@ const AccountActionBar = React.createClass({
       deleteDialogOpened: false,
     };
   },
-
   render() {
+    const { deleteDialogOpened, handleCloseDeleteDialog, handleDelete, accountId } = this.props;
     const { formatMessage } = this.props.intl;
     const loggedInUserId = this
       .context
@@ -39,21 +39,17 @@ const AccountActionBar = React.createClass({
     return (
       <nav className="account-top-bar top-bar top-bar--inner">
         <ConfirmationDialog
-          isOpen={this.props.deleteDialogOpened}
-          onConfirm={this.props.handleDelete}
-          onCancel={this.props.handleCloseDeleteDialog}
+          isOpen={deleteDialogOpened}
+          onCancel={handleCloseDeleteDialog}
+          onConfirm={handleDelete}
+          cancelLabel={formatMessage(MESSAGES.cancel)}
           confirmLabel={formatMessage(MESSAGES.delete)}
-        >
-          <div>
-            <FormattedMessage
-              id="account.deleteUserMessage"
-              defaultMessage="Are you sure want to delete this user?"
-            />
-          </div>
-        </ConfirmationDialog>
-
+          name={accountId}
+          warning={formatMessage(MESSAGES.warning)}
+          dialogMessage={formatMessage(MESSAGES.dialogMessage)}
+          dialogHeader={formatMessage(MESSAGES.dialogHeader)}
+        />
         <div className="top-bar-section">
-
           <ul className="top-bar--inner">
             <li className="top-bar--inner">
               <If condition={!this.props.isCreate && this.props.accountId !== loggedInUserId}>

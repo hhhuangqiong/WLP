@@ -5,6 +5,9 @@
   overflow-x: hidden;
   overflow-y: auto;
   background-color: rgba(0, 0, 0, 0.5);
+  position: fixed;
+  top: 0;
+  transition: all 150ms ease-in;
 }
 
 .ReactModal__Overlay--after-open {
@@ -23,6 +26,9 @@
 .ReactModal__Content--after-open {
   -webkit-transform: scale(1) rotateX(0deg);
   transition: all 150ms ease-in;
+  &:focus {
+    outline: none;
+  }
 }
 
 .ReactModal__Content--before-close {

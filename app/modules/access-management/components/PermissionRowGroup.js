@@ -1,5 +1,5 @@
 import React, { PropTypes } from 'react';
-import { injectIntl } from 'react-intl';
+import { injectIntl, intlShape } from 'react-intl';
 import cx from 'classnames';
 
 import { MESSAGES } from './../constants/i18n';
@@ -17,7 +17,13 @@ function PermissionRowGroup(props) {
     });
     let content = null;
     if (props.showEditControls && isHovered) {
-      content = <span>Pencil</span>;
+      content = (
+        <div
+          className="confirmation__footer__button confirm button confirmation__button--cancel"
+        >
+        Edit
+        </div>
+      );
     }
     if (props.showEditControls && isEdited) {
       content = (
@@ -33,7 +39,7 @@ function PermissionRowGroup(props) {
           </button>
           <button
             className="button button--no-background"
-            onClick={() => props.onSave()}
+            onClick={props.onSave}
             disabled={!props.canSave}
           >
             {intl.formatMessage(MESSAGES.save)}
@@ -60,6 +66,7 @@ function PermissionRowGroup(props) {
 }
 
 PermissionRowGroup.propTypes = {
+  intl: intlShape.isRequired,
   rolesCount: PropTypes.number.isRequired,
   showEditControls: PropTypes.bool.isRequired,
   canSave: PropTypes.bool.isRequired,

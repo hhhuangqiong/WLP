@@ -17,6 +17,10 @@ export const MESSAGES = defineMessages({
     id: 'searchByEmail',
     defaultMessage: 'Search By Email',
   },
+  cancel: {
+    id: 'cancel',
+    defaultMessage: 'Cancel',
+  },
   delete: {
     id: 'delete',
     defaultMessage: 'Delete',
@@ -44,5 +48,17 @@ export const MESSAGES = defineMessages({
   selectRole: {
     id: 'account.selectRole',
     defaultMessage: 'Select role',
+  },
+  warning: {
+    id: 'accessManagement.warning',
+    defaultMessage: 'Warning: This action cannot be undo!',
+  },
+  dialogMessage: {
+    id: 'accessManagement.dialogMessage',
+    defaultMessage: 'Are you sure you want to delete the user called',
+  },
+  dialogHeader: {
+    id: 'accessManagement.dialogHeader',
+    defaultMessage: 'Delete User',
   },
 });

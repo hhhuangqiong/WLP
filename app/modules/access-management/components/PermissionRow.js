@@ -20,7 +20,7 @@ function PermissionRow(props) {
     });
 
     return (
-      <td key={index} className={css}>
+      <td key={index} className={css} title={props.editTitle}>
         <input
           type="checkbox"
           checked={value}
@@ -49,6 +49,7 @@ function PermissionRow(props) {
 
 PermissionRow.propTypes = {
   title: PropTypes.string.isRequired,
+  editTitle: PropTypes.string,
   isChild: PropTypes.bool.isRequired,
   permissionValues: PropTypes.arrayOf(PropTypes.bool).isRequired,
   hoveredRoleIndex: PropTypes.number,

@@ -1,3 +1,9 @@
+// Typography
+@import url(https://fonts.googleapis.com/css?family=Ubuntu:400,300);
+$font-family-ubuntu: "Ubuntu", Helvetica, Roboto, Arial, sans-serif !default;
+$font-weight-normal: 400 !default;
+$font-weight-light: 300 !default;
+
 .ReactModal__Overlay {
   width: 100%;
   height: 100%;
@@ -5,8 +11,10 @@
 }
 
 .confirmation {
-  $dialog-width: rem-calc(500);
+  $dialog-width: rem-calc(600);
   $button-width: rem-calc(120);
+  font-family: $font-family-ubuntu;
+  font-weight: $font-weight-light;
 
   @include border-radius('4px');
   background-color: #fff;
@@ -17,6 +25,7 @@
   position: relative;
   width: $dialog-width;
   top: 20%;
+  border-radius: 5px;
 
   &__header {
     // the border-radious mixin does not support multiple values
@@ -33,10 +42,7 @@
 
   &__body {
     cursor: default;
-    text-align: center;
-    font-size: rem-calc(18);
-
-    padding: rem-calc(15) rem-calc(20) rem-calc(10);
+    font-size: rem-calc(16);
 
     &__line {
       font-size: rem-calc(14);
@@ -46,13 +52,65 @@
 
   &__footer {
     text-align: center;
-    padding: rem-calc(20) 0 0 0;
+    display: flex;
+    justify-content: space-between;
 
     &__button {
       display: inline-block;
-
-      // Override default margin of button class
-      margin: rem-calc(20) !important;
+      //overwrite the style
+      margin: 0;
     }
   }
+}
+
+.confirmation__button--cancel {
+  border:1px solid $button-cancel-border-color;
+  color: $button-cancel-font-color;
+  background: white;
+  border-radius: rem-calc(5);
+  min-width: 6.25rem;
+  font-size: rem-calc(12);
+  //overwrite the button style
+  &:hover {
+    background: white;
+    color: $button-cancel-font-color;
+  }
+}
+
+.confirmation__button--delete {
+  font-size: rem-calc(12);
+  border-radius: rem-calc(5);
+  min-width: 6.25rem;
+  &:hover {
+  background-color: scale-color($brand-secondary, $lightness: -3%);
+  }
+}
+
+.dialog-body {
+  padding: rem-calc(25) rem-calc(25) rem-calc(21) rem-calc(25);   
+  > span {
+    display: inline-block;
+  }
+}
+
+.dialog-info {
+  .highLight {
+    padding-left: rem-calc(6);
+  }
+}
+
+.dialog-warning {
+  padding-top: $global-spacing;
+  padding-bottom: $global-spacing*2;
+}
+
+.dialog-header {
+  background: $brand-primary;
+  color: white;
+  padding: $global-spacing/2 rem-calc(25);
+  border-radius: rem-calc(5) rem-calc(5) 0 0;
+}
+
+.highLight {
+color: $brand-primary ;
 }

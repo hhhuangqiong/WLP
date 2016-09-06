@@ -31,11 +31,22 @@ export class RolesPage extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      deleteDialogOpened: false,
       displayedRoles: props.roles,
       editedRoleIndex: null,
       hoveredRoleIndex: null,
       editedRoleBackup: null,
+      roleName: null,
     };
+    this.saveRole = this.saveRole.bind(this);
+    this.removeRole = this.removeRole.bind(this);
+    this.changeEditedRoleName = this.changeEditedRoleName.bind(this);
+    this.handleOpenDeleteDialog = this.handleOpenDeleteDialog.bind(this);
+    this.handleCloseDeleteDialog = this.handleCloseDeleteDialog.bind(this);
+    this.cancelRoleEdit = this.cancelRoleEdit.bind(this);
+    this.startRoleEdit = this.startRoleEdit.bind(this);
+    this.suggestRoleEdit = this.suggestRoleEdit.bind(this);
+    this.addRole = this.addRole.bind(this);
   }
   componentDidMount() {
     const query = {
@@ -67,14 +78,13 @@ export class RolesPage extends Component {
     if (this.state.editedRoleIndex === index) {
       return;
     }
-    this.cancelRoleEdit();
     const editedRoleBackup = cloneDeep(this.state.displayedRoles[index]);
     this.setState({
       editedRoleIndex: index,
       editedRoleBackup,
     });
   }
-  changeEditedRoleName(name) {
+  changeEditedRoleName({ name }) {
     const index = this.state.editedRoleIndex;
     if (!isNumber(index)) {
       return;
@@ -132,7 +142,21 @@ export class RolesPage extends Component {
     }
     const role = this.state.displayedRoles[index];
     this.context.executeAction(removeRole, role);
+    this.handleCloseDeleteDialog();
   }
+
+  handleOpenDeleteDialog() {
+    const index = this.state.editedRoleIndex;
+    this.setState({
+      deleteDialogOpened: true,
+      roleName: this.state.displayedRoles[index].name,
+    });
+  }
+
+  handleCloseDeleteDialog() {
+    this.setState({ deleteDialogOpened: false });
+  }
+
   finishRoleEdit() {
     this.setState({
       editedRoleIndex: null,
@@ -145,7 +169,7 @@ export class RolesPage extends Component {
       <div>
         <Panel.Wrapper className="roles-panel">
           <Panel.Header title={intl.formatMessage(MESSAGES.rolesAndPermissions)}>
-            <button className="button radius" onClick={() => this.addRole()}>
+            <button className="button radius" onClick={this.addRole}>
               {intl.formatMessage(MESSAGES.addNewRole)}
             </button>
           </Panel.Header>
@@ -155,13 +179,17 @@ export class RolesPage extends Component {
               permissions={this.props.permissions}
               hoveredRoleIndex={this.state.hoveredRoleIndex}
               editedRoleIndex={this.state.editedRoleIndex}
-              onRoleSaved={() => this.saveRole()}
-              onRoleRemoved={() => this.removeRole()}
-              onRoleEditSuggested={e => this.suggestRoleEdit(e.index)}
-              onRoleEditStarted={e => this.startRoleEdit(e.index)}
-              onRoleEditCancelled={() => this.cancelRoleEdit()}
-              onRolePermissionChanged={e => this.changeEditedRolePermission(e)}
-              onRoleNameChanged={e => this.changeEditedRoleName(e.name)}
+              deleteDialogOpened={this.state.deleteDialogOpened}
+              onRoleSaved={this.saveRole}
+              onRoleRemoved={this.removeRole}
+              handleOpenDeleteDialog={this.handleOpenDeleteDialog}
+              handleCloseDeleteDialog={this.handleCloseDeleteDialog}
+              onRoleEditSuggested={this.suggestRoleEdit}
+              onRoleEditStarted={this.startRoleEdit}
+              onRoleEditCancelled={this.cancelRoleEdit}
+              onRolePermissionChanged={this.changeEditedRolePermission}
+              onRoleNameChanged={this.changeEditedRoleName}
+              roleName={this.state.roleName}
             />
           </Panel.Body>
         </Panel.Wrapper>

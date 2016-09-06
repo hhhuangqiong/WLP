@@ -1,4 +1,4 @@
-import { defineMessages } from 'react-intl';
+  import { defineMessages } from 'react-intl';
 
 export const MESSAGES = defineMessages({
   rolesAndPermissions: {
@@ -76,5 +76,21 @@ export const MESSAGES = defineMessages({
   verification: {
     id: 'accessManagement.verification',
     defaultMessage: 'Verification Resource',
+  },
+  warning: {
+    id: 'accessManagement.warning',
+    defaultMessage: 'Warning: This action cannot be undo!',
+  },
+  dialogMessage: {
+    id: 'accessManagement.dialogMessage',
+    defaultMessage: 'Are you sure you want to delete the role called',
+  },
+  dialogHeader: {
+    id: 'accessManagement.dialogHeader',
+    defaultMessage: 'Delete Role',
+  },
+  title: {
+    id: 'accessManagement.title',
+    defaultMessage: 'Click to edit',
   },
 });

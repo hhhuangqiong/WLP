@@ -30,6 +30,9 @@ $gray-table: #e4e4e4;
 
 $link-secondary: #8d929a;
 
+//space for padding and margin
+$global-spacing: rem-calc(16);
+
 //link
 $link-function-factor: -50%;
 
@@ -138,3 +141,7 @@ $flag-resized-dimension: 28;
 $up-trend-font-color: #2AD032;
 $down-trend-font-color: #FC0E2B;
 $no-effect-trend-font-color: #CCC;
+
+//button
+$button-cancel-border-color: #A7A5A5;
+$button-cancel-font-color: #7C7C7C;
