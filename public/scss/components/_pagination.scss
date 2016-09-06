@@ -59,11 +59,10 @@ ul.pagination {
   }
   .select-number {
     display: flex;
-    width: 13%;
     justify-content: space-between;
     align-items: baseline;
   }
   .Select {
-    width: 40%;
+    width: rem-calc(80);
   }
 }
