@@ -205,19 +205,22 @@ const EndUserProfile = React.createClass({
   renderAccountPanel() {
     const { intl: { formatMessage } } = this.props;
     const EMPTY_STRING = formatMessage(i18nMessages.unknownLabel);
-    const gender = get(this.props, 'user.userDetails.gender');
-    const creationDate = dateLocale.format(moment(this.props.user.userDetails.creationDate), DATE_FORMAT);
-    const countryCode = (this.props.user.userDetails.countryCode || '').toLowerCase();
+
+    const details = get(this.props, 'user.userDetails', {});
+
+    const { jid, gender, verified, email, pin, birthDate } = details;
+    const creationDate = dateLocale.format(moment(details.creationDate), DATE_FORMAT);
+    const countryCode = (details.countryCode || '').toLowerCase();
 
     return (
       <Accordion.Navigation
         title={formatMessage(MESSAGES.accountTitle)}
-        verified={get(this.props, 'user.userDetails.verified')}
+        verified={verified}
         hasIndicator
       >
         <Item label={formatMessage(MESSAGES.createdTime)} className="end-user-info__created-time">{creationDate}</Item>
         <Item label={formatMessage(MESSAGES.verified)} capitalize>
-          <If condition={this.props.user.userDetails.verified}>
+          <If condition={verified}>
             <span className="verified">
               <FormattedMessage
                 id="endUser.details.verified"
@@ -239,13 +242,13 @@ const EndUserProfile = React.createClass({
             {getCountryName(countryCode) || EMPTY_STRING}
           </div>
         </Item>
-        <Item label={formatMessage(MESSAGES.username)}>{this.props.user.userDetails.jid}</Item>
-        <Item label={formatMessage(MESSAGES.email)}>{this.props.user.userDetails.email || EMPTY_STRING}</Item>
-        <Item label={formatMessage(MESSAGES.pin)}>{this.props.user.userDetails.pin || EMPTY_STRING}</Item>
-        <Item label={formatMessage(MESSAGES.dateOfBirth)}>{this.props.user.userDetails.birthDate || EMPTY_STRING}</Item>
+        <Item label={formatMessage(MESSAGES.username)}>{jid}</Item>
+        <Item label={formatMessage(MESSAGES.email)}>{email || EMPTY_STRING}</Item>
+        <Item label={formatMessage(MESSAGES.pin)}>{pin || EMPTY_STRING}</Item>
+        <Item label={formatMessage(MESSAGES.dateOfBirth)}>{birthDate || EMPTY_STRING}</Item>
         <Item label={formatMessage(MESSAGES.gender)} capitalize>
           <span className="gender-label">
-            {this.renderGenderInfo(this.props.user.userDetails.gender)}
+            {this.renderGenderInfo(gender)}
           </span>
         </Item>
       </Accordion.Navigation>
@@ -255,9 +258,14 @@ const EndUserProfile = React.createClass({
   renderDevicePanel() {
     const { intl: { formatMessage } } = this.props;
     const EMPTY_STRING = formatMessage(i18nMessages.unknownLabel);
+    const devices = get(this.props, 'user.userDetails.devices');
 
-    return this.props.user.userDetails.devices.map((device) => {
-      return (
+    if (!devices) {
+      return [];
+    }
+
+    return devices.map((device) =>
+      (
         <Accordion.Navigation title={formatMessage(MESSAGES.appTitle)}>
           <Item label={formatMessage(MESSAGES.device)}>
             <span className="device-label">
@@ -274,8 +282,7 @@ const EndUserProfile = React.createClass({
           </Item>
           <Item label={formatMessage(MESSAGES.language)}>{device.appLanguage}</Item>
         </Accordion.Navigation>
-      );
-    });
+      ));
   },
 
   render() {
