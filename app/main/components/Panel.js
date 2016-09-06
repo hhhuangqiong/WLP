@@ -1,7 +1,6 @@
 import { isString } from 'lodash';
 import React, { PropTypes, isValidElement } from 'react';
 import classNames from 'classnames';
-import { FormattedMessage } from 'react-intl';
 
 const Panel = React.createClass({
   propTypes: {
@@ -9,7 +8,7 @@ const Panel = React.createClass({
     // so far we have only two types of panel
     // so a boolean is used instead of enum
     addOn: PropTypes.bool,
-    children: PropTypes.element.isRequired,
+    children: PropTypes.node.isRequired,
   },
 
   getDefaultProps() {
@@ -35,10 +34,10 @@ const PanelHeader = React.createClass({
     ]),
     className: PropTypes.string,
     title: PropTypes.string.isRequired,
-    children: PropTypes.element.isRequired,
-    caption: PropTypes.oneOf([
+    children: PropTypes.node,
+    caption: PropTypes.oneOfType([
       PropTypes.string.isRequired,
-      PropTypes.element.isRequired,
+      PropTypes.node.isRequired,
     ]),
   },
 
@@ -85,7 +84,7 @@ const PanelBody = React.createClass({
       PropTypes.array,
     ]),
     className: PropTypes.string,
-    children: PropTypes.element.isRequired,
+    children: PropTypes.node,
   },
 
   render() {

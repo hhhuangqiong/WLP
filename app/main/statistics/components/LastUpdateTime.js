@@ -47,6 +47,7 @@ LastUpdateTime.propTypes = {
   type: PropTypes.oneOf([
     TIME_TYPES.MONTHLY,
     TIME_TYPES.TIME_RANGE,
+    TIME_TYPES.LATEST,
   ]),
   time: PropTypes.string,
   timescale: PropTypes.string,

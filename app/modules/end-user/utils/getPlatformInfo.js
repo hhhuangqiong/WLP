@@ -13,6 +13,10 @@ const PLATFORM = {
     iconClass: 'icon-android',
     name: i18nMessages.android,
   },
+  UNKNOWN: {
+    iconClass: null,
+    name: i18nMessages.unknownPlatform,
+  },
 };
 
 export default (platform) => {
@@ -26,10 +30,8 @@ export default (platform) => {
     case 'phone':
     case 'windows.phone':
       return PLATFORM.WINDOWS_PHONE;
+    // other case like unexpected platform 'all'
     default:
-      return {
-        name: platform,
-        iconClass: '',
-      };
+      return PLATFORM.UNKNOWN;
   }
 };

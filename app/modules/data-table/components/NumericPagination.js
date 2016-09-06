@@ -51,8 +51,8 @@ class Pagination extends Component {
               <div className="large-4 columns large-collapse">
                 <select onChange={this.onPageRecChange} value={pageRec}>
                   {
-                    pageRecOptions.map(_pageRec => (
-                      <option value={_pageRec}>{ _pageRec }</option>
+                    pageRecOptions.map((_pageRec, index) => (
+                      <option value={_pageRec} key={index}>{ _pageRec }</option>
                     ))
                   }
                 </select>

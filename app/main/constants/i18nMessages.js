@@ -85,6 +85,10 @@ export default defineMessages({
     id: 'windowsPhone',
     defaultMessage: 'Windows Phone',
   },
+  unknownPlatform: {
+    id: 'unknownPlatform',
+    defaultMessage: 'Unknown Platform',
+  },
   callIn: {
     id: 'vsdk.details.callIn',
     defaultMessage: 'call-in',

@@ -2,6 +2,11 @@ import React, { Component, PropTypes } from 'react';
 import classNames from 'classnames';
 
 export default class ColorRadioButton extends Component {
+  constructor(props) {
+    super(props);
+    this.clickRadio = this.clickRadio.bind(this);
+  }
+
   clickRadio() {
     this.props.onChange(this.props.value);
   }
@@ -24,17 +29,8 @@ export default class ColorRadioButton extends Component {
 
   render() {
     if (!this.props.value) return null;
-
     return (
-      <div className="color-radio-wrapper" onClick={this.clickRadio.bind(this)}>
-        <input
-          type="radio"
-          id={this.props.value}
-          name={this.props.group}
-          checked={this.props.checked}
-          className="hide"
-        />
-
+      <div className="color-radio-wrapper" onClick={this.clickRadio}>
         <If condition={this.props.location === 'left'}>
           {this.renderButton()}
         </If>
@@ -54,7 +50,6 @@ ColorRadioButton.propTypes = {
   label: PropTypes.string.isRequired,
   color: PropTypes.string.isRequired,
   checked: PropTypes.bool.isRequired,
-  group: PropTypes.string.isRequired,
   location: PropTypes.string.isRequired,
   value: PropTypes.string.isRequired,
 };

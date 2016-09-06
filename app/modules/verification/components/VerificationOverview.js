@@ -215,7 +215,6 @@ const VerificationOverview = React.createClass({
     return ATTEMPT_TOGGLES.map(toggle => (
       <div key={toggle.id} className="verification-overview__title">
         <ColorRadioButton
-          group="verificationAttempt"
           label={formatMessage(toggle.title)}
           value={toggle.id}
           color={toggle.color}

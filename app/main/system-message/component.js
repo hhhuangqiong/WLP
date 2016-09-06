@@ -31,7 +31,7 @@ SystemMessage.propTypes = {
     PropTypes.string,
     PropTypes.number,
   ]),
-  type: PropTypes.oneOf(['error', 'info']),
+  type: PropTypes.oneOf(['error', 'info', 'success', 'secondary']),
   message: PropTypes.string,
   buttons: PropTypes.array,
   hidden: PropTypes.bool,

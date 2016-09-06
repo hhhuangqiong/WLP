@@ -17,6 +17,12 @@ class SystemMessageContainer extends Component {
     this.context.executeAction(dismissMessage);
   }
 
+  shouldComponentUpdate(nextProps) {
+    // avoid create render the system message again since it will create the timeout again
+    // each id should be rendered once and fail to edit again
+    return this.props.id !== nextProps.id;
+  }
+
   parseMessage(message) {
     const { formatMessage } = this.props.intl;
 
@@ -61,7 +67,7 @@ SystemMessageContainer.propTypes = {
     PropTypes.string,
     PropTypes.number,
   ]),
-  type: PropTypes.oneOf(['error', 'info']),
+  type: PropTypes.oneOf(['error', 'info', 'success', 'secondary']),
   message: PropTypes.oneOfType([
     PropTypes.shape({
       id: PropTypes.string,
