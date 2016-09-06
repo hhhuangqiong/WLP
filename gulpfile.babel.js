@@ -29,7 +29,7 @@ if (webpackConfig.custom.hotLoadPort) {
   defaultTasks.push('webpack-dev-server');
 }
 
-const babelCache = new Cache();
+
 
 const src = {
   allJs: 'app/**/*.js',
@@ -45,6 +45,8 @@ const dest = {
   intl: 'public/locale-data',
   babel: './build/babel',
 };
+
+const babelCache = new Cache(`${dest.build}/.gulp-cache`);
 
 function _continueOnError(fn) {
   const _fn = fn();
