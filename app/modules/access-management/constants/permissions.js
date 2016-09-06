@@ -101,6 +101,10 @@ export const PERMISSIONS = [{
   intlKey: 'sms',
   resource: RESOURCE.SMS,
   action: ACTION.READ,
+}, {
+  intlKey: 'verification',
+  resource: RESOURCE.VERIFICATION_SDK,
+  action: ACTION.READ,
 }];
 
 export default PERMISSIONS;
