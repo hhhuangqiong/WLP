@@ -42,9 +42,9 @@ const VsfDetails = createClass({
   },
 
   getInitialState() {
-    const { fromTime, toTime, category, userNumber, isLoadingMore } = this.syncQueryAndState();
+    const { fromTime, toTime, category, userNumber, isLoadingMore, hasNextPage } = this.syncQueryAndState();
     const { transactions } = this.getStore(VSFTransactionStore).getData();
-    return { fromTime, toTime, category, userNumber, transactions, isLoadingMore };
+    return { fromTime, toTime, category, userNumber, transactions, isLoadingMore, hasNextPage };
   },
 
   componentDidMount() {

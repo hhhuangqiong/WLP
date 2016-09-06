@@ -12,9 +12,10 @@ const DatePicker = React.createClass({
   propTypes: {
     withIcon: PropTypes.bool,
     type: PropTypes.string,
-    selectedDate: PropTypes.string,
-    minDate: PropTypes.string,
-    maxDate: PropTypes.string,
+    // moment object
+    selectedDate: PropTypes.object,
+    minDate: PropTypes.object,
+    maxDate: PropTypes.object,
     dateFormat: PropTypes.string,
     onChange: PropTypes.func.isRequired,
   },

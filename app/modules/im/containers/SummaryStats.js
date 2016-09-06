@@ -133,7 +133,8 @@ Container.contextTypes = {
 Container.propTypes = {
   isLoading: PropTypes.bool,
   data: PropTypes.shape({
-    total: PropTypes.object,
+    // array of object
+    total: PropTypes.array,
     text: PropTypes.object,
     image: PropTypes.object,
     video: PropTypes.object,

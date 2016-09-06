@@ -74,7 +74,7 @@ const TABLE_TITLES = [
 
 const SMSTable = React.createClass({
   propTypes: {
-    records: PropTypes.object,
+    records: PropTypes.array,
     intl: PropTypes.object.isRequired,
     page: PropTypes.number,
     totalPage: PropTypes.number,

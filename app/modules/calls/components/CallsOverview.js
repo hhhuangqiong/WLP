@@ -3,7 +3,6 @@ import moment from 'moment';
 import classNames from 'classnames';
 
 import React, { PropTypes } from 'react';
-import { Link } from 'react-router';
 import Select from 'react-select';
 import { FormattedMessage, defineMessages, injectIntl } from 'react-intl';
 
@@ -504,8 +503,8 @@ const CallsOverview = React.createClass({
               <DateSelector
                 className={classNames({ disabled: this.isMonthlyStatsLoading() })}
                 date={this.getMonthlyStatsDate()}
-                minDate={moment().subtract(1, 'months').subtract(1, 'years').startOf('month').format('L')}
-                maxDate={moment().subtract(1, 'months').endOf('month').format('L')}
+                minDate={moment().subtract(1, 'months').subtract(1, 'years').startOf('month').format(SHORT_DATE_FORMAT)}
+                maxDate={moment().subtract(1, 'months').endOf('month').format(SHORT_DATE_FORMAT)}
                 onChange={this.handleMonthlyStatsChange}
               />
             </Panel.Header>

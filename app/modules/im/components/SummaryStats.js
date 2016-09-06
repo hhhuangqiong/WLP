@@ -115,7 +115,7 @@ const SummaryStats = props => {
         <Panel.Body customClass="narrow no-padding">
           <DataGrid.Wrapper>
             {
-              map(SUMMARY_TYPES, type => (
+              map(SUMMARY_TYPES, (type, index) => (
                 <DataGrid.Cell
                   title={formatMessage(MESSAGES[`${type}Title`])}
                   data={get(summaryData, `${type}.value`)}
@@ -124,6 +124,7 @@ const SummaryStats = props => {
                   changeEffect={get(summaryData, `${type}.change.effect`)}
                   changePercentage={get(summaryData, `${type}.change.percentage`)}
                   isLoading={isLoading}
+                  key={index}
                 />
               ))
             }

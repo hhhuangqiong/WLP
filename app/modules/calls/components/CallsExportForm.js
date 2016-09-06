@@ -17,8 +17,8 @@ export default React.createClass({
     startDate: PropTypes.string,
     endDate: PropTypes.string,
     netType: PropTypes.string,
-    handleExport: PropTypes.func.isRequired,
-    closeModal: PropTypes.func.isRequired,
+    handleExport: PropTypes.func,
+    closeModal: PropTypes.func,
   },
 
   defaultState() {

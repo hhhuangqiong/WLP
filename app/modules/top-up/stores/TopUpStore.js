@@ -11,7 +11,8 @@ const TopUpStore = createStore({
   },
 
   initialize() {
-    this.histories = null;
+    // component will handle the empty case
+    this.histories = [];
     this.page = 1;
     this.totalRec = 0;
     this.isLoadingMore = false;
@@ -28,7 +29,7 @@ const TopUpStore = createStore({
     if (payload) {
       this.histories = (this.histories || []).concat(payload.history);
       this.totalRec = payload.totalRec;
-      this.page = payload.page;
+      this.page = parseInt(payload.page, 10);
       this.isLoadingMore = false;
     } else {
       this.histories = [];
