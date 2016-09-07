@@ -23,7 +23,8 @@ export default createStore({
 
   initialize() {
     this.countriesData = null;
-    this.types = null;
+    // it should match with the default as a empty array
+    this.types = [];
     this.osTypes = null;
 
     this.accumulatedAttempts = null;
@@ -109,7 +110,7 @@ export default createStore({
   },
 
   handleVerificationTypeFetchedFailure(err) {
-    this.types = null;
+    this.types = [];
     this.typeError = err;
 
     this.emitChange();

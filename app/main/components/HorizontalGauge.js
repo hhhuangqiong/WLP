@@ -9,7 +9,7 @@ import classNames from 'classnames';
 export default React.createClass({
   propTypes: {
     color: PropTypes.string.isRequired,
-    percentage: PropTypes.string.isRequired,
+    percentage: PropTypes.number.isRequired,
     children: PropTypes.oneOfType([
       PropTypes.element,
       PropTypes.array,

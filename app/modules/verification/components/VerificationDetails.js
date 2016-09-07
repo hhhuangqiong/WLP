@@ -3,12 +3,7 @@ import moment from 'moment';
 
 import React, { PropTypes } from 'react';
 import { FluxibleMixin } from 'fluxible-addons-react';
-import { Link } from 'react-router';
-import {
-  FormattedMessage,
-  injectIntl,
-  defineMessages,
-} from 'react-intl';
+import { injectIntl } from 'react-intl';
 
 import * as FilterBar from './../../../main/components/FilterBar';
 import DateRangePicker from './../../../main/components/DateRangePicker';

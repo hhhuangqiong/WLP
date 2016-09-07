@@ -1,5 +1,4 @@
 import React, { PropTypes } from 'react';
-import { Link } from 'react-router';
 import Select from 'react-select';
 import classNames from 'classnames';
 import moment from 'moment';
