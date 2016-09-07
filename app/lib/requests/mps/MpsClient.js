@@ -1,7 +1,7 @@
 import Q from 'q';
 import request from 'superagent';
-import { HttpStatusError, ArgumentNullError, ValidationError, NotFoundError } from 'common-errors';
-import { isString, get, isNumber, omit, forEach, isEqual, merge } from 'lodash';
+import { HttpStatusError, ArgumentNullError, ValidationError } from 'common-errors';
+import { isString, get, isNumber, omit, forEach, isEqual, merge, cloneDeep } from 'lodash';
 import logger from 'winston';
 
 const serviceFilter = ['SDK', 'WHITE_LABEL'];
@@ -27,12 +27,13 @@ export default class MpsClient {
       return mCommand;
     }
     presetData = omit(presetData, omitPresetInfo);
-    // merge missing field back to provision data
-    mCommand = merge(presetData, mCommand);
+    // deep clone the presetData and merge missing field back to provision data
+    mCommand = merge(cloneDeep(presetData), mCommand);
+    // compare each field and ensure the data is exactly the same
     forEach(presetData, (value, key) => {
       // check the values whether identical to the preset value
       if (!isEqual(mCommand[key], value)) {
-        throw new ValidationError(key);
+        throw new ValidationError(`Data ${key} is invalid`);
       }
     });
     return mCommand;
