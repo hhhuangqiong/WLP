@@ -19,5 +19,7 @@ export function formatNewRole(company) {
       'wlp:verification-sdk': ['read'],
       'wlp:general': ['read'],
     },
+    // create the root role that IAM will make it read only
+    isRoot: true,
   };
 }
