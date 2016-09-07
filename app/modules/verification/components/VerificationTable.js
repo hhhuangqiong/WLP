@@ -78,7 +78,6 @@ const VerificationTable = React.createClass({
      */
     onLoadMoreClick: PropTypes.func.isRequired,
     isLoadingMore: PropTypes.bool,
-    intl: PropTypes.object.isRequired,
   },
 
   getDefaultProps() {

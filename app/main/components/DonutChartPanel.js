@@ -49,7 +49,7 @@ export default React.createClass({
      * @type String[]
      */
     colors: PropTypes.arrayOf(PropTypes.string),
-    bars: PropTypes.array,
+    bars: PropTypes.number,
     className: PropTypes.string,
   },
 
@@ -93,6 +93,7 @@ export default React.createClass({
           percentage={percentage}
           unit={this.props.unit}
           color={colors[index]}
+          key={index}
         />
       );
     });

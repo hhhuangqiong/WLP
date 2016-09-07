@@ -19,5 +19,5 @@ Dropdown.Trigger = DropdownTrigger;
 Dropdown.Content = DropdownContent;
 
 Dropdown.propTypes = {
-  children: PropTypes.element.isRequired,
+  children: PropTypes.node,
 };
