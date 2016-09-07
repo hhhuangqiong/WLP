@@ -3,10 +3,10 @@
 Changes of this documentation for releases
 
 ### 1.9.0
-Updated the [application structure](docs/ARCHITECTURE.md) supported with company provision(MPS) and integrated with [IAM/OPENID](docs/IAM_INTEGRATION.md)
+Updated the [application structure](./ARCHITECTURE.md) supported with company provision(MPS) and integrated with [IAM/OPENID](./IAM_INTEGRATION.md)
 
 ### 1.8.0
-- Changed Capabilities details in [Capabilities Seeding](docs/CAPABILITIES_SEEDING.md)
+- Changed Capabilities details in Capabilities Seeding
 
 ### 1.7.2
 - Updated Redis Uri configuration using redisUri

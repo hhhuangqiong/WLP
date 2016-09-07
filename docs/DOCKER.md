@@ -29,14 +29,14 @@ docker.dev.maaii.com/m80/m800-white-label-portal
 | (Deprecated^) `logging__winston__meta__instance`|Deploy server/instance name, to use to identify from logstash which container the logs is coming from | testbed-wlp-1 |
 | `iamApi__baseUrl` | Identity Access Management API Endpoint | http://127.0.0.1:3001 |
 | `mpsApi__baseUrl` | Maaii Provision Service API Endpoint | http://deploy.dev.maaii.com:4005 |
-| `openid__issuer`  | OpenId Issuer Endpoint. In most cases, should be pointed to IAM openid issuer endpoint. See [IAM Integration](docs/IAM_INTEGRATION.md) | http://127.0.0.1:3001/openid/core/.well-known/openid-configuration |
-| `openid__clientId` | OpenId Client Id. See [IAM Integration](docs/IAM_INTEGRATION.md) | wlp |
-| `openid__clientSecret` | OpenId Client Secret. [IAM Integration](docs/IAM_INTEGRATION.md) | 7GnoS1vf5HqM1b8B4ZKDJQA6BvXa38ltUoFFVQ4cloR4GICEuWQk50S60pIVK16b |
+| `openid__issuer`  | OpenId Issuer Endpoint. In most cases, should be pointed to IAM openid issuer endpoint. See [IAM Integration](./IAM_INTEGRATION.md) | http://127.0.0.1:3001/openid/core/.well-known/openid-configuration |
+| `openid__clientId` | OpenId Client Id. See [IAM Integration](./IAM_INTEGRATION.md) | wlp |
+| `openid__clientSecret` | OpenId Client Secret. [IAM Integration](./IAM_INTEGRATION.md) | 7GnoS1vf5HqM1b8B4ZKDJQA6BvXa38ltUoFFVQ4cloR4GICEuWQk50S60pIVK16b |
 
 
 Note: Keys defined with __ in between words are due to default setup of [nconf](https://github.com/indexzero/nconf), an npm module that we used to organize application configurations.  
 
-Note: `openid_` prefix should follow the guide in the [IAM integration](docs/IAM_INTEGRATION.md)
+Note: `openid_` prefix should follow the guide in the [IAM integration](./IAM_INTEGRATION.md)
 
 ^ Deprecated as this would logs forwarding to logstash will be done through mapping of docker logs
 
