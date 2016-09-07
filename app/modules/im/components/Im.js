@@ -307,6 +307,7 @@ const Im = React.createClass({
               <Searchbox
                 value={this.state.search}
                 searchTypes={searchTypes}
+                selectedType={this.state.searchType}
                 placeHolder={formatMessage(i18nMessages.userOrMobile)}
                 onSelectChangeHandler={this.handleSearchTypeChange}
                 onInputChangeHandler={this.handleSearchChange}

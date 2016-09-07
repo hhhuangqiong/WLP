@@ -7,7 +7,7 @@ import DateSelector from '../../../../main/components/DateSelector';
 import * as Panel from './../../../../main/components/Panel';
 import * as DataGrid from '../../../../main/statistics/components/DataGrid';
 import LastUpdateTime, { TIME_TYPES } from '../../../../main/statistics/components/LastUpdateTime';
-import { SHORT_DATE_TIME_FORMAT } from '../../../../utils/timeFormatter';
+import { SHORT_DATE_TIME_FORMAT, SHORT_DATE_FORMAT } from '../../../../utils/timeFormatter';
 
 const MESSAGES = defineMessages({
   monthlyStatistic: {
@@ -45,7 +45,7 @@ function VsfMonthlyStats({ intl, isLoading, onChange, date, stats }) {
         <DateSelector
           className={classNames({ disabled: isLoading })}
           date={date}
-          maxDate={moment().subtract(1, 'month').endOf('month')}
+          maxDate={moment().subtract(1, 'month').endOf('month').format(SHORT_DATE_FORMAT)}
           onChange={onChange}
         />
       </Panel.Header>
@@ -67,15 +67,16 @@ function VsfMonthlyStats({ intl, isLoading, onChange, date, stats }) {
 }
 
 VsfMonthlyStats.propTypes = {
-  intl: PropTypes.string.isRequired,
+  intl: PropTypes.object.isRequired,
   isLoading: PropTypes.bool.isRequired,
   onChange: PropTypes.func.isRequired,
-  date: PropTypes.object.isRequired,
+  date: PropTypes.string.isRequired,
   stats: PropTypes.shape({
-    total: PropTypes.string.isRequired,
-    direction: PropTypes.string.isRequired,
-    change: PropTypes.string.isRequired,
-    percent: PropTypes.string.isRequired,
+    // it will check in the data grid
+    total: PropTypes.number,
+    direction: PropTypes.string,
+    change: PropTypes.number,
+    percent: PropTypes.string,
   }),
 };
 

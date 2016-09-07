@@ -114,7 +114,7 @@ const SummaryStats = ({
       <Panel.Body className="narrow no-padding">
         <DataGrid.Wrapper>
           {
-            map(SUMMARY_TYPES, type => (
+            map(SUMMARY_TYPES, (type, index) => (
               <DataGrid.Cell
                 title={formatMessage(MESSAGES[`totalSms${capitalize(type)}`])}
                 data={get(summaryData, `${type}.value`)}
@@ -123,6 +123,7 @@ const SummaryStats = ({
                 changePercentage={get(summaryData, `${type}.change.percentage`)}
                 changeEffect={get(summaryData, `${type}.change.effect`)}
                 isLoading={isLoading}
+                key={index}
               />
             ))
           }
@@ -213,10 +214,10 @@ SummaryStats.propTypes = {
   onChange: PropTypes.func.isRequired,
   timeFrame: PropTypes.string.isRequired,
   summaryData: PropTypes.shape({
-    total: PropTypes.number,
-    submitted: PropTypes.number,
-    undelivered: PropTypes.number,
-    rejected: PropTypes.number,
+    total: PropTypes.object,
+    submitted: PropTypes.object,
+    undelivered: PropTypes.object,
+    rejected: PropTypes.object,
   }),
   lineChartData: PropTypes.shape({
     sum: PropTypes.number,

@@ -12,7 +12,7 @@ const SearchBox = props => {
       {
         props.searchTypes ? (
           <select
-            className={classNames('top-bar-section__query-select', 'left')}
+            className={classNames('top-bar-section__query-select', 'left', 'capitalize')}
             name={props.searchTypeInputName}
             onChange={props.onSelectChangeHandler}
             value={props.selectedType}
@@ -30,12 +30,12 @@ const SearchBox = props => {
                   type.value === props.selectedType ?
                     (
                       <option key={index} value={type.value} selected>
-                        <span className="capitalize">{formatMessage(type.name)}</span>
+                        {formatMessage(type.name)}
                       </option>
                     ) :
                     (
                       <option key={index} value={type.value}>
-                        <span className="capitalize">{formatMessage(type.name)}</span>
+                        {formatMessage(type.name)}
                       </option>
                     )
                 ))

@@ -11,10 +11,11 @@ import * as dateLocale from '../../utils/dateLocale';
 export default React.createClass({
   propTypes: {
     name: PropTypes.string,
-    date: PropTypes.string,
+    // moment object
+    date: PropTypes.object,
+    minDate: PropTypes.object,
     dataPickerkey: PropTypes.string,
     dataPickerRef: PropTypes.string,
-    minDate: PropTypes.string,
     dateFormat: PropTypes.string,
     timeFormat: PropTypes.string,
     className: PropTypes.string,

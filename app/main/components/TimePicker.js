@@ -1,4 +1,3 @@
-import moment from 'moment';
 import React, { PropTypes } from 'react';
 
 import * as dateLocale from '../../utils/dateLocale';
@@ -6,7 +5,8 @@ import * as dateLocale from '../../utils/dateLocale';
 const TimePicker = React.createClass({
   propTypes: {
     onChange: PropTypes.func.isRequired,
-    datetime: PropTypes.func.isRequired,
+    // moment object
+    datetime: PropTypes.object.isRequired,
     format: PropTypes.string.isRequired,
     timePickerId: PropTypes.string.isRequired,
     className: PropTypes.string,

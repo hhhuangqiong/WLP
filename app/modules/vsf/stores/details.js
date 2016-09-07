@@ -13,7 +13,8 @@ export default createStore({
   },
 
   initialize() {
-    this.transactions = null;
+    // component will check for the size of transactions
+    this.transactions = [];
     this.hasNextPage = false;
     this.pageSize = 100;
     this.pageIndex = 0;

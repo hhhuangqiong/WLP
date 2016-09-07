@@ -205,10 +205,10 @@ VsfSummaryStats.propTypes = {
   onChange: PropTypes.func.isRequired,
   timeFrame: PropTypes.string.isRequired,
   stats: PropTypes.shape({
-    voiceSticker: PropTypes.number.isRequired,
-    sticker: PropTypes.number.isRequired,
-    animation: PropTypes.number.isRequired,
-    credit: PropTypes.number.isRequired,
+    voiceSticker: PropTypes.object.isRequired,
+    sticker: PropTypes.object.isRequired,
+    animation: PropTypes.object.isRequired,
+    credit: PropTypes.object.isRequired,
   }),
   lineChartData: PropTypes.shape({
     sum: PropTypes.number,

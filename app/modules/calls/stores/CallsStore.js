@@ -15,7 +15,8 @@ const CallsStore = createStore({
   },
 
   initialize() {
-    this.calls = null;
+    // in the component (call table), it will check whether empty
+    this.calls = [];
     this.offset = 0;
     this.page = 0;
     this.size = 0;

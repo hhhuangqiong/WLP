@@ -6,7 +6,7 @@ import moment from 'moment';
 import * as Panel from './../../../main/components/Panel';
 import * as DataGrid from '../../../main/statistics/components/DataGrid';
 import LastUpdateTime, { TIME_TYPES } from '../../../main/statistics/components/LastUpdateTime';
-import { SHORT_DATE_TIME_FORMAT } from '../../../utils/timeFormatter';
+import { SHORT_DATE_TIME_FORMAT, SHORT_DATE_FORMAT } from '../../../utils/timeFormatter';
 import DateSelector from '../../../main/components/DateSelector';
 
 const MESSAGES = defineMessages({
@@ -50,8 +50,8 @@ const MonthlyStats = props => {
             className={classNames({ disabled: isLoading })}
             date={selectedDate}
             // eslint-disable-next-line max-len
-            minDate={moment().subtract(1, 'months').subtract(1, 'years').startOf('month').format('L')}
-            maxDate={moment().subtract(1, 'months').endOf('month').format('L')}
+            minDate={moment().subtract(1, 'months').subtract(1, 'years').startOf('month').format(SHORT_DATE_FORMAT)}
+            maxDate={moment().subtract(1, 'months').endOf('month').format(SHORT_DATE_FORMAT)}
             onChange={onSelectedDateChange}
           />
         </Panel.Header>
@@ -86,7 +86,8 @@ MonthlyStats.propTypes = {
       percentage: PropTypes.number,
     }),
   }),
-  selectedDate: PropTypes.object,
+  // string instead of moment object
+  selectedDate: PropTypes.string,
   onSelectedDateChange: PropTypes.func,
 };
 

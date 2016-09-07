@@ -88,7 +88,7 @@ MonthlyStatsContainer.contextTypes = {
 };
 
 MonthlyStatsContainer.propTypes = {
-  stats: PropTypes.array.isRequired,
+  stats: PropTypes.object.isRequired,
   date: PropTypes.string.isRequired,
   isLoading: PropTypes.bool.isRequired,
 };

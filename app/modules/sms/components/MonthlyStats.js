@@ -8,6 +8,7 @@ import DateSelector from '../../../main/components/DateSelector';
 import * as Panel from './../../../main/components/Panel';
 import * as DataGrid from '../../../main/statistics/components/DataGrid';
 import LastUpdateTime, { TIME_TYPES } from '../../../main/statistics/components/LastUpdateTime';
+import { SHORT_DATE_FORMAT } from '../../../utils/timeFormatter';
 
 import {
   SHORT_DATE_TIME_FORMAT,
@@ -41,7 +42,7 @@ function MonthlyStats({ intl, isLoading, onChange, date, stats }) {
         <DateSelector
           className={classNames({ disabled: isLoading })}
           date={date}
-          maxDate={moment().subtract(1, 'month').endOf('month')}
+          maxDate={moment().subtract(1, 'month').endOf('month').format(SHORT_DATE_FORMAT)}
           onChange={onChange}
         />
       </Panel.Header>
@@ -63,12 +64,12 @@ function MonthlyStats({ intl, isLoading, onChange, date, stats }) {
 }
 
 MonthlyStats.propTypes = {
-  intl: PropTypes.string.isRequired,
+  intl: PropTypes.object.isRequired,
   isLoading: PropTypes.bool.isRequired,
   onChange: PropTypes.func.isRequired,
-  date: PropTypes.object.isRequired,
+  date: PropTypes.string.isRequired,
   stats: PropTypes.shape({
-    value: PropTypes.string,
+    value: PropTypes.number,
     change: PropTypes.shape({
       direction: PropTypes.string,
       effect: PropTypes.string,
