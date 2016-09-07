@@ -54,7 +54,7 @@ export const CAPABILITIES = {
   'call.onnet': 'On-Net Call',
   'call.maaii-in': 'Maii-in Call',
   im: 'IM',
-  'im.im_to_sms': 'IM To SMS',
+  'im.im-to-sms': 'IM To SMS',
   'verification.mo': 'MO Verification',
   'verification.mt': 'MT Verification',
   'verification.sms': 'SMS Verification',
