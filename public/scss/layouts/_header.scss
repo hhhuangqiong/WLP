@@ -1,4 +1,6 @@
 .public-header {
+    // make the header always on the top
+    z-index:1;
     width: 100%;
     background-color: $brand-primary;
     &__title-area {
