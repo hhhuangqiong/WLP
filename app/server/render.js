@@ -13,6 +13,7 @@ import { getRedirectPath } from '../utils/reactRouter';
 import { createMarkupElement, getInitialData } from '../utils/fluxible';
 import { getLocaleDataFromPath } from '../utils/intl';
 import { setLocale } from '../utils/dateLocale';
+import { SIGN_IN } from '../utils/paths';
 
 import loadSession from '../main/actions/loadSession';
 import getAccessibleCompanies from '../main/actions/getAccessibleCompanies';
@@ -94,7 +95,14 @@ export default function renderer(app, config) {
             // it should response with redirection
             try {
               const redirectTo = getRedirectPath(redirectLocation);
+              // handling for ensure login, save the return to link
+              // it will return back when finish the authorization,
+              // it will be read in the passportjs
+              if (redirectTo === SIGN_IN) {
+                req.session.returnTo = req.originalUrl || req.url;
+              }
               logger.debug(`redirection is detected, to: ${redirectTo}`);
+              // ensure login handling
               res.redirect(302, redirectTo);
             } catch (err) {
               next(err);

@@ -8,7 +8,6 @@ import methodOverride from 'method-override';
 import morgan from 'morgan';
 import session from 'express-session';
 import userLocale from 'm800-user-locale';
-import { ensureLoggedIn } from 'connect-ensure-login';
 
 import app from '../app';
 import config from '../config';
@@ -17,6 +16,7 @@ import apiResponse from './utils/apiResponse';
 import { apiErrorHandler } from './middlewares/errorHandler';
 import authRouter from './routers/auth';
 import { fetchDep } from './utils/bottle';
+import { ERROR_500 } from '../utils/paths';
 
 const PROJ_ROOT = path.join(__dirname, '../..');
 
@@ -101,6 +101,17 @@ export default function (port) {
 
   // as API server
   server.use(authRouter);
+
+  // server error handling
+  // by pass the permission checking when there is 500 error and render directly
+  server.use((req, res, next) => {
+    if (req.path === ERROR_500) {
+      render(app, config)(req, res, () => {});
+      return;
+    }
+    next();
+  });
+
   const fetchPermissionsMiddleware = fetchDep(nconf.get('containerName'), 'FetchPermissionsMiddleware');
   server.use(fetchPermissionsMiddleware);
 
@@ -109,8 +120,22 @@ export default function (port) {
   server.use(config.API_PATH_PREFIX, require('./routers/api').default);
   server.use(config.API_PATH_PREFIX, apiErrorHandler);
 
-  server.use(ensureLoggedIn('/sign-in'), (req, res, next) => {
+  // on the server side, it will fetch the permission list, if any sever error will go into 500 at the bottom.
+  // other routing are checked in the app router directly, it will check route existence and permission.
+  server.use((req, res, next) => {
     render(app, config)(req, res, next);
   });
+
+  // server error handling
+  // it will perform redirection to 500 page
+  server.use((err, req, res, next) => {
+    if (err) {
+      logger.info('Server error received and perform redirect to 500 page');
+      res.redirect(302, ERROR_500);
+      return;
+    }
+    next();
+  });
+
   return server;
 }

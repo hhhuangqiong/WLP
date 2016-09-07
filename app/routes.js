@@ -46,6 +46,7 @@ import {
   ERROR_401 as path401,
   ERROR_404 as path404,
   ERROR_500 as path500,
+  SIGN_IN,
 } from './utils/paths';
 
 import AuthStore from './main/stores/AuthStore';
@@ -57,19 +58,19 @@ const debug = createDebug('app:routes');
 export default (context) => {
   // handle whether user login or not and redirect to the assigned carrier
   function checkLogin(nextState, replace) {
+    if (nextState.location.pathname !== '/') {
+      return;
+    }
     const store = context.getStore(AuthStore);
     const user = store.getUser();
     // not login, redirect to sign in page on IAM
     if (!user) {
       debug('There is no user in AuthStore, redirecting to sign-in');
-      replace('/sign-in');
+      replace(SIGN_IN);
       return;
     }
-
-    if (nextState.location.pathname === '/') {
-      // only redirect to carrierId path
-      replace(`/${user.carrierId}`);
-    }
+    // only redirect to carrierId path
+    replace(`/${user.carrierId}`);
   }
 
   // check for the permission and set the default path for that carrier(if not mentioned)
@@ -85,6 +86,11 @@ export default (context) => {
 
     const store = context.getStore(AuthStore);
     const user = store.getUser();
+    // when try to access without user, redirect to login page
+    if (!user) {
+      replace(SIGN_IN);
+      return;
+    }
     // if it doesn't mention the target page, then assign the default section
     if (routes.length === 2) {
       const defaultSection = navigationSections.find(x => includes(user.permissions, x.permission));
