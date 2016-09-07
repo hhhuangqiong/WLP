@@ -14,8 +14,8 @@ export default React.createClass({
     carrierId: React.PropTypes.string,
     startDate: React.PropTypes.string,
     endDate: React.PropTypes.string,
-    handleExport: React.PropTypes.func.isRequired,
-    closeModal: React.PropTypes.func.isRequired,
+    handleExport: React.PropTypes.func,
+    closeModal: React.PropTypes.func,
   },
 
   getInitialState() {

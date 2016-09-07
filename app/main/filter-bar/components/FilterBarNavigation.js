@@ -62,11 +62,13 @@ export default function FilterBarNavigation({ section, tab }, { params }) {
         {renderDetails(tab, `/${identity}/${section}/details`)}
       </li>
       {
+        /* @TODO hide the user activation section
         section === 'end-user' ? (
           <li className="top-bar--inner tab--inverted__title">
             {renderUserActivation(tab, `/${identity}/${section}/whitelist`)}
           </li>
         ) : null
+        */
       }
     </ul>
   );

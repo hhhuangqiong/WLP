@@ -97,17 +97,6 @@ function OverviewSummaryStats({
   );
 }
 
-OverviewSummaryStats.defaultProps = {
-  stats: {
-    /* Disabled for WLP-824
-    verifiedIos: 0,
-    verifiedAndroid: 0,
-    */
-    registeredIos: 0,
-    registeredAndroid: 0,
-  }
-};
-
 OverviewSummaryStats.propTypes = {
   intl: PropTypes.object.isRequired,
   isLoading: PropTypes.bool.isRequired,

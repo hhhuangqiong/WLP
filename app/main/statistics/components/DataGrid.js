@@ -77,12 +77,12 @@ Wrapper.propTypes = {
     }),
   ]),
   totalColumns: PropTypes.number,
-  children: PropTypes.arrayOf(PropTypes.element),
-  customClass: PropTypes.oneOf([
+  children: PropTypes.node,
+  customClass: PropTypes.oneOfType([
     PropTypes.string,
     PropTypes.array,
   ]),
-  wrapperClass: PropTypes.oneOf([
+  wrapperClass: PropTypes.oneOfType([
     PropTypes.string,
     PropTypes.array,
   ]),

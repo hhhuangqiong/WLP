@@ -10,8 +10,8 @@ function TableHeader({ intl, headers }) {
     <thead>
       <tr>
         {
-          headers.map(title => (
-            <th className="top-up-table--cell">
+          headers.map((title, index) => (
+            <th className="top-up-table--cell" key={index}>
               {typeof title === 'object' ? formatMessage(title) : ''}
             </th>
           ))
@@ -26,7 +26,7 @@ TableHeader.defaultProps = {
 };
 
 TableHeader.propTypes = {
-  headers: PropTypes.string.isRequired,
+  headers: PropTypes.array.isRequired,
   intl: PropTypes.shape({
     formatMessage: PropTypes.func.isRequired,
   }),

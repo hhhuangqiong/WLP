@@ -72,7 +72,7 @@ const AccountTable = React.createClass({
   renderAccountItems(accounts) {
     const { identity, accountId } = this.context.params;
     return accounts.map(account => (
-      <li className={classNames('account-table__item', { active: account.id === accountId }, 'clearfix')} key={account.Id}>
+      <li className={classNames('account-table__item', { active: account.id === accountId }, 'clearfix')} key={account.id}>
         <Link to={`/${identity}/account/${account.id}/profile`} params={{ id: account.id, identity }}>
           <div className="account-icon left">
             {/* @TODO update the icon with new user icon */}

@@ -1,5 +1,4 @@
 import React, { PropTypes } from 'react';
-import { Link } from 'react-router';
 import Select from 'react-select';
 import { FormattedMessage, injectIntl, defineMessages } from 'react-intl';
 
@@ -387,7 +386,6 @@ const EndUsersOverview = React.createClass({
                             LINECHART_TOGGLES.map(toggle => (
                               <li key={toggle.id} className="verification-overview__title">
                                 <ColorRadioButton
-                                  group="verificationAttempt"
                                   label={formatMessage(toggle.title)}
                                   value={toggle.id}
                                   color={toggle.color}
@@ -468,11 +466,11 @@ const EndUsersOverview = React.createClass({
                       {
                         this.state.deviceStats && this.state.deviceStats.map((stat) => {
                           const percentage = Math.round(stat.total / this._getDeviceTotal() * 100);
-
+                          const platformName = getPlatformInfo(stat.platform).name;
                           return (
-                            <div className="large-12 columns left">
+                            <div className="large-12 columns left" key={stat.platform}>
                               <PercentageChart
-                                title={formatMessage(getPlatformInfo(stat.platform).name)}
+                                title={formatMessage(platformName)}
                                 percentage={percentage}
                                 stat={stat.total}
                                 unit={formatMessage(MESSAGES.userUnit)}

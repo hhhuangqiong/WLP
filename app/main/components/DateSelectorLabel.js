@@ -7,7 +7,7 @@ export default class DateSelectorLabel extends Component {
     date: PropTypes.string.isRequired,
     minDate: PropTypes.string.isRequired,
     maxDate: PropTypes.string.isRequired,
-    displayFormat: PropTypes.element.isRequired,
+    displayFormat: PropTypes.string.isRequired,
     timescale: PropTypes.string.isRequired,
     parseFormat: PropTypes.string,
     onChange: PropTypes.func.isRequired,
@@ -60,12 +60,14 @@ export default class DateSelectorLabel extends Component {
           style={{ textAlign: 'center' }}
         >
           <div className="date-dropdown-label">{currentDate}</div>
-          <select className="date-dropdown-element" onChange={this.handleSelect}>
+          <select className="date-dropdown-element" onChange={this.handleSelect}
+            defaultValue={moment(date, parseFormat).get(timescale)}
+          >
             {this.props.options.map(option =>
               (
                 <option
                   value={option.value}
-                  selected={+option.value === moment(date, parseFormat).get(timescale)}
+                  key={option.value}
                 >{option.label}</option>
               )
             )}

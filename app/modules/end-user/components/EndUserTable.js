@@ -1,5 +1,5 @@
 import moment from 'moment';
-import { get, bindKey, isNull, isEmpty, capitalize } from 'lodash';
+import { get, bindKey, isEmpty, capitalize } from 'lodash';
 import React, { PropTypes } from 'react';
 import classNames from 'classnames';
 import { FormattedMessage, defineMessages, injectIntl } from 'react-intl';

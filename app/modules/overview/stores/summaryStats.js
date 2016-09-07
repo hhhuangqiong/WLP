@@ -11,7 +11,14 @@ export default createStore({
   },
 
   initialize() {
-    this.stats = {};
+    this.stats = {
+      /* Disabled for WLP-824
+      verifiedIos: 0,
+      verifiedAndroid: 0,
+      */
+      registeredIos: 0,
+      registeredAndroid: 0,
+    };
     this.isLoading = false;
   },
 
