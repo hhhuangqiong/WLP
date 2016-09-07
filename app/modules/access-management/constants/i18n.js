@@ -73,4 +73,8 @@ export const MESSAGES = defineMessages({
     id: 'accessManagement.sms',
     defaultMessage: 'SMS Resource',
   },
+  verification: {
+    id: 'accessManagement.verification',
+    defaultMessage: 'Verification Resource',
+  },
 });
