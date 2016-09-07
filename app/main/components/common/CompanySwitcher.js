@@ -30,30 +30,18 @@ const CompanySwitcher = React.createClass({
     };
   },
 
-  switchCompany(carrierId) {
-    // redirecting to an existing module will work
-    // a proper landing path will be checked on server-side
-    // ideally it should reconstruct the defaultPath by authorityChecker
-    const destination = userPath(carrierId);
-
-    // it should always be a client side process
-    // let's refresh the page at this moment, until we
-    // establish a mechanism to detect identity change in every page
-    if (window) {
-      window.location.assign(`${destination}/`);
-    }
-  },
-
   render() {
     const buttons = this
       .state
       .companies
       .map(({ name, carrierId, logo }) => {
         const logoSrc = !!logo ? logo : DEFAULT_LOGO_SRC;
-        const switchCompany = this.switchCompany.bind(this, carrierId);
+        // it will redirect to carrierId path and refresh the page when switching company.
+        // it will then load the company info and recontruct the defaultPath in the app route.
+        const destination = `${userPath(carrierId)}/`;
         return (
           <li className="navigation-bar__item" title={name} key={carrierId}>
-            <a href="#" onClick={switchCompany}>
+            <a href={destination}>
               <img src={logoSrc} alt={name} />
             </a>
           </li>
