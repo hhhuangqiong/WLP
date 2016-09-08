@@ -1,7 +1,8 @@
 import Q from 'q';
 import { isObject, includes, any, difference, flatten, map } from 'lodash';
+import { NotFoundError } from 'common-errors';
 
-import { RESOURCE, CAPABILITY, permission, SERVICE_TYPE, CHARGE_WALLET, PAYMENT_MODE } from './acl-enums';
+import { RESOURCE, CAPABILITY, permission } from './acl-enums';
 
 function flattenPermissions(permissions) {
   return flatten(
@@ -9,46 +10,39 @@ function flattenPermissions(permissions) {
   );
 }
 
-function deriveProhibitions(capabilities) {
+function deriveProhibitions(carrierProfile) {
   // This defines resource/permission availability depending on capabilities
   // Not sure if this mapping is correct
   const PERMISSION_DEPENDENCIES = {
-    [permission(RESOURCE.GENERAL)]: c => !includes(c, CAPABILITY.SERVICE_SDK),
+    [permission(RESOURCE.GENERAL)]: ({ serviceType }) => serviceType !== 'SDK',
     [permission(RESOURCE.END_USER)]: () => true, // all companies will show end user section
-    [permission(RESOURCE.CALL)]: c => any(c, x => /^call/.test(x)),
-    [permission(RESOURCE.IM)]: c => includes(c, CAPABILITY.IM),
-    [permission(RESOURCE.SMS)]: c => includes(c, CAPABILITY.IM_TO_SMS),
-    [permission(RESOURCE.VSF)]: c => includes(c, CAPABILITY.VSF),
-    [permission(RESOURCE.TOP_UP)]: c => includes(c, CAPABILITY.PAYMENT_PRE_PAID), // show top up when it is pre-paid
-    [permission(RESOURCE.VERIFICATION_SDK)]: c =>
-      any(c, x => /^verification/.test(x)) || includes(c, CAPABILITY.SERVICE_SDK),
+    [permission(RESOURCE.CALL)]: ({ capabilities }) => any(capabilities, x => /^call/.test(x)),
+    [permission(RESOURCE.IM)]: ({ capabilities }) => includes(capabilities, CAPABILITY.IM),
+    [permission(RESOURCE.SMS)]: ({ capabilities }) => includes(capabilities, CAPABILITY.IM_TO_SMS),
+    [permission(RESOURCE.VSF)]: ({ capabilities }) => includes(capabilities, CAPABILITY.VSF),
+    [permission(RESOURCE.TOP_UP)]: ({ paymentMode }) => paymentMode === 'PRE_PAID', // show top up when it is pre-paid
+    [permission(RESOURCE.VERIFICATION_SDK)]: ({ serviceType, capabilities }) =>
+      any(capabilities, x => /^verification/.test(x)) || serviceType === 'SDK',
   };
   /* eslint no-confusing-arrow: 0 */
-  const prohibitions = map(PERMISSION_DEPENDENCIES, (rule, p) => rule(capabilities) ? null : p)
+  const prohibitions = map(PERMISSION_DEPENDENCIES, (rule, p) => rule(carrierProfile) ? null : p)
     .filter(p => p !== null);
   return prohibitions;
 }
 
 export function createAclResolver(logger, iamClient, provisionHelper) {
-  async function getCapabilities(carrierId) {
+  async function getCarrierProfile(carrierId) {
     const item = await provisionHelper.getProvisionByCarrierId(carrierId);
-    if (!item.profile || !item.profile.capabilities) {
-      return [];
+    if (!item || !item.profile) {
+      logger.debug('Fail to carrier profile');
+      throw new NotFoundError('Carrier profile');
     }
-    const capabilities = item.profile.capabilities;
-    // push those service type and payment type as capability
-    if (SERVICE_TYPE[item.profile.serviceType]) {
-      capabilities.push(SERVICE_TYPE[item.profile.serviceType]);
-    }
-
-    if (PAYMENT_MODE[item.profile.paymentMode]) {
-      capabilities.push(PAYMENT_MODE[item.profile.paymentMode]);
-    }
-    // @TODO chargeWallet is not shown
-    if (CHARGE_WALLET[item.profile.chargeWallet]) {
-      capabilities.push(CHARGE_WALLET[item.profile.chargeWallet]);
-    }
-    return capabilities;
+    return {
+      capabilities: item.profile.capabilities,
+      paymentMode: item.profile.paymentMode,
+      chargeWallet: item.profile.chargeWallet,
+      serviceType: item.profile.serviceType,
+    };
   }
 
   async function resolve(params) {
@@ -66,27 +60,25 @@ export function createAclResolver(logger, iamClient, provisionHelper) {
     logger.debug('Resolved carrierId to be companyId %s', companyId);
     // if no companyId, it will be no permission and capabilities
     if (!companyId) {
-      return {
-        capabilities: [],
-        permissions: [],
-      };
+      logger.debug('Fail to find company');
+      throw new NotFoundError('company');
     }
-    let [userPermissions, companyCapabilities] = await Q.all([
+    let [userPermissions, carrierProfile] = await Q.all([
       iamClient.getUserPermissions({
         service: 'wlp',
         company: companyId,
         username: params.username,
       }),
-      getCapabilities(params.carrierId),
+      getCarrierProfile(params.carrierId),
     ]);
     // Flatten user permissions to a single array, e.g. ["resource:read", "resource:create"]
     userPermissions = flattenPermissions(userPermissions);
     // Filter out permissions that are not enabled due to company capabilities
-    const prohibitions = deriveProhibitions(companyCapabilities);
+    const prohibitions = deriveProhibitions(carrierProfile);
     userPermissions = difference(userPermissions, prohibitions);
     logger.debug('Resolved permissions for user %s for carrier %s', params.username, params.carrierId);
     return {
-      capabilities: companyCapabilities,
+      capabilities: carrierProfile.capabilities,
       permissions: userPermissions,
     };
   }

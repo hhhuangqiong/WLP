@@ -56,7 +56,6 @@
     "classnames": "^1.2.0",
     "common-errors": "^0.5.3",
     "compression": "^1.2.1",
-    "connect-ensure-login": "^0.1.1",
     "connect-multiparty": "^1.2.5",
     "connect-redis": "^2.1.0",
     "contra": "^1.8.1",
