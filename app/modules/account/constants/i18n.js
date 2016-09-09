@@ -50,15 +50,15 @@ export const MESSAGES = defineMessages({
     defaultMessage: 'Select role',
   },
   warning: {
-    id: 'accessManagement.warning',
+    id: 'account.warning',
     defaultMessage: 'Warning: This action cannot be undo!',
   },
   dialogMessage: {
-    id: 'accessManagement.dialogMessage',
+    id: 'account.dialogMessage',
     defaultMessage: 'Are you sure you want to delete the user called',
   },
   dialogHeader: {
-    id: 'accessManagement.dialogHeader',
+    id: 'account.dialogHeader',
     defaultMessage: 'Delete User',
   },
 });
