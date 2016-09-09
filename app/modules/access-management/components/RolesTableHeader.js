@@ -12,7 +12,7 @@ function RolesTableHeader(props) {
       roleIndex: index,
     });
   }
-  
+
   function renderDeleteButton({ creating }) {
     if (creating) return null;
     return (
@@ -61,7 +61,7 @@ function RolesTableHeader(props) {
           warning={props.intl.formatMessage(MESSAGES.warning)}
           dialogMessage={props.intl.formatMessage(MESSAGES.dialogMessage)}
           dialogHeader={props.intl.formatMessage(MESSAGES.dialogHeader)}
-          name={props.roleName}
+          name={props.editedRoleIndex ? props.roles[props.editedRoleIndex].name : null}
         />
       <tr>
         <th className="roles-table__title-cell"></th>

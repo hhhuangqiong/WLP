@@ -36,7 +36,6 @@ export class RolesPage extends Component {
       editedRoleIndex: null,
       hoveredRoleIndex: null,
       editedRoleBackup: null,
-      roleName: null,
     };
     this.saveRole = this.saveRole.bind(this);
     this.removeRole = this.removeRole.bind(this);
@@ -153,7 +152,6 @@ export class RolesPage extends Component {
     const index = this.state.editedRoleIndex;
     this.setState({
       deleteDialogOpened: true,
-      roleName: this.state.displayedRoles[index].name,
     });
   }
 
@@ -193,7 +191,6 @@ export class RolesPage extends Component {
               onRoleEditCancelled={this.cancelRoleEdit}
               onRolePermissionChanged={this.changeEditedRolePermission}
               onRoleNameChanged={this.changeEditedRoleName}
-              roleName={this.state.roleName}
             />
           </Panel.Body>
         </Panel.Wrapper>

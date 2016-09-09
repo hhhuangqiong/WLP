@@ -17,6 +17,10 @@ export const MESSAGES = defineMessages({
     id: 'accessManagement.cancel',
     defaultMessage: 'Cancel',
   },
+  edit: {
+    id: 'accessManagement.edit',
+    defaultMessage: 'edit',
+  },
   create: {
     id: 'accessManagement.create',
     defaultMessage: 'Create',

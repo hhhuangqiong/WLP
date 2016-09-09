@@ -21,7 +21,7 @@ function PermissionRowGroup(props) {
         <div
           className="confirmation__footer__button confirm button confirmation__button--cancel"
         >
-        Edit
+          {intl.formatMessage(MESSAGES.edit)}
         </div>
       );
     }

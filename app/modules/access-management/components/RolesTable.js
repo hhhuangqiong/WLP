@@ -28,7 +28,6 @@ class RolesTable extends Component {
       handleCloseDeleteDialog: PropTypes.func,
       handleOpenDeleteDialog: PropTypes.func,
       deleteDialogOpened: PropTypes.bool,
-      roleName: PropTypes.string,
     };
   }
   constructor(props) {
@@ -138,6 +137,7 @@ class RolesTable extends Component {
       (permission, index) => this.renderPermissionGroup(permission, index, isValid)
     );
     const {
+      roles,
       hoveredRoleIndex,
       editedRoleIndex,
       onRoleNameChanged,
@@ -145,7 +145,6 @@ class RolesTable extends Component {
       handleCloseDeleteDialog,
       handleOpenDeleteDialog,
       deleteDialogOpened,
-      roleName,
     } = this.props;
     return (
       <table
@@ -154,7 +153,7 @@ class RolesTable extends Component {
         onClick={this.handleTableClick}
       >
         <RolesTableHeader
-          roles={this.props.roles}
+          roles={roles}
           hoveredRoleIndex={hoveredRoleIndex}
           editedRoleIndex={editedRoleIndex}
           onNameChanged={onRoleNameChanged}
@@ -162,7 +161,6 @@ class RolesTable extends Component {
           handleCloseDeleteDialog={handleCloseDeleteDialog}
           handleOpenDeleteDialog={handleOpenDeleteDialog}
           deleteDialogOpened={deleteDialogOpened}
-          roleName={roleName}
           editTitle={this.props.intl.formatMessage(MESSAGES.title)}
         />
         {rows}
