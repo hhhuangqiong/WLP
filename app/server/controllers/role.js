@@ -1,4 +1,4 @@
-import { extend } from 'lodash';
+import { extend, omit } from 'lodash';
 import invariant from 'invariant';
 
 // TODO: Consider simple proxying to another microservice using something like
@@ -10,7 +10,7 @@ export default function roleController(iamServiceClient) {
 
   async function list(req, res, next) {
     try {
-      const roles = await iamServiceClient.getRoles(req.query);
+      const roles = await iamServiceClient.getRoles(omit(req.query, 'carrierId'));
       res.json(roles);
     } catch (e) {
       next(e);

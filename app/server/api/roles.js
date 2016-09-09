@@ -10,7 +10,7 @@ export default function (apiPrefix = '') {
     getRoles(params, cb) {
       superagent
         .get(`${this._getHost()}${apiPrefix}/roles`)
-        .query(params)
+        .query({ carrierId: this.getCarrierId(), ...params })
         .accept('json')
         .end(genericHandler(cb));
     },
@@ -19,6 +19,7 @@ export default function (apiPrefix = '') {
       superagent
         .post(`${this._getHost()}${apiPrefix}/roles`)
         .accept('json')
+        .query({ carrierId: this.getCarrierId() })
         .send(params)
         .end(genericHandler(cb));
     },
@@ -27,6 +28,7 @@ export default function (apiPrefix = '') {
       superagent
         .put(`${this._getHost()}${apiPrefix}/roles/${params.id}`)
         .accept('json')
+        .query({ carrierId: this.getCarrierId() })
         .send(params)
         .end(genericHandler(cb));
     },
@@ -34,6 +36,7 @@ export default function (apiPrefix = '') {
     deleteRole(params, cb) {
       superagent
         .del(`${this._getHost()}${apiPrefix}/roles/${params.id}`)
+        .query({ carrierId: this.getCarrierId() })
         .accept('json')
         .end(genericHandler(cb));
     },
