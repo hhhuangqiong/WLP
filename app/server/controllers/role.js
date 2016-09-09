@@ -36,8 +36,9 @@ export default function roleController(iamServiceClient) {
   async function remove(req, res, next) {
     try {
       const command = req.params;
-      const result = await iamServiceClient.deleteRole(command);
-      res.json(result);
+      await iamServiceClient.deleteRole(command);
+      // return result with id to adapt API action creator
+      res.json({ id: command.id });
     } catch (e) {
       next(e);
     }
