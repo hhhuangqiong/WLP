@@ -12,7 +12,18 @@ function RolesTableHeader(props) {
       roleIndex: index,
     });
   }
-  const cells = props.roleNames.map((name, i) => {
+  
+  function renderDeleteButton({ creating }) {
+    if (creating) return null;
+    return (
+      <i className="fi-x"
+        onClick={props.handleOpenDeleteDialog}
+      />
+    );
+  }
+
+  const cells = props.roles.map((role, i) => {
+    const { name } = role;
     const isEdited = props.editedRoleIndex === i;
     const isHovered = !isEdited && props.hoveredRoleIndex === i;
     const css = cx({
@@ -29,14 +40,12 @@ function RolesTableHeader(props) {
           value={name}
           onChange={e => handleInputChange(e, i)}
         />
-        <i className="fi-x"
-          onClick = {props.handleOpenDeleteDialog}
-        />
+        {renderDeleteButton(role)}
       </div>
     )
       : <span>{name}</span>;
     return (
-      <th className={css} key={i}>
+      <th className={css} key={i} title={props.editTitle}>
         {content}
       </th>
     );
@@ -65,7 +74,7 @@ function RolesTableHeader(props) {
 
 RolesTableHeader.propTypes = {
   intl: intlShape.isRequired,
-  roleNames: PropTypes.arrayOf(PropTypes.string).isRequired,
+  roles: PropTypes.array.isRequired,
   hoveredRoleIndex: PropTypes.number,
   editedRoleIndex: PropTypes.number,
   onNameChanged: PropTypes.func,
@@ -75,6 +84,7 @@ RolesTableHeader.propTypes = {
   handleDelete: PropTypes.func,
   handleCloseDeleteDialog: PropTypes.func,
   roleName: PropTypes.string,
+  editTitle: PropTypes.string,
 };
 
 export default injectIntl(RolesTableHeader);
