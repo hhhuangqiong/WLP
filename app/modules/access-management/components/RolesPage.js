@@ -10,7 +10,7 @@ import addRole from './../actions/addRole';
 import updateRole from '../actions/updateRole';
 import removeRole from './../actions/removeRole';
 import fetchRoles from './../actions/fetchRoles';
-
+import _ from 'lodash';
 import { MESSAGES } from './../constants/i18n';
 import RoleStore from './../stores/RoleStore';
 import ApplicationStore from './../../../main/stores/ApplicationStore';
@@ -41,6 +41,7 @@ export class RolesPage extends Component {
     this.saveRole = this.saveRole.bind(this);
     this.removeRole = this.removeRole.bind(this);
     this.changeEditedRoleName = this.changeEditedRoleName.bind(this);
+    this.changeEditedRolePermission = this.changeEditedRolePermission.bind(this);
     this.handleOpenDeleteDialog = this.handleOpenDeleteDialog.bind(this);
     this.handleCloseDeleteDialog = this.handleCloseDeleteDialog.bind(this);
     this.cancelRoleEdit = this.cancelRoleEdit.bind(this);
@@ -63,6 +64,7 @@ export class RolesPage extends Component {
       name: null,
       company: this.props.company.id,
       permissions: {},
+      creating: true,
     };
     const roles = [...this.state.displayedRoles, role];
     this.setState({ displayedRoles: roles });
@@ -133,7 +135,7 @@ export class RolesPage extends Component {
   saveRole() {
     const role = this.state.displayedRoles[this.state.editedRoleIndex];
     const action = this.isNewRole(role) ? addRole : updateRole;
-    this.context.executeAction(action, role);
+    this.context.executeAction(action, _.omit(role, ['creating']));
   }
   removeRole() {
     const index = this.state.editedRoleIndex;
@@ -141,7 +143,9 @@ export class RolesPage extends Component {
       return;
     }
     const role = this.state.displayedRoles[index];
-    this.context.executeAction(removeRole, role);
+    if (_.find(this.props.roles, role)) {
+      this.context.executeAction(removeRole, role);
+    }
     this.handleCloseDeleteDialog();
   }
 

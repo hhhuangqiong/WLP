@@ -47,7 +47,7 @@ function PermissionRowGroup(props) {
         </div>
       );
     }
-    const cell = <td key={i} className={css}>{content}</td>;
+    const cell = <td key={i} className={css} title={props.editTitle}>{content}</td>;
     cells.push(cell);
   }
 
@@ -71,6 +71,7 @@ PermissionRowGroup.propTypes = {
   showEditControls: PropTypes.bool.isRequired,
   canSave: PropTypes.bool.isRequired,
   title: PropTypes.string.isRequired,
+  editTitle: PropTypes.string,
   children: PropTypes.arrayOf(PropTypes.element),
   hoveredRoleIndex: PropTypes.number,
   editedRoleIndex: PropTypes.number,

@@ -122,6 +122,7 @@ class RolesTable extends Component {
           rolesCount={this.props.roles.length}
           hoveredRoleIndex={this.props.hoveredRoleIndex}
           editedRoleIndex={this.props.editedRoleIndex}
+          editTitle={this.props.intl.formatMessage(MESSAGES.title)}
           onSave={this.props.onRoleSaved}
           onCancel={this.props.onRoleEditCancelled}
         >
@@ -153,7 +154,7 @@ class RolesTable extends Component {
         onClick={this.handleTableClick}
       >
         <RolesTableHeader
-          roleNames={this.props.roles.map(x => x.name)}
+          roles={this.props.roles}
           hoveredRoleIndex={hoveredRoleIndex}
           editedRoleIndex={editedRoleIndex}
           onNameChanged={onRoleNameChanged}
@@ -162,6 +163,7 @@ class RolesTable extends Component {
           handleOpenDeleteDialog={handleOpenDeleteDialog}
           deleteDialogOpened={deleteDialogOpened}
           roleName={roleName}
+          editTitle={this.props.intl.formatMessage(MESSAGES.title)}
         />
         {rows}
       </table>
