@@ -9,11 +9,17 @@ $roles-table-control-color: #3B95CC;
   margin-top: 0;
   border-radius: 0;
 
+  td {
+    //overwrite  the style
+    min-width: 0;
+  }
+
   &__header {
     .roles-table__role-cell {
       padding: 0.5rem;
       text-align: center;
       vertical-align: middle;
+      width: 150px;
     }
     button {
       margin: 0;

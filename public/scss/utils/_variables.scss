@@ -30,6 +30,12 @@ $gray-table: #e4e4e4;
 
 $link-secondary: #8d929a;
 
+// Typography
+@import url(https://fonts.googleapis.com/css?family=Ubuntu:400,300);
+$font-family-ubuntu: "Ubuntu", Helvetica, Roboto, Arial, sans-serif !default;
+$font-weight-normal: 400 !default;
+$font-weight-light: 300 !default;
+
 //space for padding and margin
 $global-spacing: rem-calc(16);
 
@@ -145,3 +151,6 @@ $no-effect-trend-font-color: #CCC;
 //button
 $button-cancel-border-color: #A7A5A5;
 $button-cancel-font-color: #7C7C7C;
+
+//table
+$table-stripe: none;

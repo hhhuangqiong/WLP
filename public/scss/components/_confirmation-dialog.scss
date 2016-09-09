@@ -27,6 +27,10 @@ $font-weight-light: 300 !default;
   top: 20%;
   border-radius: 5px;
 
+  .high-light {
+    color: $brand-primary ;
+  }
+
   &__header {
     // the border-radious mixin does not support multiple values
     border-radius: 4px 4px 0 0;
@@ -61,28 +65,28 @@ $font-weight-light: 300 !default;
       margin: 0;
     }
   }
-}
 
-.confirmation__button--cancel {
-  border:1px solid $button-cancel-border-color;
-  color: $button-cancel-font-color;
-  background: white;
-  border-radius: rem-calc(5);
-  min-width: 6.25rem;
-  font-size: rem-calc(12);
-  //overwrite the button style
-  &:hover {
-    background: white;
+  &__button--cancel {
+    border:1px solid $button-cancel-border-color;
     color: $button-cancel-font-color;
+    background: white;
+    border-radius: rem-calc(5);
+    min-width: 6.25rem;
+    font-size: rem-calc(12);
+    //overwrite the button style
+    &:hover {
+      background: white;
+      color: $button-cancel-font-color;
+    }
   }
-}
 
-.confirmation__button--delete {
-  font-size: rem-calc(12);
-  border-radius: rem-calc(5);
-  min-width: 6.25rem;
-  &:hover {
-  background-color: scale-color($brand-secondary, $lightness: -3%);
+  &__button--delete {
+    font-size: rem-calc(12);
+    border-radius: rem-calc(5);
+    min-width: 6.25rem;
+    &:hover {
+    background-color: scale-color($brand-secondary, $lightness: -3%);
+    }
   }
 }
 
@@ -94,7 +98,7 @@ $font-weight-light: 300 !default;
 }
 
 .dialog-info {
-  .highLight {
+  .high-light {
     padding-left: rem-calc(6);
   }
 }
@@ -109,8 +113,4 @@ $font-weight-light: 300 !default;
   color: white;
   padding: $global-spacing/2 rem-calc(25);
   border-radius: rem-calc(5) rem-calc(5) 0 0;
-}
-
-.highLight {
-color: $brand-primary ;
 }

@@ -18,7 +18,7 @@ ul.pagination {
         display: flex;
         align-items: center;
         justify-content: center;
-        @include border-radius($global-rounded);
+        @include border-radius($global-radius);
     }
 
     &.hover {
