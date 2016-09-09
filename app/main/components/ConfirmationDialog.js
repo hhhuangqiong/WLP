@@ -95,9 +95,9 @@ const ConfirmationDialog = React.createClass({
           <div className="dialog-body">
             <div className="dialog-info">
               {dialogMessage}
-              <span className="highLight">" {name} "</span> ?
+              <span className="high-light">" {name} "</span> ?
             </div>
-            <div className="dialog-warning highLight">
+            <div className="dialog-warning high-light">
               {warning}
             </div>
             <div className="confirmation__footer">

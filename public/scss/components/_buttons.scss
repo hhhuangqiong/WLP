@@ -1,14 +1,14 @@
 .button--primary {
     @include button(
 		$bg: $brand-primary,
-		$radius: $global-rounded
+		$radius: $global-radius
 	);
 }
 
 .button--secondary{
 	@include button(
 		$bg: scale-color($brand-secondary, $lightness: -3%),
-		$radius: $global-rounded
+		$radius: $global-radius
 	);
 }
 

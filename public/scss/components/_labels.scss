@@ -3,7 +3,7 @@
     &.status {
         width: rem-calc(10);
         height: rem-calc(10);
-        @include label($padding: 0, $radius: $global-rounded);
+        @include label($padding: 0, $radius: $global-radius);
         &.success {
             @include label-style($success-color);
         }
