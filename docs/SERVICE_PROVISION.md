@@ -136,7 +136,8 @@ Cache-Control: no-cache
     "wlp:sms":["read"],
     "wlp:verification-sdk":["read"],
     "wlp:general":["read"]
-  }
+  },
+  "isRoot": true
 }
 ```
 Response will return 201 Created and the role data submitted
