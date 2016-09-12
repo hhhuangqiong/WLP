@@ -5,6 +5,7 @@ import classNames from 'classnames';
 import { injectIntl, intlShape, FormattedMessage, defineMessages } from 'react-intl';
 import { Link } from 'react-router';
 
+import { FETCH_COMPANY_INTERVAL } from '../../../config/index';
 import CompanyList from './CompanyList';
 import Icon from '../../../main/components/Icon';
 import connectToStores from 'fluxible-addons-react/connectToStores';
@@ -31,6 +32,7 @@ class Company extends React.Component {
     this.handlePageClick = this.handlePageClick.bind(this);
     this.handleFirstPageClick = this.handleFirstPageClick.bind(this);
     this.handleLastPageClick = this.handleLastPageClick.bind(this);
+    this.refetchCompany = this.refetchCompany.bind(this);
   }
 
   componentDidMount() {
@@ -43,6 +45,11 @@ class Company extends React.Component {
         pageNumber: 0,
       }
     );
+    this.refetchCompany();
+  }
+
+  componentWillUnmount() {
+    clearInterval(this.refetchInterval);
   }
 
   setPageRange(start, end, interval) {
@@ -73,6 +80,18 @@ class Company extends React.Component {
         pageNumber: selectedPage,
       }
     );
+  }
+
+  refetchCompany() {
+    const { executeAction, params } = this.context;
+    this.refetchInterval = setInterval(() => {
+      executeAction(fetchCompanies,
+        {
+          carrierId: params.identity,
+          pageSize: this.props.pageSize,
+        }
+      );
+    }, FETCH_COMPANY_INTERVAL);
   }
 
   handleSearchChange(e) {

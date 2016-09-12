@@ -83,7 +83,7 @@ export class RolesPage extends Component {
       return;
     }
     const editedRoleBackup = cloneDeep(this.state.displayedRoles[index]);
-    if (!this.state.displayedRoles[index].isRoot) {
+    if (index !== this.state.adminRoleIndex) {
       this.setState({
         editedRoleIndex: index,
         editedRoleBackup,

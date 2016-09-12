@@ -24,4 +24,5 @@ module.exports = {
       PAGE_SIZE: 100,
     },
   },
+  FETCH_COMPANY_INTERVAL: 30000,
 };

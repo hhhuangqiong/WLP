@@ -1,5 +1,6 @@
 import { extend, omit } from 'lodash';
 import invariant from 'invariant';
+import _ from 'lodash';
 
 // TODO: Consider simple proxying to another microservice using something like
 // https://github.com/chimurai/http-proxy-middleware or custom middleware
@@ -11,7 +12,7 @@ export default function roleController(iamServiceClient) {
   async function list(req, res, next) {
     try {
       const roles = await iamServiceClient.getRoles(omit(req.query, 'carrierId'));
-      res.json(roles);
+      res.json(_.sortBy(roles, (role) => (Date.parse(role.createdAt || 0))));
     } catch (e) {
       next(e);
     }

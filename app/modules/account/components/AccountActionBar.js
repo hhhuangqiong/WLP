@@ -84,8 +84,8 @@ const AccountActionBar = React.createClass({
                   onClick={this.props.handleDiscard}
                 >
                 <FormattedMessage
-                  id="Discard"
-                  defaultMessage="Discard"
+                  id="cancel"
+                  defaultMessage="Cancel"
                 />
                 </div>
               </If>

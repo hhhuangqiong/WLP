@@ -199,6 +199,7 @@ class CompanyEditForm extends Component {
   render() {
     const { intl: { formatMessage }, errors } = this.props;
     const { identity } = this.context.params;
+    const { status } = this.props.companyDetail;
     return (
       <div className="company__new-profile">
         <div className="header inline-with-space narrow">
@@ -222,17 +223,24 @@ class CompanyEditForm extends Component {
               'item',
               )
             }
-            disabled={this.props.companyDetail.status === 'IN_PROGRESS' }
+            disabled={status === 'IN_PROGRESS' }
             onClick={
-              this.props.companyDetail.status === 'ERROR' ?
+              status === 'ERROR' ?
               this.updateCompany :
               this.saveCompany
             }
           >
-          <FormattedMessage
-            id="save"
-            defaultMessage="Save"
-          />
+          {
+            status === 'ERROR' ?
+            <FormattedMessage
+              id="retry"
+              defaultMessage="Retry"
+            /> :
+            <FormattedMessage
+              id="save"
+              defaultMessage="Save"
+            />
+          }
           </button> :
           // display when the component doesn't receive props from store
           <button
