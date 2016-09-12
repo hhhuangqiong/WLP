@@ -45,7 +45,7 @@ function RolesTableHeader(props) {
     )
       : <span>{name}</span>;
     return (
-      <th className={css} key={i} title={props.editTitle}>
+      <th className={css} key={i} title={props.adminRoleIndex !== i ? props.editTitle : null}>
         {content}
       </th>
     );
@@ -85,6 +85,7 @@ RolesTableHeader.propTypes = {
   handleCloseDeleteDialog: PropTypes.func,
   roleName: PropTypes.string,
   editTitle: PropTypes.string,
+  adminRoleIndex: PropTypes.number,
 };
 
 export default injectIntl(RolesTableHeader);

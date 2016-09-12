@@ -16,7 +16,7 @@ function PermissionRowGroup(props) {
       'roles-table__role-cell--edited': isEdited,
     });
     let content = null;
-    if (props.showEditControls && isHovered) {
+    if (props.showEditControls && isHovered && props.adminRoleIndex !== i) {
       content = (
         <div
           className="confirmation__footer__button confirm button confirmation__button--cancel"
@@ -47,7 +47,11 @@ function PermissionRowGroup(props) {
         </div>
       );
     }
-    const cell = <td key={i} className={css} title={props.editTitle}>{content}</td>;
+    const cell = (
+      <td key={i} className={css} title={props.adminRoleIndex !== i ? props.editTitle : null}>
+      {content}
+      </td>
+    );
     cells.push(cell);
   }
 
@@ -77,6 +81,7 @@ PermissionRowGroup.propTypes = {
   editedRoleIndex: PropTypes.number,
   onCancel: PropTypes.func.isRequired,
   onSave: PropTypes.func.isRequired,
+  adminRoleIndex: PropTypes.number,
 };
 
 export default injectIntl(PermissionRowGroup);

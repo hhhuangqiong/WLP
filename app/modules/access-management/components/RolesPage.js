@@ -1,7 +1,7 @@
 import React, { Component, PropTypes } from 'react';
 import { isString, isNumber, without, cloneDeep } from 'lodash';
 import connectToStores from 'fluxible-addons-react/connectToStores';
-import { injectIntl } from 'react-intl';
+import { injectIntl, intlShape } from 'react-intl';
 
 import * as Panel from './../../../main/components/Panel';
 import RolesTable from './RolesTable';
@@ -23,6 +23,7 @@ export class RolesPage extends Component {
   }
   static get propTypes() {
     return {
+      intl: intlShape.isRequired,
       roles: PropTypes.arrayOf(PropTypes.object),
       permissions: PropTypes.arrayOf(PropTypes.object),
       company: PropTypes.object.isRequired,
@@ -36,6 +37,7 @@ export class RolesPage extends Component {
       editedRoleIndex: null,
       hoveredRoleIndex: null,
       editedRoleBackup: null,
+      adminRoleIndex: null,
     };
     this.saveRole = this.saveRole.bind(this);
     this.removeRole = this.removeRole.bind(this);
@@ -56,6 +58,7 @@ export class RolesPage extends Component {
   }
   componentWillReceiveProps(nextProps) {
     this.state.displayedRoles = nextProps.roles;
+    this.state.adminRoleIndex = _.findIndex(this.state.displayedRoles, { isRoot: true });
     this.finishRoleEdit();
   }
   addRole() {
@@ -80,10 +83,12 @@ export class RolesPage extends Component {
       return;
     }
     const editedRoleBackup = cloneDeep(this.state.displayedRoles[index]);
-    this.setState({
-      editedRoleIndex: index,
-      editedRoleBackup,
-    });
+    if (!this.state.displayedRoles[index].isRoot) {
+      this.setState({
+        editedRoleIndex: index,
+        editedRoleBackup,
+      });
+    }
   }
   changeEditedRoleName({ name }) {
     const index = this.state.editedRoleIndex;
@@ -149,7 +154,6 @@ export class RolesPage extends Component {
   }
 
   handleOpenDeleteDialog() {
-    const index = this.state.editedRoleIndex;
     this.setState({
       deleteDialogOpened: true,
     });
@@ -178,6 +182,7 @@ export class RolesPage extends Component {
           <Panel.Body className="roles-table-container">
             <RolesTable
               roles={this.state.displayedRoles}
+              adminRoleIndex={this.state.adminRoleIndex}
               permissions={this.props.permissions}
               hoveredRoleIndex={this.state.hoveredRoleIndex}
               editedRoleIndex={this.state.editedRoleIndex}
