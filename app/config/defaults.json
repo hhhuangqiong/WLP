@@ -25,6 +25,10 @@
       "timestamp": "x"
     }
   },
+  "mcmApi": {
+    "baseUrl": "http://192.168.118.127:8082",
+    "timeout": 15000
+  },
   "iamApi": {
     "baseUrl": "http://deploy.dev.maaii.com:4004"
   },

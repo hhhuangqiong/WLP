@@ -1,4 +1,5 @@
 import moment from 'moment';
+import { get } from 'lodash';
 
 /**
  * @method contructOpts Provides basic function for validating
@@ -143,11 +144,16 @@ export function handleError(err, status) {
     // https://visionmedia.github.io/superagent/#error-handling
     const response = err.response.body;
     error.status = err.status;
-    error.code = response.error;
-    error.message = response.message;
+    error.code = ['error.code', 'error']
+      .map(prop => get(response, prop))
+      .find(x => x);
+    error.message = ['error.message', 'message']
+      .map(prop => get(response, prop))
+      .find(x => x);
   }
 
   error.status = err.status || status || 500;
   error.code = err.code;
+
   return error;
 }

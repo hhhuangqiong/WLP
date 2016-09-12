@@ -9,6 +9,7 @@ import { IamClient } from '../../lib/requests/iam/IamServiceClient';
 import { createFetchPermissionsMiddleware } from '../../server/middlewares/authorization';
 import { createAclResolver } from './../../main/acl/acl-resolver';
 import roleController from '../../server/controllers/role';
+import carrierWalletController from '../../server/controllers/carrierWallet';
 import AccountController from '../../server/controllers/account';
 import CompanyController from '../../server/controllers/company';
 import ProvisionHelper from '../../server/utils/provisionHelper';
@@ -16,6 +17,8 @@ import IamHelper from '../../server/utils/iamHelper';
 import provisionController from '../../server/controllers/provision';
 import { ApplicationRequest } from '../../lib/requests/Application';
 import MpsClient from '../../lib/requests/mps/MpsClient';
+import mcmClient from '../../lib/requests/mcm/McmClient';
+
 /**
  * Initialize the IoC container
  * The registered factory(s) seems to be lazied loaded.
@@ -83,7 +86,7 @@ export default function init(nconf) {
 
   ioc.service('RedisClient', () => makeRedisClient(nconf.get('redisUri')));
 
-  // Remote service clients (real)
+  // Remote service clients
   ioc.constant('MpsClientOptions', {
     baseUrl: nconf.get('mpsApi:baseUrl'),
   });
@@ -97,6 +100,11 @@ export default function init(nconf) {
     timeout: nconf.get('mumsApi:timeout'),
   });
   ioc.service('ApplicationRequest', ApplicationRequest, 'ApplicationOptions');
+  ioc.constant('McmClientOptions', {
+    baseUrl: nconf.get('mcmApi:baseUrl'),
+    timeout: nconf.get('mcmApi:timeout'),
+  });
+  ioc.service('McmClient', mcmClient, 'McmClientOptions');
 
   // Provision Adapter
   ioc.service('ProvisionHelper', ProvisionHelper, 'MpsClient');
@@ -113,6 +121,7 @@ export default function init(nconf) {
   ioc.service('CompanyController', CompanyController, 'IamServiceClient');
   ioc.service('AccountController', AccountController, 'IamServiceClient', 'ProvisionHelper');
   ioc.service('ProvisionController', provisionController, 'IamServiceClient', 'ProvisionHelper');
+  ioc.service('CarrierWalletController', carrierWalletController, 'McmClient');
 
   return ioc;
 }

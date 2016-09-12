@@ -21,16 +21,15 @@ export function fetchContainerInstance(name) {
  *
  * @return {*} The registered dependency
  */
-export function fetchDep(name, depIdentifer) {
+export function fetchDep(name, depIdentifier) {
   const ioc = fetchContainerInstance(name);
-
   if (ioc) {
     // TODO prevent the 'identifier.' case
-    const dependency = depIdentifer.split('.').reduce((result, key) => {
+    const dependency = depIdentifier.split('.').reduce((result, key) => {
       return result[key];
     }, ioc.container);
     if (isUndefined(dependency)) {
-      throw new Error(`Failed to resolve from IOC container: ${name}.`);
+      throw new Error(`Failed to resolve from IOC container: ${depIdentifier}.`);
     }
     return dependency;
   }

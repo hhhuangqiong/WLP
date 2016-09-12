@@ -17,6 +17,7 @@ const router = new Router();
 
 // TODO: refactor api.js to be a factory function with dependencies
 const roleController = fetchDep(nconf.get('containerName'), 'RoleController');
+const carrierWalletController = fetchDep(nconf.get('containerName'), 'CarrierWalletController');
 
 // eslint:max-len 0
 router
@@ -162,6 +163,18 @@ router
   .get('/carriers/:carrierId/preset', [
     authorize(permission(RESOURCE.COMPANY, ACTION.UPDATE)),
     carriers.getPreset,
+  ])
+  .get('/carriers/:carrierId/wallets', [
+    authorize(permission(RESOURCE.TOP_UP, ACTION.READ)),
+    carrierWalletController.getWallets,
+  ])
+  .post('/carriers/:carrierId/topup-records', [
+    authorize(permission(RESOURCE.TOP_UP, ACTION.CREATE)),
+    carrierWalletController.createTopUpRecord,
+  ])
+  .get('/carriers/:carrierId/topup-records', [
+    authorize(permission(RESOURCE.TOP_UP, ACTION.READ)),
+    carrierWalletController.getTopUpRecords,
   ])
   // used in account section
   .get('/accounts', [

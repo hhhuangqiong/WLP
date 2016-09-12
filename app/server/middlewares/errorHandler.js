@@ -5,6 +5,7 @@ const ERROR_LABEL = 'error';
 const INNER_ERROR_FIELDS = ['message', 'arguments', 'type', 'name'];
 
 function filteredMessage(err) {
+  // TODO: unify error throwing / handling
   let errorMessage;
   switch (err.name) {
     case 'ArgumentNullError':
@@ -13,14 +14,15 @@ function filteredMessage(err) {
     case 'NotPermittedError':
       return err.message;
     default:
-      // superagent error from IAM
-      errorMessage = _.get(err, 'response.error.message');
-      if (errorMessage) {
-        return errorMessage;
-      }
-      // Show only manually typed message instead of
-      // the generated one to reduce redundant message
-      return err.args && err.args['0'];
+      errorMessage = [
+        // superagent error from IAM
+        _.get(err, 'response.error.message'),
+        // Show only manually typed message instead of
+        // the generated one to reduce redundant message
+        err.args && err.args['0'],
+        err.message,
+      ].find(x => x);
+      return errorMessage;
   }
 }
 
