@@ -67,10 +67,9 @@ const CompanyStore = createStore({
     this.emitChange();
   },
 
-  receiveCompanies({ companies, total, searchCompany, pageNumber, pageSize }) {
+  receiveCompanies({ companies, total, pageNumber, pageSize }) {
     this.companies = companies;
     this.total = total;
-    this.searchCompany = searchCompany;
     this.pageNumber = pageNumber;
     this.pageSize = pageSize;
     this.emitChange();
@@ -131,10 +130,6 @@ const CompanyStore = createStore({
     return this.total;
   },
 
-  getSearchCompany() {
-    return this.searchCompany;
-  },
-
   getPageNumber() {
     return this.pageNumber;
   },
@@ -171,7 +166,6 @@ const CompanyStore = createStore({
       capabilitiesDisabled: this.capabilitiesDisabled,
       descriptionDisabled: this.descriptionDisabled,
       total: this.total,
-      searchCompany: this.searchCompany,
       pageNumber: this.pageNumber,
       pageSize: this.pageSize,
       companyDetail: this.companyDetail,
@@ -190,7 +184,6 @@ const CompanyStore = createStore({
     this.companies = state.companies;
     this.companyDetail = state.companyDetail;
     this.total = state.total;
-    this.searchCompany = state.searchCompany;
     this.pageNumber = state.pageNumber;
     this.pageSize = state.pageSize;
     this.profileDisabled = state.profileDisabled;

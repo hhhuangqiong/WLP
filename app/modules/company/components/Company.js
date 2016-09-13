@@ -25,7 +25,7 @@ const MESSAGES = defineMessages({
 class Company extends React.Component {
   constructor(props) {
     super(props);
-    this.state = { selected: 0 };
+    this.state = { selected: 0, searchCompany: '' };
     this.setPageRange = this.setPageRange.bind(this);
     this.handleSearchChange = this.handleSearchChange.bind(this);
     this.setPageNumber = this.setPageNumber.bind(this);
@@ -72,10 +72,11 @@ class Company extends React.Component {
     } else {
       selectedPage = this.state.selected;
     }
+    this.setState({ selected: selectedPage });
     executeAction(fetchCompanies,
       {
         carrierId: params.identity,
-        searchCompany: this.props.searchCompany,
+        searchCompany: this.state.searchCompany,
         pageSize: val.value,
         pageNumber: selectedPage,
       }
@@ -88,7 +89,9 @@ class Company extends React.Component {
       executeAction(fetchCompanies,
         {
           carrierId: params.identity,
+          searchCompany: this.state.searchCompany,
           pageSize: this.props.pageSize,
+          pageNumber: this.state.selected,
         }
       );
     }, FETCH_COMPANY_INTERVAL);
@@ -97,6 +100,7 @@ class Company extends React.Component {
   handleSearchChange(e) {
     if (e.keyCode === ENTER_KEY) {
       const { executeAction, params } = this.context;
+      this.setState({ searchCompany: e.target.value.trim() });
       executeAction(
         fetchCompanies,
         {
@@ -111,13 +115,13 @@ class Company extends React.Component {
 
   handlePageClick(data) {
     const selected = data.selected;
-    const { pageSize, searchCompany } = this.props;
+    const { pageSize } = this.props;
     this.setState({ selected });
     const { executeAction, params } = this.context;
     executeAction(fetchCompanies,
       {
         carrierId: params.identity,
-        searchCompany,
+        searchCompany: this.state.searchCompany,
         pageSize,
         pageNumber: Math.ceil(selected),
       }
@@ -211,7 +215,6 @@ Company.propTypes = {
   intl: intlShape.isRequired,
   companies: PropTypes.array,
   total: PropTypes.number,
-  searchCompany: PropTypes.string,
   pageNumber: PropTypes.number,
   pageSize: PropTypes.number,
 };
@@ -224,7 +227,6 @@ Company.contextTypes = {
 Company = connectToStores(Company, [CompanyStore], (context) => ({
   companies: context.getStore(CompanyStore).getCompanies(),
   total: context.getStore(CompanyStore).getTotal(),
-  searchCompany: context.getStore(CompanyStore).getSearchCompany(),
   pageNumber: context.getStore(CompanyStore).getPageNumber(),
   pageSize: context.getStore(CompanyStore).getPageSize(),
 }));
