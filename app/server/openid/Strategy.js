@@ -22,6 +22,8 @@ export class OpenIdStrategy extends Strategy {
       issuer: options.issuer,
       clientID: options.clientID,
       clientSecret: options.clientSecret,
+      authMethod: options.authMethod,
+      signingAlg: options.signingAlg,
       redirectURL: options.redirectURL,
       postLogoutURL: options.postLogoutURL,
       scope: options.scope || 'openid',
