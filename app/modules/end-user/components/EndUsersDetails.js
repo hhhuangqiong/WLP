@@ -7,12 +7,15 @@ import { FluxibleMixin } from 'fluxible-addons-react';
 
 import EndUserStore from '../stores/EndUserStore';
 
+import { injectIntl, intlShape } from 'react-intl';
+import i18nMessages from '../../../main/constants/i18nMessages';
 import fetchEndUser from '../actions/fetchEndUser';
 import fetchEndUsers from '../actions/fetchEndUsers';
 import clearEndUsers from '../actions/clearEndUsers';
 import showNextPage from '../actions/showNextPage';
 
 import * as FilterBar from './../../../main/components/FilterBar';
+import SearchInput, { SUBMIT_KEY } from './../../../main/components/SearchInput';
 import DateRangePicker from './../../../main/components/DateRangePicker';
 import Export from './../../../main/file-export/components/Export';
 import FilterBarNavigation from '../../../main/filter-bar/components/FilterBarNavigation';
@@ -39,6 +42,7 @@ const EndUsers = React.createClass({
     params: PropTypes.object,
     route: PropTypes.object,
     router: PropTypes.object,
+    intl: intlShape.isRequired,
   },
 
   mixins: [FluxibleMixin],
@@ -48,11 +52,22 @@ const EndUsers = React.createClass({
   },
 
   getInitialState() {
-    return _.merge(_.clone(this.getDefaultQuery()), this.getRequestBodyFromQuery(), this.getStateFromStores());
+    return _.merge(
+      _.clone(
+        this.getDefaultQuery()),
+        this.getRequestBodyFromQuery(),
+        this.getStateFromStores(),
+        { userName: '' },
+      );
   },
 
   componentDidMount() {
-    this.executeAction(fetchEndUsers, _.merge(_.clone(this.getDefaultQuery()), this.getRequestBodyFromState(), this.getStateFromStores()));
+    const payload =
+      _.merge(_.clone(this.getDefaultQuery()),
+        this.getRequestBodyFromState(),
+        this.getStateFromStores(),
+      );
+    this.executeAction(fetchEndUsers, payload);
   },
 
   componentDidUpdate(prevProps, prevState) {
@@ -80,6 +95,7 @@ const EndUsers = React.createClass({
   },
 
   render() {
+    const { intl : { formatMessage } } = this.props;
     const selectedUser = this.getStore(EndUserStore).getCurrentUser();
 
     return (
@@ -114,6 +130,14 @@ const EndUsers = React.createClass({
                   endDate={this.state.endDate}
                 />
               </Export>
+            </li>
+            <li className="top-bar--inner">
+              <SearchInput
+                value={this.state.userName}
+                placeHolder={formatMessage(i18nMessages.userName)}
+                onInputChangeHandler={this.handleUsernameChange}
+                onKeyPressHandler={this.handleSearchSubmit}
+              />
             </li>
           </FilterBar.RightItems>
         </FilterBar.Wrapper>
@@ -181,6 +205,24 @@ const EndUsers = React.createClass({
       currentUser: this.context.params.username ? this.getStore(EndUserStore).getCurrentUser() : null,
       isLoading: this.getStore(EndUserStore).getIsLoading(),
     };
+  },
+
+  handleSearchSubmit(e) {
+    if (e.which === SUBMIT_KEY) {
+      e.preventDefault();
+      const payload =
+        _.merge(_.clone(this.getDefaultQuery()),
+          this.getRequestBodyFromState(),
+          this.getStateFromStores(),
+          { userName: this.state.userName }
+        );
+      this.context.executeAction(clearEndUsers);
+      this.executeAction(fetchEndUsers, payload);
+    }
+  },
+
+  onInputChangeHandler(e) {
+    this.setState({ userName: e.target.value });
   },
 
   /**
@@ -277,4 +319,4 @@ const EndUsers = React.createClass({
   },
 });
 
-export default EndUsers;
+export default injectIntl(EndUsers);

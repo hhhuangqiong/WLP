@@ -134,8 +134,41 @@ function getUsers(req, res) {
     fromTime: req.query.startDate,
     toTime: req.query.endDate,
     pageNumberIndex: req.query.page,
+    userName: req.query.userName,
   };
 
+  if (queries.userName) {
+    endUserRequest.getUser(carrierId, queries.userName, (err, result) => {
+      if (err) {
+        const { code, message, timeout, status } = err;
+
+        res.status(status || 500).json({
+          error: {
+            code,
+            message,
+            timeout,
+          },
+        });
+
+        return;
+      }
+      const resultObject =
+        {
+          carrierId,
+          dateRange: {
+            pageNumberIndex: queries.pageNumberIndex,
+            fromTime: queries.fromTime,
+            toTime: queries.toTime,
+          },
+          hasNextPage: false,
+          userList: [
+            result.userDetails,
+          ],
+        };
+      res.json(resultObject);
+    });
+    return;
+  }
   endUserRequest.getUsers(carrierId, queries, (err, result) => {
     if (err) {
       const { code, message, timeout, status } = err;
@@ -147,10 +180,8 @@ function getUsers(req, res) {
           timeout,
         },
       });
-
       return;
     }
-
     res.json(result);
   });
 }

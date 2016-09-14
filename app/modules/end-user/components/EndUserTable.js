@@ -9,6 +9,7 @@ import TableHeader from '../../../modules/data-table/components/TableHeader';
 import Pagination from '../../../modules/data-table/components/Pagination';
 import i18nMessages from '../../../main/constants/i18nMessages';
 import Icon from '../../../main/components/Icon';
+import _ from 'lodash';
 import * as dateLocale from '../../../utils/dateLocale';
 
 import getPlatformInfo from '../utils/getPlatformInfo.js';
@@ -128,7 +129,7 @@ const EndUserTable = React.createClass({
               <FormattedMessage
                 id="loading"
                 defaultMessage="Loading"
-                />
+              />
               <span>...</span>
             </div>
           </td>
@@ -177,7 +178,7 @@ const EndUserTable = React.createClass({
           className={
             classNames(
             'end-user-table-row',
-            { selected: currentUser && currentUser.userDetails.username === u.username }
+            { selected: currentUser && _.get(currentUser, 'userDetails.username') === u.username }
             )
           }
           onClick={handleOnClick}

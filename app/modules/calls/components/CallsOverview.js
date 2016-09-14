@@ -649,7 +649,8 @@ const CallsOverview = React.createClass({
                       shareTooltip
                       showLegend
                       xAxis={this._getLineChartXAxis()}
-                      yAxis={this._getDurationLineChartYAxis()} />
+                      yAxis={this._getDurationLineChartYAxis()}
+                    />
                   </div>
                 </div>
               </div>
