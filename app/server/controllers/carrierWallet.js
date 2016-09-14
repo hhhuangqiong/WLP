@@ -22,7 +22,7 @@ export function carrierWalletController(mcmClient) {
 
   async function createTopUpRecord(req, res, next) {
     try {
-      const command = _.extend({}, req.params, req.query);
+      const command = _.extend({}, req.params, req.body);
       const result = await mcmClient.topUpWallet(command);
       res.json(result);
     } catch (e) {

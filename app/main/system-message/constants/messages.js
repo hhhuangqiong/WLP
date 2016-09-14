@@ -1,5 +1,7 @@
 import { defineMessages } from 'react-intl';
 
+import { TOP_UP_ERROR_CODE } from './errorCodes';
+
 export const MESSAGES = defineMessages({
   signInBadRequest: {
     id: 'sign-in.error.badRequest',
@@ -16,5 +18,13 @@ export const MESSAGES = defineMessages({
   signInInternalServerError: {
     id: 'sign-in.error.internalServerError',
     defaultMessage: 'The process encountered an unexpected error. Please contact support for assistance.',
+  },
+  topUpMaxLimitError: {
+    id: 'topUp.error.maxLimit',
+    defaultMessage: 'The balance after top up exceeds maximum limit',
+  },
+  topUpMinAmountError: {
+    id: 'topUp.error.minAmount',
+    defaultMessage: 'Top up amount is too small',
   },
 });

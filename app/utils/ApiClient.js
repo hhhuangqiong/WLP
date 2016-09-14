@@ -1,4 +1,4 @@
-import { get, isString, isObject } from 'lodash';
+import { get, isString, isObject, startsWith, trim } from 'lodash';
 import { TimeoutError } from 'common-errors';
 import fetch from 'isomorphic-fetch';
 import { stringify } from 'query-string';
@@ -112,11 +112,10 @@ export default class ApiClient {
           reject(new Error('`data` argument must be an object or an instance of FormData'));
           return;
         }
-
         // @workaround to append carrierId
-        if (path.indexOf('carriers/') === -1) {
-          query = query || {};
-          query.carrierId = getCarrierId();
+        path = trim(path, '/');
+        if (!startsWith(path, 'carriers')) {
+          path = `carriers/${getCarrierId()}/${path}`;
         }
 
         let options = {

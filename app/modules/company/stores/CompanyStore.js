@@ -35,8 +35,8 @@ const CompanyStore = createStore({
   initialize() {
     // all the companies
     this.companies = [];
-    // total number of companies
-    this.total = 0;
+    // totalElements number of companies
+    this.totalElements = 0;
     // search input field
     this.searchCompany = '';
     // current page number in companies page
@@ -67,9 +67,10 @@ const CompanyStore = createStore({
     this.emitChange();
   },
 
-  receiveCompanies({ companies, total, pageNumber, pageSize }) {
+  receiveCompanies({ companies, totalElements, searchCompany, pageNumber, pageSize }) {
     this.companies = companies;
-    this.total = total;
+    this.totalElements = totalElements;
+    this.searchCompany = searchCompany;
     this.pageNumber = pageNumber;
     this.pageSize = pageSize;
     this.emitChange();
@@ -126,8 +127,12 @@ const CompanyStore = createStore({
     return this.companies;
   },
 
-  getTotal() {
-    return this.total;
+  getTotalElements() {
+    return this.totalElements;
+  },
+
+  getSearchCompany() {
+    return this.searchCompany;
   },
 
   getPageNumber() {
@@ -165,7 +170,8 @@ const CompanyStore = createStore({
       profileDisabled: this.profileDisabled,
       capabilitiesDisabled: this.capabilitiesDisabled,
       descriptionDisabled: this.descriptionDisabled,
-      total: this.total,
+      totalElements: this.totalElements,
+      searchCompany: this.searchCompany,
       pageNumber: this.pageNumber,
       pageSize: this.pageSize,
       companyDetail: this.companyDetail,
@@ -183,7 +189,8 @@ const CompanyStore = createStore({
   rehydrate(state) {
     this.companies = state.companies;
     this.companyDetail = state.companyDetail;
-    this.total = state.total;
+    this.totalElements = state.totalElements;
+    this.searchCompany = state.searchCompany;
     this.pageNumber = state.pageNumber;
     this.pageSize = state.pageSize;
     this.profileDisabled = state.profileDisabled;

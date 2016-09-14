@@ -130,7 +130,8 @@ export default function (port) {
   // it will perform redirection to 500 page
   server.use((err, req, res, next) => {
     if (err) {
-      logger.info('Server error received and perform redirect to 500 page');
+      logger.error(err.message, err);
+      logger.info('Redirected to 500 page.');
       res.redirect(302, ERROR_500);
       return;
     }

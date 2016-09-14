@@ -3,26 +3,17 @@ import { isArray, isString, difference, get, extend } from 'lodash';
 
 import { NotPermittedError } from 'common-errors';
 import invariant from 'invariant';
-import validator from 'validator';
 
 const debug = createDebug('app:server/middlewares/authorization');
 
-function isCarrierIdAlike(part) {
-  // @TODO bugs on checking the demo_verify.maaiii-api.org with validator.isURL (return false)
-  return part === 'm800' || validator.isURL(part) || part === 'demo_verify.maaiii-api.org';
-}
-
 function inferCarrierIdFromRequest(req) {
-  // @TODO to investigate if it is trustable to extract the carrierId from the header Referer
-  const url = req.originalUrl;
-  const parts = url.split('/');
   const carrierId = [
-    parts.find((part, index) => isCarrierIdAlike(part) && index < parts.length - 1),
-    req.query.carrierId,
+    req.headers['X-CarrierId'],
     get(req, 'user.carrierId'),
   ].find(isString);
   return carrierId;
 }
+
 
 export function createFetchPermissionsMiddleware(logger, aclResolver) {
   invariant(aclResolver, 'Permissions fetch middleware requires acl resolver.');
@@ -34,7 +25,12 @@ export function createFetchPermissionsMiddleware(logger, aclResolver) {
     }
     const carrierId = inferCarrierIdFromRequest(req);
     if (!carrierId) {
-      logger.warn('Failed to infer carrier id from request: %s %s. Skipping authorization', req.method, req.originalUrl);
+      logger.warn(
+        'Failed to infer carrier id from request: %s %s. You might forgot to send X-CarrierId header.',
+        req.method,
+        req.originalUrl);
+      next();
+      return;
     }
     debug(`Inferred carried id: ${carrierId}`);
     const params = {

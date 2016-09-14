@@ -153,7 +153,9 @@ export function handleError(err, status) {
   }
 
   error.status = err.status || status || 500;
-  error.code = err.code;
+  if (!error.code) {
+    error.code = err.code;
+  }
 
   return error;
 }

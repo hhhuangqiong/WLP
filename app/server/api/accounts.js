@@ -5,27 +5,26 @@ import * as saUtil from '../../utils/superagent';
 const debug = require('debug')('app:server/api/accounts');
 const genericHandler = _.partial(saUtil.genericHandler, debug);
 
-export default function (apiPrefix = '') {
+export default function () {
   return {
     getAccounts(params, cb) {
       superagent
-        .get(`${this._getHost()}${apiPrefix}/accounts`)
-        .query({ carrierId: this.getCarrierId(), ...params })
+        .get(`${this._getBaseUrl()}/accounts`)
+        .query(params)
         .accept('json')
         .end(genericHandler(cb));
     },
     getAccount(params, cb) {
       superagent
-        .get(`${this._getHost()}${apiPrefix}/accounts/${params.id}`)
-        .query({ carrierId: this.getCarrierId(), ...params })
+        .get(`${this._getBaseUrl()}/accounts/${params.id}`)
+        .query(params)
         .accept('json')
         .end(genericHandler(cb));
     },
     createAccount(params, cb) {
       superagent
-        .post(`${this._getHost()}${apiPrefix}/accounts`)
+        .post(`${this._getBaseUrl()}/accounts`)
         .accept('json')
-        .query({ carrierId: this.getCarrierId() })
         .send(params)
         .end(genericHandler(cb));
     },
@@ -33,25 +32,22 @@ export default function (apiPrefix = '') {
     updateAccount(params, cb) {
       const { id, ...accountInfo } = params;
       superagent
-        .put(`${this._getHost()}${apiPrefix}/accounts/${id}`)
+        .put(`${this._getBaseUrl()}/accounts/${id}`)
         .accept('json')
-        .query({ carrierId: this.getCarrierId() })
         .send(accountInfo)
         .end(genericHandler(cb));
     },
 
     deleteAccount(params, cb) {
       superagent
-        .del(`${this._getHost()}${apiPrefix}/accounts/${params.accountId}`)
+        .del(`${this._getBaseUrl()}/accounts/${params.accountId}`)
         .accept('json')
-        .query({ carrierId: this.getCarrierId() })
         .end(genericHandler(cb));
     },
 
     resendCreatePassword(params, cb) {
       superagent
-        .put(`${this._getHost()}${apiPrefix}/accounts/reverify/${params.data.username}`)
-        .query({ carrierId: this.getCarrierId() })
+        .put(`${this._getBaseUrl()}/accounts/reverify/${params.data.username}`)
         .accept('json')
         .end(genericHandler(cb));
     },

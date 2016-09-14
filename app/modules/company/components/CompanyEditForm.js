@@ -22,8 +22,8 @@ import {
   TIMEZONE,
   MESSAGES,
   CAPABILITIES,
-  COMPANY_TYPE,
-  PAYMENT_TYPE,
+  COMPANY_TYPE_LABEL,
+  PAYMENT_TYPE_LABEL,
 } from '../constants/companyOptions';
 
 class CompanyEditForm extends Component {
@@ -263,8 +263,8 @@ class CompanyEditForm extends Component {
               onCompanyCodeChange={this.onCompanyCodeChange}
               onCompanyTypeChange={this.onCompanyTypeChange}
               onPaymentTypeChange={this.onPaymentTypeChange}
-              companyTypeOption={COMPANY_TYPE}
-              paymentTypeOption={PAYMENT_TYPE}
+              companyTypeOption={COMPANY_TYPE_LABEL}
+              paymentTypeOption={PAYMENT_TYPE_LABEL}
               disabled={this.props.profileDisabled}
               validateField={this.validateField}
               status={this.props.companyDetail.status}

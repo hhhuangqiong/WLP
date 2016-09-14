@@ -34,6 +34,7 @@ export function apiErrorHandler(err, req, res, next) {
       .status(err.status || 500)
       .json({ [ERROR_LABEL]: {
         name: err.name,
+        code: err.code,
         message: filteredMessage(err),
         moduleId: err.moduleId,
         context: JSON.stringify(err.inner_error, INNER_ERROR_FIELDS),

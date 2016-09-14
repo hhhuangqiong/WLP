@@ -13,167 +13,180 @@ import {
 import { permission, RESOURCE, ACTION } from './../../main/acl/acl-enums';
 import { fetchDep } from './../utils/bottle';
 
-const router = new Router();
+// Merge params is used to inherit carrierId from common parent router
+const routes = new Router({ mergeParams: true });
+const apiRouter = new Router();
+apiRouter
+  .use('/carriers/:carrierId', routes)
+  .use('*', (req, res) => res.status(400).json({
+    error: {
+      name: 'Unknown URL',
+      message: `No endpoint for the given URL ${req.originalUrl}`,
+    },
+  }));
 
 // TODO: refactor api.js to be a factory function with dependencies
 const roleController = fetchDep(nconf.get('containerName'), 'RoleController');
 const carrierWalletController = fetchDep(nconf.get('containerName'), 'CarrierWalletController');
 
 // eslint:max-len 0
-router
+routes
   .use(cacheControl)
-  // general overview
-  .get('/carriers/:carrierId/overview/summaryStats', [
+  .get('/company',
+    carriers.getCompany,
+  )
+  .get('/overview/summaryStats', [
     authorize(permission(RESOURCE.GENERAL)),
     carriers.getOverviewSummaryStats,
   ])
-  .get('/carriers/:carrierId/overview/detailStats', [
+  .get('/overview/detailStats', [
     authorize(permission(RESOURCE.GENERAL)),
     carriers.getOverviewDetailStats,
   ])
   // end users
-  .get('/carriers/:carrierId/users', [
+  .get('/users', [
     authorize(permission(RESOURCE.END_USER)),
     carriers.getUsers,
   ])
-  .get('/carriers/:carrierId/users/whitelist/:username?', [
+  .get('/users/whitelist/:username?', [
     authorize(permission(RESOURCE.END_USER)),
     carriers.getWhitelist,
   ])
-  .post('/carriers/:carrierId/users/whitelist', [
+  .post('/users/whitelist', [
     authorize(permission(RESOURCE.END_USER, ACTION.CREATE)),
     carriers.addWhitelist,
   ])
-  .delete('/carriers:/:carrierId/users/whitelist', [
+  .delete('/users/whitelist', [
     authorize(permission(RESOURCE.END_USER, ACTION.DELETE)),
     carriers.removeWhitelist,
   ])
   // TODO: change userStatsTotal and userStatsMonthly
-  .get('/carriers/:carrierId/userStatsTotal', [
+  .get('/userStatsTotal', [
     authorize(permission(RESOURCE.END_USER)),
     carriers.getEndUsersStatsTotal,
   ])
-  .get('/carriers/:carrierId/userStatsMonthly', [
+  .get('/userStatsMonthly', [
     authorize(permission(RESOURCE.END_USER)),
     carriers.getEndUsersStatsMonthly,
   ])
-  .get('/carriers/:carrierId/stat/user/query', [
+  .get('/stat/user/query', [
     authorize(permission(RESOURCE.END_USER)),
     carriers.getEndUsersStats,
   ])
-  .get('/carriers/:carrierId/users/:username', [
+  .get('/users/:username', [
     authorize(permission(RESOURCE.END_USER)),
     carriers.getUsername,
   ])
-  .get('/carriers/:carrierId/users/:username/wallet', [
+  .get('/users/:username/wallet', [
     authorize(permission(RESOURCE.END_USER)),
     carriers.getUserWallet,
   ])
-  .post('/carriers/:carrierId/users/:username/suspension', [
+  .post('/users/:username/suspension', [
     authorize(permission(RESOURCE.END_USER, ACTION.UPDATE)),
     carriers.suspendUser,
   ])
-  .delete('/carriers/:carrierId/users/:username/suspension', [
+  .delete('/users/:username/suspension', [
     authorize(permission(RESOURCE.END_USER, ACTION.UPDATE)),
     carriers.reactivateUser,
   ])
   // calls
-  .get('/carriers/:carrierId/calls', [
+  .get('/calls', [
     authorize(permission(RESOURCE.CALL)),
     carriers.getCalls,
   ])
-  .get('/carriers/:carrierId/callUserStatsMonthly', [
+  .get('/callUserStatsMonthly', [
     authorize(permission(RESOURCE.CALL)),
     carriers.getCallUserStatsMonthly,
   ])
-  .get('/carriers/:carrierId/callUserStatsTotal', [
+  .get('/callUserStatsTotal', [
     authorize(permission(RESOURCE.CALL)),
     carriers.getCallUserStatsTotal,
   ])
   // im
-  .get('/carriers/:carrierId/im', [
+  .get('/im', [
     authorize(permission(RESOURCE.IM)),
     carriers.getIM,
   ])
-  .get('/carriers/:carrierId/stats/im', [
+  .get('/stats/im', [
     authorize(permission(RESOURCE.IM)),
     carriers.getIMStats,
   ])
-  .get('/carriers/:carrierId/stats/im/monthly', [
+  .get('/stats/im/monthly', [
     authorize(permission(RESOURCE.IM)),
     carriers.getIMMonthlyStats,
   ])
-  .get('/carriers/:carrierId/stats/im/summary', [
+  .get('/stats/im/summary', [
     authorize(permission(RESOURCE.IM)),
     carriers.getIMSummaryStats,
   ])
   // sms
-  .get('/carriers/:carrierId/sms', [
+  .get('/sms', [
     authorize(permission(RESOURCE.SMS)),
     carriers.getSMS,
   ])
-  .get('/carriers/:carrierId/stats/sms', [
+  .get('/stats/sms', [
     authorize(permission(RESOURCE.SMS)),
     carriers.getSMSStats,
   ])
-  .get('/carriers/:carrierId/stats/sms/monthly', [
+  .get('/stats/sms/monthly', [
     authorize(permission(RESOURCE.SMS)),
     carriers.getSMSMonthlyStats,
   ])
-  .get('/carriers/:carrierId/stats/sms/summary', [
+  .get('/stats/sms/summary', [
     authorize(permission(RESOURCE.SMS)),
     carriers.getSMSSummaryStats,
   ])
   // top up
-  .get('/carriers/:carrierId/topup', [
+  .get('/topup', [
     authorize(permission(RESOURCE.TOP_UP)),
     carriers.getTopUp,
   ])
   // vsf
-  .get('/carriers/:carrierId/vsf', [
+  .get('/vsf', [
     authorize(permission(RESOURCE.VSF)),
     carriers.getVSF,
   ])
-  .get('/carriers/:carrierId/vsf/overview/summaryStats', [
+  .get('/vsf/overview/summaryStats', [
     authorize(permission(RESOURCE.VSF)),
     carriers.getVsfSummaryStats,
   ])
-  .get('/carriers/:carrierId/vsf/overview/monthlyStats', [
+  .get('/vsf/overview/monthlyStats', [
     authorize(permission(RESOURCE.VSF)),
     carriers.getVsfMonthlyStats,
   ])
   // verifications
-  .get('/carriers/:carrierId/verifications', [
+  .get('/verifications', [
     authorize(permission(RESOURCE.VERIFICATION_SDK)),
     carriers.getVerifications,
   ])
-  .get('/carriers/:carrierId/verificationStats', [
+  .get('/verificationStats', [
     authorize(permission(RESOURCE.VERIFICATION_SDK)),
     carriers.getVerificationStatistics,
   ])
-  .get('/carriers/:carrierId/applicationIds', [
+  .get('/applicationIds', [
     authorize(permission(RESOURCE.VERIFICATION_SDK)),
     carriers.getApplicationIds,
   ])
-  .get('/carriers/:carrierId/applications', [
+  .get('/applications', [
     authorize(permission(RESOURCE.VERIFICATION_SDK)),
     carriers.getApplications,
   ])
   // used in the company provision section to get the preset information
-  .get('/carriers/:carrierId/preset', [
+  .get('/preset', [
     authorize(permission(RESOURCE.COMPANY, ACTION.UPDATE)),
     carriers.getPreset,
   ])
-  .get('/carriers/:carrierId/wallets', [
-    authorize(permission(RESOURCE.TOP_UP, ACTION.READ)),
+  // company wallet
+  .get('/wallets', [
+    authorize(permission(RESOURCE.COMPANY, ACTION.READ)),
     carrierWalletController.getWallets,
   ])
-  .post('/carriers/:carrierId/topup-records', [
-    authorize(permission(RESOURCE.TOP_UP, ACTION.CREATE)),
+  .post('/topUpRecords', [
+    authorize(permission(RESOURCE.COMPANY, ACTION.UPDATE)),
     carrierWalletController.createTopUpRecord,
   ])
-  .get('/carriers/:carrierId/topup-records', [
-    authorize(permission(RESOURCE.TOP_UP, ACTION.READ)),
+  .get('/topUpRecords', [
+    authorize(permission(RESOURCE.COMPANY, ACTION.READ)),
     carrierWalletController.getTopUpRecords,
   ])
   // used in account section
@@ -241,12 +254,6 @@ router
   .delete('/roles/:id', [
     authorize(permission(RESOURCE.ROLE, ACTION.DELETE)),
     roleController.remove,
-  ])
-  .use('*', (req, res) => res.status(400).json({
-    error: {
-      name: 'Unknown URL',
-      message: `No endpoint for the given URL ${req.originalUrl}`,
-    },
-  }));
+  ]);
 
-export default router;
+export default apiRouter;

@@ -1,10 +1,8 @@
 import _ from 'lodash';
-import Q from 'q';
 import request from 'superagent';
 import logger from 'winston';
-
 import { handleError } from './../helper';
-import { camelizeKeysRecursive } from './../../../utils/objectTransforms';
+import { camelizeKeysRecursive, renameKeys } from './../../../utils/objectTransforms';
 
 // Credit Management API client
 export function mcmClient(options) {
@@ -46,18 +44,26 @@ export function mcmClient(options) {
     return call(httpOptions).then(x => x.wallets);
   }
   function getTopUpHistory(params) {
+    const { carrierId, ...query } = params;
     const httpOptions = {
-      url: `carriers/${params.carrierId}/topup-records`,
+      url: `carriers/${carrierId}/topUpRecords`,
       method: 'get',
-      query: _.pick(params, ['page', 'size']),
+      query: renameKeys(query, {
+        pageNumber: 'page',
+        pageSize: 'size',
+      }),
     };
-    return call(httpOptions);
+    return call(httpOptions)
+      .then(page => renameKeys(page, {
+        content: 'contents',
+      }));
   }
   function topUpWallet(params) {
+    const { carrierId, walletId, ...body } = params;
     const httpOptions = {
-      url: `carriers/${params.carrierId}/wallets/${params.walletId}/topup`,
+      url: `carriers/${carrierId}/wallets/${walletId}/topup`,
       method: 'put',
-      body: _.pick(params, ['amount', 'currency', 'description']),
+      body,
     };
     return call(httpOptions);
   }

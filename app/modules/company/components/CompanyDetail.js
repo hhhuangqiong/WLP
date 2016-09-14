@@ -13,12 +13,13 @@ import {
   UPDATING,
   STATUS,
 } from '../constants/status';
+import { MESSAGES, PAYMENT_TYPE } from '../constants/companyOptions';
 
 const CompanyDetail = (props, context) => {
   const { identity } = context.params;
-  const { id, companyName, domain, createDate, status, intl: { formatMessage } } = props;
+  const { id, companyName, paymentType, domain, createDate, status, intl: { formatMessage } } = props;
   return (
-    <tr key={companyName} onClick={() => context.router.push(`/${identity}/company/${id}/edit`)}>
+    <tr key={companyName}>
       <td>{companyName}</td>
       <td>{domain}</td>
       <td>{dateLocale.format(moment(createDate), SHORT_DATE_FORMAT)}</td>
@@ -56,6 +57,18 @@ const CompanyDetail = (props, context) => {
           }
         })()
       }
+      <td>
+        <div className="company-sidebar__list__item__links">
+          <button className="button--secondary" onClick={() => context.router.push(`/${identity}/company/${id}/edit`)}>
+            {formatMessage(MESSAGES.details)}
+          </button>
+          <If condition={paymentType === PAYMENT_TYPE.PRE_PAID}>
+            <button className="button--secondary" onClick={() => context.router.push(`/${identity}/company/${domain}/wallet`)}>
+              {formatMessage(MESSAGES.wallet)}
+            </button>
+          </If>
+        </div>
+      </td>
     </tr>
   );
 };
@@ -65,6 +78,7 @@ CompanyDetail.propTypes = {
   intl: intlShape.isRequired,
   id: PropTypes.string.isRequired,
   companyName: PropTypes.string.isRequired,
+  paymentType: PropTypes.string.isRequired,
   domain: PropTypes.string,
   createDate: PropTypes.string.isRequired,
   status: PropTypes.string.isRequired,

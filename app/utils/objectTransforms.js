@@ -13,6 +13,7 @@ export function renameKeys(o, nameMap) {
       target[key] = value;
     }
   });
+  return target;
 }
 
 export function camelizeKeys(o) {

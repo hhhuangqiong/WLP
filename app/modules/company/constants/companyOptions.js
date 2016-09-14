@@ -44,6 +44,70 @@ export const MESSAGES = defineMessages({
     id: 'timezone',
     defaultMessage: 'Timezone',
   },
+  backToCompanies: {
+    id: 'backToCompanies',
+    defaultMessage: 'Back To Companies',
+  },
+  wallet: {
+    id: 'wallet',
+    defaultMessage: 'Wallet',
+  },
+  voiceWallet: {
+    id: 'voiceWallet',
+    defaultMessage: 'Voice Wallet',
+  },
+  smsWallet: {
+    id: 'smsWallet',
+    defaultMessage: 'SMS Wallet',
+  },
+  details: {
+    id: 'details',
+    defaultMessage: 'Details',
+  },
+  date: {
+    id: 'date',
+    defaultMessage: 'Date',
+  },
+  topUpValue: {
+    id: 'topUpValue',
+    defaultMessage: 'Top Up Value',
+  },
+  balance: {
+    id: 'balance',
+    defaultMessage: 'Balance',
+  },
+  type: {
+    id: 'type',
+    defaultMessage: 'Type',
+  },
+  description: {
+    id: 'description',
+    defaultMessage: 'Description',
+  },
+  currentBalance: {
+    id: 'currentBalance',
+    defaultMessage: 'Current Balance',
+  },
+  topUpAmount: {
+    id: 'topUpAmount',
+    defaultMessage: 'Top Up Amount',
+  },
+  topUpDescription: {
+    id: 'topUpDescription',
+    defaultMessage: 'Top Up Description',
+  },
+  sms: {
+    id: 'sms',
+    defaultMessage: 'SMS',
+  },
+  voice: {
+    id: 'voice',
+    defaultMessage: 'Voice',
+  },
+  submit: {
+    id: 'submit',
+    defaultMessage: 'Submit',
+  },
 });
 
 export const CAPABILITIES = {
@@ -63,11 +127,15 @@ export const CAPABILITIES = {
   vsf: 'VSF',
 };
 
-export const COMPANY_TYPE = {
+export const COMPANY_TYPE_LABEL = {
   SDK: 'SDK',
   WHITE_LABEL: 'WHITE LABEL',
 };
-export const PAYMENT_TYPE = {
+export const PAYMENT_TYPE_LABEL = {
   PRE_PAID: 'Pre-Paid',
   POST_PAID: 'Post Paid',
+};
+export const PAYMENT_TYPE = {
+  PRE_PAID: 'PRE_PAID',
+  POST_PAID: 'POST_PAID',
 };

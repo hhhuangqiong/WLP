@@ -1,0 +1,18 @@
+.company-wallet-header {
+  .company-wallet-header__link {
+    display: flex;
+    align-items: center;
+    padding: rem-calc(10 0 10 0);
+    h4 {
+      margin-bottom: 0;
+    }
+    .icon {
+      margin-right: rem-calc(10);
+      fill: $gray;
+    }
+  }
+}
+
+.company-wallet-table {
+  width: 100%;
+}

@@ -44,10 +44,9 @@ const Currency = ({ currencyCode, amount, intl }) => {
 
   return (
     <span>
-      <span>{currency.sign}</span>
       <FormattedNumber
-        value={amount}
-        maximumSignificantDigits={1}
+        style="currency"
+        value={parseFloat(amount)}
         currency={currency.code}
       />
       <span> {unit}</span>

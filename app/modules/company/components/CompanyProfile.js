@@ -21,8 +21,8 @@ import {
   TIMEZONE,
   MESSAGES,
   CAPABILITIES,
-  COMPANY_TYPE,
-  PAYMENT_TYPE,
+  COMPANY_TYPE_LABEL,
+  PAYMENT_TYPE_LABEL,
 } from '../constants/companyOptions';
 
 class CompanyProfile extends Component {
@@ -216,8 +216,8 @@ class CompanyProfile extends Component {
             onCompanyCodeChange={this.onCompanyCodeChange}
             onCompanyTypeChange={this.onCompanyTypeChange}
             onPaymentTypeChange={this.onPaymentTypeChange}
-            companyTypeOption={COMPANY_TYPE}
-            paymentTypeOption={PAYMENT_TYPE}
+            companyTypeOption={COMPANY_TYPE_LABEL}
+            paymentTypeOption={PAYMENT_TYPE_LABEL}
             validateField={this.validateField}
             errors={errors}
             disabled={profileDisable}

@@ -15,3 +15,7 @@ input {
   display: inline-block;
   text-transform: none !important;
 }
+
+.input-static {
+  padding: rem-calc(5 0 5 0);
+}

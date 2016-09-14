@@ -102,8 +102,10 @@ export default function provisionController(iamServiceClient, provisionHelper) {
 
       res.json({
         total: provisionResult.pageTotal,
+        totalElements: provisionResult.total,
         companies: result,
-        pageNumber: provisionResult.page,
+        // MPS returns pages starting from 1, converting to 0-based for consistency
+        pageNumber: provisionResult.page - 1,
         pageSize: provisionResult.pageSize,
       });
     } catch (ex) {

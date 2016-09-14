@@ -26,7 +26,7 @@
     }
   },
   "mcmApi": {
-    "baseUrl": "http://192.168.118.127:8082",
+    "baseUrl": "http://192.168.119.66:8090",
     "timeout": 15000
   },
   "iamApi": {

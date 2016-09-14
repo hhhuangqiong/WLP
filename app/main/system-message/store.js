@@ -2,6 +2,9 @@ import { isPlainObject } from 'lodash';
 import { DISMISS_MESSAGE } from './constants/actionTypes';
 import createStore from 'fluxible/addons/createStore';
 
+import { TOP_UP_ERROR_CODE } from './constants/errorCodes';
+import { MESSAGES } from './constants/messages';
+
 /**
  * Store for states of System Message Component
  *
@@ -26,6 +29,7 @@ const SystemMessageStore = createStore({
     UPDATE_COMPANY_PROFILE_SUCCESS: 'handleUpdateCompanySuccess',
     UPDATE_COMPANY_SERVICE_FAILURE: 'handleUpdateCompanyFailure',
     UPDATE_COMPANY_SERVICE_SUCCESS: 'handleUpdateCompanySuccess',
+    TOP_UP_WALLET_FAILURE: 'handleTopUpWalletFailure',
   },
 
   // do not change this
@@ -104,6 +108,21 @@ const SystemMessageStore = createStore({
     this.hidden = false;
 
     this.emitChange();
+  },
+
+  handleTopUpWalletFailure(error) {
+    let message = error.message;
+    switch (error.code) {
+      case TOP_UP_ERROR_CODE.TOP_UP_AMOUNT_EXCEEDS_MAX_LIMIT:
+        message = MESSAGES.topUpMaxLimitError;
+        break;
+      case TOP_UP_ERROR_CODE.TOP_UP_AMOUNT_TOO_SMALL:
+        message = MESSAGES.topUpMinAmountError;
+        break;
+      default:
+        message = error.message;
+    }
+    this.handleErrorMessage(message);
   },
 
   handleInfoMessage(payload) {

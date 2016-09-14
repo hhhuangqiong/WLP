@@ -32,7 +32,6 @@ const overviewStatsRequest = fetchDep(nconf.get('containerName'), 'OverviewStats
 const provisionHelper = fetchDep(nconf.get('containerName'), 'ProvisionHelper');
 const iamHelper = fetchDep(nconf.get('containerName'), 'IamHelper');
 const applicationRequest = fetchDep(nconf.get('containerName'), 'ApplicationRequest');
-const mcmClient = fetchDep(nconf.get('containerName'), 'McmClient');
 
 import SmsRequest from '../../lib/requests/dataProviders/SMS';
 

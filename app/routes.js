@@ -11,6 +11,7 @@ import Protected from './main/components/common/Protected';
 import Company from './modules/company/components/Company';
 import CompanyProfile from './modules/company/components/CompanyProfile';
 import CompanyEditForm from './modules/company/components/CompanyEditForm';
+import CompanyWallet from './modules/company/components/CompanyWallet';
 import Account from './modules/account/components/Account';
 import AccountProfile from './modules/account/components/AccountProfile';
 import Verification from './modules/verification/components/Verification';
@@ -127,6 +128,7 @@ export default (context) => {
           <Route path="overview" component={Company} />
           <Route path="create" component={CompanyProfile} />
           <Route path=":companyId/edit" component={CompanyEditForm} />
+          <Route path=":carrierId/wallet" component={CompanyWallet} />
         </Route>
 
         <Route path={`${modules.ACCOUNT}`} component={Account}>
