@@ -41,9 +41,9 @@ export const MESSAGES = defineMessages({
     id: 'accessManagement.companyManagement',
     defaultMessage: 'Company Management',
   },
-  userManagement: {
-    id: 'accessManagement.userManagement',
-    defaultMessage: 'User Management',
+  accountManagement: {
+    id: 'accessManagement.accountManagement',
+    defaultMessage: 'Account Management',
   },
   permissionManagement: {
     id: 'accessManagement.permissionManagement',

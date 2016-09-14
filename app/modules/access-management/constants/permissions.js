@@ -21,7 +21,7 @@ export const PERMISSIONS = [{
     action: ACTION.DELETE,
   }],
 }, {
-  intlKey: 'userManagement',
+  intlKey: 'accountManagement',
   children: [{
     intlKey: 'create',
     resource: RESOURCE.USER,

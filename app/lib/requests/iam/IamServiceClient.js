@@ -5,27 +5,6 @@ import logger from 'winston';
 import { HttpStatusError, ArgumentNullError } from 'common-errors';
 import nconf from 'nconf';
 
-import { ACTIONS, RESOURCE } from './../../../main/acl/acl-enums';
-
-const ADMIN_PERMISSIONS = {
-  [RESOURCE.COMPANY]: ACTIONS,
-  [RESOURCE.USER]: ACTIONS,
-  [RESOURCE.ROLE]: ACTIONS,
-  [RESOURCE.END_USER]: ACTIONS,
-  [RESOURCE.TOP_UP]: ACTIONS,
-  [RESOURCE.GENERAL]: ACTIONS,
-  [RESOURCE.VSF]: ACTIONS,
-  [RESOURCE.CALL]: ACTIONS,
-  [RESOURCE.IM]: ACTIONS,
-  [RESOURCE.SMS]: ACTIONS,
-};
-
-export class IamClientMock {
-  getUserPermissions() {
-    return Q.resolve(ADMIN_PERMISSIONS);
-  }
-}
-
 export class IamClient {
   constructor(options) {
     if (!options.baseUrl) {

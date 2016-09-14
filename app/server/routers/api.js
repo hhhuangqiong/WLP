@@ -21,9 +21,7 @@ const roleController = fetchDep(nconf.get('containerName'), 'RoleController');
 // eslint:max-len 0
 router
   .use(cacheControl)
-  .get('/carriers/:carrierId/company',
-    carriers.getCompany,
-  )
+  // general overview
   .get('/carriers/:carrierId/overview/summaryStats', [
     authorize(permission(RESOURCE.GENERAL)),
     carriers.getOverviewSummaryStats,
@@ -32,6 +30,7 @@ router
     authorize(permission(RESOURCE.GENERAL)),
     carriers.getOverviewDetailStats,
   ])
+  // end users
   .get('/carriers/:carrierId/users', [
     authorize(permission(RESOURCE.END_USER)),
     carriers.getUsers,
@@ -77,6 +76,7 @@ router
     authorize(permission(RESOURCE.END_USER, ACTION.UPDATE)),
     carriers.reactivateUser,
   ])
+  // calls
   .get('/carriers/:carrierId/calls', [
     authorize(permission(RESOURCE.CALL)),
     carriers.getCalls,
@@ -89,6 +89,7 @@ router
     authorize(permission(RESOURCE.CALL)),
     carriers.getCallUserStatsTotal,
   ])
+  // im
   .get('/carriers/:carrierId/im', [
     authorize(permission(RESOURCE.IM)),
     carriers.getIM,
@@ -105,6 +106,7 @@ router
     authorize(permission(RESOURCE.IM)),
     carriers.getIMSummaryStats,
   ])
+  // sms
   .get('/carriers/:carrierId/sms', [
     authorize(permission(RESOURCE.SMS)),
     carriers.getSMS,
@@ -121,10 +123,12 @@ router
     authorize(permission(RESOURCE.SMS)),
     carriers.getSMSSummaryStats,
   ])
+  // top up
   .get('/carriers/:carrierId/topup', [
     authorize(permission(RESOURCE.TOP_UP)),
     carriers.getTopUp,
   ])
+  // vsf
   .get('/carriers/:carrierId/vsf', [
     authorize(permission(RESOURCE.VSF)),
     carriers.getVSF,
@@ -137,6 +141,7 @@ router
     authorize(permission(RESOURCE.VSF)),
     carriers.getVsfMonthlyStats,
   ])
+  // verifications
   .get('/carriers/:carrierId/verifications', [
     authorize(permission(RESOURCE.VERIFICATION_SDK)),
     carriers.getVerifications,
@@ -153,11 +158,12 @@ router
     authorize(permission(RESOURCE.VERIFICATION_SDK)),
     carriers.getApplications,
   ])
-  // @expect to use on both update and create, but fail
+  // used in the company provision section to get the preset information
   .get('/carriers/:carrierId/preset', [
     authorize(permission(RESOURCE.COMPANY, ACTION.UPDATE)),
     carriers.getPreset,
   ])
+  // used in account section
   .get('/accounts', [
     authorize(permission(RESOURCE.USER)),
     accounts.getAccounts,
@@ -178,32 +184,17 @@ router
     authorize(permission(RESOURCE.USER, ACTION.DELETE)),
     accounts.deleteAccount,
   ])
-  .get('/companies/:companyId/profile', [
-    authorize(permission(RESOURCE.COMPANY)),
-    companies.getCompany,
-  ])
-  // it will be used in the account page to get the possible companies under and assign roles
+  // it will be used in the account page to get the possible companies and roles,
+  // so it can be assgined to user
   .get('/companies/:companyId/managingCompanies', [
     authorize(permission(RESOURCE.USER)),
-    companies.getManagingCompanies,
+    companies.getManagingCompaniesRoles,
   ])
+  // used in company section
+  // only for provision status(complete) to update the company description
   .put('/companies/:companyId/profile', [
     authorize(permission(RESOURCE.COMPANY, ACTION.UPDATE)),
     companies.updateCompany,
-  ])
-  // @TODO no such use case and function
-  .post('/companies/:companyId/suspension', [
-    authorize(permission(RESOURCE.COMPANY, ACTION.UPDATE)),
-    companies.deactivateCompany,
-  ])
-  // @TODO no such use case and function
-  .put('/companies/:companyId/suspension', [
-    authorize(permission(RESOURCE.COMPANY, ACTION.UPDATE)),
-    companies.reactivateCompany,
-  ])
-  .get('/companies/:companyId/roles', [
-    authorize(permission(RESOURCE.ROLE)),
-    companies.getCompanyRoles,
   ])
   .post('/provisioning', [
     authorize(permission(RESOURCE.COMPANY, ACTION.CREATE)),
@@ -221,6 +212,7 @@ router
     authorize(permission(RESOURCE.COMPANY, ACTION.UPDATE)),
     provision.putProvision,
   ])
+  // used in the access management section
   .get('/roles', [
     authorize(permission(RESOURCE.ROLE)),
     roleController.list,
