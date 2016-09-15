@@ -1,4 +1,5 @@
 import _ from 'lodash';
+const EMPTY_VALUE = '-';
 
 function buildProvisionData(data) {
   return {
@@ -92,8 +93,8 @@ export default function provisionController(iamServiceClient, provisionHelper) {
 
         return {
           id: item.id,
-          companyName: targetCompanyName,
-          domain: item.profile.carrierId,
+          companyName: targetCompanyName || EMPTY_VALUE,
+          domain: item.profile.carrierId || EMPTY_VALUE,
           createDate: item.createdAt,
           status: item.status,
         };
