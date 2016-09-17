@@ -40,14 +40,14 @@ export default function () {
 
     deleteAccount(params, cb) {
       superagent
-        .del(`${this._getBaseUrl()}/accounts/${params.accountId}`)
+        .del(`${this._getBaseUrl()}/accounts/${params.id}`)
         .accept('json')
         .end(genericHandler(cb));
     },
 
-    resendCreatePassword(params, cb) {
+    requestSetPassword(params, cb) {
       superagent
-        .put(`${this._getBaseUrl()}/accounts/reverify/${params.data.username}`)
+        .post(`${this._getBaseUrl()}/accounts/${params.id}/requestSetPassword`)
         .accept('json')
         .end(genericHandler(cb));
     },

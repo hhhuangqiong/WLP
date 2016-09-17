@@ -2,7 +2,7 @@ import { pick, isString, get, extend, isNumber, defaults, omit, map } from 'loda
 import Q from 'q';
 import request from 'superagent';
 import logger from 'winston';
-import { HttpStatusError, ArgumentNullError } from 'common-errors';
+import { HttpStatusError, ArgumentNullError, NotSupportedError } from 'common-errors';
 import nconf from 'nconf';
 
 export class IamClient {
@@ -28,15 +28,32 @@ export class IamClient {
     return this._handle(req, url);
   }
   createUser(command) {
-    const updatedCommand = command || {};
+    const url = this.userPath;
+    const req = request.post(url).set('Content-Type', 'application/json').send(command);
+    return this._handle(req, url);
+  }
+  requestSetPassword(command) {
+    const url = `${this.userPath}/${command.id}/requestSetPassword`;
     // need to mention the client id & redirect url in order to send an confirm email
     // that redirect to the right places when clicked in that email
-    updatedCommand.clientId = nconf.get('openid:clientId');
-    updatedCommand.redirectURL = `${nconf.get('APP_URL')}/callback`;
-
-    const url = this.userPath;
+    const updatedCommand = {
+      clientId: nconf.get('openid:clientId'),
+      redirectURL: `${nconf.get('APP_URL')}/callback`,
+    };
     const req = request.post(url).set('Content-Type', 'application/json').send(updatedCommand);
-    return this._handle(req, url);
+    return this._handle(req, url)
+      .catch(err => {
+        let error;
+        // handle the specific error for request set password fail error
+        const errorBody = err.response;
+        if (get(errorBody, 'error.code') === 20006) {
+          error = new NotSupportedError(`Fail to deliver email to user ${command.id}`);
+          error.response = errorBody;
+        } else {
+          error = err;
+        }
+        throw error;
+      });
   }
   putUser(command) {
     const url = `${this.userPath}/${command.id}`;

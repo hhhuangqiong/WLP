@@ -1,7 +1,5 @@
 import { defineMessages } from 'react-intl';
 
-import { TOP_UP_ERROR_CODE } from './errorCodes';
-
 export const MESSAGES = defineMessages({
   signInBadRequest: {
     id: 'sign-in.error.badRequest',
@@ -26,5 +24,25 @@ export const MESSAGES = defineMessages({
   topUpMinAmountError: {
     id: 'topUp.error.minAmount',
     defaultMessage: 'Top up amount is too small',
+  },
+  saved: {
+    id: 'saved',
+    defaultMessage: 'Saved',
+  },
+  deleteEndUserSuccess: {
+    id: 'endUser.deleteUserSuccess',
+    defaultMessage: '{user} is deleted successfully',
+  },
+  createAccountSuccess: {
+    id: 'account.createAccountSuccess',
+    defaultMessage: 'Create account success!',
+  },
+  updateAccountSuccess: {
+    id: 'account.updateAccountSuccess',
+    defaultMessage: 'Update account success!',
+  },
+  deleteAccountSuccess: {
+    id: 'account.deleteAccountSuccess',
+    defaultMessage: 'Delete account success!',
   },
 });

@@ -18,18 +18,20 @@ const SystemMessageStore = createStore({
     ERROR_MESSAGE: 'handleErrorMessage',
     INFO_MESSAGE: 'handleInfoMessage',
     // types below are going to be obsoleted or moved to the corresponding store
-    CREATE_COMPANY_FAILURE: 'handleUpdateCompanyFailure',
+    CREATE_COMPANY_FAILURE: 'handleErrorMessage',
     DEACTIVATE_COMPANY_SUCCESS: 'handleUpdateCompanySuccess',
-    DEACTIVATE_END_USER_FAILURE: 'handleDeactivateEndUserFailure',
-    DELETE_END_USER_FAILURE: 'handleDeleteEndUserFailure',
+    DEACTIVATE_END_USER_FAILURE: 'handleErrorMessage',
+    DELETE_END_USER_FAILURE: 'handleErrorMessage',
     DELETE_END_USER_SUCCESS: 'handleDeleteEndUserSuccess',
     REACTIVATE_COMPANY_SUCCESS: 'handleUpdateCompanySuccess',
-    REACTIVATE_END_USER_FAILURE: 'handleReactivateEndUserFailure',
-    UPDATE_COMPANY_PROFILE_FAILURE: 'handleUpdateCompanyFailure',
-    UPDATE_COMPANY_PROFILE_SUCCESS: 'handleUpdateCompanySuccess',
-    UPDATE_COMPANY_SERVICE_FAILURE: 'handleUpdateCompanyFailure',
-    UPDATE_COMPANY_SERVICE_SUCCESS: 'handleUpdateCompanySuccess',
     TOP_UP_WALLET_FAILURE: 'handleTopUpWalletFailure',
+    REACTIVATE_END_USER_FAILURE: 'handleErrorMessage',
+    CREATE_ACCOUNT_SUCCESS: 'handleCreateAccountSuccess',
+    CREATE_ACCOUNT_FAILURE: 'handleErrorMessage',
+    DELETE_ACCOUNT_SUCCESS: 'handleDeleteAccountSuccess',
+    DELETE_ACCOUNT_FAILURE: 'handleErrorMessage',
+    UPDATE_ACCOUNT_SUCCESS: 'handleUpdateAccountSuccess',
+    UPDATE_ACCOUNT_FAILURE: 'handleErrorMessage',
   },
 
   // do not change this
@@ -43,71 +45,40 @@ const SystemMessageStore = createStore({
     this.timeout = 5000;
   },
 
-  handleUpdateCompanySuccess() {
+  handleInfoMessage(payload) {
     this.id = Date.now();
     this.type = 'success';
-    this.message = 'Saved';
     this.hidden = false;
+
+    if (isPlainObject(payload)) {
+      this.message = payload;
+    } else {
+      this.message = payload.message;
+    }
 
     this.emitChange();
   },
 
-  handleUpdateCompanyFailure(err) {
+  handleErrorMessage(err) {
     this.id = Date.now();
     this.type = 'error';
-    this.message = err.message;
     this.hidden = false;
 
-    this.emitChange();
-  },
-
-  /**
-   * change the states for the system message
-   * most likely:
-   *   id, type, message
-   * then:
-   *   buttons
-   * rare case:
-   *   autoMiss, dismiss, timeout
-   *
-   * @param err
-   * @param err.message {String}
-   */
-
-  handleReactivateEndUserFailure(err) {
-    this.id = Date.now();
-    this.type = 'secondary';
-    this.message = err.message;
-    this.hidden = false;
-
-    this.emitChange();
-  },
-
-  handleDeactivateEndUserFailure(err) {
-    this.id = Date.now();
-    this.type = 'secondary';
-    this.message = err.message;
-    this.hidden = false;
-
-    this.emitChange();
-  },
-
-  handleDeleteEndUserFailure(err) {
-    this.id = Date.now();
-    this.type = 'secondary';
-    this.message = err.message;
-    this.hidden = false;
+    if (isPlainObject(err)) {
+      this.message = err;
+    } else {
+      this.message = err.message;
+    }
 
     this.emitChange();
   },
 
   handleDeleteEndUserSuccess(user) {
-    this.id = Date.now();
-    this.type = 'secondary';
-    this.message = `${user.username} is deleted successfully`;
-    this.hidden = false;
-
-    this.emitChange();
+    // @TODO improve convert into the i18nMessage in component
+    // temporary update the message with the value which is used when formatMessage in react-intl
+    const message = MESSAGES.deleteEndUserSuccess;
+    message.value = { user: user.username };
+    this.handleInfoMessage(message);
   },
 
   handleTopUpWalletFailure(error) {
@@ -125,30 +96,20 @@ const SystemMessageStore = createStore({
     this.handleErrorMessage(message);
   },
 
-  handleInfoMessage(payload) {
-    this.id = Date.now();
-    this.type = 'success';
-
-    this.message = payload.message;
-
-    this.hidden = false;
-
-    this.emitChange();
+  handleCreateAccountSuccess() {
+    this.handleInfoMessage(MESSAGES.createAccountSuccess);
   },
 
-  handleErrorMessage(err) {
-    this.id = Date.now();
-    this.type = 'secondary';
+  handleUpdateAccountSuccess() {
+    this.handleInfoMessage(MESSAGES.updateAccountSuccess);
+  },
 
-    if (isPlainObject(err)) {
-      this.message = err;
-    } else {
-      this.message = err.message;
-    }
+  handleDeleteAccountSuccess() {
+    this.handleInfoMessage(MESSAGES.deleteAccountSuccess);
+  },
 
-    this.hidden = false;
-
-    this.emitChange();
+  handleUpdateCompanySuccess() {
+    this.handleInfoMessage(MESSAGES.saved);
   },
 
   handleDismissMessage() {

@@ -1,5 +1,6 @@
 import _ from 'lodash';
 import createStore from 'fluxible/addons/createStore';
+import { NotSupportedError } from 'common-errors';
 
 /**
  * Define the state accounts and selected account.
@@ -29,9 +30,10 @@ export default createStore({
   handlers: {
     FETCH_ACCOUNTS_SUCCESS: 'fetchAccounts',
     FETCH_ACCOUNT_SUCCESS: 'fetchAccount',
-    CREATE_ACCOUNT_SUCCESS: 'createAccount',
-    UPDATE_ACCOUNT_SUCCESS: 'updateAccount',
-    DELETE_ACCOUNT_SUCCESS: 'deleteAccount',
+    CREATE_ACCOUNT_SUCCESS: 'succeedOperation',
+    UPDATE_ACCOUNT_SUCCESS: 'succeedOperation',
+    DELETE_ACCOUNT_SUCCESS: 'succeedOperation',
+    CREATE_ACCOUNT_FAILURE: 'createAccountFailure',
     FETCH_CARRIER_MANAGING_COMPANIES_SUCCESS: 'fetchCarrierManagingCompanies',
   },
 
@@ -39,7 +41,23 @@ export default createStore({
     this.accounts = [];
     this.selectedAccount = {};
     this.managingCompanies = [];
-    this.accountActionToken = null;
+    this.operationResult = {
+      token: null,
+      redirection: null,
+    };
+  },
+
+
+  createAccountFailure(err) {
+    // NotSupportedError refer to deliver email failure but succeed creating user
+    // redirect to the edit user form page when fail to send email
+    if (err.name === NotSupportedError.name) {
+      this.operationResult = {
+        token: err.token,
+        redirection: `/account/${err.accountId}/profile`,
+      };
+      this.emitChange();
+    }
   },
 
   fetchAccounts(payload) {
@@ -63,18 +81,12 @@ export default createStore({
     this.emitChange();
   },
 
-  createAccount(token) {
-    this.accountActionToken = token;
-    this.emitChange();
-  },
-
-  updateAccount(token) {
-    this.accountActionToken = token;
-    this.emitChange();
-  },
-
-  deleteAccount(token) {
-    this.accountActionToken = token;
+  // default path will redirect to account home page
+  succeedOperation({ token, redirection = '/account' }) {
+    this.operationResult = {
+      token,
+      redirection,
+    };
     this.emitChange();
   },
 
@@ -99,8 +111,8 @@ export default createStore({
     return this.selectedAccount;
   },
 
-  getAccountActionToken() {
-    return this.accountActionToken;
+  getOperationResult() {
+    return this.operationResult;
   },
 
   dehydrate() {
@@ -108,7 +120,7 @@ export default createStore({
       accounts: this.getAccounts(),
       selectedAccount: this.getSelectedAccount(),
       managingCompanies: this.getManagingCompanies(),
-      accountActionToken: this.getActionToken(),
+      operationResult: this.getOperationResult(),
     };
   },
 
@@ -116,6 +128,6 @@ export default createStore({
     this.accounts = state.accounts;
     this.selectedAccount = state.selectedAccount;
     this.managingCompanies = state.managingCompanies;
-    this.accountActionToken = state.accountActionToken;
+    this.operationResult = state.operationResult;
   },
 });
