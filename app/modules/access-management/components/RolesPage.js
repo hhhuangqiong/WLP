@@ -147,7 +147,7 @@ export class RolesPage extends Component {
       return;
     }
     const role = this.state.displayedRoles[index];
-    if (_.find(this.props.roles, role)) {
+    if (_.find(this.props.roles, mRole => role.id === mRole.id)) {
       this.context.executeAction(removeRole, role);
     }
     this.handleCloseDeleteDialog();
