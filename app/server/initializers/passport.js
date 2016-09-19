@@ -27,6 +27,8 @@ export default function setup() {
   const issuer = nconf.get('openid:issuer');
   const clientID = nconf.get('openid:clientId');
   const clientSecret = nconf.get('openid:clientSecret');
+  const authMethod = 'client_secret_jwt';
+  const signingAlg = 'HS512';
   const appURL = nconf.get('APP_URL');
 
   if (!issuer) {
@@ -46,6 +48,8 @@ export default function setup() {
     issuer,
     clientID,
     clientSecret,
+    authMethod,
+    signingAlg,
     redirectURL: `${appURL}/callback`,
     postLogoutURL: appURL,
   }, (tokens, user, cb) =>

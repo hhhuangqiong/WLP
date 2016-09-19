@@ -10,6 +10,8 @@ export function loadClient(options) {
       const issuer = mIssuer;
       const client = new issuer.Client({
         client_id: options.clientID,
+        token_endpoint_auth_method: options.authMethod,
+        token_endpoint_auth_signing_alg: options.signingAlg,
         client_secret: options.clientSecret,
       });
       return {
