@@ -6,7 +6,6 @@ const SearchInput = (props) => (
   <input
     className={classNames(
       'top-bar-section__query-input',
-      'with-select',
       'right',
     )}
     type="text"
@@ -27,7 +26,7 @@ SearchInput.propTypes = {
 };
 
 SearchInput.defaultProps = {
-  value: null,
+  value: '',
   placeHolder: '',
   onInputChangeHandler: null,
   onKeyPressHandler: null,

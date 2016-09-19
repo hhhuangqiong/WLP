@@ -73,10 +73,10 @@ const EndUsers = React.createClass({
   componentDidUpdate(prevProps, prevState) {
     const { location: { search } } = this.props;
     const { location: { search: prevSearch } } = prevProps;
-
+    
     if (search !== prevSearch) {
       this.context.executeAction(clearEndUsers);
-      this.loadUserList(prevState);
+      this.fetchData();
     }
   },
 
@@ -134,8 +134,8 @@ const EndUsers = React.createClass({
             <li className="top-bar--inner">
               <SearchInput
                 value={this.state.userName}
-                placeHolder={formatMessage(i18nMessages.userName)}
-                onInputChangeHandler={this.handleUsernameChange}
+                placeHolder={formatMessage(i18nMessages.username)}
+                onInputChangeHandler={this.onInputChangeHandler}
                 onKeyPressHandler={this.handleSearchSubmit}
               />
             </li>
@@ -165,28 +165,6 @@ const EndUsers = React.createClass({
     );
   },
 
-  loadFirstUserDetail() {
-    const users = this.getStore(EndUserStore).getDisplayUsers();
-    const currentUser = this.getStore(EndUserStore).getCurrentUser();
-
-    if (!_.isEmpty(users) && _.isEmpty(currentUser)) {
-      const { username } = users[0];
-      this.handleUserClick(username);
-    }
-  },
-
-  loadUserList(prevState) {
-    const prevStartDate = prevState.startDate;
-    const prevEndDate = prevState.endDate;
-    const nextStartDate = this.getRequestBodyFromQuery().startDate;
-    const nextEndDate = this.getRequestBodyFromQuery().endDate;
-
-    if ( nextStartDate && nextEndDate && (prevStartDate !== nextStartDate || prevEndDate !== nextEndDate) ) {
-      const params = _.merge(_.clone(this.getDefaultQuery()), this.getRequestBodyFromState(), this.getRequestBodyFromQuery());
-      this.executeAction(fetchEndUsers, params);
-    }
-  },
-
   getRequestBodyFromQuery(query) {
     const { startDate, endDate, page } = query || this.context.location.query;
     return { startDate, endDate, page };
@@ -207,6 +185,26 @@ const EndUsers = React.createClass({
     };
   },
 
+  loadFirstUserDetail() {
+    const users = this.getStore(EndUserStore).getDisplayUsers();
+    const currentUser = this.getStore(EndUserStore).getCurrentUser();
+
+    if (!_.isEmpty(users) && _.isEmpty(currentUser)) {
+      const { username } = users[0];
+      this.handleUserClick(username);
+    }
+  },
+
+  fetchData() {
+    const payload =
+    _.merge(_.clone(this.getDefaultQuery()),
+      this.getRequestBodyFromState(),
+      this.getStateFromStores(),
+      { userName: this.props.location.query.userName }
+    );
+    this.context.executeAction(fetchEndUsers, payload);
+  },
+
   handleSearchSubmit(e) {
     if (e.which === SUBMIT_KEY) {
       e.preventDefault();
@@ -216,8 +214,12 @@ const EndUsers = React.createClass({
           this.getStateFromStores(),
           { userName: this.state.userName }
         );
+      const { pathname } = this.context.location;
       this.context.executeAction(clearEndUsers);
-      this.executeAction(fetchEndUsers, payload);
+      this.context.router.push({
+        pathname,
+        query: payload,
+      });
     }
   },
 

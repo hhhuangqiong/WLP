@@ -9,9 +9,9 @@ export default defineMessages({
     id: 'users',
     defaultMessage: 'users',
   },
-  userName: {
-    id: 'userName',
-    defaultMessage: 'userName',
+  username: {
+    id: 'username',
+    defaultMessage: 'username',
   },
   minutes: {
     id: 'minutes',
