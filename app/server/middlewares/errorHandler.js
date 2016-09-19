@@ -10,6 +10,7 @@ function filteredMessage(err) {
     case 'ArgumentNullError':
     case 'NotFoundError':
     case 'AlreadyInUseError':
+    case 'NotPermittedError':
       return err.message;
     default:
       // superagent error from IAM

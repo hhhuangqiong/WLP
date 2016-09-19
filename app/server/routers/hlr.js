@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import request from 'superagent';
 
-const router = Router();
+const router = new Router();
 
 // Sample Request
 // https://www.hlr-lookups.com/api/?action=submitSyncLookupRequest&msisdn=85295860801&username=gutzeit&password=gutzeit&route=IP1

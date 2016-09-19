@@ -31,18 +31,19 @@ export const CAPABILITY = {
 
 export const CAPABILITIES = Object.values(CAPABILITY);
 
+// resources will be the front end and WLP resources
 export const RESOURCE = {
   COMPANY: 'company',
   USER: 'user',
   ROLE: 'role',
-  GENERAL: 'wlp:generalOverview',
-  END_USER: 'wlp:endUser',
-  TOP_UP: 'wlp:topUp',
-  VSF: 'wlp:vsf',
-  CALL: 'wlp:call',
-  IM: 'wlp:im',
-  SMS: 'wlp:sms',
-  VERIFICATION_SDK: 'wlp:verification-sdk',
+  GENERAL: 'generalOverview',
+  END_USER: 'endUser',
+  TOP_UP: 'topUp',
+  VSF: 'vsf',
+  CALL: 'call',
+  IM: 'im',
+  SMS: 'sms',
+  VERIFICATION_SDK: 'verificationSdk',
 };
 
 export const RESOURCES = Object.values(RESOURCE);

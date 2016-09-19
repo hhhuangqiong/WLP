@@ -110,7 +110,7 @@ export default function init(nconf) {
 
   // Controllers
   ioc.service('RoleController', roleController, 'IamServiceClient');
-  ioc.service('CompanyController', CompanyController, 'IamServiceClient', 'ApplicationRequest', 'ProvisionHelper');
+  ioc.service('CompanyController', CompanyController, 'IamServiceClient');
   ioc.service('AccountController', AccountController, 'IamServiceClient', 'ProvisionHelper');
   ioc.service('ProvisionController', provisionController, 'IamServiceClient', 'ProvisionHelper');
 

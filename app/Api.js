@@ -1,7 +1,6 @@
 import _ from 'lodash';
 import superagent from 'superagent';
 
-import sessionRouter from './server/api/session';
 import accountsRouter from './server/api/accounts';
 import exportRouter from './server/api/export';
 import vsfRouter from './server/api/vsf';
@@ -78,14 +77,6 @@ Api.prototype.getPreset = function getPreset(params, cb) {
 };
 
 Api.prototype.getManagingCompanies = function getManagingCompanies(params, cb) {
-  superagent
-    .get(`${this._getHost()}/api/companies/${params.companyId}/managingCompanies`)
-    .query({ carrierId: this.getCarrierId() })
-    .accept('json')
-    .end(genericHandler(cb));
-};
-
-Api.prototype.getCarrierManagingCompanies = function getCarrierManagingCompanies(params, cb) {
   superagent
     .get(`${this._getHost()}/api/companies/${params.companyId}/managingCompanies`)
     .query({ carrierId: this.getCarrierId() })
@@ -359,7 +350,6 @@ Api.prototype.getVsfMonthlyStats = function monthlyStats(params, cb) {
 
 _.assign(
   Api.prototype,
-  sessionRouter(API_PATH_PREFIX),
   accountsRouter(API_PATH_PREFIX),
   exportRouter(EXPORT_PATH_PREFIX),
   vsfRouter(API_PATH_PREFIX),
