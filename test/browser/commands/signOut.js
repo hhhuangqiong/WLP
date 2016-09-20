@@ -6,5 +6,5 @@ export default function signOut() {
   // workaround page transition time
   browser.pause(2000);
 
-  browser.waitForVisible('#sign-in-button');
+  browser.waitForVisible('button[type="submit"]');
 }

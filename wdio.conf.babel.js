@@ -4,7 +4,6 @@ import fs from 'fs-extra';
 const BROWSERS = {
   CHROME: 'chrome',
   FIREFOX: 'firefox',
-  PHANTOMJS: 'phantomjs',
 };
 
 function getCapabilities(selectedBrowsers = Object.values(BROWSERS).join(',')) {
@@ -12,11 +11,6 @@ function getCapabilities(selectedBrowsers = Object.values(BROWSERS).join(',')) {
     .split(',')
     .map(browserName => ({
       browserName: browserName.trim(),
-      'phantomjs.binary.path': './node_modules/phantomjs/lib/phantom/bin/phantomjs',
-      // the following options can be specified
-      // maxInstances: 5,
-      // specs: [],
-      // exclude: [],
     }));
 }
 
@@ -78,7 +72,7 @@ export default {
   // according to your user and key information. However if you are using a private Selenium
   // backend you should define the host address, port, and path here.
   //
-  host: process.env.REMOTE ? (process.env.SELENIUM_HOST || 'deploy.dev.maaii.com') : 'localhost',
+  host: process.env.SELENIUM_HOST || '127.0.0.1',
   port: process.env.SELENIUM_PORT || 4444,
   path: process.env.SELENIUM_PATH || '/wd/hub',
   //
@@ -108,7 +102,7 @@ export default {
 
   // Level of logging verbosity: silent | verbose | command | data | result | error
   // to avoid overwhleming selenium system log
-  logLevel: 'silent',
+  logLevel: 'result',
 
   coloredLogs: true,
 
@@ -125,7 +119,7 @@ export default {
   framework: 'mocha',
   mochaOpts: {
     ui: 'bdd',
-    compilers: ['js:babel-core/register'],
+    compilers: ['js:babel-register'],
     timeout: process.env.TEST_TIMEOUT || 500000,
   },
 

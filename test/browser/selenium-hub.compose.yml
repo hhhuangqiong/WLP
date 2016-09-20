@@ -1,0 +1,17 @@
+# compose file for selenium server and latest snapshot image
+selenium-hub:
+  image: selenium/hub
+  ports:
+    - "${SELENIUM_PORT}:4444"
+selenium-node-chrome:
+  image: selenium/node-chrome
+  links:
+    - selenium-hub:hub
+  ports:
+    - "5900"
+selenium-node-firefox:
+  image: selenium/node-firefox
+  links:
+    - selenium-hub:hub
+  ports:
+    - "5900"

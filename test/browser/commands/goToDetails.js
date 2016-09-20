@@ -9,5 +9,5 @@ export default function goToDetails() {
   expect(browser.hasClass(detailsReportSelector, 'active')).to.be.true;
 
   browser.waitForVisible('.data-table');
-  browser.waitForVisible('.ui-state-normal');
+  browser.waitForVisible('.ui-state-normal,.ui-state-empty');
 }

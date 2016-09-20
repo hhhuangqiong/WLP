@@ -13,7 +13,8 @@ It is therefore necessary to test screen output in *User Perspective*, so that d
 ### Before start
 
 1. Start the application: `gulp`
-2. Start selenium server if you are at local: `npm run server:selenium`
+2. Ensure you've set environment variable SELENIUM_HOST, SELENIUM_PORT that wire up selenium server and web driver (wdio)
+3. Start selenium server if you are at local: `npm run selenium`
 
 ### Running test case
 
