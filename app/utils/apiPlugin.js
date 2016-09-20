@@ -1,6 +1,5 @@
 import Api from '../Api';
 import ApiClient from './ApiClient';
-import ApplicationStore from '../main/stores/ApplicationStore';
 
 const env = require('./env');
 const url = require('./url');
@@ -10,12 +9,7 @@ const debug = require('debug')('app:utils/apiPlugin');
 module.exports = {
   name: 'ApiPlugin',
 
-  plugContext(options, context) {
-    function getCarrierId() {
-      // @workaround to append the current company carrier into tha api path
-      const { carrierId } = context.getStore(ApplicationStore).getCurrentCompany();
-      return carrierId || '';
-    }
+  plugContext(options) {
     return {
       plugActionContext(actionContext) {
         // keep actionContext.api until everything
@@ -36,10 +30,9 @@ module.exports = {
               throw err;
             }
           },
-          getCarrierId,
         });
         // eslint-disable-next-line no-param-reassign
-        actionContext.apiClient = new ApiClient(options.req, !!options.req, getCarrierId);
+        actionContext.apiClient = new ApiClient(options.req, !!options.req);
       },
     };
   },

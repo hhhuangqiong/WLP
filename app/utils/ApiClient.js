@@ -1,4 +1,4 @@
-import { get, isString, isObject, startsWith, trim } from 'lodash';
+import { get, isString, isObject } from 'lodash';
 import { TimeoutError } from 'common-errors';
 import fetch from 'isomorphic-fetch';
 import { stringify } from 'query-string';
@@ -28,13 +28,27 @@ export function timeout(ms, promise) {
  * @param response {Response} Response instance from fetch.js
  * @returns {Object} json object of response body
  */
-export function parseJSON(response) {
+export function parseResponse(response) {
+  let responsePromise;
   try {
-    return response.json();
+    responsePromise = response.json();
   } catch (err) {
     debug('error occurred when parsing response object into json', err);
     throw err;
   }
+
+  // fetch won't throw error when status larger than 400, manually throw error
+  if (response.status >= 400) {
+    return responsePromise.then(responseJson => {
+      // try to obtain the error object, otherwiser will throw the status
+      throw responseJson.error || {
+        // @TODO should assign a default 'message' to the error object
+        status: response.status,
+      };
+    });
+  }
+
+  return responsePromise;
 }
 
 /**
@@ -86,7 +100,7 @@ export default class ApiClient {
    * on server-side will provide this argument via Fluxible plugin.
    * @param isFromServer {Boolean}
    */
-  constructor(req, isFromServer, getCarrierId) {
+  constructor(req, isFromServer) {
     methods.forEach(method => {
       /**
        * @method get
@@ -111,11 +125,6 @@ export default class ApiClient {
         if (data && (!isObject(data) && !(data instanceof FormData))) {
           reject(new Error('`data` argument must be an object or an instance of FormData'));
           return;
-        }
-        // @workaround to append carrierId
-        path = trim(path, '/');
-        if (!startsWith(path, 'carriers')) {
-          path = `carriers/${getCarrierId()}/${path}`;
         }
 
         let options = {
@@ -175,8 +184,8 @@ export default class ApiClient {
         // fetch yet to have its standard for timeout
         // use this workaround as suggested on
         // https://github.com/facebook/react-native/pull/6504#issuecomment-210485260
-        timeout(configs.timeout, fetch(url, options))
-          .then(parseJSON)
+        fetch(url, options)
+          .then(parseResponse)
           .then(jsonData => {
             debug('resolving json data:', jsonData);
             // the ApiClient has not say on the payload returned

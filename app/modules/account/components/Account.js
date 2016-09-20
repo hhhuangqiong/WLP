@@ -17,6 +17,10 @@ class Account extends Component {
 
   static contextTypes = {
     executeAction: PropTypes.func.isRequired,
+    params: PropTypes.object,
+    location: PropTypes.shape({
+      pathname: PropTypes.string,
+    }),
   }
 
   constructor() {
@@ -32,22 +36,21 @@ class Account extends Component {
   componentWillReceiveProps(nextProps) {
     // update the list when change from has children to  no children(no display on right hand side)
     // e.g after create, discard, update, delete account
-    if (this.props.children && !nextProps.children) {
+    // update the list when change from create to edit mode by checking the params accountId
+    if ((this.props.children && !nextProps.children) ||
+     (!this.props.params.accountId && nextProps.params.accountId)) {
       this.fetchData();
     }
   }
 
   fetchData(searchTerm) {
-    const { executeAction } = this.context;
-    const { currentCompany: { id } } = this.props;
-    const query = {
-      affiliatedCompany: id,
-    };
+    const { executeAction, params: { identity } } = this.context;
+    const query = { carrierId: identity };
     if (searchTerm) {
       query.search = searchTerm;
     }
     executeAction(fetchAccounts, query);
-    executeAction(fetchCarrierManagingCompanies, { companyId: id });
+    executeAction(fetchCarrierManagingCompanies, { carrierId: identity });
   }
 
   handleSearch(e) {

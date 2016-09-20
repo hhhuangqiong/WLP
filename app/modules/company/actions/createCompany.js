@@ -5,11 +5,9 @@ export default function (context, params, done) {
   context.api.createProvision(companyProfile, (err) => {
     if (err) {
       context.dispatch('CREATE_COMPANY_FAILURE', err);
-      context.dispatch('ERROR_MESSAGE', err);
       done();
       return;
     }
-
     context.dispatch('CREATE_COMPANY_SUCCESS', token);
     done();
   });

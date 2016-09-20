@@ -86,15 +86,15 @@ class AccountProfile extends Component {
   }
 
   componentDidMount() {
-    const { accountId } = this.context.params;
+    const { accountId, identity } = this.context.params;
     // fetch the account
     if (accountId) {
-      this.context.executeAction(fetchAccount, { id: accountId });
+      this.context.executeAction(fetchAccount, { id: accountId, carrierId: identity });
     }
   }
 
   componentWillReceiveProps(nextProps) {
-    const { accountId } = this.context.params;
+    const { accountId, identity } = this.context.params;
 
     // callback from the previous action and redirect back to the account list page
     if (this.state.operationToken === _.get(nextProps.operationResult, 'token')) {
@@ -106,7 +106,7 @@ class AccountProfile extends Component {
 
     // fetch account since the account id is different from the path
     if (nextProps.params.accountId && nextProps.params.accountId !== accountId) {
-      this.context.executeAction(fetchAccount, { id: nextProps.params.accountId });
+      this.context.executeAction(fetchAccount, { id: nextProps.params.accountId, carrierId: identity });
       return;
     }
 
@@ -212,6 +212,7 @@ class AccountProfile extends Component {
 
   handleSave(e) {
     e.preventDefault();
+    const { params: { identity } } = this.context;
     this.props.validate(err => {
       if (err || this.containErrors()) {
         return;
@@ -229,6 +230,7 @@ class AccountProfile extends Component {
         // either current affiliated id or current company id
         affiliatedCompany: this.props.account.affiliatedCompany || this.props.currentCompany.id,
         roles,
+        carrierId: identity,
       };
       if (this.isCreate()) {
         this.context.executeAction(createAccount, { token: this.state.operationToken, ...data });
@@ -244,7 +246,9 @@ class AccountProfile extends Component {
   }
 
   handleDelete() {
+    const { params: { identity } } = this.context;
     this.context.executeAction(deleteAccount, {
+      carrierId: identity,
       token: this.state.operationToken,
       id: this.state.email });
     this.handleCloseDeleteDialog();
@@ -259,7 +263,11 @@ class AccountProfile extends Component {
   }
 
   handleReverify() {
-    this.context.executeAction(resendCreatePassword, { id: this.state.email });
+    const { params: { identity } } = this.context;
+    this.context.executeAction(resendCreatePassword, {
+      id: this.state.email,
+      carrierId: identity,
+    });
     this.handleCloseReverifyDialog();
   }
 

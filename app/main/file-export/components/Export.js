@@ -51,7 +51,7 @@ export default createClass({
   },
 
   download() {
-    const downloadPath = `/export/${this.state.carrierId}/file?exportId=${this.state.exportId}`;
+    const downloadPath = `/export/carriers/${this.state.carrierId}/file?exportId=${this.state.exportId}`;
     window.open(downloadPath);
 
     this.clearExportState();

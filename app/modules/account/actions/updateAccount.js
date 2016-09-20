@@ -1,13 +1,11 @@
-export default function (context, params, done) {
-  const { token, ...accountInfo } = params;
-  context.api.updateAccount(accountInfo, (err) => {
-    if (err) {
-      context.dispatch('UPDATE_ACCOUNT_FAILURE', err);
-      context.dispatch('ERROR_MESSAGE', err);
-    } else {
+export default function (context, params) {
+  const { apiClient } = context;
+  const { token, carrierId, id, ...data } = params;
+  return apiClient
+    .put(`/carriers/${carrierId}/accounts/${id}`, { data })
+    .then(() => {
       context.dispatch('UPDATE_ACCOUNT_SUCCESS', { token });
-      context.dispatch('INFO_MESSAGE', { message: 'Successfully update user' });
-    }
-    done();
-  });
+    }).catch(err => {
+      context.dispatch('UPDATE_ACCOUNT_FAILURE', err);
+    });
 }

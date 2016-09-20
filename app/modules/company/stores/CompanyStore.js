@@ -28,7 +28,7 @@ const CompanyStore = createStore({
     FETCH_PRESET_SUCCESS: 'receivePreset',
     CREATE_COMPANY_SUCCESS: 'handleTokenUpdated',
     UPDATE_COMPANY_SUCCESS: 'handleTokenUpdated',
-    UPDATE_COMPANY_PROFILE_SUCCESS: 'handleTokenUpdated',
+    UPDATE_CARRIER_PROFILE_SUCCESS: 'handleTokenUpdated',
     RESET_COMPANY_DETAIL: 'handleCompanyDetailReset',
   },
 
