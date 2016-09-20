@@ -51,7 +51,11 @@ export const MESSAGES = defineMessages({
   },
   endUserManagement: {
     id: 'accessManagement.endUserManagement',
-    defaultMessage: 'End Users',
+    defaultMessage: 'End Users Management',
+  },
+  whitelistManagement: {
+    id: 'accessManagement.whitelistManagement',
+    defaultMessage: 'Whitelist Management',
   },
   topUp: {
     id: 'accessManagement.topUp',

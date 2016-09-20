@@ -125,6 +125,8 @@ export const CAPABILITIES = {
   'verification.ivr': 'IVR Verification',
   push: 'PUSH',
   vsf: 'VSF',
+  'end-user.whitelist': 'End User Whitelist',
+  'end-user.suspension': 'End User Suspension/Activation',
 };
 
 export const COMPANY_TYPE_LABEL = {

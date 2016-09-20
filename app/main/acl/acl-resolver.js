@@ -2,7 +2,7 @@ import Q from 'q';
 import { isObject, includes, any, difference, flatten, map } from 'lodash';
 import { NotFoundError } from 'common-errors';
 
-import { RESOURCE, CAPABILITY, permission } from './acl-enums';
+import { RESOURCE, CAPABILITY, permission, ACTION } from './acl-enums';
 
 function flattenPermissions(permissions) {
   return flatten(
@@ -16,7 +16,11 @@ function deriveProhibitions(carrierProfile) {
   const PERMISSION_DEPENDENCIES = {
     [permission(RESOURCE.GENERAL)]: ({ serviceType }) => serviceType !== 'SDK',
     [permission(RESOURCE.END_USER)]: () => true, // all companies will show end user section
+    [permission(RESOURCE.END_USER, ACTION.UPDATE)]: ({ capabilities }) =>
+      includes(capabilities, CAPABILITY.END_USER_SUSPENSION), // activate, suspend user
     [permission(RESOURCE.CALL)]: ({ capabilities }) => any(capabilities, x => /^call/.test(x)),
+    [permission(RESOURCE.WHITELIST)]: ({ capabilities }) =>
+      includes(capabilities, CAPABILITY.END_USER_WHITELIST),
     [permission(RESOURCE.IM)]: ({ capabilities }) => includes(capabilities, CAPABILITY.IM),
     [permission(RESOURCE.SMS)]: ({ capabilities }) => includes(capabilities, CAPABILITY.IM_TO_SMS),
     [permission(RESOURCE.VSF)]: ({ capabilities }) => includes(capabilities, CAPABILITY.VSF),

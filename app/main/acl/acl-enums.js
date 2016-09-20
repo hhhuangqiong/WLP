@@ -27,6 +27,9 @@ export const CAPABILITY = {
   VSF_ITEM_CREDIT: 'vsf.item.credit',
   VSF_ITEM_CUSTOMIZED: 'vsf.item.customized',
   VSF_ITEM_STICKER: 'vsf.item.sticker',
+
+  END_USER_WHITELIST: 'end-user.whitelist',
+  END_USER_SUSPENSION: 'end-user.suspension',
 };
 
 export const CAPABILITIES = Object.values(CAPABILITY);
@@ -44,6 +47,7 @@ export const RESOURCE = {
   IM: 'im',
   SMS: 'sms',
   VERIFICATION_SDK: 'verificationSdk',
+  WHITELIST: 'whitelist',
 };
 
 export const RESOURCES = Object.values(RESOURCE);

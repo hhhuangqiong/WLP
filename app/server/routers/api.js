@@ -48,16 +48,16 @@ routes
     authorize(permission(RESOURCE.END_USER)),
     carriers.getUsers,
   ])
-  .get('/users/whitelist/:username?', [
-    authorize(permission(RESOURCE.END_USER)),
+  .get('/carriers/:carrierId/users/whitelist/:username?', [
+    authorize(permission(RESOURCE.WHITELIST)),
     carriers.getWhitelist,
   ])
-  .post('/users/whitelist', [
-    authorize(permission(RESOURCE.END_USER, ACTION.CREATE)),
+  .post('/carriers/:carrierId/users/whitelist', [
+    authorize(permission(RESOURCE.WHITELIST, ACTION.CREATE)),
     carriers.addWhitelist,
   ])
-  .delete('/users/whitelist', [
-    authorize(permission(RESOURCE.END_USER, ACTION.DELETE)),
+  .delete('/carriers:/:carrierId/users/whitelist', [
+    authorize(permission(RESOURCE.WHITELIST, ACTION.DELETE)),
     carriers.removeWhitelist,
   ])
   // TODO: change userStatsTotal and userStatsMonthly

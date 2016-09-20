@@ -2,6 +2,9 @@ import React, { PropTypes } from 'react';
 import { Link } from 'react-router';
 import { FormattedMessage } from 'react-intl';
 
+import Permit from '../../../main/components/common/Permit';
+import { RESOURCE, ACTION, permission } from '../../../main/acl/acl-enums';
+
 const overviewMessage = <FormattedMessage id="overview" defaultMessage="Overview" />;
 const detailsMessage = <FormattedMessage id="detailsReport" defaultMessage="Details Report" />;
 const userActivationMessage = (
@@ -62,13 +65,13 @@ export default function FilterBarNavigation({ section, tab }, { params }) {
         {renderDetails(tab, `/${identity}/${section}/details`)}
       </li>
       {
-        /* @TODO hide the user activation section
         section === 'end-user' ? (
-          <li className="top-bar--inner tab--inverted__title">
-            {renderUserActivation(tab, `/${identity}/${section}/whitelist`)}
-          </li>
+          <Permit permission={permission(RESOURCE.WHITELIST)}>
+            <li className="top-bar--inner tab--inverted__title">
+              {renderUserActivation(tab, `/${identity}/${section}/whitelist`)}
+            </li>
+          </Permit>
         ) : null
-        */
       }
     </ul>
   );
