@@ -3,12 +3,12 @@ import classNames from 'classnames';
 import { injectIntl, intlShape, FormattedMessage, defineMessages } from 'react-intl';
 import { Link } from 'react-router';
 
-import { FETCH_COMPANY_INTERVAL } from '../../../config/index';
 import CompanyList from './CompanyList';
 import Pagination from './Pagination';
 import Icon from '../../../main/components/Icon';
 import connectToStores from 'fluxible-addons-react/connectToStores';
 import CompanyStore from '../stores/CompanyStore';
+import ClientConfigStore from '../../../main/stores/ClientConfigStore';
 import fetchCompanies from '../actions/fetchCompanies';
 
 const ENTER_KEY = 13;
@@ -57,7 +57,7 @@ class Company extends React.Component {
           pageNumber: this.state.selected,
         }
       );
-    }, FETCH_COMPANY_INTERVAL);
+    }, this.props.fetchCompanyInterval);
   }
 
   handleSearchChange(e) {
@@ -139,6 +139,7 @@ Company.propTypes = {
   searchCompany: PropTypes.string,
   pageNumber: PropTypes.number,
   pageSize: PropTypes.number,
+  fetchCompanyInterval: PropTypes.number,
 };
 Company.contextTypes = {
   executeAction: PropTypes.func.isRequired,
@@ -146,12 +147,13 @@ Company.contextTypes = {
   params: PropTypes.object.isRequired,
 };
 
-Company = connectToStores(Company, [CompanyStore], (context) => ({
+Company = connectToStores(Company, [CompanyStore, ClientConfigStore], (context) => ({
   companies: context.getStore(CompanyStore).getCompanies(),
   totalElements: context.getStore(CompanyStore).getTotalElements(),
   searchCompany: context.getStore(CompanyStore).getSearchCompany(),
   pageNumber: context.getStore(CompanyStore).getPageNumber(),
   pageSize: context.getStore(CompanyStore).getPageSize(),
+  fetchCompanyInterval: context.getStore(ClientConfigStore).getCompanyInterval(),
 }));
 
 export default injectIntl(Company);

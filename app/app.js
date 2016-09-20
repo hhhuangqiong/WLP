@@ -3,6 +3,7 @@ import Fluxible from 'fluxible';
 /* eslint-disable max-len */
 import InitialDataStore from './main/stores/InitialDataStore';
 import ApplicationStore from './main/stores/ApplicationStore';
+import ClientConfigStore from './main/stores/ClientConfigStore';
 import AuthStore from './main/stores/AuthStore';
 import VerificationStore from './modules/verification/stores/VerificationStore';
 import VerificationOverviewStore from './modules/verification/stores/VerificationOverviewStore';
@@ -51,6 +52,7 @@ app.plug(require('./utils/apiPlugin'));
 app.registerStore(InitialDataStore);
 app.registerStore(AuthStore);
 app.registerStore(ApplicationStore);
+app.registerStore(ClientConfigStore);
 app.registerStore(CompanyStore);
 app.registerStore(CompanyWalletStore);
 app.registerStore(VerificationStore);

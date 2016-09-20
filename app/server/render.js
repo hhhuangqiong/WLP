@@ -15,6 +15,7 @@ import { getLocaleDataFromPath } from '../utils/intl';
 import { setLocale } from '../utils/dateLocale';
 import { SIGN_IN } from '../utils/paths';
 
+import getClientConfig from '../main/actions/getClientConfig';
 import loadSession from '../main/actions/loadSession';
 import getAccessibleCompanies from '../main/actions/getAccessibleCompanies';
 import setUserLanguage from '../main/actions/setUserLanguage';
@@ -72,6 +73,7 @@ export default function renderer(app, config) {
       getAccessibleCompanies,
       setUserLanguage,
       fetchCurrentCompanyInfo,
+      getClientConfig,
     ];
 
     // it turns out that the server defines the

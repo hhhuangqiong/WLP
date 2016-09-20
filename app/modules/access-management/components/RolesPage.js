@@ -5,7 +5,6 @@ import { injectIntl, intlShape } from 'react-intl';
 
 import * as Panel from './../../../main/components/Panel';
 import RolesTable from './RolesTable';
-
 import addRole from './../actions/addRole';
 import updateRole from '../actions/updateRole';
 import removeRole from './../actions/removeRole';
@@ -14,6 +13,7 @@ import _ from 'lodash';
 import { MESSAGES } from './../constants/i18n';
 import RoleStore from './../stores/RoleStore';
 import ApplicationStore from './../../../main/stores/ApplicationStore';
+import ClientConfigStore from './../../../main/stores/ClientConfigStore';
 
 export class RolesPage extends Component {
   static get contextTypes() {
@@ -27,6 +27,7 @@ export class RolesPage extends Component {
       roles: PropTypes.arrayOf(PropTypes.object),
       permissions: PropTypes.arrayOf(PropTypes.object),
       company: PropTypes.object.isRequired,
+      limit: PropTypes.number,
     };
   }
   constructor(props) {
@@ -38,6 +39,7 @@ export class RolesPage extends Component {
       hoveredRoleIndex: null,
       editedRoleBackup: null,
       adminRoleIndex: null,
+      isDisableAddRole: null,
     };
     this.saveRole = this.saveRole.bind(this);
     this.removeRole = this.removeRole.bind(this);
@@ -175,7 +177,11 @@ export class RolesPage extends Component {
       <div>
         <Panel.Wrapper className="roles-panel">
           <Panel.Header title={intl.formatMessage(MESSAGES.rolesAndPermissions)}>
-            <button className="button radius" onClick={this.addRole}>
+            <button
+              className="button radius"
+              onClick={this.addRole}
+              disabled={this.state.displayedRoles.length >= this.props.limit }
+            >
               {intl.formatMessage(MESSAGES.addNewRole)}
             </button>
           </Panel.Header>
@@ -207,10 +213,11 @@ export class RolesPage extends Component {
 RolesPage = injectIntl(RolesPage);
 RolesPage = connectToStores(
   RolesPage,
-  [RoleStore, ApplicationStore],
+  [RoleStore, ApplicationStore, ClientConfigStore],
   (context) => {
     const state = context.getStore(RoleStore).getState();
     state.company = context.getStore(ApplicationStore).getCurrentCompany();
+    state.limit = context.getStore(ClientConfigStore).getRolesLength();
     return state;
   }
 );

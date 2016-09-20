@@ -22,7 +22,7 @@ export default function initialize(env, configDir, opts = { envSeparator: '__' }
 
   // TODO
   // - dynamically include files; assume some files (other than 'env-*') are not supposed to be included
-  const files = ['global.json'];
+  const files = ['global.json', 'client.json'];
 
   files.push(envConfigName(env, opts.envConfigFilePrefix || ENV_CONFIG_FILE_PREFIX));
 
@@ -33,7 +33,6 @@ export default function initialize(env, configDir, opts = { envSeparator: '__' }
       search: true,
     });
   });
-
   logger.debug('loading configuration files %j under "%s"', files, configDir);
 
   // TODO verify the existence of default config

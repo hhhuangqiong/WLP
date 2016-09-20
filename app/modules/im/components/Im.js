@@ -8,6 +8,7 @@ import DatePicker from 'react-datepicker';
 import { FormattedMessage, injectIntl } from 'react-intl';
 
 import ImStore from '../stores/ImStore';
+import ClientConfigStore from '../../../main/stores/ClientConfigStore';
 
 import clearIm from '../actions/clearIm';
 import fetchIm from '../actions/fetchIm';
@@ -23,8 +24,6 @@ import Icon from '../../../main/components/Icon';
 import * as dateLocale from '../../../utils/dateLocale';
 
 import MESSAGES from '../constants/i18n';
-
-import config from '../../../config';
 
 const searchTypes = [
   { name: i18nMessages.sender, value: 'sender' },
@@ -43,7 +42,7 @@ const Im = React.createClass({
   mixins: [FluxibleMixin],
 
   statics: {
-    storeListeners: [ImStore],
+    storeListeners: [ImStore, ClientConfigStore],
   },
 
   getInitialState() {
@@ -88,6 +87,8 @@ const Im = React.createClass({
       page: this.getStore(ImStore).getPageNumber(),
       totalPages: this.getStore(ImStore).getTotalPages(),
       isLoadingMore: this.getStore(ImStore).isLoadingMore,
+      // for setState, so it can be used later.
+      size: this.getStore(ClientConfigStore).getPages().IMS.PAGE_SIZE,
     };
   },
 
@@ -95,7 +96,8 @@ const Im = React.createClass({
     return {
       // The page number, starting from 0, defaults to 0 if not specified.
       page: 0,
-      size: config.PAGES.IMS.PAGE_SIZE,
+      //  for initializing value
+      size: this.getStore(ClientConfigStore).getPages().IMS.PAGE_SIZE,
       fromTime: moment().subtract(2, 'month').startOf('day').format('L'),
       toTime: moment().endOf('day').format('L'),
       type: '',
@@ -111,7 +113,7 @@ const Im = React.createClass({
       searchType: this.state.searchType && this.state.searchType.trim(),
       search: this.state.search && this.state.search.trim(),
       page: 0,
-      size: config.PAGES.IMS.PAGE_SIZE,
+      size: this.state.size,
       type: this.state.type && this.state.type.trim(),
     };
   },
@@ -143,7 +145,7 @@ const Im = React.createClass({
       type: query.type,
       searchType: query.searchType,
       search: query.search,
-      size: config.PAGES.IMS.PAGE_SIZE,
+      size: this.state.size,
       // The page number, starting from 0, defaults to 0 if not specified.
       page: query.page || 0,
     });
@@ -176,7 +178,7 @@ const Im = React.createClass({
       fromTime: this.state.fromTime,
       toTime: this.state.toTime,
       page: this.state.page,
-      size: config.PAGES.IMS.PAGE_SIZE,
+      size: this.state.size,
       type: this.state.type,
       search: this.state.search,
       searchType: this.state.searchType,

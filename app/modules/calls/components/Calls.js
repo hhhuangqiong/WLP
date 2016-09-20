@@ -25,12 +25,12 @@ import clearCallsReport from '../actions/clearCallsReport';
 
 import CallsTable from './CallsTable';
 import CallsStore from '../stores/CallsStore';
+import ClientConfigStore from '../../../main/stores/ClientConfigStore';
 import Searchbox from '../../../main/components/Searchbox';
 
 import Export from '../../../main/file-export/components/Export';
 import CallsExportForm from './CallsExportForm';
 
-import config from '../../../config';
 import CALL_TYPE from '../constants/callType';
 
 import * as dateLocale from '../../../utils/dateLocale';
@@ -49,7 +49,7 @@ const Calls = React.createClass({
   mixins: [FluxibleMixin],
 
   statics: {
-    storeListeners: [CallsStore],
+    storeListeners: [CallsStore, ClientConfigStore],
   },
 
   getStateFromStores() {
@@ -61,6 +61,8 @@ const Calls = React.createClass({
       page: store.getPageNumber(),
       totalPages: store.getTotalPages(),
       isLoadingMore: store.isLoadingMore,
+      // for setState, so it can be used later.
+      size: this.getStore(ClientConfigStore).getPages().CALLS.PAGE_SIZE,
     };
   },
 
@@ -68,7 +70,8 @@ const Calls = React.createClass({
     return {
       // The page number, starting from 0, defaults to 0 if not specified.
       page: 0,
-      size: config.PAGES.CALLS.PAGE_SIZE,
+      //  for initializing value
+      size: this.getStore(ClientConfigStore).getPages().CALLS.PAGE_SIZE,
       startDate: moment().subtract(2, 'day').startOf('day').format('L'),
       endDate: moment().endOf('day').format('L'),
       type: CALL_TYPE.ALL,
@@ -112,7 +115,7 @@ const Calls = React.createClass({
       endDate: this.state.endDate && this.state.endDate.trim(),
       search: this.state.search && this.state.search.trim(),
       page: 0,
-      size: config.PAGES.CALLS.PAGE_SIZE,
+      size: this.state.size,
       type: this.state.type && this.state.type.trim(),
       searchType: this.state.searchType && this.state.searchType.trim(),
     };
@@ -125,7 +128,7 @@ const Calls = React.createClass({
       carrierId: params.identity,
       startDate: query.startDate || moment().subtract(2, 'day').startOf('day').format('L'),
       endDate: query.endDate || moment().endOf('day').format('L'),
-      size: config.PAGES.CALLS.PAGE_SIZE,
+      size: this.state.size,
       // The page number, starting from 0, defaults to 0 if not specified.
       page: query.page || 0,
       type: query.type || CALL_TYPE.ALL,
@@ -159,7 +162,7 @@ const Calls = React.createClass({
       startDate: this.state.startDate,
       endDate: this.state.endDate,
       page: +this.state.page + 1,
-      size: config.PAGES.CALLS.PAGE_SIZE,
+      size: this.state.size,
       type: this.state.type,
       search: this.state.search,
       searchType: this.state.searchType,

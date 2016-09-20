@@ -1,0 +1,17 @@
+{
+  "clientConfig": {
+    "PAGES": {
+      "CALLS": {
+        "PAGE_SIZE": 100
+      },
+      "IMS": {
+        "PAGE_SIZE": 100
+      },
+      "VERIFICATIONS": {
+        "PAGE_SIZE": 100
+      }
+    },
+    "FETCH_COMPANY_INTERVAL": 30000,
+    "LIMIT_ROLES_LENGTH": 5
+  }
+}

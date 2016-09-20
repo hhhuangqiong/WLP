@@ -14,9 +14,9 @@ import clearVerifications from '../actions/resetVerificationData';
 
 import VerificationStore from '../stores/VerificationStore';
 import ApplicationStore from '../../../main/stores/ApplicationStore';
+import ClientConfigStore from '../../../main/stores/ClientConfigStore';
 
 import VerificationTable from './VerificationTable';
-import config from '../../../config';
 
 import Export from '../../../main/file-export/components/Export';
 import VerificationExportForm from './VerificationExportForm';
@@ -68,6 +68,7 @@ const VerificationDetails = React.createClass({
     storeListeners: {
       onChange: VerificationStore,
       onApplicationStoreChange: ApplicationStore,
+      ClientConfigStore,
     },
   },
 
@@ -100,7 +101,8 @@ const VerificationDetails = React.createClass({
     return {
       // The page number, starting from 0, defaults to 0 if not specified.
       page: 0,
-      size: config.PAGES.VERIFICATIONS.PAGE_SIZE,
+      //  for initializing value
+      size: this.getStore(ClientConfigStore).getPages().VERIFICATIONS.PAGE_SIZE,
       startDate: moment().subtract(2, 'month').startOf('day').format(DATE_FORMAT),
       endDate: moment().endOf('day').format(DATE_FORMAT),
       number: '',
@@ -116,7 +118,8 @@ const VerificationDetails = React.createClass({
       endDate: this.state.endDate && this.state.endDate.trim(),
       number: this.state.number && this.state.number.trim(),
       page: 0,
-      size: config.PAGES.VERIFICATIONS.PAGE_SIZE,
+      // for setState, so it can be used later.
+      size: this.getStore(ClientConfigStore).getPages().VERIFICATIONS.PAGE_SIZE,
       method: this.state.method && this.state.method.trim(),
       os: this.state.os && this.state.os.trim(),
     };

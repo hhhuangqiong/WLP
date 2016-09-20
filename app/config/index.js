@@ -13,16 +13,4 @@ module.exports = {
     // in seconds
     MAX_AGE: 60 * 30,
   },
-  PAGES: {
-    CALLS: {
-      PAGE_SIZE: 100,
-    },
-    IMS: {
-      PAGE_SIZE: 100,
-    },
-    VERIFICATIONS: {
-      PAGE_SIZE: 100,
-    },
-  },
-  FETCH_COMPANY_INTERVAL: 30000,
 };
