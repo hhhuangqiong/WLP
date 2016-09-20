@@ -14,7 +14,6 @@ import config from '../config';
 import render from './render';
 import apiResponse from './utils/apiResponse';
 import { apiErrorHandler } from './middlewares/errorHandler';
-import authRouter from './routers/auth';
 import { fetchDep } from './utils/bottle';
 import { ERROR_500 } from '../utils/paths';
 
@@ -52,11 +51,13 @@ export default function (port) {
   // a shared Kue instance for file exporting job queue
   ioc.factory('Kue', () => kueue);
 
-  require('./initializers/viewHelpers')(server);
-
   if (nconf.get('trustProxy')) {
     server.enable('trust proxy');
   }
+
+  // Please, put IoC dependencies here, so they are a bit closer to the top of the file :)
+  const fetchPermissionsMiddleware = fetchDep('FetchPermissionsMiddleware');
+  const authRouter = fetchDep('AuthRouter');
 
   // To enable using PUT, DELETE METHODS
   server.use(methodOverride('_method'));
@@ -112,7 +113,7 @@ export default function (port) {
     next();
   });
 
-  const fetchPermissionsMiddleware = fetchDep(nconf.get('containerName'), 'FetchPermissionsMiddleware');
+
   server.use(fetchPermissionsMiddleware);
 
   server.use(require('./routers/hlr').default);

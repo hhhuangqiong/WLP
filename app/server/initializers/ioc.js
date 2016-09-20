@@ -4,20 +4,25 @@ import logger from 'winston';
 import makeRedisClient from './redis';
 import ensureAuthenticated from '../middlewares/ensureAuthenticated';
 
+// Services
 import CallsRequest from '../../lib/requests/dataProviders/Call';
 import { IamClient } from '../../lib/requests/iam/IamServiceClient';
-import { createFetchPermissionsMiddleware } from '../../server/middlewares/authorization';
-import { createAclResolver } from './../../main/acl/acl-resolver';
-import roleController from '../../server/controllers/role';
-import carrierWalletController from '../../server/controllers/carrierWallet';
-import AccountController from '../../server/controllers/account';
-import CompanyController from '../../server/controllers/company';
 import ProvisionHelper from '../../server/utils/provisionHelper';
 import IamHelper from '../../server/utils/iamHelper';
-import provisionController from '../../server/controllers/provision';
-import { ApplicationRequest } from '../../lib/requests/Application';
 import MpsClient from '../../lib/requests/mps/MpsClient';
 import mcmClient from '../../lib/requests/mcm/McmClient';
+import { ApplicationRequest } from '../../lib/requests/Application';
+
+// Infrastructure components (logging, authentication, authorization)
+import { createAclResolver } from './../../main/acl/acl-resolver';
+
+// Middleware
+import { createFetchPermissionsMiddleware } from '../../server/middlewares/authorization';
+
+// Controllers
+import { register as registerControllers } from './../controllers';
+
+import { createAuthRouter } from './../routers/auth';
 
 /**
  * Initialize the IoC container
@@ -117,11 +122,10 @@ export default function init(nconf) {
   ioc.service('FetchPermissionsMiddleware', createFetchPermissionsMiddleware, 'logger', 'AclResolver');
 
   // Controllers
-  ioc.service('RoleController', roleController, 'IamServiceClient');
-  ioc.service('CompanyController', CompanyController, 'IamServiceClient');
-  ioc.service('AccountController', AccountController, 'IamServiceClient', 'ProvisionHelper');
-  ioc.service('ProvisionController', provisionController, 'IamServiceClient', 'ProvisionHelper');
-  ioc.service('CarrierWalletController', carrierWalletController, 'McmClient');
+  registerControllers(ioc);
+
+  // Routers
+  ioc.service('AuthRouter', createAuthRouter, 'AuthController');
 
   return ioc;
 }

@@ -136,9 +136,11 @@ const getCarrierExportFile = (req, res) => {
   });
 };
 
-export {
-  getCarrierExport,
-  getCarrierExportCancel,
-  getCarrierExportFile,
-  getCarrierExportFileProgress,
-};
+export default function exportController() {
+  return {
+    getCarrierExport,
+    getCarrierExportCancel,
+    getCarrierExportFile,
+    getCarrierExportFileProgress,
+  };
+}

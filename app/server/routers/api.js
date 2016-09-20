@@ -1,11 +1,6 @@
 import { Router } from 'express';
 import nconf from 'nconf';
 
-import * as carriers from '../routes/carriers';
-import * as companies from '../routes/companies';
-import * as accounts from '../routes/accounts';
-import * as provision from '../routes/provision';
-
 import cacheControl from '../middlewares/cacheControl';
 import {
   createAuthorizationMiddleware as authorize,
@@ -27,6 +22,10 @@ apiRouter
 
 // TODO: refactor api.js to be a factory function with dependencies
 const roleController = fetchDep(nconf.get('containerName'), 'RoleController');
+const companies = fetchDep(nconf.get('containerName'), 'CompanyController');
+const accounts = fetchDep(nconf.get('containerName'), 'AccountController');
+const provision = fetchDep(nconf.get('containerName'), 'ProvisionController');
+const carriers = fetchDep(nconf.get('containerName'), 'CarrierController');
 const carrierWalletController = fetchDep(nconf.get('containerName'), 'CarrierWalletController');
 
 // eslint:max-len 0
