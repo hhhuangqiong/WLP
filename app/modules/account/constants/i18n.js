@@ -51,7 +51,7 @@ export const MESSAGES = defineMessages({
   },
   warning: {
     id: 'account.warning',
-    defaultMessage: 'Warning: This action cannot be undo!',
+    defaultMessage: 'Warning: This action will permanently delete the account from the system',
   },
   deleteDialogMessage: {
     id: 'account.deleteDialogMessage',
