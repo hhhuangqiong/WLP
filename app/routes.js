@@ -78,9 +78,7 @@ export default (context) => {
   function checkAuth(nextState, replace) {
     const { routes, params: { identity: carrierId } } = nextState;
     // check the carrierId format and return early if not valid carrierid format
-    // @TODO check why demo_verify.maaiii-api.org fail validator.isURL
-    // at this moment it fails because of underscore of demo_verify
-    if (!validator.isURL(carrierId) && carrierId !== 'demo_verify.maaiii-api.org') {
+    if (!validator.isURL(carrierId, { allow_underscores: true })) {
       replace(path404);
       return;
     }

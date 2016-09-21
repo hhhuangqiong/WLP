@@ -210,6 +210,10 @@ routes
     authorize(permission(RESOURCE.USER, ACTION.DELETE)),
     accounts.deleteAccount,
   ])
+  .post('/accounts/:id/requestSetPassword', [
+    authorize(permission(RESOURCE.USER, ACTION.UPDATE)),
+    accounts.requestSetPassword,
+  ])
   // it will be used in the account page to get the possible companies and roles,
   // so it can be assgined to user
   .get('/companies/:companyId/managingCompanies', [

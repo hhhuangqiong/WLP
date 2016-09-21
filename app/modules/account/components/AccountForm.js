@@ -81,9 +81,10 @@ class AccountForm extends Component {
           onConfirm={this.props.handleReverify}
           onCancel={this.props.handleCloseReverifyDialog}
           confirmLabel={formatMessage(MESSAGES.reverify)}
-        >
-          <div>Are you sure want to send reverify email to this user?</div>
-        </ConfirmationDialog>
+          name={this.props.email}
+          dialogMessage={formatMessage(MESSAGES.reverifyDialogMessage)}
+          dialogHeader={formatMessage(MESSAGES.reverifyDialogHeader)}
+        />
 
         <FormField label="User Name">
           <div className="row">
@@ -124,13 +125,12 @@ class AccountForm extends Component {
         </FormField>
 
         <FormField label="Email">
-          {/* No requirement for reverify, user can go to forgot password page to request again
           <If condition={!this.props.isVerified && !this.props.isCreate}>
             <span
               className="account-reverify-email"
               onClick={this.props.handleOpenReverifyDialog}
             >Reverify</span>
-          </If>*/}
+          </If>
           <input
             ref="email"
             name="email"

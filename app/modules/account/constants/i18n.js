@@ -53,12 +53,20 @@ export const MESSAGES = defineMessages({
     id: 'account.warning',
     defaultMessage: 'Warning: This action cannot be undo!',
   },
-  dialogMessage: {
-    id: 'account.dialogMessage',
+  deleteDialogMessage: {
+    id: 'account.deleteDialogMessage',
     defaultMessage: 'Are you sure you want to delete the user called',
   },
-  dialogHeader: {
-    id: 'account.dialogHeader',
+  deleteDialogHeader: {
+    id: 'account.deleteDialogHeader',
     defaultMessage: 'Delete User',
+  },
+  reverifyDialogMessage: {
+    id: 'account.reverifyDialogMessage',
+    defaultMessage: 'Are you sure you want to send verification email to the user called',
+  },
+  reverifyDialogHeader: {
+    id: 'account.reverifyDialogHeader',
+    defaultMessage: 'Reverify User',
   },
 });

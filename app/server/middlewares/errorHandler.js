@@ -12,6 +12,7 @@ function filteredMessage(err) {
     case 'NotFoundError':
     case 'AlreadyInUseError':
     case 'NotPermittedError':
+    case 'NotSupportedError':
       return err.message;
     default:
       errorMessage = [
@@ -29,7 +30,6 @@ function filteredMessage(err) {
 export function apiErrorHandler(err, req, res, next) {
   if (err) {
     logger.error(err.stack);
-
     res
       .status(err.status || 500)
       .json({ [ERROR_LABEL]: {

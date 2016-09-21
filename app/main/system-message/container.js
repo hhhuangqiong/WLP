@@ -27,6 +27,11 @@ class SystemMessageContainer extends Component {
     const { formatMessage } = this.props.intl;
 
     if (has(message, 'id') && has(message, 'defaultMessage')) {
+      // read the message and values for i18n
+      if (has(message, 'value')) {
+        const { value, ...restMessage } = message;
+        return formatMessage(restMessage, value);
+      }
       return formatMessage(message);
     } else if (has(message, 'message')) {
       return message.message;

@@ -5,7 +5,7 @@ export default function (context, params, done) {
       context.dispatch('UPDATE_ACCOUNT_FAILURE', err);
       context.dispatch('ERROR_MESSAGE', err);
     } else {
-      context.dispatch('UPDATE_ACCOUNT_SUCCESS', token);
+      context.dispatch('UPDATE_ACCOUNT_SUCCESS', { token });
       context.dispatch('INFO_MESSAGE', { message: 'Successfully update user' });
     }
     done();

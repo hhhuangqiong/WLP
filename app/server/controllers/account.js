@@ -1,11 +1,10 @@
 import _ from 'lodash';
 import moment from 'moment';
 import { ArgumentError } from 'common-errors';
-import nconf from 'nconf';
 
 const debug = require('debug')('app:controllers/api');
 
-function formatAccountData(account, isCreated) {
+function formatAccountData(account) {
   if (!account.name) {
     return account;
   }
@@ -15,10 +14,6 @@ function formatAccountData(account, isCreated) {
     givenName: account.name.firstName,
     familyName: account.name.lastName,
   };
-  if (isCreated) {
-    formattedAccount.clientId = nconf.get('openid:clientId');
-    formattedAccount.redirectURL = `${nconf.get('APP_URL')}/callback`;
-  }
   return formattedAccount;
 }
 
@@ -60,7 +55,7 @@ export default function accountController(iamServiceClient, provisionHelper) {
     debug('create account via account controller');
     try {
       // separate roles into another request
-      const createUserdata = _.omit(formatAccountData(req.body, true), 'roles');
+      const createUserdata = _.omit(formatAccountData(req.body), 'roles');
       const result = await iamServiceClient.createUser(createUserdata);
       debug('created and get back the user information', result);
       const user = await iamServiceClient.getUser({ id: result.id });
@@ -71,7 +66,17 @@ export default function accountController(iamServiceClient, provisionHelper) {
       if (req.body.roles) {
         await iamServiceClient.setUserRoles({ userId: user.id, roles: req.body.roles });
       }
+      // request for set password email
+      await iamServiceClient.requestSetPassword({ id: user.id });
       res.json(userInfo);
+    } catch (err) {
+      next(err);
+    }
+  }
+
+  async function requestSetPassword(req, res, next) {
+    try {
+      await iamServiceClient.requestSetPassword({ id: req.params.id });
     } catch (err) {
       next(err);
     }
@@ -168,5 +173,6 @@ export default function accountController(iamServiceClient, provisionHelper) {
     deleteAccount,
     updateAccount,
     getAccessibleCompanies,
+    requestSetPassword,
   };
 }

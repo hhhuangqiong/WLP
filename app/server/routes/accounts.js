@@ -23,10 +23,15 @@ const deleteAccount = (req, res, next) => (
   accountController.deleteAccount(req, res, next)
 );
 
+const requestSetPassword = (req, res, next) => (
+  accountController.requestSetPassword(req, res, next)
+);
+
 export {
   getAccounts,
   getAccount,
   createAccount,
   updateAccount,
   deleteAccount,
+  requestSetPassword,
 };

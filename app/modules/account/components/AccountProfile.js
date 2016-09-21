@@ -65,7 +65,7 @@ class AccountProfile extends Component {
       selectedCompany: '',
       selectedRoles: [],
       currentRoles: {},
-      accountActiontoken: Math.random(),
+      operationToken: Math.random(),
     };
     this.handleFirstNameChange = this.handleFirstNameChange.bind(this);
     this.handleLastNameChange = this.handleLastNameChange.bind(this);
@@ -80,6 +80,9 @@ class AccountProfile extends Component {
     this.validateLastName = this.validateLastName.bind(this);
     this.validateEmail = this.validateEmail.bind(this);
     this.handleDiscard = this.handleDiscard.bind(this);
+    this.handleReverify = this.handleReverify.bind(this);
+    this.handleOpenReverifyDialog = this.handleOpenReverifyDialog.bind(this);
+    this.handleCloseReverifyDialog = this.handleCloseReverifyDialog.bind(this);
   }
 
   componentDidMount() {
@@ -92,9 +95,12 @@ class AccountProfile extends Component {
 
   componentWillReceiveProps(nextProps) {
     const { accountId } = this.context.params;
+
     // callback from the previous action and redirect back to the account list page
-    if (this.state.accountActiontoken && this.state.accountActiontoken === nextProps.accountActionToken) {
-      this.redirectToHome();
+    if (this.state.operationToken === _.get(nextProps.operationResult, 'token')) {
+      // update the operation Token, since the token is already consumed
+      this.state.operationToken = Math.random();
+      this.redirect(_.get(nextProps.operationResult, 'redirection'));
       return;
     }
 
@@ -121,10 +127,10 @@ class AccountProfile extends Component {
       email,
     };
   }
-
-  redirectToHome() {
+  // it will redirect to the page according to the operation result
+  redirect(path) {
     const { identity } = this.context.params;
-    this.context.router.push(`/${identity}/account`);
+    this.context.router.push(`/${identity}${path}`);
   }
 
   updateAccountState(props) {
@@ -143,7 +149,7 @@ class AccountProfile extends Component {
       });
     }
     props.clearValidations();
-    this.state.accountActiontoken = Math.random();
+    this.state.operationToken = Math.random();
   }
 
   validatorTypes() {
@@ -225,25 +231,22 @@ class AccountProfile extends Component {
         roles,
       };
       if (this.isCreate()) {
-        this.context.executeAction(createAccount, { token: this.state.accountActiontoken, ...data });
+        this.context.executeAction(createAccount, { token: this.state.operationToken, ...data });
       } else {
         data.id = this.state.email;
-        this.context.executeAction(updateAccount, { token: this.state.accountActiontoken, ...data });
+        this.context.executeAction(updateAccount, { token: this.state.operationToken, ...data });
       }
     });
   }
 
   handleDiscard() {
-    this.redirectToHome();
+    this.redirect('/account');
   }
 
   handleDelete() {
     this.context.executeAction(deleteAccount, {
-      accountId: this.state.email,
-      companyId: this.props.currentCompany.id,
-      token: this.state.accountActiontoken,
-    });
-
+      token: this.state.operationToken,
+      id: this.state.email });
     this.handleCloseDeleteDialog();
   }
 
@@ -256,10 +259,7 @@ class AccountProfile extends Component {
   }
 
   handleReverify() {
-    this.context.executeAction(resendCreatePassword, {
-      data: { username: this.state.email },
-    });
-
+    this.context.executeAction(resendCreatePassword, { id: this.state.email });
     this.handleCloseReverifyDialog();
   }
 
@@ -410,18 +410,18 @@ AccountProfile = connectToStores(
  (context, props) => {
    // read from the props to see if it is create or edit
    const { accountId } = props.params;
-   const defaultState = {};
+   const defaultProps = {};
    if (accountId) {
-     defaultState.account = context.getStore(AccountStore).getSelectedAccount();
-     defaultState.mode = 'edit';
+     defaultProps.account = context.getStore(AccountStore).getSelectedAccount();
+     defaultProps.mode = 'edit';
    } else {
-     defaultState.account = context.getStore(AccountStore).getNewAccount();
-     defaultState.mode = 'create';
+     defaultProps.account = context.getStore(AccountStore).getNewAccount();
+     defaultProps.mode = 'create';
    }
-   defaultState.currentCompany = context.getStore(ApplicationStore).getCurrentCompany();
-   defaultState.managingCompanies = context.getStore(AccountStore).getManagingCompanies();
-   defaultState.accountActionToken = context.getStore(AccountStore).getAccountActionToken();
-   return defaultState;
+   defaultProps.currentCompany = context.getStore(ApplicationStore).getCurrentCompany();
+   defaultProps.managingCompanies = context.getStore(AccountStore).getManagingCompanies();
+   defaultProps.operationResult = context.getStore(AccountStore).getOperationResult();
+   return defaultProps;
  });
 
 export default AccountProfile;

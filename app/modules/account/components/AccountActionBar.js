@@ -46,8 +46,8 @@ const AccountActionBar = React.createClass({
           confirmLabel={formatMessage(MESSAGES.delete)}
           name={accountId}
           warning={formatMessage(MESSAGES.warning)}
-          dialogMessage={formatMessage(MESSAGES.dialogMessage)}
-          dialogHeader={formatMessage(MESSAGES.dialogHeader)}
+          dialogMessage={formatMessage(MESSAGES.deleteDialogMessage)}
+          dialogHeader={formatMessage(MESSAGES.deleteDialogHeader)}
         />
         <div className="top-bar-section">
           <ul className="top-bar--inner">
