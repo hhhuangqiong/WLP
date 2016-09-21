@@ -57,7 +57,7 @@ const EndUsers = React.createClass({
         this.getDefaultQuery()),
         this.getRequestBodyFromQuery(),
         this.getStateFromStores(),
-        { userName: '' },
+        { username: '' },
       );
   },
 
@@ -73,7 +73,7 @@ const EndUsers = React.createClass({
   componentDidUpdate(prevProps, prevState) {
     const { location: { search } } = this.props;
     const { location: { search: prevSearch } } = prevProps;
-    
+  
     if (search !== prevSearch) {
       this.context.executeAction(clearEndUsers);
       this.fetchData();
@@ -133,7 +133,7 @@ const EndUsers = React.createClass({
             </li>
             <li className="top-bar--inner">
               <SearchInput
-                value={this.state.userName}
+                value={this.state.username}
                 placeHolder={formatMessage(i18nMessages.username)}
                 onInputChangeHandler={this.onInputChangeHandler}
                 onKeyPressHandler={this.handleSearchSubmit}
@@ -200,7 +200,7 @@ const EndUsers = React.createClass({
     _.merge(_.clone(this.getDefaultQuery()),
       this.getRequestBodyFromState(),
       this.getStateFromStores(),
-      { userName: this.props.location.query.userName }
+      { username: this.props.location.query.username }
     );
     this.context.executeAction(fetchEndUsers, payload);
   },
@@ -212,7 +212,7 @@ const EndUsers = React.createClass({
         _.merge(_.clone(this.getDefaultQuery()),
           this.getRequestBodyFromState(),
           this.getStateFromStores(),
-          { userName: this.state.userName }
+          { username: this.state.username }
         );
       const { pathname } = this.context.location;
       this.context.executeAction(clearEndUsers);
@@ -224,7 +224,7 @@ const EndUsers = React.createClass({
   },
 
   onInputChangeHandler(e) {
-    this.setState({ userName: e.target.value });
+    this.setState({ username: e.target.value });
   },
 
   /**

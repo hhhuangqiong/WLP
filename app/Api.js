@@ -147,7 +147,7 @@ Api.prototype.getEndUserWallet = function getEndUserWallet(params, cb) {
 Api.prototype.getEndUsers = function getEndUsers(params, cb) {
   return superagent
     .get(`${this._getBaseUrl(params.carrierId)}/users`)
-    .query(_.pick(params, ['startDate', 'endDate', 'page']))
+    .query(_.pick(params, ['startDate', 'endDate', 'page', 'username']))
     .accept('json')
     .end(genericHandler(cb));
 };

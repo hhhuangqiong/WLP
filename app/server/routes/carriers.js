@@ -134,11 +134,11 @@ function getUsers(req, res) {
     fromTime: req.query.startDate,
     toTime: req.query.endDate,
     pageNumberIndex: req.query.page,
-    userName: req.query.userName,
+    username: req.query.username,
   };
 
-  if (queries.userName) {
-    endUserRequest.getUser(carrierId, queries.userName, (err, result) => {
+  if (queries.username) {
+    endUserRequest.getUser(carrierId, queries.username, (err, result) => {
       if (err) {
         const { code, message, timeout, status } = err;
 
