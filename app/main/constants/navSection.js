@@ -16,17 +16,17 @@ const MESSAGES = defineMessages({
     id: 'account',
     defaultMessage: 'Account',
   },
-  users: {
-    id: 'users',
-    defaultMessage: 'Users',
+  user: {
+    id: 'user',
+    defaultMessage: 'User',
   },
   company: {
     id: 'company',
     defaultMessage: 'company',
   },
-  calls: {
-    id: 'calls',
-    defaultMessage: 'Calls',
+  call: {
+    id: 'call',
+    defaultMessage: 'Call',
   },
   im: {
     id: 'im',
@@ -70,7 +70,7 @@ export default [
     permission: permission(RESOURCE.USER),
   },
   {
-    name: MESSAGES.users,
+    name: MESSAGES.user,
     icon: 'icon-menuenduser',
     page: END_USER,
     path: `/${END_USER}`,
@@ -84,7 +84,7 @@ export default [
     permission: permission(RESOURCE.COMPANY),
   },
   {
-    name: MESSAGES.calls,
+    name: MESSAGES.call,
     icon: 'icon-menucalls',
     page: CALL,
     path: `/${CALL}`,
