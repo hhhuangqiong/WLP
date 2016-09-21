@@ -8,6 +8,7 @@
   "only": [
     "bin/",
     "app/",
-    "*.babel.js"
-  ],
+    "*.babel.js",
+    "test/"
+  ]
 }

@@ -11,12 +11,9 @@ export default function switchCompany(companyName) {
   expect(browser.isVisible(`li[title=${companyName}] > a`)).to.be.true;
 
   browser.click(`li[title=${companyName}] > a`);
-  browser.moveToObject('.mainmenu-bar');
-
-  // TODO: there is no identifier of switching company at browser moment
-  // and there are refactoring works on going
-  // therefore it is necessary to keep a pause to avoid the test is too fast before the UI changes
-  browser.pause(5000);
+  const mainmenuBar = '.mainmenu-bar';
+  browser.waitForVisible(mainmenuBar);
+  browser.moveToObject(mainmenuBar);
 
   expect(browser.getText('#sidebar-company-name')).to.be.equal(companyName);
 }

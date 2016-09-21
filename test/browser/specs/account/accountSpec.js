@@ -40,7 +40,7 @@ describe('Account', () => {
       browser.isVisible('h1=Sign In');
       browser.setValue('[name="username"]', INCORRECT_CREDENTIAL.name);
       browser.setValue('[name="password"]', INCORRECT_CREDENTIAL.password);
-      browser.click('#sign-in-button');
+      browser.click('button[type="submit"]');
 
       browser.waitForVisible(`.system-message=${ERROR_MESSAGE}`, PAGE_TRANSITION_TIMEOUT);
     });
@@ -51,7 +51,7 @@ describe('Account', () => {
       expect(browser.getValue('.language-switcher')).to.equal(EN);
     });
 
-    it('should display login error message in Chinese', () => {
+    it('should display login error message in English', () => {
       const ERROR_MESSAGE = 'The username and password you entered do not match.';
 
       const INCORRECT_CREDENTIAL = {
@@ -62,7 +62,7 @@ describe('Account', () => {
       browser.isVisible('h1=Sign In');
       browser.setValue('[name="username"]', INCORRECT_CREDENTIAL.name);
       browser.setValue('[name="password"]', INCORRECT_CREDENTIAL.password);
-      browser.click('#sign-in-button');
+      browser.click('button[type="submit"]');
 
       browser.waitForVisible(`.system-message=${ERROR_MESSAGE}`, PAGE_TRANSITION_TIMEOUT);
     });

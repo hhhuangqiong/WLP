@@ -3,9 +3,10 @@ import {
 } from '../lib/constants';
 
 export default function signIn(login, password) {
-  browser.waitForVisible('#sign-in-button');
-  browser.setValue('[name="username"]', login || ROOT_LOGIN.name);
+  // @todo use id in IAM to for precise element lookup
+  browser.waitForVisible('button[type="submit"]');
+  browser.setValue('[name="id"]', login || ROOT_LOGIN.name);
   browser.setValue('[name="password"]', password || ROOT_LOGIN.password);
-  browser.click('#sign-in-button');
+  browser.click('button[type="submit"]');
   browser.waitForVisible('.mainmenu-bar');
 }
