@@ -1,14 +1,16 @@
 import { Router } from 'express';
-import * as exportRoutes from '../routes/export';
+import { fetchDep } from './../utils/bottle';
 import cacheControl from '../middlewares/cacheControl';
 
 const router = new Router();
 
+const exportController = fetchDep('ExportController');
+
 router
   .use(cacheControl)
-  .get('/:carrierId', exportRoutes.getCarrierExport)
-  .get('/:carrierId/cancel', exportRoutes.getCarrierExportCancel)
-  .get('/:carrierId/progress', exportRoutes.getCarrierExportFileProgress)
-  .get('/:carrierId/file', exportRoutes.getCarrierExportFile);
+  .get('/:carrierId', exportController.getCarrierExport)
+  .get('/:carrierId/cancel', exportController.getCarrierExportCancel)
+  .get('/:carrierId/progress', exportController.getCarrierExportFileProgress)
+  .get('/:carrierId/file', exportController.getCarrierExportFile);
 
 export default router;
