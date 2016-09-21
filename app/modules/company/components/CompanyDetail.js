@@ -1,5 +1,6 @@
 import React, { PropTypes } from 'react';
 import moment from 'moment';
+import { isString } from 'lodash';
 import { injectIntl, intlShape } from 'react-intl';
 
 import * as dateLocale from '../../../utils/dateLocale';
@@ -13,11 +14,23 @@ import {
   UPDATING,
   STATUS,
 } from '../constants/status';
-import { MESSAGES, PAYMENT_TYPE } from '../constants/companyOptions';
+import { MESSAGES, PAYMENT_TYPE, WALLET_TYPE } from '../constants/companyOptions';
 
 const CompanyDetail = (props, context) => {
   const { identity } = context.params;
-  const { id, companyName, paymentType, domain, createDate, status, intl: { formatMessage } } = props;
+  const {
+    id,
+    companyName,
+    paymentType,
+    chargeWallet,
+    domain,
+    createDate,
+    status,
+    intl: { formatMessage },
+  } = props;
+  const isWalletVisible = paymentType === PAYMENT_TYPE.PRE_PAID &&
+    // TODO: remove is string condition when charge wallet is added to the API
+    (!isString(chargeWallet) || chargeWallet === WALLET_TYPE.COMPANY);
   return (
     <tr key={companyName}>
       <td>{companyName}</td>
@@ -62,7 +75,7 @@ const CompanyDetail = (props, context) => {
           <button className="button--secondary" onClick={() => context.router.push(`/${identity}/company/${id}/edit`)}>
             {formatMessage(MESSAGES.details)}
           </button>
-          <If condition={paymentType === PAYMENT_TYPE.PRE_PAID}>
+          <If condition={isWalletVisible}>
             <button className="button--secondary" onClick={() => context.router.push(`/${identity}/company/${domain}/wallet`)}>
               {formatMessage(MESSAGES.wallet)}
             </button>
@@ -79,6 +92,7 @@ CompanyDetail.propTypes = {
   id: PropTypes.string.isRequired,
   companyName: PropTypes.string.isRequired,
   paymentType: PropTypes.string.isRequired,
+  chargeWallet: PropTypes.string,
   domain: PropTypes.string,
   createDate: PropTypes.string.isRequired,
   status: PropTypes.string.isRequired,
