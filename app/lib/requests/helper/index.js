@@ -1,5 +1,5 @@
 import moment from 'moment';
-import { get } from 'lodash';
+import { get, isEmpty } from 'lodash';
 
 /**
  * @method contructOpts Provides basic function for validating
@@ -121,6 +121,23 @@ export function composeSolrResponse(response, pageSize) {
   };
 }
 
+export function parseBackendError(superagentResponse) {
+  const { body, text } = superagentResponse;
+  if (!isEmpty(body)) {
+    return body;
+  }
+  // For those cases where backend API doesn't set correct Content-Type header
+  try {
+    return JSON.parse(text);
+  } catch (e) {
+    return {
+      error: {
+        message: text,
+      },
+    };
+  }
+}
+
 /**
  * @method handleError Unify error data received from different APIs
  * http://issuetracking.maaii.com:8090/display/MAAIIP/MUMS+User+Management+by+Carrier+HTTP+API#MUMSUserManagementbyCarrierHTTPAPI-HTTPErrorCodes
@@ -131,7 +148,6 @@ export function composeSolrResponse(response, pageSize) {
  */
 export function handleError(err, status) {
   const error = new Error(err.message);
-
   if (err.code === 'ETIMEDOUT' || err.code === 'ECONNABORTED') {
     error.status = 504;
     error.timeout = err.timeout;
@@ -142,13 +158,13 @@ export function handleError(err, status) {
   } else if (err.response) {
     // SuperAgent error object structure
     // https://visionmedia.github.io/superagent/#error-handling
-    const response = err.response.body;
+    const parsedError = parseBackendError(err.response);
     error.status = err.status;
     error.code = ['error.code', 'error']
-      .map(prop => get(response, prop))
+      .map(prop => get(parsedError, prop))
       .find(x => x);
     error.message = ['error.message', 'message']
-      .map(prop => get(response, prop))
+      .map(prop => get(parsedError, prop))
       .find(x => x);
   }
 

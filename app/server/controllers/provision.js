@@ -95,6 +95,8 @@ export default function provisionController(iamServiceClient, provisionHelper) {
           id: item.id,
           companyName: targetCompanyName || EMPTY_VALUE,
           domain: item.profile.carrierId || EMPTY_VALUE,
+          paymentType: item.profile.paymentMode,
+          chargeWallet: item.profile.chargeWallet,
           createDate: item.createdAt,
           status: item.status,
         };

@@ -49,6 +49,9 @@
             button {
               display: inline-block;
               margin-bottom: 0;
+              &:not(:first-child) {
+                margin-left: rem-calc(5);
+              }
             }
           }
         }

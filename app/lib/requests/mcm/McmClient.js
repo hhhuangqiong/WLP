@@ -21,6 +21,8 @@ export function mcmClient(options) {
       .map(x => _.trim(x, '/'))
       .join('/');
     let req = request[definition.method](url)
+      .accept('application/json')
+      .type('application/json')
       .timeout(timeout);
     if (definition.query) {
       req = req.query(definition.query);
@@ -46,7 +48,7 @@ export function mcmClient(options) {
   function getTopUpHistory(params) {
     const { carrierId, ...query } = params;
     const httpOptions = {
-      url: `carriers/${carrierId}/topUpRecords`,
+      url: `carriers/${carrierId}/topup-records`,
       method: 'get',
       query: renameKeys(query, {
         pageNumber: 'page',
