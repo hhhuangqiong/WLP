@@ -2,7 +2,6 @@ import { get, first, isNull } from 'lodash';
 import moment from 'moment';
 
 import React, { PropTypes } from 'react';
-import classNames from 'classnames';
 import { defineMessages, FormattedMessage, intlShape, injectIntl } from 'react-intl';
 
 import fetchWallet from '../actions/fetchWallet';
@@ -13,9 +12,11 @@ import * as Accordion from '../../../main/components/Accordion';
 import * as Panel from '../../../main/components/Panel';
 import CountryFlag from '../../../main/components/CountryFlag';
 import Icon from '../../../main/components/Icon';
+import Permit from '../../../main/components/common/Permit';
 
 import WalletInfoItem from './WalletInfoItem';
 import Item from './InfoItem';
+import { RESOURCE, ACTION, permission } from '../../../main/acl/acl-enums';
 
 const { displayDateFormat: DATE_FORMAT } = require('./../../../main/config');
 import { getCountryName } from '../../../utils/StringFormatter';
@@ -298,20 +299,27 @@ const EndUserProfile = React.createClass({
             </Accordion.Wrapper>
 
             <If condition={this.props.user.userDetails.verified}>
-              <div className="enduser-profile__control text-center">
-                <div className="enduser-profile__control__row">
-                  { /*
-
-                  // Temporarily Revoke for v1.5.x
-
-                  <If condition={this.props.user.userDetails.accountStatus.toLowerCase() === 'active'}>
-                    <button className="round" onClick={this.handleSuspendClick}>suspend</button>
-                  <Else />
-                    <button className="round" onClick={this.handleReactivateClick}>reactivate</button>
-                  </If>
-                  */ }
+              <Permit permission={permission(RESOURCE.END_USER, ACTION.UPDATE)}>
+                <div className="enduser-profile__control text-center">
+                  <div className="enduser-profile__control__row">
+                    <If condition={this.props.user.userDetails.accountStatus.toLowerCase() === 'active'}>
+                      <button className="round" onClick={this.handleSuspendClick}>
+                        <FormattedMessage
+                          id="endUser.details.suspend"
+                          defaultMessage="Suspend"
+                        />
+                      </button>
+                    <Else />
+                      <button className="round" onClick={this.handleReactivateClick}>
+                      <FormattedMessage
+                        id="endUser.details.reactivate"
+                        defaultMessage="Reactivate"
+                      />
+                      </button>
+                    </If>
+                  </div>
                 </div>
-              </div>
+              </Permit>
             </If>
           </Panel.Body>
         </Panel.Wrapper>

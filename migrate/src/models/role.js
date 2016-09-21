@@ -9,7 +9,7 @@ export function formatNewRole(company) {
       company: !company.parent ? ['create', 'update', 'read', 'delete'] : [],
       user: ['create', 'update', 'read', 'delete'],
       role: ['create', 'update', 'read', 'delete'],
-      endUser: ['create', 'update', 'read', 'delete'],
+      endUser: ['update', 'read'],
       generalOverview: ['read'],
       topUp: ['read'],
       vsf: ['read'],
@@ -17,6 +17,7 @@ export function formatNewRole(company) {
       im: ['read'],
       sms: ['read'],
       verificationSdk: ['read'],
+      whitelist: ['create', 'update', 'read', 'delete'],
     },
     // create the root role that IAM will make it read only
     isRoot: true,

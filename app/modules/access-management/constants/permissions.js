@@ -61,10 +61,6 @@ export const PERMISSIONS = [{
 }, {
   intlKey: 'endUserManagement',
   children: [{
-    intlKey: 'create',
-    resource: RESOURCE.END_USER,
-    action: ACTION.CREATE,
-  }, {
     intlKey: 'update',
     resource: RESOURCE.END_USER,
     action: ACTION.UPDATE,
@@ -72,9 +68,24 @@ export const PERMISSIONS = [{
     intlKey: 'read',
     resource: RESOURCE.END_USER,
     action: ACTION.READ,
+  }],
+}, {
+  intlKey: 'whitelistManagement',
+  children: [{
+    intlKey: 'create',
+    resource: RESOURCE.WHITELIST,
+    action: ACTION.CREATE,
+  }, {
+    intlKey: 'update',
+    resource: RESOURCE.WHITELIST,
+    action: ACTION.UPDATE,
+  }, {
+    intlKey: 'read',
+    resource: RESOURCE.WHITELIST,
+    action: ACTION.READ,
   }, {
     intlKey: 'delete',
-    resource: RESOURCE.END_USER,
+    resource: RESOURCE.WHITELIST,
     action: ACTION.DELETE,
   }],
 }, {
