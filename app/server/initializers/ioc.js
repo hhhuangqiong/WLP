@@ -2,7 +2,6 @@ import Bottle from 'bottlejs';
 import logger from 'winston';
 
 import makeRedisClient from './redis';
-import ensureAuthenticated from '../middlewares/ensureAuthenticated';
 
 // Services
 import CallsRequest from '../../lib/requests/dataProviders/Call';
@@ -17,11 +16,11 @@ import { ApplicationRequest } from '../../lib/requests/Application';
 import { createAclResolver } from './../../main/acl/acl-resolver';
 
 // Middleware
-import { createFetchPermissionsMiddleware } from '../../server/middlewares/authorization';
-
+import { register as registerMiddleware } from './../middlewares';
 // Controllers
 import { register as registerControllers } from './../controllers';
 
+// Routers
 import { createAuthRouter } from './../routers/auth';
 
 /**
@@ -35,13 +34,6 @@ export default function init(nconf) {
   const ioc = Bottle(nconf.get('containerName'));
 
   ioc.constant('logger', logger);
-
-  ioc.factory('middlewares.ensureAuthenticated', () =>
-    ensureAuthenticated(nconf.get('landing:unauthenticated:path')));
-
-  ioc.factory('middlewares.flash', () => {
-    return (require('../middlewares/flash').default)();
-  });
 
   ioc.constant('DATAPROVIDER_API_BASE_URL', nconf.get('dataProviderApi:baseUrl'));
   ioc.constant('DATAPROVIDER_API_TIMEOUT', nconf.get('dataProviderApi:timeout'));
@@ -119,7 +111,12 @@ export default function init(nconf) {
   ioc.service('AclResolver', createAclResolver, 'logger', 'IamServiceClient', 'ProvisionHelper');
 
   // Middleware
-  ioc.service('FetchPermissionsMiddleware', createFetchPermissionsMiddleware, 'logger', 'AclResolver');
+  ioc.constant('SessionMiddlewareOptions', {
+    redisUri: nconf.get('redisUri'),
+    retryAttempts: nconf.get('redisFailoverAttempts'),
+    secret: nconf.get('secret:session'),
+  });
+  registerMiddleware(ioc);
 
   // Controllers
   registerControllers(ioc);

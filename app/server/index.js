@@ -6,14 +6,12 @@ import expressValidator from 'express-validator';
 import favicon from 'serve-favicon';
 import methodOverride from 'method-override';
 import morgan from 'morgan';
-import session from 'express-session';
 import userLocale from 'm800-user-locale';
 
 import app from '../app';
 import config from '../config';
 import render from './render';
 import apiResponse from './utils/apiResponse';
-import { apiErrorHandler } from './middlewares/errorHandler';
 import { fetchDep } from './utils/bottle';
 import { ERROR_500 } from '../utils/paths';
 
@@ -57,6 +55,8 @@ export default function (port) {
 
   // Please, put IoC dependencies here, so they are a bit closer to the top of the file :)
   const fetchPermissionsMiddleware = fetchDep('FetchPermissionsMiddleware');
+  const sessionMiddleware = fetchDep('SessionMiddleware');
+  const apiErrorHandlerMiddleware = fetchDep('ApiErrorHandlerMiddleware');
   const authRouter = fetchDep('AuthRouter');
 
   // To enable using PUT, DELETE METHODS
@@ -81,11 +81,7 @@ export default function (port) {
   // static resources
   server.use(express.static(path.join(PROJ_ROOT, 'public')));
 
-  // eslint-disable-next-line max-len
-  const redisStore = (require('./initializers/redisStore').default)(session, nconf.get('redisUri'), env);
-
-  server.use((require('./middlewares/redisConnection').default)(
-    redisStore, session, nconf.get('secret:session'), nconf.get('redisFailoverAttempts'), env));
+  server.use(sessionMiddleware);
 
   server.use(morgan('dev'));
 
@@ -120,7 +116,7 @@ export default function (port) {
   server.use(require('./routers/hlr').default);
   server.use(config.EXPORT_PATH_PREFIX, require('./routers/export').default);
   server.use(config.API_PATH_PREFIX, require('./routers/api').default);
-  server.use(config.API_PATH_PREFIX, apiErrorHandler);
+  server.use(config.API_PATH_PREFIX, apiErrorHandlerMiddleware);
 
   // on the server side, it will fetch the permission list, if any sever error will go into 500 at the bottom.
   // other routing are checked in the app router directly, it will check route existence and permission.

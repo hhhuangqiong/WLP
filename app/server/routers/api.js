@@ -1,10 +1,5 @@
 import { Router } from 'express';
 import nconf from 'nconf';
-
-import cacheControl from '../middlewares/cacheControl';
-import {
-  createAuthorizationMiddleware as authorize,
-} from '../middlewares/authorization';
 import { permission, RESOURCE, ACTION } from './../../main/acl/acl-enums';
 import { fetchDep } from './../utils/bottle';
 
@@ -21,6 +16,8 @@ apiRouter
   }));
 
 // TODO: refactor api.js to be a factory function with dependencies
+const noCacheMiddleware = fetchDep('NoCacheMiddleware');
+const authorize = fetchDep('AuthorizationMiddlewareFactory');
 const roleController = fetchDep(nconf.get('containerName'), 'RoleController');
 const companies = fetchDep(nconf.get('containerName'), 'CompanyController');
 const accounts = fetchDep(nconf.get('containerName'), 'AccountController');
@@ -30,7 +27,7 @@ const carrierWalletController = fetchDep(nconf.get('containerName'), 'CarrierWal
 
 // eslint:max-len 0
 routes
-  .use(cacheControl)
+  .use(noCacheMiddleware)
   // general overview
   .get('/overview/summaryStats', [
     authorize(permission(RESOURCE.GENERAL)),
