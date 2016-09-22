@@ -65,6 +65,9 @@ function capabilitiesTransform(value) {
   if (value.indexOf('verification-sdk.ivr') > -1) {
     provision.profile.capabilities.push('verification.ivr');
   }
+
+  // default for the profile charge wallet is none
+  provision.profile.chargeWallet = provision.profile.chargeWallet || 'WALLET_NONE';
   return provision;
 }
 
