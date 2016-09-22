@@ -18,20 +18,27 @@ const SystemMessageStore = createStore({
     ERROR_MESSAGE: 'handleErrorMessage',
     INFO_MESSAGE: 'handleInfoMessage',
     // types below are going to be obsoleted or moved to the corresponding store
-    CREATE_COMPANY_FAILURE: 'handleErrorMessage',
-    DEACTIVATE_COMPANY_SUCCESS: 'handleUpdateCompanySuccess',
     DEACTIVATE_END_USER_FAILURE: 'handleErrorMessage',
     DELETE_END_USER_FAILURE: 'handleErrorMessage',
     DELETE_END_USER_SUCCESS: 'handleDeleteEndUserSuccess',
     REACTIVATE_COMPANY_SUCCESS: 'handleUpdateCompanySuccess',
-    TOP_UP_WALLET_FAILURE: 'handleTopUpWalletFailure',
     REACTIVATE_END_USER_FAILURE: 'handleErrorMessage',
+    // accounts
     CREATE_ACCOUNT_SUCCESS: 'handleCreateAccountSuccess',
     CREATE_ACCOUNT_FAILURE: 'handleErrorMessage',
     DELETE_ACCOUNT_SUCCESS: 'handleDeleteAccountSuccess',
     DELETE_ACCOUNT_FAILURE: 'handleErrorMessage',
     UPDATE_ACCOUNT_SUCCESS: 'handleUpdateAccountSuccess',
     UPDATE_ACCOUNT_FAILURE: 'handleErrorMessage',
+    FETCH_ACCOUNT_FAILURE: 'handleErrorMessage',
+    FETCH_ACCOUNTS_FAILURE: 'handleErrorMessage',
+    FETCH_CARRIER_MANAGING_COMPANIES_FAILURE: 'handleErrorMessage',
+    RESEND_CREATE_PASSWORD_FAILURE: 'handleErrorMessage',
+    // company (apiActionCreator will dispatch ERROR_MESSAGE automatically, those are not added)
+    CREATE_COMPANY_FAILURE: 'handleErrorMessage',
+    TOP_UP_WALLET_FAILURE: 'handleTopUpWalletFailure',
+    UPDATE_COMPANY_FAILURE: 'handleErrorMessage',
+    UPDATE_CARRIER_PROFILE_FAILURE: 'handleErrorMessage',
   },
 
   // do not change this

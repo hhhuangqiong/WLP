@@ -1,14 +1,10 @@
-export default function (context, params, done) {
+export default function (context, params) {
   const { apiClient } = context;
-  context.dispatch('FETCH_CARRIER_MANAGING_COMPANIES');
-  apiClient
-    .get(`companies/${params.companyId}/managingCompanies`)
+  return apiClient
+    .get(`/carriers/${params.carrierId}/managingCompanies`)
     .then(result => {
       context.dispatch('FETCH_CARRIER_MANAGING_COMPANIES_SUCCESS', result);
-      done();
-    })
-    .catch(err => {
-      context.dispatch('FETCH_CARRIER_MANAGING_COMPANIES_SUCCESS', err);
-      done();
+    }).catch(err => {
+      context.dispatch('FETCH_CARRIER_MANAGING_COMPANIES_FAILURE', err);
     });
 }

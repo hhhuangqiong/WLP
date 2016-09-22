@@ -5,25 +5,25 @@ import * as saUtil from '../../utils/superagent';
 const debug = require('debug')('app:server/api/vsf');
 const genericHandler = _.partial(saUtil.genericHandler, debug);
 
-export default function (apiPrefix) {
+export default function () {
   return {
-    getVSFTransactions(params, cb) {
+    getSMS(params, cb) {
       superagent
-        .get(`${this._getBaseUrl(params.carrierId, apiPrefix)}/vsf`)
+        .get(`${this._getBaseUrl(params.carrierId)}/sms`)
         .query(params)
         .accept('json')
         .end(genericHandler(cb));
     },
-    getVsfMonthlyStats(params, cb) {
+    getSmsMonthlyStats(params, cb) {
       superagent
-        .get(`${this._getBaseUrl(params.carrierId, apiPrefix)}/vsf/overview/monthlyStats`)
+        .get(`${this._getBaseUrl(params.carrierId)}/sms/overview/monthlyStats`)
         .accept('json')
         .query(params)
         .end(genericHandler(cb));
     },
-    getVsfSummaryStats(params, cb) {
+    getSmsSummaryStats(params, cb) {
       superagent
-        .get(`${this._getBaseUrl(params.carrierId, apiPrefix)}/vsf/overview/summaryStats`)
+        .get(`${this._getBaseUrl(params.carrierId)}/sms/overview/summaryStats`)
         .accept('json')
         .query(params)
         .end(genericHandler(cb));

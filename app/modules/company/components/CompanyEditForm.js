@@ -62,8 +62,8 @@ class CompanyEditForm extends Component {
     this.updateCompany = this.updateCompany.bind(this);
   }
   componentDidMount() {
-    const { executeAction, params } = this.context;
-    executeAction(fetchCompanyDetail, params.companyId);
+    const { executeAction, params: { provisionId, identity: carrierId } } = this.context;
+    executeAction(fetchCompanyDetail, { provisionId, carrierId });
   }
   componentWillReceiveProps(nextProps) {
     const { identity } = this.context.params;
@@ -139,6 +139,7 @@ class CompanyEditForm extends Component {
     };
   }
   saveCompany() {
+    const { identity } = this.context.params;
     const { companyName, country, timezone, token } = this.state;
     this.props.validate((error) => {
       if (!error) {
@@ -147,7 +148,7 @@ class CompanyEditForm extends Component {
           country,
           timezone,
           token,
-          companyId: this.props.companyDetail.companyId,
+          carrierId: identity,
         };
         const { executeAction } = this.context;
         executeAction(updateProfile, companyInfo);
@@ -155,6 +156,7 @@ class CompanyEditForm extends Component {
     });
   }
   updateCompany() {
+    const { identity } = this.context.params;
     const {
       companyCode,
       companyName,
@@ -184,6 +186,7 @@ class CompanyEditForm extends Component {
           token,
           resellerCarrierId,
           resellerCompanyId,
+          carrierId: identity,
         };
         const { executeAction } = this.context;
         executeAction(updateCompany, companyInfo);

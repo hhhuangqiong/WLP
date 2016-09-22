@@ -9,8 +9,8 @@ import carrierWalletController from './carrierWallet';
 
 function register(container) {
   container.service('AuthController', authController);
-  container.service('RoleController', roleController, 'IamServiceClient');
-  container.service('CompanyController', companyController, 'IamServiceClient');
+  container.service('RoleController', roleController, 'IamServiceClient', 'ProvisionHelper');
+  container.service('CompanyController', companyController, 'IamServiceClient', 'ProvisionHelper');
   container.service('AccountController', accountController, 'IamServiceClient', 'ProvisionHelper');
   container.service('ProvisionController', provisionController, 'IamServiceClient', 'ProvisionHelper');
   container.service('ExportController', exportController);

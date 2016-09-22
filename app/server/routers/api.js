@@ -31,9 +31,7 @@ const carrierWalletController = fetchDep(nconf.get('containerName'), 'CarrierWal
 // eslint:max-len 0
 routes
   .use(cacheControl)
-  .get('/company',
-    carriers.getCompany,
-  )
+  // general overview
   .get('/overview/summaryStats', [
     authorize(permission(RESOURCE.GENERAL)),
     carriers.getOverviewSummaryStats,
@@ -47,15 +45,15 @@ routes
     authorize(permission(RESOURCE.END_USER)),
     carriers.getUsers,
   ])
-  .get('/carriers/:carrierId/users/whitelist/:username?', [
+  .get('/users/whitelist/:username?', [
     authorize(permission(RESOURCE.WHITELIST)),
     carriers.getWhitelist,
   ])
-  .post('/carriers/:carrierId/users/whitelist', [
+  .post('/users/whitelist', [
     authorize(permission(RESOURCE.WHITELIST, ACTION.CREATE)),
     carriers.addWhitelist,
   ])
-  .delete('/carriers:/:carrierId/users/whitelist', [
+  .delete('/users/whitelist', [
     authorize(permission(RESOURCE.WHITELIST, ACTION.DELETE)),
     carriers.removeWhitelist,
   ])
@@ -213,15 +211,17 @@ routes
     authorize(permission(RESOURCE.USER, ACTION.UPDATE)),
     accounts.requestSetPassword,
   ])
-  // it will be used in the account page to get the possible companies and roles,
+  // company controller will be used to manage the carrier,
+  // it will convert the carrier id into company id
+  // managingCompanies will be used in the account page to get the possible companies and roles,
   // so it can be assgined to user
-  .get('/companies/:companyId/managingCompanies', [
+  .get('/managingCompanies', [
     authorize(permission(RESOURCE.USER)),
     companies.getManagingCompaniesRoles,
   ])
   // used in company section
   // only for provision status(complete) to update the company description
-  .put('/companies/:companyId/profile', [
+  .put('/profile', [
     authorize(permission(RESOURCE.COMPANY, ACTION.UPDATE)),
     companies.updateCompany,
   ])

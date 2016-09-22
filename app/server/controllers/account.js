@@ -37,7 +37,8 @@ export default function accountController(iamServiceClient, provisionHelper) {
   async function getAccounts(req, res, next) {
     debug('get accounts via account controller');
     try {
-      const command = _.omit(req.query, 'carrierId');
+      const command = req.query;
+      command.affiliatedCompany = await provisionHelper.getCompanyIdByCarrierId(req.params.carrierId);
       // @TODO temporary set the page size to 50 and expect fetch all users
       // wait IAM to have no pagination support
       command.pageSize = req.query.pageSize || 50;
@@ -101,7 +102,7 @@ export default function accountController(iamServiceClient, provisionHelper) {
   async function updateAccount(req, res, next) {
     debug('update account via account controller');
     try {
-      const command = _.omit(_.extend({}, formatAccountData(req.body), req.params), 'roles');
+      const command = _.omit(_.extend({}, formatAccountData(req.body), { id: req.params.id }), 'roles');
       await iamServiceClient.putUser(command);
       // add the roles
       if (req.body.roles) {

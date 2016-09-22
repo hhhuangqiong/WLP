@@ -1,14 +1,11 @@
-export default function (context, params, done) {
+export default function (context, params) {
   const { apiClient } = context;
-  context.dispatch('FETCH_ACCOUNT_START');
-  apiClient
-    .get(`accounts/${params.id}`)
+  const { carrierId, id } = params;
+  return apiClient
+    .get(`/carriers/${carrierId}/accounts/${id}`)
     .then(account => {
       context.dispatch('FETCH_ACCOUNT_SUCCESS', account);
-      done();
-    })
-    .catch(err => {
+    }).catch(err => {
       context.dispatch('FETCH_ACCOUNT_FAILURE', err);
-      done();
     });
 }

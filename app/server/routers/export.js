@@ -8,9 +8,8 @@ const exportController = fetchDep('ExportController');
 
 router
   .use(cacheControl)
-  .get('/:carrierId', exportController.getCarrierExport)
-  .get('/:carrierId/cancel', exportController.getCarrierExportCancel)
-  .get('/:carrierId/progress', exportController.getCarrierExportFileProgress)
-  .get('/:carrierId/file', exportController.getCarrierExportFile);
-
+  .get('/carriers/:carrierId', exportController.getCarrierExport)
+  .get('/carriers/:carrierId/cancel', exportController.getCarrierExportCancel)
+  .get('/carriers/:carrierId/progress', exportController.getCarrierExportFileProgress)
+  .get('/carriers/:carrierId/file', exportController.getCarrierExportFile);
 export default router;

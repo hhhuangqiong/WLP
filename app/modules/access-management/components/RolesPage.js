@@ -19,6 +19,7 @@ export class RolesPage extends Component {
   static get contextTypes() {
     return {
       executeAction: PropTypes.func.isRequired,
+      params: PropTypes.isRequired,
     };
   }
   static get propTypes() {
@@ -53,10 +54,8 @@ export class RolesPage extends Component {
     this.addRole = this.addRole.bind(this);
   }
   componentDidMount() {
-    const query = {
-      company: this.props.company.id,
-    };
-    this.context.executeAction(fetchRoles, query);
+    const { params: { identity: carrierId } } = this.context;
+    this.context.executeAction(fetchRoles, { carrierId });
   }
   componentWillReceiveProps(nextProps) {
     this.state.displayedRoles = nextProps.roles;
@@ -139,16 +138,18 @@ export class RolesPage extends Component {
     return !isString(role.id);
   }
   saveRole() {
-    const role = this.state.displayedRoles[this.state.editedRoleIndex];
+    const { params: { identity: carrierId } } = this.context;
+    const role = { carrierId, ...this.state.displayedRoles[this.state.editedRoleIndex] };
     const action = this.isNewRole(role) ? addRole : updateRole;
     this.context.executeAction(action, _.omit(role, ['creating']));
   }
   removeRole() {
+    const { params: { identity: carrierId } } = this.context;
     const index = this.state.editedRoleIndex;
     if (!isNumber(index)) {
       return;
     }
-    const role = this.state.displayedRoles[index];
+    const role = { carrierId, ...this.state.displayedRoles[index] };
     if (_.find(this.props.roles, mRole => role.id === mRole.id)) {
       this.context.executeAction(removeRole, role);
     }

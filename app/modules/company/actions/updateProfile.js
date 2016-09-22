@@ -1,14 +1,13 @@
-export default function (context, params) {
-  const { token, ...companyProfile } = params;
-  context.dispatch('UPDATE_COMPANY_PROFILE_START');
+export default function (context, params, done) {
+  const { token, ...profile } = params;
+  context.dispatch('UPDATE_CARRIER_PROFILE_START');
 
-  context.api.updateCompanyProfile(companyProfile, err => {
+  context.api.updateCarrierProfile(profile, err => {
     if (err) {
-      context.dispatch('UPDATE_COMPANY_PROFILE_FAILURE', err);
-      context.dispatch('ERROR_MESSAGE', err);
-      return;
+      context.dispatch('UPDATE_CARRIER_PROFILE_FAILURE', err);
+    } else {
+      context.dispatch('UPDATE_CARRIER_PROFILE_SUCCESS', token);
     }
-
-    context.dispatch('UPDATE_COMPANY_PROFILE_SUCCESS', token);
+    done();
   });
 }

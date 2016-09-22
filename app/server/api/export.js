@@ -12,11 +12,11 @@ const genericHandler = _.partial(saUtil.genericHandler, debug);
  * @param {string} exportPrefix -
  *   URI prefix for export only request, it must include a slash if it is not empty.
  */
-export default function (exportPrefix = '') {
+export default function (exportPrefix) {
   return {
     getExport(params, cb) {
       superagent
-        .get(`${this._getHost()}${exportPrefix}/${params.carrierId}`)
+        .get(this._getBaseUrl(params.carrierId, exportPrefix))
         .query(params)
         .accept('json')
         .end(genericHandler(cb));
@@ -24,7 +24,7 @@ export default function (exportPrefix = '') {
 
     getExportProgress(params, cb) {
       superagent
-        .get(`${this._getHost()}${exportPrefix}/${params.carrierId}/progress`)
+        .get(`${this._getBaseUrl(params.carrierId, exportPrefix)}/progress`)
         .query(params)
         .accept('json')
         .end((err, res) => {
@@ -40,7 +40,7 @@ export default function (exportPrefix = '') {
 
     cancelExport(params, cb) {
       superagent
-        .get(`${this._getHost()}${exportPrefix}/${params.carrierId}/cancel`)
+        .get(`${this._getBaseUrl(params.carrierId, exportPrefix)}/cancel`)
         .query(params)
         .accept('json')
         .end((err, res) => {

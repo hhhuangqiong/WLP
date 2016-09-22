@@ -163,6 +163,7 @@ class CompanyProfile extends Component {
           timezone: this.state.timezone,
           capabilities: this.state.capabilities,
           token: this.state.token,
+          carrierId: this.context.params.identity,
         };
         const { executeAction } = this.context;
         executeAction(createCompany, companyInfo);

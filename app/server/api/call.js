@@ -5,27 +5,28 @@ import * as saUtil from '../../utils/superagent';
 const debug = require('debug')('app:server/api/vsf');
 const genericHandler = _.partial(saUtil.genericHandler, debug);
 
-export default function (apiPrefix) {
+export default function () {
   return {
-    getVSFTransactions(params, cb) {
+    // @TODO update the path to be RESTFUL
+    getCallsStatsTotal(params, cb) {
       superagent
-        .get(`${this._getBaseUrl(params.carrierId, apiPrefix)}/vsf`)
-        .query(params)
-        .accept('json')
-        .end(genericHandler(cb));
-    },
-    getVsfMonthlyStats(params, cb) {
-      superagent
-        .get(`${this._getBaseUrl(params.carrierId, apiPrefix)}/vsf/overview/monthlyStats`)
+        .get(`${this._getBaseUrl(params.carrierId)}/callUserStatsTotal`)
         .accept('json')
         .query(params)
         .end(genericHandler(cb));
     },
-    getVsfSummaryStats(params, cb) {
+    getCallsStatsMonthly(params, cb) {
       superagent
-        .get(`${this._getBaseUrl(params.carrierId, apiPrefix)}/vsf/overview/summaryStats`)
+        .get(`${this._getBaseUrl(params.carrierId)}/callUserStatsMonthly`)
         .accept('json')
         .query(params)
+        .end(genericHandler(cb));
+    },
+    getCalls(params, cb) {
+      superagent
+        .get(`${this._getBaseUrl(params.carrierId)}/calls`)
+        .query(params)
+        .accept('json')
         .end(genericHandler(cb));
     },
   };

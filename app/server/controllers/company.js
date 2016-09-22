@@ -1,9 +1,10 @@
 import _ from 'lodash';
 
-export default function companyController(iamServiceClient) {
+export default function companyController(iamServiceClient, provisionHelper) {
   async function updateCompany(req, res, next) {
     try {
-      const command = _.extend({}, req.body, { id: req.params.companyId });
+      const companyId = await provisionHelper.getCompanyIdByCarrierId(req.params.carrierId);
+      const command = _.extend({}, req.body, { id: companyId });
       await iamServiceClient.putCompany(command);
       const company = await iamServiceClient.getCompany({ id: command.id });
       res.json(company);
@@ -14,8 +15,9 @@ export default function companyController(iamServiceClient) {
 
   async function getManagingCompaniesRoles(req, res, next) {
     try {
+      const companyId = await provisionHelper.getCompanyIdByCarrierId(req.params.carrierId);
       // ensure the existence of the company
-      const company = await iamServiceClient.getCompany({ id: req.params.companyId });
+      const company = await iamServiceClient.getCompany({ id: companyId });
       // find all the companies that under affiliated company
       const result = await iamServiceClient.getDescendantCompany({ id: company.id });
       // include the company itself

@@ -125,7 +125,7 @@ export default (context) => {
           <IndexRedirect to="overview" />
           <Route path="overview" component={Company} />
           <Route path="create" component={CompanyProfile} />
-          <Route path=":companyId/edit" component={CompanyEditForm} />
+          <Route path=":provisionId/edit" component={CompanyEditForm} />
           <Route path=":carrierId/wallet" component={CompanyWallet} />
         </Route>
 

@@ -1,5 +1,6 @@
 import createDebug from 'debug';
-import { isArray, isString, difference, get, extend } from 'lodash';
+import { isArray, isString, difference, get, extend, indexOf } from 'lodash';
+import validator from 'validator';
 
 import { NotPermittedError } from 'common-errors';
 import invariant from 'invariant';
@@ -7,10 +8,20 @@ import invariant from 'invariant';
 const debug = createDebug('app:server/middlewares/authorization');
 
 function inferCarrierIdFromRequest(req) {
+  // extract the carrierId from the params which is the next param after /carriers/:carrierId
+  // originalUrl is in the format like /api/maaiii.org/overview or /maaaiii.org/
+  const url = req.originalUrl.split('?')[0];
+  const parts = url.split('/');
+  // find the carriers index, and the next one is the target carrierId value
+  let index = indexOf(parts, 'carriers');
+  index = index > -1 ? index + 1 : index;
   const carrierId = [
-    req.headers['X-CarrierId'],
+    get(parts, index),
+    // @TODO workaround to fetch the carrierId from the render page url
+    // http://127.0.0.1:3000/pateo.maaiii-api.org
+    get(parts, 1),
     get(req, 'user.carrierId'),
-  ].find(isString);
+  ].find(value => isString(value) && validator.isURL(value));
   return carrierId;
 }
 
@@ -26,7 +37,7 @@ export function createFetchPermissionsMiddleware(logger, aclResolver) {
     const carrierId = inferCarrierIdFromRequest(req);
     if (!carrierId) {
       logger.warn(
-        'Failed to infer carrier id from request: %s %s. You might forgot to send X-CarrierId header.',
+        'Failed to infer carrier id from request: %s %s.',
         req.method,
         req.originalUrl);
       next();
