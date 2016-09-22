@@ -1,7 +1,6 @@
 import React, { Component, PropTypes } from 'react';
 import { Link } from 'react-router';
 import { injectIntl, intlShape } from 'react-intl';
-import { zipObject } from 'lodash';
 import connectToStores from 'fluxible-addons-react/connectToStores';
 
 import { CompanyWalletStore } from '../stores/CompanyWalletStore';
@@ -10,6 +9,7 @@ import { MESSAGES } from '../constants/companyOptions';
 import fetchCompanyWallets from './../actions/fetchCompanyWallets';
 import fetchCompanyWalletRecords from './../actions/fetchCompanyWalletRecords';
 import topUpWallet from './../actions/topUpWallet';
+import updateTopUpForm from './../actions/updateTopUpForm';
 
 import Icon from '../../../main/components/Icon';
 import WalletTopUpForm from './WalletTopUpForm';
@@ -25,6 +25,10 @@ class CompanyWallet extends Component {
   static get propTypes() {
     return {
       intl: intlShape.isRequired,
+      topUpForms: PropTypes.objectOf(PropTypes.shape({
+        amount: PropTypes.string,
+        description: PropTypes.string,
+      })),
       wallets: PropTypes.arrayOf(PropTypes.shape({
         walletId: PropTypes.number.isRequired,
         serviceType: PropTypes.string.isRequired,
@@ -48,27 +52,15 @@ class CompanyWallet extends Component {
     this.context.executeAction(fetchCompanyWallets, { carrierId });
     this.context.executeAction(fetchCompanyWalletRecords, { carrierId, pageNumber, pageSize });
   }
-  componentWillReceiveProps(nextProps) {
-    // Ensure all forms are initialized with empty objects
-    const { wallets } = nextProps;
-    const topUpForms = this.state.topUpForms;
-    if (wallets.length !== topUpForms.length) {
-      this.setState({
-        topUpForms: zipObject(wallets.map(wallet => [wallet.walletId, {}])),
-      });
-    }
-  }
   handlePageChange(pageParams) {
     const { carrierId } = this.context.params;
     const params = { carrierId, ...pageParams };
     this.context.executeAction(fetchCompanyWalletRecords, params);
   }
   handleFormChange(walletId, values) {
-    this.setState({
-      topUpForms: {
-        ...this.state.topUpForms,
-        [walletId]: values,
-      },
+    this.context.executeAction(updateTopUpForm, {
+      walletId,
+      ...values,
     });
   }
   handleFormSubmit(values) {
@@ -85,7 +77,12 @@ class CompanyWallet extends Component {
     };
   }
   render() {
-    const { intl, transactionsPage, wallets } = this.props;
+    const {
+      intl,
+      transactionsPage,
+      wallets,
+      topUpForms,
+    } = this.props;
     const { identity } = this.context.params;
     return (
       <div>
@@ -104,7 +101,7 @@ class CompanyWallet extends Component {
                 <h4>{intl.formatMessage(wallet.serviceType === 'SMS' ? MESSAGES.smsWallet : MESSAGES.voiceWallet)}</h4>
                 <WalletTopUpForm
                   wallet={wallet}
-                  values={this.state.topUpForms[wallet.walletId]}
+                  values={topUpForms[wallet.walletId] || {}}
                   onChange={values => this.handleFormChange(wallet.walletId, values)}
                   onSubmit={values => this.handleFormSubmit(values)}
                 />
