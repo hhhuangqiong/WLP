@@ -36,6 +36,7 @@ const CompanyDetail = (props, context) => {
       <td>{companyName}</td>
       <td>{domain}</td>
       <td>{dateLocale.format(moment(createDate), SHORT_DATE_FORMAT)}</td>
+      <td>{formatMessage(paymentType === PAYMENT_TYPE.PRE_PAID ? MESSAGES.prePaid : MESSAGES.postPaid)}</td>
       {
         (() => {
           switch (status) {

@@ -76,6 +76,18 @@ export const MESSAGES = defineMessages({
     id: 'balance',
     defaultMessage: 'Balance',
   },
+  paymentType: {
+    id: 'paymentType',
+    defaultMessage: 'Payment Type',
+  },
+  prePaid: {
+    id: 'prePaid',
+    defaultMessage: 'Pre-Paid',
+  },
+  postPaid: {
+    id: 'postPaid',
+    defaultMessage: 'Post-Paid',
+  },
   type: {
     id: 'type',
     defaultMessage: 'Type',

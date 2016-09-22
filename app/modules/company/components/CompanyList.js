@@ -8,6 +8,7 @@ const CompanyList = (props) => (
         <th>Comany Name</th>
         <th>Carrier Domain</th>
         <th>Create Date</th>
+        <th>Payment Type</th>
         <th>Status</th>
         <th></th>
       </tr>
