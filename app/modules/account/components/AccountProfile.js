@@ -155,8 +155,8 @@ class AccountProfile extends Component {
   validatorTypes() {
     const { intl: { formatMessage } } = this.props;
     return {
-      firstName: Joi.string().max(30).required().label(formatMessage(MESSAGES.firstName)),
-      lastName: Joi.string().max(30).required().label(formatMessage(MESSAGES.lastName)),
+      firstName: Joi.string().trim().max(30).required().label(formatMessage(MESSAGES.firstName)),
+      lastName: Joi.string().trim().max(30).required().label(formatMessage(MESSAGES.lastName)),
       email: Joi.string().email().required().label(formatMessage(MESSAGES.email)),
     };
   }
