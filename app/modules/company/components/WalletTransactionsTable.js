@@ -7,7 +7,7 @@ import Currency from './../../../main/components/Currency';
 
 import { MESSAGES } from '../constants/companyOptions';
 
-import Pagination from './Pagination';
+import Pagination from '../../../main/components/Pagination';
 
 function WalletTransactionsTable(props) {
   const {
