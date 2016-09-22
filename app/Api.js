@@ -2,7 +2,7 @@ import _ from 'lodash';
 import superagent from 'superagent';
 
 import {
-  exportApi, vsfApi, roleApi, carrierWalletApi, imApi,
+  exportApi, vsfApi, roleApi, carrierWalletApi, imApi, callApi,
   provisioningApi, smsApi, userApi, verificationApi, topUpApi, overviewApi,
 } from './server/api';
 
@@ -34,9 +34,9 @@ Api.prototype._getBaseUrl = function getBaseUrl(carrierId, prefix = API_PATH_PRE
 
 // following one are the general one based on the carriers
 Api.prototype.updateCarrierProfile = function updateCarrierProfile(params, cb) {
-  const { carrierId, ...profile } = params;
+  const { carrierId, companyId, ...profile } = params;
   superagent
-    .put(`${this._getBaseUrl(carrierId)}/profile`)
+    .put(`${this._getBaseUrl(carrierId)}/company/${companyId}/profile`)
     .accept('json')
     .send(profile)
     .end(genericHandler(cb));
@@ -76,6 +76,7 @@ _.assign(
   topUpApi(),
   imApi(),
   overviewApi(),
+  callApi(),
 );
 
 module.exports = Api;

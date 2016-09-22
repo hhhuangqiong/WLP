@@ -148,6 +148,7 @@ class CompanyEditForm extends Component {
           country,
           timezone,
           token,
+          companyId: this.props.companyDetail.companyId,
           carrierId: identity,
         };
         const { executeAction } = this.context;

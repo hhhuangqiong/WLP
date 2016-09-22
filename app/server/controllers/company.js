@@ -3,8 +3,7 @@ import _ from 'lodash';
 export default function companyController(iamServiceClient, provisionHelper) {
   async function updateCompany(req, res, next) {
     try {
-      const companyId = await provisionHelper.getCompanyIdByCarrierId(req.params.carrierId);
-      const command = _.extend({}, req.body, { id: companyId });
+      const command = _.extend({}, req.body, { id: req.params.companyId });
       await iamServiceClient.putCompany(command);
       const company = await iamServiceClient.getCompany({ id: command.id });
       res.json(company);
