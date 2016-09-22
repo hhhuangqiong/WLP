@@ -4,7 +4,7 @@ import { injectIntl, intlShape, FormattedMessage, defineMessages } from 'react-i
 import { Link } from 'react-router';
 
 import CompanyList from './CompanyList';
-import Pagination from './Pagination';
+import Pagination from '../../../main/components/Pagination';
 import Icon from '../../../main/components/Icon';
 import connectToStores from 'fluxible-addons-react/connectToStores';
 import CompanyStore from '../stores/CompanyStore';
