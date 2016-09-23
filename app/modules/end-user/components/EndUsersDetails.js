@@ -57,7 +57,6 @@ const EndUsers = React.createClass({
         this.getDefaultQuery()),
         this.getRequestBodyFromQuery(),
         this.getStateFromStores(),
-        { username: '' },
       );
   },
 
@@ -70,14 +69,18 @@ const EndUsers = React.createClass({
     this.executeAction(fetchEndUsers, payload);
   },
 
-  componentDidUpdate(prevProps, prevState) {
+  componentDidUpdate(prevProps) {
     const { location: { search } } = this.props;
     const { location: { search: prevSearch } } = prevProps;
-  
+
     if (search !== prevSearch) {
       this.context.executeAction(clearEndUsers);
       this.fetchData();
     }
+  },
+
+  componentWillUnmount() {
+    this.context.executeAction(clearEndUsers);
   },
 
   onChange() {
@@ -87,6 +90,7 @@ const EndUsers = React.createClass({
 
   getDefaultQuery() {
     return {
+      username: '',
       carrierId: null,
       startDate: moment().startOf('day').subtract(MONTHS_BEFORE_TODAY, 'month').format(DATE_FORMAT),
       endDate: moment().endOf('day').format(DATE_FORMAT),
@@ -166,14 +170,14 @@ const EndUsers = React.createClass({
   },
 
   getRequestBodyFromQuery(query) {
-    const { startDate, endDate, page } = query || this.context.location.query;
-    return { startDate, endDate, page };
+    const { startDate, endDate, page, username } = query || this.context.location.query;
+    return { startDate, endDate, page, username };
   },
 
   getRequestBodyFromState() {
     const { identity } = this.context.params;
-    const { startDate, endDate, page } = this.state;
-    return { carrierId: identity, startDate, endDate, page };
+    const { startDate, endDate, page, username } = this.state;
+    return { carrierId: identity, startDate, endDate, page, username };
   },
 
   getStateFromStores() {
@@ -199,8 +203,8 @@ const EndUsers = React.createClass({
     const payload =
     _.merge(_.clone(this.getDefaultQuery()),
       this.getRequestBodyFromState(),
+      this.getRequestBodyFromQuery(),
       this.getStateFromStores(),
-      { username: this.props.location.query.username }
     );
     this.context.executeAction(fetchEndUsers, payload);
   },
@@ -208,17 +212,11 @@ const EndUsers = React.createClass({
   handleSearchSubmit(e) {
     if (e.which === SUBMIT_KEY) {
       e.preventDefault();
-      const payload =
-        _.merge(_.clone(this.getDefaultQuery()),
-          this.getRequestBodyFromState(),
-          this.getStateFromStores(),
-          { username: this.state.username }
-        );
       const { pathname } = this.context.location;
       this.context.executeAction(clearEndUsers);
       this.context.router.push({
         pathname,
-        query: payload,
+        query: this.getRequestBodyFromState(),
       });
     }
   },
