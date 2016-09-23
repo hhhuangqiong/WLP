@@ -28,7 +28,7 @@ export default function () {
     getEndUsers(params, cb) {
       superagent
         .get(`${this._getBaseUrl(params.carrierId)}/users`)
-        .query(_.pick(params, ['startDate', 'endDate', 'page', 'userName']))
+        .query(_.pick(params, ['startDate', 'endDate', 'page', 'username']))
         .accept('json')
         .end(genericHandler(cb));
     },

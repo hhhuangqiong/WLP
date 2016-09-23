@@ -184,7 +184,7 @@ const EndUserTable = React.createClass({
           }
           onClick={handleOnClick}
         >
-          <td>{u.jid}</td>
+          <td>{u.username}</td>
           <td className="data-table__datetime">{creationDate}</td>
           <td className="account-status">
             <span>

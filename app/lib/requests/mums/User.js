@@ -67,10 +67,8 @@ export default class UsersRequest {
     const usersData = {};
 
     usersData.contents = _.map(userList, value => {
-      // replace username with formed jid to maintain consistency between UI and export data
       const result = _.merge(value, (value.devices || [])[0]);
-      result.username = result.jid;
-      return _.omit(result, ['devices', 'jid']);
+      return _.omit(result, ['devices']);
     });
     usersData.pageNumber = pageNumberIndex;
     usersData.totalPages = (hasNextPage) ? pageNumberIndex + 2 : pageNumberIndex + 1;
@@ -161,13 +159,6 @@ export default class UsersRequest {
           hasNextPage: nextPageResult.userCount > 0,
         });
 
-        // assign jid to each user
-        const carrierId = result.carrierId;
-
-        result.userList.forEach(user => {
-          user.jid = `${user.username}@${carrierId}`;
-        });
-
         cb(null, result);
       })
       .catch(err => cb(handleError(err)));
@@ -201,8 +192,6 @@ export default class UsersRequest {
           return;
         }
 
-        // assign jid to the user
-        res.body.userDetails.jid = `${res.body.userDetails.username}@${res.body.carrierId}`;
         cb(null, res.body);
       });
   }

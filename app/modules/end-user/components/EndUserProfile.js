@@ -209,7 +209,7 @@ const EndUserProfile = React.createClass({
 
     const details = get(this.props, 'user.userDetails', {});
 
-    const { jid, gender, verified, email, pin, birthDate } = details;
+    const { username, gender, verified, email, pin, birthDate } = details;
     const creationDate = dateLocale.format(moment(details.creationDate), DATE_FORMAT);
     const countryCode = (details.countryCode || '').toLowerCase();
 
@@ -243,7 +243,7 @@ const EndUserProfile = React.createClass({
             {getCountryName(countryCode) || EMPTY_STRING}
           </div>
         </Item>
-        <Item label={formatMessage(MESSAGES.username)}>{jid}</Item>
+        <Item label={formatMessage(MESSAGES.username)}>{username}</Item>
         <Item label={formatMessage(MESSAGES.email)}>{email || EMPTY_STRING}</Item>
         <Item label={formatMessage(MESSAGES.pin)}>{pin || EMPTY_STRING}</Item>
         <Item label={formatMessage(MESSAGES.dateOfBirth)}>{birthDate || EMPTY_STRING}</Item>
