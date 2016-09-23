@@ -1,8 +1,7 @@
-import Q from 'q';
-import { isObject, includes, any, difference, flatten, map } from 'lodash';
+import { isObject, includes, any, difference, flatten, map, defaults } from 'lodash';
 import { NotFoundError } from 'common-errors';
 
-import { RESOURCE, CAPABILITY, permission, ACTION } from './acl-enums';
+import { RESOURCE, CAPABILITY, permission, ACTION, RESOURCE_OWNER } from './acl-enums';
 
 function flattenPermissions(permissions) {
   return flatten(
@@ -35,21 +34,29 @@ function deriveProhibitions(carrierProfile) {
 }
 
 export function createAclResolver(logger, iamClient, provisionHelper) {
-  async function getCarrierProfile(carrierId) {
-    const item = await provisionHelper.getProvisionByCarrierId(carrierId);
-    if (!item || !item.profile) {
-      logger.debug('Fail to carrier profile');
-      throw new NotFoundError('Carrier profile');
+
+  function extractProfile(provisioning, identifier) {
+    if (!provisioning || !provisioning.profile) {
+      logger.debug(`Failed to find provisioning for company: ${identifier}.`);
+      throw new NotFoundError('Provisioning');
     }
-    return {
-      capabilities: item.profile.capabilities,
-      paymentMode: item.profile.paymentMode,
-      chargeWallet: item.profile.chargeWallet,
-      serviceType: item.profile.serviceType,
-    };
+    return provisioning.profile;
   }
 
-  async function resolve(params) {
+  async function getProvisioningProfileByCarrierId(carrierId) {
+    const item = await provisionHelper.getProvisionByCarrierId(carrierId);
+    return extractProfile(item);
+  }
+
+  async function getProvisioningProfileByCompanyId(companyId) {
+    const item = await provisionHelper.getProvisionByCompanyId(companyId);
+    return extractProfile(item);
+  }
+
+  async function resolve(params = {}) {
+    params = defaults(params, {
+      owner: RESOURCE_OWNER.CURRENT_COMPANY,
+    });
     if (!isObject(params)) {
       throw new Error('Expected params to be an object.');
     }
@@ -59,30 +66,26 @@ export function createAclResolver(logger, iamClient, provisionHelper) {
     if (!params.carrierId) {
       throw new Error('Expected context to contain carrierId');
     }
-    /* eslint prefer-const: 0 */
-    const companyId = await provisionHelper.getCompanyIdByCarrierId(params.carrierId);
-    logger.debug('Resolved carrierId to be companyId %s', companyId);
-    // if no companyId, it will be no permission and capabilities
-    if (!companyId) {
-      logger.debug('Fail to find company');
-      throw new NotFoundError('company');
+    let provisioningProfile = await getProvisioningProfileByCarrierId(params.carrierId);
+    if (params.owner === RESOURCE_OWNER.PARENT_COMPANY) {
+      const company = await iamClient.getCompany({ id: provisioningProfile.companyId });
+      if (company.parent) {
+        provisioningProfile = getProvisioningProfileByCompanyId(company.parent);
+      }
     }
-    let [userPermissions, carrierProfile] = await Q.all([
-      iamClient.getUserPermissions({
-        service: 'wlp',
-        company: companyId,
-        username: params.username,
-      }),
-      getCarrierProfile(params.carrierId),
-    ]);
+    let userPermissions = await iamClient.getUserPermissions({
+      service: 'wlp',
+      company: provisioningProfile.companyId,
+      username: params.username,
+    });
     // Flatten user permissions to a single array, e.g. ["resource:read", "resource:create"]
     userPermissions = flattenPermissions(userPermissions);
     // Filter out permissions that are not enabled due to company capabilities
-    const prohibitions = deriveProhibitions(carrierProfile);
+    const prohibitions = deriveProhibitions(provisioningProfile);
     userPermissions = difference(userPermissions, prohibitions);
     logger.debug('Resolved permissions for user %s for carrier %s', params.username, params.carrierId);
     return {
-      capabilities: carrierProfile.capabilities,
+      capabilities: provisioningProfile.capabilities,
       permissions: userPermissions,
     };
   }

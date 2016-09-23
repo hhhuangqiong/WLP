@@ -61,6 +61,11 @@ export const ACTION = {
 
 export const ACTIONS = Object.values(ACTION);
 
+export const RESOURCE_OWNER = {
+  CURRENT_COMPANY: 'current',
+  PARENT_COMPANY: 'parent',
+};
+
 export function permission(resource, action = ACTION.READ) {
   if (!includes(RESOURCES, resource)) {
     throw new Error(`Unknown resource: ${resource}`);

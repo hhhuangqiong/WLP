@@ -44,6 +44,14 @@ export default function provisionHelper(mpsClient) {
     return provisionResult.items[0];
   }
 
+  async function getProvisionByCompanyId(companyId) {
+    const provisionsPage = await getProvision({ companyId });
+    if (!provisionsPage.items.length) {
+      return null;
+    }
+    return provisionsPage.items[0];
+  }
+
   async function getPresetByCarrierId(id) {
     try {
       return await mpsClient.getPreset({ presetId: id });
@@ -93,5 +101,6 @@ export default function provisionHelper(mpsClient) {
     putProvision,
     getProvisionById,
     getProvisionByCarrierId,
+    getProvisionByCompanyId,
   };
 }

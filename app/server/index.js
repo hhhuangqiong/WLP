@@ -7,6 +7,8 @@ import favicon from 'serve-favicon';
 import methodOverride from 'method-override';
 import morgan from 'morgan';
 import userLocale from 'm800-user-locale';
+import validator from 'validator';
+import _ from 'lodash';
 
 import app from '../app';
 import config from '../config';
@@ -54,7 +56,6 @@ export default function (port) {
   }
 
   // Please, put IoC dependencies here, so they are a bit closer to the top of the file :)
-  const fetchPermissionsMiddleware = fetchDep('FetchPermissionsMiddleware');
   const sessionMiddleware = fetchDep('SessionMiddleware');
   const apiErrorHandlerMiddleware = fetchDep('ApiErrorHandlerMiddleware');
   const authRouter = fetchDep('AuthRouter');
@@ -109,20 +110,14 @@ export default function (port) {
     next();
   });
 
-
-  server.use(fetchPermissionsMiddleware);
-
   // hlr is used for demo purpose
   server.use(require('./routers/hlr').default);
   server.use(config.EXPORT_PATH_PREFIX, require('./routers/export').default);
   server.use(config.API_PATH_PREFIX, require('./routers/api').default);
   server.use(config.API_PATH_PREFIX, apiErrorHandlerMiddleware);
 
-  // on the server side, it will fetch the permission list, if any sever error will go into 500 at the bottom.
-  // other routing are checked in the app router directly, it will check route existence and permission.
-  server.use((req, res, next) => {
-    render(app, config)(req, res, next);
-  });
+  const renderer = render(app, config);
+  server.use(renderer);
 
   // server error handling
   // it will perform redirection to 500 page
