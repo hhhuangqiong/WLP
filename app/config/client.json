@@ -12,6 +12,6 @@
       }
     },
     "FETCH_COMPANY_INTERVAL": 30000,
-    "LIMIT_ROLES_LENGTH": 5
+    "LIMIT_ROLES_LENGTH": 6
   }
 }
