@@ -6,7 +6,7 @@ const InfoItem = React.createClass({
     label: PropTypes.string,
     capitalze: PropTypes.bool,
     capitalize: PropTypes.bool,
-    children: PropTypes.element.isRequired,
+    children: PropTypes.node.isRequired,
     className: PropTypes.string,
   },
 

@@ -164,7 +164,7 @@ const EndUserTable = React.createClass({
   renderRows(content) {
     const { intl: { formatMessage } } = this.props;
 
-    return content.map(u => {
+    return content.map((u, index) => {
       const device = get(u, 'devices.0') || {};
 
       const creationDate = dateLocale.format(moment(u.creationDate), DATE_FORMAT);
@@ -175,6 +175,7 @@ const EndUserTable = React.createClass({
 
       return (
         <tr
+          key={index}
           className={
             classNames(
             'end-user-table-row',

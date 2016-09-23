@@ -221,7 +221,7 @@ routes
   ])
   // used in company section
   // only for provision status(complete) to update the company description
-  .put('/profile', [
+  .put('/company/:companyId/profile', [
     authorize(permission(RESOURCE.COMPANY, ACTION.UPDATE)),
     companies.updateCompany,
   ])
