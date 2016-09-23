@@ -44,6 +44,7 @@ Content-Type: application/json
 Cache-Control: no-cache
 
 {
+  "chargeWallet": "WALLET_COMPANY",
   "paymentMode": "POST_PAID",
   "serviceType": "WHITE_LABEL",
   "smsc": {
@@ -57,7 +58,7 @@ Cache-Control: no-cache
     "offnetPackageId": 1
   },
   "capabilities": [
-    "im", "im.im-to-sms", "call.onnet", "call.offnet", "push", "platform.ios", "platform.android", "verification.sms", "verification.ivr", "verification.mo", "verification.mt"
+    "im", "im.im-to-sms", "call.onnet", "call.offnet", "push", "platform.ios", "platform.android", "verification.sms", "verification.ivr", "verification.mo", "verification.mt", "end-user.whitelist", "end-user.suspension"
   ]
 }
 ```
@@ -126,16 +127,16 @@ Cache-Control: no-cache
   "permissions":{
     "company": ["create", "update", "read", "delete"],
     "user": ["create", "update", "read", "delete"],
-    "role":["create", "update", "read", "delete"],
-    "wlp:endUser":["create", "update", "read", "delete"],
-    "wlp:generalOverview":["read"],
-    "wlp:topUp":["read"],
-    "wlp:vsf":["read"],
-    "wlp:call":["read"],
-    "wlp:im":["read"],
-    "wlp:sms":["read"],
-    "wlp:verification-sdk":["read"],
-    "wlp:general":["read"]
+    "role": ["create", "update", "read", "delete"],
+    "endUser": ["update", "read"],
+    "generalOverview": ["read"],
+    "topUp": ["read"],
+    "vsf": ["read"],
+    "call": ["read"],
+    "im": ["read"],
+    "sms": ["read"],
+    "verificationSdk: ["read"],
+    "whitelist": ["create", "update", "read", "delete"]
   },
   "isRoot": true
 }
@@ -150,11 +151,13 @@ Access the MPS mongodb and collection provisionings directly, insert into the pr
 * `companyId` - the company id created above
 * `carrierId` - the company carrierId
 * `companyCode` - the company code
+* `chargeWallet` - the charge wallet type, `WALLET_NONE`, `WALLET_COMPANY`, `WALLET_END_USER`, `WALLET_OCS_INTEGRATION`
 * `capabilities` - the capabilities array for the provisioned company
-* `serviceType` - the service kind
+* `serviceType` - the service kind, `WHITE_LABEL` or `SDK`
 * `paymentMode` - the payment mode, `PRE_PAID` or `POST_PAID`
 * `country` - the provision country
-* `resellerCarrierId` - the parent carrierId who create this company. If not, it should be filled with root company carrier id.
+* `resellerCarrierId` - the parent carrierId who create this company. If not, it should be filled
+ with root company carrier id.
 
 The possible options for the values, see [IAM API documentation](http://deploy.dev.maaii.com:9080/maaii-identity-access-mgmt/api/latest/#api-company-PostCompany).
 
@@ -165,6 +168,7 @@ The possible options for the values, see [IAM API documentation](http://deploy.d
     "companyId": "{$companyId}",
     "carrierId": "{$carrierId}",
     "companyCode": "{$companyCode}",
+    "chargeWallet": "WALLET_COMPANY",
     "capabilities": [
       "platform.ios",
       "platform.android",
