@@ -1,4 +1,4 @@
-import { take } from 'lodash';
+import { take, findIndex } from 'lodash';
 import createStore from 'fluxible/addons/createStore';
 
 export const CompanyWalletStore = createStore({
@@ -27,7 +27,10 @@ export const CompanyWalletStore = createStore({
     };
   },
   receiveCompanyWallets(wallets) {
-    this.wallets = wallets;
+    this.wallets = wallets.map(x => ({
+      ...x,
+      balance: parseFloat(x.balance),
+    }));
     this.emitChange();
   },
   receiveCompanyWalletRecords(recordsPage) {
@@ -59,6 +62,17 @@ export const CompanyWalletStore = createStore({
       ...this.topUpForms,
       [record.walletId]: {},
     };
+    // Update the balance of the wallet
+    const walletIndex = findIndex(this.wallets, x => x.walletId === record.walletId);
+    const wallet = {
+      ...this.wallets[walletIndex],
+      balance: this.wallets[walletIndex].balance + parseFloat(record.amount),
+    };
+    this.wallets = [
+      ...this.wallets.slice(0, walletIndex),
+      wallet,
+      ...this.wallets.slice(walletIndex + 1),
+    ];
     this.emitChange();
   },
 });
