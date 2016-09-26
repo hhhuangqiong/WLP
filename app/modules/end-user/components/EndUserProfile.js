@@ -297,30 +297,27 @@ const EndUserProfile = React.createClass({
               {this.renderAccountPanel()}
               {this.renderDevicePanel()}
             </Accordion.Wrapper>
-
-            <If condition={this.props.user.userDetails.verified}>
-              <Permit permission={permission(RESOURCE.END_USER, ACTION.UPDATE)}>
-                <div className="enduser-profile__control text-center">
-                  <div className="enduser-profile__control__row">
-                    <If condition={this.props.user.userDetails.accountStatus.toLowerCase() === 'active'}>
-                      <button className="round" onClick={this.handleSuspendClick}>
-                        <FormattedMessage
-                          id="endUser.details.suspend"
-                          defaultMessage="Suspend"
-                        />
-                      </button>
-                    <Else />
-                      <button className="round" onClick={this.handleReactivateClick}>
+            <Permit permission={permission(RESOURCE.END_USER, ACTION.UPDATE)}>
+              <div className="enduser-profile__control text-center">
+                <div className="enduser-profile__control__row">
+                  <If condition={this.props.user.userDetails.accountStatus.toLowerCase() === 'active'}>
+                    <button className="round" onClick={this.handleSuspendClick}>
                       <FormattedMessage
-                        id="endUser.details.reactivate"
-                        defaultMessage="Reactivate"
+                        id="endUser.details.suspend"
+                        defaultMessage="Suspend"
                       />
-                      </button>
-                    </If>
-                  </div>
+                    </button>
+                  <Else />
+                    <button className="round" onClick={this.handleReactivateClick}>
+                    <FormattedMessage
+                      id="endUser.details.reactivate"
+                      defaultMessage="Reactivate"
+                    />
+                    </button>
+                  </If>
                 </div>
-              </Permit>
-            </If>
+              </div>
+            </Permit>
           </Panel.Body>
         </Panel.Wrapper>
       </If>
