@@ -32,7 +32,7 @@ class CompanyWallet extends Component {
       wallets: PropTypes.arrayOf(PropTypes.shape({
         walletId: PropTypes.number.isRequired,
         serviceType: PropTypes.string.isRequired,
-        balance: PropTypes.string.isRequired,
+        balance: PropTypes.number.isRequired,
       })),
       transactionsPage: PropTypes.shape({
         pageNumber: PropTypes.number.isRequired,

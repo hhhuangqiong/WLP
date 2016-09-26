@@ -2,7 +2,6 @@ import React, { Component, PropTypes } from 'react';
 import { injectIntl, intlShape } from 'react-intl';
 import Joi from 'joi';
 import cn from 'classnames';
-import { isNaN } from 'lodash';
 import { injectJoiValidation } from 'm800-user-locale/joi-validation';
 
 import { MESSAGES } from '../constants/companyOptions';
@@ -15,7 +14,7 @@ class WalletTopUpForm extends Component {
       intl: intlShape.isRequired,
       wallet: PropTypes.shape({
         walletId: PropTypes.number.isRequired,
-        balance: PropTypes.string.isRequired,
+        balance: PropTypes.number.isRequired,
         currency: PropTypes.number.isRequired,
       }),
       values: PropTypes.shape({

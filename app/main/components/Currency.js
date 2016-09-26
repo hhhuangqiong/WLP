@@ -56,7 +56,10 @@ const Currency = ({ currencyCode, amount, intl }) => {
 
 Currency.propTypes = {
   currencyCode: PropTypes.number.isRequired,
-  amount: PropTypes.string.isRequired,
+  amount: PropTypes.oneOfType([
+    PropTypes.string,
+    PropTypes.number,
+  ]).isRequired,
   intl: intlShape.isRequired,
 };
 
