@@ -72,7 +72,7 @@ Finally, to validate,
 
 To create a company identity in IAM, you have to set the following values via the post request to IAM.
 * `name` - Company name
-* `country` - Company country e.g `Hong Kong`
+* `country` - Company country which should be ISO-3661 2 letter country code e.g `HK`
 * `timezone` - Company timezone [possible values in the list](https://github.com/dmfilipenko/timezones.json/blob/master/timezones.json) e.g `China Standard Time`
 * `reseller` - true
 
@@ -87,7 +87,7 @@ Content-Type: application/json
 Cache-Control: no-cache
 
 {
-  "country": "Hong Kong",
+  "country": "HK",
   "name": "reseller company",
   "timezone": "China Standard Time",
   "reseller": true
@@ -180,7 +180,7 @@ The possible options for the values, see [IAM API documentation](http://deploy.d
     ],
     "serviceType": "WHITE_LABEL",
     "paymentMode": "PRE_PAID",
-    "country": "Hong Kong",
+    "country": "HK",
     "resellerCarrierId": "maaiii.org"
   }
 }

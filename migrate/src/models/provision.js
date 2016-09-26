@@ -1,4 +1,6 @@
 import logger from 'winston';
+import countryData from 'country-data';
+import _ from 'lodash';
 
 import { transformObject } from '../utils';
 
@@ -80,6 +82,12 @@ function carrierIdTransform(value) {
     },
   };
 }
+
+function countryTransform(value) {
+  const country = _.find(countryData.countries.all, place => place.name === value);
+  return { profile: { country: country.alpha2 } };
+}
+
 export function formatNewProvision(company) {
   logger.info(`[Export]Formatting new Provision ${company.name}`);
   // update the company format
@@ -88,7 +96,7 @@ export function formatNewProvision(company) {
     _id: value => ({ profile: { companyId: value } }),
     carrierId: carrierIdTransform,
     capabilities: capabilitiesTransform,
-    country: value => ({ profile: { country: value } }),
+    country: countryTransform,
     parentCarrierId: value => ({ profile: { resellerCarrierId: value } }),
     createAt: 'createdAt',
     updateAt: 'updatedAt',

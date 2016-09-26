@@ -1,5 +1,6 @@
 import logger from 'winston';
 import timezone from 'timezones.json';
+import countryData from 'country-data';
 import _ from 'lodash';
 
 import { transformObject } from '../utils';
@@ -20,6 +21,11 @@ function timezoneTransform(value) {
   return { timezone: set.value };
 }
 
+function countryTransform(value) {
+  const country = _.find(countryData.countries.all, place => place.name === value);
+  return { country: country.alpha2 };
+}
+
 export function formatNewCompany(company) {
   logger.info(`[Export]Formatting new company ${company.name}`);
   // update the company format
@@ -32,7 +38,7 @@ export function formatNewCompany(company) {
     logo: 'logo',
     themeType: 'themeType',
     address: value => ({ address: { formatted: value } }),
-    country: 'country',
+    country: countryTransform,
     timezone: timezoneTransform,
     accountManager: 'accountManager',
     status: value => ({ active: value === 'active' }),
