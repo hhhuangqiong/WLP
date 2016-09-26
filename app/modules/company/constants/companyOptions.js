@@ -5,7 +5,8 @@ import timezoneData from 'timezones.json';
 
 // @TODO missing i18n
 export const COUNTRIES = _.sortBy(countryData.countries.all.map((item) => ({
-  value: item.name,
+  // use the alpha2 which is 2-letter country code defined in ISO 3166-2
+  value: item.alpha2,
   label: item.name,
 })), country => country.label);
 
