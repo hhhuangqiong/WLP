@@ -384,7 +384,7 @@ class AccountProfile extends Component {
       <div className="account-profile__container">
         <div className="panel callout radius">
           <h4 className="account-profile__header">
-            { formatMessage(this.isCreate() ? MESSAGES.createNewUser : MESSAGES.accountInformation)}
+            { formatMessage(this.isCreate() ? MESSAGES.createNewAccount : MESSAGES.accountInformation)}
           </h4>
           <hr />
           <If condition={!this.isCreate()}>

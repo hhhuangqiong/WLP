@@ -43,10 +43,10 @@ const AccountTable = React.createClass({
       <div className="header inline-with-space narrow">
         <h5 className="title inline text-center">
           <FormattedMessage
-            id="users"
-            defaultMessage="Users"
+            id="accounts"
+            defaultMessage="Accounts"
           />
-        ({userNo})
+          {' '}({userNo})
         </h5>
         <Link to={`/${identity}/account/create`}>
           <Icon symbol="icon-user-management" className="right" />

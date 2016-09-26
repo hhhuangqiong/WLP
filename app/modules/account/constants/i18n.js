@@ -1,9 +1,9 @@
 import { defineMessages } from 'react-intl';
 
 export const MESSAGES = defineMessages({
-  createNewUser: {
-    id: 'account.createNewUser',
-    defaultMessage: 'Create New User',
+  createNewAccount: {
+    id: 'account.createNewAccount',
+    defaultMessage: 'Create New Account',
   },
   users: {
     id: 'account.users',
@@ -55,18 +55,18 @@ export const MESSAGES = defineMessages({
   },
   deleteDialogMessage: {
     id: 'account.deleteDialogMessage',
-    defaultMessage: 'Are you sure you want to delete the user called',
+    defaultMessage: 'Are you sure you want to delete the account called',
   },
   deleteDialogHeader: {
     id: 'account.deleteDialogHeader',
-    defaultMessage: 'Delete User',
+    defaultMessage: 'Delete Account',
   },
   reverifyDialogMessage: {
     id: 'account.reverifyDialogMessage',
-    defaultMessage: 'Are you sure you want to send verification email to the user called',
+    defaultMessage: 'Are you sure you want to send verification email to the account called',
   },
   reverifyDialogHeader: {
     id: 'account.reverifyDialogHeader',
-    defaultMessage: 'Reverify User',
+    defaultMessage: 'Reverify Account',
   },
 });
