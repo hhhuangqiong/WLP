@@ -1,8 +1,15 @@
-import { remove, get, max } from 'lodash';
+import { remove, get, max, find } from 'lodash';
 import { createStore } from 'fluxible/addons';
 import config from './../../../main/config';
 
 const { pages: { topUp: { pageRec: PAGE_REC } } } = config;
+
+function updateAccountStatus(list, user) {
+  const account = find(list, u => u.username === user.username);
+  if (account) {
+    account.accountStatus = user.userState;
+  }
+}
 
 const EndUserStore = createStore({
   storeName: 'EndUserStore',
@@ -13,8 +20,8 @@ const EndUserStore = createStore({
     FETCH_END_USERS_SUCCESS: 'handleEndUsersChange',
     FETCH_END_USERS_FAILURE: 'handleFetchEndUsersFailure',
     FETCH_END_USER_SUCCESS: 'handleEndUserChange',
-    REACTIVATE_END_USER_SUCCESS: 'handleEndUserReactivate',
-    DEACTIVATE_END_USER_SUCCESS: 'handleEndUserDeactivate',
+    REACTIVATE_END_USER_SUCCESS: 'handleEndUserAccountStatus',
+    DEACTIVATE_END_USER_SUCCESS: 'handleEndUserAccountStatus',
     DELETE_END_USER_SUCCESS: 'handleEndUserDelete',
     FETCH_END_USER_WALLET_SUCCESS: 'handleFetchEndUserWallet',
     FETCH_END_USER_WALLET_FAILURE: 'handleFetchEndUserWalletFailure',
@@ -101,19 +108,15 @@ const EndUserStore = createStore({
     this.emitChange();
   },
 
-  handleEndUserDeactivate(payload) {
+  handleEndUserAccountStatus(payload) {
     this.currentUser.userDetails.accountStatus = payload.userState;
-    this.emitChange();
-  },
-
-  handleEndUserReactivate(payload) {
-    this.currentUser.userDetails.accountStatus = payload.userState;
+    // manually update the user account status rather than fetch again
+    updateAccountStatus(this.users, payload);
     this.emitChange();
   },
 
   handleEndUserDelete(payload) {
     remove(this.displayUsers, user => user.username === payload.username);
-    remove(this.users, user => user.username === payload.username);
 
     this.currentUser = null;
     this.emitChange();
@@ -122,10 +125,6 @@ const EndUserStore = createStore({
   handleFetchEndUsersFailure() {
     this.flush();
     this.emitChange();
-  },
-
-  getUsers() {
-    return this.users;
   },
 
   getDisplayUsers() {
