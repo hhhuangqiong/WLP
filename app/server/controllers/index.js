@@ -15,7 +15,7 @@ function register(container) {
   container.service('ProvisionController', provisionController, 'IamServiceClient', 'ProvisionHelper');
   container.service('ExportController', exportController);
   container.service('CarrierController', carrierController);
-  container.service('CarrierWalletController', carrierWalletController, 'McmClient');
+  container.service('CarrierWalletController', carrierWalletController, 'OcsClient');
 }
 
 export {

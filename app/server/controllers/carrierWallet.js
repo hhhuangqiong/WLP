@@ -1,9 +1,9 @@
 import _ from 'lodash';
 
-export function carrierWalletController(mcmClient) {
+export function carrierWalletController(ocsClient) {
   async function getWallets(req, res, next) {
     try {
-      const result = await mcmClient.getWallets(req.params);
+      const result = await ocsClient.getWallets(req.params);
       res.json(result);
     } catch (e) {
       next(e);
@@ -13,7 +13,7 @@ export function carrierWalletController(mcmClient) {
   async function getTopUpRecords(req, res, next) {
     try {
       const query = _.extend({}, req.params, req.query);
-      const result = await mcmClient.getTopUpHistory(query);
+      const result = await ocsClient.getTopUpHistory(query);
       res.json(result);
     } catch (e) {
       next(e);
@@ -23,7 +23,7 @@ export function carrierWalletController(mcmClient) {
   async function createTopUpRecord(req, res, next) {
     try {
       const command = _.extend({}, req.params, req.body);
-      const result = await mcmClient.topUpWallet(command);
+      const result = await ocsClient.topUpWallet(command);
       res.json(result);
     } catch (e) {
       next(e);

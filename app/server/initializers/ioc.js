@@ -9,7 +9,7 @@ import { IamClient } from '../../lib/requests/iam/IamServiceClient';
 import ProvisionHelper from '../../server/utils/provisionHelper';
 import IamHelper from '../../server/utils/iamHelper';
 import MpsClient from '../../lib/requests/mps/MpsClient';
-import mcmClient from '../../lib/requests/mcm/McmClient';
+import OcsClient from '../../lib/requests/ocs/OcsClient';
 import { ApplicationRequest } from '../../lib/requests/Application';
 
 // Infrastructure components (logging, authentication, authorization)
@@ -97,11 +97,11 @@ export default function init(nconf) {
     timeout: nconf.get('mumsApi:timeout'),
   });
   ioc.service('ApplicationRequest', ApplicationRequest, 'ApplicationOptions');
-  ioc.constant('McmClientOptions', {
-    baseUrl: nconf.get('mcmApi:baseUrl'),
-    timeout: nconf.get('mcmApi:timeout'),
+  ioc.constant('OcsClientOptions', {
+    baseUrl: nconf.get('ocsApi:baseUrl'),
+    timeout: nconf.get('ocsApi:timeout'),
   });
-  ioc.service('McmClient', mcmClient, 'McmClientOptions');
+  ioc.service('OcsClient', OcsClient, 'OcsClientOptions');
 
   // Provision Adapter
   ioc.service('ProvisionHelper', ProvisionHelper, 'MpsClient');

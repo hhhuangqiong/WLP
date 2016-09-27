@@ -5,7 +5,7 @@ import { handleError } from './../helper';
 import { camelizeKeysRecursive, renameKeys } from './../../../utils/objectTransforms';
 
 // Credit Management API client
-export function mcmClient(options) {
+export function ocsClient(options) {
   const { baseUrl, timeout } = options;
 
   function handleAndLogError(superagentError, definition) {
@@ -77,4 +77,4 @@ export function mcmClient(options) {
   };
 }
 
-export default mcmClient;
+export default ocsClient;

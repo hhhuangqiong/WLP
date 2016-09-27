@@ -27,8 +27,8 @@ node "Maaii Provisioning Service (MPS)" {
   database "MPS mongodb"
 }
 
-node "Maaii MCM (Maaii Credit Management)" {
-  interface "REST API" as MCM_REST
+node "Maaii OCS (Maaii Online Charging System)" {
+  interface "REST API" as OCS_REST
 }
 
 node "Maaii MUMS" {
@@ -45,7 +45,7 @@ node "Maaii BOSS" {
 
 [WLP_COMPANY_MGMT] --> MPS_REST
 [WLP_COMPANY_MGMT] --> IAM_REST
-[WLP_COMPANY_MGMT] --> MCM_REST
+[WLP_COMPANY_MGMT] --> OCS_REST
 [WLP_USER_MGMT] --> IAM_REST
 [WLP_USER_MGMT] --> [OPEN_ID] : authenticate flow(login, logout)
 [WLP_STAT] --> MUMS_REST
@@ -102,6 +102,6 @@ Service of MUMS that provides a REST API for end user information.
 
 Service of MUMS that provides a REST API for VSF information.
 
-## Maaii MCM
+## Maaii OCS
 
 Provides a REST API for a carrier wallet transactions.
