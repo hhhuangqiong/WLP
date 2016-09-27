@@ -168,7 +168,7 @@ const EndUserTable = React.createClass({
       const device = get(u, 'devices.0') || {};
 
       const creationDate = dateLocale.format(moment(u.creationDate), DATE_FORMAT);
-      const handleOnClick = bindKey(this.props, 'onUserClick', u.username.trim());
+      const handleOnClick = bindKey(this.props, 'onUserClick', u);
 
       const platform = device.platform || formatMessage(NOT_FOUND_LABEL);
       const currentUser = this.props.currentUser;

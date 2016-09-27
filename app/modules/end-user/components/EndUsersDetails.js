@@ -3,9 +3,8 @@ import moment from 'moment';
 import { concurrent } from 'contra';
 import React, { PropTypes } from 'react';
 
-import { FluxibleMixin } from 'fluxible-addons-react';
-
 import EndUserStore from '../stores/EndUserStore';
+import connectToStores from 'fluxible-addons-react/connectToStores';
 
 import { injectIntl, intlShape } from 'react-intl';
 import i18nMessages from '../../../main/constants/i18nMessages';
@@ -35,39 +34,61 @@ const INITIAL_PAGE_NUMBER = 0;
 const MONTHS_BEFORE_TODAY = 1;
 const defaultLocale = dateLocale.getDefaultLocale();
 
-const EndUsers = React.createClass({
-  contextTypes: {
-    executeAction: PropTypes.func.isRequired,
-    location: PropTypes.object,
-    params: PropTypes.object,
-    route: PropTypes.object,
-    router: PropTypes.object,
-    intl: intlShape.isRequired,
-  },
-
-  mixins: [FluxibleMixin],
-
-  statics: {
-    storeListeners: [EndUserStore],
-  },
-
-  getInitialState() {
-    return _.merge(
-      _.clone(
-        this.getDefaultQuery()),
-        this.getRequestBodyFromQuery(),
-        this.getStateFromStores(),
-      );
-  },
+class EndUsers extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      username: '',
+      startDate: moment().startOf('day').subtract(MONTHS_BEFORE_TODAY, 'month').format(DATE_FORMAT),
+      endDate: moment().endOf('day').format(DATE_FORMAT),
+    };
+    this.handleStartDateChange = this.handleStartDateChange.bind(this);
+    this.handleEndDateChange = this.handleEndDateChange.bind(this);
+    this.handleBundleIdChange = this.handleBundleIdChange.bind(this);
+    this.handleStatusChange = this.handleStatusChange.bind(this);
+    this.applyFilters = this.applyFilters.bind(this);
+    this.checkHasNext = this.checkHasNext.bind(this);
+    this.onInputChangeHandler = this.onInputChangeHandler.bind(this);
+    this.handleSearchSubmit = this.handleSearchSubmit.bind(this);
+    this.handleUserClick = this.handleUserClick.bind(this);
+    this.loadFirstUserDetail = this.loadFirstUserDetail.bind(this);
+    this.handleQueryChange = this.handleQueryChange.bind(this);
+  }
 
   componentDidMount() {
-    const payload =
-      _.merge(_.clone(this.getDefaultQuery()),
-        this.getRequestBodyFromState(),
-        this.getStateFromStores(),
-      );
-    this.executeAction(fetchEndUsers, payload);
-  },
+    const { startDate, endDate, username } = this.state;
+    const { executeAction, params } = this.context;
+
+    const payload = {
+      carrierId: params.identity,
+      startDate,
+      endDate,
+      page: this.props.page,
+      username,
+    };
+    executeAction(fetchEndUsers, payload);
+  }
+
+  componentWillReceiveProps(nextProps) {
+    const { startDate, endDate, username } = nextProps.location.query;
+    const { page } = nextProps;
+
+    const newState = {
+      username: username || '',
+      page,
+    };
+    if (startDate && startDate !== this.state.startDate) {
+      newState.startDate = startDate;
+    }
+    if (endDate && endDate !== this.state.endDate) {
+      newState.endDate = endDate;
+    }
+
+    this.setState(newState);
+    if (_.isEmpty(nextProps.currentUser) && !_.isEmpty(nextProps.displayUsers)) {
+      this.loadFirstUserDetail(nextProps.displayUsers);
+    }
+  }
 
   componentDidUpdate(prevProps) {
     const { location: { search } } = this.props;
@@ -77,30 +98,118 @@ const EndUsers = React.createClass({
       this.context.executeAction(clearEndUsers);
       this.fetchData();
     }
-  },
+  }
 
   componentWillUnmount() {
     this.context.executeAction(clearEndUsers);
-  },
+  }
 
-  onChange() {
-    this.setState(this.getStateFromStores());
-    this.loadFirstUserDetail();
-  },
+  onInputChangeHandler(e) {
+    this.setState({ username: e.target.value });
+  }
 
-  getDefaultQuery() {
-    return {
-      username: '',
-      carrierId: null,
-      startDate: moment().startOf('day').subtract(MONTHS_BEFORE_TODAY, 'month').format(DATE_FORMAT),
-      endDate: moment().endOf('day').format(DATE_FORMAT),
-      page: INITIAL_PAGE_NUMBER,
+  handleBundleIdChange(e) {
+    this.setState({ bundleId: e.target.value });
+  }
+
+  handleStatusChange(e) {
+    this.setState({ status: e.target.value });
+  }
+
+  handleSearchSubmit(e) {
+    const { username } = this.state;
+
+    if (e.which === SUBMIT_KEY) {
+      e.preventDefault();
+      this.handleQueryChange({ username });
+    }
+  }
+
+  handleQueryChange(newQuery) {
+    const { startDate, endDate, username } = this.state;
+    const query = merge(
+      { startDate, endDate, page: this.props.page, username },
+      newQuery,
+    );
+    const queryWithoutNull = omit(query, value => !value);
+
+    const { pathname } = this.props.location;
+
+    this.context.router.push({
+      pathname,
+      query: queryWithoutNull,
+    });
+  }
+
+  handleEndDateChange(momentDate) {
+    const date = moment(momentDate.locale(defaultLocale)).format(DATE_FORMAT);
+    this.handleQueryChange({ endDate: date, page: INITIAL_PAGE_NUMBER });
+  }
+
+  handleStartDateChange(momentDate) {
+    const date = moment(momentDate.locale(defaultLocale)).format(DATE_FORMAT);
+    this.handleQueryChange({ startDate: date, page: INITIAL_PAGE_NUMBER });
+  }
+
+  fetchData() {
+    const { startDate, endDate, username } = this.state;
+    const { executeAction, params } = this.context;
+
+    const payload = {
+      carrierId: params.identity,
+      startDate,
+      endDate,
+      page: this.props.page,
+      username,
     };
-  },
+
+    executeAction(fetchEndUsers, payload);
+  }
+
+  loadFirstUserDetail(displayUsers) {
+    const currentUser = displayUsers[0];
+    this.handleUserClick(currentUser);
+  }
+
+  handleUserClick(currentUser) {
+    const { username } = currentUser;
+    const { identity: carrierId } = this.context.params;
+
+    this.context.executeAction(fetchEndUser, {
+      carrierId,
+      username,
+    });
+  }
+
+  applyFilters(users) {
+    let showUsers = users;
+    if (isNull(users)) {
+      return users;
+    }
+
+    if (this.state.bundleId) {
+      showUsers = _.filter(users, user => {
+        const device = _.get(user, 'devices.0') || {};
+        return device.appBundleId === this.state.bundleId;
+      });
+    }
+
+    if (this.state.status) {
+      showUsers = _.filter(users, user => (
+        user.accountStatus === this.state.status
+      ));
+    }
+
+    return showUsers;
+  }
+
+  checkHasNext() {
+    return this.props.hasNextPage || this.props.displayUsers < this.props.totalUsers;
+  }
 
   render() {
-    const { intl : { formatMessage } } = this.props;
-    const selectedUser = this.getStore(EndUserStore).getCurrentUser();
+    const { intl: { formatMessage } } = this.props;
+    const selectedUser = this.props.currentUser;
 
     return (
       <div className="row">
@@ -150,11 +259,11 @@ const EndUsers = React.createClass({
             <EndUserTable
               ref="endUserTable"
               currentUser={selectedUser}
-              users={this.applyFilters(this.getStore(EndUserStore).getDisplayUsers())}
-              hasNext={this._checkHasNext()}
+              users={this.applyFilters(this.props.displayUsers)}
+              hasNext={this.checkHasNext}
               onUserClick={this.handleUserClick}
               onPageChange={this.handleShowNextPage}
-              isLoading={this.state.isLoading}
+              isLoading={this.props.isLoading}
             />
           </div>
           <div className="large-8 columns">
@@ -167,156 +276,35 @@ const EndUsers = React.createClass({
         </div>
       </div>
     );
-  },
+  }
+}
 
-  getRequestBodyFromQuery(query) {
-    const { startDate, endDate, page, username } = query || this.context.location.query;
-    return { startDate, endDate, page, username };
-  },
+EndUsers.propTypes = {
+  intl: intlShape.isRequired,
+  isLoading: PropTypes.bool,
+  displayUsers: PropTypes.arrayOf(PropTypes.object),
+  currentUser: PropTypes.object,
+  hasNextPage: PropTypes.bool,
+  totalUsers: PropTypes.arrayOf(PropTypes.object),
+  location: PropTypes.object,
+  page: PropTypes.number,
+};
 
-  getRequestBodyFromState() {
-    const { identity } = this.context.params;
-    const { startDate, endDate, page, username } = this.state;
-    return { carrierId: identity, startDate, endDate, page, username };
-  },
+EndUsers.contextTypes = {
+  executeAction: PropTypes.func.isRequired,
+  params: PropTypes.object,
+  route: PropTypes.object,
+  router: PropTypes.object,
+};
 
-  getStateFromStores() {
-    return {
-      page: this.getStore(EndUserStore).getPage(),
-      hasNextPage: this.getStore(EndUserStore).getHasNextPage(),
-      currentUser: this.context.params.username ? this.getStore(EndUserStore).getCurrentUser() : null,
-      isLoading: this.getStore(EndUserStore).getIsLoading(),
-    };
-  },
+EndUsers = connectToStores(EndUsers, [EndUserStore], (context) => ({
+  page: context.getStore(EndUserStore).getPage(),
+  totalUsers: context.getStore(EndUserStore).getTotalUsers(),
+  displayUsers: context.getStore(EndUserStore).getDisplayUsers(),
+  hasNextPage: context.getStore(EndUserStore).getHasNextPage(),
+  currentUser: context.getStore(EndUserStore).getCurrentUser(),
+  isLoading: context.getStore(EndUserStore).getIsLoading(),
+}));
 
-  loadFirstUserDetail() {
-    const users = this.getStore(EndUserStore).getDisplayUsers();
-    const currentUser = this.getStore(EndUserStore).getCurrentUser();
-
-    if (!_.isEmpty(users) && _.isEmpty(currentUser)) {
-      const { username } = users[0];
-      this.handleUserClick(username);
-    }
-  },
-
-  fetchData() {
-    const payload =
-    _.merge(_.clone(this.getDefaultQuery()),
-      this.getRequestBodyFromState(),
-      this.getRequestBodyFromQuery(),
-      this.getStateFromStores(),
-    );
-    this.context.executeAction(fetchEndUsers, payload);
-  },
-
-  handleSearchSubmit(e) {
-    if (e.which === SUBMIT_KEY) {
-      e.preventDefault();
-      const { pathname } = this.context.location;
-      this.context.executeAction(clearEndUsers);
-      this.context.router.push({
-        pathname,
-        query: this.getRequestBodyFromState(),
-      });
-    }
-  },
-
-  onInputChangeHandler(e) {
-    this.setState({ username: e.target.value });
-  },
-
-  /**
-   * handleQueryChange
-   * this is for changes in either startDate/formTime or endDate/toTime
-   * upon query changes, the data in store should be cleared
-   *
-   * @param newQuery Object
-   */
-  handleQueryChange(newQuery) {
-    const query = merge(
-      this.getRequestBodyFromQuery(),
-      this.getRequestBodyFromState(),
-      newQuery
-    );
-
-    const queryWithoutNull = omit(query, value => !value);
-
-    const { pathname } = this.context.location;
-
-    this.context.router.push({
-      pathname,
-      query: queryWithoutNull,
-    });
-  },
-
-  handleStartDateChange(momentDate) {
-    const date = moment(momentDate.locale(defaultLocale)).format(DATE_FORMAT);
-    this.setState({ startDate: date, page: INITIAL_PAGE_NUMBER });
-    this.handleQueryChange({ startDate: date, page: INITIAL_PAGE_NUMBER });
-  },
-
-  handleEndDateChange(momentDate) {
-    const date = moment(momentDate.locale(defaultLocale)).format(DATE_FORMAT);
-    this.setState({ endDate: date, page: INITIAL_PAGE_NUMBER });
-    this.handleQueryChange({ endDate: date, page: INITIAL_PAGE_NUMBER });
-  },
-
-  handleShowNextPage() {
-    this.context.executeAction(showNextPage);
-
-    if (this.getStore(EndUserStore).getNeedMoreData()) {
-      const { params } = this.context;
-
-      this.context.executeAction(fetchEndUsers, {
-        carrierId: params.identity,
-        startDate: this.state.startDate,
-        endDate: this.state.endDate,
-        page: this.state.page + 1,
-      });
-    }
-  },
-
-  handleUserClick(username) {
-    const { identity: carrierId } = this.context.params;
-
-    this.context.executeAction(fetchEndUser, {
-      carrierId,
-      username,
-    });
-  },
-
-  handleBundleIdChange(e) {
-    this.setState({ bundleId: e.target.value });
-  },
-
-  handleStatusChange(e) {
-    this.setState({ status: e.target.value });
-  },
-
-  applyFilters(users) {
-    if (isNull(users)) {
-      return users;
-    }
-
-    if (this.state.bundleId) {
-      users = _.filter(users, user => {
-        const device = _.get(user, 'devices.0') || {};
-        return device.appBundleId === this.state.bundleId;
-      });
-    }
-
-    if (this.state.status) {
-      users = _.filter(users, user => {
-        return user.accountStatus === this.state.status;
-      });
-    }
-
-    return users;
-  },
-
-  _checkHasNext() {
-    return this.state.hasNextPage || this.getStore(EndUserStore).getTotalDisplayUsers() < this.getStore(EndUserStore).getTotalUsers();
-  },
-});
 
 export default injectIntl(EndUsers);

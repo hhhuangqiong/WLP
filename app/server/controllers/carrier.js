@@ -152,18 +152,18 @@ export default function carriersController() {
           return;
         }
         const resultObject =
-        {
-          carrierId,
-          dateRange: {
-            pageNumberIndex: queries.pageNumberIndex,
-            fromTime: queries.fromTime,
-            toTime: queries.toTime,
-          },
-          hasNextPage: false,
-          userList: [
-            result.userDetails,
-          ],
-        };
+          {
+            carrierId,
+            dateRange: {
+              pageNumberIndex: queries.pageNumberIndex,
+              fromTime: queries.fromTime,
+              toTime: queries.toTime,
+            },
+            hasNextPage: false,
+            userList: [
+              result.userDetails,
+            ],
+          };
         res.json(resultObject);
       });
       return;
