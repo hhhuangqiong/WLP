@@ -28,9 +28,8 @@ const Html = props => (
         type="text/css"
       />
       <link rel="stylesheet" href="/stylesheets/main.css" />
-      <link rel="stylesheet" href="/vendor/react-date-picker/dist/react-datepicker.min.css" />
       <link rel="stylesheet" href="/stylesheets/map-sprite.css" />
-      <script src="/vendor/foundation/js/vendor/modernizr.js"></script>
+      <script src="//cdnjs.cloudflare.com/ajax/libs/modernizr/2.8.3/modernizr.min.js"></script>
     </head>
     <body>
     <div id="app" className="full-height" dangerouslySetInnerHTML={{ __html: props.markup }}></div>
@@ -38,12 +37,6 @@ const Html = props => (
     <script dangerouslySetInnerHTML={{ __html: props.state }}></script>
     <script dangerouslySetInnerHTML={{ __html: props.config }}></script>
     <script dangerouslySetInnerHTML={{ __html: props.locale }}></script>
-    <script src="/vendor/jquery/dist/jquery.min.js"></script>
-    <script src="/vendor/highmaps/adapters/standalone-framework.js"></script>
-    <script src="/vendor/highmaps/highcharts.js"></script>
-    <script src="/vendor/highmaps/modules/map.js"></script>
-    <script src="/vendor/foundation/js/foundation.min.js"></script>
-    <script src="/vendor/foundation/js/foundation/foundation.dropdown.js"></script>
     <script src={bundlePath} defer></script>
     </body>
     </html>

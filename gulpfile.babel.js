@@ -29,11 +29,10 @@ if (webpackConfig.custom.hotLoadPort) {
   defaultTasks.push('webpack-dev-server');
 }
 
-
-
 const src = {
   allJs: 'app/**/*.js',
   all: 'app/**/*.json',
+  nodeModules: './node_modules',
   scss: 'public/scss/main.scss',
 };
 
@@ -90,6 +89,7 @@ const autoprefixerOpts = {
 gulp.task('scss:production', () =>
   gulp.src(src.scss)
     .pipe(sass({
+      includePaths: [src.nodeModules],
       outputStyle: 'compressed',
     }))
     .pipe(autoprefixer(autoprefixerOpts))
@@ -101,6 +101,7 @@ gulp.task('scss', () =>
   gulp.src(src.scss)
     .pipe(sourcemaps.init())
     .pipe(sass({
+      includePaths: [src.nodeModules],
       onError(e) {
         return gutil.log(e);
       },

@@ -1,12 +1,7 @@
 @import 'utils/mixins';
 @import 'utils/variables';
 
-//import vendor default and config
-@import '../vendor/foundation/scss/normalize';
-@import 'vendors/foundation-settings';
-@import 'vendors/foundation';
-@import 'vendors/foundation-icons';
-@import 'vendors/react-select';
+@import 'vendor/vendor';
 
 //layouts
 @import 'layouts/common';
@@ -74,7 +69,7 @@
 @import 'components/icon';
 @import 'components/sms-table';
 @import 'components/text';
-@import "components/company-wallet";
+@import 'components/company-wallet';
 @import 'components/company-new-profile';
 @import 'components/switch-button-group';
 
@@ -86,7 +81,7 @@
 @import 'pages/verification';
 @import 'pages/enduser';
 @import 'pages/top-up';
-@import "pages/roles";
+@import 'pages/roles';
 
 //need to rework these items
 // @import 'layouts/sidebar';

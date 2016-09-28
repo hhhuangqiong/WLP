@@ -4,6 +4,7 @@ var nodeEnv     = process.env.NODE_ENV;
 var appHostname = process.env.APP_HOSTNAME || 'localhost';
 var hotLoadPort = process.env.HOT_LOAD_PORT || 8888;
 var enableHotloader = process.env.ENABLE_WEBPACK_HOTLOADER === "true" || false;
+var ProvidePlugin = webpack.ProvidePlugin;
 
 // common
 var config =  {
@@ -53,7 +54,12 @@ var config =  {
       'react/addons': `${__dirname}/node_modules/react/addons`,
     },
   },
-  plugins: [],
+  plugins: [
+    new ProvidePlugin({
+      $: 'jquery',
+      jQuery: 'jquery',
+    }),
+  ],
   output: {
     // this is the assets path for the project server
     path: path.resolve(__dirname, 'public', 'javascript'),

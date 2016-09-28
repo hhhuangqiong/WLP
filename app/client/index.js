@@ -1,3 +1,5 @@
+import './vendor';
+
 import Q from 'q';
 import store from 'store';
 import React from 'react';
