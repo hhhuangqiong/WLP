@@ -137,8 +137,7 @@ Cache-Control: no-cache
     "sms": ["read"],
     "verificationSdk: ["read"],
     "whitelist": ["create", "update", "read", "delete"]
-  },
-  "isRoot": true
+  }
 }
 ```
 Response will return 201 Created and the role data submitted
