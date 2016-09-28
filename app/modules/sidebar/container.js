@@ -13,9 +13,7 @@ class SidebarContainer extends Component {
   }
 
   _getLogo() {
-    const defaultLogo = '/images/logo-m800.png';
-    const logo = get(this.props, 'currentCompany.logo');
-    return !!logo ? logo : defaultLogo;
+    return get(this.props, 'currentCompany.logo');
   }
 
   render() {

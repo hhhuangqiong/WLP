@@ -2,7 +2,7 @@ import React, { createClass, PropTypes } from 'react';
 import { injectIntl, intlShape, FormattedMessage } from 'react-intl';
 
 import classNames from 'classnames';
-import CircleIcon from '../../../main/components/CircleIcon';
+import Avatar from '../../../main/components/Avatar';
 
 const SUCCESS_LABEL = 'Verified';
 const FAIL_LABEL = 'Inactive';
@@ -46,12 +46,10 @@ const AccountInfo = createClass({
 
         <div className="profile-info__icon">
           <div>
-            {/* @TODO update the icon when it is ready */}
-            <CircleIcon
-              size="large"
-              backgroundColor="#E33238"
-              icon="icon-person"
-            />
+            { /* it will remove the space in the first Name and last name
+              to avoid wrong detection from first name with space,
+              which result in more than 2 char in the avatar */ }
+            <Avatar size="large" firstName={firstName} lastName={lastName} />
           </div>
         </div>
 

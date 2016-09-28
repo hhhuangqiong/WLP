@@ -2,8 +2,10 @@ import React, { PropTypes } from 'react';
 import classnames from 'classnames';
 import { Link } from 'react-router';
 import { injectIntl } from 'react-intl';
+
 import Permit from '../../main/components/common/Permit';
 import Icon from '../../main/components/Icon';
+import Avatar from '../../main/components/Avatar';
 import navSections from '../../main/constants/navSection';
 import { userPath } from '../../utils/paths';
 
@@ -30,7 +32,11 @@ const Sidebar = props => {
         <li>
           <a className="item mainmenu-bar__item" href="#">
             <label>
-              <div className="sidebar-logo"><img src={logoSrc} /></div>
+              <div className="sidebar-logo">
+                <Avatar src={logoSrc} firstName={currentCompany.name}
+                  color="#FFFFFF" size="small" borderRadius="0"
+                />
+              </div>
               <span id="sidebar-company-name">{ currentCompany && currentCompany.name }</span>
             </label>
           </a>

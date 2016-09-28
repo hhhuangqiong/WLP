@@ -48,19 +48,23 @@ $account-table-width: rem-calc(320);
     cursor: pointer;
     padding: rem-calc(15);
     border-bottom: #DCDCDC 1px solid;
-
     a {
       outline: none;
     }
 
     &__username {
       font-weight: 680;
+      @include oneLineText;
     }
 
     &__role {
       text-transform: capitalize;
       color: #C0C0C0;
       font-size: rem-calc(14);
+    }
+
+    &__email {
+      @include oneLineText;
     }
   }
 

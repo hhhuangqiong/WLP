@@ -3,7 +3,7 @@ import { Link } from 'react-router';
 import classNames from 'classnames';
 import { injectIntl, intlShape, FormattedMessage } from 'react-intl';
 
-import CircleIcon from '../../../main/components/CircleIcon';
+import Avatar from '../../../main/components/Avatar';
 import Icon from '../../../main/components/Icon';
 import { MESSAGES } from './../constants/i18n';
 
@@ -75,14 +75,8 @@ const AccountTable = React.createClass({
       <li className={classNames('account-table__item', { active: account.id === accountId }, 'clearfix')} key={account.id}>
         <Link to={`/${identity}/account/${account.id}/profile`} params={{ id: account.id, identity }}>
           <div className="account-icon left">
-            {/* @TODO update the icon with new user icon */}
-            <CircleIcon
-              size="small"
-              backgroundColor="#E33238"
-              icon="icon-person"
-            />
+            <Avatar firstName={account.name.firstName} lastName={account.name.lastName} />
           </div>
-
           <div className="account-table__item__username">
             {account.name.firstName} {account.name.lastName}
           </div>
@@ -97,7 +91,7 @@ const AccountTable = React.createClass({
 
   render() {
     return (
-      <div className="account-table">
+      <div className="account-table large-7">
         {this.renderHeader()}
         {this.renderSearchBar()}
         {this.renderRoleSections()}

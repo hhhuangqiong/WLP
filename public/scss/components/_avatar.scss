@@ -1,0 +1,35 @@
+.avatar {
+  &.capitalize {
+    text-transform: uppercase;
+  }
+  &.small {
+    font-size: $avatar-small-size * 0.45;
+    .UserAvatar--inner{
+      width: $avatar-small-size;
+      height: $avatar-small-size;
+    }
+  }
+  &.medium {
+    font-size: $avatar-medium-size * 0.4;
+    .UserAvatar--inner{
+      width: $avatar-medium-size;
+      height: $avatar-medium-size;
+    }
+  }
+  &.large {
+    font-size: $avatar-large-size * 0.4;
+    .UserAvatar--inner{
+      width: $avatar-large-size;
+      height: $avatar-large-size;
+    }
+  }
+  font-weight: bold;
+  // default font color
+  &.UserAvatar {
+    color: $white;
+  }
+  // font color when the background color is light
+  &.UserAvatar--light {
+    color: $gray-darker;
+  }
+}

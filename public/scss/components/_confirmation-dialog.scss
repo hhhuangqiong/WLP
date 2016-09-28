@@ -47,6 +47,7 @@ $font-weight-light: 300 !default;
   &__body {
     cursor: default;
     font-size: rem-calc(16);
+    word-wrap: break-word;
 
     &__line {
       font-size: rem-calc(14);
@@ -91,7 +92,7 @@ $font-weight-light: 300 !default;
 }
 
 .dialog-body {
-  padding: rem-calc(25) rem-calc(25) rem-calc(21) rem-calc(25);   
+  padding: rem-calc(25) rem-calc(25) rem-calc(21) rem-calc(25);
   > span {
     display: inline-block;
   }
