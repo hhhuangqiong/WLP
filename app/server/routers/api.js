@@ -1,6 +1,5 @@
 import { Router } from 'express';
-import nconf from 'nconf';
-import { permission, RESOURCE, ACTION } from './../../main/acl/acl-enums';
+import { permission, RESOURCE, ACTION, RESOURCE_OWNER } from './../../main/acl/acl-enums';
 import { fetchDep } from './../utils/bottle';
 
 // Merge params is used to inherit carrierId from common parent router
@@ -18,16 +17,18 @@ apiRouter
 // TODO: refactor api.js to be a factory function with dependencies
 const noCacheMiddleware = fetchDep('NoCacheMiddleware');
 const authorize = fetchDep('AuthorizationMiddlewareFactory');
-const roleController = fetchDep(nconf.get('containerName'), 'RoleController');
-const companies = fetchDep(nconf.get('containerName'), 'CompanyController');
-const accounts = fetchDep(nconf.get('containerName'), 'AccountController');
-const provision = fetchDep(nconf.get('containerName'), 'ProvisionController');
-const carriers = fetchDep(nconf.get('containerName'), 'CarrierController');
-const carrierWalletController = fetchDep(nconf.get('containerName'), 'CarrierWalletController');
+const roleController = fetchDep('RoleController');
+const companies = fetchDep('CompanyController');
+const accounts = fetchDep('AccountController');
+const provision = fetchDep('ProvisionController');
+const carriers = fetchDep('CarrierController');
+const carrierWalletController = fetchDep('CarrierWalletController');
+const meController = fetchDep('MeController');
 
 // eslint:max-len 0
 routes
   .use(noCacheMiddleware)
+  .get('/me', meController.getCurrentUser)
   // general overview
   .get('/overview/summaryStats', [
     authorize(permission(RESOURCE.GENERAL)),
@@ -172,15 +173,15 @@ routes
   ])
   // company wallet
   .get('/wallets', [
-    authorize(permission(RESOURCE.COMPANY, ACTION.READ)),
+    authorize(permission(RESOURCE.COMPANY, ACTION.READ), RESOURCE_OWNER.PARENT_COMPANY),
     carrierWalletController.getWallets,
   ])
   .post('/topUpRecords', [
-    authorize(permission(RESOURCE.COMPANY, ACTION.UPDATE)),
+    authorize(permission(RESOURCE.COMPANY, ACTION.UPDATE), RESOURCE_OWNER.PARENT_COMPANY),
     carrierWalletController.createTopUpRecord,
   ])
   .get('/topUpRecords', [
-    authorize(permission(RESOURCE.COMPANY, ACTION.READ)),
+    authorize(permission(RESOURCE.COMPANY, ACTION.READ), RESOURCE_OWNER.PARENT_COMPANY),
     carrierWalletController.getTopUpRecords,
   ])
   // used in account section

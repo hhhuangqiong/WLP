@@ -92,6 +92,7 @@ export default (context) => {
     }
     // if it doesn't mention the target page, then assign the default section
     if (routes.length === 2) {
+      debug('loading default section');
       const defaultSection = navigationSections.find(x => includes(user.permissions, x.permission));
       if (defaultSection) {
         replace(`/${carrierId}${defaultSection.path}`);

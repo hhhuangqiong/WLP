@@ -1,6 +1,9 @@
 import Q from 'q';
+import url from 'url';
+import validator from 'validator';
 import path from 'path';
 import logger from 'winston';
+import _ from 'lodash';
 import React from 'react';
 import ReactDomServer from 'react-dom/server';
 import { RouterContext, match } from 'react-router';
@@ -76,12 +79,21 @@ export default function renderer(app, config) {
       getClientConfig,
     ];
 
+    // Carrier id will be passed as a separate payload parameter
+    // As we should avoid passing req and res to fluxible actions directly if we want to be good guys
+    const parts = url.parse(req.url).pathname.split('/');
+    const carrierId = [
+      parts[1],
+      _.get(req, 'user.carrierId'),
+    ].find(x => validator.isURL(x, { allow_underscores: true }));
+    logger.debug(`Carrier id resolved by renderer: ${carrierId}.`);
+
     // it turns out that the server defines the
     // get initial data details by its own
     // which is not satisfying
     // could it be defined within the routes?
     // see: https://github.com/erikras/react-redux-universal-hot-example/blob/master/src%2Froutes.js#L27
-    Q.nfcall(getInitialData, context, initialActions, { req, res })
+    Q.nfcall(getInitialData, context, initialActions, { req, res, carrierId })
       .then(() => {
         match({ routes, location: req.url }, (matchingErr, redirectLocation, renderProps) => {
           if (matchingErr) {
