@@ -223,8 +223,8 @@ class AccountProfile extends Component {
       });
       const data = {
         name: {
-          firstName: this.state.firstName,
-          lastName: this.state.lastName,
+          firstName: this.state.firstName.trim(),
+          lastName: this.state.lastName.trim(),
         },
         id: this.state.email,
         // either current affiliated id or current company id

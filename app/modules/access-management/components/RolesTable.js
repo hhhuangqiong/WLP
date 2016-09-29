@@ -119,7 +119,6 @@ class RolesTable extends Component {
       return (
         <PermissionRowGroup
           key={permission.intlKey}
-          hasPermission={this.props.hasPermission}
           adminRoleIndex={this.props.adminRoleIndex}
           title={this.props.intl.formatMessage(MESSAGES[permission.intlKey])}
           showEditControls={this.props.hasPermission && index === 0}
