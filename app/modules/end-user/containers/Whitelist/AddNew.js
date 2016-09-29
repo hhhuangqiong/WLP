@@ -8,7 +8,6 @@ import { injectIntl, intlShape, FormattedMessage, defineMessages } from 'react-i
 import { connectToStores } from 'fluxible-addons-react';
 import Papa from 'papaparse';
 import invariant from 'invariant';
-import Paginate from 'react-paginate';
 
 import {
   addWhitelistUser,
@@ -22,6 +21,7 @@ import {
   completeImportFile,
 } from '../../actions/whitelist';
 
+import Pagination from '../../../../main/components/Pagination';
 import EditableText from '../../components/Whitelist/EditableText';
 import createWhiteListStore from '../../stores/CreateWhitelist';
 import Icon from '../../../../main/components/Icon';
@@ -32,13 +32,23 @@ const LEAVE_MESSAGE = 'Leave with unsaved change?';
 const UPLOAD_LIMIT = 1000;
 
 const MESSAGES = defineMessages({
+  allRecords: {
+    id: 'allRecords',
+    defaultMessage: 'All records',
+  },
+  errorRecords: {
+    id: 'errorRecords',
+    defaultMessage: 'Error records',
+  },
+  deleteText: {
+    id: 'message.deleteText',
+    defaultMessage: 'Are you sure to delete {value}?',
+  },
   uploadLimitReached: {
     id: 'message.uploadLimitReached',
     defaultMessage: 'Total records should not be more than {limit}',
   },
 });
-
-const DEFAULT_PAGE_RANGE = [5, 10, 15];
 
 class CreateWhiteListContainer extends Component {
   constructor(props) {
@@ -52,7 +62,6 @@ class CreateWhiteListContainer extends Component {
       'handleAddNewUserClick',
       'handleChangeFilter',
       'handlePageChange',
-      'handlePageRecChange',
       'getUploadedFilename',
       'getTotalPageNumber',
       'updateUserAtIndex',
@@ -71,8 +80,10 @@ class CreateWhiteListContainer extends Component {
   }
 
   componentDidUpdate() {
-    window.onbeforeunload = this.propmptUnsavedChangeOnClose;
-    this.propmptUnsavedChangeOnTransit(this.isDirty());
+    if (!window.onbeforeunload) {
+      window.onbeforeunload = this.propmptUnsavedChangeOnClose;
+      this.propmptUnsavedChangeOnTransit(this.isDirty());
+    }
   }
 
   componentWillUnmount() {
@@ -131,12 +142,15 @@ class CreateWhiteListContainer extends Component {
     this.setState({ percentage: null });
   }
 
-  handlePageChange({ selected }) {
-    this.context.executeAction(changeNewWhitelistPage, selected);
-  }
+  handlePageChange({ pageSize, pageNumber }) {
+    const { page, pageRec } = this.props;
 
-  handlePageRecChange(event) {
-    this.context.executeAction(changeNewWhitelistPageRec, +event.target.value);
+    if (pageSize !== pageRec) {
+      this.context.executeAction(changeNewWhitelistPageRec, pageSize);
+    }
+    if (pageNumber !== page) {
+      this.context.executeAction(changeNewWhitelistPage, pageNumber);
+    }
   }
 
   handleUploadButtonClick() {
@@ -226,17 +240,23 @@ class CreateWhiteListContainer extends Component {
   updateUserAtIndex(index, user) {
     this.context.executeAction(updateWhitelistUser, {
       index,
-      user,
+      user: { value: this.parseUsername(user.value), error: user.error },
     });
   }
 
-  deleteWhitelistUser(index) {
+  deleteWhitelistUser(index, user) {
+    const { formatMessage } = this.props.intl;
+
+    if (!confirm(formatMessage(MESSAGES.deleteText, { value: user }))) {
+      return;
+    }
+
     this.context.executeAction(deleteWhitelistUser, index);
   }
 
   /**
    * @method parseUsername
-   * to remove the first char from a string if it is a '+' symbol
+   * append a leading '+' if user has none.
    *
    * @param user {String}
    * @returns {String}
@@ -247,27 +267,30 @@ class CreateWhiteListContainer extends Component {
     }
 
     const firstChar = user.charAt(0);
-
-    if (firstChar === '+') {
-      return user.substr(1, user.length);
+    if (firstChar !== '+') {
+      return `+${user}`;
     }
-
     return user;
   }
 
   // TODO: replace this will joi validation
-  validateUsername(user) {
+  validateUsername(user, index) {
     if (!user) {
       return new Error('Username Cannot Be Empty');
     }
 
-    const validFormat = /^[0-9]*$/.test(user);
+    const parsedUser = this.parseUsername(user);
+
+    const validFormat = /^\+[0-9]+$/.test(parsedUser);
 
     if (!validFormat) {
       return new Error('Invalid Format');
     }
 
-    const duplicated = find(this.props.users, _user => _user.value === user);
+    const duplicated = find(
+      this.props.users,
+      (_user, _index) => _user.value === parsedUser && _index !== index
+    );
 
     if (duplicated) {
       return new Error('Duplicated Records');
@@ -290,7 +313,7 @@ class CreateWhiteListContainer extends Component {
     const isUploading = Number.isFinite(percentage);
 
     return (
-      <p className="text-center">
+      <div className="text-center">
         {
           isUploading && (
             <div className="whitelist-progress">
@@ -303,30 +326,7 @@ class CreateWhiteListContainer extends Component {
             </div>
           )
         }
-      </p>
-    );
-  }
-
-  renderPagination() {
-    const hasPage = this.getTotalPageNumber() > 1;
-
-    if (!hasPage) {
-      return null;
-    }
-
-    return (
-      <Paginate
-        pageNum={this.getTotalPageNumber()}
-        forceSelected={page}
-        clickCallback={this.handlePageChange}
-        marginPagesDisplayed={2}
-        pageRangeDisplayd={5}
-        previousLabel="<"
-        nextLabel=">"
-        containerClassName="pagination"
-        subContainerClassName="pages pagination"
-        activeClassName="active"
-      />
+      </div>
     );
   }
 
@@ -343,32 +343,20 @@ class CreateWhiteListContainer extends Component {
 
     return (
       <div className="end-users-whitelist__page-control">
-        <div className="row end-users-whitelist__page-control__select">
-          <div className="large-10 columns large-collapse">
-            <select onChange={this.handlePageRecChange} value={pageRec}>
-              {
-                DEFAULT_PAGE_RANGE.map(pageRange => (
-                  <option value={pageRange}>{pageRange}</option>
-                ))
-              }
-            </select>
-          </div>
-          <div className="large-14 columns">
-            <FormattedMessage
-              id="records"
-              defaultMessage="records"
-            />
-          </div>
-        </div>
-
-        {this.renderPagination()}
+        <Pagination
+          pageSize={pageRec}
+          pageNumber={page}
+          totalElements={totalUsers}
+          onChange={this.handlePageChange}
+        />
       </div>
     );
   }
 
   render() {
     // TODO: move this whole block to a component
-    const { percentage } = this.state
+    const { formatMessage } = this.props.intl;
+    const { percentage } = this.state;
     const { identity } = this.context.params;
     const {
       filter: filterValue,
@@ -544,16 +532,10 @@ class CreateWhiteListContainer extends Component {
                             <div className="large-18 columns">
                               <select value={filterValue} onChange={this.handleChangeFilter}>
                                 <option value="all">
-                                  <FormattedMessage
-                                    id="allRecords"
-                                    defaultMessage="All records"
-                                  />
+                                  {formatMessage(MESSAGES.allRecords)}
                                 </option>
                                 <option value="error">
-                                  <FormattedMessage
-                                    id="errorRecords"
-                                    defaultMessage="Error records"
-                                  />
+                                  {formatMessage(MESSAGES.errorRecords)}
                                 </option>
                               </select>
                             </div>
@@ -592,7 +574,7 @@ class CreateWhiteListContainer extends Component {
                   ) : (
                     users.map((user, index) => (
                       <tr
-                        key={isEmpty(user.value) || !!user.error ? Math.random() : user.value}
+                        key={users.length - index}
                         className={cx({ 'row--error': !!user.error })}
                       >
                         <td colSpan="2">
@@ -600,9 +582,9 @@ class CreateWhiteListContainer extends Component {
                             index={index}
                             value={user.value}
                             error={user.error}
-                            handleTextValidation={this.validateUsername}
-                            handleTextUpdate={this.updateUserAtIndex}
-                            handleTextDelete={this.deleteWhitelistUser}
+                            handleValidation={this.validateUsername}
+                            handleUpdate={this.updateUserAtIndex}
+                            handleDelete={this.deleteWhitelistUser}
                           />
                         </td>
                       </tr>

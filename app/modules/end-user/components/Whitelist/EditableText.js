@@ -1,15 +1,8 @@
 import { isEmpty, bindAll } from 'lodash';
 import cx from 'classnames';
 import React, { Component, PropTypes } from 'react';
-import { injectIntl, intlShape, FormattedMessage, defineMessages } from 'react-intl';
+import { injectIntl, intlShape, FormattedMessage } from 'react-intl';
 import Icon from '../../../../main/components/Icon';
-
-const MESSAGES = defineMessages({
-  deleteText: {
-    id: 'message.deleteText',
-    defaultMessage: 'Are you sure to delete {value}?',
-  },
-});
 
 class EditableText extends Component {
   constructor(props) {
@@ -24,8 +17,8 @@ class EditableText extends Component {
       'handleStartEditing',
       'handleExitEditing',
       'handleKeyPress',
-      'handleTextUpdate',
-      'handleTextDelete',
+      'handleUpdate',
+      'handleDelete',
       'displayControl',
       'removeControl',
     ]);
@@ -50,16 +43,11 @@ class EditableText extends Component {
         prevDisplayControl !== currentDisplayControl;
   }
 
-  handleTextUpdate() {
-    const { index, value: originalValue } = this.props;
+  handleUpdate() {
+    const { index, handleValidation } = this.props;
     const { value } = this.textInput;
 
-    if (originalValue === value) {
-      this.handleExitEditing();
-      return;
-    }
-
-    const error = this.props.handleTextValidation(value);
+    const error = handleValidation ? handleValidation(value, index) : null;
 
     if (!!error) {
       this.textInput.focus();
@@ -67,23 +55,17 @@ class EditableText extends Component {
       this.handleExitEditing();
     }
 
-    this.props.handleTextUpdate(index, { value, error });
+    this.props.handleUpdate(index, { value, error });
   }
 
-  handleTextDelete() {
-    const { value, intl } = this.props;
-    const { formatMessage } = intl;
-
-    if (!confirm(formatMessage(MESSAGES.deleteText, { value }))) {
-      return;
-    }
-
-    this.props.handleTextDelete(this.props.index);
+  handleDelete() {
+    const { index, value } = this.props;
+    this.props.handleDelete(index, value);
   }
 
   handleKeyPress(e) {
     if (e.which === 13) {
-      this.handleTextUpdate();
+      this.handleUpdate();
     }
   }
 
@@ -113,7 +95,7 @@ class EditableText extends Component {
 
   renderField() {
     const { isEditing, displayControl } = this.state;
-    const { value, error } = this.props;
+    const { value, error, handleUpdate, handleDelete } = this.props;
 
     if (isEditing) {
       return (
@@ -130,7 +112,7 @@ class EditableText extends Component {
           <div className="large-12 columns">
             <button
               className="button--no-background button--extended radius"
-              onClick={this.handleTextUpdate}
+              onClick={this.handleUpdate}
             >
               <FormattedMessage
                 id="ok"
@@ -143,20 +125,21 @@ class EditableText extends Component {
     }
 
     return (
-      <div
-        onMouseEnter={this.displayControl}
-        onMouseLeave={this.removeControl}
-      >
-        <span>+{ value }</span>
+      <div>
+        <span>{ value }</span>
         {
           displayControl && (
             <span className="editable-text__control">
-              <span onClick={this.handleStartEditing}>
-                <Icon className="editable-text__icon" symbol="icon-menusetting" />
-              </span>
-              <span onClick={this.handleTextDelete}>
-                <Icon className="editable-text__icon" symbol="icon-delete" />
-              </span>
+              {handleUpdate ? (
+                <span onClick={this.handleStartEditing}>
+                  <Icon className="editable-text__icon" symbol="icon-menusetting" />
+                </span>
+              ) : null}
+              {handleDelete ? (
+                <span onClick={this.handleDelete}>
+                  <Icon className="editable-text__icon" symbol="icon-delete" />
+                </span>
+              ) : null}
             </span>
           )
         }
@@ -169,7 +152,11 @@ class EditableText extends Component {
     const { error } = this.props;
 
     return (
-      <div className={cx('row', 'editable-text', { 'editable-text--editing': isEditing })}>
+      <div
+        className={cx('row', 'editable-text', { 'editable-text--editing': isEditing })}
+        onMouseEnter={this.displayControl}
+        onMouseLeave={this.removeControl}
+      >
         <div className="large-8 columns">
           {this.renderField()}
         </div>
@@ -184,12 +171,15 @@ class EditableText extends Component {
 EditableText.propTypes = {
   intl: intlShape.isRequired,
   isEditing: PropTypes.bool,
-  index: PropTypes.string,
+  index: PropTypes.oneOfType([
+    PropTypes.string,
+    PropTypes.number,
+  ]),
   error: PropTypes.object,
   value: PropTypes.string,
-  handleTextValidation: PropTypes.func,
-  handleTextUpdate: PropTypes.func,
-  handleTextDelete: PropTypes.func,
+  handleValidation: PropTypes.func,
+  handleUpdate: PropTypes.func,
+  handleDelete: PropTypes.func,
 };
 
 export default injectIntl(EditableText);
