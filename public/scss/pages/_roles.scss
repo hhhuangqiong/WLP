@@ -27,9 +27,9 @@ $roles-table-control-color: #3B95CC;
     input[type="text"] {
       margin: 0;
       padding: 0;
-      height: auto;
+      height: rem-calc(20);
       font-size: 13px;
-      line-height: 1.8;
+      line-height: rem-calc(20);
       text-align: center;
       background-color: transparent;
       border-color: $roles-table-control-color;
