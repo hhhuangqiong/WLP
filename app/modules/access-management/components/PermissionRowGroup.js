@@ -4,11 +4,14 @@ import cx from 'classnames';
 
 import { MESSAGES } from './../constants/i18n';
 
+import Permit from '../../../main/components/common/Permit';
+import { RESOURCE, ACTION, permission } from '../../../main/acl/acl-enums';
+
 function PermissionRowGroup(props) {
   const intl = props.intl;
   const cells = [];
   for (let i = 0; i < props.rolesCount; i++) {
-    const isEdited = props.editedRoleIndex === i;
+    const isEdited = props.showEditControls && props.editedRoleIndex === i;
     const isHovered = !isEdited && props.hoveredRoleIndex === i;
     const css = cx({
       'roles-table__role-cell': true,
@@ -18,37 +21,45 @@ function PermissionRowGroup(props) {
     let content = null;
     if (props.showEditControls && isHovered && props.adminRoleIndex !== i) {
       content = (
-        <div
-          className="confirmation__footer__button confirm button confirmation__button--cancel"
-        >
-          {intl.formatMessage(MESSAGES.edit)}
-        </div>
+        <Permit permission={permission(RESOURCE.ROLE, ACTION.UPDATE)}>
+          <div
+            className="confirmation__footer__button confirm button confirmation__button--cancel"
+          >
+            {intl.formatMessage(MESSAGES.edit)}
+          </div>
+        </Permit>
       );
     }
     if (props.showEditControls && isEdited) {
       content = (
-        <div className="roles-table__control-group">
-          <button
-            className="button button--no-background"
-            onClick={e => {
-              e.stopPropagation();
-              props.onCancel();
-            }}
-          >
-            {intl.formatMessage(MESSAGES.cancel)}
-          </button>
-          <button
-            className="button button--no-background"
-            onClick={props.onSave}
-            disabled={!props.canSave}
-          >
-            {intl.formatMessage(MESSAGES.save)}
-          </button>
-        </div>
+        <Permit permission={permission(RESOURCE.ROLE, ACTION.UPDATE)}>
+          <div className="roles-table__control-group">
+            <button
+              className="button button--no-background"
+              onClick={e => {
+                e.stopPropagation();
+                props.onCancel();
+              }}
+            >
+              {intl.formatMessage(MESSAGES.cancel)}
+            </button>
+            <button
+              className="button button--no-background"
+              onClick={props.onSave}
+              disabled={!props.canSave}
+            >
+              {intl.formatMessage(MESSAGES.save)}
+            </button>
+          </div>
+        </Permit>
       );
     }
     const cell = (
-      <td key={i} className={css} title={props.adminRoleIndex !== i ? props.editTitle : null}>
+      <td
+        key={i}
+        className={css}
+        title={props.adminRoleIndex !== i && props.showEditControls ? props.editTitle : null}
+      >
       {content}
       </td>
     );

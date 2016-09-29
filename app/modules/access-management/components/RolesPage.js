@@ -14,6 +14,9 @@ import { MESSAGES } from './../constants/i18n';
 import RoleStore from './../stores/RoleStore';
 import ApplicationStore from './../../../main/stores/ApplicationStore';
 import ClientConfigStore from './../../../main/stores/ClientConfigStore';
+import AuthStore from '../../../main/stores/AuthStore';
+import Permit from '../../../main/components/common/Permit';
+import { RESOURCE, ACTION, permission } from '../../../main/acl/acl-enums';
 
 export class RolesPage extends Component {
   static get contextTypes() {
@@ -29,6 +32,7 @@ export class RolesPage extends Component {
       permissions: PropTypes.arrayOf(PropTypes.object),
       company: PropTypes.object.isRequired,
       limit: PropTypes.number,
+      user: PropTypes.bool,
     };
   }
   constructor(props) {
@@ -41,6 +45,7 @@ export class RolesPage extends Component {
       editedRoleBackup: null,
       adminRoleIndex: null,
       isDisableAddRole: null,
+      editPermisson: null,
     };
     this.saveRole = this.saveRole.bind(this);
     this.removeRole = this.removeRole.bind(this);
@@ -52,6 +57,7 @@ export class RolesPage extends Component {
     this.startRoleEdit = this.startRoleEdit.bind(this);
     this.suggestRoleEdit = this.suggestRoleEdit.bind(this);
     this.addRole = this.addRole.bind(this);
+    this.hasPermission = this.hasPermission.bind(this);
   }
   componentDidMount() {
     const { params: { identity: carrierId } } = this.context;
@@ -61,6 +67,14 @@ export class RolesPage extends Component {
     this.state.displayedRoles = nextProps.roles;
     this.state.adminRoleIndex = _.findIndex(this.state.displayedRoles, { isRoot: true });
     this.finishRoleEdit();
+    this.hasPermission();
+  }
+  hasPermission() {
+    if (!this.props.user) {
+      this.setState({ hasPermission: false });
+    }
+    const permissions = this.props.user.permissions || [];
+    this.setState({ hasPermission: permissions.indexOf(permission(RESOURCE.ROLE, ACTION.UPDATE)) >= 0 });
   }
   addRole() {
     const role = {
@@ -178,16 +192,20 @@ export class RolesPage extends Component {
       <div>
         <Panel.Wrapper className="roles-panel">
           <Panel.Header title={intl.formatMessage(MESSAGES.rolesAndPermissions)}>
-            <button
-              className="button radius"
-              onClick={this.addRole}
-              disabled={this.state.displayedRoles.length >= this.props.limit }
-            >
-              {intl.formatMessage(MESSAGES.addNewRole)}
-            </button>
+            <Permit permission={permission(RESOURCE.ROLE, ACTION.CREATE)}>
+              <button
+                className="button radius"
+                onClick={this.addRole}
+                disabled={this.state.displayedRoles.length >= this.props.limit }
+              >
+                {intl.formatMessage(MESSAGES.addNewRole)}
+              </button>
+            </Permit>
           </Panel.Header>
           <Panel.Body className="roles-table-container">
             <RolesTable
+              // if permisttion is true, then it can be edited,vice versa
+              hasPermission= {this.state.hasPermission}
               roles={this.state.displayedRoles}
               adminRoleIndex={this.state.adminRoleIndex}
               permissions={this.props.permissions}
@@ -214,11 +232,12 @@ export class RolesPage extends Component {
 RolesPage = injectIntl(RolesPage);
 RolesPage = connectToStores(
   RolesPage,
-  [RoleStore, ApplicationStore, ClientConfigStore],
+  [RoleStore, ApplicationStore, ClientConfigStore, AuthStore],
   (context) => {
     const state = context.getStore(RoleStore).getState();
     state.company = context.getStore(ApplicationStore).getCurrentCompany();
     state.limit = context.getStore(ClientConfigStore).getRolesLength();
+    state.user = context.getStore(AuthStore).getUser();
     return state;
   }
 );

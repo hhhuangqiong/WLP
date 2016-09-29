@@ -6,6 +6,8 @@ import { injectIntl, intlShape, FormattedMessage } from 'react-intl';
 import Avatar from '../../../main/components/Avatar';
 import Icon from '../../../main/components/Icon';
 import { MESSAGES } from './../constants/i18n';
+import Permit from '../../../main/components/common/Permit';
+import { RESOURCE, ACTION, permission } from '../../../main/acl/acl-enums';
 
 const AccountTable = React.createClass({
   displayName: 'AccountTable',
@@ -48,9 +50,11 @@ const AccountTable = React.createClass({
           />
           {' '}({userNo})
         </h5>
-        <Link to={`/${identity}/account/create`}>
-          <Icon symbol="icon-user-management" className="right" />
-        </Link>
+        <Permit permission={permission(RESOURCE.USER, ACTION.CREATE)}>
+          <Link to={`/${identity}/account/create`}>
+            <Icon symbol="icon-user-management" className="right" />
+          </Link>
+        </Permit>
       </div>
     );
   },

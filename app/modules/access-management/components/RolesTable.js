@@ -29,6 +29,7 @@ class RolesTable extends Component {
       handleOpenDeleteDialog: PropTypes.func,
       deleteDialogOpened: PropTypes.bool,
       adminRoleIndex: PropTypes.number,
+      hasPermission: PropTypes.bool,
     };
   }
   constructor(props) {
@@ -97,6 +98,7 @@ class RolesTable extends Component {
       <PermissionRow
         isChild={isChild}
         key={key}
+        hasPermission={this.props.hasPermission}
         adminRoleIndex={this.props.adminRoleIndex}
         title={this.props.intl.formatMessage(MESSAGES[permission.intlKey])}
         editTitle={this.props.intl.formatMessage(MESSAGES.title)}
@@ -117,9 +119,10 @@ class RolesTable extends Component {
       return (
         <PermissionRowGroup
           key={permission.intlKey}
+          hasPermission={this.props.hasPermission}
           adminRoleIndex={this.props.adminRoleIndex}
           title={this.props.intl.formatMessage(MESSAGES[permission.intlKey])}
-          showEditControls={index === 0}
+          showEditControls={this.props.hasPermission && index === 0}
           canSave={isValid}
           rolesCount={this.props.roles.length}
           hoveredRoleIndex={this.props.hoveredRoleIndex}
@@ -149,6 +152,7 @@ class RolesTable extends Component {
       handleCloseDeleteDialog,
       handleOpenDeleteDialog,
       deleteDialogOpened,
+      hasPermission,
     } = this.props;
     return (
       <table
@@ -158,6 +162,7 @@ class RolesTable extends Component {
       >
         <RolesTableHeader
           roles={roles}
+          hasPermission={hasPermission}
           adminRoleIndex={adminRoleIndex}
           hoveredRoleIndex={hoveredRoleIndex}
           editedRoleIndex={editedRoleIndex}

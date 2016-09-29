@@ -9,9 +9,9 @@ function PermissionRow(props) {
   }
 
   const cells = props.permissionValues.map((value, index) => {
-    const isEdited = props.editedRoleIndex === index;
+    const isEdited = props.hasPermission && props.editedRoleIndex === index;
     const isHovered = !isEdited && props.hoveredRoleIndex === index;
-    const isDisabled = props.editedRoleIndex !== index;
+    const isDisabled = !props.hasPermission || props.editedRoleIndex !== index;
 
     const css = classnames({
       'roles-table__role-cell': true,
@@ -22,7 +22,7 @@ function PermissionRow(props) {
     return (
       <td key={index}
         className={css}
-        title={props.adminRoleIndex !== index ? props.editTitle : null}
+        title={props.hasPermission && props.adminRoleIndex !== index ? props.editTitle : null}
       >
         <input
           type="checkbox"
@@ -59,6 +59,7 @@ PermissionRow.propTypes = {
   hoveredRoleIndex: PropTypes.number,
   editedRoleIndex: PropTypes.number,
   onPermissionChanged: PropTypes.func.isRequired,
+  hasPermission: PropTypes.bool,
 };
 
 export default PermissionRow;

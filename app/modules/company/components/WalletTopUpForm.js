@@ -7,6 +7,8 @@ import { injectJoiValidation } from 'm800-user-locale/joi-validation';
 import { MESSAGES } from '../constants/companyOptions';
 
 import Currency from '../../../main/components/Currency';
+import Permit from '../../../main/components/common/Permit';
+import { RESOURCE, ACTION, permission } from '../../../main/acl/acl-enums';
 
 class WalletTopUpForm extends Component {
   static get propTypes() {
@@ -94,46 +96,52 @@ class WalletTopUpForm extends Component {
             </div>
           </div>
         </div>
-        <div className="row">
-          <div className="small-6 columns">
-            <label>
-              {intl.formatMessage(MESSAGES.topUpAmount)}
-            </label>
+        <Permit permission={permission(RESOURCE.COMPANY, ACTION.UPDATE)}>
+          <div className="row">
+            <div className="small-6 columns">
+              <label>
+                {intl.formatMessage(MESSAGES.topUpAmount)}
+              </label>
+            </div>
+            <div className="small-18 columns">
+              <input
+                className={cn('radius', { error: errors.amount })}
+                type="number"
+                onChange={e => this.handleFieldChange('amount', e.target.value)}
+                onBlur={this.props.handleValidation('amount')}
+                value={values.amount}
+              />
+              {this.renderErrors('amount')}
+            </div>
           </div>
-          <div className="small-18 columns">
-            <input
-              className={cn('radius', { error: errors.amount })}
-              type="number"
-              onChange={e => this.handleFieldChange('amount', e.target.value)}
-              onBlur={this.props.handleValidation('amount')}
-              value={values.amount}
-            />
-            {this.renderErrors('amount')}
+        </Permit>
+        <Permit permission={permission(RESOURCE.COMPANY, ACTION.UPDATE)}>
+          <div className="row">
+            <div className="small-6 columns">
+              <label>
+                {intl.formatMessage(MESSAGES.topUpDescription)}
+              </label>
+            </div>
+            <div className="small-18 columns">
+              <input
+                className="radius"
+                type="text"
+                onChange={e => this.handleFieldChange('description', e.target.value)}
+                value={values.description}
+              />
+            </div>
           </div>
-        </div>
-        <div className="row">
-          <div className="small-6 columns">
-            <label>
-              {intl.formatMessage(MESSAGES.topUpDescription)}
-            </label>
-          </div>
-          <div className="small-18 columns">
-            <input
-              className="radius"
-              type="text"
-              onChange={e => this.handleFieldChange('description', e.target.value)}
-              value={values.description}
-            />
-          </div>
-        </div>
-        <button
-          type="submit"
-          className="button--primary round"
-          onClick={() => this.handleSubmit()}
-          disabled={!this.canSubmit}
-        >
-          {intl.formatMessage(MESSAGES.submit)}
-        </button>
+        </Permit>
+        <Permit permission={permission(RESOURCE.COMPANY, ACTION.UPDATE)}>
+          <button
+            type="submit"
+            className="button--primary round"
+            onClick={() => this.handleSubmit()}
+            disabled={!this.canSubmit}
+          >
+            {intl.formatMessage(MESSAGES.submit)}
+          </button>
+        </Permit>
       </div>
     );
   }

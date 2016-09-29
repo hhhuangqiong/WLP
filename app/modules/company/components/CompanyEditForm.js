@@ -25,6 +25,8 @@ import {
   COMPANY_TYPE_LABEL,
   PAYMENT_TYPE_LABEL,
 } from '../constants/companyOptions';
+import Permit from '../../../main/components/common/Permit';
+import { RESOURCE, ACTION, permission } from '../../../main/acl/acl-enums';
 
 class CompanyEditForm extends Component {
   static contextTypes = {
@@ -216,46 +218,40 @@ class CompanyEditForm extends Component {
         </div>
         {
           this.props.companyDetail ?
-          <button
-            role="button"
-            tabIndex="0"
-            className={classNames(
-              'account-top-bar__button-primary',
-              'button',
-              'round',
-              'large',
-              'item',
-              )
-            }
-            disabled={status === 'IN_PROGRESS' }
-            onClick={
-              status === 'ERROR' ?
-              this.updateCompany :
-              this.saveCompany
-            }
-          >
-          {
-            status === 'ERROR' ?
-            <FormattedMessage
-              id="retry"
-              defaultMessage="Retry"
-            /> :
-            <FormattedMessage
-              id="save"
-              defaultMessage="Save"
-            />
-          }
-          </button> :
-          // display when the component doesn't receive props from store
-          <button
-            className={classNames(
+          <Permit permission={permission(RESOURCE.COMPANY, ACTION.UPDATE)}>
+            <button
+              role="button"
+              tabIndex="0"
+              className={classNames(
                 'account-top-bar__button-primary',
                 'button',
                 'round',
                 'large',
                 'item',
-            )}
-          >save</button>
+                )
+              }
+              disabled={status === 'IN_PROGRESS' }
+              onClick={
+                status === 'ERROR' ?
+                this.updateCompany :
+                this.saveCompany
+              }
+            >
+            {
+              status === 'ERROR' ?
+              <FormattedMessage
+                id="retry"
+                defaultMessage="Retry"
+              /> :
+              <FormattedMessage
+                id="save"
+                defaultMessage="Save"
+              />
+            }
+            </button>
+          </Permit> :
+          // display when the component doesn't receive props from store
+          null
         }
       </div>
         <Collapse accordion={false} defaultActiveKey="0">

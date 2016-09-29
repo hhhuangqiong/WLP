@@ -6,6 +6,8 @@ import { injectIntl, intlShape, FormattedMessage } from 'react-intl';
 import AuthStore from '../../../main/stores/AuthStore';
 import ConfirmationDialog from '../../../main/components/ConfirmationDialog';
 import { MESSAGES } from './../constants/i18n';
+import Permit from '../../../main/components/common/Permit';
+import { RESOURCE, ACTION, permission } from '../../../main/acl/acl-enums';
 
 const AccountActionBar = React.createClass({
   propTypes: {
@@ -53,17 +55,19 @@ const AccountActionBar = React.createClass({
           <ul className="top-bar--inner">
             <li className="top-bar--inner">
               <If condition={!this.props.isCreate && this.props.accountId !== loggedInUserId}>
-                <div
-                  role="button"
-                  tabIndex="2"
-                  className="account-top-bar__button-secondary button round icon-delete"
-                  onClick={this.props.handleOpenDeleteDialog}
-                >
+                <Permit permission={permission(RESOURCE.USER, ACTION.DELETE)}>
+                  <div
+                    role="button"
+                    tabIndex="2"
+                    className="account-top-bar__button-secondary button round icon-delete"
+                    onClick={this.props.handleOpenDeleteDialog}
+                  >
                   <FormattedMessage
                     id="Delete"
                     defaultMessage="Delete"
                   />
-                </div>
+                  </div>
+                </Permit>
               </If>
             </li>
           </ul>
@@ -71,45 +75,47 @@ const AccountActionBar = React.createClass({
           <ul className="right top-bar--inner">
             <li className="top-bar--inner">
               <If condition={!this.props.isCreate}>
+                  <div
+                    role="button"
+                    tabIndex="1"
+                    className={classNames(
+                      'account-top-bar__button-secondary',
+                      'button',
+                      'round',
+                      'item',
+                      { disabled: !this.props.isEnabled })
+                    }
+                    onClick={this.props.handleDiscard}
+                  >
+                  <FormattedMessage
+                    id="cancel"
+                    defaultMessage="Cancel"
+                  />
+                  </div>
+              </If>
+            </li>
+            <Permit permission={permission(RESOURCE.USER, ACTION.UPDATE)}>
+              <li className="top-bar--inner">
                 <div
                   role="button"
-                  tabIndex="1"
+                  tabIndex="0"
                   className={classNames(
-                    'account-top-bar__button-secondary',
+                    'account-top-bar__button-primary',
                     'button',
                     'round',
+                    'large',
                     'item',
                     { disabled: !this.props.isEnabled })
                   }
-                  onClick={this.props.handleDiscard}
+                  onClick={this.props.handleSave}
                 >
                 <FormattedMessage
-                  id="cancel"
-                  defaultMessage="Cancel"
+                  id="Save"
+                  defaultMessage="Save"
                 />
                 </div>
-              </If>
-            </li>
-            <li className="top-bar--inner">
-              <div
-                role="button"
-                tabIndex="0"
-                className={classNames(
-                  'account-top-bar__button-primary',
-                  'button',
-                  'round',
-                  'large',
-                  'item',
-                  { disabled: !this.props.isEnabled })
-                }
-                onClick={this.props.handleSave}
-              >
-              <FormattedMessage
-                id="Save"
-                defaultMessage="Save"
-              />
-              </div>
-            </li>
+              </li>
+            </Permit>
           </ul>
 
         </div>

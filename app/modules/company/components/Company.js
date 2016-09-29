@@ -10,6 +10,8 @@ import connectToStores from 'fluxible-addons-react/connectToStores';
 import CompanyStore from '../stores/CompanyStore';
 import ClientConfigStore from '../../../main/stores/ClientConfigStore';
 import fetchCompanies from '../actions/fetchCompanies';
+import Permit from '../../../main/components/common/Permit';
+import { RESOURCE, ACTION, permission } from '../../../main/acl/acl-enums';
 
 const ENTER_KEY = 13;
 
@@ -88,26 +90,28 @@ class Company extends React.Component {
     return (
       <div className="company" data-equalizer>
         <nav className="top-bar company-sidebar__search" data-topbar role="navigation">
-          <Link to={`/${identity}/company/create`}>
-            <div
-              role="button"
-              tabIndex="0"
-              className={classNames(
-              'account-top-bar__button-primary',
-              'button',
-              'round',
-              'large',
-              'item',
-              'button-create',
-              )
-            }
-            >
-              <FormattedMessage
-                id="createNewCompany"
-                defaultMessage="Create New Company"
-              />
-            </div>
-          </Link>
+          <Permit permission={permission(RESOURCE.COMPANY, ACTION.CREATE)}>
+            <Link to={`/${identity}/company/create`}>
+              <div
+                role="button"
+                tabIndex="0"
+                className={classNames(
+                'account-top-bar__button-primary',
+                'button',
+                'round',
+                'large',
+                'item',
+                'button-create',
+                )
+              }
+              >
+                <FormattedMessage
+                  id="createNewCompany"
+                  defaultMessage="Create New Company"
+                />
+              </div>
+            </Link>
+          </Permit>
           <div>
           <input
             className="round"

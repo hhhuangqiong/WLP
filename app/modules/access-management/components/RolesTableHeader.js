@@ -4,6 +4,8 @@ import cx from 'classnames';
 import { injectIntl, intlShape } from 'react-intl';
 import ConfirmationDialog from '../../../main/components/ConfirmationDialog';
 import { MESSAGES } from './../constants/i18n';
+import Permit from '../../../main/components/common/Permit';
+import { RESOURCE, ACTION, permission } from '../../../main/acl/acl-enums';
 
 function RolesTableHeader(props) {
   function handleInputChange(e, index) {
@@ -24,7 +26,7 @@ function RolesTableHeader(props) {
 
   const cells = props.roles.map((role, i) => {
     const { name } = role;
-    const isEdited = props.editedRoleIndex === i;
+    const isEdited = props.hasPermission && props.editedRoleIndex === i;
     const isHovered = !isEdited && props.hoveredRoleIndex === i;
     const css = cx({
       'roles-table__role-cell': true,
@@ -40,12 +42,18 @@ function RolesTableHeader(props) {
           value={name}
           onChange={e => handleInputChange(e, i)}
         />
-        {renderDeleteButton(role)}
+        <Permit permission={permission(RESOURCE.ROLE, ACTION.DELETE)}>
+          {renderDeleteButton(role)}
+        </Permit>
       </div>
     )
       : <span>{name}</span>;
     return (
-      <th className={css} key={i} title={props.adminRoleIndex !== i ? props.editTitle : null}>
+      <th
+        className={css}
+        key={i}
+        title={props.hasPermission && props.adminRoleIndex !== i ? props.editTitle : null}
+      >
         {content}
       </th>
     );
@@ -86,6 +94,7 @@ RolesTableHeader.propTypes = {
   roleName: PropTypes.string,
   editTitle: PropTypes.string,
   adminRoleIndex: PropTypes.number,
+  hasPermission: PropTypes.bool,
 };
 
 export default injectIntl(RolesTableHeader);
