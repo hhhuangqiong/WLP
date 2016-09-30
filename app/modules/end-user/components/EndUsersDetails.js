@@ -1,13 +1,10 @@
 import _, { merge, omit, isNull } from 'lodash';
 import moment from 'moment';
-import { concurrent } from 'contra';
 import React, { PropTypes } from 'react';
-
-import EndUserStore from '../stores/EndUserStore';
+import { injectIntl, intlShape } from 'react-intl';
 import connectToStores from 'fluxible-addons-react/connectToStores';
 
-import { injectIntl, intlShape } from 'react-intl';
-import i18nMessages from '../../../main/constants/i18nMessages';
+import EndUserStore from '../stores/EndUserStore';
 import fetchEndUser from '../actions/fetchEndUser';
 import fetchEndUsers from '../actions/fetchEndUsers';
 import clearEndUsers from '../actions/clearEndUsers';
@@ -19,29 +16,32 @@ import DateRangePicker from './../../../main/components/DateRangePicker';
 import Export from './../../../main/file-export/components/Export';
 import FilterBarNavigation from '../../../main/filter-bar/components/FilterBarNavigation';
 import * as dateLocale from '../../../utils/dateLocale';
+import i18nMessages from '../../../main/constants/i18nMessages';
+import config from './../../../main/config';
 
 import EndUserTable from './EndUserTable';
 import EndUserProfile from './EndUserProfile';
 import EndUserExportForm from './EndUserExportForm';
 
-import config from './../../../main/config';
-
 const { inputDateFormat: DATE_FORMAT } = config;
 
 // See: https://issuetracking.maaii.com:9443/display/MAAIIP/MUMS+User+Management+by+Carrier+HTTP+API
-// page = 0 1st page
-const INITIAL_PAGE_NUMBER = 0;
 const MONTHS_BEFORE_TODAY = 1;
 const defaultLocale = dateLocale.getDefaultLocale();
+const START_DATE = moment().startOf('day').subtract(MONTHS_BEFORE_TODAY, 'month').format(DATE_FORMAT);
+const END_DATE = moment().endOf('day').format(DATE_FORMAT);
 
 class EndUsers extends React.Component {
   constructor(props) {
     super(props);
+    // parse the data from query at the beginning and load it into the state
+    const { startDate, endDate, username } = props.location.query;
     this.state = {
-      username: '',
-      startDate: moment().startOf('day').subtract(MONTHS_BEFORE_TODAY, 'month').format(DATE_FORMAT),
-      endDate: moment().endOf('day').format(DATE_FORMAT),
+      username: username || '',
+      startDate: startDate || START_DATE,
+      endDate: endDate || END_DATE,
     };
+
     this.handleStartDateChange = this.handleStartDateChange.bind(this);
     this.handleEndDateChange = this.handleEndDateChange.bind(this);
     this.handleBundleIdChange = this.handleBundleIdChange.bind(this);
@@ -53,38 +53,36 @@ class EndUsers extends React.Component {
     this.handleUserClick = this.handleUserClick.bind(this);
     this.loadFirstUserDetail = this.loadFirstUserDetail.bind(this);
     this.handleQueryChange = this.handleQueryChange.bind(this);
+    this.handleShowNextPage = this.handleShowNextPage.bind(this);
   }
 
   componentDidMount() {
     const { startDate, endDate, username } = this.state;
     const { executeAction, params } = this.context;
-
     const payload = {
       carrierId: params.identity,
+      page: this.props.page,
       startDate,
       endDate,
-      page: this.props.page,
       username,
     };
     executeAction(fetchEndUsers, payload);
   }
 
   componentWillReceiveProps(nextProps) {
-    const { startDate, endDate, username } = nextProps.location.query;
-    const { page } = nextProps;
-
-    const newState = {
-      username: username || '',
-      page,
-    };
-    if (startDate && startDate !== this.state.startDate) {
-      newState.startDate = startDate;
+    // when search the username/date update, it will update the query, where query will be
+    // the central of component state, it will be default value if missing value in query
+    // so it will parse the query and set into component state
+    if (nextProps.location.query !== this.props.location.query) {
+      // update the state from query
+      const { startDate, endDate, username } = nextProps.location.query;
+      this.setState({
+        username: username || '',
+        startDate: startDate || START_DATE,
+        endDate: endDate || END_DATE,
+      });
     }
-    if (endDate && endDate !== this.state.endDate) {
-      newState.endDate = endDate;
-    }
 
-    this.setState(newState);
     if (_.isEmpty(nextProps.currentUser) && !_.isEmpty(nextProps.displayUsers)) {
       this.loadFirstUserDetail(nextProps.displayUsers);
     }
@@ -93,7 +91,7 @@ class EndUsers extends React.Component {
   componentDidUpdate(prevProps) {
     const { location: { search } } = this.props;
     const { location: { search: prevSearch } } = prevProps;
-
+    // fetch again when the query change
     if (search !== prevSearch) {
       this.context.executeAction(clearEndUsers);
       this.fetchData();
@@ -128,7 +126,7 @@ class EndUsers extends React.Component {
   handleQueryChange(newQuery) {
     const { startDate, endDate, username } = this.state;
     const query = merge(
-      { startDate, endDate, page: this.props.page, username },
+      { startDate, endDate, username },
       newQuery,
     );
     const queryWithoutNull = omit(query, value => !value);
@@ -143,12 +141,12 @@ class EndUsers extends React.Component {
 
   handleEndDateChange(momentDate) {
     const date = moment(momentDate.locale(defaultLocale)).format(DATE_FORMAT);
-    this.handleQueryChange({ endDate: date, page: INITIAL_PAGE_NUMBER });
+    this.handleQueryChange({ endDate: date });
   }
 
   handleStartDateChange(momentDate) {
     const date = moment(momentDate.locale(defaultLocale)).format(DATE_FORMAT);
-    this.handleQueryChange({ startDate: date, page: INITIAL_PAGE_NUMBER });
+    this.handleQueryChange({ startDate: date });
   }
 
   fetchData() {
@@ -157,9 +155,9 @@ class EndUsers extends React.Component {
 
     const payload = {
       carrierId: params.identity,
+      page: this.props.page,
       startDate,
       endDate,
-      page: this.props.page,
       username,
     };
 
@@ -204,7 +202,24 @@ class EndUsers extends React.Component {
   }
 
   checkHasNext() {
-    return this.props.hasNextPage || this.props.displayUsers < this.props.totalUsers;
+    return this.props.hasNextPage || this.props.displayUsers.length < this.props.totalUsers;
+  }
+
+  handleShowNextPage() {
+    this.context.executeAction(showNextPage);
+
+    if (this.props.needMoreData) {
+      const { params } = this.context;
+      const { startDate, endDate } = this.state;
+      const { page } = this.props;
+
+      this.context.executeAction(fetchEndUsers, {
+        carrierId: params.identity,
+        page: page + 1,
+        startDate,
+        endDate,
+      });
+    }
   }
 
   render() {
@@ -260,7 +275,7 @@ class EndUsers extends React.Component {
               ref="endUserTable"
               currentUser={selectedUser}
               users={this.applyFilters(this.props.displayUsers)}
-              hasNext={this.checkHasNext}
+              hasNext={this.checkHasNext()}
               onUserClick={this.handleUserClick}
               onPageChange={this.handleShowNextPage}
               isLoading={this.props.isLoading}
@@ -285,9 +300,10 @@ EndUsers.propTypes = {
   displayUsers: PropTypes.arrayOf(PropTypes.object),
   currentUser: PropTypes.object,
   hasNextPage: PropTypes.bool,
-  totalUsers: PropTypes.arrayOf(PropTypes.object),
+  totalUsers: PropTypes.number,
   location: PropTypes.object,
   page: PropTypes.number,
+  needMoreData: PropTypes.bool,
 };
 
 EndUsers.contextTypes = {
@@ -304,6 +320,7 @@ EndUsers = connectToStores(EndUsers, [EndUserStore], (context) => ({
   hasNextPage: context.getStore(EndUserStore).getHasNextPage(),
   currentUser: context.getStore(EndUserStore).getCurrentUser(),
   isLoading: context.getStore(EndUserStore).getIsLoading(),
+  needMoreData: context.getStore(EndUserStore).getNeedMoreData(),
 }));
 
 

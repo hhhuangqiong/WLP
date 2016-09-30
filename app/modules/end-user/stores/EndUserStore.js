@@ -1,4 +1,4 @@
-import { remove, get, max, find } from 'lodash';
+import { remove, get, max, find, parseInt } from 'lodash';
 import { createStore } from 'fluxible/addons';
 import config from './../../../main/config';
 
@@ -87,7 +87,7 @@ const EndUserStore = createStore({
     this.users = (this.users || []).concat(payload.userList);
     this.displayUsers = (this.displayUsers || []).concat(this._getDisplayUsers());
     this.hasNextPage = payload.hasNextPage;
-    this.page = payload.dateRange.pageNumberIndex;
+    this.page = parseInt(payload.dateRange.pageNumberIndex);
     this.isLoading = false;
     this.emitChange();
   },
