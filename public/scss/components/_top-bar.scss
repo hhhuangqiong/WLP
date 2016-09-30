@@ -24,7 +24,7 @@
             li {
               background-color: $topbar-link-bg;
               > a {
-                 align-items: center;
+                  align-items: center;
                   text-transform: capitalize;
                   min-height: rem-calc(60);
                   padding-left: rem-calc(0 30) !important;
@@ -108,14 +108,18 @@
                         min-width: 25%;
                         background: $dropdown-link-bg-color;
                         margin-top: 0;
-                        padding: 5px;
                         &:first-child,
                         &:last-child{
                             margin-top: 0;
                             @include border-radius('0');
                         }
+                        // make the icon independent of the top bar line height,
+                        // it will affect the avatar size
+                        .UserAvatar--inner {
+                           line-height: normal;
+                         }
                         a {
-                            padding: 0 3% !important;
+                            padding: 10% 3% !important;
                             img {
                                 @include border-radius($company-switcher-width/4);
                                 width: 100%;

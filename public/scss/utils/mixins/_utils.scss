@@ -28,3 +28,9 @@
     border-right: $width solid transparent;
     border-bottom: $height solid $color;
 }
+
+@mixin oneLineText(){
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
