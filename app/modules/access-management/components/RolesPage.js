@@ -19,7 +19,7 @@ export class RolesPage extends Component {
   static get contextTypes() {
     return {
       executeAction: PropTypes.func.isRequired,
-      params: PropTypes.isRequired,
+      params: PropTypes.object.isRequired,
     };
   }
   static get propTypes() {
