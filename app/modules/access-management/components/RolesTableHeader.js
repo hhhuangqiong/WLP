@@ -18,9 +18,11 @@ function RolesTableHeader(props) {
   function renderDeleteButton({ creating }) {
     if (creating) return null;
     return (
-      <i className="fi-x"
-        onClick={props.handleOpenDeleteDialog}
-      />
+      <Permit permission={permission(RESOURCE.ROLE, ACTION.DELETE)}>
+        <i className="fi-x"
+          onClick={props.handleOpenDeleteDialog}
+        />
+      </Permit>
     );
   }
 
@@ -42,9 +44,7 @@ function RolesTableHeader(props) {
           value={name}
           onChange={e => handleInputChange(e, i)}
         />
-        <Permit permission={permission(RESOURCE.ROLE, ACTION.DELETE)}>
-          {renderDeleteButton(role)}
-        </Permit>
+        {renderDeleteButton(role)}
       </div>
     )
       : <span>{name}</span>;

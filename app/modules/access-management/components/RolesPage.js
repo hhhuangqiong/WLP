@@ -45,7 +45,7 @@ export class RolesPage extends Component {
       editedRoleBackup: null,
       adminRoleIndex: null,
       isDisableAddRole: null,
-      editPermisson: null,
+      hasPermisson: null,
     };
     this.saveRole = this.saveRole.bind(this);
     this.removeRole = this.removeRole.bind(this);
@@ -57,7 +57,6 @@ export class RolesPage extends Component {
     this.startRoleEdit = this.startRoleEdit.bind(this);
     this.suggestRoleEdit = this.suggestRoleEdit.bind(this);
     this.addRole = this.addRole.bind(this);
-    this.hasPermission = this.hasPermission.bind(this);
   }
   componentDidMount() {
     const { params: { identity: carrierId } } = this.context;
