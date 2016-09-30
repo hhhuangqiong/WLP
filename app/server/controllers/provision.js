@@ -64,7 +64,7 @@ export default function provisionController(iamServiceClient, provisionHelper) {
       const pageNo = 1 + (req.query.pageNumber ? parseInt(req.query.pageNumber, 10) : 0);
       // first get from the MPS to have a full list of provisioning
       // independent of pagination and search
-      const provisioningQuery = { pageSize, page: pageNo, resellerCarrierId: req.query.carrierId };
+      const provisioningQuery = { pageSize, page: pageNo, resellerCarrierId: req.params.carrierId };
       if (req.query.searchCompany) {
         provisioningQuery.search = req.query.searchCompany;
       }
