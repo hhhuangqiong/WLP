@@ -45,7 +45,7 @@ export function formatNewCompany(company) {
     businessContact: value => ({ businessContact: [value] }),
     technicalContact: value => ({ technicalContact: [value] }),
     supportContact: value => ({ supportContact: [value] }),
-    createdAt: 'createdAt',
+    createAt: 'createdAt',
     updateAt: 'updatedAt',
   };
 
