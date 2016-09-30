@@ -38,14 +38,24 @@ export function ocsClient(options) {
     }
   }
 
-  function getWallets(params) {
+  async function getWallets(params) {
     const httpOptions = {
       url: `carriers/${params.carrierId}/balances`,
       method: 'get',
     };
-    return call(httpOptions).then(x => x.wallets);
+    try {
+      const result = await call(httpOptions);
+      return result.wallets;
+    } catch (e) {
+      if (e.status === 404) {
+        logger.warn(`OCS has no wallets for carrier id: ${params.carrierId}.`);
+        return [];
+      }
+      throw e;
+    }
   }
-  function getTopUpHistory(params) {
+
+  async function getTopUpHistory(params) {
     const { carrierId, ...query } = params;
     const httpOptions = {
       url: `carriers/${carrierId}/topup-records`,
@@ -55,10 +65,22 @@ export function ocsClient(options) {
         pageSize: 'size',
       }),
     };
-    return call(httpOptions)
-      .then(page => renameKeys(page, {
-        content: 'contents',
-      }));
+    try {
+      let page = await call(httpOptions);
+      page = renameKeys(page, { content: 'contents' });
+      return page;
+    } catch (e) {
+      if (e.status === 404) {
+        logger.warn(`OCS has no wallets for carrier id: ${carrierId}.`);
+        return {
+          pageNumber: 0,
+          pageSize: parseInt(query.pageSize, 10),
+          totalElements: 0,
+          contents: [],
+        };
+      }
+      throw e;
+    }
   }
   function topUpWallet(params) {
     const { carrierId, walletId, ...body } = params;
