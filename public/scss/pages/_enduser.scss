@@ -165,13 +165,82 @@
 }
 
 .end-users-whitelist {
+  .data-table {
+    thead {
+      th {
+        padding: rem-calc(18);
+
+        &.username {
+          color: #333;
+          padding-left: rem-calc(30);
+        }
+      }
+
+      .button {
+        margin: 0;
+        padding: rem-calc(8 20);
+      }
+    }
+
+    tbody {
+      border-top: 1px solid #eee;
+
+      tr {
+        &.empty {
+          height: rem-calc(300);
+        }
+
+        td {
+          padding: rem-calc(18 30);
+        }
+      }
+    }
+  }
+
+  .editable-text {
+    min-height: 1.4em;
+
+    > .row {
+      display: flex;
+      flex: 1;
+      align-items: center;
+    }
+
+    &__control {
+      margin: 0 2em;
+
+      > span {
+        padding: 0 0.3em;
+      }
+    }
+
+    &__icon {
+      cursor: pointer;
+      fill: gray;
+      fill-opacity: 0.5;
+
+      width: 1.2em;
+      height: 1.2em;
+
+      &:hover {
+        fill-opacity: 1;
+      }
+    }
+  }
+}
+
+.end-users-whitelist--create {
   .page {
+    button,
+    .button {
+      margin: 0;
+    }
+
     &__header {
       .icon {
         position: relative;
         top: -1px;
       }
-
 
       span.summary {
         margin-right: 40px;
@@ -190,36 +259,6 @@
           text-decoration: underline;
         }
       }
-    }
-
-    .data-table {
-      .column {
-        &--username {
-          width: 75%
-        }
-
-        &--controls {
-          width: 25%;
-        }
-      }
-    }
-  }
-
-  &__page-control {
-    display: flex;
-    justify-content: space-between;
-
-    &__select {
-      min-width: 15%;
-    }
-  }
-}
-
-.end-users-whitelist--create {
-  .page {
-    button,
-    .button {
-      margin: 0;
     }
 
     &__contents {
@@ -278,35 +317,6 @@
 
     progress {
       width: 50%;
-    }
-  }
-
-  .editable-text {
-    > .row {
-      display: flex;
-      flex: 1;
-      align-items: center;
-    }
-
-    &__control {
-      margin: 0 2em;
-
-      > span {
-        padding: 0 0.3em;
-      }
-    }
-
-    &__icon {
-      cursor: pointer;
-      fill: gray;
-      fill-opacity: 0.5;
-
-      width: 1.2em;
-      height: 1.2em;
-
-      &:hover {
-        fill-opacity: 1;
-      }
     }
   }
 }
