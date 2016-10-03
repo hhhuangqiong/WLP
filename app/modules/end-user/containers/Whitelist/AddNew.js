@@ -20,6 +20,7 @@ import {
   startImportFile,
   completeImportFile,
 } from '../../actions/whitelist';
+import createSignupRules from '../../actions/createSignupRules';
 
 import Pagination from '../../../../main/components/Pagination';
 import EditableText from '../../components/Whitelist/EditableText';
@@ -27,6 +28,8 @@ import createWhiteListStore from '../../stores/CreateWhitelist';
 import Icon from '../../../../main/components/Icon';
 import * as FilterBar from '../../../../main/components/FilterBar';
 import FilterBarNavigation from '../../../../main/filter-bar/components/FilterBarNavigation';
+
+import { MESSAGES as COMMON_MESSAGES } from '../../constants/i18n';
 
 const LEAVE_MESSAGE = 'Leave with unsaved change?';
 const UPLOAD_LIMIT = 1000;
@@ -61,6 +64,7 @@ class CreateWhiteListContainer extends Component {
     bindAll(this, [
       'handleAddNewUserClick',
       'handleChangeFilter',
+      'handleCreateClick',
       'handlePageChange',
       'getUploadedFilename',
       'getTotalPageNumber',
@@ -82,7 +86,11 @@ class CreateWhiteListContainer extends Component {
   componentDidUpdate() {
     if (!window.onbeforeunload) {
       window.onbeforeunload = this.propmptUnsavedChangeOnClose;
-      this.propmptUnsavedChangeOnTransit(this.isDirty());
+      this.propmptUnsavedChangeOnTransit();
+    }
+    if (this.props.isCreateSuccess) {
+      const { identity } = this.context.params;
+      this.context.router.push(`/${identity}/end-user/whitelist`);
     }
   }
 
@@ -108,21 +116,31 @@ class CreateWhiteListContainer extends Component {
     return filenames.join(', ');
   }
 
-  // TODO: handle unsaved chnages from EditableText and API request
-  isDirty() {
-    return true;
+  getTotalPageNumber() {
+    const {
+      pageRec,
+      totalUsers,
+    } = this.props;
+
+    return totalUsers / pageRec;
   }
 
-  propmptUnsavedChangeOnTransit(isUnsaved = false) {
+  isDirty() {
+    return !this.props.isCreateSuccess && this.props.totalUsers > 0;
+  }
+
+  propmptUnsavedChangeOnTransit() {
     const errorMessage = 'A higher order function withRouter should be used';
 
     invariant(this.props.router, errorMessage);
     invariant(this.props.route, errorMessage);
 
+    const isDirty = this.isDirty;
+
     // Detecting page transition (prevent leaving by setting true)
     this.props.router.setRouteLeaveHook(
       this.props.route,
-      () => isUnsaved && confirm(LEAVE_MESSAGE)
+      () => !isDirty() || confirm(LEAVE_MESSAGE)
     );
   }
 
@@ -232,6 +250,19 @@ class CreateWhiteListContainer extends Component {
     this.context.executeAction(addWhitelistUser);
   }
 
+  handleCreateClick() {
+    if (this.props.totalError > 0 || this.props.totalUsers < 1) {
+      return;
+    }
+
+    const { identity } = this.context.params;
+
+    this.context.executeAction(createSignupRules, {
+      carrierId: identity,
+      identities: this.props.allUsers.map(({ value }) => value),
+    });
+  }
+
   handleChangeFilter(e) {
     const { value } = e.target;
     this.context.executeAction(changeFilter, value);
@@ -276,7 +307,7 @@ class CreateWhiteListContainer extends Component {
   // TODO: replace this will joi validation
   validateUsername(user, index) {
     if (!user) {
-      return new Error('Username Cannot Be Empty');
+      return COMMON_MESSAGES.phoneNumberEmptyError;
     }
 
     const parsedUser = this.parseUsername(user);
@@ -284,7 +315,7 @@ class CreateWhiteListContainer extends Component {
     const validFormat = /^\+[0-9]+$/.test(parsedUser);
 
     if (!validFormat) {
-      return new Error('Invalid Format');
+      return COMMON_MESSAGES.invalidFormatError;
     }
 
     const duplicated = find(
@@ -293,19 +324,10 @@ class CreateWhiteListContainer extends Component {
     );
 
     if (duplicated) {
-      return new Error('Duplicated Records');
+      return COMMON_MESSAGES.duplicatedRecordError;
     }
 
     return null;
-  }
-
-  getTotalPageNumber() {
-    const {
-      pageRec,
-      totalUsers,
-    } = this.props;
-
-    return totalUsers / pageRec;
   }
 
   renderEmptyRecord() {
@@ -422,6 +444,7 @@ class CreateWhiteListContainer extends Component {
                         'radius',
                         { disabled: hasError || totalUsers === 0 }
                       )}
+                      onClick={this.handleCreateClick}
                     >
                       <FormattedMessage
                         id="create"
@@ -608,17 +631,23 @@ CreateWhiteListContainer.contextTypes = {
   executeAction: PropTypes.func,
   params: PropTypes.object,
   location: PropTypes.object,
+  router: PropTypes.object.isRequired,
 };
 
 CreateWhiteListContainer.propTypes = {
   intl: intlShape.isRequired,
   filter: PropTypes.string,
   isLoading: PropTypes.bool,
+  isCreateSuccess: PropTypes.bool,
   page: PropTypes.number,
   pageRec: PropTypes.number,
   totalError: PropTypes.number,
   totalUsers: PropTypes.number,
   users: PropTypes.arrayOf(PropTypes.shape({
+    value: PropTypes.string,
+    error: PropTypes.object,
+  })),
+  allUsers: PropTypes.arrayOf(PropTypes.shape({
     value: PropTypes.string,
     error: PropTypes.object,
   })),

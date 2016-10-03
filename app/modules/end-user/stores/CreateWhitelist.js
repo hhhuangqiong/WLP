@@ -11,7 +11,9 @@ import {
   START_IMPORT_FILE,
   UPDATE_WHITELIST_USER,
   DELETE_WHITELIST_USER,
+  CREATE_SIGNUP_RULES_SUCCESS,
 } from '../constants/actionTypes';
+import { MESSAGES } from '../constants/i18n';
 
 const createWhiteListStore = createStore({
   storeName: 'CreateWhiteListStore',
@@ -26,11 +28,13 @@ const createWhiteListStore = createStore({
     [CLEAR_NEW_WHITELIST]: 'handleClearWhitelist',
     [START_IMPORT_FILE]: 'handleStartUploadFile',
     [COMPLETE_IMPORT_FILE]: 'handleCompleteUploadFile',
+    [CREATE_SIGNUP_RULES_SUCCESS]: 'handleCreateSignupRulesSuccess',
   },
 
   initialize() {
     this.isLoading = false;
     this.isImporting = null;
+    this.isCreateSuccess = false;
     this.page = 0;
     this.pageRec = 10;
     this.uploadedFiles = [];
@@ -104,6 +108,7 @@ const createWhiteListStore = createStore({
     this.filter = 'all';
     this.isLoading = false;
     this.isImporting = null;
+    this.isCreateSuccess = false;
     this.page = 0;
     this.pageRec = 10;
     this.uploadedFiles = [];
@@ -130,6 +135,30 @@ const createWhiteListStore = createStore({
     this.users = results.concat(this.users);
     this.page = 0;
     this.emitChange();
+  },
+
+  handleCreateSignupRulesSuccess(result) {
+    if (!result.failedMessages || result.failedMessages.length < 1) {
+      this.isCreateSuccess = true;
+      this.users = [];
+      this.page = 0;
+    } else {
+      this.users = result.failedMessages.map((failedMessage) => ({
+        value: failedMessage.signupRule.identity,
+        error: this.getErrorMessageByCode(failedMessage.errorDetails.code),
+      }));
+      this.page = 0;
+    }
+    this.emitChange();
+  },
+
+  getErrorMessageByCode(code) {
+    switch (code) {
+      case 33000:
+        return MESSAGES.duplicatedRecordError;
+      default:
+        return MESSAGES.unknownError;
+    }
   },
 
   getIndexByTotalUsers(index) {
@@ -167,11 +196,13 @@ const createWhiteListStore = createStore({
       filter: this.filter,
       isLoading: this.isLoading,
       isImporting: this.isImporting,
+      isCreateSuccess: this.isCreateSuccess,
       page: this.page,
       pageRec: this.pageRec,
       uploadedFiles: this.uploadedFiles,
       uploadingFile: this.uploadingFile,
       users: this.getUserByPage(),
+      allUsers: this.users,
       totalUsers: this.users.length,
       totalError: this.getErrorCount(),
     };
@@ -193,6 +224,7 @@ const createWhiteListStore = createStore({
       filter: this.filter,
       isLoading: this.isLoading,
       isImporting: this.isImporting,
+      isCreateSuccess: this.isCreateSuccess,
       page: this.page,
       pageRec: this.pageRec,
       uploadedFiles: this.uploadedFiles,
@@ -207,6 +239,7 @@ const createWhiteListStore = createStore({
     this.filter = state.fitler;
     this.isLoading = state.isLoading;
     this.isImporting = state.isImporting;
+    this.isCreateSuccess = state.isCreateSuccess;
     this.page = state.page;
     this.pageRec = state.pageRec;
     this.uploadedFiles = state.uploadedFiles;

@@ -149,7 +149,7 @@ class EditableText extends Component {
 
   render() {
     const { isEditing } = this.state;
-    const { error } = this.props;
+    const { error, intl: { formatMessage } } = this.props;
 
     return (
       <div
@@ -161,7 +161,7 @@ class EditableText extends Component {
           {this.renderField()}
         </div>
         <div className="large-16 columns">
-          {error && <span className="error-text right">{ error.message }</span>}
+          {error && <span className="error-text right">{formatMessage(error)}</span>}
         </div>
       </div>
     );

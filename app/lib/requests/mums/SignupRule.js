@@ -7,14 +7,14 @@ import errorMixin from '../mixins/mumsErrorResponse';
 
 // https://issuetracking.maaii.com:9443/display/MAAIIP/Sign-up+Rule+HTTP+API
 
-const DEFAULT_QUERIES = {
-  pageNumber: 0,
-  pageSize: 10,
+const SIGNUP_RULE_PRESET_PARAMS = {
   applicationVersionStatus: 'RELEASED',
   group: 'CUSTOM',
   identityType: 'PHONE_NUMBER',
   policy: 'ALLOW',
 };
+
+const SIGNUP_RULE_COMMENTS_TEMPLATE = 'Allow user with phone number %s to sign up.';
 
 /**
  * @mixes mixins/mumsErrorResponse
@@ -28,10 +28,20 @@ export default class SignupRuleRequest {
         get: {
           uri: '/2.0/carriers/%s/signupRules',
           method: 'GET',
+          defaultQueries: {
+            ...SIGNUP_RULE_PRESET_PARAMS,
+            pageNumber: 0,
+            pageSize: 10,
+          },
         },
         create: {
           uri: '/2.0/carriers/%s/signupRules',
           method: 'POST',
+          presetParams: {
+            ...SIGNUP_RULE_PRESET_PARAMS,
+            regex: false,
+            order: 1,
+          },
         },
         delete: {
           uri: '/2.0/carriers/%s/signupRules/%s',
@@ -65,9 +75,9 @@ export default class SignupRuleRequest {
       identity: identity || undefined,
       pageNumber,
       pageSize,
-    }, DEFAULT_QUERIES);
+    }, api.defaultQueries);
 
-    logger.debug(`Get SignupRules from: ${reqUrl}`);
+    logger.debug(`Get signupRules from: ${reqUrl}`);
 
     request(api.method, reqUrl)
       .query(parsedQueries)
@@ -85,6 +95,51 @@ export default class SignupRuleRequest {
 
         cb(null, res.body);
       });
+  }
+
+  /**
+   * create a batch of SignupRules
+   * @param  {String}     carrierId
+   * @param  {String}     username    created by
+   * @param  {Array}      identities  array of phone number identities
+   * @param  {Function}   cb
+   */
+  createSignupRules(carrierId, username, identities, cb) {
+    const base = this.opts.baseUrl;
+    const api = this.opts.apis.create;
+    const url = util.format(api.uri, carrierId);
+    const reqUrl = util.format('%s%s', base, url);
+
+    try {
+      const reqBody = identities.map((identity) => ({
+        ...api.presetParams,
+        identity,
+        comments: util.format(SIGNUP_RULE_COMMENTS_TEMPLATE, identity),
+        updatedUser: username,
+      }));
+
+      logger.debug(`Create signupRules from: ${reqUrl}`);
+
+      request(api.method, reqUrl)
+        .send(reqBody)
+        .timeout(this.opts.timeout)
+        .end((err, res) => {
+          if (err) {
+            cb(err);
+            return;
+          }
+
+          if (res.status >= 400) {
+            cb(this.prepareError(res.body.error));
+            return;
+          }
+
+          cb(null, res.body);
+        });
+    } catch (e) {
+      cb(e);
+      return;
+    }
   }
 }
 

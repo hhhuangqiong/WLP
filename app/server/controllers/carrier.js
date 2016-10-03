@@ -117,7 +117,7 @@ export default function carriersController() {
     // TODO: implementation with whitelistRequest.remove
   }
 
-  // '/carriers/:carrierId/signupRules'
+  // get '/carriers/:carrierId/signupRules'
   function getSignupRules(req, res) {
     req.checkParams('carrierId').notEmpty();
 
@@ -126,6 +126,30 @@ export default function carriersController() {
     signupRuleRequest.getSignupRules(carrierId, req.query, (err, result) => {
       if (err) {
         logger.error('error occurred when fetching signupRules', err);
+        const { code, message, timeout, status } = err;
+
+        res.status(status || 500).json({
+          error: {
+            code,
+            message,
+            timeout,
+          },
+        });
+        return;
+      }
+      res.json(result);
+    });
+  }
+
+  // post '/carriers/:carrierId/signupRules'
+  function createSignupRules(req, res) {
+    req.checkParams('carrierId').notEmpty();
+
+    const { carrierId } = req.params;
+
+    signupRuleRequest.createSignupRules(carrierId, req.user.username, req.body.identities, (err, result) => {
+      if (err) {
+        logger.error('error occurred when creating signupRules', err);
         const { code, message, timeout, status } = err;
 
         res.status(status || 500).json({
@@ -2061,6 +2085,7 @@ export default function carriersController() {
     getIMMonthlyStats,
     getIMSummaryStats,
     getSignupRules,
+    createSignupRules,
     getSMS,
     getSMSStats,
     getSMSMonthlyStats,

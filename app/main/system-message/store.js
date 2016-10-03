@@ -39,6 +39,8 @@ const SystemMessageStore = createStore({
     TOP_UP_WALLET_FAILURE: 'handleTopUpWalletFailure',
     UPDATE_COMPANY_FAILURE: 'handleErrorMessage',
     UPDATE_CARRIER_PROFILE_FAILURE: 'handleErrorMessage',
+    // signupRule
+    CREATE_SIGNUP_RULES_SUCCESS: 'handleCreateSignupRulesSuccess',
   },
 
   // do not change this
@@ -117,6 +119,15 @@ const SystemMessageStore = createStore({
 
   handleUpdateCompanySuccess() {
     this.handleInfoMessage(MESSAGES.saved);
+  },
+
+  handleCreateSignupRulesSuccess(result) {
+    if (!result.savedIds || result.savedIds.length < 1) {
+      return;
+    }
+    const message = MESSAGES.createSignupRulesSuccess;
+    message.value = { number: result.savedIds.length };
+    this.handleInfoMessage(message);
   },
 
   handleDismissMessage() {
