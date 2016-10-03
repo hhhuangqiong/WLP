@@ -41,7 +41,7 @@ class WalletTopUpForm extends Component {
     const { intl: { formatMessage } } = this.props;
     return {
       amount: Joi.number()
-        .greater(-this.props.wallet.balance)
+        .min(-this.props.wallet.balance)
         .label(formatMessage(MESSAGES.topUpAmount)),
     };
   }
