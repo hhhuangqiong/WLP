@@ -1,5 +1,5 @@
 import React, { Component, PropTypes } from 'react';
-import { isString, isNumber, without, cloneDeep } from 'lodash';
+import { isString, isNumber, without, cloneDeep, get } from 'lodash';
 import connectToStores from 'fluxible-addons-react/connectToStores';
 import { injectIntl, intlShape } from 'react-intl';
 
@@ -69,10 +69,11 @@ export class RolesPage extends Component {
     this.hasPermission();
   }
   hasPermission() {
-    if (!this.props.user) {
+    const permissions = get(this.props.user, 'permissions');
+    if (!permissions) {
       this.setState({ hasPermission: false });
+      return;
     }
-    const permissions = this.props.user.permissions || [];
     this.setState({ hasPermission: permissions.indexOf(permission(RESOURCE.ROLE, ACTION.UPDATE)) >= 0 });
   }
   addRole() {
