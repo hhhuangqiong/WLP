@@ -192,6 +192,7 @@ export class RolesPage extends Component {
   }
   render() {
     const { intl } = this.props;
+    const roleName = this.state.editedRoleIndex ? this.state.displayedRoles[this.state.editedRoleIndex].name : '';
     return (
       <div>
         <Panel.Wrapper className="roles-panel">
@@ -213,10 +214,8 @@ export class RolesPage extends Component {
               onConfirm={this.removeRole}
               cancelLabel={intl.formatMessage(MESSAGES.cancel)}
               confirmLabel={intl.formatMessage(MESSAGES.delete)}
-              warning={intl.formatMessage(MESSAGES.warning)}
-              dialogMessage={intl.formatMessage(MESSAGES.dialogMessage)}
+              dialogMessage={intl.formatMessage(MESSAGES.dialogMessage, { name: roleName })}
               dialogHeader={intl.formatMessage(MESSAGES.dialogHeader)}
-              name={this.state.editedRoleIndex ? this.state.displayedRoles[this.state.editedRoleIndex].name : null}
             />
             <RolesTable
               // if permisttion is true, then it can be edited,vice versa

@@ -17,14 +17,6 @@ export const MESSAGES = defineMessages({
     id: 'searchByEmail',
     defaultMessage: 'Search By Email',
   },
-  cancel: {
-    id: 'cancel',
-    defaultMessage: 'Cancel',
-  },
-  delete: {
-    id: 'delete',
-    defaultMessage: 'Delete',
-  },
   reverify: {
     id: 'reverify',
     defaultMessage: 'Reverify',
@@ -49,13 +41,9 @@ export const MESSAGES = defineMessages({
     id: 'account.selectRole',
     defaultMessage: 'Select role',
   },
-  warning: {
-    id: 'account.warning',
-    defaultMessage: 'Warning: This action will permanently delete the account from the system',
-  },
   deleteDialogMessage: {
     id: 'account.deleteDialogMessage',
-    defaultMessage: 'Are you sure you want to delete the account called',
+    defaultMessage: 'Are you sure you want to delete the account <span class="high-light">"{name}"</span>?<br/><br/><span class="high-light">Warning: This action will permanently delete the account from the system.</span>',
   },
   deleteDialogHeader: {
     id: 'account.deleteDialogHeader',
@@ -63,7 +51,7 @@ export const MESSAGES = defineMessages({
   },
   reverifyDialogMessage: {
     id: 'account.reverifyDialogMessage',
-    defaultMessage: 'Are you sure you want to send verification email to the account called',
+    defaultMessage: 'Are you sure you want to send verification email to the account <span class="high-light">"{name}"</span>?',
   },
   reverifyDialogHeader: {
     id: 'account.reverifyDialogHeader',

@@ -6,6 +6,7 @@ import { injectIntl, intlShape, FormattedMessage } from 'react-intl';
 import AuthStore from '../../../main/stores/AuthStore';
 import ConfirmationDialog from '../../../main/components/ConfirmationDialog';
 import { MESSAGES } from './../constants/i18n';
+import COMMON_MESSAGES from '../../../main/constants/i18nMessages';
 import Permit from '../../../main/components/common/Permit';
 import { RESOURCE, ACTION, permission } from '../../../main/acl/acl-enums';
 
@@ -44,11 +45,9 @@ const AccountActionBar = React.createClass({
           isOpen={deleteDialogOpened}
           onCancel={handleCloseDeleteDialog}
           onConfirm={handleDelete}
-          cancelLabel={formatMessage(MESSAGES.cancel)}
-          confirmLabel={formatMessage(MESSAGES.delete)}
-          name={accountId}
-          warning={formatMessage(MESSAGES.warning)}
-          dialogMessage={formatMessage(MESSAGES.deleteDialogMessage)}
+          cancelLabel={formatMessage(COMMON_MESSAGES.cancel)}
+          confirmLabel={formatMessage(COMMON_MESSAGES.delete)}
+          dialogMessage={formatMessage(MESSAGES.deleteDialogMessage, { name: accountId })}
           dialogHeader={formatMessage(MESSAGES.deleteDialogHeader)}
         />
         <div className="top-bar-section">

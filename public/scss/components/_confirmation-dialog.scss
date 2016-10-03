@@ -59,6 +59,7 @@ $font-weight-light: 300 !default;
     text-align: center;
     display: flex;
     justify-content: space-between;
+    flex-direction: row-reverse;
 
     &__button {
       display: inline-block;
@@ -96,17 +97,10 @@ $font-weight-light: 300 !default;
   > span {
     display: inline-block;
   }
-}
 
-.dialog-info {
-  .high-light {
-    padding-left: rem-calc(6);
+  .dialog-info {
+    padding-bottom: $global-spacing*2;
   }
-}
-
-.dialog-warning {
-  padding-top: $global-spacing;
-  padding-bottom: $global-spacing*2;
 }
 
 .dialog-header {

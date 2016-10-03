@@ -81,8 +81,7 @@ class AccountForm extends Component {
           onConfirm={this.props.handleReverify}
           onCancel={this.props.handleCloseReverifyDialog}
           confirmLabel={formatMessage(MESSAGES.reverify)}
-          name={this.props.email}
-          dialogMessage={formatMessage(MESSAGES.reverifyDialogMessage)}
+          dialogMessage={formatMessage(MESSAGES.reverifyDialogMessage, { name: this.props.email })}
           dialogHeader={formatMessage(MESSAGES.reverifyDialogHeader)}
         />
 

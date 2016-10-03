@@ -113,4 +113,16 @@ export default defineMessages({
     id: 'control',
     defaultMessage: 'Control',
   },
+  ok: {
+    id: 'ok',
+    defaultMessage: 'OK',
+  },
+  cancel: {
+    id: 'cancel',
+    defaultMessage: 'Cancel',
+  },
+  delete: {
+    id: 'delete',
+    defaultMessage: 'Delete',
+  },
 });

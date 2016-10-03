@@ -43,12 +43,10 @@ const ConfirmationDialog = React.createClass({
      * @type {String}
      */
     cancelLabel: PropTypes.string,
-    onCancel: PropTypes.func.isRequired,
+    onCancel: PropTypes.func,
     onConfirm: PropTypes.func.isRequired,
-    warning: PropTypes.string,
     dialogHeader: PropTypes.string,
     dialogMessage: PropTypes.string,
-    name: PropTypes.string,
     children: PropTypes.oneOfType([
       PropTypes.element,
       PropTypes.array,
@@ -73,10 +71,9 @@ const ConfirmationDialog = React.createClass({
       onConfirm,
       confirmLabel,
       cancelLabel,
-      warning,
       dialogMessage,
       dialogHeader,
-      name } = this.props;
+    } = this.props;
     return (
       <Modal
         className="confirmation"
@@ -88,26 +85,15 @@ const ConfirmationDialog = React.createClass({
             <h4 className="confirmation__header__title">{this.props.title}</h4>
           </div>
         </If>
-          <div className="confirmation__body">
-            <div className="dialog-header">
+        <div className="confirmation__body">
+          <div className="dialog-header">
             {dialogHeader}
           </div>
           <div className="dialog-body">
             <div className="dialog-info">
-              {dialogMessage}
-              <span className="high-light">" {name} "</span> ?
-            </div>
-            <div className="dialog-warning high-light">
-              {warning}
+              <span dangerouslySetInnerHTML={{ __html: dialogMessage }} />
             </div>
             <div className="confirmation__footer">
-              <button
-                className="confirmation__footer__button confirm button confirmation__button--cancel"
-                role="cancel"
-                onClick={onCancel}
-              >
-                {cancelLabel}
-              </button>
               <button
                 className="confirmation__footer__button confirm button confirmation__button--delete"
                 role="confirm"
@@ -115,10 +101,18 @@ const ConfirmationDialog = React.createClass({
               >
                 {confirmLabel}
               </button>
-              </div>
+              {onCancel ? (
+                <button
+                  className="confirmation__footer__button confirm button confirmation__button--cancel"
+                  role="cancel"
+                  onClick={onCancel}
+                >
+                  {cancelLabel}
+                </button>
+              ) : null}
             </div>
-
           </div>
+        </div>
       </Modal>
     );
   },

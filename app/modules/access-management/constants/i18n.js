@@ -85,13 +85,9 @@ export const MESSAGES = defineMessages({
     id: 'accessManagement.verification',
     defaultMessage: 'Verification Resource',
   },
-  warning: {
-    id: 'accessManagement.warning',
-    defaultMessage: 'Warning: This action will permanently delete the role from the system',
-  },
   dialogMessage: {
     id: 'accessManagement.dialogMessage',
-    defaultMessage: 'Are you sure you want to delete the role called',
+    defaultMessage: 'Are you sure you want to delete the role <span class="high-light">"{name}"</span>?<br/><br/><span class="high-light">Warning: This action will permanently delete the role from the system.</span>',
   },
   dialogHeader: {
     id: 'accessManagement.dialogHeader',
