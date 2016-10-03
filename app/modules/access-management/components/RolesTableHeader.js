@@ -7,6 +7,8 @@ import { MESSAGES } from './../constants/i18n';
 import Permit from '../../../main/components/common/Permit';
 import { RESOURCE, ACTION, permission } from '../../../main/acl/acl-enums';
 
+const ROLE_NAME_MAX_LENGTH = 15;
+
 function RolesTableHeader(props) {
   function handleInputChange(e, index) {
     props.onNameChanged({
@@ -43,6 +45,7 @@ function RolesTableHeader(props) {
           type="text"
           value={name}
           onChange={e => handleInputChange(e, i)}
+          maxLength={ROLE_NAME_MAX_LENGTH}
         />
         {renderDeleteButton(role)}
       </div>
