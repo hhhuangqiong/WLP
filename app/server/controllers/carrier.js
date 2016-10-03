@@ -19,6 +19,7 @@ import { parseTotalAtTime, parseMonthlyTotalInTime } from '../parser/userStats';
 
 export default function carriersController() {
   const endUserRequest = fetchDep(nconf.get('containerName'), 'EndUserRequest');
+  const signupRuleRequest = fetchDep(nconf.get('containerName'), 'SignupRuleRequest');
   const whitelistRequest = fetchDep(nconf.get('containerName'), 'WhitelistRequest');
   const walletRequest = fetchDep(nconf.get('containerName'), 'WalletRequest');
   const callsRequest = fetchDep(nconf.get('containerName'), 'CallsRequest');
@@ -114,6 +115,30 @@ export default function carriersController() {
 
   function removeWhitelist(req, res) {
     // TODO: implementation with whitelistRequest.remove
+  }
+
+  // '/carriers/:carrierId/signupRules'
+  function getSignupRules(req, res) {
+    req.checkParams('carrierId').notEmpty();
+
+    const { carrierId } = req.params;
+
+    signupRuleRequest.getSignupRules(carrierId, req.query, (err, result) => {
+      if (err) {
+        logger.error('error occurred when fetching signupRules', err);
+        const { code, message, timeout, status } = err;
+
+        res.status(status || 500).json({
+          error: {
+            code,
+            message,
+            timeout,
+          },
+        });
+        return;
+      }
+      res.json(result);
+    });
   }
 
 // '/carriers/:carrierId/users'
@@ -2035,6 +2060,7 @@ export default function carriersController() {
     getIMStats,
     getIMMonthlyStats,
     getIMSummaryStats,
+    getSignupRules,
     getSMS,
     getSMSStats,
     getSMSMonthlyStats,

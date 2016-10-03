@@ -43,6 +43,11 @@ routes
     authorize(permission(RESOURCE.END_USER)),
     carriers.getUsers,
   ])
+  // signupRules
+  .get('/signupRules', [
+    authorize(permission(RESOURCE.WHITELIST)),
+    carriers.getSignupRules,
+  ])
   .get('/users/whitelist/:username?', [
     authorize(permission(RESOURCE.WHITELIST)),
     carriers.getWhitelist,
