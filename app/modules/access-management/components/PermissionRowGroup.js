@@ -83,7 +83,7 @@ function PermissionRowGroup(props) {
 PermissionRowGroup.propTypes = {
   intl: intlShape.isRequired,
   rolesCount: PropTypes.number.isRequired,
-  showEditControls: PropTypes.bool.isRequired,
+  showEditControls: PropTypes.bool,
   canSave: PropTypes.bool.isRequired,
   title: PropTypes.string.isRequired,
   editTitle: PropTypes.string,

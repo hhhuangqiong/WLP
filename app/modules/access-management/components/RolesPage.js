@@ -15,8 +15,10 @@ import RoleStore from './../stores/RoleStore';
 import ApplicationStore from './../../../main/stores/ApplicationStore';
 import ClientConfigStore from './../../../main/stores/ClientConfigStore';
 import AuthStore from '../../../main/stores/AuthStore';
+import ConfirmationDialog from '../../../main/components/ConfirmationDialog';
 import Permit from '../../../main/components/common/Permit';
 import { RESOURCE, ACTION, permission } from '../../../main/acl/acl-enums';
+
 
 export class RolesPage extends Component {
   static get contextTypes() {
@@ -32,7 +34,7 @@ export class RolesPage extends Component {
       permissions: PropTypes.arrayOf(PropTypes.object),
       company: PropTypes.object.isRequired,
       limit: PropTypes.number,
-      user: PropTypes.bool,
+      user: PropTypes.object,
     };
   }
   constructor(props) {
@@ -66,9 +68,9 @@ export class RolesPage extends Component {
     this.state.displayedRoles = nextProps.roles;
     this.state.adminRoleIndex = _.findIndex(this.state.displayedRoles, { isRoot: true });
     this.finishRoleEdit();
-    this.hasPermission();
+    this.updateHasPermission();
   }
-  hasPermission() {
+  updateHasPermission() {
     const permissions = get(this.props.user, 'permissions');
     if (!permissions) {
       this.setState({ hasPermission: false });
@@ -97,8 +99,8 @@ export class RolesPage extends Component {
     if (this.state.editedRoleIndex === index) {
       return;
     }
-    const editedRoleBackup = cloneDeep(this.state.displayedRoles[index]);
     if (index !== this.state.adminRoleIndex) {
+      const editedRoleBackup = cloneDeep(this.state.displayedRoles[index]);
       this.setState({
         editedRoleIndex: index,
         editedRoleBackup,
@@ -130,6 +132,10 @@ export class RolesPage extends Component {
     this.setState({ displayedRoles: roles });
   }
   cancelRoleEdit() {
+    // if the dialog is open , the function will not be called.
+    if (this.state.deleteDialogOpened) {
+      return;
+    }
     const index = this.state.editedRoleIndex;
     if (!isNumber(index)) {
       return;
@@ -171,9 +177,7 @@ export class RolesPage extends Component {
   }
 
   handleOpenDeleteDialog() {
-    this.setState({
-      deleteDialogOpened: true,
-    });
+    this.setState({ deleteDialogOpened: true });
   }
 
   handleCloseDeleteDialog() {
@@ -203,6 +207,17 @@ export class RolesPage extends Component {
             </Permit>
           </Panel.Header>
           <Panel.Body className="roles-table-container">
+            <ConfirmationDialog
+              isOpen={this.state.deleteDialogOpened}
+              onCancel={this.handleCloseDeleteDialog}
+              onConfirm={this.removeRole}
+              cancelLabel={intl.formatMessage(MESSAGES.cancel)}
+              confirmLabel={intl.formatMessage(MESSAGES.delete)}
+              warning={intl.formatMessage(MESSAGES.warning)}
+              dialogMessage={intl.formatMessage(MESSAGES.dialogMessage)}
+              dialogHeader={intl.formatMessage(MESSAGES.dialogHeader)}
+              name={this.state.editedRoleIndex ? this.state.displayedRoles[this.state.editedRoleIndex].name : null}
+            />
             <RolesTable
               // if permisttion is true, then it can be edited,vice versa
               hasPermission= {this.state.hasPermission}
@@ -211,14 +226,11 @@ export class RolesPage extends Component {
               permissions={this.props.permissions}
               hoveredRoleIndex={this.state.hoveredRoleIndex}
               editedRoleIndex={this.state.editedRoleIndex}
-              deleteDialogOpened={this.state.deleteDialogOpened}
               onRoleSaved={this.saveRole}
-              onRoleRemoved={this.removeRole}
-              handleOpenDeleteDialog={this.handleOpenDeleteDialog}
-              handleCloseDeleteDialog={this.handleCloseDeleteDialog}
               onRoleEditSuggested={this.suggestRoleEdit}
               onRoleEditStarted={this.startRoleEdit}
               onRoleEditCancelled={this.cancelRoleEdit}
+              onRoleRemoveRequested={this.handleOpenDeleteDialog}
               onRolePermissionChanged={this.changeEditedRolePermission}
               onRoleNameChanged={this.changeEditedRoleName}
             />
