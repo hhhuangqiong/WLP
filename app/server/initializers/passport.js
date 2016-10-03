@@ -27,8 +27,8 @@ export default function setup() {
   const issuer = nconf.get('openid:issuer');
   const clientID = nconf.get('openid:clientId');
   const clientSecret = nconf.get('openid:clientSecret');
-  const authMethod = 'client_secret_jwt';
-  const signingAlg = 'HS512';
+  const authMethod = nconf.get('openid:token_endpoint_auth_method');
+  const signingAlg = nconf.get('openid:token_endpoint_auth_signing_alg');
   const appURL = nconf.get('APP_URL');
 
   if (!issuer) {

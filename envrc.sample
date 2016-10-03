@@ -40,5 +40,7 @@ export iamApi__baseUrl=http://127.0.0.1:3001
 export openid__issuer=http://127.0.0.1:3001/openid/core/.well-known/openid-configuration
 export openid__clientId=wlp
 export openid__clientSecret=7GnoS1vf5HqM1b8B4ZKDJQA6BvXa38ltUoFFVQ4cloR4GICEuWQk50S60pIVK16b
+export openid__token_endpoint_auth_method=client_secret_basic
+
 #set up for MPS
 export mpsApi__baseUrl=http://deploy.dev.maaii.com:4005
