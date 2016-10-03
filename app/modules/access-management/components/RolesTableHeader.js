@@ -12,7 +12,8 @@ const ROLE_NAME_MAX_LENGTH = 15;
 function RolesTableHeader(props) {
   function handleInputChange(e, index) {
     props.onNameChanged({
-      name: e.target.value,
+    // will not allow to enter space
+      name: e.target.value.trim(),
       roleIndex: index,
     });
   }
