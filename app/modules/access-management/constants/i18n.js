@@ -87,7 +87,7 @@ export const MESSAGES = defineMessages({
   },
   warning: {
     id: 'accessManagement.warning',
-    defaultMessage: 'Warning: This action cannot be undo!',
+    defaultMessage: 'Warning: This action will permanently delete the role from the system',
   },
   dialogMessage: {
     id: 'accessManagement.dialogMessage',
