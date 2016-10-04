@@ -2,6 +2,7 @@ import React, { PropTypes } from 'react';
 import { FormattedMessage } from 'react-intl';
 import Select from 'react-select';
 import ReactPaginate from 'react-paginate';
+import classNames from 'classnames';
 
 function Pagination(props) {
   const {
@@ -11,6 +12,7 @@ function Pagination(props) {
     pageSizeOptions,
     pageNumber,
     onChange,
+    disabled,
   } = props;
   const pageSizeSelectItems = pageSizeOptions.map(o => ({
     label: o,
@@ -31,7 +33,7 @@ function Pagination(props) {
     });
   }
   return (
-    <div className="pagination-select">
+    <div className={classNames('pagination-select', { disabled })}>
       <div className="select-number">
         <Select
           className="pagination-size"
@@ -40,6 +42,7 @@ function Pagination(props) {
           options={pageSizeSelectItems}
           onChange={onPageSizeChange}
           searchable={false}
+          disabled={disabled}
         />
         <FormattedMessage id="recordsPerPage" defaultMessage="records per page" />
       </div>
@@ -76,12 +79,13 @@ Pagination.propTypes = {
   pageNumber: PropTypes.number,
   pageSizeOptions: PropTypes.arrayOf(PropTypes.number),
   onChange: PropTypes.func,
+  disabled: PropTypes.bool,
 };
 
 Pagination.defaultProps = {
   displayedPages: 5,
   pageSizeOptions: [5, 10, 15],
+  disabled: false,
 };
 
 export default Pagination;
-

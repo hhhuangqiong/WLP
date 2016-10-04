@@ -1,4 +1,4 @@
-import { isEmpty, bindAll } from 'lodash';
+import { bindAll } from 'lodash';
 import cx from 'classnames';
 import React, { Component, PropTypes } from 'react';
 import { injectIntl, intlShape, FormattedMessage } from 'react-intl';
@@ -9,7 +9,6 @@ class EditableText extends Component {
     super(props);
 
     this.state = {
-      isEditing: isEmpty(props.value),
       displayControl: false,
     };
 
@@ -25,36 +24,37 @@ class EditableText extends Component {
   }
 
   componentDidMount() {
-    if (this.state.isEditing) {
+    const { editIndex, index } = this.props;
+    if (editIndex === index) {
       this.textInput.focus();
     }
   }
 
   shouldComponentUpdate(nextProps, nextState) {
-    const { index: prevIndex, value: prevValue, error: prevError } = this.props;
-    const { index: currentIndex, value: currentValue, error: currentError } = nextProps;
-    const { isEditing: prevIsEditing, displayControl: prevDisplayControl } = this.state;
-    const { isEditing: currentIsEditing, displayControl: currentDisplayControl } = nextState;
+    const { index: prevIndex, value: prevValue, error: prevError, editIndex: prevEditIndex } = this.props;
+    const { index: currentIndex, value: currentValue, error: currentError, editIndex: currentEditIndex } = nextProps;
+    const { displayControl: prevDisplayControl } = this.state;
+    const { displayControl: currentDisplayControl } = nextState;
 
     return prevIndex !== currentIndex ||
         prevValue !== currentValue ||
         prevError !== currentError ||
-        prevIsEditing !== currentIsEditing ||
+        prevEditIndex !== currentEditIndex ||
         prevDisplayControl !== currentDisplayControl;
   }
 
+  componentDidUpdate(prevProps) {
+    // focus when the edit index changed
+    if (prevProps.editIndex !== this.props.editIndex && this.props.editIndex === this.props.index) {
+      this.textInput.focus();
+    }
+  }
+
   handleUpdate() {
-    const { index, handleValidation } = this.props;
+    const { index, error } = this.props;
     const { value } = this.textInput;
 
-    const error = handleValidation ? handleValidation(value, index) : null;
-
-    if (!!error) {
-      this.textInput.focus();
-    } else {
-      this.handleExitEditing();
-    }
-
+    this.handleExitEditing();
     this.props.handleUpdate(index, { value, error });
   }
 
@@ -70,15 +70,13 @@ class EditableText extends Component {
   }
 
   handleStartEditing() {
-    this.setState({
-      isEditing: true,
-    });
+    const { index } = this.props;
+    this.props.handleStartEditing(index);
   }
 
   handleExitEditing() {
-    this.setState({
-      isEditing: false,
-    });
+    const { index } = this.props;
+    this.props.handleExitEditing(index);
   }
 
   displayControl() {
@@ -94,10 +92,11 @@ class EditableText extends Component {
   }
 
   renderField() {
-    const { isEditing, displayControl } = this.state;
-    const { value, error, handleUpdate, handleDelete } = this.props;
+    const { displayControl } = this.state;
+    const { value, error, handleUpdate, handleDelete, editIndex, index } = this.props;
 
-    if (isEditing) {
+    // editing
+    if (editIndex === index) {
       return (
         <div className="row">
           <div className="large-12 columns">
@@ -148,12 +147,11 @@ class EditableText extends Component {
   }
 
   render() {
-    const { isEditing } = this.state;
-    const { error, intl: { formatMessage } } = this.props;
+    const { error, intl: { formatMessage }, index, editIndex } = this.props;
 
     return (
       <div
-        className={cx('row', 'editable-text', { 'editable-text--editing': isEditing })}
+        className={cx('row', 'editable-text', { 'editable-text--editing': index === editIndex })}
         onMouseEnter={this.displayControl}
         onMouseLeave={this.removeControl}
       >
@@ -170,16 +168,14 @@ class EditableText extends Component {
 
 EditableText.propTypes = {
   intl: intlShape.isRequired,
-  isEditing: PropTypes.bool,
-  index: PropTypes.oneOfType([
-    PropTypes.string,
-    PropTypes.number,
-  ]),
+  index: PropTypes.number,
+  editIndex: PropTypes.number,
   error: PropTypes.object,
   value: PropTypes.string,
-  handleValidation: PropTypes.func,
   handleUpdate: PropTypes.func,
   handleDelete: PropTypes.func,
+  handleExitEditing: PropTypes.func,
+  handleStartEditing: PropTypes.func,
 };
 
 export default injectIntl(EditableText);
