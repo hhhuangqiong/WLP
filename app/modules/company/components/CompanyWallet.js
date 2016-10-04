@@ -2,6 +2,7 @@ import React, { Component, PropTypes } from 'react';
 import { Link } from 'react-router';
 import { injectIntl, intlShape } from 'react-intl';
 import connectToStores from 'fluxible-addons-react/connectToStores';
+import classNames from 'classnames';
 
 import { CompanyWalletStore } from '../stores/CompanyWalletStore';
 import { MESSAGES } from '../constants/companyOptions';
@@ -29,6 +30,7 @@ class CompanyWallet extends Component {
         amount: PropTypes.string,
         description: PropTypes.string,
       })),
+      walletsLoading: PropTypes.bool,
       wallets: PropTypes.arrayOf(PropTypes.shape({
         walletId: PropTypes.number.isRequired,
         serviceType: PropTypes.string.isRequired,
@@ -81,9 +83,49 @@ class CompanyWallet extends Component {
       intl,
       transactionsPage,
       wallets,
+      walletsLoading,
       topUpForms,
     } = this.props;
     const { identity } = this.context.params;
+
+    let content;
+    if (walletsLoading) {
+      content = (
+        <div>{intl.formatMessage(MESSAGES.loading)}</div>
+      );
+    } else if (wallets.length === 0) {
+      content = (
+        <div>{intl.formatMessage(MESSAGES.noDataAvailable)}</div>
+      );
+    } else {
+      content = (
+        <div>
+          <div className="row">
+            {
+              wallets.map(wallet =>
+                <div className="small-12 columns" key={wallet.walletId}>
+                  <h4>{intl.formatMessage(wallet.serviceType === 'SMS' ? MESSAGES.smsWallet : MESSAGES.voiceWallet)}</h4>
+                  <WalletTopUpForm
+                    wallet={wallet}
+                    values={topUpForms[wallet.walletId] || {}}
+                    onChange={values => this.handleFormChange(wallet.walletId, values)}
+                    onSubmit={values => this.handleFormSubmit(values)}
+                  />
+                </div>
+              )
+            }
+          </div>
+          <WalletTransactionsTable
+            contents={transactionsPage.contents.map(x => this.toDisplayedTransaction(x))}
+            pageNumber={transactionsPage.pageNumber}
+            pageSize={transactionsPage.pageSize}
+            totalElements={transactionsPage.totalElements}
+            onPageChange={p => this.handlePageChange(p)}
+          />
+        </div>
+      );
+    }
+
     return (
       <div>
         <div className="company-wallet-header">
@@ -94,28 +136,7 @@ class CompanyWallet extends Component {
             </h4>
           </Link>
         </div>
-        <div className="row">
-          {
-            wallets.map(wallet =>
-              <div className="small-12 columns" key={wallet.walletId}>
-                <h4>{intl.formatMessage(wallet.serviceType === 'SMS' ? MESSAGES.smsWallet : MESSAGES.voiceWallet)}</h4>
-                <WalletTopUpForm
-                  wallet={wallet}
-                  values={topUpForms[wallet.walletId] || {}}
-                  onChange={values => this.handleFormChange(wallet.walletId, values)}
-                  onSubmit={values => this.handleFormSubmit(values)}
-                />
-              </div>
-            )
-          }
-        </div>
-        <WalletTransactionsTable
-          contents={transactionsPage.contents.map(x => this.toDisplayedTransaction(x))}
-          pageNumber={transactionsPage.pageNumber}
-          pageSize={transactionsPage.pageSize}
-          totalElements={transactionsPage.totalElements}
-          onPageChange={p => this.handlePageChange(p)}
-        />
+        {content}
       </div>
     );
   }

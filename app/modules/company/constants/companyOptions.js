@@ -121,6 +121,14 @@ export const MESSAGES = defineMessages({
     id: 'submit',
     defaultMessage: 'Submit',
   },
+  noDataAvailable: {
+    id: 'noDataAvailable',
+    defaultMessage: 'There is no data available. Please, try again later.',
+  },
+  loading: {
+    id: 'loading',
+    defaultMessage: 'Loading...',
+  },
 });
 
 export const CAPABILITIES = {
