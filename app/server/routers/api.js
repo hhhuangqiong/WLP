@@ -48,6 +48,10 @@ routes
     authorize(permission(RESOURCE.WHITELIST)),
     carriers.getSignupRules,
   ])
+  .post('/signupRules', [
+    authorize(permission(RESOURCE.WHITELIST, ACTION.CREATE)),
+    carriers.createSignupRules,
+  ])
   .get('/users/whitelist/:username?', [
     authorize(permission(RESOURCE.WHITELIST)),
     carriers.getWhitelist,

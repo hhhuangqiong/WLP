@@ -45,4 +45,8 @@ export const MESSAGES = defineMessages({
     id: 'account.deleteAccountSuccess',
     defaultMessage: 'Delete account success!',
   },
+  createSignupRulesSuccess: {
+    id: 'user.createSignupRulesSuccess',
+    defaultMessage: '{number} new users created',
+  },
 });
