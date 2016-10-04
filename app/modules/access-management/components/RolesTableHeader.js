@@ -2,8 +2,6 @@ import React, { PropTypes } from 'react';
 import cx from 'classnames';
 
 import { injectIntl, intlShape } from 'react-intl';
-import ConfirmationDialog from '../../../main/components/ConfirmationDialog';
-import { MESSAGES } from './../constants/i18n';
 import Permit from '../../../main/components/common/Permit';
 import { RESOURCE, ACTION, permission } from '../../../main/acl/acl-enums';
 
@@ -22,9 +20,7 @@ function RolesTableHeader(props) {
     if (creating) return null;
     return (
       <Permit permission={permission(RESOURCE.ROLE, ACTION.DELETE)}>
-        <i className="fi-x"
-          onClick={props.handleOpenDeleteDialog}
-        />
+        <i className="fi-x" onClick={props.onRoleRemoveRequested} />
       </Permit>
     );
   }
@@ -64,17 +60,6 @@ function RolesTableHeader(props) {
   });
   return (
     <thead className="roles-table__header">
-        <ConfirmationDialog
-          isOpen={props.deleteDialogOpened}
-          onCancel={props.handleCloseDeleteDialog}
-          onConfirm={props.handleDelete}
-          cancelLabel={props.intl.formatMessage(MESSAGES.cancel)}
-          confirmLabel={props.intl.formatMessage(MESSAGES.delete)}
-          warning={props.intl.formatMessage(MESSAGES.warning)}
-          dialogMessage={props.intl.formatMessage(MESSAGES.dialogMessage)}
-          dialogHeader={props.intl.formatMessage(MESSAGES.dialogHeader)}
-          name={props.editedRoleIndex ? props.roles[props.editedRoleIndex].name : null}
-        />
       <tr>
         <th className="roles-table__title-cell"></th>
         {cells}
@@ -90,11 +75,7 @@ RolesTableHeader.propTypes = {
   hoveredRoleIndex: PropTypes.number,
   editedRoleIndex: PropTypes.number,
   onNameChanged: PropTypes.func,
-  onRemoved: PropTypes.func,
-  handleOpenDeleteDialog: PropTypes.func,
-  deleteDialogOpened: PropTypes.bool,
-  handleDelete: PropTypes.func,
-  handleCloseDeleteDialog: PropTypes.func,
+  onRoleRemoveRequested: PropTypes.func,
   roleName: PropTypes.string,
   editTitle: PropTypes.string,
   adminRoleIndex: PropTypes.number,

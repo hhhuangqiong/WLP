@@ -23,11 +23,7 @@ class RolesTable extends Component {
       onRoleEditSuggested: PropTypes.func,
       onRoleEditStarted: PropTypes.func,
       onRoleEditCancelled: PropTypes.func,
-      handleDelete: PropTypes.func,
-      onRoleRemoved: PropTypes.func,
-      handleCloseDeleteDialog: PropTypes.func,
-      handleOpenDeleteDialog: PropTypes.func,
-      deleteDialogOpened: PropTypes.bool,
+      onRoleRemoveRequested: PropTypes.func,
       adminRoleIndex: PropTypes.number,
       hasPermission: PropTypes.bool,
     };
@@ -48,11 +44,6 @@ class RolesTable extends Component {
     return isValid;
   }
   handleClickOutside() {
-    // should the onRoleEditCancelled be called
-    // if the dialog is open , the function will not be called.
-    if (this.props.deleteDialogOpened) {
-      return;
-    }
     this.props.onRoleEditCancelled();
   }
   handleTableClick(e) {
@@ -147,10 +138,7 @@ class RolesTable extends Component {
       hoveredRoleIndex,
       editedRoleIndex,
       onRoleNameChanged,
-      onRoleRemoved,
-      handleCloseDeleteDialog,
-      handleOpenDeleteDialog,
-      deleteDialogOpened,
+      onRoleRemoveRequested,
       hasPermission,
     } = this.props;
     return (
@@ -166,10 +154,7 @@ class RolesTable extends Component {
           hoveredRoleIndex={hoveredRoleIndex}
           editedRoleIndex={editedRoleIndex}
           onNameChanged={onRoleNameChanged}
-          handleDelete={onRoleRemoved}
-          handleCloseDeleteDialog={handleCloseDeleteDialog}
-          handleOpenDeleteDialog={handleOpenDeleteDialog}
-          deleteDialogOpened={deleteDialogOpened}
+          onRoleRemoveRequested={onRoleRemoveRequested}
           editTitle={this.props.intl.formatMessage(MESSAGES.title)}
         />
         {rows}
