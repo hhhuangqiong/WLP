@@ -168,8 +168,14 @@ class EditableText extends Component {
 
 EditableText.propTypes = {
   intl: intlShape.isRequired,
-  index: PropTypes.number,
-  editIndex: PropTypes.number,
+  index: PropTypes.oneOfType([
+    PropTypes.string,
+    PropTypes.number,
+  ]),
+  editIndex: PropTypes.oneOfType([
+    PropTypes.string,
+    PropTypes.number,
+  ]),
   error: PropTypes.object,
   value: PropTypes.string,
   handleUpdate: PropTypes.func,

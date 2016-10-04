@@ -20,7 +20,6 @@ import { parseTotalAtTime, parseMonthlyTotalInTime } from '../parser/userStats';
 export default function carriersController() {
   const endUserRequest = fetchDep(nconf.get('containerName'), 'EndUserRequest');
   const signupRuleRequest = fetchDep(nconf.get('containerName'), 'SignupRuleRequest');
-  const whitelistRequest = fetchDep(nconf.get('containerName'), 'WhitelistRequest');
   const walletRequest = fetchDep(nconf.get('containerName'), 'WalletRequest');
   const callsRequest = fetchDep(nconf.get('containerName'), 'CallsRequest');
   const topUpRequest = fetchDep(nconf.get('containerName'), 'TopUpRequest');
@@ -81,42 +80,6 @@ export default function carriersController() {
     return validationErrors.map(issue => `${issue.msg}: ${issue.param}`).join(', ');
   }
 
-  function getWhitelist(req, res) {
-    req.checkParams('carrierId').notEmpty();
-    req.checkQuery('from').notEmpty();
-    req.checkQuery('to').notEmpty();
-
-    const { carrierId, username } = req.params;
-    const { from, to } = req.query;
-    const queries = {
-      from,
-      to,
-    };
-
-    Q.ninvoke(whitelistRequest, 'get', carrierId, {
-      username,
-      from,
-      to
-    })
-      .then(result => {
-        res.json({
-          success: true,
-          ...result,
-        });
-      })
-      .catch(err => {
-        res.apiError(err.status || 500, err);
-      });
-  }
-
-  function addWhitelist(req, res) {
-    // TODO: implementation with whitelistRequest.add
-  }
-
-  function removeWhitelist(req, res) {
-    // TODO: implementation with whitelistRequest.remove
-  }
-
   // get '/carriers/:carrierId/signupRules'
   function getSignupRules(req, res) {
     req.checkParams('carrierId').notEmpty();
@@ -150,6 +113,31 @@ export default function carriersController() {
     signupRuleRequest.createSignupRules(carrierId, req.user.username, req.body.identities, (err, result) => {
       if (err) {
         logger.error('error occurred when creating signupRules', err);
+        const { code, message, timeout, status } = err;
+
+        res.status(status || 500).json({
+          error: {
+            code,
+            message,
+            timeout,
+          },
+        });
+        return;
+      }
+      res.json(result);
+    });
+  }
+
+  // delete '/carriers/:carrierId/signupRules/:id'
+  function deleteSignupRule(req, res) {
+    req.checkParams('carrierId').notEmpty();
+    req.checkParams('id').notEmpty();
+
+    const { carrierId, id } = req.params;
+
+    signupRuleRequest.deleteSignupRule(carrierId, id, (err, result) => {
+      if (err) {
+        logger.error('error occurred when deleting signupRule', err);
         const { code, message, timeout, status } = err;
 
         res.status(status || 500).json({
@@ -2072,9 +2060,6 @@ export default function carriersController() {
   }
 
   return {
-    getWhitelist,
-    addWhitelist,
-    removeWhitelist,
     getOverviewDetailStats,
     getOverviewSummaryStats,
     getCalls,
@@ -2084,8 +2069,6 @@ export default function carriersController() {
     getIMStats,
     getIMMonthlyStats,
     getIMSummaryStats,
-    getSignupRules,
-    createSignupRules,
     getSMS,
     getSMSStats,
     getSMSMonthlyStats,
@@ -2108,5 +2091,8 @@ export default function carriersController() {
     getApplicationIds,
     getApplications,
     getPreset,
+    getSignupRules,
+    createSignupRules,
+    deleteSignupRule,
   };
 }

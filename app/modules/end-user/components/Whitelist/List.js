@@ -3,8 +3,11 @@ import React, { PropTypes, Component } from 'react';
 import { Link } from 'react-router';
 import { FormattedMessage, injectIntl, intlShape } from 'react-intl';
 import classNames from 'classnames';
-import NumericPagination from '../../../data-table/components/NumericPagination';
-import i18nMessages from '../../../../main/constants/i18nMessages';
+import EditableText from './EditableText';
+import Pagination from '../../../../main/components/Pagination';
+import Permit from '../../../../main/components/common/Permit';
+import { RESOURCE, ACTION, permission } from '../../../../main/acl/acl-enums';
+import COMMON_MESSAGES from '../../../../main/constants/i18nMessages';
 import {
   UI_STATE_LOADING,
   UI_STATE_EMPTY,
@@ -12,8 +15,8 @@ import {
 } from '../../../../main/constants/uiState';
 
 const TABLE_TITLES = [
-  i18nMessages.userOrMobile,
-  i18nMessages.control,
+  COMMON_MESSAGES.userOrMobile,
+  COMMON_MESSAGES.control,
 ];
 
 class WhiteList extends Component {
@@ -24,22 +27,6 @@ class WhiteList extends Component {
   }
 
   renderTableBody() {
-    if (this.props.isLoading) {
-      return (
-        <tr>
-          <td colSpan={TABLE_TITLES.length}>
-            <div className="text-center capitalize">
-              <FormattedMessage
-                id="loading"
-                defaultMessage="loading"
-              />
-              <span>...</span>
-            </div>
-          </td>
-        </tr>
-      );
-    }
-
     if (isEmpty(this.props.users)) {
       return (
         <tr className="empty">
@@ -55,11 +42,14 @@ class WhiteList extends Component {
       );
     }
 
-
     return this.props.users.map(user => (
-      <tr key={user}>
+      <tr key={user.id}>
         <td>
-          { user }
+          <EditableText
+            index={user.id}
+            value={user.identity}
+            handleDelete={this.props.handleDelete}
+          />
         </td>
         <td>
         </td>
@@ -70,7 +60,7 @@ class WhiteList extends Component {
   render() {
     const props = this.props;
     const { identity } = this.context.params;
-    const { page, pageRec, totalUsers } = props;
+    const { pageSize, pageNumber, totalElements, handlePageChange } = props;
 
     return (
       <section className="page end-users-whitelist">
@@ -78,21 +68,23 @@ class WhiteList extends Component {
           <table className="data-table large-24">
             <thead>
             <tr>
-              <th className="column--username">
+              <th className="username">
                 <FormattedMessage
                   id="username"
                   defaultMessage="Username"
                 />
               </th>
-              <th className="column--controls">
-                <Link to={`/${identity}/end-user/whitelist/new`}>
-                  <button className="right">
-                    <FormattedMessage
-                      id="createNewUser"
-                      defaultMessage="Create New User"
-                    />
-                  </button>
-                </Link>
+              <th className="controls">
+                <Permit permission={permission(RESOURCE.WHITELIST, ACTION.CREATE)}>
+                  <Link to={`/${identity}/end-user/whitelist/new`}>
+                    <button className="right button round">
+                      <FormattedMessage
+                        id="createNewUser"
+                        defaultMessage="Create New User"
+                      />
+                    </button>
+                  </Link>
+                </Permit>
               </th>
             </tr>
             </thead>
@@ -105,17 +97,12 @@ class WhiteList extends Component {
             { this.renderTableBody() }
             </tbody>
           </table>
-          {
-            !props.isLoading ? (
-              <NumericPagination
-                pageRec={pageRec}
-                totalRec={totalUsers}
-                current={page}
-                onPageChange={props.handlePageChange}
-                onPageRecChange={props.handlePageRecChange}
-              />
-            ) : null
-          }
+          <Pagination
+            pageSize={pageSize}
+            pageNumber={pageNumber}
+            totalElements={totalElements}
+            onChange={handlePageChange}
+          />
         </div>
       </section>
     );
@@ -129,19 +116,16 @@ WhiteList.contextTypes = {
 WhiteList.propTypes = {
   intl: intlShape.isRequired,
   isLoading: PropTypes.bool.isRequired,
-  page: PropTypes.number,
-  pageRec: PropTypes.number,
+  totalElements: PropTypes.number,
+  pageNumber: PropTypes.number,
+  pageSize: PropTypes.number,
   searchValue: PropTypes.string,
   users: PropTypes.array,
-  totalUsers: PropTypes.number,
-  handleSearchSubmit: PropTypes.func,
   handlePageChange: PropTypes.func,
-  handlePageRecChange: PropTypes.func,
+  handleDelete: PropTypes.func,
 };
 
 WhiteList.defaultProps = {
-  page: 1,
-  pageRec: 10,
   users: [],
 };
 

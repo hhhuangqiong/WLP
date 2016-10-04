@@ -141,6 +141,37 @@ export default class SignupRuleRequest {
       return;
     }
   }
+
+  /**
+   * delete a SignupRule
+   * @param  {String}   carrierId
+   * @param  {String}   id        signupRule id
+   * @param  {Function} cb
+   */
+  deleteSignupRule(carrierId, id, cb) {
+    const base = this.opts.baseUrl;
+    const api = this.opts.apis.delete;
+    const url = util.format(api.uri, carrierId, id);
+    const reqUrl = util.format('%s%s', base, url);
+
+    logger.debug(`Delete signupRule from: ${reqUrl}`);
+
+    request(api.method, reqUrl)
+      .timeout(this.opts.timeout)
+      .end((err, res) => {
+        if (err) {
+          cb(err);
+          return;
+        }
+
+        if (res.status >= 400) {
+          cb(this.prepareError(res.body.error));
+          return;
+        }
+
+        cb(null, res.body);
+      });
+  }
 }
 
 _.assign(SignupRuleRequest.prototype, errorMixin);

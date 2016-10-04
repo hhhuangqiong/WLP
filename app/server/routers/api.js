@@ -52,17 +52,9 @@ routes
     authorize(permission(RESOURCE.WHITELIST, ACTION.CREATE)),
     carriers.createSignupRules,
   ])
-  .get('/users/whitelist/:username?', [
-    authorize(permission(RESOURCE.WHITELIST)),
-    carriers.getWhitelist,
-  ])
-  .post('/users/whitelist', [
-    authorize(permission(RESOURCE.WHITELIST, ACTION.CREATE)),
-    carriers.addWhitelist,
-  ])
-  .delete('/users/whitelist', [
+  .delete('/signupRules/:id', [
     authorize(permission(RESOURCE.WHITELIST, ACTION.DELETE)),
-    carriers.removeWhitelist,
+    carriers.deleteSignupRule,
   ])
   // TODO: change userStatsTotal and userStatsMonthly
   .get('/userStatsTotal', [

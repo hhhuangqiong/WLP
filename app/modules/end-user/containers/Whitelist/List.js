@@ -1,36 +1,47 @@
-import { assign, isEmpty, omit } from 'lodash';
 import React, { PropTypes, Component } from 'react';
-import { browserHistory } from 'react-router';
+import { find, get, bindAll } from 'lodash';
 import { injectIntl, intlShape } from 'react-intl';
 import { connectToStores } from 'fluxible-addons-react';
 import WhiteList from '../../components/Whitelist/List';
-import whiteListStore from '../../stores/Whitelist';
-import { clearWhitelist, fetchWhitelist } from '../../actions/whitelist';
+import AuthStore from '../../../../main/stores/AuthStore';
+import WhiteListStore from '../../stores/Whitelist';
+import { clearWhitelist } from '../../actions/whitelist';
+import fetchSignupRules from '../../actions/fetchSignupRules';
+import deleteSignupRule from '../../actions/deleteSignupRule';
+import { RESOURCE, ACTION, permission } from '../../../../main/acl/acl-enums';
+import ConfirmationDialog from '../../../../main/components/ConfirmationDialog';
 import * as FilterBar from '../../../../main/components/FilterBar';
 import FilterBarNavigation from '../../../../main/filter-bar/components/FilterBarNavigation';
 import SearchBox, { SUBMIT_KEY } from '../../../../main/components/Searchbox';
-import i18nMessages from '../../../../main/constants/i18nMessages';
+import COMMON_MESSAGES from '../../../../main/constants/i18nMessages';
+import { MESSAGES } from '../../constants/i18n';
 
 class WhiteListContainer extends Component {
   constructor(props) {
     super(props);
+    this.state = {
+      isDeleteDialogOpen: false,
+      deletingUser: null,
+      search: '',
+    };
 
-    this.handlePageRecChange = this.handlePageRecChange.bind(this);
-    this.handlePageChange = this.handlePageChange.bind(this);
-    this.handleQueryChange = this.handleQueryChange.bind(this);
-    this.handleSearchSubmit = this.handleSearchSubmit.bind(this);
+    bindAll(this, [
+      'handlePageChange',
+      'handleSearchKeyPress',
+      'handleDelete',
+      'handleOpenDeleteDialog',
+      'handleCloseDeleteDialog',
+    ]);
   }
 
   componentDidMount() {
     this.fetchData();
   }
 
-  componentDidUpdate(prevProps) {
-    const { search: prevSearch } = prevProps.location;
-    const { search: currentSearch } = this.props.location;
-
-    if (prevSearch !== currentSearch) {
-      this.fetchData();
+  componentWillReceiveProps(nextProps) {
+    if (nextProps.isRefetchRequired) {
+      const { pageSize, pageNumber } = this.props;
+      this.fetchData({ pageSize, pageNumber, identity: this.state.search });
     }
   }
 
@@ -38,91 +49,81 @@ class WhiteListContainer extends Component {
     this.context.executeAction(clearWhitelist);
   }
 
-  fetchData() {
+  fetchData(query = {}) {
     const { identity } = this.context.params;
-    let { query } = this.context.location;
-    const { pageRec } = this.props;
-
-    // TODO: redefine the correct query based on page and pageRec
-    // e.g. on Page 1, from = 0, to = (pageRec - 1)
-    // e.g. on Page 2, from = pageRec, to = from + (pageRec - 1)
-    if (isEmpty(query)) {
-      query = {
-        from: 0,
-        to: pageRec,
-        pageRec,
-      };
-    }
-
-    this.context.executeAction(fetchWhitelist, {
+    this.context.executeAction(fetchSignupRules, {
       carrierId: identity,
       query,
     });
   }
 
-  handleSearchSubmit(e) {
-    if (e.which !== SUBMIT_KEY) {
-      return;
-    }
-
-    const value = e.target.value;
-    const changes = { username: value && value.trim(), page: 1 };
-    this.handleQueryChange(changes);
+  hasDeletePermission() {
+    const permissions = get(this.props.user, 'permissions', []);
+    return permissions.indexOf(permission(RESOURCE.WHITELIST, ACTION.DELETE)) >= 0;
   }
 
-  handlePageChange(page) {
-    if (!page) {
-      return;
-    }
+  handleSearchKeyPress(e) {
+    const value = e.target.value.trim();
+    this.setState({ search: value });
 
-    this.handleQueryChange({ current: page });
+    if (e.which === SUBMIT_KEY) {
+      this.fetchData({ identity: value });
+    }
   }
 
-  handlePageRecChange(pageRec) {
-    if (!pageRec) {
-      return;
-    }
-
-    this.handleQueryChange({ pageRec });
+  handlePageChange({ pageSize, pageNumber }) {
+    this.fetchData({ pageSize, pageNumber, identity: this.state.search });
   }
 
-  handleQueryChange(changes) {
-    const { pathname, query } = this.context.location;
-    const newQuery = omit(assign(query, changes), v => !v);
+  handleOpenDeleteDialog(id) {
+    const deletingUser = find(this.props.users, (user) => user.id === id) || {};
+    this.setState({ isDeleteDialogOpen: true, deletingUser });
+  }
 
-    browserHistory.push({
-      pathname,
-      query: newQuery,
+  handleCloseDeleteDialog() {
+    this.setState({ isDeleteDialogOpen: false, deletingUser: null });
+  }
+
+  handleDelete() {
+    const { identity } = this.context.params;
+    this.context.executeAction(deleteSignupRule, {
+      carrierId: identity,
+      id: this.state.deletingUser.id,
     });
+    this.setState({ isDeleteDialogOpen: false, deletingUser: null });
   }
 
   render() {
-    const { query } = this.context.location;
     const { formatMessage } = this.props.intl;
-    const { username: searchValue } = query;
-    const { pageRec } = query || this.props;
+    const { isDeleteDialogOpen, deletingUser } = this.state;
+    const deletingUserName = deletingUser ? deletingUser.identity : '';
 
     return (
       <div className="row">
+        <ConfirmationDialog
+          isOpen={isDeleteDialogOpen}
+          onCancel={this.handleCloseDeleteDialog}
+          onConfirm={this.handleDelete}
+          cancelLabel={formatMessage(COMMON_MESSAGES.cancel)}
+          confirmLabel={formatMessage(COMMON_MESSAGES.delete)}
+          dialogMessage={formatMessage(MESSAGES.deleteDialogMessage, { name: deletingUserName })}
+          dialogHeader={formatMessage(MESSAGES.deleteDialogHeader)}
+        />
         <FilterBar.Wrapper>
           <FilterBarNavigation section="end-user" tab="whitelist" />
           <FilterBar.RightItems>
             <SearchBox
-              value={searchValue}
-              placeHolder={formatMessage(i18nMessages.mobile)}
-              onKeyPressHandler={this.handleSearchSubmit}
-              />
+              value={this.state.search}
+              placeHolder={formatMessage(COMMON_MESSAGES.mobile)}
+              onKeyPressHandler={this.handleSearchKeyPress}
+            />
           </FilterBar.RightItems>
         </FilterBar.Wrapper>
         <WhiteList
           {...this.props}
-          pageRec={pageRec}
-          searchValue={searchValue}
-          handlePageRecChange={this.handlePageRecChange}
           handlePageChange={this.handlePageChange}
-          handleSearchInputChange={this.handleSearchInputChange}
-          handleSearchSubmit={this.handleSearchSubmit}
-          />
+          handleDelete={this.hasDeletePermission() ? this.handleOpenDeleteDialog : null}
+        />
       </div>
     );
   }
@@ -131,25 +132,29 @@ class WhiteListContainer extends Component {
 WhiteListContainer.contextTypes = {
   executeAction: PropTypes.func,
   params: PropTypes.object,
-  location: PropTypes.object,
 };
 
 WhiteListContainer.propTypes = {
-  location: PropTypes.shape({
-    search: PropTypes.string,
-  }),
   intl: intlShape.isRequired,
+  isRefetchRequired: PropTypes.bool,
   isLoading: PropTypes.bool,
-  search: PropTypes.string,
-  pageRec: PropTypes.number.isRequired,
+  users: PropTypes.array,
+  totalElements: PropTypes.number,
+  pageNumber: PropTypes.number,
+  pageSize: PropTypes.number,
+  // current login user from AuthStore
+  user: PropTypes.object.isRequired,
 };
 
 WhiteListContainer.defaultProps = {
-  pageRec: 10,
+  pageSize: 10,
 };
 
 export default connectToStores(
   injectIntl(WhiteListContainer),
-  [whiteListStore],
-  context => context.getStore(whiteListStore).getState()
+  [AuthStore, WhiteListStore],
+  context => ({
+    ...context.getStore(WhiteListStore).getState(),
+    user: context.getStore(AuthStore).getUser(),
+  })
 );

@@ -2,7 +2,7 @@ import cx from 'classnames';
 import { isEmpty, reduce, bindAll, get, isNull } from 'lodash';
 import React, { PropTypes, Component } from 'react';
 import { Link, withRouter } from 'react-router';
-import { injectIntl, intlShape, FormattedMessage, defineMessages } from 'react-intl';
+import { injectIntl, intlShape, FormattedMessage } from 'react-intl';
 import { connectToStores } from 'fluxible-addons-react';
 import Papa from 'papaparse';
 import invariant from 'invariant';
@@ -21,39 +21,25 @@ import {
 import createSignupRules from '../../actions/createSignupRules';
 
 import Pagination from '../../../../main/components/Pagination';
+import ConfirmationDialog from '../../../../main/components/ConfirmationDialog';
 import EditableText from '../../components/Whitelist/EditableText';
 import createWhiteListStore from '../../stores/CreateWhitelist';
 import Icon from '../../../../main/components/Icon';
 import * as FilterBar from '../../../../main/components/FilterBar';
 import FilterBarNavigation from '../../../../main/filter-bar/components/FilterBarNavigation';
 
+import COMMON_MESSAGES from '../../../../main/constants/i18nMessages';
+import { MESSAGES } from '../../constants/i18n';
+
 const LEAVE_MESSAGE = 'Leave with unsaved change?';
 const UPLOAD_LIMIT = 1000;
-
-const MESSAGES = defineMessages({
-  allRecords: {
-    id: 'allRecords',
-    defaultMessage: 'All records',
-  },
-  errorRecords: {
-    id: 'errorRecords',
-    defaultMessage: 'Error records',
-  },
-  deleteText: {
-    id: 'message.deleteText',
-    defaultMessage: 'Are you sure to delete {value}?',
-  },
-  uploadLimitReached: {
-    id: 'message.uploadLimitReached',
-    defaultMessage: 'Total records should not be more than {limit}',
-  },
-});
 
 class CreateWhiteListContainer extends Component {
   constructor(props) {
     super(props);
 
     this.state = {
+      isReachLimitDialogOpen: false,
       percentage: null,
       editIndex: null,
       addingNewUser: false,
@@ -64,6 +50,7 @@ class CreateWhiteListContainer extends Component {
       'handleChangeFilter',
       'handleCreateClick',
       'handlePageChange',
+      'handleCloseReachLimitDialog',
       'getUploadedFilename',
       'updateUserAtIndex',
       'handleStartEditing',
@@ -221,10 +208,7 @@ class CreateWhiteListContainer extends Component {
 
         if (newNumberAfterInsert > UPLOAD_LIMIT) {
           uploadedData = [];
-
-          // TODO: Make a nice looking UI dialog instead
-          alert(formatMessage(MESSAGES.uploadLimitReached, { limit: UPLOAD_LIMIT }));
-
+          this.setState({ isReachLimitDialogOpen: true });
           return;
         }
 
@@ -239,6 +223,10 @@ class CreateWhiteListContainer extends Component {
   }
 
   handleAddNewUserClick() {
+    if (this.props.totalUsers >= UPLOAD_LIMIT) {
+      this.setState({ isReachLimitDialogOpen: true });
+      return;
+    }
     this.setState({ addingNewUser: true });
     this.context.executeAction(addWhitelistUser);
   }
@@ -255,6 +243,10 @@ class CreateWhiteListContainer extends Component {
   handleChangeFilter(e) {
     const { value } = e.target;
     this.context.executeAction(changeFilter, value);
+  }
+
+  handleCloseReachLimitDialog() {
+    this.setState({ isReachLimitDialogOpen: false });
   }
 
   updateUserAtIndex(index, user) {
@@ -292,11 +284,6 @@ class CreateWhiteListContainer extends Component {
   }
 
   deleteWhitelistUser(index, user) {
-    const { formatMessage } = this.props.intl;
-
-    if (!confirm(formatMessage(MESSAGES.deleteText, { value: user }))) {
-      return;
-    }
     // when delete any white list user, it will disable the edit index
     this.setState({ editIndex: null });
     this.context.executeAction(deleteWhitelistUser, index);
@@ -352,7 +339,7 @@ class CreateWhiteListContainer extends Component {
   render() {
     // TODO: move this whole block to a component
     const { formatMessage } = this.props.intl;
-    const { editIndex, percentage } = this.state;
+    const { isReachLimitDialogOpen, editIndex, percentage } = this.state;
     const { identity } = this.context.params;
     const {
       filter: filterValue,
@@ -369,6 +356,13 @@ class CreateWhiteListContainer extends Component {
 
     return (
       <div className="row">
+        <ConfirmationDialog
+          isOpen={isReachLimitDialogOpen}
+          onConfirm={this.handleCloseReachLimitDialog}
+          confirmLabel={formatMessage(COMMON_MESSAGES.ok)}
+          dialogMessage={formatMessage(MESSAGES.reachLimitDialogMessage, { limit: UPLOAD_LIMIT })}
+          dialogHeader={formatMessage(MESSAGES.reachLimitDialogHeader)}
+        />
         <FilterBar.Wrapper>
           <FilterBarNavigation section="end-user" tab="whitelist" />
         </FilterBar.Wrapper>
