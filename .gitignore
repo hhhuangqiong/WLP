@@ -48,13 +48,8 @@ dist/
 build/
 
 # Assume all css are generated from SCSS
-public/stylesheets/*.css
-public/stylesheets/*.map
+public/stylesheets
 .sass-cache
-!public/stylesheets/iconic-fonts.css
-
-# Assume no '.ts' being written under 'app/' (temporary setting)
-app/**/*.ts
 
 # strongly advise not to put your own gitignore entry here
 # https://help.github.com/articles/ignoring-files/#create-a-global-gitignore
