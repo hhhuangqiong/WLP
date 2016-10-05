@@ -99,6 +99,8 @@ export class RolesPage extends Component {
     if (this.state.editedRoleIndex === index) {
       return;
     }
+    // cancel previous editing role
+    this.cancelRoleEdit();
     if (index !== this.state.adminRoleIndex) {
       const editedRoleBackup = cloneDeep(this.state.displayedRoles[index]);
       this.setState({
