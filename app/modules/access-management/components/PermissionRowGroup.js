@@ -11,7 +11,7 @@ function PermissionRowGroup(props) {
   const intl = props.intl;
   const cells = [];
   for (let i = 0; i < props.rolesCount; i++) {
-    const isEdited = props.showEditControls && props.editedRoleIndex === i;
+    const isEdited = props.editedRoleIndex === i;
     const isHovered = !isEdited && props.hoveredRoleIndex === i;
     const css = cx({
       'roles-table__role-cell': true,
