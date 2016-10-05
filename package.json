@@ -6,7 +6,7 @@
     "jenkins": "npm prune && npm i && npm run build",
     "jenkins:commit": "npm run jenkins && npm run test",
     "jenkins:merge": "npm run jenkins && gitbook install && gitbook build && npm run i18n:download && npm run i18n:upload && npm prune --production ",
-    "build": "npm run clean && npm run copyjson && npm run transpile && gulp scss:production && npm run migrate:build",
+    "build": "npm run clean && gulp build:production && npm run migrate:build",
     "copyjson": "gulp copy",
     "i18n:upload": "gulp intl:upload",
     "i18n:download": "gulp intl:download",

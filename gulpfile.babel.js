@@ -20,7 +20,7 @@ import { ONE_SKY as oneSkyConfig } from './app/config/credentials';
 import { LOCALES as supportedLangs } from './app/config';
 
 const gulpSequence = require('gulp-sequence').use(gulp);
-const defaultTasks = ['copy', ['nodemon', 'watch', 'scss', 'webpack']];
+const defaultTasks = ['copy', ['nodemon', 'watch', 'scss', 'fonts', 'webpack']];
 const webpackConfig = require('./webpack.config');
 
 const INTL_MESSAGES_PATTERN = './build/intl/**/*.json';
@@ -33,6 +33,9 @@ const src = {
   allJs: 'app/**/*.js',
   all: 'app/**/*.json',
   nodeModules: './node_modules',
+  fonts: [
+    './node_modules/foundation-icons/*.{eot,svg,ttf,woff}',
+  ],
   scss: 'public/scss/main.scss',
 };
 
@@ -113,6 +116,13 @@ gulp.task('scss', () =>
       stream: true,
     }) : gutil.noop()))
 );
+
+gulp.task('fonts', () => {
+  gulp.src(src.fonts)
+    .pipe(gulp.dest(dest.css));
+});
+
+gulp.task('build:production', ['copy', 'fonts', 'scss:production', 'babel', 'webpack']);
 
 gulp.task('copy', () =>
   gulp.src(src.all)
