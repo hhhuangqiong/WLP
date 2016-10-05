@@ -6,7 +6,7 @@
     "jenkins": "npm prune && npm i && npm run build",
     "jenkins:commit": "npm run jenkins && npm run test",
     "jenkins:merge": "npm run jenkins && gitbook install && gitbook build && npm run i18n:download && npm run i18n:upload && npm prune --production ",
-    "build": "npm run clean && gulp build:production && npm run migrate:build",
+    "build": "npm run clean && NODE_ENV=production gulp build:production && npm run migrate:build",
     "copyjson": "gulp copy",
     "i18n:upload": "gulp intl:upload",
     "i18n:download": "gulp intl:download",
@@ -143,7 +143,7 @@
     "timezones.json": "^1.1.0",
     "validator": "^3.42.0",
     "warning": "^2.1.0",
-    "webpack": "^1.9.4",
+    "webpack": "^2.1.0-beta.25",
     "winston": "^1.0.0",
     "winston-logstash": "^0.2.11"
   },
@@ -195,7 +195,7 @@
     "wdio-junit-reporter": "0.0.2",
     "wdio-mocha-framework": "^0.2.12",
     "webdriverio": "^4.0.9",
-    "webpack-dev-server": "^1.9.0",
+    "webpack-dev-server": "^2.1.0-beta.8",
     "yargs": "^3.0.4"
   }
 }
