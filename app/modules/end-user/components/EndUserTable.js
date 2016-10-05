@@ -1,5 +1,5 @@
 import moment from 'moment';
-import { get, bindKey, isEmpty, capitalize } from 'lodash';
+import { get, bindKey, isEmpty, capitalize, isNull } from 'lodash';
 import React, { PropTypes } from 'react';
 import classNames from 'classnames';
 import { FormattedMessage, defineMessages, injectIntl } from 'react-intl';
@@ -78,6 +78,7 @@ const EndUserTable = React.createClass({
     onPageChange: PropTypes.func.isRequired,
     currentUser: PropTypes.object.isRequired,
     intl: PropTypes.object.isRequired,
+    isLoading: PropTypes.bool,
   },
 
   contextTypes: {
@@ -89,14 +90,6 @@ const EndUserTable = React.createClass({
       users: [],
       hasNext: false,
     };
-  },
-
-  renderEmptyRow() {
-    if (!this.props.users || this.props.users.length === 0) {
-      return <EmptyRow colSpan={TABLE_TITLES.length} />;
-    }
-
-    return null;
   },
 
   renderTableFooterContent() {
@@ -119,32 +112,43 @@ const EndUserTable = React.createClass({
     );
   },
 
-  renderTableBody(content, isLoading) {
-    if (isEmpty(content)) {
-      return isLoading ? (
-        <tbody className={UI_STATE_LOADING}>
-        <tr>
-          <td colSpan={TABLE_TITLES.length}>
-            <div className="text-center">
-              <FormattedMessage
-                id="loading"
-                defaultMessage="Loading"
-              />
-              <span>...</span>
-            </div>
-          </td>
-        </tr>
-        </tbody>
-      ) : (
-        <tbody className={UI_STATE_EMPTY}>
-          <EmptyRow colSpan={TABLE_TITLES.length} />
-        </tbody>
-      );
-    }
-
+  renderLoadingBody() {
     return (
-      <tbody className={UI_STATE_NORMAL}>{this.renderRows(content)}</tbody>
+      <tbody className={UI_STATE_LOADING}>
+      <tr>
+        <td colSpan={TABLE_TITLES.length}>
+          <div className="text-center">
+            <FormattedMessage
+              id="loading"
+              defaultMessage="Loading"
+            />
+            <span>...</span>
+          </div>
+        </td>
+      </tr>
+      </tbody>
     );
+  },
+
+  renderEmptyBody() {
+    return (
+      <tbody className={UI_STATE_EMPTY}>
+        <EmptyRow colSpan={TABLE_TITLES.length} />
+      </tbody>
+    );
+  },
+
+  renderTableBody(users, isLoading) {
+    // if the users is null which is the first time to fetch data or isLoading,
+    // it will show the loading
+    if (isNull(users) || isLoading) {
+      return this.renderLoadingBody();
+    }
+    // if the users data is empty, it will show empty body
+    if (isEmpty(users)) {
+      return this.renderEmptyBody();
+    }
+    return (<tbody className={UI_STATE_NORMAL}>{this.renderRows(users)}</tbody>);
   },
 
   getAccountStatus(accountStatus) {

@@ -68,7 +68,10 @@ class Pagination extends Component {
 
 Pagination.propTypes = {
   hasMoreData: PropTypes.bool.isRequired,
-  colSpan: PropTypes.string.isRequired,
+  colSpan: PropTypes.oneOfType([
+    PropTypes.number,
+    PropTypes.string,
+  ]).isRequired,
   onLoadMore: PropTypes.func.isRequired,
   isLoading: PropTypes.bool.isRequired,
 };

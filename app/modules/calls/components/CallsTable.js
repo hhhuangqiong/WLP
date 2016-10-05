@@ -71,7 +71,7 @@ import {
 
 const CallsTable = React.createClass({
   propTypes: {
-    calls: PropTypes.array.isRequired,
+    calls: PropTypes.array,
     totalPages: PropTypes.number.isRequired,
     page: PropTypes.number.isRequired,
     onDataLoad: PropTypes.func.isRequired,
