@@ -1,4 +1,4 @@
-import { get, isArray, has, filter } from 'lodash';
+import { get, isArray, has, filter, indexOf, forEach, find } from 'lodash';
 const createStore = require('fluxible/addons/createStore');
 
 import {
@@ -14,6 +14,30 @@ import {
   CREATE_SIGNUP_RULES_SUCCESS,
 } from '../constants/actionTypes';
 import { MESSAGES } from '../constants/i18n';
+
+function validateUsername(username, index, usersList) {
+  if (!username) {
+    return MESSAGES.phoneNumberEmptyError;
+  }
+
+  const validFormat = /^\+[0-9]+$/.test(username);
+  if (!validFormat) {
+    return MESSAGES.invalidFormatError;
+  }
+
+  const duplicated = find(usersList, (_user, _index) => _user.value === username && _index !== index);
+  if (duplicated) {
+    return MESSAGES.duplicatedRecordError;
+  }
+  return null;
+}
+
+function validateUser(users) {
+  forEach(users, (user, index) => {
+    // clean up origin error
+    user.error = validateUsername(user.value, index, users);
+  });
+}
 
 const createWhiteListStore = createStore({
   storeName: 'CreateWhiteListStore',
@@ -57,16 +81,17 @@ const createWhiteListStore = createStore({
   },
 
   handleUpdateWhitelistUser({ index, user }) {
-    const indexOfTotalUsers = this.getIndexByTotalUsers(index);
+    const indexOfTotalUsers = this.getIndexByDisplayIndex(index);
 
     if (Number.isFinite(indexOfTotalUsers) && this.isValidUser(user)) {
       this.users[indexOfTotalUsers] = user;
+      validateUser(this.users);
       this.emitChange();
     }
   },
 
   handleDeleteWhitelistUser(index) {
-    const indexOfTotalUsers = this.getIndexByTotalUsers(index);
+    const indexOfTotalUsers = this.getIndexByDisplayIndex(index);
 
     const isValid = Number.isFinite(indexOfTotalUsers);
 
@@ -83,11 +108,13 @@ const createWhiteListStore = createStore({
     if (currentPage > lastPage) {
       this.page = lastPage;
     }
-
+    validateUser(this.users);
     this.emitChange();
   },
 
   handleChangeFilter(filterValue) {
+    // after change filter, it will set to the first page
+    this.page = 0;
     this.filter = filterValue;
     this.emitChange();
   },
@@ -134,6 +161,7 @@ const createWhiteListStore = createStore({
     this.uploadingFile = null;
     this.users = results.concat(this.users);
     this.page = 0;
+    validateUser(this.users);
     this.emitChange();
   },
 
@@ -161,8 +189,9 @@ const createWhiteListStore = createStore({
     }
   },
 
-  getIndexByTotalUsers(index) {
-    return (this.page * this.pageRec) + index;
+  getIndexByDisplayIndex(index) {
+    const changedUser = this.getUserByPage()[index];
+    return indexOf(this.users, changedUser);
   },
 
   getLastPage() {
@@ -191,6 +220,13 @@ const createWhiteListStore = createStore({
     return get(filter(this.users, user => !!user.error), 'length') || 0;
   },
 
+  getFilteredTotalUsers() {
+    if (this.filter === 'error') {
+      return this.getErrorCount();
+    }
+    return this.users.length;
+  },
+
   getState() {
     return {
       filter: this.filter,
@@ -201,9 +237,15 @@ const createWhiteListStore = createStore({
       pageRec: this.pageRec,
       uploadedFiles: this.uploadedFiles,
       uploadingFile: this.uploadingFile,
-      users: this.getUserByPage(),
+      // display Users will be the displayed user list on each page
+      displayUsers: this.getUserByPage(),
+      // the total number of users with filter
+      filteredTotalUsers: this.getFilteredTotalUsers(),
+      // all the users without filter or page
       allUsers: this.users,
+      // total user number
       totalUsers: this.users.length,
+      // total error number
       totalError: this.getErrorCount(),
     };
   },

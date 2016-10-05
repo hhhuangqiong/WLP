@@ -31,7 +31,7 @@
     color: $brand-primary;
   }
 
-  &.disabled {
+  &.disabled, &:disabled {
     color: $brand-primary;
 
     &:hover,

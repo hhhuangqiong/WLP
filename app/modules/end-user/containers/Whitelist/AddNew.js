@@ -1,7 +1,5 @@
 import cx from 'classnames';
-
-import { isEmpty, find, reduce, bindAll } from 'lodash';
-
+import { isEmpty, reduce, bindAll, get, isNull } from 'lodash';
 import React, { PropTypes, Component } from 'react';
 import { Link, withRouter } from 'react-router';
 import { injectIntl, intlShape, FormattedMessage, defineMessages } from 'react-intl';
@@ -28,8 +26,6 @@ import createWhiteListStore from '../../stores/CreateWhitelist';
 import Icon from '../../../../main/components/Icon';
 import * as FilterBar from '../../../../main/components/FilterBar';
 import FilterBarNavigation from '../../../../main/filter-bar/components/FilterBarNavigation';
-
-import { MESSAGES as COMMON_MESSAGES } from '../../constants/i18n';
 
 const LEAVE_MESSAGE = 'Leave with unsaved change?';
 const UPLOAD_LIMIT = 1000;
@@ -59,6 +55,8 @@ class CreateWhiteListContainer extends Component {
 
     this.state = {
       percentage: null,
+      editIndex: null,
+      addingNewUser: false,
     };
 
     bindAll(this, [
@@ -67,12 +65,12 @@ class CreateWhiteListContainer extends Component {
       'handleCreateClick',
       'handlePageChange',
       'getUploadedFilename',
-      'getTotalPageNumber',
       'updateUserAtIndex',
+      'handleStartEditing',
+      'handleExitEditing',
       'handleUploadButtonClick',
       'handleUploadFileChange',
       'deleteWhitelistUser',
-      'validateUsername',
       'updatePercentage',
       'clearPercentage',
       'renderEmptyRecord',
@@ -81,6 +79,15 @@ class CreateWhiteListContainer extends Component {
       'propmptUnsavedChangeOnClose',
       'isDirty',
     ]);
+  }
+
+  componentWillReceiveProps(nextProps) {
+    // after pressing add user, it will set the state addingNewUser to true,
+    // it will receive the props with the first user with empty value
+    // which will automatically set to be editable.
+    if (this.state.addingNewUser && isEmpty(get(nextProps.displayUsers[0], 'value'))) {
+      this.setState({ addingNewUser: false, editIndex: 0 });
+    }
   }
 
   componentDidUpdate() {
@@ -114,15 +121,6 @@ class CreateWhiteListContainer extends Component {
     }, []);
 
     return filenames.join(', ');
-  }
-
-  getTotalPageNumber() {
-    const {
-      pageRec,
-      totalUsers,
-    } = this.props;
-
-    return totalUsers / pageRec;
   }
 
   isDirty() {
@@ -211,11 +209,9 @@ class CreateWhiteListContainer extends Component {
           return;
         }
 
-        const error = this.validateUsername(username);
-
         uploadedData.push({
           value: username,
-          error,
+          error: null,
         });
       },
       complete: () => {
@@ -243,18 +239,11 @@ class CreateWhiteListContainer extends Component {
   }
 
   handleAddNewUserClick() {
-    if (this.props.totalError > 0) {
-      return;
-    }
-
+    this.setState({ addingNewUser: true });
     this.context.executeAction(addWhitelistUser);
   }
 
   handleCreateClick() {
-    if (this.props.totalError > 0 || this.props.totalUsers < 1) {
-      return;
-    }
-
     const { identity } = this.context.params;
 
     this.context.executeAction(createSignupRules, {
@@ -275,14 +264,12 @@ class CreateWhiteListContainer extends Component {
     });
   }
 
-  deleteWhitelistUser(index, user) {
-    const { formatMessage } = this.props.intl;
+  handleStartEditing(index) {
+    this.setState({ editIndex: index });
+  }
 
-    if (!confirm(formatMessage(MESSAGES.deleteText, { value: user }))) {
-      return;
-    }
-
-    this.context.executeAction(deleteWhitelistUser, index);
+  handleExitEditing() {
+    this.setState({ editIndex: null });
   }
 
   /**
@@ -304,30 +291,15 @@ class CreateWhiteListContainer extends Component {
     return user;
   }
 
-  // TODO: replace this will joi validation
-  validateUsername(user, index) {
-    if (!user) {
-      return COMMON_MESSAGES.phoneNumberEmptyError;
+  deleteWhitelistUser(index, user) {
+    const { formatMessage } = this.props.intl;
+
+    if (!confirm(formatMessage(MESSAGES.deleteText, { value: user }))) {
+      return;
     }
-
-    const parsedUser = this.parseUsername(user);
-
-    const validFormat = /^\+[0-9]+$/.test(parsedUser);
-
-    if (!validFormat) {
-      return COMMON_MESSAGES.invalidFormatError;
-    }
-
-    const duplicated = find(
-      this.props.users,
-      (_user, _index) => _user.value === parsedUser && _index !== index
-    );
-
-    if (duplicated) {
-      return COMMON_MESSAGES.duplicatedRecordError;
-    }
-
-    return null;
+    // when delete any white list user, it will disable the edit index
+    this.setState({ editIndex: null });
+    this.context.executeAction(deleteWhitelistUser, index);
   }
 
   renderEmptyRecord() {
@@ -355,21 +327,23 @@ class CreateWhiteListContainer extends Component {
   renderPageControl() {
     const {
       pageRec,
-      totalUsers,
       page,
+      filteredTotalUsers,
     } = this.props;
 
-    if (totalUsers === 0) {
+    if (filteredTotalUsers === 0) {
       return null;
     }
+    const isEditing = !isNull(this.state.editIndex);
 
     return (
       <div className="end-users-whitelist__page-control">
         <Pagination
           pageSize={pageRec}
           pageNumber={page}
-          totalElements={totalUsers}
+          totalElements={filteredTotalUsers}
           onChange={this.handlePageChange}
+          disabled={isEditing}
         />
       </div>
     );
@@ -378,19 +352,20 @@ class CreateWhiteListContainer extends Component {
   render() {
     // TODO: move this whole block to a component
     const { formatMessage } = this.props.intl;
-    const { percentage } = this.state;
+    const { editIndex, percentage } = this.state;
     const { identity } = this.context.params;
     const {
       filter: filterValue,
       totalUsers,
       totalError,
-      users,
+      displayUsers,
       uploadedFiles,
     } = this.props;
 
     const hasError = totalError > 0;
 
     const isUploading = Number.isFinite(percentage);
+    const isEditing = !isNull(editIndex);
 
     return (
       <div className="row">
@@ -441,10 +416,10 @@ class CreateWhiteListContainer extends Component {
                     <button
                       className={cx(
                         'button--extended',
-                        'radius',
-                        { disabled: hasError || totalUsers === 0 }
+                        'radius'
                       )}
                       onClick={this.handleCreateClick}
+                      disabled={hasError || totalUsers === 0 || isEditing}
                     >
                       <FormattedMessage
                         id="create"
@@ -485,8 +460,13 @@ class CreateWhiteListContainer extends Component {
                   <div className="row">
                     <div className="large-5 columns">
                       <button
-                        className="button--no-background button--extended radius"
+                        className={cx(
+                            'button--no-background',
+                            'button--extended',
+                            'radius'
+                        )}
                         onClick={this.handleUploadButtonClick}
+                        disabled={isEditing}
                       >
                         <FormattedMessage
                           id="uploadCsv"
@@ -553,7 +533,10 @@ class CreateWhiteListContainer extends Component {
                               </label>
                             </div>
                             <div className="large-18 columns">
-                              <select value={filterValue} onChange={this.handleChangeFilter}>
+                              <select value={filterValue}
+                                onChange={this.handleChangeFilter}
+                                disabled={isEditing}
+                              >
                                 <option value="all">
                                   {formatMessage(MESSAGES.allRecords)}
                                 </option>
@@ -571,9 +554,9 @@ class CreateWhiteListContainer extends Component {
                                 'button--no-background',
                                 'button--extended',
                                 'radius',
-                                { disabled: hasError }
                               )}
                               onClick={this.handleAddNewUserClick}
+                              disabled={ isEditing }
                             >
                               <FormattedMessage
                                 id="addUser"
@@ -588,26 +571,28 @@ class CreateWhiteListContainer extends Component {
                 </thead>
                 <tbody>
                 {
-                  isUploading || isEmpty(users) ? (
+                  isUploading || isEmpty(displayUsers) ? (
                     <tr className="empty">
                       <td colSpan="2">
                         {this.renderEmptyRecord()}
                       </td>
                     </tr>
                   ) : (
-                    users.map((user, index) => (
+                    displayUsers.map((user, index) => (
                       <tr
-                        key={users.length - index}
+                        key={displayUsers.length - index}
                         className={cx({ 'row--error': !!user.error })}
                       >
                         <td colSpan="2">
                           <EditableText
                             index={index}
+                            editIndex={this.state.editIndex}
                             value={user.value}
                             error={user.error}
-                            handleValidation={this.validateUsername}
                             handleUpdate={this.updateUserAtIndex}
                             handleDelete={this.deleteWhitelistUser}
+                            handleStartEditing={this.handleStartEditing}
+                            handleExitEditing={this.handleExitEditing}
                           />
                         </td>
                       </tr>
@@ -616,9 +601,7 @@ class CreateWhiteListContainer extends Component {
                 }
                 </tbody>
               </table>
-
               {this.renderPageControl()}
-
             </section>
           </div>
         </section>
@@ -643,10 +626,11 @@ CreateWhiteListContainer.propTypes = {
   pageRec: PropTypes.number,
   totalError: PropTypes.number,
   totalUsers: PropTypes.number,
-  users: PropTypes.arrayOf(PropTypes.shape({
+  displayUsers: PropTypes.arrayOf(PropTypes.shape({
     value: PropTypes.string,
     error: PropTypes.object,
   })),
+  filteredTotalUsers: PropTypes.number,
   allUsers: PropTypes.arrayOf(PropTypes.shape({
     value: PropTypes.string,
     error: PropTypes.object,

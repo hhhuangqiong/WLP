@@ -47,6 +47,10 @@ ul.pagination {
   justify-content: space-between;
   align-items: baseline;
   width: 100%;
+  &.disabled {
+    pointer-events: none;
+    opacity: $button-disabled-opacity;
+  }
   .Select-value {
     //for overwrite the default style
     padding: 0px;
