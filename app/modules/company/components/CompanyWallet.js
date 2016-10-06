@@ -60,9 +60,14 @@ class CompanyWallet extends Component {
     this.context.executeAction(fetchCompanyWalletRecords, params);
   }
   handleFormChange(walletId, values) {
+    const { pageNumber, pageSize } = this.props.transactionsPage;
     this.context.executeAction(updateTopUpForm, {
       walletId,
       ...values,
+      pageParams: {
+        pageNumber,
+        pageSize,
+      },
     });
   }
   handleFormSubmit(values) {
