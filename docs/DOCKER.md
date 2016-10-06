@@ -30,7 +30,9 @@ docker.dev.maaii.com/m80/m800-white-label-portal
 | `bufferTimeInMinutes__callStats__hourlyFetch` | buffering time to determine whether to get latest call stats data or the data from one hour before to ensure all data are cached into redis successfully. | 10 |
 | (Deprecated^) `logging__winston__meta__instance`|Deploy server/instance name, to use to identify from logstash which container the logs is coming from | testbed-wlp-1 |
 | `iamApi__baseUrl` | Identity Access Management API Endpoint | http://127.0.0.1:3001 |
+| `iamApi__timeout` | Identity Access Management API Timeout | 15000 |
 | `mpsApi__baseUrl` | Maaii Provision Service API Endpoint | http://deploy.dev.maaii.com:4005 |
+| `mpsApi__timeout` | Maaii Provision Service API Timeout | 15000 |
 | `openid__issuer`  | OpenId Issuer Endpoint. In most cases, should be pointed to IAM openid issuer endpoint. See [IAM Integration](./IAM_INTEGRATION.md) | http://127.0.0.1:3001/openid/core/.well-known/openid-configuration |
 | `openid__clientId` | OpenId Client Id. See [IAM Integration](./IAM_INTEGRATION.md) | wlp |
 | `openid__clientSecret` | OpenId Client Secret. [IAM Integration](./IAM_INTEGRATION.md) | 7GnoS1vf5HqM1b8B4ZKDJQA6BvXa38ltUoFFVQ4cloR4GICEuWQk50S60pIVK16b |

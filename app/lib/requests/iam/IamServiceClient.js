@@ -147,7 +147,7 @@ export class IamClient {
 
   async _handle(superagentRequest, url) {
     try {
-      const res = await superagentRequest;
+      const res = await superagentRequest.timeout(this._options.timeout);
       return res.body;
     } catch (err) {
       // Wrap HTTP errors

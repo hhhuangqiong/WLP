@@ -30,9 +30,11 @@
     "timeout": 15000
   },
   "iamApi": {
-    "baseUrl": "http://deploy.dev.maaii.com:4004"
+    "baseUrl": "http://deploy.dev.maaii.com:4004",
+    "timeout": 15000
   },
   "mpsApi": {
-    "baseUrl": "http://deploy.dev.maaii.com:4005"
+    "baseUrl": "http://deploy.dev.maaii.com:4005",
+    "timeout": 15000
   }
 }

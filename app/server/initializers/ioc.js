@@ -86,10 +86,12 @@ export default function init(nconf) {
   // Remote service clients
   ioc.constant('MpsClientOptions', {
     baseUrl: nconf.get('mpsApi:baseUrl'),
+    timeout: nconf.get('mpsApi:timeout'),
   });
   ioc.service('MpsClient', MpsClient, 'MpsClientOptions');
   ioc.constant('IamClientOptions', {
     baseUrl: nconf.get('iamApi:baseUrl'),
+    timeout: nconf.get('iamApi:timeout'),
   });
   ioc.service('IamServiceClient', IamClient, 'IamClientOptions');
   ioc.constant('ApplicationOptions', {
