@@ -55,7 +55,8 @@ Cache-Control: no-cache
   },
   "billing": {
     "currency": 840,
-    "offnetPackageId": 1
+    "offnetPackageId": 1,
+    "smsPackageId": 1
   },
   "capabilities": [
     "im", "im.im-to-sms", "call.onnet", "call.offnet", "push", "platform.ios", "platform.android", "verification.sms", "verification.ivr", "verification.mo", "verification.mt", "end-user.whitelist", "end-user.suspension"
