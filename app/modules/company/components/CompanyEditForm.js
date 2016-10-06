@@ -128,7 +128,7 @@ class CompanyEditForm extends Component {
   validatorTypes() {
     const { intl: { formatMessage } } = this.props;
     return {
-      companyCode: Joi.string().required().regex(/^[a-zA-Z0-9]+$/)
+      companyCode: Joi.string().required().regex(/^[a-z0-9]+$/)
         .label(formatMessage(MESSAGES.companyCode)),
       companyName: Joi.string().required().label(formatMessage(MESSAGES.companyName)),
       country: Joi.string().required().label(formatMessage(MESSAGES.country)),
