@@ -45,7 +45,6 @@ Cache-Control: no-cache
 
 {
   "chargeWallet": "WALLET_COMPANY",
-  "paymentMode": "POST_PAID",
   "serviceType": "WHITE_LABEL",
   "smsc": {
     "sourceAddress": "1234567899",
