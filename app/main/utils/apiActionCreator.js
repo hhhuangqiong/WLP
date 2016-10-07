@@ -75,13 +75,13 @@ export default function apiActionCreator(key, apiMethod, opts = { debugPrefix: '
           // TODO conditionally called
           context.dispatch(ERROR_MESSAGE, err);
 
-          done();
+          done(err);
           return;
         }
 
         debug('Success');
         context.dispatch(lifecycle.SUCCESS, result);
-        done();
+        done(null, result);
       });
     }
 
