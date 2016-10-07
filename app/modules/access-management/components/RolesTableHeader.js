@@ -11,7 +11,7 @@ function RolesTableHeader(props) {
   function handleInputChange(e, index) {
     props.onNameChanged({
     // will not allow to enter space
-      name: e.target.value.trim(),
+      name: e.target.value.trim().replace(/\s+/g, ''),
       roleIndex: index,
     });
   }
