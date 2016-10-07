@@ -31,7 +31,6 @@ import FilterBarNavigation from '../../../../main/filter-bar/components/FilterBa
 import COMMON_MESSAGES from '../../../../main/constants/i18nMessages';
 import { MESSAGES } from '../../constants/i18n';
 
-const LEAVE_MESSAGE = 'Leave with unsaved change?';
 const UPLOAD_LIMIT = 1000;
 
 class CreateWhiteListContainer extends Component {
@@ -125,13 +124,13 @@ class CreateWhiteListContainer extends Component {
     // Detecting page transition (prevent leaving by setting true)
     this.props.router.setRouteLeaveHook(
       this.props.route,
-      () => !isDirty() || confirm(LEAVE_MESSAGE)
+      () => !isDirty() || confirm(this.props.intl.formatMessage(MESSAGES.leaveAlertMessage))
     );
   }
 
   propmptUnsavedChangeOnClose() {
     if (this.isDirty()) {
-      return LEAVE_MESSAGE;
+      return this.props.intl.formatMessage(MESSAGES.leaveAlertMessage);
     }
 
     return null;
