@@ -45,4 +45,8 @@ export const MESSAGES = defineMessages({
     id: 'user.whitelist.deleteDialogMessage',
     defaultMessage: 'Are you sure you want to remove {name} from Activation User List?<br/><br/>This user will not be suspended by this action. But this account will not be able to reactivate again.',
   },
+  leaveAlertMessage: {
+    id: 'user.whitelist.leaveAlertMessage',
+    defaultMessage: 'Leave with unsaved change?',
+  },
 });
