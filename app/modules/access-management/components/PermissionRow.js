@@ -9,7 +9,7 @@ function PermissionRow(props) {
   }
 
   const cells = props.permissionValues.map((value, index) => {
-    const isEdited = props.hasPermission && props.editedRoleIndex === index;
+    const isEdited = props.editedRoleIndex === index;
     const isHovered = !isEdited && props.hoveredRoleIndex === index;
     const isDisabled = !props.hasPermission || props.editedRoleIndex !== index;
 
