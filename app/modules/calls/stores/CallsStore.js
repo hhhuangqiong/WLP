@@ -16,7 +16,9 @@ const CallsStore = createStore({
 
   initialize() {
     // in the component (call table), it will check whether empty
-    this.calls = [];
+    // expect there are three states and component itself should handle for all three cases
+    // null (not fetched yet), [] (no records), non empty array
+    this.calls = null;
     this.offset = 0;
     this.page = 0;
     this.size = 0;

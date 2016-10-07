@@ -10,7 +10,7 @@ const SearchInput = (props) => (
     )}
     type="text"
     name={props.searchInputName}
-    value={props.value}
+    defaultValue={props.defaultValue}
     placeholder={props.placeHolder}
     onChange={props.onInputChangeHandler}
     onKeyPress={props.onKeyPressHandler}
@@ -18,7 +18,7 @@ const SearchInput = (props) => (
 );
 
 SearchInput.propTypes = {
-  value: PropTypes.string,
+  defaultValue: PropTypes.string,
   placeHolder: PropTypes.string,
   searchInputName: PropTypes.string,
   onInputChangeHandler: PropTypes.func,

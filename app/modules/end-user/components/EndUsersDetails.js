@@ -1,4 +1,4 @@
-import _, { merge, omit, isNull } from 'lodash';
+import _, { merge, omit } from 'lodash';
 import moment from 'moment';
 import React, { PropTypes } from 'react';
 import { injectIntl, intlShape } from 'react-intl';
@@ -26,29 +26,16 @@ import EndUserExportForm from './EndUserExportForm';
 const { inputDateFormat: DATE_FORMAT } = config;
 
 // See: https://issuetracking.maaii.com:9443/display/MAAIIP/MUMS+User+Management+by+Carrier+HTTP+API
-const MONTHS_BEFORE_TODAY = 1;
 const defaultLocale = dateLocale.getDefaultLocale();
-const START_DATE = moment().startOf('day').subtract(MONTHS_BEFORE_TODAY, 'month').format(DATE_FORMAT);
+const START_DATE = moment().startOf('day').subtract(1, 'month').format(DATE_FORMAT);
 const END_DATE = moment().endOf('day').format(DATE_FORMAT);
 
 class EndUsers extends React.Component {
   constructor(props) {
     super(props);
-    // parse the data from query at the beginning and load it into the state
-    const { startDate, endDate, username } = props.location.query;
-    this.state = {
-      username: username || '',
-      startDate: startDate || START_DATE,
-      endDate: endDate || END_DATE,
-    };
 
     this.handleStartDateChange = this.handleStartDateChange.bind(this);
     this.handleEndDateChange = this.handleEndDateChange.bind(this);
-    this.handleBundleIdChange = this.handleBundleIdChange.bind(this);
-    this.handleStatusChange = this.handleStatusChange.bind(this);
-    this.applyFilters = this.applyFilters.bind(this);
-    this.checkHasNext = this.checkHasNext.bind(this);
-    this.onInputChangeHandler = this.onInputChangeHandler.bind(this);
     this.handleSearchSubmit = this.handleSearchSubmit.bind(this);
     this.handleUserClick = this.handleUserClick.bind(this);
     this.loadFirstUserDetail = this.loadFirstUserDetail.bind(this);
@@ -57,32 +44,10 @@ class EndUsers extends React.Component {
   }
 
   componentDidMount() {
-    const { startDate, endDate, username } = this.state;
-    const { executeAction, params } = this.context;
-    const payload = {
-      carrierId: params.identity,
-      page: this.props.page,
-      startDate,
-      endDate,
-      username,
-    };
-    executeAction(fetchEndUsers, payload);
+    this.fetchEndUsers();
   }
 
   componentWillReceiveProps(nextProps) {
-    // when search the username/date update, it will update the query, where query will be
-    // the central of component state, it will be default value if missing value in query
-    // so it will parse the query and set into component state
-    if (nextProps.location.query !== this.props.location.query) {
-      // update the state from query
-      const { startDate, endDate, username } = nextProps.location.query;
-      this.setState({
-        username: username || '',
-        startDate: startDate || START_DATE,
-        endDate: endDate || END_DATE,
-      });
-    }
-
     if (_.isEmpty(nextProps.currentUser) && !_.isEmpty(nextProps.displayUsers)) {
       this.loadFirstUserDetail(nextProps.displayUsers);
     }
@@ -94,7 +59,7 @@ class EndUsers extends React.Component {
     // fetch again when the query change
     if (search !== prevSearch) {
       this.context.executeAction(clearEndUsers);
-      this.fetchData();
+      this.fetchEndUsers();
     }
   }
 
@@ -102,29 +67,24 @@ class EndUsers extends React.Component {
     this.context.executeAction(clearEndUsers);
   }
 
-  onInputChangeHandler(e) {
-    this.setState({ username: e.target.value });
-  }
-
-  handleBundleIdChange(e) {
-    this.setState({ bundleId: e.target.value });
-  }
-
-  handleStatusChange(e) {
-    this.setState({ status: e.target.value });
+  loadDataFromQuery() {
+    const { query: { startDate, endDate, username } } = this.props.location;
+    return {
+      username: username || '',
+      startDate: startDate || START_DATE,
+      endDate: endDate || END_DATE,
+    };
   }
 
   handleSearchSubmit(e) {
-    const { username } = this.state;
-
     if (e.which === SUBMIT_KEY) {
       e.preventDefault();
-      this.handleQueryChange({ username });
+      this.handleQueryChange({ username: e.target.value });
     }
   }
 
   handleQueryChange(newQuery) {
-    const { startDate, endDate, username } = this.state;
+    const { startDate, endDate, username } = this.loadDataFromQuery();
     const query = merge(
       { startDate, endDate, username },
       newQuery,
@@ -149,8 +109,8 @@ class EndUsers extends React.Component {
     this.handleQueryChange({ startDate: date });
   }
 
-  fetchData() {
-    const { startDate, endDate, username } = this.state;
+  fetchEndUsers() {
+    const { startDate, endDate, username } = this.loadDataFromQuery();
     const { executeAction, params } = this.context;
 
     const payload = {
@@ -179,38 +139,12 @@ class EndUsers extends React.Component {
     });
   }
 
-  applyFilters(users) {
-    let showUsers = users;
-    if (isNull(users)) {
-      return users;
-    }
-
-    if (this.state.bundleId) {
-      showUsers = _.filter(users, user => {
-        const device = _.get(user, 'devices.0') || {};
-        return device.appBundleId === this.state.bundleId;
-      });
-    }
-
-    if (this.state.status) {
-      showUsers = _.filter(users, user => (
-        user.accountStatus === this.state.status
-      ));
-    }
-
-    return showUsers;
-  }
-
-  checkHasNext() {
-    return this.props.hasNextPage || this.props.displayUsers.length < this.props.totalUsers;
-  }
-
   handleShowNextPage() {
     this.context.executeAction(showNextPage);
 
     if (this.props.needMoreData) {
       const { params } = this.context;
-      const { startDate, endDate } = this.state;
+      const { startDate, endDate } = this.loadDataFromQuery();
       const { page } = this.props;
 
       this.context.executeAction(fetchEndUsers, {
@@ -225,6 +159,7 @@ class EndUsers extends React.Component {
   render() {
     const { intl: { formatMessage } } = this.props;
     const selectedUser = this.props.currentUser;
+    const { startDate, endDate, username } = this.loadDataFromQuery();
 
     return (
       <div className="row">
@@ -233,37 +168,26 @@ class EndUsers extends React.Component {
           <FilterBar.LeftItems>
             <DateRangePicker
               withIcon
-              startDate={this.state.startDate}
-              endDate={this.state.endDate}
+              startDate={startDate}
+              endDate={endDate}
               handleStartDateChange={this.handleStartDateChange}
               handleEndDateChange={this.handleEndDateChange}
             />
-            {/*
-              <div>
-              <select className="status-select top-bar-section__query-input" name="statusSelect" onChange={this.handleStatusChange}>
-              <option key={'status'} value="">Choose Account Status</option>
-              {accountStatus.map((status)=>{
-              return <option key={status} value={status.toUpperCase()}>{status}</option>;
-              })}
-              </select>
-              </div>
-            */}
           </FilterBar.LeftItems>
           <FilterBar.RightItems>
             <li className="top-bar--inner">
               <Export exportType="End_User">
                 <EndUserExportForm
                   carrierId={this.context.params.identity}
-                  startDate={this.state.startDate}
-                  endDate={this.state.endDate}
+                  startDate={startDate}
+                  endDate={endDate}
                 />
               </Export>
             </li>
             <li className="top-bar--inner">
               <SearchInput
-                value={this.state.username}
+                defaultValue={username}
                 placeHolder={formatMessage(i18nMessages.username)}
-                onInputChangeHandler={this.onInputChangeHandler}
                 onKeyPressHandler={this.handleSearchSubmit}
               />
             </li>
@@ -274,8 +198,8 @@ class EndUsers extends React.Component {
             <EndUserTable
               ref="endUserTable"
               currentUser={selectedUser}
-              users={this.applyFilters(this.props.displayUsers)}
-              hasNext={this.checkHasNext()}
+              users={this.props.displayUsers}
+              hasNext={this.props.hasNextPage}
               onUserClick={this.handleUserClick}
               onPageChange={this.handleShowNextPage}
               isLoading={this.props.isLoading}

@@ -29,8 +29,10 @@ const EndUserStore = createStore({
   },
 
   initialize() {
-    this.users = [];
-    this.displayUsers = [];
+    // users will be null indicate it is not fetch yet
+    // component itself can get the user status and handle the view itself
+    this.users = null;
+    this.displayUsers = null;
     this.currentUser = {};
     this.hasNextPage = false;
     this.page = 0;
@@ -86,7 +88,11 @@ const EndUserStore = createStore({
   handleEndUsersChange(payload) {
     this.users = (this.users || []).concat(payload.userList);
     this.displayUsers = (this.displayUsers || []).concat(this._getDisplayUsers());
-    this.hasNextPage = payload.hasNextPage;
+    // since end store will handle the page locally and extract the data for that page
+    // if the total display user less than total user indicates we can load more data locally
+    // if the response object indicates hasNextPage means the current total user is not reach the end
+    // and expect there are more pages, so we can load more data externally
+    this.hasNextPage = payload.hasNextPage || this.getTotalDisplayUsers() < this.getTotalUsers();
     this.page = parseInt(payload.dateRange.pageNumberIndex);
     this.isLoading = false;
     this.emitChange();
@@ -123,7 +129,10 @@ const EndUserStore = createStore({
   },
 
   handleFetchEndUsersFailure() {
-    this.flush();
+    this.initialize();
+    // set it to empty to indicate no record rather than not fetched
+    this.users = [];
+    this.displayUsers = this.users;
     this.emitChange();
   },
 
@@ -165,11 +174,7 @@ const EndUserStore = createStore({
   },
 
   getNeedMoreData() {
-    return this.displayUsers.length === this.users.length;
-  },
-
-  flush() {
-    this.initialize();
+    return !!this.users && this.displayUsers.length === this.users.length;
   },
 
   dehydrate() {
