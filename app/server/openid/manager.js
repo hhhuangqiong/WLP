@@ -1,24 +1,38 @@
 import { Issuer } from 'openid-client';
+import Q from 'q';
 
 let openidOption;
 let loadClientPromise;
 
 export function loadClient(options) {
   openidOption = options;
-  loadClientPromise = Issuer.discover(options.issuer)
-    .then(mIssuer => {
-      const issuer = mIssuer;
-      const client = new issuer.Client({
-        client_id: options.clientID,
-        token_endpoint_auth_method: options.authMethod,
-        token_endpoint_auth_signing_alg: options.signingAlg,
-        client_secret: options.clientSecret,
-      });
-      return {
-        issuer,
-        client,
-      };
-    });
+  const {
+    // redirectURL, postLogoutURL, skipUserInfo and scope are no need to pass into client
+    skipUserInfo,
+    scope,
+    redirectURL,
+    postLogoutURL,
+    issuer,
+    clientId: client_id,
+    clientSecret: client_secret,
+    token_endpoint_auth_method,
+    token_endpoint_auth_signing_alg,
+    ...restParam } = options;
+  const mIssuer = new Issuer({
+    issuer,
+    ...restParam,
+  });
+  const mClient = new mIssuer.Client({
+    client_id,
+    client_secret,
+    token_endpoint_auth_method,
+    token_endpoint_auth_signing_alg,
+  });
+  // @TODO workaround to allow manual create client
+  loadClientPromise = Q.resolve({
+    issuer: mIssuer,
+    client: mClient,
+  });
   return loadClientPromise;
 }
 

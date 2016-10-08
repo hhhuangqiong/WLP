@@ -57,7 +57,8 @@ the WLP APP URL which is required,
 To send along with the login and logout with IAM the exact location to redirect to.(`{$ip}` e.g`http://deploy.dev.maaii.com:4002`) which is used to construct the redirect_uris, and post_logout_redirect_uris.
 
 - `openid__issuer`  
-iam Open id issuer which is the address to obtain the endpoint url, it will return a json data (`{$iamIp}/openid/core/.well-known/openid-configuration`  e.g.`http://deploy.dev.maaii.com:4004/openid/core/.well-known/openid-configuration`)
+iam Open id issuer which is the address to issue the openid
+(`{$iamIp}/openid/core`  e.g.`http://deploy.dev.maaii.com:4004/openid/core`)
 
 - `openid__clientId`  
 the client id that registered above (e.g `wlp`)
@@ -70,6 +71,34 @@ the authentication method used above (e.g `client_secret_basic`)
 
 - `openid__token_endpoint_auth_signing_alg`
 the signing algorithms when applied on `client_secret_jwt`, no need to set using `client_secret_basic` (e.g `HS512`)
+
+- `openid__authorization_endpoint`
+OpenId Client authorization end point which redirect login  
+(`${openid__issuer}/auth` e.g`http://deploy.dev.maaii.com:4004/openid/core/auth`)
+
+- `openid__token_endpoint`
+OpenId Client token end point which obtain access token  
+(`${openid__issuer}/token` e.g`http://deploy.dev.maaii.com:4004/openid/core/token`)
+
+- `openid__token_introspection_endpoint`
+OpenId Client introspect end point which introspect token  
+(`${openid__issuer}/token/introspection` e.g`http://deploy.dev.maaii.com:4004/openid/core/token/introspection`)
+
+- `openid__end_session_endpoint`
+OpenId Client session end point which end session
+(`${openid__issuer}/session/end` e.g `http://deploy.dev.maaii.com:4004/openid/core/session/end`)
+
+- `openid__userinfo_endpoint`
+OpenId Client user info end point
+(`${openid__issuer}/me` e.g `http://deploy.dev.maaii.com:4004/openid/core/me`)
+
+- `openid__jwks_uri`
+OpenId Client certificate end point
+(`${openid__issuer}/certs}` e.g`http://deploy.dev.maaii.com:4004/openid/core/certs`)
+
+- `openid__token_revocation_endpoint`
+OpenId Client revocation end point
+(`${openid__issuer}/token/revocation` e.g `http://deploy.dev.maaii.com:4004/openid/core/token/revocation`)
 
 ## Reference
 [Open Connect ID Standard](http://openid.net/connect/)  

@@ -41,6 +41,20 @@ export openid__issuer=http://127.0.0.1:3001/openid/core/.well-known/openid-confi
 export openid__clientId=wlp
 export openid__clientSecret=7GnoS1vf5HqM1b8B4ZKDJQA6BvXa38ltUoFFVQ4cloR4GICEuWQk50S60pIVK16b
 export openid__token_endpoint_auth_method=client_secret_basic
+# login redirect
+export openid__authorization_endpoint=http://127.0.0.1:3001/openid/core/auth
+# token generate after redirect back to WLP
+export openid__token_endpoint=http://127.0.0.1:3001/openid/core/token
+# introspect token
+export openid__token_introspection_endpoint=http://127.0.0.1:3001/openid/core/token/introspection
+# logout redirect
+export openid__end_session_endpoint=http://127.0.0.1:3001/openid/core/session/end
+# get the user info based on token
+export openid__userinfo_endpoint=http://127.0.0.1:3001/openid/core/me
+# get the jwk info
+export openid__jwks_uri=http://127.0.0.1:3001/openid/core/certs
+# to end the session
+export openid__token_revocation_endpoint=http://127.0.0.1:3001/openid/core/token/revocation
 
 #set up for MPS
 export mpsApi__baseUrl=http://deploy.dev.maaii.com:4005

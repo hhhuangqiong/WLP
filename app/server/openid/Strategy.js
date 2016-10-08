@@ -9,8 +9,8 @@ export class OpenIdStrategy extends Strategy {
     super(options, verify);
     this.name = 'openid-connect';
     // validate the required fields
-    if (!options.clientID) {
-      throw new ArgumentNullError('clientID');
+    if (!options.clientId) {
+      throw new ArgumentNullError('clientId');
     }
     if (!options.clientSecret) {
       throw new ArgumentNullError('clientSecret');
@@ -19,15 +19,9 @@ export class OpenIdStrategy extends Strategy {
       throw new ArgumentNullError('issuer');
     }
     this._config = {
-      issuer: options.issuer,
-      clientID: options.clientID,
-      clientSecret: options.clientSecret,
-      authMethod: options.authMethod,
-      signingAlg: options.signingAlg,
-      redirectURL: options.redirectURL,
-      postLogoutURL: options.postLogoutURL,
       scope: options.scope || 'openid',
       skipUserInfo: options.skipUserProfile || false,
+      ...options,
     };
     this._verify = verify;
     loadClient(this._config);

@@ -24,34 +24,20 @@ export default function setup() {
   });
 
   // @todo: configurations should be injected
-  const issuer = nconf.get('openid:issuer');
-  const clientID = nconf.get('openid:clientId');
-  const clientSecret = nconf.get('openid:clientSecret');
-  const authMethod = nconf.get('openid:token_endpoint_auth_method');
-  const signingAlg = nconf.get('openid:token_endpoint_auth_signing_alg');
+  const openIdConfig = nconf.get('openid');
   const appURL = nconf.get('APP_URL');
 
-  if (!issuer) {
-    throw new ArgumentNullError('Open Id issuer(openid:issuer)');
-  }
-  if (!clientID) {
-    throw new ArgumentNullError('Open Id client id(openid:clientId)');
-  }
-  if (!clientSecret) {
-    throw new ArgumentNullError('Open Id client secret(openid:clientSecret)');
+  if (!openIdConfig) {
+    throw new ArgumentNullError('openIdConfig');
   }
   if (!appURL) {
     throw new ArgumentNullError('White label app url(APP_URL)');
   }
   // set up the open id strategy
   passport.use(new OpenIdStrategy({
-    issuer,
-    clientID,
-    clientSecret,
-    authMethod,
-    signingAlg,
     redirectURL: `${appURL}/callback`,
     postLogoutURL: appURL,
+    ...openIdConfig,
   }, (tokens, user, cb) =>
     cb(null, { tokens, user })
   ));
