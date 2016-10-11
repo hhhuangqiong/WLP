@@ -1,3 +1,6 @@
+const hotLoadPort = process.env.HOT_LOAD_PORT || 8888;
+const enableHotloader = process.env.ENABLE_WEBPACK_HOTLOADER === 'true' || false;
+
 import autoprefixer from 'gulp-autoprefixer';
 import babel from 'gulp-babel';
 import del from 'del';
@@ -25,7 +28,7 @@ const webpackConfig = require('./webpack.config');
 
 const INTL_MESSAGES_PATTERN = './build/intl/**/*.json';
 
-if (webpackConfig.custom.hotLoadPort) {
+if (enableHotloader) {
   defaultTasks.push('webpack-dev-server');
 }
 
@@ -159,7 +162,6 @@ gulp.task('webpack', (cb) => {
 });
 
 gulp.task('webpack-dev-server', ['scss', 'webpack'], (callback) => {
-  const hotLoadPort = webpackConfig.custom.hotLoadPort;
   const devServer = new WebpackDevServer(webpack(webpackConfig), {
     contentBase: webpackConfig.output.path,
     hot: true,

@@ -8,7 +8,6 @@ var ProvidePlugin = webpack.ProvidePlugin;
 
 // common
 var config =  {
-  custom: {},
   entry: [
     'babel-polyfill',
     './app/client/index.js',
@@ -44,7 +43,9 @@ var config =  {
     ],
   },
   resolve: {
-    fallback: path.join(__dirname, 'node_modules'),
+    modules: [
+      'node_modules',
+    ],
     // React somehow requires all components to be instantiate with
     // the same library reference. therefore this forces the
     // m800-user-locale module resolve same react package at top-level.
@@ -74,12 +75,19 @@ var config =  {
   }
 };
 
-if (nodeEnv === "production") {
-  config.plugins.push(new webpack.DefinePlugin({
-      'process.env': {NODE_ENV: '"production"'}
-    }));
-}
-else {
+if (nodeEnv === 'production') {
+  config.plugins.push(
+    new webpack.DefinePlugin({
+      'process.env': { NODE_ENV: '"production"' },
+    }),
+    new webpack.LoaderOptionsPlugin({
+      minimize: true,
+      debug: false,
+    }),
+    new webpack.optimize.DedupePlugin(),
+    new webpack.optimize.UglifyJsPlugin()
+  );
+} else {
   config.plugins.push(new webpack.NoErrorsPlugin());
 }
 
@@ -88,7 +96,6 @@ if (enableHotloader) {
   config.entry.unshift('webpack-dev-server/client?http://' + appHostname + ':' + hotLoadPort);
   config.entry.unshift('webpack/hot/only-dev-server');
   config.plugins.push(new webpack.HotModuleReplacementPlugin());
-  config.custom.hotLoadPort = hotLoadPort;
   config.output.publicPath = 'http://' + appHostname + ':' + hotLoadPort + '/';
 }
 
