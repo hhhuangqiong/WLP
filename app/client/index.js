@@ -4,7 +4,7 @@ import Q from 'q';
 import store from 'store';
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { Router, browserHistory } from 'react-router';
+import { Router, browserHistory, match } from 'react-router';
 import { IntlProvider, addLocaleData } from 'react-intl';
 
 import app from '../app';
@@ -57,26 +57,32 @@ const dehydratedState = window[GLOBAL_DATA_VARIABLE];
 const contextOptions = { config };
 const messages = window[GLOBAL_LOCALE_VARIABLE];
 
+const { pathname, search, hash } = window.location;
+const location = `${pathname}${search}${hash}`;
+
 Q.nfcall(intlPolyfill)
   .then(() => Q.nfcall(createContext, app, dehydratedState, contextOptions))
   .then(context => {
-    const routes = getRoutes(context);
     // enable the svg4everybody to be loaded on all browser
     svg4everybody();
-    let children = React.createElement(Router, {
-      routes,
-      history: browserHistory,
+
+    const routes = getRoutes(context);
+    match({ routes, location, history: browserHistory }, (error, redirectLocation, renderProps) => {
+      let children = React.createElement(Router, {
+        ...renderProps,
+      });
+
+      debug('Localization: wrapping Router Component with IntlProvider Component');
+      // assuming that value in localStorage has higher priority
+      // than the lang attribute from server
+      const locale = store.get('locale') || document.documentElement.getAttribute('lang');
+      setLocale(locale);
+      children = React.createElement(IntlProvider, { locale, messages }, children);
+
+      const markupElement = createMarkupElement(context, children);
+
+      ReactDOM.render(markupElement, mountNode);
     });
-
-    debug('Localization: wrapping Router Component with IntlProvider Component');
-    // assuming that value in localStorage has higher priority
-    // than the lang attribute from server
-    const locale = store.get('locale') || document.documentElement.getAttribute('lang');
-    setLocale(locale);
-    children = React.createElement(IntlProvider, { locale, messages }, children);
-
-    const markupElement = createMarkupElement(context, children);
-    ReactDOM.render(markupElement, mountNode);
   })
   .catch(err => {
     throw err;
