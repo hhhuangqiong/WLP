@@ -104,7 +104,11 @@ export default class UserStatsRequest {
       .timeout(this.opts.timeout)
       .end((err, res) => {
         if (err) {
-          logger.debug(util.format('Received a response from %s: ', reqUrl), jsonSchema(res.body));
+          // @TODO since timeout won't have res and prevent exception from undefeined res.body
+          logger.debug('Received error', err);
+          if (res) {
+            logger.debug(util.format('Received error response from %s: ', reqUrl), jsonSchema(res.body));
+          }
           cb(err);
           return;
         }
