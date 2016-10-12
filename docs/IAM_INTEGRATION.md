@@ -23,7 +23,8 @@ It will request user to enter the password. If it is correct, it will redirect t
 In the following steps, there are two ip will be used.  
 
 `{$ip}` - the ip address of the WLP application (e.g `http://deploy.dev.maaii.com:4002`)  
-`{$iamIp}` - the IAM ip address  (e.g `http://deploy.dev.maaii.com:4004`)
+`{$externalIamEndpoint}` - the IAM public domain which is public to outside (e.g `https://iam-tb.m800.com`)
+`{$internalIamEndpoint}` - the IAM internal IP which is internal address (e.g `http://192.168.119.66:3020`)
 
 Please refer to the IAM documentation about [OPEN ID Connect (Add a new Client)](http://deploy.dev.maaii.com:9080/maaii-identity-access-mgmt/).
 
@@ -58,7 +59,7 @@ To send along with the login and logout with IAM the exact location to redirect 
 
 - `openid__issuer`  
 iam Open id issuer which is the address to issue the openid
-(`{$iamIp}/openid/core`  e.g.`http://deploy.dev.maaii.com:4004/openid/core`)
+(`${externalIamEndpoint}/openid/core`  e.g.`https://iam-tb.m800.com/openid/core`)
 
 - `openid__clientId`  
 the client id that registered above (e.g `wlp`)
@@ -72,33 +73,37 @@ the authentication method used above (e.g `client_secret_basic`)
 - `openid__token_endpoint_auth_signing_alg`
 the signing algorithms when applied on `client_secret_jwt`, no need to set using `client_secret_basic` (e.g `HS512`)
 
+The following 7 end points are configuration for IAM OpenID
+
 - `openid__authorization_endpoint`
 OpenId Client authorization end point which redirect login  
-(`${openid__issuer}/auth` e.g`http://deploy.dev.maaii.com:4004/openid/core/auth`)
-
-- `openid__token_endpoint`
-OpenId Client token end point which obtain access token  
-(`${openid__issuer}/token` e.g`http://deploy.dev.maaii.com:4004/openid/core/token`)
-
-- `openid__token_introspection_endpoint`
-OpenId Client introspect end point which introspect token  
-(`${openid__issuer}/token/introspection` e.g`http://deploy.dev.maaii.com:4004/openid/core/token/introspection`)
+(`${externalIamEndpoint}/openid/core/auth` e.g`https://iam-tb.m800.com/openid/core/auth`)
 
 - `openid__end_session_endpoint`
 OpenId Client session end point which end session
-(`${openid__issuer}/session/end` e.g `http://deploy.dev.maaii.com:4004/openid/core/session/end`)
+(`${externalIamEndpoint}/openid/core/session/end` e.g `https://iam-tb.m800.com/openid/core/session/end`)
+
+- `openid__token_endpoint`
+OpenId Client token end point which obtain access token  
+(`${internalIamEndpoint}/openid/core/token` e.g`http://192.168.119.66:3020/openid/core/token`)
+
+- `openid__token_introspection_endpoint`
+OpenId Client introspect end point which introspect token  
+(`${internalIamEndpoint}/openid/core/token/introspection` e.g`http://192.168.119.66:3020/openid/core/token/introspection`)
 
 - `openid__userinfo_endpoint`
 OpenId Client user info end point
-(`${openid__issuer}/me` e.g `http://deploy.dev.maaii.com:4004/openid/core/me`)
+(`${internalIamEndpoint}/openid/core/me` e.g `http://192.168.119.66:3020/openid/core/me`)
 
 - `openid__jwks_uri`
 OpenId Client certificate end point
-(`${openid__issuer}/certs}` e.g`http://deploy.dev.maaii.com:4004/openid/core/certs`)
+(`${internalIamEndpoint}/openid/core/certs}` e.g`http://192.168.119.66:3020/openid/core/certs`)
 
 - `openid__token_revocation_endpoint`
 OpenId Client revocation end point
-(`${openid__issuer}/token/revocation` e.g `http://deploy.dev.maaii.com:4004/openid/core/token/revocation`)
+(`${internalIamEndpoint}/openid/core/token/revocation` e.g `http://192.168.119.66:3020/openid/core/token/revocation`)
+
+Please aware there are 7 endpoints, two of them (`openid__authorization_endpoint`, `openid__end_session_endpoint`) are based on the externalIamEndpoint which will be redirected to by browser. The remaining are used by the WLP server side internally
 
 ## Reference
 [Open Connect ID Standard](http://openid.net/connect/)  
