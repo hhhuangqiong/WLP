@@ -1,13 +1,21 @@
-var path        = require('path');
-var webpack     = require('webpack');
-var nodeEnv     = process.env.NODE_ENV;
-var appHostname = process.env.APP_HOSTNAME || 'localhost';
-var hotLoadPort = process.env.HOT_LOAD_PORT || 8888;
-var enableHotloader = process.env.ENABLE_WEBPACK_HOTLOADER === "true" || false;
-var ProvidePlugin = webpack.ProvidePlugin;
+const path = require('path');
+const webpack = require('webpack');
+const appConfig = require('./app/config');
+const nodeEnv = process.env.NODE_ENV;
+const appHostname = process.env.APP_HOSTNAME || 'localhost';
+const hotLoadPort = process.env.HOT_LOAD_PORT || 8888;
+const enableHotloader = process.env.ENABLE_WEBPACK_HOTLOADER === 'true' || false;
+const ProvidePlugin = webpack.ProvidePlugin;
+
+const langSet = new Set();
+appConfig.LOCALES.forEach((configLocale) => {
+  langSet.add(configLocale.split('-')[0]);
+});
+// For remove unused locale data
+const langStrRegex = new RegExp([...langSet].join('|', 'i'));
 
 // common
-var config =  {
+const config = {
   entry: [
     'babel-polyfill',
     './app/client/index.js',
@@ -15,7 +23,8 @@ var config =  {
   devtool: 'eval-source-map',
   module: {
     loaders: [
-      { test: /\.js$/,
+      {
+        test: /\.js$/,
         include: [
           path.join(__dirname, 'app'),
         ],
@@ -24,7 +33,7 @@ var config =  {
       {
         test: /\.js$/,
         include: [
-          path.join(__dirname, 'app')
+          path.join(__dirname, 'app'),
         ],
         loader: 'babel',
         query: {
@@ -60,19 +69,24 @@ var config =  {
       $: 'jquery',
       jQuery: 'jquery',
     }),
+    // only load supported locale data in moment and react-intl
+    new webpack.ContextReplacementPlugin(/moment[\/\\]locale$/, langStrRegex),
+    new webpack.ContextReplacementPlugin(/react-intl[\/\\]locale-data$/, langStrRegex),
+    // resolve to use joi-browser for client-side joi
+    new webpack.NormalModuleReplacementPlugin(/^joi$/, path.resolve(__dirname, './node_modules/joi-browser')),
   ],
   output: {
     // this is the assets path for the project server
     path: path.resolve(__dirname, 'public', 'javascript'),
     filename: 'bundle.js',
     // this is the assets path for webpack-dev-server
-    publicPath: '/javascript/'
+    publicPath: '/javascript/',
   },
   node: {
     net: 'empty',
     dns: 'empty',
-    fs: 'empty'
-  }
+    fs: 'empty',
+  },
 };
 
 if (nodeEnv === 'production') {
@@ -92,7 +106,7 @@ if (nodeEnv === 'production') {
 }
 
 if (enableHotloader) {
-  console.log("Hotloader enabled!");
+  console.log('Hotloader enabled!');
   config.entry.unshift('webpack-dev-server/client?http://' + appHostname + ':' + hotLoadPort);
   config.entry.unshift('webpack/hot/only-dev-server');
   config.plugins.push(new webpack.HotModuleReplacementPlugin());
