@@ -1,6 +1,6 @@
 import React from 'react';
 import { Route, IndexRedirect } from 'react-router';
-import { startsWith, includes } from 'lodash';
+import { startsWith, includes, find } from 'lodash';
 import validator from 'validator';
 import modules from './constants/moduleId';
 import navigationSections from './main/constants/navSection';
@@ -51,6 +51,7 @@ import {
 } from './utils/paths';
 
 import AuthStore from './main/stores/AuthStore';
+import ApplicationStore from './main/stores/ApplicationStore';
 
 import createDebug from 'debug';
 
@@ -70,8 +71,15 @@ export default (context) => {
       replace(SIGN_IN);
       return;
     }
-    // only redirect to carrierId path
-    replace(`/${user.carrierId}`);
+
+    const applicationStore = context.getStore(ApplicationStore);
+    // companies that assigned to user and at least one role is assigned to those companies
+    const managingCompanies = applicationStore.getManagingCompanies();
+
+    // check if user has role in the affiliate company, and then find the first company
+    const targetCompany = find(managingCompanies, company => company.carrierId === user.carrierId) || managingCompanies[0];
+    const path = targetCompany ? `/${targetCompany.carrierId}` : path401;
+    replace(path);
   }
 
   // check for the permission and set the default path for that carrier(if not mentioned)
