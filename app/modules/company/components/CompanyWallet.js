@@ -2,12 +2,11 @@ import React, { Component, PropTypes } from 'react';
 import { Link } from 'react-router';
 import { injectIntl, intlShape } from 'react-intl';
 import connectToStores from 'fluxible-addons-react/connectToStores';
-import classNames from 'classnames';
 
 import { CompanyWalletStore } from '../stores/CompanyWalletStore';
 import { MESSAGES } from '../constants/companyOptions';
 
-import fetchCompanyWallets from './../actions/fetchCompanyWallets';
+import fetchCompanyWalletsWithRecords from '../actions/fetchCompanyWalletsWithRecords';
 import fetchCompanyWalletRecords from './../actions/fetchCompanyWalletRecords';
 import topUpWallet from './../actions/topUpWallet';
 import updateTopUpForm from './../actions/updateTopUpForm';
@@ -51,8 +50,7 @@ class CompanyWallet extends Component {
   componentDidMount() {
     const { carrierId } = this.context.params;
     const { pageNumber, pageSize } = this.props.transactionsPage;
-    this.context.executeAction(fetchCompanyWallets, { carrierId });
-    this.context.executeAction(fetchCompanyWalletRecords, { carrierId, pageNumber, pageSize });
+    this.context.executeAction(fetchCompanyWalletsWithRecords, { carrierId, pageNumber, pageSize });
   }
   handlePageChange(pageParams) {
     const { carrierId } = this.context.params;
@@ -78,9 +76,10 @@ class CompanyWallet extends Component {
     });
   }
   toDisplayedTransaction(transaction) {
+    const wallet = this.props.wallets.find(x => x.walletId === transaction.walletId);
     return {
       ...transaction,
-      type: this.props.wallets.find(x => x.walletId === transaction.walletId).serviceType,
+      type: wallet ? wallet.serviceType : '',
     };
   }
   render() {
