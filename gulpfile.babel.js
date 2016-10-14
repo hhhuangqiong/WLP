@@ -86,7 +86,7 @@ gulp.task('watch', () => {
   gulp.watch('public/scss/**/*.scss', ['scss']);
 });
 
-gulp.task('clean', () => del([dest.app, `${dest.build}/**/*`, dest.intl, dest.babel]));
+gulp.task('clean', () => del([dest.app, `${dest.build}/**/*`, dest.intl, dest.babel, `${dest.build}/.gulp-cache`]));
 
 const autoprefixerOpts = {
   browsers: ['last 3 versions'],
