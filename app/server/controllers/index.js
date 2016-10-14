@@ -10,9 +10,9 @@ import meController from './me';
 
 function register(container) {
   container.service('AuthController', authController);
-  container.service('MeController', meController, 'AclResolver', 'IamServiceClient');
+  container.service('MeController', meController, 'AclResolver', 'IamServiceClient', 'ProvisionHelper', 'MeControllerOptions');
   container.service('RoleController', roleController, 'IamServiceClient', 'ProvisionHelper');
-  container.service('CompanyController', companyController, 'IamServiceClient', 'ProvisionHelper');
+  container.service('CompanyController', companyController, 'IamServiceClient', 'ProvisionHelper', 'CompanyControllerOptions');
   container.service('AccountController', accountController, 'IamServiceClient', 'ProvisionHelper');
   container.service('ProvisionController', provisionController, 'IamServiceClient', 'ProvisionHelper');
   container.service('ExportController', exportController);

@@ -2,7 +2,7 @@ import { introspect } from '../openid/manager';
 
 // Using the passportjs and openid, it will attach the access token in the req.user
 // instrospect the token and log out user, it will then redirect to the login page.
-export async function authentication(req, res, next) {
+export async function authenticationMiddleware(req, res, next) {
   const { user } = req;
   if (!user) {
     next();

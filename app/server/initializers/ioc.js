@@ -7,7 +7,6 @@ import makeRedisClient from './redis';
 import CallsRequest from '../../lib/requests/dataProviders/Call';
 import { IamClient } from '../../lib/requests/iam/IamServiceClient';
 import ProvisionHelper from '../../server/utils/provisionHelper';
-import IamHelper from '../../server/utils/iamHelper';
 import MpsClient from '../../lib/requests/mps/MpsClient';
 import OcsClient from '../../lib/requests/ocs/OcsClient';
 import { ApplicationRequest } from '../../lib/requests/Application';
@@ -89,11 +88,30 @@ export default function init(nconf) {
     timeout: nconf.get('mpsApi:timeout'),
   });
   ioc.service('MpsClient', MpsClient, 'MpsClientOptions');
+
   ioc.constant('IamClientOptions', {
     baseUrl: nconf.get('iamApi:baseUrl'),
     timeout: nconf.get('iamApi:timeout'),
   });
+
   ioc.service('IamServiceClient', IamClient, 'IamClientOptions');
+
+  // rewrite the company logo path
+  const rewriteLogoPath = {
+    original: `${nconf.get('iamApi:baseUrl')}/identity/companies/logo`,
+    new: `${nconf.get('APP_URL')}/api/companies/logo`,
+  };
+
+  ioc.constant('CompanyControllerOptions', {
+    proxy: {
+      target: nconf.get('iamApi:baseUrl'),
+      pathRewrite: {
+        '/api/companies/logo': '/identity/companies/logo',
+      },
+    },
+  });
+  ioc.constant('MeControllerOptions', { rewriteLogoPath });
+
   ioc.constant('ApplicationOptions', {
     baseUrl: nconf.get('mumsApi:baseUrl'),
     timeout: nconf.get('mumsApi:timeout'),
@@ -107,7 +125,6 @@ export default function init(nconf) {
 
   // Provision Adapter
   ioc.service('ProvisionHelper', ProvisionHelper, 'MpsClient');
-  ioc.service('IamHelper', IamHelper, 'IamServiceClient', 'ProvisionHelper');
 
   // Core components
   ioc.service('AclResolver', createAclResolver, 'logger', 'IamServiceClient', 'ProvisionHelper');

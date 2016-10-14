@@ -1,6 +1,7 @@
 import _ from 'lodash';
+import proxy from 'http-proxy-middleware';
 
-export default function companyController(iamServiceClient, provisionHelper) {
+export default function companyController(iamServiceClient, provisionHelper, companyControllerOptions) {
   async function updateCompany(req, res, next) {
     try {
       const command = _.extend({}, req.body, { id: req.params.companyId });
@@ -37,8 +38,13 @@ export default function companyController(iamServiceClient, provisionHelper) {
     }
   }
 
+  function getLogo() {
+    return proxy(companyControllerOptions.proxy);
+  }
+
   return {
     getManagingCompaniesRoles,
     updateCompany,
+    getLogo,
   };
 }

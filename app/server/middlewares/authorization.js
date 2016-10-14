@@ -2,7 +2,7 @@ import createDebug from 'debug';
 import { isArray, difference, extend } from 'lodash';
 import { RESOURCE_OWNER } from './../../main/acl/acl-enums';
 
-import { NotPermittedError, AuthenticationRequiredError } from 'common-errors';
+import { NotPermittedError } from 'common-errors';
 
 const debug = createDebug('app:server/middlewares/authorization');
 
@@ -17,15 +17,6 @@ export function createAuthorizationMiddlewareFactory(logger, aclResolver) {
     const requiredPermissions = isArray(permissions) ? permissions : [permissions];
     return async function verifyPermissions(req, res, next) {
       try {
-        if (!req.user) {
-          const error = new AuthenticationRequiredError();
-          extend(error, {
-            message: 'Authentication is required to access the resource',
-            status: 401,
-          });
-          next(error);
-          return;
-        }
         const carrierId = resourceCarrierIdSelector(req);
         debug(`Inferred carried id: ${carrierId}`);
         const username = req.user.username;

@@ -1,30 +1,37 @@
-import { ArgumentError } from 'common-errors';
+import createDebug from 'debug';
+import Q from 'q';
 import _ from 'lodash';
-import nconf from 'nconf';
 
-import { fetchDep } from '../../server/utils/bottle';
+const debug = createDebug('app:actions/getAccessibleCompanies');
 
-const debug = require('debug')('app:actions/getAccessibleCompanies');
+export default function getAccessibleCompanies(context, payload) {
+  const { apiClient } = context;
+  const { carrierId } = payload;
 
-export default function getAccessibleCompanies(context, params, done) {
-  debug('action start get accessible company');
-  const iamHelper = fetchDep(nconf.get('containerName'), 'IamHelper');
-
-  const user = _.get(params, 'req.user');
-  const affiliatedCompany = _.get(params, 'req.user.affiliatedCompany');
-
-  // if no user, it will manage no company
-  if (!user) {
-    context.dispatch('FETCH_MANAGING_COMPANIES_FAILURE', new ArgumentError('user'));
-    done();
-    return;
+  if (!carrierId) {
+    context.dispatch('FETCH_MANAGING_COMPANIES_FAILURE', null);
+    return Q.resolve(null);
   }
 
-  iamHelper.getManagingCompanies(user, affiliatedCompany).then(companies => {
-    context.dispatch('FETCH_MANGAING_COMPANIES_SUCCESS', companies);
-    done();
-  }).catch(err => {
-    context.dispatch('FETCH_MANAGING_COMPANIES_FAILURE', err);
-    done();
-  });
+  debug('Loading current managingCompanies company info for user');
+  return apiClient
+    .get(`/carriers/${carrierId}/me/companies`)
+    .then(companies => {
+      debug('Loaded managingCompanies company successfully.');
+      context.dispatch('FETCH_MANGAING_COMPANIES_SUCCESS', companies);
+      // if the carrierId is one of the managing companies, it will obtain the data directly
+      const targetCompany = _.find(companies, comp => comp.carrierId === carrierId);
+      if (!targetCompany) {
+        debug('Fail to load current company.');
+        context.dispatch('FETCH_COMPANY_INFO_FAILURE', null);
+        return companies;
+      }
+      debug(`Loaded current company successfully: ${targetCompany.name}.`);
+      context.dispatch('FETCH_COMPANY_INFO_SUCCESS', targetCompany);
+      return companies;
+    })
+    .catch(err => {
+      debug(`Error while loading current company: ${err.message}.`);
+      context.dispatch('FETCH_MANAGING_COMPANIES_FAILURE', err);
+    });
 }

@@ -4,14 +4,16 @@ import {
 import createSessionMiddleware from './session';
 import noCache from './noCache';
 import { apiErrorHandler } from './errorHandler';
-import { authentication } from './authentication';
+import { authenticationMiddleware } from './authentication';
+import ensureAuthenticatedMiddleware from './ensureAuthenticated';
 
 function register(container) {
   container.service('SessionMiddleware', createSessionMiddleware, 'SessionMiddlewareOptions');
   container.service('AuthorizationMiddlewareFactory', createAuthorizationMiddlewareFactory, 'logger', 'AclResolver');
   container.constant('NoCacheMiddleware', noCache);
   container.constant('ApiErrorHandlerMiddleware', apiErrorHandler);
-  container.constant('AuthenticationMiddleware', authentication);
+  container.constant('AuthenticationMiddleware', authenticationMiddleware);
+  container.constant('EnsureAuthenticatedMiddleware', ensureAuthenticatedMiddleware);
 }
 
 export {
@@ -19,6 +21,8 @@ export {
   createSessionMiddleware,
   noCache,
   apiErrorHandler,
-  authentication,
+  authenticationMiddleware,
+  ensureAuthenticatedMiddleware,
+
   register,
 };

@@ -2,21 +2,10 @@ import { Router } from 'express';
 import { permission, RESOURCE, ACTION, RESOURCE_OWNER } from './../../main/acl/acl-enums';
 import { fetchDep } from './../utils/bottle';
 
-// Merge params is used to inherit carrierId from common parent router
-const routes = new Router({ mergeParams: true });
-const apiRouter = new Router();
-apiRouter
-  .use('/carriers/:carrierId', routes)
-  .use('*', (req, res) => res.status(400).json({
-    error: {
-      name: 'Unknown URL',
-      message: `No endpoint for the given URL ${req.originalUrl}`,
-    },
-  }));
-
 // TODO: refactor api.js to be a factory function with dependencies
 const noCacheMiddleware = fetchDep('NoCacheMiddleware');
 const authorize = fetchDep('AuthorizationMiddlewareFactory');
+const ensureAuthenticatedMiddleware = fetchDep('EnsureAuthenticatedMiddleware');
 const roleController = fetchDep('RoleController');
 const companies = fetchDep('CompanyController');
 const accounts = fetchDep('AccountController');
@@ -25,10 +14,27 @@ const carriers = fetchDep('CarrierController');
 const carrierWalletController = fetchDep('CarrierWalletController');
 const meController = fetchDep('MeController');
 
+// Merge params is used to inherit carrierId from common parent router
+const routes = new Router({ mergeParams: true });
+const apiRouter = new Router();
+apiRouter
+  // check the existence of req.user, throw 401 when not exist
+  .use(ensureAuthenticatedMiddleware)
+  // company logo has no permission checking
+  .use('/companies/logo', companies.getLogo())
+  // undergo the authorization checking base on permission
+  .use('/carriers/:carrierId', routes)
+  .use('*', (req, res) => res.status(400).json({
+    error: {
+      name: 'Unknown URL',
+      message: `No endpoint for the given URL ${req.originalUrl}`,
+    },
+  }));
 // eslint:max-len 0
 routes
   .use(noCacheMiddleware)
   .get('/me', meController.getCurrentUser)
+  .get('/me/companies', meController.getCompanies)
   // general overview
   .get('/overview/summaryStats', [
     authorize(permission(RESOURCE.GENERAL)),
@@ -214,7 +220,7 @@ routes
   // it will convert the carrier id into company id
   // managingCompanies will be used in the account page to get the possible companies and roles,
   // so it can be assgined to user
-  .get('/managingCompanies', [
+  .get('/managingCompaniesRoles', [
     authorize(permission(RESOURCE.USER)),
     companies.getManagingCompaniesRoles,
   ])

@@ -11,7 +11,7 @@ const RedisStore = redisStoreClassFactory(session);
 function createSessionStore(redisUri) {
   let redisOptions = ioredisUri(redisUri);
   const isSentinel = _.has(redisOptions, 'sentinels');
-  logger.info(`Redis ${isSentinel ? '(Sentinel)' : '(Single)'} connection options`, redisOptions)
+  logger.info(`Redis ${isSentinel ? '(Sentinel)' : '(Single)'} connection options`, redisOptions);
   if (isSentinel) {
     redisOptions = {
       ...redisOptions,

@@ -34,7 +34,6 @@ export default function carriersController() {
   const vsfStatsRequest = fetchDep(nconf.get('containerName'), 'VsfStatsRequest');
   const overviewStatsRequest = fetchDep(nconf.get('containerName'), 'OverviewStatsRequest');
   const provisionHelper = fetchDep(nconf.get('containerName'), 'ProvisionHelper');
-  const iamHelper = fetchDep(nconf.get('containerName'), 'IamHelper');
   const applicationRequest = fetchDep(nconf.get('containerName'), 'ApplicationRequest');
 
 // @NB please suggest where the below array can be moved to as constant
@@ -1949,26 +1948,6 @@ export default function carriersController() {
       });
   }
 
-  async function getCompany(req, res, next) {
-    logger.debug('loading user from compange request');
-
-    const { user } = req;
-    logger.debug('user', user);
-    req.checkParams('carrierId').notEmpty();
-    const error = req.validationErrors();
-
-    if (error) {
-      res.apiError(400, new ValidationError(prepareValidationMessage(error)));
-      return;
-    }
-    try {
-      const company = iamHelper.getCompanyByCarrierId(req.params.carrierId);
-      res.json(company);
-    } catch (ex) {
-      next(ex);
-    }
-  }
-
   /**
    * Acquire the application ID's with carrierId.
    * The `carrierId` must be embedded in the request object's params.
@@ -2085,7 +2064,6 @@ export default function carriersController() {
     getVsfSummaryStats,
     getVerifications,
     getVerificationStatistics,
-    getCompany,
     reactivateUser,
     suspendUser,
     getApplicationIds,

@@ -22,7 +22,6 @@ import getClientConfig from './actions/getClientConfig';
 import loadSession from './actions/loadSession';
 import getAccessibleCompanies from './actions/getAccessibleCompanies';
 import setUserLanguage from './actions/setUserLanguage';
-import fetchCurrentCompanyInfo from './actions/fetchCurrentCompanyInfo';
 
 /**
  * @method createHtmlElement
@@ -75,7 +74,6 @@ export default function renderer(app, config) {
       loadSession,
       getAccessibleCompanies,
       setUserLanguage,
-      fetchCurrentCompanyInfo,
       getClientConfig,
     ];
 
