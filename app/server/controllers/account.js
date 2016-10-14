@@ -124,56 +124,12 @@ export default function accountController(iamServiceClient, provisionHelper) {
     }
   }
 
-  async function getAccessibleCompanies(req, res, next) {
-    debug('get user managing companies via account controller');
-    const { user } = req;
-    if (!user) {
-      debug('user is not logged in and fail to get managing companies');
-      res.json([]);
-      return;
-    }
-
-    const affiliatedCompany = _.get(req, 'user.affiliatedCompany');
-    debug('get the affiliatedCompany', affiliatedCompany);
-    if (!affiliatedCompany) {
-      debug('user is logged in and without the current affiliated company');
-      res.apiError(500, {
-        errors: new ArgumentError('req.user.affiliatedCompany'),
-      });
-      return;
-    }
-
-    try {
-      // Ensure the existence of affiliated company
-      const company = await iamServiceClient.getCompany({ id: affiliatedCompany });
-      // find all the companies that under affiliated company
-      const result = await iamServiceClient.getDescendantCompany({ id: company.id });
-      // append the current company at the front
-      result.unshift(company);
-      const companyIds = _.map(result, item => item.id);
-      const carrierIds = await provisionHelper.getCarrierIdsByCompanyIds(companyIds);
-      const resultArray = [];
-      _.forEach(result, (item, index) => {
-        // only filter the companies with carrier Id
-        if (carrierIds[index]) {
-          const mItem = item;
-          mItem.carrierId = carrierIds[index];
-          resultArray.push(mItem);
-        }
-      });
-      res.json(resultArray);
-    } catch (ex) {
-      next(ex);
-    }
-  }
-
   return {
     getAccounts,
     getAccount,
     createAccount,
     deleteAccount,
     updateAccount,
-    getAccessibleCompanies,
     requestSetPassword,
   };
 }

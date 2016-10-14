@@ -7,8 +7,6 @@ import favicon from 'serve-favicon';
 import methodOverride from 'method-override';
 import morgan from 'morgan';
 import userLocale from 'm800-user-locale';
-import validator from 'validator';
-import _ from 'lodash';
 
 import app from '../app';
 import config from '../config';
@@ -21,7 +19,6 @@ const PROJ_ROOT = path.join(__dirname, '../..');
 
 const debug = require('debug');
 debug.enable('app:*');
-
 
 export default function (port) {
   if (!port) throw new Error('Please specify port');
@@ -59,6 +56,7 @@ export default function (port) {
   const sessionMiddleware = fetchDep('SessionMiddleware');
   const apiErrorHandlerMiddleware = fetchDep('ApiErrorHandlerMiddleware');
   const authRouter = fetchDep('AuthRouter');
+  const authenticationMiddleware = fetchDep('AuthenticationMiddleware');
 
   // To enable using PUT, DELETE METHODS
   server.use(methodOverride('_method'));
@@ -100,21 +98,14 @@ export default function (port) {
   // as API server
   server.use(authRouter);
 
-  // server error handling
-  // by pass the permission checking when there is 500 error and render directly
-  server.use((req, res, next) => {
-    if (req.path === ERROR_500) {
-      render(app, config)(req, res, () => {});
-      return;
-    }
-    next();
-  });
-
   // hlr is used for demo purpose
   server.use(require('./routers/hlr').default);
   server.use(config.EXPORT_PATH_PREFIX, require('./routers/export').default);
   server.use(config.API_PATH_PREFIX, require('./routers/api').default);
   server.use(config.API_PATH_PREFIX, apiErrorHandlerMiddleware);
+
+  // introspect user access token and log out the user if invalid token
+  server.use(authenticationMiddleware);
 
   const renderer = render(app, config);
   server.use(renderer);

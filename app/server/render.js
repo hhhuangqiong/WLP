@@ -18,11 +18,11 @@ import { getLocaleDataFromPath } from '../utils/intl';
 import { setLocale } from '../utils/dateLocale';
 import { SIGN_IN } from '../utils/paths';
 
-import getClientConfig from '../main/actions/getClientConfig';
-import loadSession from '../main/actions/loadSession';
-import getAccessibleCompanies from '../main/actions/getAccessibleCompanies';
-import setUserLanguage from '../main/actions/setUserLanguage';
-import fetchCurrentCompanyInfo from '../main/actions/fetchCurrentCompanyInfo';
+import getClientConfig from './actions/getClientConfig';
+import loadSession from './actions/loadSession';
+import getAccessibleCompanies from './actions/getAccessibleCompanies';
+import setUserLanguage from './actions/setUserLanguage';
+import fetchCurrentCompanyInfo from './actions/fetchCurrentCompanyInfo';
 
 /**
  * @method createHtmlElement

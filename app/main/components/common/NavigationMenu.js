@@ -1,6 +1,4 @@
-import { some } from 'lodash';
 import React, { PropTypes } from 'react';
-import { Link } from 'react-router';
 import { FluxibleMixin } from 'fluxible-addons-react';
 import { FormattedMessage, injectIntl } from 'react-intl';
 
@@ -10,15 +8,6 @@ import signOut from '../../actions/signOut';
 import Icon from '../Icon';
 
 import AuthStore from '../../stores/AuthStore';
-
-const companyPages = [
-  'companies',
-  'company-create',
-  'company-profile',
-  'company-service',
-];
-
-const accountPages = ['account', 'account-create', 'account-profile'];
 
 const Navigation = React.createClass({
   contextTypes: {
