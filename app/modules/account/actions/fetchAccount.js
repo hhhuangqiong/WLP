@@ -2,7 +2,7 @@ export default function (context, params) {
   const { apiClient } = context;
   const { carrierId, id } = params;
   return apiClient
-    .get(`/carriers/${carrierId}/accounts/${id}`)
+    .get(`/carriers/${carrierId}/accounts/${encodeURIComponent(id)}`)
     .then(account => {
       context.dispatch('FETCH_ACCOUNT_SUCCESS', account);
     }).catch(err => {

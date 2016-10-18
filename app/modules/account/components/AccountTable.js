@@ -77,7 +77,7 @@ const AccountTable = React.createClass({
     const { identity, accountId } = this.context.params;
     return accounts.map(account => (
       <li className={classNames('account-table__item', { active: account.id === accountId }, 'clearfix')} key={account.id}>
-        <Link to={`/${identity}/account/${account.id}/profile`} params={{ id: account.id, identity }}>
+        <Link to={`/${identity}/account/${encodeURIComponent(account.id)}/profile`} params={{ id: account.id, identity }}>
           <div className="account-icon left">
             <Avatar firstName={account.name.firstName} lastName={account.name.lastName} />
           </div>

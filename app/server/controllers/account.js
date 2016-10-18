@@ -1,6 +1,5 @@
 import _ from 'lodash';
 import moment from 'moment';
-import { ArgumentError } from 'common-errors';
 
 const debug = require('debug')('app:controllers/api');
 

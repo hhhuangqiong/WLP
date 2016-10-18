@@ -54,7 +54,7 @@ export default createStore({
     if (err.name === NotSupportedError.name) {
       this.operationResult = {
         token: err.token,
-        redirection: `/account/${err.accountId}/profile`,
+        redirection: `/account/${encodeURIComponent(err.accountId)}/profile`,
       };
       this.emitChange();
     }

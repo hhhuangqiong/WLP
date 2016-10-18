@@ -13,6 +13,7 @@ const provision = fetchDep('ProvisionController');
 const carriers = fetchDep('CarrierController');
 const carrierWalletController = fetchDep('CarrierWalletController');
 const meController = fetchDep('MeController');
+const decodeParamsMiddeware = fetchDep('DecodeParamsMiddeware');
 
 // Merge params is used to inherit carrierId from common parent router
 const routes = new Router({ mergeParams: true });
@@ -20,6 +21,7 @@ const apiRouter = new Router();
 apiRouter
   // check the existence of req.user, throw 401 when not exist
   .use(ensureAuthenticatedMiddleware)
+  .use(decodeParamsMiddeware)
   // company logo has no permission checking
   .use('/companies/logo', companies.getLogo())
   // undergo the authorization checking base on permission
@@ -30,6 +32,7 @@ apiRouter
       message: `No endpoint for the given URL ${req.originalUrl}`,
     },
   }));
+
 // eslint:max-len 0
 routes
   .use(noCacheMiddleware)

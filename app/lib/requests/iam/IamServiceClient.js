@@ -23,7 +23,7 @@ export class IamClient {
     return this._handle(req, url);
   }
   getUser(command) {
-    const url = `${this.userPath}/${command.id}`;
+    const url = `${this.userPath}/${encodeURIComponent(command.id)}`;
     const req = request.get(url);
     return this._handle(req, url);
   }
@@ -33,7 +33,7 @@ export class IamClient {
     return this._handle(req, url);
   }
   requestSetPassword(command) {
-    const url = `${this.userPath}/${command.id}/requestSetPassword`;
+    const url = `${this.userPath}/${encodeURIComponent(command.id)}/requestSetPassword`;
     // need to mention the client id & redirect url in order to send an confirm email
     // that redirect to the right places when clicked in that email
     const updatedCommand = {
@@ -56,13 +56,13 @@ export class IamClient {
       });
   }
   putUser(command) {
-    const url = `${this.userPath}/${command.id}`;
+    const url = `${this.userPath}/${encodeURIComponent(command.id)}`;
     const req = request.put(url).set('Content-Type', 'application/json')
       .send(omit(command, 'id'));
     return this._handle(req, url);
   }
   deleteUser(command) {
-    const url = `${this.userPath}/${command.id}`;
+    const url = `${this.userPath}/${encodeURIComponent(command.id)}`;
     const req = request.delete(url);
     return this._handle(req, url);
   }
@@ -100,7 +100,7 @@ export class IamClient {
   // access
   getUserPermissions(params) {
     const query = pick(params, ['service', 'company']);
-    const url = `${this._options.baseUrl}/access/users/${params.username}/permissions`;
+    const url = `${this._options.baseUrl}/access/users/${encodeURIComponent(params.username)}/permissions`;
     const req = request.get(url).query(query);
     return this._handle(req, url);
   }
@@ -131,14 +131,14 @@ export class IamClient {
     return this._handle(req, url);
   }
   getUserRoles(command) {
-    const url = `${this._options.baseUrl}/access/users/${command.userId}/roles`;
+    const url = `${this._options.baseUrl}/access/users/${encodeURIComponent(command.userId)}/roles`;
     const query = { service: this._SERVICE_NAME };
     const req = request.get(url).query(query);
     return this._handle(req, url);
   }
 
   async setUserRoles(command) {
-    const url = `${this._options.baseUrl}/access/users/${command.userId}/roles`;
+    const url = `${this._options.baseUrl}/access/users/${encodeURIComponent(command.userId)}/roles`;
     const query = { service: this._SERVICE_NAME };
     const body = map(command.roles, role => ({ id: role }));
     const req = request.put(url).query(query).send(body);
