@@ -5,9 +5,7 @@ input {
   }
 
   &.error + label {
-    margin-bottom: rem-calc(10);
-    color: red;
-    font-size: smaller;
+    @include errorMessage;
   }
 }
 

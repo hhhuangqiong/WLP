@@ -25,6 +25,7 @@ class AccountForm extends Component {
     firstNameError: PropTypes.array,
     lastNameError: PropTypes.array,
     emailError: PropTypes.array,
+    rolesError: PropTypes.array,
     // This is the process state for assigning roles
     // possible string will lbe
     // addNewRoles, selectCompany, selectRole, editRole
@@ -54,6 +55,20 @@ class AccountForm extends Component {
     }
   }
 
+  renderErrorMessages = (errorMessages) => {
+    if (!errorMessages) {
+      return null;
+    }
+    return (
+      <div className="error">
+        {errorMessages.map((errorMsg, index) => (
+          <div key={index}>{errorMsg}</div>
+        ))}
+      </div>
+    );
+  }
+
+
   render() {
     const {
       firstName,
@@ -68,6 +83,7 @@ class AccountForm extends Component {
       handleRoleEditStageChanged,
       handleEditRole,
       handleDeleteCompany,
+      rolesError,
    } = this.props;
 
     const { formatMessage } = this.props.intl;
@@ -191,8 +207,8 @@ class AccountForm extends Component {
               default: return null;
             }
           })()}
+          {this.renderErrorMessages(rolesError)}
         </FormField>
-
       </form>
     );
   }

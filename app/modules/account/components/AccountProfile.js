@@ -125,11 +125,16 @@ class AccountProfile extends Component {
   }
 
   getValidatorData() {
+    let roles = [];
+    _.each(this.state.currentRoles, role => {
+      roles = roles.concat(role);
+    });
     const { firstName, lastName, email } = this.state;
     return {
       firstName,
       lastName,
       email,
+      roles,
     };
   }
   // it will redirect to the page according to the operation result
@@ -164,6 +169,7 @@ class AccountProfile extends Component {
       firstName: Joi.string().trim().max(30).required().label(formatMessage(MESSAGES.firstName)),
       lastName: Joi.string().trim().max(30).required().label(formatMessage(MESSAGES.lastName)),
       email: Joi.string().email().required().label(formatMessage(MESSAGES.email)),
+      roles: Joi.array().min(1).label(formatMessage(MESSAGES.roles)),
     };
   }
 
@@ -394,6 +400,7 @@ class AccountProfile extends Component {
         firstNameError={errors.firstName}
         lastNameError={errors.lastName}
         emailError={errors.email}
+        rolesError={errors.roles}
         isCreate={this.isCreate()}
         isVerified={account.isVerified}
         RoleEditStage={RoleEditStage}
