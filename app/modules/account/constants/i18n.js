@@ -33,6 +33,10 @@ export const MESSAGES = defineMessages({
     id: 'lastName',
     defaultMessage: 'Last Name',
   },
+  roles: {
+    id: 'roles',
+    defaultMessage: 'roles',
+  },
   email: {
     id: 'email',
     defaultMessage: 'Email',

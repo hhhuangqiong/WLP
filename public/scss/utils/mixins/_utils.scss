@@ -21,7 +21,7 @@
 	}
 }
 
-@mixin arrowUp($color: white, $width: 5px, $height: 5px){
+@mixin arrowUp($color: white, $width: 5px, $height: 5px) {
 	width: 0;
     height: 0;
     border-left: $width solid transparent;
@@ -29,8 +29,14 @@
     border-bottom: $height solid $color;
 }
 
-@mixin oneLineText(){
+@mixin oneLineText() {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+
+@mixin errorMessage() {
+  color: red;
+  font-size: small;
+  margin-bottom: rem-calc(10);
 }

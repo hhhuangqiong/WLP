@@ -121,6 +121,10 @@ $account-table-width: rem-calc(320);
   padding-bottom: rem-calc(20);
   margin-bottom: rem-calc(1);
 
+  .error {
+    @include errorMessage;
+  }
+
   &__select {
     margin-bottom: rem-calc(20);
 
