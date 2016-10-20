@@ -9,6 +9,7 @@ import { injectJoiValidation } from 'm800-user-locale/joi-validation';
 import ApplicationStore from '../../../main/stores/ApplicationStore';
 import AccountStore from '../stores/AccountStore';
 import { MESSAGES } from './../constants/i18n';
+import { ROLE_EDIT_STAGES } from '../constants/status';
 
 import createAccount from '../actions/createAccount';
 import updateAccount from '../actions/updateAccount';
@@ -62,10 +63,11 @@ class AccountProfile extends Component {
       lastName: '',
       email: '',
       deleteDialogOpened: false,
-      selectedCompany: '',
+      selectedCompany: {},
       selectedRoles: [],
       currentRoles: {},
       operationToken: Math.random(),
+      RoleEditStage: ROLE_EDIT_STAGES.addNewRole,
     };
     this.handleFirstNameChange = this.handleFirstNameChange.bind(this);
     this.handleLastNameChange = this.handleLastNameChange.bind(this);
@@ -76,13 +78,16 @@ class AccountProfile extends Component {
     this.handleCloseDeleteDialog = this.handleCloseDeleteDialog.bind(this);
     this.handleSelectedCompanyChange = this.handleSelectedCompanyChange.bind(this);
     this.handleSelectedRoleChange = this.handleSelectedRoleChange.bind(this);
+    this.handleRoleEditStageChanged = this.handleRoleEditStageChanged.bind(this);
     this.validateFirstName = this.validateFirstName.bind(this);
     this.validateLastName = this.validateLastName.bind(this);
     this.validateEmail = this.validateEmail.bind(this);
     this.handleDiscard = this.handleDiscard.bind(this);
     this.handleReverify = this.handleReverify.bind(this);
+    this.handleEditRole = this.handleEditRole.bind(this);
     this.handleOpenReverifyDialog = this.handleOpenReverifyDialog.bind(this);
     this.handleCloseReverifyDialog = this.handleCloseReverifyDialog.bind(this);
+    this.handleDeleteCompany = this.handleDeleteCompany.bind(this);
   }
 
   componentDidMount() {
@@ -139,8 +144,9 @@ class AccountProfile extends Component {
     this.state.email = props.account.email;
     this.state.createdAt = props.account.createdAt;
     this.state.selectedRoles = [];
-    this.state.selectedCompany = '';
+    this.state.selectedCompany = {};
     this.state.currentRoles = {};
+    this.setState({ RoleEditStage: ROLE_EDIT_STAGES.addNewRole });
     // convert into current roles format in form of object
     if (props.account.roles) {
       _.each(props.account.roles, role => {
@@ -177,6 +183,22 @@ class AccountProfile extends Component {
     e.preventDefault();
     this.setState({ email: e.target.value });
     if (this.props.errors.email) this.validateEmail();
+  }
+
+  handleEditRole(id) {
+    this.handleSelectedCompanyChange(id);
+    this.handleRoleEditStageChanged(ROLE_EDIT_STAGES.editRole);
+  }
+
+  handleDeleteCompany(id) {
+    const roles = _.omit(this.state.currentRoles, id);
+    this.setState({ currentRoles: roles });
+    this.setState({ selectedRoles: [] });
+    this.handleRoleEditStageChanged(ROLE_EDIT_STAGES.addNewRole);
+  }
+
+  handleRoleEditStageChanged(RoleEditStage) {
+    this.setState({ RoleEditStage });
   }
 
   containErrors() {
@@ -280,20 +302,30 @@ class AccountProfile extends Component {
   }
 
   handleSelectedCompanyChange(item) {
-    if (!item.value) {
+    if (!item) {
       return;
     }
+    const currentCompany = _.find(
+    this.props.managingCompanies, company => company.id === item);
+
     this.setState({
       currentRoles: this.state.currentRoles,
-      selectedCompany: item.value,
-      selectedRoles: this.state.currentRoles[item.value] || [],
+      selectedCompany: currentCompany,
+      selectedRoles: this.state.currentRoles[item] || [],
     });
   }
 
-  handleSelectedRoleChange(items) {
-    const selectedValues = _.map(items, item => item.value);
-    this.state.currentRoles[this.state.selectedCompany] = selectedValues;
-    this.setState({ selectedRoles: selectedValues });
+  handleSelectedRoleChange(e) {
+    let selectedRoles = this.state.selectedRoles;
+    if (e.target.checked) {
+      selectedRoles = this.state.selectedRoles.concat(e.target.value);
+    } else {
+      selectedRoles = this.state.selectedRoles;
+      const index = selectedRoles.indexOf(e.target.value);
+      selectedRoles.splice(index, 1);
+    }
+    this.state.currentRoles[this.state.selectedCompany.id] = selectedRoles;
+    this.setState({ selectedRoles });
   }
 
   isCreate() {
@@ -339,6 +371,8 @@ class AccountProfile extends Component {
       lastName,
       selectedCompany,
       selectedRoles,
+      currentRoles,
+      RoleEditStage,
     } = this.state;
 
     const {
@@ -353,6 +387,7 @@ class AccountProfile extends Component {
         firstName={firstName}
         lastName={lastName}
         email={email}
+        currentRoles={currentRoles}
         managingCompanies={managingCompanies}
         selectedCompany={selectedCompany}
         selectedRoles={selectedRoles}
@@ -361,6 +396,7 @@ class AccountProfile extends Component {
         emailError={errors.email}
         isCreate={this.isCreate()}
         isVerified={account.isVerified}
+        RoleEditStage={RoleEditStage}
         validateFirstName={this.validateFirstName}
         validateLastName={this.validateLastName}
         validateEmail={this.validateEmail}
@@ -369,11 +405,14 @@ class AccountProfile extends Component {
         handleEmailChange={this.handleEmailChange}
         handleSelectedCompanyChange={this.handleSelectedCompanyChange}
         handleSelectedRoleChange={this.handleSelectedRoleChange}
+        handleRoleEditStageChanged={this.handleRoleEditStageChanged}
         handleSave={this.handleSave}
+        handleEditRole={this.handleEditRole}
         reverifyDialogOpened={this.state.reverifyDialogOpened}
         handleReverify={this.handleReverify}
         handleOpenReverifyDialog={this.handleOpenReverifyDialog}
         handleCloseReverifyDialog={this.handleCloseReverifyDialog}
+        handleDeleteCompany={this.handleDeleteCompany}
       />
     );
   }
@@ -384,7 +423,10 @@ class AccountProfile extends Component {
       <div className="account-profile__container">
         <div className="panel callout radius">
           <h4 className="account-profile__header">
-            { formatMessage(this.isCreate() ? MESSAGES.createNewAccount : MESSAGES.accountInformation)}
+            {
+              formatMessage(this.isCreate() ?
+              MESSAGES.createNewAccount : MESSAGES.accountInformation)
+            }
           </h4>
           <hr />
           <If condition={!this.isCreate()}>

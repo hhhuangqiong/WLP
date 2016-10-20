@@ -21,6 +21,10 @@ export const MESSAGES = defineMessages({
     id: 'reverify',
     defaultMessage: 'Reverify',
   },
+  userName: {
+    id: 'userName',
+    defaultMessage: 'user Name',
+  },
   firstName: {
     id: 'firstName',
     defaultMessage: 'First Name',
@@ -33,13 +37,17 @@ export const MESSAGES = defineMessages({
     id: 'email',
     defaultMessage: 'Email',
   },
+  assignedRole: {
+    id: 'assignedRole',
+    defaultMessage: 'Assigned Role',
+  },
   selectCompany: {
     id: 'account.selectCompany',
-    defaultMessage: 'Select a company',
+    defaultMessage: 'Select Company',
   },
   selectRole: {
     id: 'account.selectRole',
-    defaultMessage: 'Select role',
+    defaultMessage: 'Select role(s)',
   },
   deleteDialogMessage: {
     id: 'account.deleteDialogMessage',
@@ -56,5 +64,13 @@ export const MESSAGES = defineMessages({
   reverifyDialogHeader: {
     id: 'account.reverifyDialogHeader',
     defaultMessage: 'Reverify Account',
+  },
+  addNewRole: {
+    id: 'account.addNewRole',
+    defaultMessage: 'Add new Role',
+  },
+  changeCompany: {
+    id: 'account.changeCompany',
+    defaultMessage: 'Change Company',
   },
 });

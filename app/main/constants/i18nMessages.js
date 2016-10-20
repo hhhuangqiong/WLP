@@ -5,6 +5,18 @@ export default defineMessages({
     id: 'all',
     defaultMessage: 'All',
   },
+  add: {
+    id: 'add',
+    defaultMessage: 'Add',
+  },
+  next: {
+    id: 'next',
+    defaultMessage: 'Next',
+  },
+  save: {
+    id: 'save',
+    defaultMessage: 'save',
+  },
   users: {
     id: 'users',
     defaultMessage: 'users',

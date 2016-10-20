@@ -130,6 +130,147 @@ $account-table-width: rem-calc(320);
     }
   }
 
+  &__role-item {
+    border-bottom: 1px solid #e0e0e0;
+    padding: rem-calc(10);
+    margin: 0;
+    display: flex;
+    flex-flow: row wrap;
+    justify-content: space-around;
+    .icon-minus-circle {
+      fill: $brand-primary;
+      width: rem-calc(16);
+      height: rem-calc(16);
+    }
+    .deleteIcon {
+      width: 10%;
+    }
+    .item {
+      width: 90%;
+      display: flex;
+    }
+    .company-name {
+      width: 50%;
+    }
+    .role-name {
+      width: 50%;
+    }
+    &:hover {
+      background: #eef6ff;
+      cursor: pointer;
+    }
+    &:last-child {
+      border-bottom: none;
+    }
+  }
+
+  .active {
+    background-color: #FDF5E6;
+  }
+
+  &-link {
+    color: #4a90e2;;
+    cursor: pointer;
+    margin-top: rem-calc(5);
+    display: inline-block;
+  }
+
+  &__selected-role {
+    height: 160px;
+    overflow-y: auto;
+    margin: rem-calc(15) rem-calc(8) rem-calc(20) rem-calc(30);
+    .role {
+      border-bottom: 1px solid #eeeeee;
+      margin-right: rem-calc(20);
+      cursor: pointer;
+      input {
+        width: rem-calc(18);
+        height: rem-calc(18);
+        vertical-align: middle;
+        margin: 0px;
+      }
+      label {
+        margin-left: rem-calc(10);
+        cursor: pointer;
+        width: 90%;
+      }
+      &:last-child {
+        border-bottom: none;
+      }
+    }
+  }
+
+  &__selected-company {
+    height: 250px;
+    overflow-y: auto;
+    margin: rem-calc(15) rem-calc(8) rem-calc(20) rem-calc(30);
+    .company {
+      padding: rem-calc(10) rem-calc(2);
+      border-bottom: 1px solid #eeeeee;
+      margin-right: rem-calc(20);
+      cursor: pointer;
+      &:last-child {
+        border-bottom: none;
+      }
+    }
+  }
+
+  .select-company {
+    padding: rem-calc(18);
+    .icon {
+      height: rem-calc(25);
+      width: rem-calc(25);
+      margin-bottom: rem-calc(16);
+      fill: #ccc;
+    }
+    .underline {
+      font-size: rem-calc(12);
+      text-decoration: underline;
+    }
+    .company-name {
+      font-size: 16px;
+      display: inline-block;
+      margin-right: rem-calc(8);
+      font-weight: 400;
+    }
+    &__role {
+      margin-top: rem-calc(10);
+    }
+    &__header {
+      display: inline-block;
+      padding-top: rem-calc(7);
+    }
+  }
+
+  &__assignedRole {
+    border: 1px solid #a7a5a5;
+    border-radius: 5px;
+    background: white;
+    margin-top: rem-calc(20);
+    overflow: hidden;
+    .button {
+      padding: rem-calc(6) rem-calc(40);
+      margin: 0px rem-calc(7);
+    }
+    .delete {
+      cursor: pointer;
+      fill: #ccc;
+      height: 1.55rem;
+      width: 1.55rem;
+    }
+    ::-webkit-scrollbar {
+      width: 8px;
+      height: 50px;
+      background: #eeeeee;
+      border-radius: rem-calc(5);
+    }
+    ::-webkit-scrollbar-thumb {
+      background-color: #cfcfcf;
+      border-radius: rem-calc(5);
+      height: rem-calc(50);
+    }
+  }
+
   &__company-selected {
     margin-top: rem-calc(5);
     float: right;
@@ -147,11 +288,6 @@ $account-table-width: rem-calc(320);
   overflow: hidden;
   min-height: $account-page-height;
 
-  .icon {
-    height: rem-calc(60);
-    width: rem-calc(60);
-    margin-bottom: rem-calc(16);
-  }
   &__container {
     background-color: $account-page-color;
     border-radius: 10px;
