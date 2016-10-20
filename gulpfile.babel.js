@@ -10,7 +10,7 @@ import nodemon from 'gulp-nodemon';
 import sass from 'gulp-sass';
 import bless from 'gulp-bless';
 import sourcemaps from 'gulp-sourcemaps';
-import Cache from 'gulp-file-cache';
+import changed from 'gulp-changed';
 import webpack from 'webpack';
 import WebpackDevServer from 'webpack-dev-server';
 import spriteSmith from 'gulp.spritesmith';
@@ -48,10 +48,7 @@ const dest = {
   css: 'public/stylesheets',
   image: 'public/images',
   intl: 'public/locale-data',
-  babel: './build/babel',
 };
-
-const babelCache = new Cache(`${dest.build}/.gulp-cache`);
 
 function _continueOnError(fn) {
   const _fn = fn();
@@ -86,7 +83,7 @@ gulp.task('watch', () => {
   gulp.watch('public/scss/**/*.scss', ['scss']);
 });
 
-gulp.task('clean', () => del([dest.app, `${dest.build}/**/*`, dest.intl, dest.babel, `${dest.build}/.gulp-cache`]));
+gulp.task('clean', () => del([dest.app, `${dest.build}/**/*`, dest.intl]));
 
 const autoprefixerOpts = {
   browsers: ['last 3 versions'],
@@ -135,9 +132,8 @@ gulp.task('copy', () =>
 gulp.task('babel', () => {
   const b = /^watch/.test(argv._[0]) ? _continueOnError(babel) : babel();
   return gulp.src(src.allJs)
-    .pipe(babelCache.filter())
+    .pipe(changed(dest.app))
     .pipe(b)
-    .pipe(babelCache.cache())
     .pipe(sourcemaps.init())
     .pipe(sourcemaps.write('.'))
     .pipe(gulp.dest(dest.app));
