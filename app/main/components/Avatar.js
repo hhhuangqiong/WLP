@@ -26,7 +26,7 @@ function Avatar(props) {
   // icon size, font size, font color and font style will be handled in the scss
   // all the letters will be capital letters.
   const mClassName = classNames('avatar', 'capitalize', className, size);
-  return <UserAvatar className={mClassName} name={name} {...restProps } />;
+  return <UserAvatar className={mClassName} name={name || ' '} {...restProps } />;
 }
 
 Avatar.propTypes = {

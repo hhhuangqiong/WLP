@@ -19,8 +19,8 @@ const AccountInfo = createClass({
   },
 
   render() {
-    const firstName = this.props.firstName || '<First Name>';
-    const lastName = this.props.lastName || '<Last Name>';
+    const firstName = this.props.firstName;
+    const lastName = this.props.lastName;
     const createdAt = this.props.createdAt;
     const status = this.props.isVerified ? SUCCESS_LABEL : FAIL_LABEL;
 
@@ -53,7 +53,7 @@ const AccountInfo = createClass({
           </div>
         </div>
 
-        <h5>{firstName} {lastName}</h5>
+        <h5>{firstName || '<First Name>'} {lastName || '<Last Name>'}</h5>
 
         <If condition={createdAt}>
           <div className="profile-info__time">

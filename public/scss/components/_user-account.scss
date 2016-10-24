@@ -313,9 +313,12 @@ $account-table-width: rem-calc(320);
   .profile-info {
     padding: rem-calc(30);
     text-align: center;
+    position: relative;
 
     &__status {
       margin-right: rem-calc(15);
+      position: absolute;
+      right: 0;
 
       .success {
         color: green;
@@ -332,7 +335,8 @@ $account-table-width: rem-calc(320);
     }
 
     &__icon {
-      margin-left: 42.5%;
+      display: flex;
+      justify-content: center;
       margin-bottom: rem-calc(20);
     }
 
