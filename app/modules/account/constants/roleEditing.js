@@ -4,3 +4,5 @@ export const ROLE_EDIT_STAGES = {
   selectRole: 'selectRole',
   editRole: 'editRole',
 };
+export const FORWARD = 'forward';
+export const BACKWARD = 'backward';

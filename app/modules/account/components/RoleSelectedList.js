@@ -1,7 +1,7 @@
 import React, { PropTypes } from 'react';
 import { injectIntl, intlShape } from 'react-intl';
 import { MESSAGES } from './../constants/i18n';
-import { ROLE_EDIT_STAGES } from './../constants/status';
+import { ROLE_EDIT_STAGES } from './../constants/roleEditing';
 import i18nMessages from '../../../main/constants/i18nMessages';
 import _ from 'lodash';
 import Icon from '../../../main/components/Icon';
@@ -10,7 +10,7 @@ const RoleSelectedList = (props) => {
   const { formatMessage } = props.intl;
 
   return (
-    <div className="account-form__assignedRole select-company">
+    <div className="account-form__assigned-role__company-list">
       <div>
         <span className="company-name">{props.selectedCompany.name}</span>
         {
@@ -52,7 +52,7 @@ const RoleSelectedList = (props) => {
       </div>
       <div role="button"
         className="account-top-bar__button-primary button round item right"
-        onClick={() => props.handleRoleEditStageChanged(ROLE_EDIT_STAGES.addNewRole)}
+        onClick={props.handleSaveCompany}
       >
         <span>{formatMessage(i18nMessages.save)}</span>
       </div>
@@ -77,6 +77,7 @@ RoleSelectedList.propTypes = {
   handleRoleEditStageChanged: PropTypes.func.isRequired,
   handleSelectedRoleChange: PropTypes.func.isRequired,
   handleDeleteCompany: PropTypes.func,
+  handleSaveCompany: PropTypes.func.isRequired,
 };
 
 export default injectIntl(RoleSelectedList);

@@ -2,7 +2,7 @@ import React, { PropTypes } from 'react';
 import _ from 'lodash';
 import { FormattedMessage } from 'react-intl';
 import RolesList from './RolesList';
-import { ROLE_EDIT_STAGES } from './../constants/status';
+import { ROLE_EDIT_STAGES } from './../constants/roleEditing';
 import { MESSAGES } from './../constants/i18n';
 
 const AddNewRole = (props) => (

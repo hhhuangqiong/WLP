@@ -7,7 +7,7 @@ const RolesList = (props) => {
   const companies = _.map(companyIdArray, id =>
     _.find(props.managingCompanies, company => company.id === id));
   return (
-    <div className="account-form__assignedRole">
+    <div className="account-form__assigned-role">
     {
       companies.map((item, index) => (
         <Role

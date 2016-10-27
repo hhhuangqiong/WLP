@@ -2,13 +2,17 @@ import React, { PropTypes, Component } from 'react';
 import classnames from 'classnames';
 import { injectIntl, intlShape } from 'react-intl';
 import _ from 'lodash';
+import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
 import FormField from '../../../main/components/FormField';
 import ConfirmationDialog from '../../../main/components/ConfirmationDialog';
 import { MESSAGES } from './../constants/i18n';
-import { ROLE_EDIT_STAGES } from './../constants/status';
+import { ROLE_EDIT_STAGES, FORWARD, BACKWARD } from './../constants/roleEditing';
 import AddNewRole from './AddNewRole';
 import CompanySelectedList from './CompanySelectedList';
 import RoleSelectedList from './RoleSelectedList';
+
+const ANIMATION_TIME = 500; // ms
+const ENTER_CODE = 13;
 
 class AccountForm extends Component {
   static propTypes = {
@@ -29,7 +33,7 @@ class AccountForm extends Component {
     // This is the process state for assigning roles
     // possible string will lbe
     // addNewRoles, selectCompany, selectRole, editRole
-    RoleEditStage: PropTypes.oneOf(_.values(ROLE_EDIT_STAGES)).isRequired,
+    roleEditStage: PropTypes.oneOf(_.values(ROLE_EDIT_STAGES)).isRequired,
     validateFirstName: PropTypes.func.isRequired,
     validateLastName: PropTypes.func.isRequired,
     validateEmail: PropTypes.func.isRequired,
@@ -46,10 +50,12 @@ class AccountForm extends Component {
     handleCloseReverifyDialog: PropTypes.func.isRequired,
     handleDeleteCompany: PropTypes.func.isRequired,
     handleEditRole: PropTypes.func.isRequired,
+    handleSaveCompany: PropTypes.func.isRequired,
+    previousRoleEditStage: PropTypes.oneOf(_.values(ROLE_EDIT_STAGES)).isRequired,
   };
 
   onSubmit = (e) => {
-    if (e.which === 13) {
+    if (e.which === ENTER_CODE) {
       e.preventDefault();
       this.props.handleSave(e);
     }
@@ -68,23 +74,65 @@ class AccountForm extends Component {
     );
   }
 
+  renderEditRoleList = (status) => {
+    const {
+      selectedCompany,
+      currentRoles,
+      previousRoleEditStage,
+      roleEditStage,
+      ...restProps,
+    } = this.props;
+
+    let animationDirection;
+    if (previousRoleEditStage === ROLE_EDIT_STAGES.selectRole
+      && roleEditStage === ROLE_EDIT_STAGES.selectCompany) {
+      animationDirection = BACKWARD;
+    } else {
+      animationDirection = FORWARD;
+    }
+
+    return (
+      <div className="account-form__assigned-role select-company">
+        <ReactCSSTransitionGroup
+          transitionName = {animationDirection}
+          transitionEnter = {ANIMATION_TIME}
+          transitionLeaveTimeout = {ANIMATION_TIME}
+        >
+        {(() => {
+          switch (status) {
+            case ROLE_EDIT_STAGES.selectCompany:
+              return (
+                <CompanySelectedList
+                  key={ROLE_EDIT_STAGES.selectCompany}
+                  selectedCompany={selectedCompany}
+                  {...restProps}
+                />
+              );
+            case ROLE_EDIT_STAGES.selectRole:
+              return (
+                <RoleSelectedList
+                  key={ROLE_EDIT_STAGES.selectRole}
+                  selectedCompany={selectedCompany}
+                  editRole={_.includes(_.keys(currentRoles), selectedCompany.id)}
+                  {...restProps}
+                />
+              );
+            default: return null;
+          }
+        })()}
+        </ReactCSSTransitionGroup>
+      </div>
+    );
+  }
 
   render() {
     const {
       firstName,
       lastName,
       email,
-      managingCompanies,
-      selectedCompany,
-      handleSelectedCompanyChange,
-      selectedRoles,
-      currentRoles,
-      handleSelectedRoleChange,
-      handleRoleEditStageChanged,
-      handleEditRole,
-      handleDeleteCompany,
       rolesError,
-   } = this.props;
+      ...restProps,
+    } = this.props;
 
     const { formatMessage } = this.props.intl;
 
@@ -162,51 +210,13 @@ class AccountForm extends Component {
         </FormField>
 
         <FormField label={formatMessage(MESSAGES.assignedRole)}>
-          {(() => {
-            switch (this.props.RoleEditStage) {
-              case ROLE_EDIT_STAGES.addNewRole:
-                return (
-                  <AddNewRole
-                    currentRoles={currentRoles}
-                    managingCompanies={managingCompanies}
-                    handleRoleEditStageChanged={handleRoleEditStageChanged}
-                    handleEditRole={handleEditRole}
-                    handleDeleteCompany={handleDeleteCompany}
-                  />
-                );
-              case ROLE_EDIT_STAGES.selectCompany:
-                return (
-                  <CompanySelectedList
-                    managingCompanies={managingCompanies}
-                    handleSelectedCompanyChange={handleSelectedCompanyChange}
-                    selectedCompany={selectedCompany}
-                    handleRoleEditStageChanged={handleRoleEditStageChanged}
-                  />
-                );
-              case ROLE_EDIT_STAGES.selectRole:
-                return (
-                  <RoleSelectedList
-                    selectedCompany={selectedCompany}
-                    selectedRoles={selectedRoles}
-                    handleRoleEditStageChanged={handleRoleEditStageChanged}
-                    handleSelectedRoleChange={handleSelectedRoleChange}
-                    editRole={false}
-                  />
-                );
-              case ROLE_EDIT_STAGES.editRole:
-                return (
-                  <RoleSelectedList
-                    selectedCompany={selectedCompany}
-                    selectedRoles={selectedRoles}
-                    handleRoleEditStageChanged={handleRoleEditStageChanged}
-                    handleSelectedRoleChange={handleSelectedRoleChange}
-                    handleDeleteCompany={handleDeleteCompany}
-                    editRole
-                  />
-                );
-              default: return null;
-            }
-          })()}
+          {
+            this.props.roleEditStage === ROLE_EDIT_STAGES.addNewRole ?
+            <AddNewRole
+              key={ROLE_EDIT_STAGES.addNewRole}
+              {...restProps}
+            /> : this.renderEditRoleList(this.props.roleEditStage)
+          }
           {this.renderErrorMessages(rolesError)}
         </FormField>
       </form>

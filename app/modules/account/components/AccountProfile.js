@@ -9,7 +9,7 @@ import { injectJoiValidation } from 'm800-user-locale/joi-validation';
 import ApplicationStore from '../../../main/stores/ApplicationStore';
 import AccountStore from '../stores/AccountStore';
 import { MESSAGES } from './../constants/i18n';
-import { ROLE_EDIT_STAGES } from '../constants/status';
+import { ROLE_EDIT_STAGES } from '../constants/roleEditing';
 
 import createAccount from '../actions/createAccount';
 import updateAccount from '../actions/updateAccount';
@@ -67,7 +67,8 @@ class AccountProfile extends Component {
       selectedRoles: [],
       currentRoles: {},
       operationToken: Math.random(),
-      RoleEditStage: ROLE_EDIT_STAGES.addNewRole,
+      roleEditStage: ROLE_EDIT_STAGES.addNewRole,
+      previousRoleEditStage: null,
     };
     this.handleFirstNameChange = this.handleFirstNameChange.bind(this);
     this.handleLastNameChange = this.handleLastNameChange.bind(this);
@@ -88,6 +89,7 @@ class AccountProfile extends Component {
     this.handleOpenReverifyDialog = this.handleOpenReverifyDialog.bind(this);
     this.handleCloseReverifyDialog = this.handleCloseReverifyDialog.bind(this);
     this.handleDeleteCompany = this.handleDeleteCompany.bind(this);
+    this.handleSaveCompany = this.handleSaveCompany.bind(this);
   }
 
   componentDidMount() {
@@ -111,7 +113,8 @@ class AccountProfile extends Component {
 
     // fetch account since the account id is different from the path
     if (nextProps.params.accountId && nextProps.params.accountId !== accountId) {
-      this.context.executeAction(fetchAccount, { id: nextProps.params.accountId, carrierId: identity });
+      this.context.executeAction(fetchAccount,
+        { id: nextProps.params.accountId, carrierId: identity });
       return;
     }
 
@@ -151,7 +154,7 @@ class AccountProfile extends Component {
     this.state.selectedRoles = [];
     this.state.selectedCompany = {};
     this.state.currentRoles = {};
-    this.setState({ RoleEditStage: ROLE_EDIT_STAGES.addNewRole });
+    this.setState({ roleEditStage: ROLE_EDIT_STAGES.addNewRole });
     // convert into current roles format in form of object
     if (props.account.roles) {
       _.each(props.account.roles, role => {
@@ -193,18 +196,22 @@ class AccountProfile extends Component {
 
   handleEditRole(id) {
     this.handleSelectedCompanyChange(id);
-    this.handleRoleEditStageChanged(ROLE_EDIT_STAGES.editRole);
+    this.handleRoleEditStageChanged(ROLE_EDIT_STAGES.selectRole);
+  }
+
+  handleSaveCompany() {
+    this.state.currentRoles[this.state.selectedCompany.id] = this.state.selectedRoles;
+    this.handleRoleEditStageChanged(ROLE_EDIT_STAGES.addNewRole);
   }
 
   handleDeleteCompany(id) {
     const roles = _.omit(this.state.currentRoles, id);
-    this.setState({ currentRoles: roles });
-    this.setState({ selectedRoles: [] });
+    this.setState({ currentRoles: roles, selectedRoles: [] });
     this.handleRoleEditStageChanged(ROLE_EDIT_STAGES.addNewRole);
   }
 
-  handleRoleEditStageChanged(RoleEditStage) {
-    this.setState({ RoleEditStage });
+  handleRoleEditStageChanged(roleEditStage) {
+    this.setState({ roleEditStage, previousRoleEditStage: this.state.roleEditStage });
   }
 
   containErrors() {
@@ -330,7 +337,6 @@ class AccountProfile extends Component {
       const index = selectedRoles.indexOf(e.target.value);
       selectedRoles.splice(index, 1);
     }
-    this.state.currentRoles[this.state.selectedCompany.id] = selectedRoles;
     this.setState({ selectedRoles });
   }
 
@@ -378,7 +384,8 @@ class AccountProfile extends Component {
       selectedCompany,
       selectedRoles,
       currentRoles,
-      RoleEditStage,
+      roleEditStage,
+      previousRoleEditStage,
     } = this.state;
 
     const {
@@ -401,9 +408,10 @@ class AccountProfile extends Component {
         lastNameError={errors.lastName}
         emailError={errors.email}
         rolesError={errors.roles}
+        previousRoleEditStage={previousRoleEditStage}
         isCreate={this.isCreate()}
         isVerified={account.isVerified}
-        RoleEditStage={RoleEditStage}
+        roleEditStage={roleEditStage}
         validateFirstName={this.validateFirstName}
         validateLastName={this.validateLastName}
         validateEmail={this.validateEmail}
@@ -420,6 +428,7 @@ class AccountProfile extends Component {
         handleOpenReverifyDialog={this.handleOpenReverifyDialog}
         handleCloseReverifyDialog={this.handleCloseReverifyDialog}
         handleDeleteCompany={this.handleDeleteCompany}
+        handleSaveCompany={this.handleSaveCompany}
       />
     );
   }

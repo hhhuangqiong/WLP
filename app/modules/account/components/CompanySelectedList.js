@@ -4,12 +4,12 @@ import { MESSAGES } from './../constants/i18n';
 import classNames from 'classnames';
 import i18nMessages from '../../../main/constants/i18nMessages';
 import Icon from '../../../main/components/Icon';
-import { ROLE_EDIT_STAGES } from './../constants/status';
+import { ROLE_EDIT_STAGES } from './../constants/roleEditing';
 
 const CompanySelectedList = (props) => {
   const { formatMessage } = props.intl;
   return (
-    <div className="account-form__assignedRole select-company">
+    <div className="account-form__assigned-role__company-list">
       <div>
         <span className="select-company__header">
           {formatMessage(MESSAGES.selectCompany)}
@@ -23,9 +23,9 @@ const CompanySelectedList = (props) => {
       </div>
       <div className="account-form__selected-company">
       {
-        props.managingCompanies.map((company, index) =>
+        props.managingCompanies.map((company) =>
           <div
-            key={index}
+            key={company.id}
             className={classNames('company', { active: company.id === props.selectedCompany.id })}
             onClick={() => props.handleSelectedCompanyChange(company.id)}
           >
