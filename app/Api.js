@@ -3,7 +3,7 @@ import superagent from 'superagent';
 
 import {
   exportApi, vsfApi, roleApi, carrierWalletApi, imApi, callApi,
-  provisioningApi, smsApi, userApi, verificationApi, topUpApi, overviewApi,
+  provisioningApi, smsApi, userApi, verificationApi, topUpApi, overviewApi, resourceApi,
 } from './server/api';
 
 import { API_PATH_PREFIX, EXPORT_PATH_PREFIX } from './config';
@@ -77,6 +77,7 @@ _.assign(
   imApi(),
   overviewApi(),
   callApi(),
+  resourceApi(),
 );
 
 module.exports = Api;

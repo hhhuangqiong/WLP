@@ -11,6 +11,7 @@ const companies = fetchDep('CompanyController');
 const accounts = fetchDep('AccountController');
 const provision = fetchDep('ProvisionController');
 const carriers = fetchDep('CarrierController');
+const resources = fetchDep('ResourceController');
 const carrierWalletController = fetchDep('CarrierWalletController');
 const meController = fetchDep('MeController');
 const decodeParamsMiddeware = fetchDep('DecodeParamsMiddeware');
@@ -250,6 +251,10 @@ routes
     provision.putProvision,
   ])
   // used in the access management section
+  .get('/resource', [
+    authorize(permission(RESOURCE.ROLE)),
+    resources.getCarrierResources,
+  ])
   .get('/roles', [
     authorize(permission(RESOURCE.ROLE)),
     roleController.list,

@@ -9,6 +9,7 @@ import addRole from './../actions/addRole';
 import updateRole from '../actions/updateRole';
 import removeRole from './../actions/removeRole';
 import fetchRoles from './../actions/fetchRoles';
+import getCarrierResources from './../actions/getCarrierResources';
 import _ from 'lodash';
 import { MESSAGES } from './../constants/i18n';
 import RoleStore from './../stores/RoleStore';
@@ -18,7 +19,6 @@ import AuthStore from '../../../main/stores/AuthStore';
 import ConfirmationDialog from '../../../main/components/ConfirmationDialog';
 import Permit from '../../../main/components/common/Permit';
 import { RESOURCE, ACTION, permission } from '../../../main/acl/acl-enums';
-
 
 export class RolesPage extends Component {
   static get contextTypes() {
@@ -30,11 +30,17 @@ export class RolesPage extends Component {
   static get propTypes() {
     return {
       intl: intlShape.isRequired,
-      roles: PropTypes.arrayOf(PropTypes.object),
-      permissions: PropTypes.arrayOf(PropTypes.object),
-      company: PropTypes.object.isRequired,
       limit: PropTypes.number,
       user: PropTypes.object,
+      company: PropTypes.object.isRequired,
+      roles: PropTypes.arrayOf(PropTypes.object),
+      permissions: PropTypes.arrayOf(PropTypes.object),
+      carrierPermissions: PropTypes.array,
+    };
+  }
+  static get defaultProps() {
+    return {
+      carrierPermissions: [],
     };
   }
   constructor(props) {
@@ -63,6 +69,7 @@ export class RolesPage extends Component {
   componentDidMount() {
     const { params: { identity: carrierId } } = this.context;
     this.context.executeAction(fetchRoles, { carrierId });
+    this.context.executeAction(getCarrierResources, { carrierId });
   }
   componentWillReceiveProps(nextProps) {
     this.state.displayedRoles = nextProps.roles;
@@ -76,7 +83,9 @@ export class RolesPage extends Component {
       this.setState({ hasPermission: false });
       return;
     }
-    this.setState({ hasPermission: permissions.indexOf(permission(RESOURCE.ROLE, ACTION.UPDATE)) >= 0 });
+    this.setState({
+      hasPermission: permissions.indexOf(permission(RESOURCE.ROLE, ACTION.UPDATE)) >= 0,
+    });
   }
   addRole() {
     const role = {
@@ -224,7 +233,7 @@ export class RolesPage extends Component {
               hasPermission= {this.state.hasPermission}
               roles={this.state.displayedRoles}
               adminRoleIndex={this.state.adminRoleIndex}
-              permissions={this.props.permissions}
+              permissions={this.props.carrierPermissions}
               hoveredRoleIndex={this.state.hoveredRoleIndex}
               editedRoleIndex={this.state.editedRoleIndex}
               onRoleSaved={this.saveRole}

@@ -9,6 +9,29 @@ function flattenPermissions(permissions) {
   );
 }
 
+function deriveResources(carrierProfile) {
+  // This defines resource availability depending on capabilities
+  const PERMISSION_DEPENDENCIES = {
+    [RESOURCE.GENERAL]: ({ serviceType }) => serviceType !== 'SDK',
+    [RESOURCE.USER]: () => true, // all companies wiil show accounts sections
+    [RESOURCE.END_USER]: () => true, // all companies will show end user section
+    [RESOURCE.ROLE]: () => true, // all companies will show access management
+    [RESOURCE.CALL]: ({ capabilities }) => any(capabilities, x => /^call/.test(x)),
+    [RESOURCE.WHITELIST]: ({ capabilities }) =>
+      includes(capabilities, CAPABILITY.END_USER_WHITELIST),
+    [RESOURCE.IM]: ({ capabilities }) => includes(capabilities, CAPABILITY.IM),
+    [RESOURCE.SMS]: ({ capabilities }) => includes(capabilities, CAPABILITY.IM_TO_SMS),
+    [RESOURCE.VSF]: ({ capabilities }) => includes(capabilities, CAPABILITY.VSF),
+    // show top up when it is pre-paid
+    [RESOURCE.TOP_UP]: ({ paymentMode }) => paymentMode === 'PRE_PAID',
+    [RESOURCE.VERIFICATION_SDK]: ({ serviceType, capabilities }) =>
+      any(capabilities, x => /^verification/.test(x)) || serviceType === 'SDK',
+  };
+  const resources = map(PERMISSION_DEPENDENCIES, (rule, p) => rule(carrierProfile) ? p : null)
+    .filter(p => p !== null);
+  return resources;
+}
+
 function deriveProhibitions(carrierProfile) {
   // This defines resource/permission availability depending on capabilities
   // Not sure if this mapping is correct
@@ -23,7 +46,8 @@ function deriveProhibitions(carrierProfile) {
     [permission(RESOURCE.IM)]: ({ capabilities }) => includes(capabilities, CAPABILITY.IM),
     [permission(RESOURCE.SMS)]: ({ capabilities }) => includes(capabilities, CAPABILITY.IM_TO_SMS),
     [permission(RESOURCE.VSF)]: ({ capabilities }) => includes(capabilities, CAPABILITY.VSF),
-    [permission(RESOURCE.TOP_UP)]: ({ paymentMode }) => paymentMode === 'PRE_PAID', // show top up when it is pre-paid
+    // show top up when it is pre-paid
+    [permission(RESOURCE.TOP_UP)]: ({ paymentMode }) => paymentMode === 'PRE_PAID',
     [permission(RESOURCE.VERIFICATION_SDK)]: ({ serviceType, capabilities }) =>
       any(capabilities, x => /^verification/.test(x)) || serviceType === 'SDK',
   };
@@ -34,7 +58,6 @@ function deriveProhibitions(carrierProfile) {
 }
 
 export function createAclResolver(logger, iamClient, provisionHelper) {
-
   function extractProfile(provisioning, identifier) {
     if (!provisioning || !provisioning.profile) {
       logger.debug(`Failed to find provisioning for company: ${identifier}.`);
@@ -53,8 +76,24 @@ export function createAclResolver(logger, iamClient, provisionHelper) {
     return extractProfile(item);
   }
 
-  async function resolve(params = {}) {
-    params = defaults(params, {
+  async function getCarrierResources(params = {}) {
+    if (!isObject(params)) {
+      throw new Error('Expected params to be an object.');
+    }
+    if (!params.carrierId) {
+      throw new Error('Expected context to contain carrierId');
+    }
+    const provisioningProfile = await getProvisioningProfileByCarrierId(params.carrierId);
+    const carrierResources = deriveResources(provisioningProfile);
+    const company = await iamClient.getCompany({ id: provisioningProfile.companyId });
+    if (company.reseller) {
+      carrierResources.push(RESOURCE.COMPANY);
+    }
+    return carrierResources;
+  }
+
+  async function resolve(args = {}) {
+    const params = defaults(args, {
       owner: RESOURCE_OWNER.CURRENT_COMPANY,
     });
     if (!isObject(params)) {
@@ -89,8 +128,8 @@ export function createAclResolver(logger, iamClient, provisionHelper) {
       permissions: userPermissions,
     };
   }
-
   return {
     resolve,
+    getCarrierResources,
   };
 }

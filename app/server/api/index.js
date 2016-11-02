@@ -10,6 +10,7 @@ import vsfApi from './vsf';
 import topUpApi from './topUp';
 import imApi from './im';
 import overviewApi from './overview';
+import resourceApi from './resource';
 
 export {
   callApi,
@@ -24,4 +25,5 @@ export {
   topUpApi,
   imApi,
   overviewApi,
+  resourceApi,
 };
