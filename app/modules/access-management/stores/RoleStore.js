@@ -13,7 +13,7 @@ const RoleStore = createStore({
   },
   initialize() {
     this.roles = [];
-    this.permissions = PERMISSIONS;
+    this.carrierPermissions = [];
   },
   handleRoleUpdated(role) {
     const roles = this.roles.slice(0);
@@ -27,18 +27,21 @@ const RoleStore = createStore({
     this.emitChange();
   },
   handleResourcesReceived(resources) {
-    const allPermissions = _.cloneDeep(this.permissions);
-    // filter the allPermissions according to the resources
-    this.carrierPermissions = _.filter(allPermissions, eachPermission => {
-      if (eachPermission.children) {
-        // we wanna filter the allPermission children
-        /* eslint-disable no-param-reassign */
-        eachPermission.children = _.filter(eachPermission.children, permissionChild =>
-          _.includes(resources, permissionChild.resource));
-        /* eslint-enable */
-        return eachPermission.children.length > 0;
+    const carrierPermissions = _.map(PERMISSIONS, eachPermission => {
+      if (!eachPermission.children) {
+        return eachPermission;
       }
-      return _.includes(resources, eachPermission.resource);
+      return {
+        ...eachPermission,
+        children: _.filter(eachPermission.children, permissionChild =>
+          _.includes(resources, permissionChild.resource)),
+      };
+    });
+    this.carrierPermissions = _.filter(carrierPermissions, eachPermission => {
+      if (!eachPermission.children) {
+        return _.includes(resources, eachPermission.resource);
+      }
+      return eachPermission.children.length > 0;
     });
     this.emitChange();
   },
@@ -53,7 +56,6 @@ const RoleStore = createStore({
   getState() {
     return {
       roles: this.roles,
-      permissions: this.permissions,
       carrierPermissions: this.carrierPermissions,
     };
   },
@@ -62,7 +64,6 @@ const RoleStore = createStore({
   },
   rehydrate(state) {
     this.roles = state.roles;
-    this.permissions = state.permissions;
     this.carrierPermissions = state.carrierPermissions;
   },
 });
