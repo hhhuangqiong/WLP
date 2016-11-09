@@ -1,6 +1,6 @@
 .company-wallet-header {
   .company-wallet-header__link {
-    display: flex;
+    display: inline-flex;
     align-items: center;
     padding: rem-calc(10 0 10 0);
     h4 {
@@ -10,6 +10,9 @@
       margin-right: rem-calc(10);
       fill: $gray;
     }
+  }
+  .export-download-button {
+    display: inline-block;
   }
 }
 

@@ -15,12 +15,7 @@ export const CompanyWalletStore = createStore({
     this.walletsLoading = true;
     this.wallets = [];
     this.topUpForms = {};
-    this.transactionsPage = {
-      pageNumber: 0,
-      pageSize: 10,
-      totalElements: 0,
-      contents: [],
-    };
+    this.transactionsPage = null;
   },
   getState() {
     return {
@@ -86,6 +81,16 @@ export const CompanyWalletStore = createStore({
     ];
     this.emitChange();
   },
+  dehydrate() {
+    return this.getState();
+  },
+  rehydrate(state) {
+    this.wallets = state.wallets;
+    this.walletsLoading = state.walletsLoading;
+    this.transactionsPage = state.transactionsPage;
+    this.topUpForms = state.topUpForms;
+  },
+
 });
 
 export default CompanyWalletStore;

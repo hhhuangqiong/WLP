@@ -17,6 +17,7 @@ function WalletTransactionsTable(props) {
     pageSize,
     totalElements,
     onPageChange,
+    pageSizeOptions,
   } = props;
   return (
     <table className="company-wallet-table">
@@ -56,6 +57,7 @@ function WalletTransactionsTable(props) {
             pageSize={pageSize}
             totalElements={totalElements}
             onChange={onPageChange}
+            pageSizeOptions={pageSizeOptions}
           />
         </td>
       </tr>
@@ -77,6 +79,7 @@ WalletTransactionsTable.propTypes = {
     transactionId: PropTypes.string,
   })),
   onPageChange: PropTypes.func,
+  pageSizeOptions: PropTypes.arrayOf(PropTypes.number),
 };
 
 export default injectIntl(WalletTransactionsTable);
