@@ -25,12 +25,11 @@ class Permit extends Component {
 Permit.propTypes = {
   user: PropTypes.object,
   permission: PropTypes.string,
+  children: PropTypes.element,
 };
 
-Permit = connectToStores(Permit, [AuthStore], (context) => {
-  return {
-    user: context.getStore(AuthStore).getUser(),
-  };
-});
+Permit = connectToStores(Permit, [AuthStore], (context) => (
+  { user: context.getStore(AuthStore).getUser() }
+));
 
 export default Permit;

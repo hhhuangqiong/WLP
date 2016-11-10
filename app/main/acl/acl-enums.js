@@ -48,6 +48,7 @@ export const RESOURCE = {
   SMS: 'sms',
   VERIFICATION_SDK: 'verificationSdk',
   WHITELIST: 'whitelist',
+  CALL_EXPORT: 'callExport',
 };
 
 export const RESOURCES = Object.values(RESOURCE);

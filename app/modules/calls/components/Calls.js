@@ -12,6 +12,7 @@ import {
 } from 'react-intl';
 
 import { FluxibleMixin } from 'fluxible-addons-react';
+import { RESOURCE, ACTION, permission } from '../../../main/acl/acl-enums';
 
 import * as FilterBar from '../../../main/components/FilterBar';
 import DatePicker from '../../../main/components/DatePicker';
@@ -27,6 +28,7 @@ import CallsTable from './CallsTable';
 import CallsStore from '../stores/CallsStore';
 import ClientConfigStore from '../../../main/stores/ClientConfigStore';
 import Searchbox from '../../../main/components/Searchbox';
+import Permit from '../../../main/components/common/Permit';
 
 import Export from '../../../main/file-export/components/Export';
 import CallsExportForm from './CallsExportForm';
@@ -315,13 +317,15 @@ const Calls = React.createClass({
               </div>
             </div>
 
-            <Export exportType="Calls">
-              <CallsExportForm
-                startDate={this.state.startDate}
-                endDate={this.state.endDate}
-                netType={this.state.type}
-              />
-            </Export>
+            <Permit permission={permission(RESOURCE.CALL_EXPORT, ACTION.READ)}>
+              <Export exportType="Calls">
+                <CallsExportForm
+                  startDate={this.state.startDate}
+                  endDate={this.state.endDate}
+                  netType={this.state.type}
+                />
+              </Export>
+            </Permit>
 
             <Searchbox
               value={this.state.search}

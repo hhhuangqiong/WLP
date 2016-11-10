@@ -103,7 +103,7 @@ export default function (port) {
   server.use(config.EXPORT_PATH_PREFIX, require('./routers/export').default);
   server.use(config.API_PATH_PREFIX, require('./routers/api').default);
   server.use(config.API_PATH_PREFIX, apiErrorHandlerMiddleware);
-
+  server.use(config.EXPORT_PATH_PREFIX, apiErrorHandlerMiddleware);
   // introspect user access token and log out the user if invalid token
   server.use(authenticationMiddleware);
 

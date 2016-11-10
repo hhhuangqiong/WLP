@@ -139,6 +139,15 @@ export class RolesPage extends Component {
     actions = operation === 'add'
       ? [...actions, action]
       : without(actions, action);
+    // if the callExport is ticked, then the call would be also ticked
+    if (resource === RESOURCE.CALL_EXPORT && _.includes(actions, ACTION.READ)) {
+      roles[index].permissions[RESOURCE.CALL] = actions;
+    }
+    // if the call is unticked , then the callExport will also be unticked
+    if (resource === RESOURCE.CALL
+      && _.isEmpty(actions) && !_.isEmpty(role.permissions[RESOURCE.CALL_EXPORT])) {
+      roles[index].permissions[RESOURCE.CALL_EXPORT] = actions;
+    }
     roles[index].permissions[resource] = actions;
     this.setState({ displayedRoles: roles });
   }

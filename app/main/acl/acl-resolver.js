@@ -1,12 +1,15 @@
 import { isObject, includes, any, difference, flatten, map, defaults } from 'lodash';
 import { NotFoundError } from 'common-errors';
-
 import { RESOURCE, CAPABILITY, permission, ACTION, RESOURCE_OWNER } from './acl-enums';
 
 function flattenPermissions(permissions) {
   return flatten(
     map(permissions, (actions, resource) => actions.map(action => (`${resource}:${action}`)))
   );
+}
+
+function filterCallAndExport(capabilities) {
+  return any(capabilities, x => /^call/.test(x));
 }
 
 function deriveResources(carrierProfile) {
@@ -16,7 +19,8 @@ function deriveResources(carrierProfile) {
     [RESOURCE.USER]: () => true, // all companies wiil show accounts sections
     [RESOURCE.END_USER]: () => true, // all companies will show end user section
     [RESOURCE.ROLE]: () => true, // all companies will show access management
-    [RESOURCE.CALL]: ({ capabilities }) => any(capabilities, x => /^call/.test(x)),
+    [RESOURCE.CALL]: ({ capabilities }) => filterCallAndExport(capabilities),
+    [RESOURCE.CALL_EXPORT]: ({ capabilities }) => filterCallAndExport(capabilities),
     [RESOURCE.WHITELIST]: ({ capabilities }) =>
       includes(capabilities, CAPABILITY.END_USER_WHITELIST),
     [RESOURCE.IM]: ({ capabilities }) => includes(capabilities, CAPABILITY.IM),
@@ -40,7 +44,7 @@ function deriveProhibitions(carrierProfile) {
     [permission(RESOURCE.END_USER)]: () => true, // all companies will show end user section
     [permission(RESOURCE.END_USER, ACTION.UPDATE)]: ({ capabilities }) =>
       includes(capabilities, CAPABILITY.END_USER_SUSPENSION), // activate, suspend user
-    [permission(RESOURCE.CALL)]: ({ capabilities }) => any(capabilities, x => /^call/.test(x)),
+    [permission(RESOURCE.CALL)]: ({ capabilities }) => filterCallAndExport(capabilities),
     [permission(RESOURCE.WHITELIST)]: ({ capabilities }) =>
       includes(capabilities, CAPABILITY.END_USER_WHITELIST),
     [permission(RESOURCE.IM)]: ({ capabilities }) => includes(capabilities, CAPABILITY.IM),
