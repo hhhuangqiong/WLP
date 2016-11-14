@@ -3,6 +3,8 @@ import classNames from 'classnames';
 import Select from 'react-select';
 import { injectIntl, defineMessages, intlShape, FormattedMessage } from 'react-intl';
 
+import ValidationErrorLabel from '../../../main/components/ValidationErrorLabel';
+
 const MESSAGES = defineMessages({
   selectCountry: {
     id: 'company.selectCountry',
@@ -13,19 +15,6 @@ const MESSAGES = defineMessages({
     defaultMessage: 'Select a timezone',
   },
 });
-
-function renderErrorMessages(errorMessages) {
-  if (!errorMessages) {
-    return null;
-  }
-  return (
-    <label>
-      {errorMessages.map((errorMsg, index) => (
-        <div key={index}>{errorMsg}</div>
-      ))}
-    </label>
-  );
-}
 
 const CompanyDescription = (props) => {
   const {
@@ -43,7 +32,7 @@ const CompanyDescription = (props) => {
     intl: { formatMessage },
    } = props;
   return (
-    <div className="company-description">
+    <div className="company-description company-content">
     <div className="row" defaultActiveKey = "2">
       <div className="large-10 columns">
         <label>
@@ -59,7 +48,7 @@ const CompanyDescription = (props) => {
           onBlur={validateField('companyName')}
           disabled={disabled}
         />
-        {renderErrorMessages(errors.companyName)}
+        <ValidationErrorLabel messages={errors.companyName} />
       </div>
     </div>
       <div className="row">
@@ -80,7 +69,7 @@ const CompanyDescription = (props) => {
             clearable={false}
             disabled={disabled}
           />
-          {renderErrorMessages(errors.country)}
+          <ValidationErrorLabel messages={errors.coutry} />
         </div>
       </div>
       <div className="row">
@@ -101,7 +90,7 @@ const CompanyDescription = (props) => {
             clearable={false}
             disabled={disabled}
           />
-          {renderErrorMessages(errors.timezone)}
+          <ValidationErrorLabel messages={errors.timezone} />
         </div>
       </div>
     </div>

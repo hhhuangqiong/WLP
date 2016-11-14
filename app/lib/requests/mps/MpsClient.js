@@ -1,7 +1,7 @@
 import Q from 'q';
 import request from 'superagent';
 import { HttpStatusError, ArgumentNullError, ValidationError } from 'common-errors';
-import { isString, get, isNumber, omit, forEach, isEqual, merge, cloneDeep } from 'lodash';
+import { isString, get, isNumber, omit, forEach, isEqual, merge, cloneDeep, isObject } from 'lodash';
 import logger from 'winston';
 
 const serviceFilter = ['SDK', 'WHITE_LABEL'];
@@ -32,7 +32,9 @@ export default class MpsClient {
     // compare each field and ensure the data is exactly the same
     forEach(presetData, (value, key) => {
       // check the values whether identical to the preset value
-      if (!isEqual(mCommand[key], value)) {
+      // since user can configure more setting than preset's value like smsc setting,
+      // it will only check the first level non object values
+      if (!isObject(value) && !isEqual(mCommand[key], value)) {
         throw new ValidationError(`Data ${key} is invalid`);
       }
     });

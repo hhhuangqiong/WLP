@@ -29,6 +29,10 @@ export const MESSAGES = defineMessages({
     id: 'companyCapabilities',
     defaultMessage: 'Company Capabilities',
   },
+  smscSetting: {
+    id: 'companySmscSetting',
+    defaultMessage: 'SMSC Setting',
+  },
   companyCode: {
     id: 'companyCode',
     defaultMessage: 'Company Code',
@@ -145,6 +149,18 @@ export const MESSAGES = defineMessages({
     id: 'company.HttpStatusErrorDescription',
     defaultMessage: 'HttpStatusError error occurred. Contact support with the following trace id',
   },
+  ip: {
+    id: 'ip',
+    defaultMessage: 'ip',
+  },
+  port: {
+    id: 'port',
+    defaultMessage: 'port',
+  },
+  smscBinding: {
+    id: 'SMSCbinding',
+    defaultMessage: 'SMSC binding',
+  },
 });
 
 export const CAPABILITIES = {
@@ -183,4 +199,21 @@ export const WALLET_TYPE = {
   END_USER: 'WALLET_END_USER',
   OCS_INTEGRATION: 'WALLET_OCS_INTEGRATION',
   COMPANY: 'WALLET_COMPANY',
+};
+export const SMSC_TYPE = {
+  DEFAULT: 'DEFAULT',
+  CUSTOM: 'CUSTOM',
+};
+export const SMSC_TYPE_LABEL = {
+  DEFAULT: 'Default SMSC',
+  CUSTOM: 'Custom SMSC',
+};
+export const SMSC_DATA_ID = {
+  USERNAME: 'smscValues.username',
+  PASSWORD: 'smscValues.password',
+  IP: 'smscValues.binding.ip',
+  PORT: 'smscValues.binding.port',
+  BINDINGS: 'smsc.bindings',
+  BINDING: 'smscValues.binding',
+  TYPE: 'smscValues.type',
 };

@@ -2,20 +2,8 @@ import React, { PropTypes } from 'react';
 import classNames from 'classnames';
 import { injectIntl, intlShape, FormattedMessage } from 'react-intl';
 import SwitchButtonGroup from '../../../main/components/SwitchButtonGroup';
+import ValidationErrorLabel from '../../../main/components/ValidationErrorLabel';
 import StatusDisplay from './StatusDisplay';
-
-function renderErrorMessages(errorMessages) {
-  if (!errorMessages) {
-    return null;
-  }
-  return (
-    <label>
-      {errorMessages.map((errorMsg, index) => (
-        <div key={index}>{errorMsg}</div>
-      ))}
-    </label>
-  );
-}
 
 const CompanyProfileInfo = (props) => {
   const {
@@ -34,7 +22,7 @@ const CompanyProfileInfo = (props) => {
     handleOpenErrorDialog,
    } = props;
   return (
-    <div className="company-profile">
+    <div className="company-profile company-content">
       {
         status ?
         <StatusDisplay status={status} handleOpenErrorDialog={handleOpenErrorDialog} /> :
@@ -55,7 +43,7 @@ const CompanyProfileInfo = (props) => {
             onBlur={validateField('companyCode')}
             disabled={!!disabled.companyCode}
           />
-          {renderErrorMessages(errors.companyCode)}
+          <ValidationErrorLabel messages={errors.companyCode} />
         </div>
       </div>
       <div className="row">

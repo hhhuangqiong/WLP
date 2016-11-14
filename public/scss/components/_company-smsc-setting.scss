@@ -1,0 +1,46 @@
+.company-smsc-setting {
+  .smsc-bindings-table {
+    @include tableBorder(5px);
+    margin-top: rem-calc(20);
+    overflow: hidden;
+    position: relative;
+    .smsc-binding-item {
+      @include tableItem();
+      padding: rem-calc(10);
+      display: flex;
+      color: $black;
+    }
+    &.disabled {
+      pointer-events: none;
+      .icon-minus-circle {
+        display: none;
+      }
+    }
+  }
+  .icon-minus-circle {
+    fill: $brand-primary;
+    width: rem-calc(16);
+    height: rem-calc(16);
+  }
+  .icon-error {
+    fill: $icon-close-color;
+    width: rem-calc(25);
+    height: rem-calc(25);
+  }
+  &__link {
+    color: $info-color;
+    cursor: pointer;
+    font-size: rem-calc(14);
+    display: inline-flex;
+    &.disabled {
+      display: none;
+    }
+  }
+  &__dialog {
+    @include tableBorder(5px);
+    padding: 10px 30px 0 30px;
+  }
+  .validation-error {
+    color: $brand-primary;
+  }
+}

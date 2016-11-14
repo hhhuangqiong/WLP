@@ -40,3 +40,19 @@
   font-size: small;
   margin-bottom: rem-calc(10);
 }
+
+@mixin tableBorder($radius) {
+  border: $table-border;
+  border-radius: $radius;
+  background: $white;
+}
+
+@mixin tableItem() {
+  cursor: pointer;
+  &:not(:last-child) {
+    border-bottom: $table-item-border;
+  }
+  &:hover {
+    background: $table-item-hover-color;
+  }
+}

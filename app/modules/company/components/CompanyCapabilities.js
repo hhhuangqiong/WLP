@@ -9,7 +9,7 @@ const CompanyCapabilities = (props) => {
     disabled,
   } = props;
   return (
-    <div className="company-capabilities">
+    <div className="company-capabilities company-content">
       {
         _.map(capabilities, (value, key) => (
         <div className="checkbox-capabilities" key={key}>
