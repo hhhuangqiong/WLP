@@ -57,7 +57,14 @@ export default class MpsClient {
     const url = `${this.basePath}/provisioning`;
     const updatedCommand = await this.mergeAndValidateProvisionData(command);
     const req = request.post(url).send(updatedCommand);
-    return this._handle(req, url);
+    try {
+      const result = await this._handle(req, url);
+      return result;
+    } catch (err) {
+      const error = err;
+      error.details = err.response.error.details;
+      throw error;
+    }
   }
 
   async putProvision(command) {

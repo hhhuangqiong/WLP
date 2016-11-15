@@ -3,6 +3,7 @@
 $font-family-ubuntu: "Ubuntu", Helvetica, Roboto, Arial, sans-serif !default;
 $font-weight-normal: 400 !default;
 $font-weight-light: 300 !default;
+$icon-color: #999;
 
 .ReactModal__Overlay {
   width: 100%;
@@ -49,6 +50,15 @@ $font-weight-light: 300 !default;
     font-size: rem-calc(16);
     word-wrap: break-word;
 
+    &--error {
+      .dialog-body {
+        padding: rem-calc(25) 0 rem-calc(21) 0;
+      }
+      .confirmation__footer__button {
+        margin-right: rem-calc(20);
+      }
+    }
+
     &__line {
       font-size: rem-calc(14);
       margin-bottom: rem-calc(5);
@@ -94,8 +104,53 @@ $font-weight-light: 300 !default;
 
 .dialog-body {
   padding: rem-calc(25) rem-calc(25) rem-calc(21) rem-calc(25);
+
   > span {
     display: inline-block;
+  }
+
+  .icon {
+    fill: $icon-color;
+    cursor: pointer;
+    position: relative;
+    top: rem-calc(50);
+  }
+
+  .rc-collapse {
+    border: none;
+
+    > .rc-collapse-item {
+      > .rc-collapse-header {
+        span {
+          left: rem-calc(-15);
+        }
+        .arrow {
+          height: rem-calc(15);
+          width: rem-calc(15);
+          margin-left: rem-calc(50);
+          margin-top: rem-calc(16);
+        }
+      }
+      > .rc-collapse-content-box {
+        max-height: rem-calc(80);
+        overflow-y: auto;
+      }
+    }
+
+    > .rc-collapse-item-active {
+      > .rc-collapse-header {
+        .arrow {
+          height: rem-calc(15);
+          width: rem-calc(15);
+          margin-left: rem-calc(50);
+          margin-top: rem-calc(20);
+        }
+      }
+    }
+
+    &-content {
+      padding: 0;
+    }
   }
 
   .dialog-info {

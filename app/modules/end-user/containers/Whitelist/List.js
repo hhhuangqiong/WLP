@@ -9,7 +9,7 @@ import { clearWhitelist } from '../../actions/whitelist';
 import fetchSignupRules from '../../actions/fetchSignupRules';
 import deleteSignupRule from '../../actions/deleteSignupRule';
 import { RESOURCE, ACTION, permission } from '../../../../main/acl/acl-enums';
-import ConfirmationDialog from '../../../../main/components/ConfirmationDialog';
+import CommonDialog from '../../../../main/components/CommonDialog';
 import * as FilterBar from '../../../../main/components/FilterBar';
 import FilterBarNavigation from '../../../../main/filter-bar/components/FilterBarNavigation';
 import SearchBox, { SUBMIT_KEY } from '../../../../main/components/Searchbox';
@@ -97,18 +97,24 @@ class WhiteListContainer extends Component {
     const { formatMessage } = this.props.intl;
     const { isDeleteDialogOpen, deletingUser } = this.state;
     const deletingUserName = deletingUser ? deletingUser.identity : '';
+    const dialogMessage = formatMessage(MESSAGES.deleteDialogMessage, { name: deletingUserName });
 
     return (
       <div className="row">
-        <ConfirmationDialog
+        <CommonDialog
           isOpen={isDeleteDialogOpen}
           onCancel={this.handleCloseDeleteDialog}
           onConfirm={this.handleDelete}
           cancelLabel={formatMessage(COMMON_MESSAGES.cancel)}
           confirmLabel={formatMessage(COMMON_MESSAGES.delete)}
-          dialogMessage={formatMessage(MESSAGES.deleteDialogMessage, { name: deletingUserName })}
           dialogHeader={formatMessage(MESSAGES.deleteDialogHeader)}
-        />
+        >
+          <div className="dialog-info">
+              <span
+                dangerouslySetInnerHTML={{ __html: dialogMessage }}
+              />
+          </div>
+        </CommonDialog>
         <FilterBar.Wrapper>
           <FilterBarNavigation section="end-user" tab="whitelist" />
           <FilterBar.RightItems>

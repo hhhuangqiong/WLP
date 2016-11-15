@@ -31,9 +31,25 @@
     left: 2rem;
     cursor: pointer;
   }
+  .complete {
+    color: $success-color;
+  }
+  .in-progress {
+    color: $info-color;
+  }
+  .status-error {
+    color: $alert-color;
+    cursor: pointer;
+  }
+  .unknown {
+    color: $gray;
+  }
   .button {
     font-size: 0.875rem;
     padding: 0.6rem 2.25rem 0.6rem 2.25rem;
+  }
+  .dialog-body {
+    padding: 0;
   }
   .rc-collapse {
     border-top:1px solid #d9d9d9;
@@ -92,4 +108,3 @@
     width: 20%;
   }
 }
-

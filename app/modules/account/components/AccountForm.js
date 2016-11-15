@@ -135,6 +135,7 @@ class AccountForm extends Component {
     } = this.props;
 
     const { formatMessage } = this.props.intl;
+    const dialogMessage = formatMessage(MESSAGES.reverifyDialogMessage, { name: this.props.email });
 
     return (
       <form className="account-form" onSubmit={this.props.handleSave}>
@@ -143,8 +144,8 @@ class AccountForm extends Component {
           onConfirm={this.props.handleReverify}
           onCancel={this.props.handleCloseReverifyDialog}
           confirmLabel={formatMessage(MESSAGES.reverify)}
-          dialogMessage={formatMessage(MESSAGES.reverifyDialogMessage, { name: this.props.email })}
           dialogHeader={formatMessage(MESSAGES.reverifyDialogHeader)}
+          dialogMessage={dialogMessage}
         />
 
         <FormField label={formatMessage(MESSAGES.userName)}>

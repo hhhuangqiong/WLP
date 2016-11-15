@@ -38,6 +38,7 @@ const AccountActionBar = React.createClass({
       .context
       .getStore(AuthStore)
       .getUserId();
+    const dialogMessage = formatMessage(MESSAGES.deleteDialogMessage, { name: accountId });
 
     return (
       <nav className="account-top-bar top-bar top-bar--inner">
@@ -47,8 +48,8 @@ const AccountActionBar = React.createClass({
           onConfirm={handleDelete}
           cancelLabel={formatMessage(COMMON_MESSAGES.cancel)}
           confirmLabel={formatMessage(COMMON_MESSAGES.delete)}
-          dialogMessage={formatMessage(MESSAGES.deleteDialogMessage, { name: accountId })}
           dialogHeader={formatMessage(MESSAGES.deleteDialogHeader)}
+          dialogMessage={dialogMessage}
         />
         <div className="top-bar-section">
           <ul className="top-bar--inner">

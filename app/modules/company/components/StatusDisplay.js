@@ -15,6 +15,7 @@ const StatusDisplay = (props) => {
   const {
     status,
     intl: { formatMessage },
+    handleOpenErrorDialog,
   } = props;
 
   return (
@@ -41,7 +42,9 @@ const StatusDisplay = (props) => {
               );
             case ERROR:
               return (
-                <div className="suspended large-14 columns status">
+                <div className="status-error large-14 columns status"
+                  onClick={handleOpenErrorDialog}
+                >
                   <span className="circle-button red"></span>{formatMessage(STATUS[status])}
                 </div>
               );
@@ -64,6 +67,7 @@ const StatusDisplay = (props) => {
 StatusDisplay.propTypes = {
   status: PropTypes.string,
   intl: intlShape.isRequired,
+  handleOpenErrorDialog: PropTypes.func,
 };
 
 export default injectIntl(StatusDisplay);

@@ -25,6 +25,8 @@ import {
   PAYMENT_TYPE_LABEL,
 } from '../constants/companyOptions';
 
+// split companyCode in profile.companyCode 
+const PATH_INDEX = 1;
 class CompanyProfile extends Component {
   static propTypes = {
     intl: intlShape.isRequired,
@@ -37,6 +39,7 @@ class CompanyProfile extends Component {
     getValidationMessages: PropTypes.func,
     clearValidations: PropTypes.func,
     preset: React.PropTypes.object,
+    companyCreatedError: React.PropTypes.object,
   }
   static contextTypes = {
     executeAction: React.PropTypes.func.isRequired,
@@ -55,22 +58,14 @@ class CompanyProfile extends Component {
       paymentType: 'PRE_PAID',
       capabilities: [],
       token: Math.random(),
+      errorDialogOpened: true,
+      validationErrors: {},
     };
-    this.createCompany = this.createCompany.bind(this);
-    this.onCompanyCodeChange = this.onCompanyCodeChange.bind(this);
-    this.onCompanyNameChange = this.onCompanyNameChange.bind(this);
-    this.onCompanyTypeChange = this.onCompanyTypeChange.bind(this);
-    this.onPaymentTypeChange = this.onPaymentTypeChange.bind(this);
-    this.onCountryChange = this.onCountryChange.bind(this);
-    this.onTimezoneChange = this.onTimezoneChange.bind(this);
-    this.onCapabilitiesChange = this.onCapabilitiesChange.bind(this);
-    this.validateField = this.validateField.bind(this);
   }
   componentDidMount() {
     const { carrierId } = this.props.currentCompany;
     this.context.executeAction(fetchPreset, { carrierId });
   }
-
   componentWillReceiveProps(nextProps) {
     const { identity } = this.context.params;
     const { companyToken, preset } = nextProps;
@@ -95,32 +90,33 @@ class CompanyProfile extends Component {
           _.intersection(nextProps.preset.capabilities, _.keys(CAPABILITIES)) });
       }
     }
+    this.getError(nextProps.errors, nextProps.companyCreatedError);
   }
-  onCompanyNameChange(e) {
+  onCompanyNameChange = (e) => {
     // from input
     const value = e.target.value;
     this.setState({ companyName: value });
   }
-  onCompanyCodeChange(e) {
+  onCompanyCodeChange = (e) => {
     // from input
     const value = e.target.value;
     this.setState({ companyCode: value });
   }
-  onCompanyTypeChange(value) {
+  onCompanyTypeChange = (value) => {
     this.setState({ companyType: value });
   }
-  onPaymentTypeChange(value) {
+  onPaymentTypeChange = (value) => {
     this.setState({ paymentType: value });
   }
-  onCountryChange(val = {}) {
+  onCountryChange = (val = {}) => {
     const value = val.value || '';
     this.setState({ country: value });
   }
-  onTimezoneChange(val = {}) {
+  onTimezoneChange = (val = {}) => {
     const value = val.value || '';
     this.setState({ timezone: value });
   }
-  onCapabilitiesChange(e) {
+  onCapabilitiesChange = (e) => {
     let capabilities;
     if (e.target.checked) {
       capabilities = this.state.capabilities.concat(e.target.value);
@@ -131,10 +127,33 @@ class CompanyProfile extends Component {
     }
     this.setState({ capabilities });
   }
-  getValidatorData() {
-    return this.state;
+  getValidatorData = () => (
+    this.state
+  )
+  // for both JOI and user error
+  getError = (errors, companyCreatedError) => {
+    // if JOI error occurs,UI will display JOI error
+    if (!_.isEmpty(errors)) {
+      this.setState({ validationErrors: errors });
+      return;
+    }
+    if (!_.isEmpty(companyCreatedError)) {
+      const validationErrors = {};
+      _.forEach(companyCreatedError.details, (error) => {
+        const path = error.path.split('.')[PATH_INDEX];
+        if (validationErrors[path]) {
+          validationErrors[path].push(error.message);
+          return;
+        }
+        validationErrors[path] = [];
+        validationErrors[path].push(error.message);
+      });
+      this.setState({ validationErrors });
+      return;
+    }
+    this.setState({ validationErrors: {} });
   }
-  validatorTypes() {
+  validatorTypes = () => {
     const { intl: { formatMessage } } = this.props;
     return {
       companyCode: Joi.string().required().regex(/^[a-z0-9]+$/)
@@ -144,12 +163,10 @@ class CompanyProfile extends Component {
       timezone: Joi.string().required().label(formatMessage(MESSAGES.timezone)),
     };
   }
-  validateField(field) {
-    return () => {
-      this.props.validate(field);
-    };
+  validateField = (field) => () => {
+    this.props.validate(field);
   }
-  createCompany() {
+  createCompany = () => {
     this.props.validate((error) => {
       if (!error) {
         const companyInfo = {
@@ -172,13 +189,14 @@ class CompanyProfile extends Component {
   }
 
   render() {
-    const { intl: { formatMessage }, errors, preset } = this.props;
+    const { intl: { formatMessage }, preset } = this.props;
     const { identity } = this.context.params;
     const profileDisable = {
       companyCode: false,
       companyType: preset && !!preset.companyType,
       paymentType: preset && !!preset.paymentType,
     };
+
     return (
     <div className="company__new-profile panel">
       <div className="header inline-with-space">
@@ -220,7 +238,7 @@ class CompanyProfile extends Component {
             companyTypeOption={COMPANY_TYPE_LABEL}
             paymentTypeOption={PAYMENT_TYPE_LABEL}
             validateField={this.validateField}
-            errors={errors}
+            errors={this.state.validationErrors}
             disabled={profileDisable}
           />
         </Panel>
@@ -235,7 +253,7 @@ class CompanyProfile extends Component {
             onCountryChange={this.onCountryChange}
             onTimezoneChange={this.onTimezoneChange}
             validateField={this.validateField}
-            errors={errors}
+            errors={this.state.validationErrors}
             disabled={false}
           />
         </Panel>
@@ -256,10 +274,12 @@ class CompanyProfile extends Component {
 
 CompanyProfile = injectIntl(injectJoiValidation(CompanyProfile));
 
-CompanyProfile = connectToStores(CompanyProfile, [ApplicationStore, CompanyStore], (context) => ({
-  currentCompany: context.getStore(ApplicationStore).getCurrentCompany(),
-  companyToken: context.getStore(CompanyStore).getCompanyToken(),
-  preset: context.getStore(CompanyStore).getPreset(),
-}));
+CompanyProfile = connectToStores(CompanyProfile,
+  [ApplicationStore, CompanyStore], (context) => ({
+    currentCompany: context.getStore(ApplicationStore).getCurrentCompany(),
+    companyToken: context.getStore(CompanyStore).getCompanyToken(),
+    preset: context.getStore(CompanyStore).getPreset(),
+    companyCreatedError: context.getStore(CompanyStore).getCompanyCreatedError(),
+  }));
 
 export default CompanyProfile;

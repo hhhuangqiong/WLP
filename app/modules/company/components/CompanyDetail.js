@@ -56,7 +56,7 @@ const CompanyDetail = (props, context) => {
               );
             case ERROR:
               return (
-                <td className="suspended">
+                <td className="status-error">
                   <span className="circle-button red"></span>{formatMessage(STATUS[status])}
                 </td>
               );

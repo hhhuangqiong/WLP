@@ -31,12 +31,13 @@ const CompanyProfileInfo = (props) => {
     validateField,
     errors,
     status,
+    handleOpenErrorDialog,
    } = props;
   return (
     <div className="company-profile">
       {
         status ?
-        <StatusDisplay status={status} /> :
+        <StatusDisplay status={status} handleOpenErrorDialog={handleOpenErrorDialog} /> :
         null
       }
       <div className="row">
@@ -107,6 +108,7 @@ CompanyProfileInfo.propTypes = {
   validateField: PropTypes.func,
   errors: PropTypes.object,
   status: PropTypes.string,
+  handleOpenErrorDialog: PropTypes.func,
 };
 
 export default injectIntl(CompanyProfileInfo);

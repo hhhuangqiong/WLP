@@ -17,6 +17,7 @@ import resetCompanyDetail from '../actions/resetCompanyDetail';
 import fetchCompanyDetail from '../actions/fetchCompanyDetail';
 import updateProfile from '../actions/updateProfile';
 import updateCompany from '../actions/updateCompany';
+import CommonDialog from '../../../main/components/CommonDialog';
 import {
   COUNTRIES,
   TIMEZONE,
@@ -27,7 +28,12 @@ import {
 } from '../constants/companyOptions';
 import Permit from '../../../main/components/common/Permit';
 import { RESOURCE, ACTION, permission } from '../../../main/acl/acl-enums';
+import i18nMessages from '../../../main/constants/i18nMessages';
 
+// split companyCode in profile.companyCode
+const PATH_INDEX = 1;
+const PREVIOUS = 'icon-previous';
+const NEXT = 'icon-next';
 class CompanyEditForm extends Component {
   static contextTypes = {
     executeAction: PropTypes.func.isRequired,
@@ -52,16 +58,9 @@ class CompanyEditForm extends Component {
     this.state = this.getCompanyState(props);
     this.state.token = Math.random();
     this.state.fetched = false;
-    this.isChecked = this.isChecked.bind(this);
-    this.saveCompany = this.saveCompany.bind(this);
-    this.onCompanyCodeChange = this.onCompanyCodeChange.bind(this);
-    this.onCompanyNameChange = this.onCompanyNameChange.bind(this);
-    this.onCompanyTypeChange = this.onCompanyTypeChange.bind(this);
-    this.onPaymentTypeChange = this.onPaymentTypeChange.bind(this);
-    this.onCountryChange = this.onCountryChange.bind(this);
-    this.onTimezoneChange = this.onTimezoneChange.bind(this);
-    this.validateField = this.validateField.bind(this);
-    this.updateCompany = this.updateCompany.bind(this);
+    this.state.currentErrorIndex = null;
+    this.state.errorDialogOpened = false;
+    this.state.validationErrors = {};
   }
   componentDidMount() {
     const { executeAction, params: { provisionId, identity: carrierId } } = this.context;
@@ -79,40 +78,44 @@ class CompanyEditForm extends Component {
     if (!this.state.fetched && nextProps.companyDetail) {
       this.setState(_.merge(this.getCompanyState(nextProps), { fetched: true }));
     }
+    if (nextProps.systemErrors) {
+      this.setState({ currentErrorIndex: 0 });
+    }
+    this.getError(nextProps.errors, nextProps.userErrors);
   }
   componentWillUnmount() {
     const { executeAction } = this.context;
     executeAction(resetCompanyDetail);
   }
-  onCompanyCodeChange(e) {
+  onCompanyCodeChange = (e) => {
     // from input
     const value = e.target.value;
     this.setState({ companyCode: value });
   }
-  onCompanyNameChange(e) {
+  onCompanyNameChange = (e) => {
     // from input
     const value = e.target.value;
     this.setState({ companyName: value });
   }
-  onCompanyTypeChange(value) {
+  onCompanyTypeChange = (value) => {
     this.setState({ companyType: value });
   }
-  onPaymentTypeChange(value) {
+  onPaymentTypeChange = (value) => {
     this.setState({ paymentType: value });
   }
-  onCountryChange(val = {}) {
+  onCountryChange = (val = {}) => {
     // from react-select
     const value = val.value || '';
     this.setState({ country: value });
   }
-  onTimezoneChange(val = {}) {
+  onTimezoneChange = (val = {}) => {
     // from react-select
     const value = val.value || '';
     this.setState({ timezone: value });
   }
-  getCompanyState(props) {
+  getCompanyState = (props) => (
     // the purpose of the passed down prop is to initialize and seed company values
-    return {
+    {
       companyCode: props.companyDetail.companyCode,
       companyName: props.companyDetail.companyName,
       companyType: props.companyDetail.companyType,
@@ -120,12 +123,53 @@ class CompanyEditForm extends Component {
       country: props.companyDetail.country,
       timezone: props.companyDetail.timezone,
       capabilitiesChecked: props.companyDetail.capabilities,
-    };
+    }
+  )
+  getValidatorData = () => (
+    this.state
+  )
+  // for both JOI and user error
+  getError = (errors, userErrors) => {
+    // if JOI error occurs,UI will display JOI error
+    if (!_.isEmpty(errors)) {
+      this.setState({ validationErrors: errors });
+      return;
+    }
+    if (!_.isEmpty(userErrors)) {
+      const validationErrors = {};
+      _.forEach(userErrors, (error) => {
+        if (!error.path) {
+          return;
+        }
+        const path = error.path.split('.')[PATH_INDEX];
+        if (validationErrors[path]) {
+          validationErrors[path].push(error.message);
+          return;
+        }
+        validationErrors[path] = [];
+        validationErrors[path].push(error.message);
+      });
+      this.setState({ validationErrors });
+      return;
+    }
+    this.setState({ validationErrors: {} });
   }
-  getValidatorData() {
-    return this.state;
+  handleCloseErrorDialog = () => {
+    this.setState({ errorDialogOpened: false });
   }
-  validatorTypes() {
+  handleOpenErrorDialog = () => {
+    this.setState({ errorDialogOpened: true });
+  }
+  handleSystemErrorChange = (direction) => {
+    const currentErrorIndex = this.state.currentErrorIndex;
+    if (direction === PREVIOUS && currentErrorIndex > 0) {
+      this.setState({ currentErrorIndex: currentErrorIndex - 1 });
+    }
+    if (direction === NEXT && currentErrorIndex < this.props.systemErrors.length - 1) {
+      this.setState({ currentErrorIndex: currentErrorIndex + 1 });
+    }
+  }
+  validatorTypes = () => {
     const { intl: { formatMessage } } = this.props;
     return {
       companyCode: Joi.string().required().regex(/^[a-z0-9]+$/)
@@ -135,12 +179,10 @@ class CompanyEditForm extends Component {
       timezone: Joi.string().required().label(formatMessage(MESSAGES.timezone)),
     };
   }
-  validateField(field) {
-    return () => {
-      this.props.validate(field);
-    };
+  validateField = (field) => () => {
+    this.props.validate(field);
   }
-  saveCompany() {
+  saveCompany = () => {
     const { identity } = this.context.params;
     const { companyName, country, timezone, token } = this.state;
     this.props.validate((error) => {
@@ -158,7 +200,7 @@ class CompanyEditForm extends Component {
       }
     });
   }
-  updateCompany() {
+  updateCompany = () => {
     const { identity } = this.context.params;
     const {
       companyCode,
@@ -196,18 +238,61 @@ class CompanyEditForm extends Component {
       }
     });
   }
-  isChecked(value) {
+  isChecked = (value) => {
     if (this.state.capabilitiesChecked) {
       return this.state.capabilitiesChecked.indexOf(value) !== -1;
     }
     return null;
   }
+  renderArrow = (direction) => {
+    // SystemError Oject's length > 1,will render arrow
+    if (this.props.systemErrors.length > 1) {
+      return (
+        <div className="small-2 columns" onClick={() => this.handleSystemErrorChange(direction)}>
+          <Icon symbol={direction} />
+        </div>
+      );
+    }
+    return null;
+  }
   render() {
-    const { intl: { formatMessage }, errors } = this.props;
+    const { intl: { formatMessage }, systemErrors } = this.props;
     const { identity } = this.context.params;
     const { status } = this.props.companyDetail;
+    const currentErrorIndex = this.state.currentErrorIndex;
+    
     return (
       <div className="company__new-profile">
+      {
+        // when taskError is not empty, errorDialog will be rendered
+        !_.isEmpty(systemErrors) ?
+        <CommonDialog
+          isOpen={this.state.errorDialogOpened}
+          onConfirm={this.handleCloseErrorDialog}
+          confirmLabel={formatMessage(i18nMessages.ok)}
+          dialogHeader={formatMessage(MESSAGES[systemErrors[currentErrorIndex].name])}
+          isMultipleError={systemErrors.length > 1}
+        >
+          <div className="row">
+            {this.renderArrow(PREVIOUS)}
+            <div className={classNames({ 'small-20 columns': systemErrors.length > 1 }) }>
+              <div className="dialog__message">
+                <span>
+                {formatMessage(MESSAGES[`${systemErrors[currentErrorIndex].name}Description`])}
+                </span>
+              </div>
+              <Collapse accordion={false}>
+                <Panel header={formatMessage(MESSAGES.details)} >
+                  <div>
+                  {systemErrors[currentErrorIndex].message}
+                  </div>
+                </Panel>
+              </Collapse>
+            </div>
+            {this.renderArrow(NEXT)}
+          </div>
+        </CommonDialog> : null
+      }
         <div className="header inline-with-space narrow">
         <div>
           <Link to={`/${identity}/company/overview`}><Icon symbol="icon-previous" />
@@ -268,7 +353,8 @@ class CompanyEditForm extends Component {
               disabled={this.props.profileDisabled}
               validateField={this.validateField}
               status={this.props.companyDetail.status}
-              errors={errors}
+              errors={this.state.validationErrors}
+              handleOpenErrorDialog={this.handleOpenErrorDialog}
             />
           </Panel>
           <Panel header={formatMessage(MESSAGES.companyDescription)} >
@@ -283,7 +369,7 @@ class CompanyEditForm extends Component {
               onTimezoneChange={this.onTimezoneChange}
               disabled={this.props.descriptionDisabled}
               validateField={this.validateField}
-              errors={errors}
+              errors={this.state.validationErrors}
             />
           </Panel>
           <Panel header={formatMessage(MESSAGES.companyCapabilities)} >
@@ -311,6 +397,8 @@ CompanyEditForm.propTypes = {
   descriptionDisabled: PropTypes.bool,
   capabilitiesDisabled: PropTypes.bool,
   companyToken: PropTypes.number,
+  systemErrors: PropTypes.arrayOf(PropTypes.object),
+  userErrors: PropTypes.arrayOf(PropTypes.object),
 };
 
 CompanyEditForm = injectIntl(injectJoiValidation(CompanyEditForm));
@@ -321,6 +409,8 @@ CompanyEditForm = connectToStores(CompanyEditForm, [CompanyStore], (context) => 
   descriptionDisabled: context.getStore(CompanyStore).getDescriptionDisabled(),
   capabilitiesDisabled: context.getStore(CompanyStore).getCapabilitiesDisabled(),
   companyToken: context.getStore(CompanyStore).getCompanyToken(),
+  systemErrors: context.getStore(CompanyStore).getSystemErrors(),
+  userErrors: context.getStore(CompanyStore).getUserErrors(),
 }));
 
 export default CompanyEditForm;

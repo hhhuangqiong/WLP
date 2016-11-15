@@ -43,6 +43,7 @@ function parseResponse(provisionItem, company = {}, preset = {}) {
     status: provisionItem.status,
     id: provisionItem.id,
     preset: formatedPreset,
+    taskErrors: provisionItem.taskErrors,
   };
 }
 

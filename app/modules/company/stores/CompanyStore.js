@@ -3,6 +3,9 @@ import createStore from 'fluxible/addons/createStore';
 
 import { COMPLETE, INPROGRESS, ERROR } from '../constants/status';
 
+const SYSTEM_ERROR = 'SystemError';
+const HTTP_STATUS_ERROR = 'HttpStatusError';
+
 const defaultCompanyObject = {
   provisionId: null,
   companyId: null,
@@ -17,6 +20,9 @@ const defaultCompanyObject = {
   capabilities: [],
   preset: {},
   status: null,
+  companyCreatedError: null,
+  systemErrors: null,
+  userErrors: null,
 };
 
 const CompanyStore = createStore({
@@ -27,6 +33,7 @@ const CompanyStore = createStore({
     FETCH_COMPANY_DETAIL_SUCCESS: 'receiveCompanyDetail',
     FETCH_PRESET_SUCCESS: 'receivePreset',
     CREATE_COMPANY_SUCCESS: 'handleTokenUpdated',
+    CREATE_COMPANY_FAILURE: 'handleTokenFail',
     UPDATE_COMPANY_SUCCESS: 'handleTokenUpdated',
     UPDATE_CARRIER_PROFILE_SUCCESS: 'handleTokenUpdated',
     RESET_COMPANY_DETAIL: 'handleCompanyDetailReset',
@@ -67,6 +74,11 @@ const CompanyStore = createStore({
     this.emitChange();
   },
 
+  handleTokenFail(err) {
+    this.companyCreatedError = err;
+    this.emitChange();
+  },
+
   receiveCompanies({ companies, totalElements, searchCompany, pageNumber, pageSize }) {
     this.companies = companies;
     this.totalElements = totalElements;
@@ -95,6 +107,15 @@ const CompanyStore = createStore({
 
   receiveCompanyDetail(detail) {
     this.companyDetail = _.merge(_.clone(defaultCompanyObject, true), detail);
+    if (this.companyDetail.taskErrors) {
+      const taskErrors = this.companyDetail.taskErrors;
+      this.userErrors = _.filter(taskErrors, error =>
+        !_.includes([SYSTEM_ERROR, HTTP_STATUS_ERROR], error.name)
+      );
+      this.systemErrors = _.filter(taskErrors, error =>
+        _.includes([SYSTEM_ERROR, HTTP_STATUS_ERROR], error.name)
+      );
+    }
     // if true means the the input is disbale,while false means can be edited
     this.profileDisabled = {
       companyCode: true,
@@ -120,6 +141,7 @@ const CompanyStore = createStore({
 
   receivePreset(preset) {
     this.preset = preset;
+    this.companyCreatedError = {};
     this.emitChange();
   },
 
@@ -163,6 +185,18 @@ const CompanyStore = createStore({
     return this.companyToken;
   },
 
+  getCompanyCreatedError() {
+    return this.companyCreatedError;
+  },
+
+  getSystemErrors() {
+    return this.systemErrors;
+  },
+
+  getUserErrors() {
+    return this.userErrors;
+  },
+
   getState() {
     return {
       companies: this.companies,
@@ -175,6 +209,9 @@ const CompanyStore = createStore({
       pageNumber: this.pageNumber,
       pageSize: this.pageSize,
       companyDetail: this.companyDetail,
+      companyCreatedError: this.companyCreatedError,
+      systemErrors: this.systemErrors,
+      userErrors: this.userErrors,
     };
   },
 
@@ -197,6 +234,9 @@ const CompanyStore = createStore({
     this.capabilitiesDisabled = state.capabilitiesDisabled;
     this.descriptionDisabled = state.descriptionDisabled;
     this.preset = state.preset;
+    this.companyCreatedError = state.companyCreatedError;
+    this.systemErrors = state.systemErrors;
+    this.userErrors = state.userErrors;
   },
 });
 

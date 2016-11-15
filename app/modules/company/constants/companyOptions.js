@@ -129,6 +129,22 @@ export const MESSAGES = defineMessages({
     id: 'loading',
     defaultMessage: 'Loading...',
   },
+  SystemError: {
+    id: 'company.SystemError',
+    defaultMessage: 'SystemError',
+  },
+  HttpStatusError: {
+    id: 'company.HttpStatusError',
+    defaultMessage: 'HttpStatusError',
+  },
+  SystemErrorDescription: {
+    id: 'company.SystemErrorDescription',
+    defaultMessage: 'System error occurred. Contact support with the following trace id',
+  },
+  HttpStatusErrorDescription: {
+    id: 'company.HttpStatusErrorDescription',
+    defaultMessage: 'HttpStatusError error occurred. Contact support with the following trace id',
+  },
 });
 
 export const CAPABILITIES = {

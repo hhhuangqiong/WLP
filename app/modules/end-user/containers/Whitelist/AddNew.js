@@ -21,7 +21,7 @@ import {
 import createSignupRules from '../../actions/createSignupRules';
 
 import Pagination from '../../../../main/components/Pagination';
-import ConfirmationDialog from '../../../../main/components/ConfirmationDialog';
+import CommonDialog from '../../../../main/components/CommonDialog';
 import EditableText from '../../components/Whitelist/EditableText';
 import createWhiteListStore from '../../stores/CreateWhitelist';
 import Icon from '../../../../main/components/Icon';
@@ -347,6 +347,7 @@ class CreateWhiteListContainer extends Component {
       displayUsers,
       uploadedFiles,
     } = this.props;
+    const dialogMessage = formatMessage(MESSAGES.reachLimitDialogMessage, { limit: UPLOAD_LIMIT });
 
     const hasError = totalError > 0;
 
@@ -355,13 +356,18 @@ class CreateWhiteListContainer extends Component {
 
     return (
       <div className="row">
-        <ConfirmationDialog
+        <CommonDialog
           isOpen={isReachLimitDialogOpen}
           onConfirm={this.handleCloseReachLimitDialog}
           confirmLabel={formatMessage(COMMON_MESSAGES.ok)}
-          dialogMessage={formatMessage(MESSAGES.reachLimitDialogMessage, { limit: UPLOAD_LIMIT })}
           dialogHeader={formatMessage(MESSAGES.reachLimitDialogHeader)}
-        />
+        >
+          <div className="dialog-info">
+            <span
+              dangerouslySetInnerHTML={{ __html: dialogMessage }}
+            />
+          </div>
+        </CommonDialog>
         <FilterBar.Wrapper>
           <FilterBarNavigation section="end-user" tab="whitelist" />
         </FilterBar.Wrapper>
