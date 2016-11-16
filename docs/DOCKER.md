@@ -20,6 +20,8 @@ docker.dev.maaii.com/m80/m800-white-label-portal
 | `bossApi__timeout` | BOSS API Timeout | 15000 |
 | `mumsApi__baseUrl` | MUMS API Endpoint |`http://192.168.119.12:8080`|
 | `mumsApi__timeout` | MUMS API Timeout | 15000 |
+| `signUpRuleApi__baseUrl` | Sign Up Rule API Endpoint |`http://192.168.118.127:8083`|
+| `signUpRuleApi__timeout` | Sign Up Rule API Timeout | 15000 |
 | `dataProviderApi__baseUrl` | Data Provider API Endpoint |`http://192.168.119.131:9998,http://192.168.119.132:9998`|
 | `dataProviderApi__timeout` | Data Provider API Timeout |60000|
 | `mvsApi__baseUrl` | Maaii Virtual Store Endpoint |`http://192.168.119.21:9125`|

@@ -69,7 +69,10 @@ export default function init(nconf) {
   ioc.constant('MUMS_API_BASE_URL', nconf.get('mumsApi:baseUrl'));
   ioc.constant('MUMS_API_TIMEOUT', nconf.get('mumsApi:timeout'));
   ioc.service('EndUserRequest', require('../../lib/requests/mums/User').default, 'MUMS_API_BASE_URL', 'MUMS_API_TIMEOUT');
-  ioc.service('SignupRuleRequest', require('../../lib/requests/mums/SignupRule').default, 'MUMS_API_BASE_URL', 'MUMS_API_TIMEOUT');
+
+  ioc.constant('SIGN_UP_RULE_API_BASE_URL', nconf.get('signUpRuleApi:baseUrl'));
+  ioc.constant('SIGN_UP_RULE_API_TIMEOUT', nconf.get('signUpRuleApi:timeout'));
+  ioc.service('SignupRuleRequest', require('../../lib/requests/signUpRule/SignUpRule').default, 'SIGN_UP_RULE_API_BASE_URL', 'SIGN_UP_RULE_API_TIMEOUT');
 
   ioc.constant('MVS_API_BASE_URL', nconf.get('mvsApi:baseUrl'));
   ioc.constant('MVS_API_TIMEOUT', nconf.get('mvsApi:timeout'));
