@@ -1,30 +1,22 @@
 import { Router } from 'express';
 import { fetchDep } from './../utils/bottle';
-import { permission, RESOURCE } from './../../main/acl/acl-enums';
 
-const authorize = fetchDep('AuthorizationMiddlewareFactory');
-const router = new Router();
+const apiRouter = new Router();
+// Merge params is used to inherit carrierId from common parent router
+const router = new Router({ mergeParams: true });
 
 const exportController = fetchDep('ExportController');
 const noCache = fetchDep('NoCacheMiddleware');
+const exportAuthMiddleware = fetchDep('ExportAuthMiddleware');
+
+apiRouter
+  .use('/carriers/:carrierId', [exportAuthMiddleware, router]);
 
 router
   .use(noCache)
-  .get('/carriers/:carrierId', [
-    authorize(permission(RESOURCE.CALL_EXPORT)),
-    exportController.getCarrierExport,
-  ])
-  .get('/carriers/:carrierId/cancel', [
-    authorize(permission(RESOURCE.CALL_EXPORT)),
-    exportController.getCarrierExportCancel,
-  ])
-  .get('/carriers/:carrierId/progress', [
-    authorize(permission(RESOURCE.CALL_EXPORT)),
-    exportController.getCarrierExportFileProgress,
-  ])
-  .get('/carriers/:carrierId/file', [
-    authorize(permission(RESOURCE.CALL_EXPORT)),
-    exportController.getCarrierExportFile,
-  ]);
+  .get('/', exportController.getCarrierExport)
+  .get('/cancel', exportController.getCarrierExportCancel)
+  .get('/progress', exportController.getCarrierExportFileProgress)
+  .get('/file', exportController.getCarrierExportFile);
 
-export default router;
+export default apiRouter;

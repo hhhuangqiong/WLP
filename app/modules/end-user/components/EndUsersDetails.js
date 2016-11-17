@@ -3,6 +3,7 @@ import moment from 'moment';
 import React, { PropTypes } from 'react';
 import { injectIntl, intlShape } from 'react-intl';
 import connectToStores from 'fluxible-addons-react/connectToStores';
+import { RESOURCE, ACTION, permission } from '../../../main/acl/acl-enums';
 
 import EndUserStore from '../stores/EndUserStore';
 import fetchEndUser from '../actions/fetchEndUser';
@@ -18,6 +19,7 @@ import FilterBarNavigation from '../../../main/filter-bar/components/FilterBarNa
 import * as dateLocale from '../../../utils/dateLocale';
 import i18nMessages from '../../../main/constants/i18nMessages';
 import config from './../../../main/config';
+import Permit from '../../../main/components/common/Permit';
 
 import EndUserTable from './EndUserTable';
 import EndUserProfile from './EndUserProfile';
@@ -175,15 +177,17 @@ class EndUsers extends React.Component {
             />
           </FilterBar.LeftItems>
           <FilterBar.RightItems>
-            <li className="top-bar--inner">
-              <Export exportType="End_User">
-                <EndUserExportForm
-                  carrierId={this.context.params.identity}
-                  startDate={startDate}
-                  endDate={endDate}
-                />
-              </Export>
-            </li>
+            <Permit permission={permission(RESOURCE.END_USER_EXPORT, ACTION.READ)}>
+              <li className="top-bar--inner">
+                <Export exportType="End_User">
+                  <EndUserExportForm
+                    carrierId={this.context.params.identity}
+                    startDate={startDate}
+                    endDate={endDate}
+                  />
+                </Export>
+              </li>
+            </Permit>
             <li className="top-bar--inner">
               <SearchInput
                 defaultValue={username}

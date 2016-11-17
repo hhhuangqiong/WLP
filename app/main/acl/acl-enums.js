@@ -49,6 +49,15 @@ export const RESOURCE = {
   VERIFICATION_SDK: 'verificationSdk',
   WHITELIST: 'whitelist',
   CALL_EXPORT: 'callExport',
+  IM_EXPORT: 'imExport',
+  END_USER_EXPORT: 'endUserExport',
+};
+
+// use for distinguish which part needs to download file
+export const EXPORT_TYPE = {
+  END_USER: 'End_User',
+  CALLS: 'Calls',
+  IM: 'Im',
 };
 
 export const RESOURCES = Object.values(RESOURCE);

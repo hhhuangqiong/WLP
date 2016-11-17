@@ -53,6 +53,10 @@ export const MESSAGES = defineMessages({
     id: 'accessManagement.endUserManagement',
     defaultMessage: 'End Users Management',
   },
+  endUserExport: {
+    id: 'accessManagement.endUserExport',
+    defaultMessage: 'End Users Export',
+  },
   whitelistManagement: {
     id: 'accessManagement.whitelistManagement',
     defaultMessage: 'Whitelist Management',
@@ -80,6 +84,10 @@ export const MESSAGES = defineMessages({
   im: {
     id: 'accessManagement.im',
     defaultMessage: 'IM Resource',
+  },
+  imExport: {
+    id: 'accessManagement.imExport',
+    defaultMessage: 'IM Export',
   },
   sms: {
     id: 'accessManagement.sms',

@@ -7,6 +7,7 @@ import { apiErrorHandler } from './errorHandler';
 import { authenticationMiddleware } from './authentication';
 import ensureAuthenticatedMiddleware from './ensureAuthenticated';
 import { decodeParamsMiddeware } from './decodeParams';
+import { createExportAuthMiddleware } from './exportAuthMiddleware';
 
 function register(container) {
   container.service('SessionMiddleware', createSessionMiddleware, 'SessionMiddlewareOptions');
@@ -16,6 +17,7 @@ function register(container) {
   container.constant('AuthenticationMiddleware', authenticationMiddleware);
   container.constant('EnsureAuthenticatedMiddleware', ensureAuthenticatedMiddleware);
   container.constant('DecodeParamsMiddeware', decodeParamsMiddeware);
+  container.service('ExportAuthMiddleware', createExportAuthMiddleware, 'AuthorizationMiddlewareFactory');
 }
 
 export {
@@ -26,6 +28,6 @@ export {
   authenticationMiddleware,
   ensureAuthenticatedMiddleware,
   decodeParamsMiddeware,
-
+  createExportAuthMiddleware,
   register,
 };

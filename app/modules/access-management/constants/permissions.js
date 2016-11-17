@@ -113,6 +113,14 @@ export const PERMISSIONS = [{
   resource: RESOURCE.IM,
   action: ACTION.READ,
 }, {
+  intlKey: 'imExport',
+  resource: RESOURCE.IM_EXPORT,
+  action: ACTION.READ,
+}, {
+  intlKey: 'endUserExport',
+  resource: RESOURCE.END_USER_EXPORT,
+  action: ACTION.READ,
+}, {
   intlKey: 'sms',
   resource: RESOURCE.SMS,
   action: ACTION.READ,

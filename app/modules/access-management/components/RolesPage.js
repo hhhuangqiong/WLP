@@ -55,16 +55,6 @@ export class RolesPage extends Component {
       isDisableAddRole: null,
       hasPermisson: null,
     };
-    this.saveRole = this.saveRole.bind(this);
-    this.removeRole = this.removeRole.bind(this);
-    this.changeEditedRoleName = this.changeEditedRoleName.bind(this);
-    this.changeEditedRolePermission = this.changeEditedRolePermission.bind(this);
-    this.handleOpenDeleteDialog = this.handleOpenDeleteDialog.bind(this);
-    this.handleCloseDeleteDialog = this.handleCloseDeleteDialog.bind(this);
-    this.cancelRoleEdit = this.cancelRoleEdit.bind(this);
-    this.startRoleEdit = this.startRoleEdit.bind(this);
-    this.suggestRoleEdit = this.suggestRoleEdit.bind(this);
-    this.addRole = this.addRole.bind(this);
   }
   componentDidMount() {
     const { params: { identity: carrierId } } = this.context;
@@ -77,7 +67,7 @@ export class RolesPage extends Component {
     this.finishRoleEdit();
     this.updateHasPermission();
   }
-  updateHasPermission() {
+  updateHasPermission = () => {
     const permissions = get(this.props.user, 'permissions');
     if (!permissions) {
       this.setState({ hasPermission: false });
@@ -87,7 +77,7 @@ export class RolesPage extends Component {
       hasPermission: permissions.indexOf(permission(RESOURCE.ROLE, ACTION.UPDATE)) >= 0,
     });
   }
-  addRole() {
+  addRole = () => {
     const role = {
       name: null,
       company: this.props.company.id,
@@ -98,13 +88,13 @@ export class RolesPage extends Component {
     this.setState({ displayedRoles: roles });
     this.startRoleEdit(roles.length - 1);
   }
-  suggestRoleEdit(index) {
+  suggestRoleEdit = (index) => {
     if (this.state.hoveredRoleIndex === index) {
       return;
     }
     this.setState({ hoveredRoleIndex: index });
   }
-  startRoleEdit(index) {
+  startRoleEdit = (index) => {
     if (this.state.editedRoleIndex === index) {
       return;
     }
@@ -118,7 +108,7 @@ export class RolesPage extends Component {
       });
     }
   }
-  changeEditedRoleName({ name }) {
+  changeEditedRoleName = ({ name }) => {
     const index = this.state.editedRoleIndex;
     if (!isNumber(index)) {
       return;
@@ -127,7 +117,26 @@ export class RolesPage extends Component {
     roles[index] = { ...roles[index], name };
     this.setState({ displayedRoles: roles });
   }
-  changeEditedRolePermission({ resource, action, operation }) {
+
+  handleTickResourceAndExport = (
+    resource, actions, exportResource, exportPermission, roles, role, index) => {
+    // e.g if the callExport is ticked(), which means actions will be read
+    // then the call would be also ticked
+    if (resource === exportPermission && _.includes(actions, ACTION.READ)) {
+      /* eslint-disable no-param-reassign */
+      roles[index].permissions[exportResource] = actions;
+      /* eslint-enable */
+    }
+    // e.gif the call is unticked , which means actions will be empty
+    // then the callExport will also be unticked
+    if (resource === exportResource
+      && _.isEmpty(actions) && !_.isEmpty(role.permissions[exportPermission])) {
+      /* eslint-disable no-param-reassign */
+      roles[index].permissions[exportPermission] = actions;
+      /* eslint-enable */
+    }
+  }
+  changeEditedRolePermission = ({ resource, action, operation }) => {
     const index = this.state.editedRoleIndex;
     if (!isNumber(index)) {
       return;
@@ -139,19 +148,28 @@ export class RolesPage extends Component {
     actions = operation === 'add'
       ? [...actions, action]
       : without(actions, action);
-    // if the callExport is ticked, then the call would be also ticked
-    if (resource === RESOURCE.CALL_EXPORT && _.includes(actions, ACTION.READ)) {
-      roles[index].permissions[RESOURCE.CALL] = actions;
-    }
-    // if the call is unticked , then the callExport will also be unticked
-    if (resource === RESOURCE.CALL
-      && _.isEmpty(actions) && !_.isEmpty(role.permissions[RESOURCE.CALL_EXPORT])) {
-      roles[index].permissions[RESOURCE.CALL_EXPORT] = actions;
+    switch (resource) {
+      case RESOURCE.CALL:
+      case RESOURCE.CALL_EXPORT:
+        this.handleTickResourceAndExport(
+          resource, actions, RESOURCE.CALL, RESOURCE.CALL_EXPORT, roles, role, index
+        ); break;
+      case RESOURCE.IM:
+      case RESOURCE.IM_EXPORT:
+        this.handleTickResourceAndExport(
+          resource, actions, RESOURCE.IM, RESOURCE.IM_EXPORT, roles, role, index
+        ); break;
+      case RESOURCE.END_USER:
+      case RESOURCE.END_USER_EXPORT:
+        this.handleTickResourceAndExport(
+          resource, actions, RESOURCE.END_USER, RESOURCE.END_USER_EXPORT, roles, role, index
+        ); break;
+      default: break;
     }
     roles[index].permissions[resource] = actions;
     this.setState({ displayedRoles: roles });
   }
-  cancelRoleEdit() {
+  cancelRoleEdit = () => {
     // if the dialog is open , the function will not be called.
     if (this.state.deleteDialogOpened) {
       return;
@@ -174,16 +192,17 @@ export class RolesPage extends Component {
       editedRoleBackup: null,
     });
   }
-  isNewRole(role) {
-    return !isString(role.id);
-  }
-  saveRole() {
+  isNewRole = (role) => (
+    !isString(role.id)
+  )
+
+  saveRole = () => {
     const { params: { identity: carrierId } } = this.context;
     const role = { carrierId, ...this.state.displayedRoles[this.state.editedRoleIndex] };
     const action = this.isNewRole(role) ? addRole : updateRole;
     this.context.executeAction(action, _.omit(role, ['creating']));
   }
-  removeRole() {
+  removeRole = () => {
     const { params: { identity: carrierId } } = this.context;
     const index = this.state.editedRoleIndex;
     if (!isNumber(index)) {
@@ -196,15 +215,15 @@ export class RolesPage extends Component {
     this.handleCloseDeleteDialog();
   }
 
-  handleOpenDeleteDialog() {
+  handleOpenDeleteDialog = () => {
     this.setState({ deleteDialogOpened: true });
   }
 
-  handleCloseDeleteDialog() {
+  handleCloseDeleteDialog = () => {
     this.setState({ deleteDialogOpened: false });
   }
 
-  finishRoleEdit() {
+  finishRoleEdit = () => {
     this.setState({
       editedRoleIndex: null,
       editedRoleBackup: null,

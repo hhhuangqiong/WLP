@@ -12,18 +12,24 @@ function filterCallAndExport(capabilities) {
   return any(capabilities, x => /^call/.test(x));
 }
 
+function filterImAndExport(capabilities, im) {
+  return includes(capabilities, im);
+}
+
 function deriveResources(carrierProfile) {
   // This defines resource availability depending on capabilities
   const PERMISSION_DEPENDENCIES = {
     [RESOURCE.GENERAL]: ({ serviceType }) => serviceType !== 'SDK',
     [RESOURCE.USER]: () => true, // all companies wiil show accounts sections
     [RESOURCE.END_USER]: () => true, // all companies will show end user section
+    [RESOURCE.END_USER_EXPORT]: () => true, // all companies wiil show show end user section export
     [RESOURCE.ROLE]: () => true, // all companies will show access management
     [RESOURCE.CALL]: ({ capabilities }) => filterCallAndExport(capabilities),
     [RESOURCE.CALL_EXPORT]: ({ capabilities }) => filterCallAndExport(capabilities),
     [RESOURCE.WHITELIST]: ({ capabilities }) =>
       includes(capabilities, CAPABILITY.END_USER_WHITELIST),
-    [RESOURCE.IM]: ({ capabilities }) => includes(capabilities, CAPABILITY.IM),
+    [RESOURCE.IM]: ({ capabilities }) => filterImAndExport(capabilities, CAPABILITY.IM),
+    [RESOURCE.IM_EXPORT]: ({ capabilities }) => filterImAndExport(capabilities, CAPABILITY.IM),
     [RESOURCE.SMS]: ({ capabilities }) => includes(capabilities, CAPABILITY.IM_TO_SMS),
     [RESOURCE.VSF]: ({ capabilities }) => includes(capabilities, CAPABILITY.VSF),
     // show top up when it is pre-paid
@@ -47,7 +53,7 @@ function deriveProhibitions(carrierProfile) {
     [permission(RESOURCE.CALL)]: ({ capabilities }) => filterCallAndExport(capabilities),
     [permission(RESOURCE.WHITELIST)]: ({ capabilities }) =>
       includes(capabilities, CAPABILITY.END_USER_WHITELIST),
-    [permission(RESOURCE.IM)]: ({ capabilities }) => includes(capabilities, CAPABILITY.IM),
+    [permission(RESOURCE.IM)]: ({ capabilities }) => filterImAndExport(capabilities, CAPABILITY.IM),
     [permission(RESOURCE.SMS)]: ({ capabilities }) => includes(capabilities, CAPABILITY.IM_TO_SMS),
     [permission(RESOURCE.VSF)]: ({ capabilities }) => includes(capabilities, CAPABILITY.VSF),
     // show top up when it is pre-paid

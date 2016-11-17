@@ -6,6 +6,7 @@ import React, { PropTypes } from 'react';
 import { FluxibleMixin } from 'fluxible-addons-react';
 import DatePicker from 'react-datepicker';
 import { FormattedMessage, injectIntl } from 'react-intl';
+import { RESOURCE, ACTION, permission } from '../../../main/acl/acl-enums';
 
 import ImStore from '../stores/ImStore';
 import ClientConfigStore from '../../../main/stores/ClientConfigStore';
@@ -16,6 +17,7 @@ import fetchMoreIms from '../actions/fetchMoreIms';
 
 import ImTable from './ImTable';
 import Searchbox from '../../../main/components/Searchbox';
+import Permit from '../../../main/components/common/Permit';
 import i18nMessages from '../../../main/constants/i18nMessages';
 import Export from '../../../main/file-export/components/Export';
 import ImExportForm from './ImExportForm';
@@ -297,14 +299,18 @@ const Im = React.createClass({
                 ))}
               </select>
             </div>
-            <div className="right">
-              <Export exportType="Im">
-                <ImExportForm
-                  fromTime={this.state.fromTime}
-                  toTime={this.state.toTime}
-                />
-              </Export>
-            </div>
+
+            <Permit permission={permission(RESOURCE.IM_EXPORT, ACTION.READ)}>
+              <div className="right">
+                <Export exportType="Im">
+                  <ImExportForm
+                    fromTime={this.state.fromTime}
+                    toTime={this.state.toTime}
+                  />
+                </Export>
+              </div>
+            </Permit>
+
             <div className="im-search top-bar-section right">
               <Searchbox
                 value={this.state.search}
