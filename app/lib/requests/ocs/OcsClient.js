@@ -12,7 +12,7 @@ export function ocsClient(options) {
     const error = handleError(superagentError);
     const status = superagentError.status;
     const { method, url } = definition;
-    logger.error(`Request to MCMA [${method.toUpperCase()} ${url}] failed with ${status || 'connection error'}. Error message was: ${error.message}.`);
+    logger.error(`Request to OCS [${method.toUpperCase()} ${url}] failed with ${status || 'connection error'}. Error message was: ${error.message}.`);
     return error;
   }
 
