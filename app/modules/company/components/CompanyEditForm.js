@@ -557,7 +557,7 @@ class CompanyEditForm extends Component {
       <div className="company__new-profile">
       {
         // when taskError is not empty, errorDialog will be rendered
-        !_.isEmpty(systemErrors) ?
+        !_.isEmpty(systemErrors) && this.state.errorDialogOpened ?
         <CommonDialog
           isOpen={this.state.errorDialogOpened}
           onConfirm={this.handleCloseErrorDialog}
