@@ -58,7 +58,6 @@ class CompanyProfile extends Component {
       paymentType: 'PRE_PAID',
       capabilities: [],
       token: Math.random(),
-      errorDialogOpened: true,
       validationErrors: {},
     };
   }
