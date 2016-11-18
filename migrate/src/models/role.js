@@ -18,6 +18,9 @@ export function formatNewRole(company) {
       sms: ['read'],
       verificationSdk: ['read'],
       whitelist: ['create', 'update', 'read', 'delete'],
+      endUserExport: ['read'],
+      imExport: ['read'],
+      callExport: ['read'],
     },
     // create the root role that IAM will make it read only
     isRoot: true,
