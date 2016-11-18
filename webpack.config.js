@@ -28,14 +28,14 @@ const config = {
         include: [
           path.join(__dirname, 'app'),
         ],
-        loader: 'react-hot',
+        loader: 'react-hot-loader',
       },
       {
         test: /\.js$/,
         include: [
           path.join(__dirname, 'app'),
         ],
-        loader: 'babel',
+        loader: 'babel-loader',
         query: {
           // Control the cacheDirectory by ourself for better control
           cacheDirectory: path.join(__dirname, 'build', 'babel'),
@@ -48,7 +48,7 @@ const config = {
           ],
         },
       },
-      { test: /\.json$/, loader: 'json' },
+      { test: /\.json$/, loader: 'json-loader' },
     ],
   },
   resolve: {
