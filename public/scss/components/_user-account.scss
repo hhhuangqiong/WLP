@@ -19,7 +19,7 @@ $animation-time: 500ms;
 
   .icon-user-management{
     fill: black;
-    width: rem-calc(24); 
+    width: rem-calc(24);
     height: rem-calc(24);
   }
 
@@ -234,7 +234,7 @@ $animation-time: 500ms;
   }
 
   &-link {
-    color: #4a90e2;;
+    color: $info-color;;
     cursor: pointer;
     margin-top: rem-calc(5);
     display: inline-block;
@@ -315,10 +315,10 @@ $animation-time: 500ms;
     overflow: hidden;
     position: relative;
     // solve the font-weight change in Safari when do animation
-    -webkit-transform: translateZ(0); 
+    -webkit-transform: translateZ(0);
     &__company-list {
       padding: 1.125rem;
-      -webkit-transform: translateZ(0); 
+      -webkit-transform: translateZ(0);
     }
     .button {
       padding: rem-calc(6) rem-calc(40);

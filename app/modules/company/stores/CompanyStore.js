@@ -62,6 +62,7 @@ const CompanyStore = createStore({
     };
     this.capabilitiesDisabled = false;
     this.descriptionDisabled = false;
+    this.smscSettingDisabled = false;
   },
 
   handleCompanyDetailReset() {
@@ -124,6 +125,7 @@ const CompanyStore = createStore({
     };
     this.descriptionDisabled = true;
     this.capabilitiesDisabled = true;
+    this.smscSettingDisabled = true;
     switch (this.companyDetail.status) {
       case INPROGRESS:
         break;
@@ -181,6 +183,10 @@ const CompanyStore = createStore({
     return this.capabilitiesDisabled;
   },
 
+  getSmscSettingDisabled() {
+    return this.smscSettingDisabled;
+  },
+
   getCompanyToken() {
     return this.companyToken;
   },
@@ -204,6 +210,7 @@ const CompanyStore = createStore({
       profileDisabled: this.profileDisabled,
       capabilitiesDisabled: this.capabilitiesDisabled,
       descriptionDisabled: this.descriptionDisabled,
+      smscSettingDisabled: this.smscSettingDisabled,
       totalElements: this.totalElements,
       searchCompany: this.searchCompany,
       pageNumber: this.pageNumber,
@@ -233,6 +240,7 @@ const CompanyStore = createStore({
     this.profileDisabled = state.profileDisabled;
     this.capabilitiesDisabled = state.capabilitiesDisabled;
     this.descriptionDisabled = state.descriptionDisabled;
+    this.smscSettingDisabled = state.smscSettingDisabled;
     this.preset = state.preset;
     this.companyCreatedError = state.companyCreatedError;
     this.systemErrors = state.systemErrors;

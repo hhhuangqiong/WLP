@@ -142,6 +142,7 @@ $icon-apple-color: $gray-lighter;
 $icon-android-color: #A4C639;
 $icon-male-color: rgb(81, 187, 226);
 $icon-female-color: rgb(250, 108, 205);
+$icon-close-color: #ccc;
 
 //flag
 $flag-original-dimension: 256;
@@ -158,3 +159,8 @@ $button-cancel-font-color: #7C7C7C;
 
 //table
 $table-stripe: none;
+$table-border-color: #a7a5a5;
+$table-border: 1px solid $table-border-color;
+$table-item-hover-color: #eef6ff;
+$table-item-border-color: #e0e0e0;
+$table-item-border: 1px solid $table-item-border-color;

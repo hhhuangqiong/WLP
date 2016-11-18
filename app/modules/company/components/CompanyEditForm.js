@@ -13,11 +13,16 @@ import CompanyStore from '../stores/CompanyStore';
 import CompanyProfileInfo from './CompanyProfileInfo';
 import CompanyDescription from './CompanyDescription';
 import CompanyCapabilities from './CompanyCapabilities';
+import SmscSetting from './SmscSetting';
 import resetCompanyDetail from '../actions/resetCompanyDetail';
 import fetchCompanyDetail from '../actions/fetchCompanyDetail';
 import updateProfile from '../actions/updateProfile';
 import updateCompany from '../actions/updateCompany';
 import CommonDialog from '../../../main/components/CommonDialog';
+import SmscBindingTable from './SmscBindingTable';
+import SmscBindingDialog from './SmscBindingDialog';
+import ValidationErrorLabel from '../../../main/components/ValidationErrorLabel';
+import i18nMessages from '../../../main/constants/i18nMessages';
 import {
   COUNTRIES,
   TIMEZONE,
@@ -25,15 +30,18 @@ import {
   CAPABILITIES,
   COMPANY_TYPE_LABEL,
   PAYMENT_TYPE_LABEL,
+  SMSC_TYPE_LABEL,
+  SMSC_TYPE,
+  SMSC_DATA_ID,
 } from '../constants/companyOptions';
 import Permit from '../../../main/components/common/Permit';
 import { RESOURCE, ACTION, permission } from '../../../main/acl/acl-enums';
-import i18nMessages from '../../../main/constants/i18nMessages';
 
 // split companyCode in profile.companyCode
 const PATH_INDEX = 1;
 const PREVIOUS = 'icon-previous';
 const NEXT = 'icon-next';
+
 class CompanyEditForm extends Component {
   static contextTypes = {
     executeAction: PropTypes.func.isRequired,
@@ -113,9 +121,54 @@ class CompanyEditForm extends Component {
     const value = val.value || '';
     this.setState({ timezone: value });
   }
-  getCompanyState = (props) => (
-    // the purpose of the passed down prop is to initialize and seed company values
-    {
+
+  onFieldChange = (id, value) => {
+    // switch smsc type will reset the state
+    if (id === SMSC_DATA_ID.TYPE && value === SMSC_TYPE.DEFAULT) {
+      const { smsc, smscValues } = this.getDefaultSmsState();
+      this.setState({ smsc, smscValues });
+      return;
+    }
+    const newState = this.state;
+    _.set(newState, id, value);
+    this.setState(newState);
+  }
+  getDefaultSmsState() {
+    return {
+      // smsc state
+      smsc: {
+        bindings: [],
+        selectedBindingIndex: null,
+        dialogOpened: false,
+      },
+      // smsc input values
+      smscValues: {
+        type: SMSC_TYPE.DEFAULT,
+        username: '',
+        password: '',
+        binding: {
+          ip: '',
+          port: '',
+        },
+      },
+    };
+  }
+  getClosingSmscDialogState = () => {
+    const smsc = this.state.smsc;
+    smsc.dialogOpened = false;
+    const smscValues = this.state.smscValues;
+    smscValues.binding = {
+      ip: '',
+      port: '',
+    };
+    return {
+      smsc,
+      smscValues,
+    };
+  }
+  getCompanyState(props) {
+    return {
+      // the purpose of the passed down prop is to initialize and seed company values
       companyCode: props.companyDetail.companyCode,
       companyName: props.companyDetail.companyName,
       companyType: props.companyDetail.companyType,
@@ -123,11 +176,22 @@ class CompanyEditForm extends Component {
       country: props.companyDetail.country,
       timezone: props.companyDetail.timezone,
       capabilitiesChecked: props.companyDetail.capabilities,
-    }
-  )
-  getValidatorData = () => (
-    this.state
-  )
+      smscValues: {
+        type: _.get(props.companyDetail, 'smsc') ? SMSC_TYPE.CUSTOM : SMSC_TYPE.DEFAULT,
+        username: _.get(props.companyDetail, 'smsc.username') || '',
+        password: _.get(props.companyDetail, 'smsc.password') || '',
+        binding: {
+          ip: '',
+          port: '',
+        },
+      },
+      smsc: {
+        bindings: _.get(props.companyDetail, 'smsc.bindingDetails') || [],
+        selectedBindingIndex: null,
+        dialogOpened: false,
+      },
+    };
+  }
   // for both JOI and user error
   getError = (errors, userErrors) => {
     // if JOI error occurs,UI will display JOI error
@@ -154,8 +218,26 @@ class CompanyEditForm extends Component {
     }
     this.setState({ validationErrors: {} });
   }
-  handleCloseErrorDialog = () => {
-    this.setState({ errorDialogOpened: false });
+
+  getValidatorData = () => {
+    const data = _.pick(this.state, ['companyCode', 'companyName', 'country', 'timezone']);
+
+    if (this.state.smscValues.type === SMSC_TYPE.DEFAULT) {
+      return data;
+    }
+
+    // get the values when it is not default
+    data[SMSC_DATA_ID.USERNAME] = _.get(this.state, SMSC_DATA_ID.USERNAME);
+    data[SMSC_DATA_ID.PASSWORD] = _.get(this.state, SMSC_DATA_ID.PASSWORD);
+    data[SMSC_DATA_ID.BINDINGS] = _.get(this.state, SMSC_DATA_ID.BINDINGS);
+
+    if (!this.state.smsc.dialogOpened) {
+      return data;
+    }
+
+    // get the dialog values when opened
+    data[SMSC_DATA_ID.BINDING] = _.get(this.state, SMSC_DATA_ID.BINDING);
+    return data;
   }
   handleOpenErrorDialog = () => {
     this.setState({ errorDialogOpened: true });
@@ -171,13 +253,36 @@ class CompanyEditForm extends Component {
   }
   validatorTypes = () => {
     const { intl: { formatMessage } } = this.props;
-    return {
+
+    // base company profile
+    const companyProfileJoi = Joi.object().keys({
       companyCode: Joi.string().required().regex(/^[a-z0-9]+$/)
         .label(formatMessage(MESSAGES.companyCode)),
       companyName: Joi.string().required().label(formatMessage(MESSAGES.companyName)),
       country: Joi.string().required().label(formatMessage(MESSAGES.country)),
       timezone: Joi.string().required().label(formatMessage(MESSAGES.timezone)),
-    };
+    });
+
+    if (this.state.smscValues.type === SMSC_TYPE.DEFAULT) {
+      return companyProfileJoi;
+    }
+
+    // extended the companyProfile JOI when smsc type non default
+    const extendedKeys = {};
+    extendedKeys[SMSC_DATA_ID.USERNAME] = Joi.string().required().label(formatMessage(i18nMessages.username));
+    extendedKeys[SMSC_DATA_ID.PASSWORD] = Joi.string().required().label(formatMessage(i18nMessages.password));
+    extendedKeys[SMSC_DATA_ID.BINDINGS] = Joi.array().unique().min(1).required().label(formatMessage(MESSAGES.smscBinding));
+
+    if (!this.state.smsc.dialogOpened) {
+      return companyProfileJoi.keys(extendedKeys);
+    }
+
+    const bindingSchema = Joi.object().keys({
+      ip: Joi.string().ip().required().label(formatMessage(MESSAGES.ip)),
+      port: Joi.number().integer().required().label(formatMessage(MESSAGES.port)),
+    });
+    extendedKeys[SMSC_DATA_ID.BINDING] = bindingSchema;
+    return companyProfileJoi.keys(extendedKeys);
   }
   validateField = (field) => () => {
     this.props.validate(field);
@@ -195,6 +300,14 @@ class CompanyEditForm extends Component {
           companyId: this.props.companyDetail.companyId,
           carrierId: identity,
         };
+        // only submit smsc values when it is not default
+        if (this.state.smscValues.type !== SMSC_TYPE.DEFAULT) {
+          companyInfo.smsc = {
+            username: this.state.smscValues.username,
+            password: this.state.smscValues.password,
+            bindingDetails: this.state.smsc.bindings,
+          };
+        }
         const { executeAction } = this.context;
         executeAction(updateProfile, companyInfo);
       }
@@ -216,7 +329,7 @@ class CompanyEditForm extends Component {
       resellerCarrierId,
       resellerCompanyId,
       id: provisionId,
-   } = this.props.companyDetail;
+    } = this.props.companyDetail;
     this.props.validate((error) => {
       if (!error) {
         const companyInfo = {
@@ -233,6 +346,14 @@ class CompanyEditForm extends Component {
           resellerCompanyId,
           carrierId: identity,
         };
+        // only submit smsc values when it is not default
+        if (this.state.smscValues.type !== SMSC_TYPE.DEFAULT) {
+          companyInfo.smsc = {
+            username: this.state.smscValues.username,
+            password: this.state.smscValues.password,
+            bindingDetails: this.state.smsc.bindings,
+          };
+        }
         const { executeAction } = this.context;
         executeAction(updateCompany, companyInfo);
       }
@@ -243,6 +364,54 @@ class CompanyEditForm extends Component {
       return this.state.capabilitiesChecked.indexOf(value) !== -1;
     }
     return null;
+  }
+  handleCloseErrorDialog = () => {
+    this.setState({ errorDialogOpened: false });
+  }
+  handleCloseSmscBindingDialog = () => {
+    const { smsc, smscValues } = this.getClosingSmscDialogState();
+    smsc.selectedBindingIndex = null;
+    this.setState({ smsc, smscValues });
+  }
+  handleOpenSmscBindingDialog = (index = null) => {
+    // update the smsc state
+    const smsc = this.state.smsc;
+    smsc.dialogOpened = true;
+    smsc.selectedBindingIndex = index;
+
+    const smscValues = this.state.smscValues;
+    // set the dialog values
+    if (index !== null) {
+      smscValues.binding = smsc.bindings[index];
+    }
+    this.setState({ smsc, smscValues });
+  }
+  handleAddSmscBinding = (obj) => {
+    this.props.validate(SMSC_DATA_ID.BINDING, err => {
+      // if both input values are valid
+      if (!err) {
+        const { smsc, smscValues } = this.getClosingSmscDialogState();
+        smsc.bindings.push(_.clone(obj));
+        this.setState({ smsc, smscValues });
+        this.props.validate(SMSC_DATA_ID.BINDINGS);
+      }
+    });
+  }
+  handleDeleteSmscBinding = (index) => {
+    const { smsc, smscValues } = this.getClosingSmscDialogState();
+    smsc.bindings.splice(index, 1);
+    smsc.selectedBindingIndex = null;
+    this.setState({ smsc, smscValues });
+    this.props.validate(SMSC_DATA_ID.BINDINGS);
+  }
+  handleUpdateSmscBinding = (index, obj) => {
+    const { smsc, smscValues } = this.getClosingSmscDialogState();
+    const target = smsc.bindings[index];
+    target.ip = obj.ip;
+    target.port = obj.port;
+    smsc.selectedBindingIndex = null;
+    this.setState({ smsc, smscValues });
+    this.props.validate(SMSC_DATA_ID.BINDINGS);
   }
   renderArrow = (direction) => {
     // SystemError Oject's length > 1,will render arrow
@@ -255,12 +424,135 @@ class CompanyEditForm extends Component {
     }
     return null;
   }
+  renderSmscBindingDetails() {
+    const {
+      smsc: { dialogOpened, bindings, selectedBindingIndex },
+      smscValues: { binding },
+    } = this.state;
+    const { getValidationMessages, isValid, smscSettingDisabled } = this.props;
+    if (!dialogOpened) {
+      return (
+      <div className="row">
+        <div className="large-10 columns">
+          <label>
+            <FormattedMessage id="smscBinding" defaultMessage="SMSC Binding" />:
+          </label>
+        </div>
+        <div className="large-14 columns">
+        <div className={classNames('company-smsc-setting__link', { disabled: smscSettingDisabled }) }
+          onClick={() => this.handleOpenSmscBindingDialog()}
+        >
+          + <FormattedMessage id="addNewBinding" defaultMessage="Add new Binding" />
+        </div>
+        {
+          bindings.length > 0 ?
+          <SmscBindingTable
+            bindings={bindings}
+            handleOpenBindingDialog={this.handleOpenSmscBindingDialog}
+            handleDeleteBinding={this.handleDeleteSmscBinding}
+            disabled={smscSettingDisabled}
+          /> : null
+        }
+          <ValidationErrorLabel messages={getValidationMessages(SMSC_DATA_ID.BINDINGS)} />
+        </div>
+      </div>);
+    }
+
+    return (
+      <SmscBindingDialog
+        values={binding}
+        selectedBindingIndex={selectedBindingIndex}
+        onFieldChange={this.onFieldChange}
+        handleAddBinding={this.handleAddSmscBinding}
+        handleDeleteBinding={this.handleDeleteSmscBinding}
+        handleUpdateBinding={this.handleUpdateSmscBinding}
+        handleCloseBindingDialog={this.handleCloseSmscBindingDialog}
+        isValid={isValid}
+        validateField={this.validateField}
+        getValidationMessages={getValidationMessages}
+      />
+    );
+  }
+  renderPanel() {
+    const { intl: { formatMessage } } = this.props;
+    const companyProfilePanel = (
+      <Panel header={formatMessage(MESSAGES.companyProfile)} >
+        <CompanyProfileInfo
+          companyCode={this.state.companyCode}
+          companyType={this.state.companyType}
+          paymentType={this.state.paymentType}
+          onCompanyCodeChange={this.onCompanyCodeChange}
+          onCompanyTypeChange={this.onCompanyTypeChange}
+          onPaymentTypeChange={this.onPaymentTypeChange}
+          companyTypeOption={COMPANY_TYPE_LABEL}
+          paymentTypeOption={PAYMENT_TYPE_LABEL}
+          disabled={this.props.profileDisabled}
+          validateField={this.validateField}
+          status={this.props.companyDetail.status}
+          errors={this.state.validationErrors}
+          handleOpenErrorDialog={this.handleOpenErrorDialog}
+        />
+      </Panel>
+    );
+    const companyDescriptionPanel = (
+      <Panel header={formatMessage(MESSAGES.companyDescription)} >
+        <CompanyDescription
+          companyName={this.state.companyName}
+          country={this.state.country}
+          timezone={this.state.timezone}
+          countryOption={COUNTRIES}
+          timezoneOption={TIMEZONE}
+          onCompanyNameChange={this.onCompanyNameChange}
+          onCountryChange={this.onCountryChange}
+          onTimezoneChange={this.onTimezoneChange}
+          disabled={this.props.descriptionDisabled}
+          validateField={this.validateField}
+          errors={this.state.validationErrors}
+        />
+      </Panel>
+    );
+    const companyCapabilitiesPanel = (
+      <Panel header={formatMessage(MESSAGES.companyCapabilities)} >
+        <CompanyCapabilities
+          capabilities={CAPABILITIES}
+          onCapabilitiesChange={this.onCapabilitiesChange}
+          capabilitiesChecked={this.state.capabilitiesChecked}
+          disabled={this.props.capabilitiesDisabled}
+          isChecked={this.isChecked}
+        />
+      </Panel>
+    );
+
+    const smscSettingPanel = (
+      <Panel header={formatMessage(MESSAGES.smscSetting)} >
+        <SmscSetting
+          option={SMSC_TYPE_LABEL}
+          values={this.state.smscValues}
+          onFieldChange={this.onFieldChange}
+          isValid={this.props.isValid}
+          validateField={this.validateField}
+          getValidationMessages={this.props.getValidationMessages}
+          disabled={this.props.smscSettingDisabled}
+        >
+          {this.renderSmscBindingDetails()}
+        </SmscSetting>
+      </Panel>
+    );
+    const panel = [companyProfilePanel, companyDescriptionPanel, companyCapabilitiesPanel];
+
+    // show the panel when having capability im to sms and sms verfication
+    if (_.includes(this.state.capabilitiesChecked, 'im.im-to-sms') ||
+     _.includes(this.state.capabilitiesChecked, 'verification.sms')) {
+      panel.push(smscSettingPanel);
+    }
+    return panel;
+  }
   render() {
     const { intl: { formatMessage }, systemErrors } = this.props;
     const { identity } = this.context.params;
     const { status } = this.props.companyDetail;
     const currentErrorIndex = this.state.currentErrorIndex;
-    
+
     return (
       <div className="company__new-profile">
       {
@@ -340,47 +632,7 @@ class CompanyEditForm extends Component {
         }
       </div>
         <Collapse accordion={false} defaultActiveKey="0">
-          <Panel header={formatMessage(MESSAGES.companyProfile)} >
-            <CompanyProfileInfo
-              companyCode={this.state.companyCode}
-              companyType={this.state.companyType}
-              paymentType={this.state.paymentType}
-              onCompanyCodeChange={this.onCompanyCodeChange}
-              onCompanyTypeChange={this.onCompanyTypeChange}
-              onPaymentTypeChange={this.onPaymentTypeChange}
-              companyTypeOption={COMPANY_TYPE_LABEL}
-              paymentTypeOption={PAYMENT_TYPE_LABEL}
-              disabled={this.props.profileDisabled}
-              validateField={this.validateField}
-              status={this.props.companyDetail.status}
-              errors={this.state.validationErrors}
-              handleOpenErrorDialog={this.handleOpenErrorDialog}
-            />
-          </Panel>
-          <Panel header={formatMessage(MESSAGES.companyDescription)} >
-            <CompanyDescription
-              companyName={this.state.companyName}
-              country={this.state.country}
-              timezone={this.state.timezone}
-              countryOption={COUNTRIES}
-              timezoneOption={TIMEZONE}
-              onCompanyNameChange={this.onCompanyNameChange}
-              onCountryChange={this.onCountryChange}
-              onTimezoneChange={this.onTimezoneChange}
-              disabled={this.props.descriptionDisabled}
-              validateField={this.validateField}
-              errors={this.state.validationErrors}
-            />
-          </Panel>
-          <Panel header={formatMessage(MESSAGES.companyCapabilities)} >
-            <CompanyCapabilities
-              capabilities={CAPABILITIES}
-              onCapabilitiesChange={this.onCapabilitiesChange}
-              capabilitiesChecked={this.state.capabilitiesChecked}
-              disabled={this.props.capabilitiesDisabled}
-              isChecked={this.isChecked}
-            />
-          </Panel>
+        {this.renderPanel()}
         </Collapse>
       </div>
     );
@@ -396,6 +648,7 @@ CompanyEditForm.propTypes = {
   }),
   descriptionDisabled: PropTypes.bool,
   capabilitiesDisabled: PropTypes.bool,
+  smscSettingDisabled: PropTypes.bool,
   companyToken: PropTypes.number,
   systemErrors: PropTypes.arrayOf(PropTypes.object),
   userErrors: PropTypes.arrayOf(PropTypes.object),
@@ -408,6 +661,7 @@ CompanyEditForm = connectToStores(CompanyEditForm, [CompanyStore], (context) => 
   profileDisabled: context.getStore(CompanyStore).getProfileDisabled(),
   descriptionDisabled: context.getStore(CompanyStore).getDescriptionDisabled(),
   capabilitiesDisabled: context.getStore(CompanyStore).getCapabilitiesDisabled(),
+  smscSettingDisabled: context.getStore(CompanyStore).getSmscSettingDisabled(),
   companyToken: context.getStore(CompanyStore).getCompanyToken(),
   systemErrors: context.getStore(CompanyStore).getSystemErrors(),
   userErrors: context.getStore(CompanyStore).getUserErrors(),

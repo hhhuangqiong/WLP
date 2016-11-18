@@ -2,7 +2,7 @@ import _ from 'lodash';
 const EMPTY_VALUE = '-';
 
 function buildProvisionData(data) {
-  return {
+  const provisionProfile = {
     companyInfo: {
       name: data.companyName,
       timezone: data.timezone,
@@ -15,6 +15,17 @@ function buildProvisionData(data) {
     serviceType: data.companyType,
     paymentMode: data.paymentType,
   };
+
+  if (data.smsc) {
+    provisionProfile.smsc = {
+      realm: {
+        systemId: data.smsc.username,
+        password: data.smsc.password,
+        bindingDetails: data.smsc.bindingDetails,
+      },
+    };
+  }
+  return provisionProfile;
 }
 
 function parseResponse(provisionItem, company = {}, preset = {}) {
@@ -29,7 +40,7 @@ function parseResponse(provisionItem, company = {}, preset = {}) {
     formatedPreset.capabilities = preset.capabilities;
   }
   // format the response and return the necessary data
-  return {
+  const companyProfile = {
     companyId: company.id,
     companyName: company.name,
     timezone: company.timezone,
@@ -45,6 +56,15 @@ function parseResponse(provisionItem, company = {}, preset = {}) {
     preset: formatedPreset,
     taskErrors: provisionItem.taskErrors,
   };
+  const realm = _.get(provisionItem, 'profile.smsc.realm');
+  if (realm) {
+    companyProfile.smsc = {
+      username: realm.systemId,
+      password: realm.password,
+      bindingDetails: realm.bindingDetails,
+    };
+  }
+  return companyProfile;
 }
 
 export default function provisionController(iamServiceClient, provisionHelper) {

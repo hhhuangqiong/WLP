@@ -25,6 +25,10 @@ export default defineMessages({
     id: 'username',
     defaultMessage: 'username',
   },
+  password: {
+    id: 'password',
+    defaultMessage: 'password',
+  },
   minutes: {
     id: 'minutes',
     defaultMessage: 'minutes',
