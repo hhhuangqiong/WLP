@@ -3,27 +3,25 @@ import _ from 'lodash';
 import classNames from 'classnames';
 
 const SwitchButtonGroup = (props) => {
-  const { types, currentType, onChange, disabled } = props;
+  const { option, selected, onChange, disabled } = props;
   return (
-      <div className="switch-button-group">
+      <div className={ classNames('switch-button-group', { disabled }) }>
       {
-        _.map(_.keys(types), (item, index) => (
-          <span
-            key={item}
+        _.map(option, (item, index) => (
+          <span key={index}
             className={ classNames(
               'item',
-              { active: currentType === item },
+              { active: selected === item.value },
               { left: index === 0 },
-              { right: index === _.keys(types).length - 1 })
+              { right: index === option.length - 1 })
           }
             onClick= {() => {
-              if (disabled) {
-                return;
+              if (!disabled) {
+                onChange(item.value);
               }
-              onChange(item);
             }}
           >
-          {types[item]}
+          {item.label}
           </span>
         ))
       }
@@ -36,12 +34,15 @@ SwitchButtonGroup.propTypes = {
    * The array of the optional types.
    * @type {Array}
    */
-  types: PropTypes.object,
+  option: PropTypes.arrayOf(PropTypes.shape({
+    value: PropTypes.string,
+    label: PropTypes.string,
+  })).isRequired,
   /**
-   * The value of the current active type.
+   * The value of the current selected.
    * @type {String}
    */
-  currentType: PropTypes.string,
+  selected: PropTypes.string,
   /**
    * The function to change the active type.
    * @type {func}

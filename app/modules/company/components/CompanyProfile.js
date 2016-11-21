@@ -21,14 +21,17 @@ import SmscBindingDialog from './SmscBindingDialog';
 import ApplicationStore from '../../../main/stores/ApplicationStore';
 import CompanyStore from '../stores/CompanyStore';
 import i18nMessages from '../../../main/constants/i18nMessages';
+import { formatIntlOption } from '../../../utils/intl';
 import {
   COUNTRIES,
   TIMEZONE,
   MESSAGES,
   CAPABILITIES,
-  COMPANY_TYPE_LABEL,
-  PAYMENT_TYPE_LABEL,
-  SMSC_TYPE_LABEL,
+  COMPANY_TYPE,
+  COMPANY_OPTION,
+  PAYMENT_TYPE,
+  PAYMENT_OPTION,
+  SMSC_OPTION,
   SMSC_TYPE,
   SMSC_DATA_ID,
 } from '../constants/companyOptions';
@@ -63,8 +66,8 @@ class CompanyProfile extends Component {
       companyName: '',
       country: '',
       timezone: '',
-      companyType: 'SDK',
-      paymentType: 'PRE_PAID',
+      companyType: COMPANY_TYPE.SDK,
+      paymentType: PAYMENT_TYPE.PRE_PAID,
       capabilities: [],
       token: Math.random(),
       validationErrors: {},
@@ -399,6 +402,7 @@ class CompanyProfile extends Component {
       companyType: preset && !!preset.companyType,
       paymentType: preset && !!preset.paymentType,
     };
+    const formatIntlOptionMethod = formatIntlOption.bind(null, formatMessage);
     const companyProfilePanel = (
       <Panel header={formatMessage(MESSAGES.companyProfile)} >
         <CompanyProfileInfo
@@ -408,8 +412,8 @@ class CompanyProfile extends Component {
           onCompanyCodeChange={this.onCompanyCodeChange}
           onCompanyTypeChange={this.onCompanyTypeChange}
           onPaymentTypeChange={this.onPaymentTypeChange}
-          companyTypeOption={COMPANY_TYPE_LABEL}
-          paymentTypeOption={PAYMENT_TYPE_LABEL}
+          companyTypeOption={_.map(COMPANY_OPTION, formatIntlOptionMethod)}
+          paymentTypeOption={_.map(PAYMENT_OPTION, formatIntlOptionMethod)}
           validateField={this.validateField}
           errors={this.state.validationErrors}
           disabled={profileDisable}
@@ -448,7 +452,7 @@ class CompanyProfile extends Component {
     const smscSettingPanel = (
       <Panel header={formatMessage(MESSAGES.smscSetting)} >
         <SmscSetting
-          option={SMSC_TYPE_LABEL}
+          option={_.map(SMSC_OPTION, formatIntlOptionMethod)}
           values={this.state.smscValues}
           onFieldChange={this.onFieldChange}
           isValid={this.props.isValid}

@@ -1,6 +1,7 @@
 import { sync as globSync } from 'glob';
 import { readFileSync } from 'fs';
 import * as path from 'path';
+import _ from 'lodash';
 
 /**
  * @method getLocaleDataFromPath
@@ -25,4 +26,11 @@ export function getLocaleDataFromPath(src) {
       collection[localePrefix] = messages;
       return collection;
     }, {});
+}
+
+export function formatIntlOption(formatMessage, item) {
+  return {
+    label: formatMessage(item.label),
+    value: item.value,
+  };
 }

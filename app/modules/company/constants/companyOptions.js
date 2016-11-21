@@ -161,6 +161,22 @@ export const MESSAGES = defineMessages({
     id: 'SMSCbinding',
     defaultMessage: 'SMSC binding',
   },
+  SDK: {
+    id: 'SDK',
+    defaultMessage: 'SDK',
+  },
+  whiteLabel: {
+    id: 'whiteLabel',
+    defaultMessage: 'WHITE LABEL',
+  },
+  defaultSMSC: {
+    id: 'defaultSMSC',
+    defaultMessage: 'Default SMSC',
+  },
+  customSMSC: {
+    id: 'customSMSC',
+    defaultMessage: 'Custom SMSC',
+  },
 });
 
 export const CAPABILITIES = {
@@ -182,32 +198,52 @@ export const CAPABILITIES = {
   'end-user.whitelist': 'End User Whitelist',
 };
 
-export const COMPANY_TYPE_LABEL = {
+export const COMPANY_TYPE = {
   SDK: 'SDK',
-  WHITE_LABEL: 'WHITE LABEL',
+  WHITE_LABEL: 'WHITE_LABEL',
 };
-export const PAYMENT_TYPE_LABEL = {
-  PRE_PAID: 'Pre-Paid',
-  POST_PAID: 'Post Paid',
-};
+
+export const COMPANY_OPTION = [{
+  value: COMPANY_TYPE.SDK,
+  label: MESSAGES.SDK,
+}, {
+  value: COMPANY_TYPE.WHITE_LABEL,
+  label: MESSAGES.whiteLabel,
+}];
+
 export const PAYMENT_TYPE = {
   PRE_PAID: 'PRE_PAID',
   POST_PAID: 'POST_PAID',
 };
+
+export const PAYMENT_OPTION = [{
+  value: PAYMENT_TYPE.PRE_PAID,
+  label: MESSAGES.prePaid,
+}, {
+  value: PAYMENT_TYPE.POST_PAID,
+  label: MESSAGES.postPaid,
+}];
+
 export const WALLET_TYPE = {
   NONE: 'WALLET_NONE',
   END_USER: 'WALLET_END_USER',
   OCS_INTEGRATION: 'WALLET_OCS_INTEGRATION',
   COMPANY: 'WALLET_COMPANY',
 };
+
 export const SMSC_TYPE = {
   DEFAULT: 'DEFAULT',
   CUSTOM: 'CUSTOM',
 };
-export const SMSC_TYPE_LABEL = {
-  DEFAULT: 'Default SMSC',
-  CUSTOM: 'Custom SMSC',
-};
+
+export const SMSC_OPTION = [{
+  value: SMSC_TYPE.DEFAULT,
+  label: MESSAGES.defaultSMSC,
+}, {
+  value: SMSC_TYPE.CUSTOM,
+  label: MESSAGES.customSMSC,
+}];
+
 export const SMSC_DATA_ID = {
   USERNAME: 'smscValues.username',
   PASSWORD: 'smscValues.password',

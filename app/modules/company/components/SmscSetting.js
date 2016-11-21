@@ -8,7 +8,7 @@ import ValidationErrorLabel from '../../../main/components/ValidationErrorLabel'
 
 class SmscSetting extends Component {
   static propTypes = {
-    option: PropTypes.object.isRequired,
+    option: PropTypes.array.isRequired,
     values: PropTypes.shape({
       type: PropTypes.string,
       username: PropTypes.string,
@@ -95,8 +95,8 @@ class SmscSetting extends Component {
             <div className="large-14 columns">
               <SwitchButtonGroup
                 className="radius"
-                types={option}
-                currentType={values.type}
+                option={option}
+                selected={values.type}
                 onChange={(value) => onFieldChange(SMSC_DATA_ID.TYPE, value)}
                 disabled={disabled}
               />

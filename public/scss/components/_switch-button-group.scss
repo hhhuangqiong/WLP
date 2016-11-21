@@ -35,4 +35,7 @@
       border-radius: 0px rem-calc($global-radius) rem-calc($global-radius) 0px;
     }
   }
+  &.disabled {
+    pointer-events: none;
+  }
 }

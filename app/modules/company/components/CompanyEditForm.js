@@ -23,14 +23,15 @@ import SmscBindingTable from './SmscBindingTable';
 import SmscBindingDialog from './SmscBindingDialog';
 import ValidationErrorLabel from '../../../main/components/ValidationErrorLabel';
 import i18nMessages from '../../../main/constants/i18nMessages';
+import { formatIntlOption } from '../../../utils/intl';
 import {
   COUNTRIES,
   TIMEZONE,
   MESSAGES,
   CAPABILITIES,
-  COMPANY_TYPE_LABEL,
-  PAYMENT_TYPE_LABEL,
-  SMSC_TYPE_LABEL,
+  COMPANY_OPTION,
+  PAYMENT_OPTION,
+  SMSC_OPTION,
   SMSC_TYPE,
   SMSC_DATA_ID,
 } from '../constants/companyOptions';
@@ -475,6 +476,7 @@ class CompanyEditForm extends Component {
   }
   renderPanel() {
     const { intl: { formatMessage } } = this.props;
+    const formatIntlOptionMethod = formatIntlOption.bind(null, formatMessage);
     const companyProfilePanel = (
       <Panel header={formatMessage(MESSAGES.companyProfile)} >
         <CompanyProfileInfo
@@ -484,8 +486,8 @@ class CompanyEditForm extends Component {
           onCompanyCodeChange={this.onCompanyCodeChange}
           onCompanyTypeChange={this.onCompanyTypeChange}
           onPaymentTypeChange={this.onPaymentTypeChange}
-          companyTypeOption={COMPANY_TYPE_LABEL}
-          paymentTypeOption={PAYMENT_TYPE_LABEL}
+          companyTypeOption={_.map(COMPANY_OPTION, formatIntlOptionMethod)}
+          paymentTypeOption={_.map(PAYMENT_OPTION, formatIntlOptionMethod)}
           disabled={this.props.profileDisabled}
           validateField={this.validateField}
           status={this.props.companyDetail.status}
@@ -526,7 +528,7 @@ class CompanyEditForm extends Component {
     const smscSettingPanel = (
       <Panel header={formatMessage(MESSAGES.smscSetting)} >
         <SmscSetting
-          option={SMSC_TYPE_LABEL}
+          option={_.map(SMSC_OPTION, formatIntlOptionMethod)}
           values={this.state.smscValues}
           onFieldChange={this.onFieldChange}
           isValid={this.props.isValid}

@@ -55,8 +55,8 @@ const CompanyProfileInfo = (props) => {
         <div className="large-14 columns">
           <SwitchButtonGroup
             className="radius"
-            types={companyTypeOption}
-            currentType={companyType}
+            option={companyTypeOption}
+            selected={companyType}
             onChange={onCompanyTypeChange}
             disabled={!!disabled.companyType}
           />
@@ -71,8 +71,8 @@ const CompanyProfileInfo = (props) => {
         <div className="large-14 columns">
           <SwitchButtonGroup
             className="radius"
-            types={paymentTypeOption}
-            currentType={paymentType}
+            option={paymentTypeOption}
+            selected={paymentType}
             onChange={onPaymentTypeChange}
             disabled={!!disabled.paymentType}
           />
@@ -87,8 +87,8 @@ CompanyProfileInfo.propTypes = {
   companyCode: PropTypes.string,
   companyType: PropTypes.string,
   paymentType: PropTypes.string,
-  companyTypeOption: PropTypes.object,
-  paymentTypeOption: PropTypes.object,
+  companyTypeOption: PropTypes.array,
+  paymentTypeOption: PropTypes.array,
   onCompanyCodeChange: PropTypes.func,
   onCompanyTypeChange: PropTypes.func,
   onPaymentTypeChange: PropTypes.func,
