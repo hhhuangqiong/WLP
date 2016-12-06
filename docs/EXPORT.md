@@ -17,15 +17,29 @@ ExportTask -> ExportConfig: get the config
 ExportConfig --> ExportTask: return the config
 ExportTask --> ExportController: return the job id
 ExportController --> WLP: return the job id
-WLP --> User: showing processing status
 
 ExportTask -> OtherService: send the request to get the data
 OtherService --> ExportTask : return the data
-ExportTask --> ExportTask: process the data and save into redis
+ExportTask --> ExportTask: process the data to csv and save into redis
+
+WLP -> ExportController: request progress
+ExportController -> ExportTask: get progress by job id
+ExportTask --> ExportController: return progress
+ExportController --> WLP: return progress
+WLP --> User: showing processing status
+
+
+User -> WLP: click download button
+WLP -> ExportController: request to get file by export id(job id)
+ExportController -> ExportTask:request to get file
+ExportTask --> ExportTask: get csv file from redis by id
+ExportTask --> ExportController: return csv file
+ExportController --> WLP: return csv file
+WLP --> User: file download
 
 {% endplantuml %}
 
 ## Development
 
-http://localhost:3100/  
+http://localhost:3100/
 Port with 3100 will be the Kue GUI interface, it will show the current jobs lists.
