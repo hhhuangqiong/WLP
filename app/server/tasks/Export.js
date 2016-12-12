@@ -14,19 +14,20 @@ import {
   IM,
   VERIFICATION,
   END_USER,
-  CALLS_COST, SMS,
+  CALLS_COST,
+  SMS,
 } from '../../main/file-export/constants/ExportType';
 
 import {
   getCountryName,
   beautifyTime,
   stringifyNumbers,
-  parseDuration,
   sanitizeNull,
 } from '../../utils/StringFormatter';
 
 const PAGE_START_INDEX = 0;
 const PAGE_SIZE = 1000;
+const PAGE_SIZE_SMALL = 100;
 
 const MISSING_PAGE_DATA_MSG = 'Invalid pageNumber/totalPages';
 
@@ -121,10 +122,10 @@ export default class ExportTask {
     job[CALLS_COST] = () => (
       {
         carrier: params.carrierId,
-        startDate: moment(query.startDate, 'x').toISOString(),
-        endDate: moment(query.endDate, 'x').toISOString(),
-        page: 0,
-        limit: 100,
+        start_date: moment(query.startDate, 'x').toISOString(),
+        end_date: moment(query.endDate, 'x').toISOString(),
+        page: PAGE_START_INDEX,
+        limit: PAGE_SIZE_SMALL,
       }
     );
 
@@ -248,6 +249,7 @@ export default class ExportTask {
         };
         break;
       default:
+        humanizedRow = { ...row };
         break;
     }
 
@@ -264,6 +266,8 @@ export default class ExportTask {
         return EXPORTS.IM;
       case CALLS:
         return EXPORTS.CALLS;
+      case CALLS_COST:
+        return EXPORTS.CALLS_COST;
       case VERIFICATION:
         return EXPORTS.VERIFICATION;
       case END_USER:

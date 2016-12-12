@@ -81,6 +81,10 @@ export const MESSAGES = defineMessages({
     id: 'accessManagement.callExport',
     defaultMessage: 'Call Export',
   },
+  callCostExport: {
+    id: 'accessManagement.callCostExport',
+    defaultMessage: 'Call Cost Export',
+  },
   im: {
     id: 'accessManagement.im',
     defaultMessage: 'IM Resource',

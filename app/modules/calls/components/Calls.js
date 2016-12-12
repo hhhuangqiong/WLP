@@ -26,16 +26,25 @@ import clearCallsReport from '../actions/clearCallsReport';
 
 import CallsTable from './CallsTable';
 import CallsStore from '../stores/CallsStore';
+import AuthStore from '../../../main/stores/AuthStore';
 import ClientConfigStore from '../../../main/stores/ClientConfigStore';
 import Searchbox from '../../../main/components/Searchbox';
-import Permit from '../../../main/components/common/Permit';
 
 import Export from '../../../main/file-export/components/Export';
 import CallsExportForm from './CallsExportForm';
 
-import CALL_TYPE from '../constants/callType';
-
+import { CALL_TYPE, CALL_EXPORT_REPORT_TYPE } from '../constants/callType';
+import { CALLS_COST, CALLS } from '../../../main/file-export/constants/exportType';
 import * as dateLocale from '../../../utils/dateLocale';
+
+// use for react-select options
+const CALL_EXPORT_OPTIONS = [{
+  value: CALLS,
+  label: CALL_EXPORT_REPORT_TYPE.USAGE,
+}, {
+  value: CALLS_COST,
+  label: CALL_EXPORT_REPORT_TYPE.RETAIL_PRICE,
+}];
 
 const defaultLocale = dateLocale.getDefaultLocale();
 
@@ -56,7 +65,6 @@ const Calls = React.createClass({
 
   getStateFromStores() {
     const store = this.getStore(CallsStore);
-
     return {
       calls: store.getCalls(),
       callsCount: store.getCallsCount(),
@@ -65,6 +73,7 @@ const Calls = React.createClass({
       isLoadingMore: store.isLoadingMore,
       // for setState, so it can be used later.
       size: this.getStore(ClientConfigStore).getPages().CALLS.PAGE_SIZE,
+      user: this.getStore(AuthStore).getUser(),
     };
   },
 
@@ -85,12 +94,19 @@ const Calls = React.createClass({
   getInitialState() {
     const query = _.merge(this.getDefaultQuery(), this.context.location.query);
     const queryAndStore = _.merge(this.getStateFromStores(), query);
-    return queryAndStore;
+    const exportState = {
+      // default export type will be calls
+      exportType: CALLS,
+      exportTypeOptions: null,
+    };
+    const initializedStates = _.merge(queryAndStore, exportState);
+    return initializedStates;
   },
 
   componentDidMount() {
     $(document).foundation('reveal', 'reflow');
     this.fetchData();
+    this.setExportTypeOptions();
   },
 
   componentDidUpdate({ location: { search: prevSearch } }) {
@@ -106,9 +122,29 @@ const Calls = React.createClass({
     this.context.executeAction(clearCallsReport);
   },
 
+  setExportTypeOptions() {
+    const userPermissions = this.state.user.permissions;
+    const exportTypeOptions = [];
+    if (_.includes(userPermissions, permission(RESOURCE.CALL_EXPORT, ACTION.READ))) {
+      exportTypeOptions.push(CALL_EXPORT_OPTIONS[0]);
+    }
+    if (_.includes(userPermissions, permission(RESOURCE.CALL_COST_EXPORT, ACTION.READ))) {
+      exportTypeOptions.push(CALL_EXPORT_OPTIONS[1]);
+    }
+    if (exportTypeOptions.length === 1) {
+      this.setState({ exportType: exportTypeOptions[0].value });
+    }
+    this.setState({ exportTypeOptions });
+  },
+
   onChange() {
     const query = _.merge(this.getDefaultQuery(), this.context.location.query);
     this.setState(_.merge(query, this.getStateFromStores()));
+  },
+
+  handleExportTypeChange(val = {}) {
+    const value = val.value || '';
+    this.setState({ exportType: value });
   },
 
   getQueryFromState() {
@@ -278,7 +314,7 @@ const Calls = React.createClass({
             {/* <DropdownFilter /> */}
 
             <div className="date-range-picker left">
-              <Icon className="date-range-picker__icon left" symbol="icon-calendar"/ >
+              <Icon className="date-range-picker__icon left" symbol="icon-calendar" / >
               <div
                 className="date-input-wrap date-range-picker__start left"
                 onClick={this._handleStartDateClick}
@@ -317,15 +353,20 @@ const Calls = React.createClass({
               </div>
             </div>
 
-            <Permit permission={permission(RESOURCE.CALL_EXPORT, ACTION.READ)}>
-              <Export exportType="Calls">
+            {
+              !_.isEmpty(this.state.exportTypeOptions) ?
+              <Export exportType={this.state.exportType}>
                 <CallsExportForm
                   startDate={this.state.startDate}
                   endDate={this.state.endDate}
                   netType={this.state.type}
+                  exportTypeOptions={this.state.exportTypeOptions}
+                  disabled={this.state.exportTypeOptions.length === 1}
+                  handleExportTypeChange={this.handleExportTypeChange}
+                  exportType={this.state.exportType}
                 />
-              </Export>
-            </Permit>
+              </Export> : null
+            }
 
             <Searchbox
               value={this.state.search}

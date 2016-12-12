@@ -30,6 +30,7 @@ function deriveResources(carrierProfile) {
     [RESOURCE.ROLE]: () => true, // all companies will show access management
     [RESOURCE.CALL]: ({ capabilities }) => filterCallAndExport(capabilities),
     [RESOURCE.CALL_EXPORT]: ({ capabilities }) => filterCallAndExport(capabilities),
+    [RESOURCE.CALL_COST_EXPORT]: ({ capabilities }) => filterCallAndExport(capabilities),
     [RESOURCE.WHITELIST]: ({ capabilities }) =>
       includes(capabilities, CAPABILITY.END_USER_WHITELIST),
     [RESOURCE.IM]: ({ capabilities }) => filterImAndExport(capabilities, CAPABILITY.IM),

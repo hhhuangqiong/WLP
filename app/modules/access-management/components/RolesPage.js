@@ -127,7 +127,7 @@ export class RolesPage extends Component {
       roles[index].permissions[exportResource] = actions;
       /* eslint-enable */
     }
-    // e.gif the call is unticked , which means actions will be empty
+    // e.g if the call is unticked , which means actions will be empty
     // then the callExport will also be unticked
     if (resource === exportResource
       && _.isEmpty(actions) && !_.isEmpty(role.permissions[exportPermission])) {
@@ -150,25 +150,44 @@ export class RolesPage extends Component {
       : without(actions, action);
     switch (resource) {
       case RESOURCE.CALL:
-      case RESOURCE.CALL_EXPORT:
+        // handle the dependency in three parts: call_resource call_export call_cost_export
+        this.handleTickResourceAndExport(
+          resource, actions, RESOURCE.CALL, RESOURCE.CALL_COST_EXPORT, roles, role, index
+        );
         this.handleTickResourceAndExport(
           resource, actions, RESOURCE.CALL, RESOURCE.CALL_EXPORT, roles, role, index
-        ); break;
+        );
+        break;
+      case RESOURCE.CALL_EXPORT:
+        // just need to handle the dependency between call_resource and call_export
+        this.handleTickResourceAndExport(
+          resource, actions, RESOURCE.CALL, RESOURCE.CALL_EXPORT, roles, role, index
+        );
+        break;
+      case RESOURCE.CALL_COST_EXPORT:
+        // just need to handle the dependency between call_resource and call_cost_export
+        this.handleTickResourceAndExport(
+          resource, actions, RESOURCE.CALL, RESOURCE.CALL_COST_EXPORT, roles, role, index
+        );
+        break;
       case RESOURCE.IM:
       case RESOURCE.IM_EXPORT:
         this.handleTickResourceAndExport(
           resource, actions, RESOURCE.IM, RESOURCE.IM_EXPORT, roles, role, index
-        ); break;
+        );
+        break;
       case RESOURCE.END_USER:
       case RESOURCE.END_USER_EXPORT:
         this.handleTickResourceAndExport(
           resource, actions, RESOURCE.END_USER, RESOURCE.END_USER_EXPORT, roles, role, index
-        ); break;
+        );
+        break;
       case RESOURCE.SMS:
       case RESOURCE.SMS_EXPORT:
         this.handleTickResourceAndExport(
           resource, actions, RESOURCE.SMS, RESOURCE.SMS_EXPORT, roles, role, index
-        ); break;
+        );
+        break;
       default: break;
     }
     roles[index].permissions[resource] = actions;

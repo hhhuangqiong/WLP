@@ -82,6 +82,39 @@ export function ocsClient(options) {
       throw e;
     }
   }
+
+  async function getCallsCost(params) {
+    const { carrier, ...query } = params;
+    // cos API's pagination index is from 1 instead of 0
+    const reqQuery = { ...query, page: query.page + 1 };
+    const httpOptions = {
+      url: `carriers/${carrier}/records/calls`,
+      method: 'get',
+      query: reqQuery,
+    };
+
+    try {
+      const result = await call(httpOptions);
+      // return the origin request page back
+      result.pageNumber = result.pageNumber - 1;
+      return result;
+    } catch (e) {
+      if (e.status === 404) {
+        logger.warn(`OCS has no records for carrier id: ${carrier}.`);
+        return {
+          page_number: 0,
+          page_size: parseInt(reqQuery.pageSize, 10),
+          offset: 0,
+          number_of_elements: 0,
+          total_pages: 0,
+          total_elements: 0,
+          content: [],
+        };
+      }
+      throw e;
+    }
+  }
+
   function topUpWallet(params) {
     const { carrierId, walletId, ...body } = params;
     const httpOptions = {
@@ -96,6 +129,7 @@ export function ocsClient(options) {
     getWallets,
     getTopUpHistory,
     topUpWallet,
+    getCallsCost,
   };
 }
 

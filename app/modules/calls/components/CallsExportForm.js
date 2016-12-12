@@ -1,24 +1,31 @@
 import React, { PropTypes } from 'react';
 import moment from 'moment';
 import classNames from 'classnames';
-import { FormattedMessage } from 'react-intl';
+import { injectIntl, intlShape, FormattedMessage } from 'react-intl';
+import Select from 'react-select';
 
 import DateTimePicker from '../../../main/components/DateTimePicker';
 import ExportSubmitControls from '../../../main/file-export/components/ExportSubmitControls';
 
-import CALL_TYPE from '../constants/callType';
+import { CALL_TYPE, MESSAGES, CALL_EXPORT_REPORT_TYPE } from '../constants/callType';
+import { CALLS_COST, CALLS } from '../../../main/file-export/constants/exportType';
 import * as dateLocale from '../../../utils/dateLocale';
 import { TIME_FORMAT } from '../../../utils/timeFormatter';
 
 const defaultLocale = dateLocale.getDefaultLocale();
 
-export default React.createClass({
+const CallsExportForm = React.createClass({
   propTypes: {
     startDate: PropTypes.string,
     endDate: PropTypes.string,
     netType: PropTypes.string,
     handleExport: PropTypes.func,
     closeModal: PropTypes.func,
+    intl: intlShape.isRequired,
+    exportTypeOptions: PropTypes.array,
+    disabled: PropTypes.bool,
+    exportType: PropTypes.string,
+    handleExportTypeChange: PropTypes.func,
   },
 
   defaultState() {
@@ -79,6 +86,7 @@ export default React.createClass({
 
   render() {
     // ExportCountryDropdown is removed for WLP-285
+    const { formatMessage } = this.props.intl;
     return (
       <form onSubmit={this.handleExport} noValidate>
         <h4 id="modalTitle">
@@ -139,33 +147,56 @@ export default React.createClass({
             />
           </label>
 
-          <ul className="button-group round even-3 export-type-buttons">
-            <li>
-              <a
-                className={classNames('button', { active: this.state.netType === CALL_TYPE.ONNET })}
-                onClick={this.handleToggleOnnet}
-              >
-                <FormattedMessage id="onnet" defaultMessage="Onnet" />
-              </a>
-            </li>
-            <li>
-              <a
-                className={classNames('button', { active: this.state.netType === CALL_TYPE.OFFNET })}
-                onClick={this.handleToggleOffnet}
-              >
-                <FormattedMessage id="offnet" defaultMessage="Offnet" />
-              </a>
-            </li>
-            <li>
-              <a
-                className={classNames('button', { active: this.state.netType === CALL_TYPE.MAAII_IN })}
-                onClick={this.handleToggleMaaiiIn}
-              >
-                <FormattedMessage id="maaiiIn" defaultMessage="Maaii-In" />
-              </a>
-            </li>
-          </ul>
+          <Select
+            className="export-select"
+            name="select-export-type"
+            value={this.props.exportType}
+            placeholder={formatMessage(MESSAGES.selectType)}
+            options={this.props.exportTypeOptions}
+            onChange={this.props.handleExportTypeChange}
+            clearable={false}
+            disabled={this.props.disabled}
+          />
         </div>
+
+        {
+          this.props.exportType !== CALLS_COST ?
+          <div className="export-row">
+            <label className="left bold">
+              <FormattedMessage
+                id="filter"
+                defaultMessage="Filter by"
+              />
+            </label>
+
+            <ul className="button-group round even-3 export-type-buttons">
+              <li>
+                <a
+                  className={classNames('button', { active: this.state.netType === CALL_TYPE.ONNET })}
+                  onClick={this.handleToggleOnnet}
+                >
+                  <FormattedMessage id="onnet" defaultMessage="Onnet" />
+                </a>
+              </li>
+              <li>
+                <a
+                  className={classNames('button', { active: this.state.netType === CALL_TYPE.OFFNET })}
+                  onClick={this.handleToggleOffnet}
+                >
+                  <FormattedMessage id="offnet" defaultMessage="Offnet" />
+                </a>
+              </li>
+              <li>
+                <a
+                  className={classNames('button', { active: this.state.netType === CALL_TYPE.MAAII_IN })}
+                  onClick={this.handleToggleMaaiiIn}
+                >
+                  <FormattedMessage id="maaiiIn" defaultMessage="Maaii-In" />
+                </a>
+              </li>
+            </ul>
+          </div> : null
+        }
 
         <hr />
 
@@ -178,3 +209,5 @@ export default React.createClass({
     );
   },
 });
+
+export default injectIntl(CallsExportForm);

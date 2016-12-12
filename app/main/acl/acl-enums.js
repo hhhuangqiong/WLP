@@ -49,6 +49,7 @@ export const RESOURCE = {
   VERIFICATION_SDK: 'verificationSdk',
   WHITELIST: 'whitelist',
   CALL_EXPORT: 'callExport',
+  CALL_COST_EXPORT: 'callCostExport',
   IM_EXPORT: 'imExport',
   END_USER_EXPORT: 'endUserExport',
   SMS_EXPORT: 'smsExport',

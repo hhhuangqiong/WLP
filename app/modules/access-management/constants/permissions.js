@@ -109,6 +109,10 @@ export const PERMISSIONS = [{
   resource: RESOURCE.CALL_EXPORT,
   action: ACTION.READ,
 }, {
+  intlKey: 'callCostExport',
+  resource: RESOURCE.CALL_COST_EXPORT,
+  action: ACTION.READ,
+}, {
   intlKey: 'im',
   resource: RESOURCE.IM,
   action: ACTION.READ,

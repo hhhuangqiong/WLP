@@ -24,6 +24,17 @@ export default {
     EXPORT_REQUEST_EXECUTION: 'getCalls',
     EXPORT_FILENAME: 'export_calls_usage.csv',
   },
+  CALLS_COST: {
+    DATA_FIELDS: [
+      'accountId', 'callType', 'childCdr', 'cost', 'creationDate', 'currency',
+      'destination', 'durationMinutes', 'durationSeconds', 'endDate', 'id',
+      'ocsSessionId', 'reasonCode', 'requestedDestionation', 'startDate',
+      'userId', 'username', 'walletId',
+    ],
+    EXPORT_REQUEST: 'OcsClient',
+    EXPORT_REQUEST_EXECUTION: 'getCallsCost',
+    EXPORT_FILENAME: 'export_calls_retail_price.csv',
+  },
   SMS: {
     DATA_FIELDS: [
       'id', 'carrier', 'charged_amount', 'country', 'destination_address_inbound',
@@ -37,10 +48,10 @@ export default {
   },
   CALLS_COST: {
     DATA_FIELDS: [
-      'id', 'account_id', 'user_id', 'wallet_id', 'ocs_session_id', 'username',
-      'carrier_identifier', 'destination', 'start_date', 'end_date', 'duration_seconds',
-      'duration_minutes', 'reason_code', 'currency', 'cost', 'creation_date',
-      'child_cdr', 'type',
+      'accountId', 'callType', 'childCdr', 'cost', 'creationDate', 'currency',
+      'destination', 'durationMinutes', 'durationSeconds', 'endDate', 'id',
+      'ocsSessionId', 'reasonCode', 'requestedDestionation', 'startDate',
+      'userId', 'username', 'walletId',
     ],
     EXPORT_REQUEST: 'OcsClient',
     EXPORT_REQUEST_EXECUTION: 'getCallsCost',

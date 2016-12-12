@@ -25,6 +25,10 @@ $positioning: -150px;
   width: $control-width !important;
 }
 
+.export-select {
+  width: rem-calc(250);
+  height: rem-calc(40);
+}
 .export-form-row-padding {
   margin-bottom: 15px;
 }
