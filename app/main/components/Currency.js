@@ -23,6 +23,7 @@ export function getCurrencyTranslation(currency, formatMessage) {
     case 'NTD': return formatMessage(i18nMessages.ntd);
     case 'EUR': return formatMessage(i18nMessages.eur);
     case 'MINS': return formatMessage(i18nMessages.mins);
+    case 'HKD': return formatMessage(i18nMessages.hkd);
     default: return currency;
   }
 }

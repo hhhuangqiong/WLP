@@ -93,6 +93,10 @@ export default defineMessages({
     id: 'mins',
     defaultMessage: 'MINS',
   },
+  hkd: {
+    id: 'hkd',
+    defaultMessage: 'HKD',
+  },
   ios: {
     id: 'ios',
     defaultMessage: 'iOS',
