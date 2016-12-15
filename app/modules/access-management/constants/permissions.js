@@ -125,6 +125,10 @@ export const PERMISSIONS = [{
   resource: RESOURCE.SMS,
   action: ACTION.READ,
 }, {
+  intlKey: 'smsExport',
+  resource: RESOURCE.SMS_EXPORT,
+  action: ACTION.READ,
+}, {
   intlKey: 'verification',
   resource: RESOURCE.VERIFICATION_SDK,
   action: ACTION.READ,

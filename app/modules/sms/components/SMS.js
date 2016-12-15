@@ -14,6 +14,12 @@ import clearSMS from '../actions/clearSMS';
 import SMSTable from './SMSTable';
 import SMSStore from '../stores/SMSStore';
 
+import Export from '../../../main/file-export/components/Export';
+import SmsExportForm from './SmsExportForm';
+
+import Permit from '../../../main/components/common/Permit';
+import { RESOURCE, ACTION, permission } from '../../../main/acl/acl-enums';
+import { SMS as Sms } from '../../../main/file-export/constants/ExportType';
 import i18nMessages from '../../../main/constants/i18nMessages';
 import * as FilterBar from './../../../main/components/FilterBar';
 import DateRangePicker from './../../../main/components/DateRangePicker';
@@ -148,6 +154,16 @@ const SMS = React.createClass({
             />
           </FilterBar.LeftItems>
           <FilterBar.RightItems>
+            <Permit permission={permission(RESOURCE.SMS_EXPORT, ACTION.READ)}>
+              <Export exportType={Sms}>
+                  <SmsExportForm
+                    startDate={this.state.startDate}
+                    endDate={this.state.endDate}
+                    page={this.state.page}
+                    pageRec={this.state.pageRec}
+                  />
+              </Export>
+            </Permit>
             <SearchBox
               placeHolder={formatMessage(i18nMessages.sender)}
               value={this.state.number}

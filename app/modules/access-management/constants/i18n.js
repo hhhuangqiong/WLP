@@ -93,6 +93,10 @@ export const MESSAGES = defineMessages({
     id: 'accessManagement.sms',
     defaultMessage: 'SMS Resource',
   },
+  smsExport: {
+    id: 'accessManagement.smsExport',
+    defaultMessage: 'SMS Export',
+  },
   verification: {
     id: 'accessManagement.verification',
     defaultMessage: 'Verification Resource',

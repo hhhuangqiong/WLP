@@ -22,7 +22,29 @@ export default {
     ],
     EXPORT_REQUEST: 'CallsRequest',
     EXPORT_REQUEST_EXECUTION: 'getCalls',
-    EXPORT_FILENAME: 'export_calls.csv',
+    EXPORT_FILENAME: 'export_calls_usage.csv',
+  },
+  SMS: {
+    DATA_FIELDS: [
+      'id', 'carrier', 'charged_amount', 'country', 'destination_address_inbound',
+      'origin_interface', 'outgoing_interface', 'request_date', 'response_date',
+      'segment_count', 'sms_server_msg_id', 'source_address_inbound', 'status',
+      'type', 'type2',
+    ],
+    EXPORT_REQUEST: 'SmsRequest',
+    EXPORT_REQUEST_EXECUTION: 'getSms',
+    EXPORT_FILENAME: 'export_sms.csv',
+  },
+  CALLS_COST: {
+    DATA_FIELDS: [
+      'ID', 'hey', 'USERID', 'WALLETID', 'VC2SID',
+      'VC2CALLING', 'VC2REQUESTED', 'VC2CALLED', 'DATBEGIN',
+      'DATEND', 'NUMSECONDS', 'NUMMINUTES', 'NUMCAUSECODE', 'NUMCURRENCYCODE', 'NUMCOST',
+      'DATCREATE', 'NUMISCHILD', 'NUMCALLTYPE',
+    ],
+    EXPORT_REQUEST: 'OcsClient',
+    EXPORT_REQUEST_EXECUTION: 'getCallsCost',
+    EXPORT_FILENAME: 'export_calls_retail_price.csv',
   },
   VERIFICATION: {
     DATA_FIELDS: [

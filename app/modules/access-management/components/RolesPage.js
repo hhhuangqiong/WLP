@@ -164,6 +164,11 @@ export class RolesPage extends Component {
         this.handleTickResourceAndExport(
           resource, actions, RESOURCE.END_USER, RESOURCE.END_USER_EXPORT, roles, role, index
         ); break;
+      case RESOURCE.SMS:
+      case RESOURCE.SMS_EXPORT:
+        this.handleTickResourceAndExport(
+          resource, actions, RESOURCE.SMS, RESOURCE.SMS_EXPORT, roles, role, index
+        ); break;
       default: break;
     }
     roles[index].permissions[resource] = actions;

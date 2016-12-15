@@ -9,7 +9,7 @@ import redisWStream from 'redis-wstream';
 
 import { fetchDep } from '../utils/bottle';
 import EXPORTS from '../../config/export';
-import { CALLS, IM, VERIFICATION, END_USER } from '../../main/file-export/constants/ExportType';
+import { CALLS, IM, VERIFICATION, END_USER, CALLS_COST, SMS } from '../../main/file-export/constants/ExportType';
 
 import {
   getCountryName,
@@ -109,6 +109,27 @@ export default class ExportTask {
         origin: query.origin,
         page: PAGE_START_INDEX,
         size: PAGE_SIZE,
+      }
+    );
+
+    job[CALLS_COST] = () => (
+      {
+        carrier: params.carrierId,
+        startDate: query.startDate,
+        endDate: query.endDate,
+        page: PAGE_START_INDEX,
+        limit: PAGE_SIZE,
+      }
+    );
+
+    job[SMS] = () => (
+      {
+        carrier: params.carrierId,
+        from: query.startDate,
+        to: query.endDate,
+        source_address_inbound: query.number,
+        page: query.page,
+        size: query.pageRec,
       }
     );
 
@@ -242,6 +263,8 @@ export default class ExportTask {
         return EXPORTS.VERIFICATION;
       case END_USER:
         return EXPORTS.END_USER;
+      case SMS:
+        return EXPORTS.SMS;
       default:
         return {};
     }

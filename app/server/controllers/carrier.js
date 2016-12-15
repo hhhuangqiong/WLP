@@ -13,7 +13,6 @@ import {
   getTotalFromSegments,
   parseStatsComparison,
 } from '../utils/statsParseHelper';
-import SmsRequest from '../../lib/requests/dataProviders/SMS';
 import { parseVerificationStatistic } from '../parser/verificationStats';
 import { parseTotalAtTime, parseMonthlyTotalInTime } from '../parser/userStats';
 
@@ -22,6 +21,7 @@ export default function carriersController() {
   const signupRuleRequest = fetchDep(nconf.get('containerName'), 'SignupRuleRequest');
   const walletRequest = fetchDep(nconf.get('containerName'), 'WalletRequest');
   const callsRequest = fetchDep(nconf.get('containerName'), 'CallsRequest');
+  const smsRequest = fetchDep(nconf.get('containerName'), 'SmsRequest');
   const topUpRequest = fetchDep(nconf.get('containerName'), 'TopUpRequest');
   const imRequest = fetchDep(nconf.get('containerName'), 'ImRequest');
   const imStatsRequest = fetchDep(nconf.get('containerName'), 'ImStatsRequest');
@@ -485,7 +485,7 @@ export default function carriersController() {
   }
 
 // '/carriers/:carrierId/sms'
-  const getSMS = function (req, res) {
+  function getSMS(req, res) {
     req.checkParams('carrierId').notEmpty();
 
     req
@@ -498,22 +498,24 @@ export default function carriersController() {
       .notEmpty()
       .isInt();
 
-    const carrierId = req.params.carrierId;
-
-    const query = {
+    const params = {
       from: req.query.startDate,
       to: req.query.endDate,
       source_address_inbound: req.query.number,
       page: req.query.page,
       size: req.query.pageRec,
+      carrier: req.params.carrierId,
     };
 
-    const request = new SmsRequest({
-      baseUrl: nconf.get('dataProviderApi:baseUrl'),
-      timeout: nconf.get('dataProviderApi:timeout'),
-    });
+    if (params.from) {
+      params.from = moment(params.from, 'L').startOf('day').format('x');
+    }
 
-    request.get(carrierId, query, (err, result) => {
+    if (params.to) {
+      params.to = moment(params.to, 'L').endOf('day').format('x');
+    }
+
+    smsRequest.getSms(params, (err, result) => {
       if (err) {
         const { code, message, timeout, status } = err;
 

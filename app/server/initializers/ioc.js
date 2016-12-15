@@ -5,6 +5,7 @@ import makeRedisClient from './redis';
 
 // Services
 import CallsRequest from '../../lib/requests/dataProviders/Call';
+import SmsRequest from '../../lib/requests/dataProviders/SMS';
 import { IamClient } from '../../lib/requests/iam/IamServiceClient';
 import ProvisionHelper from '../../server/utils/provisionHelper';
 import MpsClient from '../../lib/requests/mps/MpsClient';
@@ -37,6 +38,7 @@ export default function init(nconf) {
   ioc.constant('DATAPROVIDER_API_BASE_URL', nconf.get('dataProviderApi:baseUrl'));
   ioc.constant('DATAPROVIDER_API_TIMEOUT', nconf.get('dataProviderApi:timeout'));
   ioc.service('CallsRequest', CallsRequest, 'DATAPROVIDER_API_BASE_URL', 'DATAPROVIDER_API_TIMEOUT');
+  ioc.service('SmsRequest', SmsRequest, 'DATAPROVIDER_API_BASE_URL', 'DATAPROVIDER_API_TIMEOUT');
 
   ioc.service(
     'CallStatsRequest',

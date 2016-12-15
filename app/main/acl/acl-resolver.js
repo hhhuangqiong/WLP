@@ -16,6 +16,10 @@ function filterImAndExport(capabilities, im) {
   return includes(capabilities, im);
 }
 
+function filterSmsAndExport(capabilities, sms) {
+  return includes(capabilities, sms);
+}
+
 function deriveResources(carrierProfile) {
   // This defines resource availability depending on capabilities
   const PERMISSION_DEPENDENCIES = {
@@ -30,7 +34,8 @@ function deriveResources(carrierProfile) {
       includes(capabilities, CAPABILITY.END_USER_WHITELIST),
     [RESOURCE.IM]: ({ capabilities }) => filterImAndExport(capabilities, CAPABILITY.IM),
     [RESOURCE.IM_EXPORT]: ({ capabilities }) => filterImAndExport(capabilities, CAPABILITY.IM),
-    [RESOURCE.SMS]: ({ capabilities }) => includes(capabilities, CAPABILITY.IM_TO_SMS),
+    [RESOURCE.SMS]: ({ capabilities }) => filterSmsAndExport(capabilities, CAPABILITY.IM_TO_SMS),
+    [RESOURCE.SMS_EXPORT]: ({ capabilities }) => filterSmsAndExport(capabilities, CAPABILITY.IM_TO_SMS),
     [RESOURCE.VSF]: ({ capabilities }) => includes(capabilities, CAPABILITY.VSF),
     // show top up when it is pre-paid
     [RESOURCE.TOP_UP]: ({ paymentMode }) => paymentMode === 'PRE_PAID',
@@ -54,7 +59,7 @@ function deriveProhibitions(carrierProfile) {
     [permission(RESOURCE.WHITELIST)]: ({ capabilities }) =>
       includes(capabilities, CAPABILITY.END_USER_WHITELIST),
     [permission(RESOURCE.IM)]: ({ capabilities }) => filterImAndExport(capabilities, CAPABILITY.IM),
-    [permission(RESOURCE.SMS)]: ({ capabilities }) => includes(capabilities, CAPABILITY.IM_TO_SMS),
+    [permission(RESOURCE.SMS)]: ({ capabilities }) => filterSmsAndExport(capabilities, CAPABILITY.IM_TO_SMS),
     [permission(RESOURCE.VSF)]: ({ capabilities }) => includes(capabilities, CAPABILITY.VSF),
     // show top up when it is pre-paid
     [permission(RESOURCE.TOP_UP)]: ({ paymentMode }) => paymentMode === 'PRE_PAID',
