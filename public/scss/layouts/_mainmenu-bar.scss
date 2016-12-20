@@ -33,6 +33,7 @@
         display: flex;
         align-items: center;
         label {
+            cursor: pointer;
             text-align: left;
             .icon, .sidebar-logo{
                 text-align: center;

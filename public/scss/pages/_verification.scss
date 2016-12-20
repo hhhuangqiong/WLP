@@ -8,6 +8,7 @@
 
 .verification-filter-button {
   @include button-control;
+  cursor: pointer;
 
   &__text {
     margin-right: rem-calc(10);
