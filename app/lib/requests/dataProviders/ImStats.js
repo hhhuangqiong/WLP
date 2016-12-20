@@ -28,48 +28,39 @@ export default class ImStatsRequest {
     this.opts = constructOpts(opts);
   }
 
-  normalizeData(type, params, cb) {
+  normalizeData(type, params) {
     logger.debug('normalizeData', params);
 
-    Q
-      .nfcall(swapDate, params)
-      .then(data => {
-        // not using _.mapKeys or _.pick here
-        // is to list out all the possible parameters for better reference
+    try {
+      const data = swapDate(params);
+      let query = {};
 
-        const query = {};
+      // mandatory parameters
+      query.from = params.from;
+      query.to = params.to;
 
-        // mandatory parameters
-        query.from = params.from;
-        query.to = params.to;
+      // optional parameters
+      if (data.timescale) query.timescale = data.timescale;
+      if (data.breakdown) query.breakdown = data.breakdown;
 
-        // optional parameters
-        if (data.timescale) query.timescale = data.timescale;
-        if (data.breakdown) query.breakdown = data.breakdown;
+      // filter parameters
+      if (data.carriers) query.carriers = data.carriers;
+      if (data.countries) query.countries = data.countries;
+      if (data.platforms) query.platforms = data.platforms;
 
-        // filter parameters
-        if (data.carriers) query.carriers = data.carriers;
-        if (data.countries) query.countries = data.countries;
-        if (data.platforms) query.platforms = data.platforms;
-
-        // request specific parameters
-        if (type === REQUEST_TYPE.IM) {
-          if (data.scope) query.scope = data.scope;
-          if (data.nature) query.nature = data.nature;
-          if (data.sources) query.sources = data.sources;
-        }
-
-        return _.omit(query, value => !value);
-      })
-      .then(query => {
-        logger.debug('finished data normalisation', query);
-        cb(null, query);
-      })
-      .catch(err => {
-        logger.error('error occurred when normalised data for im stat request', err);
-        cb(handleError(err, 500), null);
-      })
-      .done();
+      // request specific parameters
+      if (type === REQUEST_TYPE.IM) {
+        if (data.scope) query.scope = data.scope;
+        if (data.nature) query.nature = data.nature;
+        if (data.sources) query.sources = data.sources;
+      }
+      query = _.omit(query, value => !value);
+      logger.debug('finished data normalisation', query);
+      return query;
+    } catch (err) {
+      logger.error('error occurred when normalised data for im stat request', err);
+      throw handleError(err, 500);
+    }
   }
 
   sendRequest(endpoint, params, loadBalanceIndex = 0, cb) {
@@ -111,15 +102,12 @@ export default class ImStatsRequest {
   }
 
   getImStats(params, cb) {
-    Q
-      .ninvoke(this, 'normalizeData', REQUEST_TYPE.IM, params)
-      .then(query => {
-        this.sendRequest(this.opts.endpoints.IM, query, cb);
-      })
-      .catch(err => {
-        logger.error('error occurred in getImStats()', err);
-        cb(handleError(err, err.status || 500));
-      })
-      .done();
+    const query = this.normalizeData(REQUEST_TYPE.IM, params);
+    try {
+      this.sendRequest(this.opts.endpoints.IM, query, cb);
+    } catch (err) {
+      logger.error('error occurred in getImStats()', err);
+      cb(handleError(err, err.status || 500));
+    }
   }
 }

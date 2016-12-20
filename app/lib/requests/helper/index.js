@@ -48,7 +48,7 @@ export function formatDateString(params, format) {
  *
  * @returns {*}
  */
-export function swapDate(params, cb) {
+export function swapDate(params) {
   const { from, to } = params;
 
   const isValid = (target) => moment(from, target, true).isValid();
@@ -63,7 +63,7 @@ export function swapDate(params, cb) {
     params.from = tmp;
   }
 
-  return cb(null, params);
+  return params;
 }
 
 /**

@@ -8,7 +8,7 @@ export function /**
  * For reference on how this function is built see:
  * @see {@link https://github.com/maxcnunes/solr-query-builder}
  */
-buildImSolrQueryString(params, cb) {
+buildImSolrQueryString(params) {
   const qb = new SolrQueryBuilder();
 
   qb.where('carrier', params.carrier);
@@ -55,5 +55,5 @@ buildImSolrQueryString(params, cb) {
     start: (+params.page * params.size),
   };
 
-  cb(null, queryResult);
+  return queryResult;
 }

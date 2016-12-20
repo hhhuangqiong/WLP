@@ -1,12 +1,16 @@
 import _ from 'lodash';
 import logger from 'winston';
 import nconf from 'nconf';
-import Q from 'q';
 import request from 'superagent';
 import util from 'util';
 
 import { buildCallSolrQueryString } from '../queryBuilder/call';
-import { constructOpts, formatDateString, swapDate, composeSolrResponse, handleError } from '../helper';
+import { constructOpts,
+  formatDateString,
+  swapDate,
+  composeSolrResponse,
+  handleError,
+} from '../helper';
 import qs from 'qs';
 
 export default class CallsRequest {
@@ -39,9 +43,8 @@ export default class CallsRequest {
    * @param params.page {Int} page number
    * @param params.size {Int} total of entities in one page
    * @param params.username {String} mobile number of caller
-   * @param cb {Function} Q callback
    */
-  formatQueryData(params, cb) {
+  formatQueryData(params) {
     function normalizeData(params) {
       const query = {};
 
@@ -63,18 +66,14 @@ export default class CallsRequest {
       return query;
     }
 
-    Q.nfcall(swapDate, params)
-      .then(params => {
-        const format = nconf.get(util.format('%s:format:timestamp', this.opts.type)) || 'x';
-        return formatDateString(params, format);
-      })
-      .then(normalizeData)
-      .fail(err => {
-        return cb(handleError(err, 500), null);
-      })
-      .done(params => {
-        return cb(null, params);
-      });
+    try {
+      const date = swapDate(params);
+      const format = nconf.get(util.format('%s:format:timestamp', this.opts.type)) || 'x';
+      const formattedDate = formatDateString(date, format);
+      return normalizeData(formattedDate);
+    } catch (err) {
+      throw handleError(err, 500);
+    }
   }
 
   /**
@@ -83,14 +82,8 @@ export default class CallsRequest {
    * @param params {Object} Formatted query object
    * @param [loadBalanceIndex=0] {Number} the load balancing index which serves
    * as the index of the api endpoints array
-   * @param cb {Function} Callback function from @method getCalls
    */
-  sendRequest(params, loadBalanceIndex = 0, cb) {
-    if (!cb && _.isFunction(loadBalanceIndex)) {
-      cb = loadBalanceIndex;
-      loadBalanceIndex = 0;
-    }
-
+  async sendRequest(params, loadBalanceIndex = 0) {
     let baseUrl = this.opts.baseUrl;
     const baseUrlArray = baseUrl.split(',');
 
@@ -105,19 +98,13 @@ export default class CallsRequest {
 
     logger.debug(`Calls: ${this.opts.methods.CALLS.METHOD} ${url}?${qs.stringify(params)}`, params);
 
-    request
-      .get(url)
-      .query(params)
-      .buffer()
-      .timeout(this.opts.timeout)
-      .end((err, res) => {
-        if (err) {
-          cb(handleError(err, err.status || 400));
-          return;
-        }
-
-        this.filterCalls(res.body, params.rows, cb);
-      });
+    try {
+      const req = request.get(url).query(params).buffer().timeout(this.opts.timeout);
+      const res = await req;
+      return this.filterCalls(res.body, params.rows);
+    } catch (err) {
+      throw handleError(err, err.status || 400);
+    }
   }
 
   /**
@@ -127,11 +114,10 @@ export default class CallsRequest {
    * which source are either `PROXY` or `GATEWAY`
    *
    * @param data {Object} result return from API request
-   * @param cb {Function} Callback function from @method getCalls
    */
-  filterCalls(data, pageSize, cb) {
+  filterCalls(data, pageSize) {
     if (data && data.content) {
-      data.content = _.filter(data.content, function (call) {
+      data.content = _.filter(data.content, (call) => {
         if (call.type.toLowerCase() === 'offnet') {
           return call.source === 'GATEWAY';
         }
@@ -139,27 +125,24 @@ export default class CallsRequest {
         return call;
       });
     }
-
-    cb(null, composeSolrResponse(data, pageSize));
+    return composeSolrResponse(data, pageSize);
   }
 
   /**
    * @method getCalls
    *
    * @param params {Object} Raw query data object
-   * @param cb {Function} Callback function from API controller
    */
-  getCalls(params, cb) {
+  async getCalls(params) {
     logger.debug('get calls from carrier %s', params);
 
-    Q
-      .ninvoke(this, 'formatQueryData', params)
-      .then(params => Q.nfcall(buildCallSolrQueryString, params))
-      .then(params => {
-        this.sendRequest(params, cb);
-      })
-      .catch(err => {
-        cb(handleError(err, err.status || 500));
-      });
+    try {
+      const formattedDate = this.formatQueryData(params);
+      const queryString = buildCallSolrQueryString(formattedDate);
+      const result = await this.sendRequest(queryString);
+      return result;
+    } catch (err) {
+      throw handleError(err, err.status || 500);
+    }
   }
 }

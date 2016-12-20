@@ -29,10 +29,9 @@ export default class SMSRequest {
     this.opts = constructOpts(opts);
   }
 
-  getSms(params, cb) {
+  async getSms(params) {
     const carrier = params.carrier;
     if (!carrier) throw new Error('`carrier` is required');
-    if (!cb || !_.isFunction(cb)) throw new Error('`cb` is required and must be a function');
 
     const baseUrlArray = this.opts.baseUrl.split(',');
     const baseUrl = baseUrlArray.length > 1 ? _.first(baseUrlArray) : this.opts.baseUrl;
@@ -66,25 +65,12 @@ export default class SMSRequest {
     }
 
     logger.debug(`SMS API Endpoint: ${path}?${qs.stringify(query)}`);
-
-    request
-      .get(path)
-      .timeout(this._timeout)
-      .query(query)
-      .end((err, res) => {
-        // TODO DRY this
-        if (err) {
-          cb(err);
-          return;
-        }
-
-        if (res.status >= 400) {
-          cb(this.prepareError(res.body.error));
-          return;
-        }
-
-        cb(null, res.body);
-      });
+    const req = request.get(path).timeout(this._timeout).query(query);
+    const res = await req;
+    if (res.status >= 400) {
+      throw this.prepareError(res.body.error);
+    }
+    return res.body;
   }
 }
 

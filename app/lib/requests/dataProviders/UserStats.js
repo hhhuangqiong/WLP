@@ -39,43 +39,38 @@ export default class UserStatsRequest {
     this.opts = constructOpts(opts);
   }
 
-  normalizeData(type, params, cb) {
+  normalizeData(type, params) {
     logger.debug('normalizeData', params);
-    Q
-      .nfcall(swapDate, params)
-      .then(data => {
-        const query = {};
 
-        // for active user query API and new user API,
-        // they return the -1 day stat from the `from` query
-        // e.g. when I passed 12th Nov as `from` query,
-        // the data is actually from 11th Nov but not 12th
-        // that why we have to silently add one day before
-        // sending out the request
-        if (type === REQUEST_TYPE.NEW_USERS || type === REQUEST_TYPE.ACTIVE_USERS) {
-          query.from = moment(params.from, 'x').add(1, 'day').startOf('day').format('x');
-          query.to = moment(params.to, 'x').add(1, 'day').endOf('day').format('x');
-        } else {
-          query.from = params.from;
-          query.to = params.to;
-        }
+    try {
+      const data = swapDate(params);
+      let query = {};
 
-        if (data.carriers) query.carriers = data.carriers;
-        if (data.timescale) query.timescale = data.timescale;
-        if (data.timeWindow) query.timeWindow = data.timeWindow;
-        if (data.breakdown) query.breakdown = data.breakdown;
-        if (data.status) query.status = data.status;
-        if (data.countries) query.countries = data.countries;
+      // for active user query API and new user API,
+      // they return the -1 day stat from the `from` query
+      // e.g. when I passed 12th Nov as `from` query,
+      // the data is actually from 11th Nov but not 12th
+      // that why we have to silently add one day before
+      // sending out the request
+      if (type === REQUEST_TYPE.NEW_USERS || type === REQUEST_TYPE.ACTIVE_USERS) {
+        query.from = moment(params.from, 'x').add(1, 'day').startOf('day').format('x');
+        query.to = moment(params.to, 'x').add(1, 'day').endOf('day').format('x');
+      } else {
+        query.from = params.from;
+        query.to = params.to;
+      }
 
-        return _.omit(query, value => !value);
-      })
-      .then(query => {
-        cb(null, query);
-      })
-      .catch(err => {
-        cb(handleError(err, 500), null);
-      })
-      .done();
+      if (data.carriers) query.carriers = data.carriers;
+      if (data.timescale) query.timescale = data.timescale;
+      if (data.timeWindow) query.timeWindow = data.timeWindow;
+      if (data.breakdown) query.breakdown = data.breakdown;
+      if (data.status) query.status = data.status;
+      if (data.countries) query.countries = data.countries;
+      query = _.omit(query, value => !value);
+      return query;
+    } catch (err) {
+      throw handleError(err, 500);
+    }
   }
 
   sendRequest(endpoint, params, loadBalanceIndex = 0, cb) {
@@ -118,38 +113,29 @@ export default class UserStatsRequest {
   }
 
   getUserStats(params, cb) {
-    Q
-      .ninvoke(this, 'normalizeData', REQUEST_TYPE.USER, params)
-      .then(query => {
-        this.sendRequest(this.opts.endpoints.USER, query, cb);
-      })
-      .catch(error => {
-        cb(handleError(error, error.status || 500));
-      })
-      .done();
+    const query = this.normalizeData(REQUEST_TYPE.USER, params);
+    try {
+      this.sendRequest(this.opts.endpoints.USER, query, cb);
+    } catch (err) {
+      cb(handleError(err, err.status || 500));
+    }
   }
 
   getNewUserStats(params, cb) {
-    Q
-      .ninvoke(this, 'normalizeData', REQUEST_TYPE.NEW_USERS, params)
-      .then(query => {
-        this.sendRequest(this.opts.endpoints.NEW_USERS, query, cb);
-      })
-      .catch(error => {
-        cb(handleError(error, error.status || 500));
-      })
-      .done();
+    const query = this.normalizeData(REQUEST_TYPE.NEW_USERS, params);
+    try {
+      this.sendRequest(this.opts.endpoints.NEW_USERS, query, cb);
+    } catch (err) {
+      cb(handleError(err, err.status || 500));
+    }
   }
 
   getActiveUserStats(params, cb) {
-    Q
-      .ninvoke(this, 'normalizeData', REQUEST_TYPE.USER.ACTIVE_USERS, params)
-      .then(query => {
-        this.sendRequest(this.opts.endpoints.ACTIVE_USERS, query, cb);
-      })
-      .catch(error => {
-        cb(handleError(error, error.status || 500));
-      })
-      .done();
+    const query = this.normalizeData(REQUEST_TYPE.USER.ACTIVE_USERS, params);
+    try {
+      this.sendRequest(this.opts.endpoints.ACTIVE_USERS, query, cb);
+    } catch (err) {
+      cb(handleError(err, err.status || 500));
+    }
   }
 }

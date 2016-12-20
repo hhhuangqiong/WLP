@@ -37,10 +37,10 @@ export default {
   },
   CALLS_COST: {
     DATA_FIELDS: [
-      'ID', 'hey', 'USERID', 'WALLETID', 'VC2SID',
-      'VC2CALLING', 'VC2REQUESTED', 'VC2CALLED', 'DATBEGIN',
-      'DATEND', 'NUMSECONDS', 'NUMMINUTES', 'NUMCAUSECODE', 'NUMCURRENCYCODE', 'NUMCOST',
-      'DATCREATE', 'NUMISCHILD', 'NUMCALLTYPE',
+      'id', 'account_id', 'user_id', 'wallet_id', 'ocs_session_id', 'username',
+      'carrier_identifier', 'destination', 'start_date', 'end_date', 'duration_seconds',
+      'duration_minutes', 'reason_code', 'currency', 'cost', 'creation_date',
+      'child_cdr', 'type',
     ],
     EXPORT_REQUEST: 'OcsClient',
     EXPORT_REQUEST_EXECUTION: 'getCallsCost',

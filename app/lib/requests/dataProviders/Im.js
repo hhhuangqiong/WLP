@@ -44,9 +44,8 @@ export default class ImRequest {
    * @param params.message_type {String} message type
    * @param params.sender {String} The sender name/JID
    * @param params.recipient {String} The recipient name/JID
-   * @param cb {Function} Q callback
    */
-  formatQueryData(params, cb) {
+  formatQueryData(params) {
     function normalizeData(params) {
       const query = {};
 
@@ -67,14 +66,15 @@ export default class ImRequest {
       return query;
     }
 
-    Q.nfcall(swapDate, params)
-      .then(params => {
-        const format = nconf.get(util.format('%s:format:timestamp', this.opts.type)) || 'x';
-        return formatDateString(params, format);
-      })
-      .then(normalizeData)
-      .fail(err => cb(handleError(err, 500), null))
-      .done(params => cb(null, params));
+    try {
+      const date = swapDate(params);
+      const format = nconf.get(util.format('%s:format:timestamp', this.opts.type)) || 'x';
+      const formattedDate = formatDateString(date, format);
+      const query = normalizeData(formattedDate);
+      return query;
+    } catch (err) {
+      throw handleError(err, 500);
+    }
   }
 
   /**
@@ -83,14 +83,8 @@ export default class ImRequest {
    * @param params {Object} Formatted query object
    * @param [loadBalanceIndex=0] {Number} the load balancing index which serves
    * as the index of the api endpoints array
-   * @param cb {Function} Callback function from @method getImStat
    */
-  sendRequest(params, loadBalanceIndex = 0, cb) {
-    if (!cb && _.isFunction(loadBalanceIndex)) {
-      cb = loadBalanceIndex;
-      loadBalanceIndex = 0;
-    }
-
+  async sendRequest(params, loadBalanceIndex = 0) {
     let baseUrl = this.opts.baseUrl;
     const baseUrlArray = baseUrl.split(',');
 
@@ -106,19 +100,13 @@ export default class ImRequest {
 
     logger.debug(`IM request: ${url}?${qs.stringify(params)}`);
 
-    request
-      .get(url)
-      .query(params)
-      .buffer()
-      .timeout(this.opts.timeout)
-      .end((err, res) => {
-        if (err) return cb(handleError(err, err.status || 400));
-        try {
-          return this.filterData(res.body, params.rows, cb);
-        } catch (error) {
-          return cb(handleError(error, 500));
-        }
-      });
+    try {
+      const req = request.get(url).query(params).buffer().timeout(this.opts.timeout);
+      const res = await req;
+      return this.filterData(res.body, params.rows);
+    } catch (err) {
+      throw handleError(err, err.status || 400);
+    }
   }
 
   /**
@@ -127,9 +115,8 @@ export default class ImRequest {
    * it is claimed that only happen on testbed applications
    *
    * @param res {Object} result return from API request
-   * @param cb {Function} Callback function from @method getImStat
    */
-  filterData(data, pageSize, cb) {
+  filterData(data, pageSize) {
     if (data && data.content) {
       /**
         To assign a nice looking label instead of showing 'undefined' or null
@@ -143,37 +130,44 @@ export default class ImRequest {
       });
     }
 
-    return cb(null, composeSolrResponse(data, pageSize));
+    try {
+      const result = composeSolrResponse(data, pageSize);
+      return result;
+    } catch (err) {
+      throw handleError(err, 500);
+    }
   }
 
   /**
    * @method getImStat
    *
    * @param params {Object} Raw query data object
-   * @param cb {Function} Callback function from API controller
    */
-  getImStat(params, cb) {
+  async getImStat(params) {
     logger.debug('get im message statistic from BOSS with params', params);
-    Q
-      .ninvoke(this, 'formatQueryData', params)
-      .then(params => {
-        this.sendRequest(params, cb);
-      })
-      .catch(err => cb(handleError(err, err.status || 500)));
+
+    try {
+      const query = this.formatQueryData(params);
+      const result = await this.sendRequest(query);
+      return result;
+    } catch (err) {
+      throw handleError(err, err.status || 500);
+    }
   }
 
   /**
    * @method getImSolr
    * @param params {Object} Raw query data object
-   * @param cb {Function} Callback function from API controller
    */
-  getImSolr(params, cb) {
+  async getImSolr(params) {
     logger.debug('get IM message history from dataProvider with params', params);
 
-    Q.nfcall(buildImSolrQueryString, params)
-      .then(params => {
-        this.sendRequest(params, cb);
-      })
-      .catch(err => cb(handleError(err, err.status || 500))).done();
+    try {
+      const query = buildImSolrQueryString(params);
+      const result = await this.sendRequest(query);
+      return result;
+    } catch (err) {
+      throw handleError(err, err.status || 500);
+    }
   }
 }

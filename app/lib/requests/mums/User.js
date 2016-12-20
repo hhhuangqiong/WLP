@@ -41,24 +41,22 @@ export default class UsersRequest {
     this.opts = constructOpts(opts);
   }
 
-
-  getExportUsers({ carrier, from, to, page = 0 }, cb) {
+  getExportUsers({ carrier, from, to, page = 0 }) {
     const query = { fromTime: from, toTime: to };
     query.pageNumberIndex = page;
-    this.getUsers(carrier, query, (err, res) => {
-      if (err) return cb(err);
 
+    return Q.ninvoke(this, 'getUsers', carrier, query).then(res => {
       try {
-        return cb(null, this._morphExportUsers(res));
+        return this._morphExportUsers(res);
       } catch (e) {
         logger.error('Unexpected response from MUMS %s', res);
         logger.error('Error stack:', e.stack);
 
-        err = new Error();
+        const err = new Error();
         err.message = 'Unexpected response';
         err.status = 500;
 
-        cb(err);
+        throw err;
       }
     });
   }

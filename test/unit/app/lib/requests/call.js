@@ -29,30 +29,26 @@ describe('CallRequest', function() {
         size: 20
       };
 
-      return request.formatQueryData(params, function(err, formatted) {
-        let formattedParams = Qs.stringify(formatted);
-        nock(baseUrl)
-        .get(util.format('%s?%s', url, formattedParams))
-        .delay(delay)
-        .reply(200, callResponse);
-        return done();
-      });
+      const formattedDate = request.formatQueryData(params);
+      const formattedParams = Qs.stringify(formattedDate);
+      nock(baseUrl)
+      .get(util.format('%s?%s', url, formattedParams))
+      .delay(delay)
+      .reply(200, callResponse);
+      done();
     });
 
     afterEach(() => request = null);
 
-    it('should swap startDate with endDate if startDate is later than endDate', function(done){
+    it('should swap startDate with endDate if startDate is later than endDate', function(){
       params = {
         caller_carrier: 'maaiitest.com',
         from: '02/02/2015',
         to: '02/01/2015'
       };
-      return request.formatQueryData(params, function(err, formatted) {
-        expect(formatted.from < formatted.to)
-        .to.be.true;
 
-        return done();
-      });
+      const formatted = request.formatQueryData(params);
+      expect(formatted.from < formatted.to).to.be.true;
     });
 
     it('should convert date into unix timestamp', function() {
@@ -61,11 +57,11 @@ describe('CallRequest', function() {
         from: '02/01/2015',
         to: '02/02/2015'
       };
-      return request.formatQueryData(params, (err, formatted) =>
-        expect(formatted.from, formatted.to)
+
+      const formatted = request.formatQueryData(params);
+      expect(formatted.from, formatted.to)
         .to.be.a('string')
-        .and.to.have.length(13)
-      );
+        .and.to.have.length(13);
     });
   });
 });

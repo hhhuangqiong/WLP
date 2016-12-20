@@ -1,4 +1,3 @@
-import moment from 'moment';
 import logger from 'winston';
 import Q from 'q';
 import request from 'superagent';
@@ -42,41 +41,27 @@ export default class CallStatsRequest {
     this.opts = constructOpts(opts);
   }
 
-  normalizeData(type, params, cb) {
+  normalizeData(type, params) {
     logger.debug('normalizeData', params);
 
-    Q
-      .nfcall(swapDate, params)
-      .then(data => {
-        const query = {};
-
-        query.from = params.from;
-        query.to = params.to;
-
-        if (data.caller_carrier) query.caller_carrier = data.caller_carrier;
-        if (data.timescale) query.timescale = data.timescale;
-        if (data.timeWindow) query.timeWindow = data.timeWindow;
-        if (data.breakdown) query.breakdown = data.breakdown;
-        if (data.status) query.status = data.status;
-        if (data.countries) query.countries = data.countries;
-        if (data.stat_type) query.stat_type = data.stat_type;
-        if (data.type) {
-          query.type = data.type;
-        } else {
-          // WLP-914
-          // data with type `TEST_CALL` should not be included
-          query.type = ALL_TYPES_EXCEPT_TESTING.join(',');
-        }
-
-        return _.omit(query, (value) => { return !value; });
-      })
-      .then(query => {
-        cb(null, query);
-      })
-      .catch(err => {
-        cb(handleError(err, 500), null);
-      })
-      .done();
+    try {
+      const date = swapDate(params);
+      const query = {
+        from: params.from,
+        to: params.to,
+        type: date.type || ALL_TYPES_EXCEPT_TESTING.join(','),
+        caller_carrier: date.caller_carrier,
+        timescale: date.timescale,
+        timeWindow: date.timeWindow,
+        breakdown: date.breakdown,
+        status: date.status,
+        countries: date.countries,
+        stat_type: date.stat_type,
+      };
+      return _.omit(query, value => !value);
+    } catch (err) {
+      throw handleError(err, 500);
+    }
   }
 
   sendRequest(endpoint, params, loadBalanceIndex = 0, cb) {
@@ -113,11 +98,11 @@ export default class CallStatsRequest {
   }
 
   getCallStats(params, cb) {
+    const query = this.normalizeData(REQUEST_TYPE.CALLS, params);
     Q
-      .ninvoke(this, 'normalizeData', REQUEST_TYPE.CALLS, params)
-      .then(query => Q.allSettled([
+      .allSettled([
         Q.ninvoke(this, 'sendRequest', this.opts.endpoints.CALLS, query),
-      ]))
+      ])
       .then(results => {
         const error = _.find(results, result => result.state !== 'fulfilled');
 
@@ -203,11 +188,11 @@ export default class CallStatsRequest {
   }
 
   getCallerStats(params, cb) {
+    const query = this.normalizeData(REQUEST_TYPE.CALLERS, params);
     Q
-      .ninvoke(this, 'normalizeData', REQUEST_TYPE.CALLERS, params)
-      .then(query => Q.allSettled([
+      .allSettled([
         Q.ninvoke(this, 'sendRequest', this.opts.endpoints.CALLERS, query),
-      ]))
+      ])
       .then(results => {
         const error = _.find(results, result => result.state !== 'fulfilled');
 
@@ -253,11 +238,11 @@ export default class CallStatsRequest {
   }
 
   getCalleeStats(params, cb) {
+    const query = this.normalizeData(REQUEST_TYPE.CALLEES, params);
     Q
-      .ninvoke(this, 'normalizeData', REQUEST_TYPE.CALLEES, params)
-      .then(query => Q.allSettled([
+      .allSettled([
         Q.ninvoke(this, 'sendRequest', this.opts.endpoints.CALLEES, query),
-      ]))
+      ])
       .then(results => {
         const error = _.find(results, result => result.state !== 'fulfilled');
 

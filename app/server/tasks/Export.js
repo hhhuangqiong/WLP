@@ -9,7 +9,13 @@ import redisWStream from 'redis-wstream';
 
 import { fetchDep } from '../utils/bottle';
 import EXPORTS from '../../config/export';
-import { CALLS, IM, VERIFICATION, END_USER, CALLS_COST, SMS } from '../../main/file-export/constants/ExportType';
+import {
+  CALLS,
+  IM,
+  VERIFICATION,
+  END_USER,
+  CALLS_COST, SMS,
+} from '../../main/file-export/constants/ExportType';
 
 import {
   getCountryName,
@@ -115,10 +121,10 @@ export default class ExportTask {
     job[CALLS_COST] = () => (
       {
         carrier: params.carrierId,
-        startDate: query.startDate,
-        endDate: query.endDate,
-        page: PAGE_START_INDEX,
-        limit: PAGE_SIZE,
+        startDate: moment(query.startDate, 'x').toISOString(),
+        endDate: moment(query.endDate, 'x').toISOString(),
+        page: 0,
+        limit: 100,
       }
     );
 
@@ -285,55 +291,44 @@ export default class ExportTask {
    */
   start() {
     this.kueue.process(this.exportType, (job, done) => {
-      Q
-        .ninvoke(this, 'exportCSV', job)
-        .then(() => done(null))
-        /**
-        * Gracefully handle errors to prevent from stuck jobs:
-        * https://github.com/Automattic/kue#prevent-from-stuck-active-jobs
-        */
-        .catch(err => done(err))
-        .done();
+      this.exportCSV(job).then(() => done(null)).catch(done);
     });
   }
 
-  // job process function
-  exportCSV(job, cb) {
+// job process function
+  exportCSV(job) {
     const EXPORT_KEY = `${this.exportType}:${job.id}`;
-    const param = job.data;
+    const params = job.data;
     const redisClient = fetchDep(nconf.get('containerName'), 'RedisClient');
     const csvStream = csv.createWriteStream({ headers: true });
 
     let totalExportElements = 0;
 
-    csvStream
-      .pipe(redisWStream(redisClient, EXPORT_KEY))
-      .on('finish', () => {
-        logger.info(
-          `Job #${job.id} finished writing file, ${totalExportElements} records are being exported`
-        );
+    return new Promise((resolve, reject) => {
+      csvStream
+        .pipe(redisWStream(redisClient, EXPORT_KEY))
+        .on('finish', () => {
+          logger.info(
+            `Job #${job.id} finished writing file, ${totalExportElements} records are being exported`
+          );
+          resolve();
+          return;
+        });
 
-        cb(null);
-        return;
-      });
+      const next = param => {
+        // get the job by id to verify that the job is not removed
+        kue.Job.get(job.id, err => {
+          // get job failed, sliently stop the process
+          if (err) {
+            logger.error(`Could not find job #${job.id}`, err);
+            return false;
+          }
 
-    const next = param => {
-      // get the job by id to verify that the job is not removed
-      kue.Job.get(job.id, err => {
-        // get job failed, sliently stop the process
-        if (err) {
-          logger.error(`Could not find job #${job.id}`, err);
-          return false;
-        }
-
-        const config = this.getExportConfig();
-        const request = fetchDep(nconf.get('containerName'), config.EXPORT_REQUEST);
-
-        Q
-          .ninvoke(request, config.EXPORT_REQUEST_EXECUTION, param)
-          .then(result => {
+          const config = this.getExportConfig();
+          const request = fetchDep(nconf.get('containerName'), config.EXPORT_REQUEST);
+          const invoke = request[config.EXPORT_REQUEST_EXECUTION].bind(request);
+          invoke(param).then(result => {
             let contentIndex = 0;
-
             // Compatible with different naming fields from end point response
             const contents = result.contents || result.content;
             const numberOfContent = contents.length;
@@ -352,7 +347,7 @@ export default class ExportTask {
 
             // Raise error if pageNumber and totalPages are not valid
             if (pageNumber === undefined || totalPages === undefined) {
-              cb({ message: MISSING_PAGE_DATA_MSG });
+              reject(new Error(MISSING_PAGE_DATA_MSG));
               return;
             }
 
@@ -378,11 +373,10 @@ export default class ExportTask {
               next(param);
             }
           })
-          .catch(error => cb(error))
-          .done();
-      });
-    };
-
-    next(param);
+          .catch(reject);
+        });
+      };
+      next(params);
+    });
   }
 }

@@ -21,7 +21,7 @@ const DEFAULT_SORT_ORDER = 'start_time desc';
  * @param params.page {Number} page number
  * @param cb {Function}
  */
-export function buildCallSolrQueryString(params, cb) {
+export function buildCallSolrQueryString(params) {
   const qb = new SolrQueryBuilder();
 
   qb
@@ -91,5 +91,5 @@ export function buildCallSolrQueryString(params, cb) {
     start: (+params.page * params.size),
   };
 
-  cb(null, queryResult);
+  return queryResult;
 }

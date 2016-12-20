@@ -391,7 +391,7 @@ export default function carriersController() {
   }
 
 // '/carriers/:carrierId/calls'
-  function getCalls(req, res) {
+  async function getCalls(req, res) {
     req.checkParams('carrierId').notEmpty();
     req.checkQuery('startDate').notEmpty();
     req.checkQuery('endDate').notEmpty();
@@ -417,23 +417,19 @@ export default function carriersController() {
       delete params.caller;
     }
 
-    callsRequest.getCalls(params, (err, result) => {
-      if (err) {
-        const { code, message, timeout, status } = err;
-
-        res.status(status || 500).json({
-          error: {
-            code,
-            message,
-            timeout,
-          },
-        });
-
-        return;
-      }
-
+    try {
+      const result = await callsRequest.getCalls(params);
       res.json(result);
-    });
+    } catch (err) {
+      const { code, message, timeout, status } = err;
+      res.status(status || 500).json({
+        error: {
+          code,
+          message,
+          timeout,
+        },
+      });
+    }
   }
 
 // '/carriers/:carrierId/topup'
@@ -485,7 +481,7 @@ export default function carriersController() {
   }
 
 // '/carriers/:carrierId/sms'
-  function getSMS(req, res) {
+  async function getSMS(req, res) {
     req.checkParams('carrierId').notEmpty();
 
     req
@@ -515,24 +511,20 @@ export default function carriersController() {
       params.to = moment(params.to, 'L').endOf('day').format('x');
     }
 
-    smsRequest.getSms(params, (err, result) => {
-      if (err) {
-        const { code, message, timeout, status } = err;
-
-        res.status(status || 500).json({
-          error: {
-            code,
-            message,
-            timeout,
-          },
-        });
-
-        return;
-      }
-
+    try {
+      const result = await smsRequest.getSms(params);
       res.json(result);
-    });
-  };
+    } catch (err) {
+      const { code, message, timeout, status } = err;
+      res.status(status || 500).json({
+        error: {
+          code,
+          message,
+          timeout,
+        },
+      });
+    }
+  }
 
   function getSMSStats(req, res) {
     req.checkParams('carrierId').notEmpty();
@@ -783,7 +775,7 @@ export default function carriersController() {
   }
 
 // '/carriers/:carrierId/im'
-  function getIM(req, res) {
+  async function getIM(req, res) {
     req.checkParams('carrierId').notEmpty();
     req.checkQuery('fromTime').notEmpty();
     req.checkQuery('toTime').notEmpty();
@@ -826,23 +818,19 @@ export default function carriersController() {
       ['carrier', 'message_type', 'from', 'to', 'sender', 'recipient', 'page', 'size']
     );
 
-    imRequest.getImSolr(params, (err, result) => {
-      if (err) {
-        const { code, message, timeout, status } = err;
-
-        res.status(status || 500).json({
-          error: {
-            code,
-            message,
-            timeout,
-          },
-        });
-
-        return;
-      }
-
+    try {
+      const result = imRequest.getImSolr(params);
       res.json(result);
-    });
+    } catch (err) {
+      const { code, message, timeout, status } = err;
+      res.status(status || 500).json({
+        error: {
+          code,
+          message,
+          timeout,
+        },
+      });
+    }
   }
 
 // '/carriers/:carrierId/vsf'
@@ -898,7 +886,7 @@ export default function carriersController() {
   }
 
 // '/carriers/:carrierId/verifications'
-  const getVerifications = function (req, res) {
+  const getVerifications = async function (req, res) {
     req.checkParams('carrierId').notEmpty();
     req.checkQuery('application').notEmpty();
     req.checkQuery('from').notEmpty();
@@ -928,19 +916,16 @@ export default function carriersController() {
       phone_number: req.query.phone_number,
     }, val => !val);
 
-    verificationRequest.getVerifications(params, (err, result) => {
-      if (err) {
-        res.status(err.status).json({
-          error: {
-            message: err.message,
-          },
-        });
-
-        return;
-      }
-
+    try {
+      const result = await verificationRequest.getVerifications(params);
       res.json(result);
-    });
+    } catch (error) {
+      res.status(error.status).json({
+        error: {
+          message: error.message,
+        },
+      });
+    }
   };
 
   function validateStatisticsRequest(req, cb) {
@@ -978,21 +963,20 @@ export default function carriersController() {
       const params = mapVerificationStatsRequestParameters(req);
       const breakdownType = req.query.type;
 
-      Q
-        .ninvoke(verificationRequest, 'getVerificationStats', params, breakdownType)
-        .then(response => Q.nfcall(parseVerificationStatistic, response, params))
-        .then(result => res.json(result))
-        .catch(err => {
-          const { code, message, timeout, status } = err;
+      verificationRequest.getVerificationStats(params, breakdownType)
+      .then(response => Q.nfcall(parseVerificationStatistic, response, params))
+      .then(result => res.json(result))
+      .catch(error => {
+        const { code, message, timeout, status } = error;
 
-          res.status(status || 500).json({
-            error: {
-              code,
-              message,
-              timeout,
-            },
-          });
-        }).done();
+        res.status(status || 500).json({
+          error: {
+            code,
+            message,
+            timeout,
+          },
+        });
+      });
     });
   }
 

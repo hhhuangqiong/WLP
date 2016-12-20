@@ -31,39 +31,36 @@ export default class SMSStatsRequest {
   normalizeData(type, params, cb) {
     logger.debug('normalizeData', params);
 
-    Q
-      .nfcall(swapDate, params)
-      .then(data => {
-        // not using _.mapKeys or _.pick here
-        // is to list out all the possible parameters for better reference
+    try {
+      const date = swapDate(params);
+      let query = {};
 
-        const query = {};
+      // mandatory parameters
+      query.from = params.from;
+      query.to = params.to;
 
-        // mandatory parameters
-        query.from = params.from;
-        query.to = params.to;
-        if (data.carrier) query.carrier = data.carrier;
-        if (data.stat_type) query.stat_type = data.stat_type;
+      // optional parameters
+      if (date.timescale) query.timescale = date.timescale;
+      if (date.breakdown) query.breakdown = date.breakdown;
 
-        // optional parameters
-        if (data.timescale) query.timescale = data.timescale;
-        if (data.breakdown) query.breakdown = data.breakdown;
-        if (data.destination) query.country = data.destination;
-        if (data.status) query.status = data.status;
-        if (data.type) query.status = data.type;
+      // filter parameters
+      if (date.carriers) query.carriers = date.carriers;
+      if (date.countries) query.countries = date.countries;
+      if (date.platforms) query.platforms = date.platforms;
 
-
-        return _.omit(query, value => !value);
-      })
-      .then(query => {
-        logger.debug('finished data normalisation', query);
-        cb(null, query);
-      })
-      .catch(err => {
-        logger.error('error occurred when normalised data for SMS stats request', err);
-        cb(handleError(err, 500), null);
-      })
-      .done();
+      // request specific parameters
+      if (type === REQUEST_TYPE.IM) {
+        if (date.scope) query.scope = date.scope;
+        if (date.nature) query.nature = date.nature;
+        if (date.sources) query.sources = date.sources;
+      }
+      query = _.omit(query, value => !value);
+      logger.debug('finished data normalisation', query);
+      cb(null, query);
+    } catch (err) {
+      logger.error('error occurred when normalised data for SMS stats request', err);
+      cb(handleError(err, 500), null);
+    }
   }
 
   sendRequest(endpoint, params, loadBalanceIndex = 0, cb) {

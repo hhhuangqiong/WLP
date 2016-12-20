@@ -98,30 +98,23 @@ export default class VerificationRequest {
    * @param {String} [params.method]  Verification method
    * @param {String} [params.platform]  The device platform (i.e. android, ios, etc.)
    * @param {String} [params.phone_number]  The wildcard phone number for searching
-   * @param {Function} cb  Node-style callback function
    */
-  formatQueryParameters(params, cb) {
-    Q
-      .nfcall(swapDate, params)
-      .then(paramsAfterSwappedDate => {
-        const format = nconf.get(util.format('%s:format:timestamp', this.opts.type)) || 'x';
+  formatQueryParameters(params) {
+    try {
+      const paramsAfterSwappedDate = swapDate(params);
+      const format = nconf.get(util.format('%s:format:timestamp', this.opts.type)) || 'x';
 
-        paramsAfterSwappedDate.type = this.convertVerificationTypes(paramsAfterSwappedDate.method);
-        delete paramsAfterSwappedDate.method;
+      paramsAfterSwappedDate.type = this.convertVerificationTypes(paramsAfterSwappedDate.method);
+      delete paramsAfterSwappedDate.method;
 
-        if (paramsAfterSwappedDate.phone_number) {
-          paramsAfterSwappedDate.phone_number = this.normalizePhoneNumberForVerificationSolr(paramsAfterSwappedDate.phone_number);
-        }
-
-        return formatDateString(paramsAfterSwappedDate, format);
-      })
-      .then(formattedParams => {
-        cb(null, formattedParams);
-      })
-      .catch(err => {
-        cb(handleError(err, 500), null);
-      })
-      .done();
+      if (paramsAfterSwappedDate.phone_number) {
+        paramsAfterSwappedDate.phone_number = this.normalizePhoneNumberForVerificationSolr(paramsAfterSwappedDate.phone_number);
+      }
+      const formattedParams = formatDateString(paramsAfterSwappedDate, format);
+      return formattedParams;
+    } catch (err) {
+      throw handleError(err, 500);
+    }
   }
 
   /**
@@ -132,13 +125,8 @@ export default class VerificationRequest {
    * @param {Object} params  Formatted query object
    * @param {Number} [loadBalanceIndex=0] the load balancing index which serves
    * as the index of the api endpoints array
-   * @param {Function} cb  Callback function
    */
-  sendRequest(endpoint, params, loadBalanceIndex = 0, cb) {
-    if (!cb && _.isFunction(loadBalanceIndex)) {
-      cb = loadBalanceIndex;
-      loadBalanceIndex = 0;
-    }
+  async sendRequest(endpoint, params, loadBalanceIndex = 0) {
 
     let baseUrl = this.opts.baseUrl;
     const baseUrlArray = baseUrl.split(',');
@@ -154,43 +142,37 @@ export default class VerificationRequest {
 
     logger.debug(`Verification API Endpoint: ${reqUrl}?${qs.stringify(params)}`);
 
-    request(endpoint.METHOD, reqUrl)
-      .query(params)
-      .buffer()
-      .timeout(this.opts.timeout)
-      .end((err, res) => {
-        if (!err) {
-          logger.debug(util.format('Received a response from %s: ', reqUrl), jsonSchema(res.body));
-          cb(null, res.body);
-          return;
-        }
+    try {
+      const req = request(endpoint.METHOD, reqUrl).query(params).buffer().timeout(this.opts.timeout);
+      const res = await req;
+      logger.debug(util.format('Received a response from %s: ', reqUrl), jsonSchema(res.body));
+      return res.body;
+    } catch (err) {
+      // TODO: generalize the network error handling (maybe extending Error class?)
+      const error = new Error();
+      error.status = err.status;
+      error.message = err.message;
 
-        // TODO: generalize the network error handling (maybe extending Error class?)
-        const error = new Error();
+      if (err.code === 'ETIMEDOUT' || err.code === 'ECONNABORTED') {
+        error.status = 504;
+        error.timeout = this.opts.timeout;
+      } else if (err.code === 'ENOTFOUND') {
+        error.status = 404;
+      } else if (err.code === 'ECONNREFUSED') {
+        error.status = 500;
+      } else if (err.response) {
+        // SuperAgent error object structure
+        // https://visionmedia.github.io/superagent/#error-handling
+        const response = err.response.body;
         error.status = err.status;
-        error.message = err.message;
+        error.code = response.error;
+        error.message = response.message;
+      }
 
-        if (err.code === 'ETIMEDOUT' || err.code === 'ECONNABORTED') {
-          error.status = 504;
-          error.timeout = this.opts.timeout;
-        } else if (err.code === 'ENOTFOUND') {
-          error.status = 404;
-        } else if (err.code === 'ECONNREFUSED') {
-          error.status = 500;
-        } else if (err.response) {
-          // SuperAgent error object structure
-          // https://visionmedia.github.io/superagent/#error-handling
-          const response = err.response.body;
-          error.status = err.status;
-          error.code = response.error;
-          error.message = response.message;
-        }
-
-        logger.debug(util.format('Received a %s response from %s: %s',
-          error.status, reqUrl, error.message));
-
-        cb(error);
-      });
+      logger.debug(util.format('Received a %s response from %s: %s',
+        error.status, reqUrl, error.message));
+      throw err;
+    }
   }
 
   /**
@@ -199,35 +181,34 @@ export default class VerificationRequest {
    *
    * @method
    * @param {Object} params  Raw query parameter object
-   * @param {Function} cb  Node-style callback function
    */
-  getVerifications(params, cb) {
-    Q
-      .ninvoke(this, 'formatQueryParameters', this.convertDateInParamsFromIsoToTimestamp(params))
-      .then(paramsAfterFormatQuery => {
-        this.sendRequest(this.opts.endpoints.SEARCH, paramsAfterFormatQuery, cb);
-      })
-      .catch(cb)
-      .done();
+  async getVerifications(params) {
+    const query = this.convertDateInParamsFromIsoToTimestamp(params);
+    const paramsAfterFormatQuery = this.formatQueryParameters(query);
+
+    try {
+      const result = await this.sendRequest(this.opts.endpoints.SEARCH, paramsAfterFormatQuery);
+      return result;
+    } catch (err) {
+      throw err;
+    }
   }
 
   /**
    * Get statistics of verification events from data provider
    * @param  {Object}   params  Parameters in form of object for pass into query
    * @param  {String}   groupBy breakdown type of statistics
-   * @param  {Function} cb      Node-style callback function
    */
-  getVerificationStats(params, groupBy, cb) {
+  async getVerificationStats(params, groupBy) {
     const formattedParams = this.convertDateInParamsFromIsoToTimestamp(_.merge(params, {
       breakdown: groupBy,
     }));
 
-    Q
-      .ninvoke(this, 'sendRequest', this.opts.endpoints.STATS, formattedParams)
-      .then(result => {
-        cb(null, result);
-      })
-      .catch(cb)
-      .done();
+    try {
+      const result = await this.sendRequest(this.opts.endpoints.STATS, formattedParams);
+      return result;
+    } catch (err) {
+      throw err;
+    }
   }
 }
