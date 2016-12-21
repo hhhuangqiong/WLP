@@ -160,7 +160,6 @@ class CreateWhiteListContainer extends Component {
   }
 
   handleUploadFileChange(e) {
-    const { formatMessage } = this.props.intl;
     const file = e.target.files[0];
 
     if (!file) {

@@ -20,7 +20,8 @@ function validateUsername(username, index, usersList) {
     return MESSAGES.phoneNumberEmptyError;
   }
 
-  const validFormat = /^\+[0-9]+$/.test(username);
+  // according to E164 spec phone number max length expect to be 15 and min is 8
+  const validFormat = /^\+[0-9]{8,15}$/.test(username);
   if (!validFormat) {
     return MESSAGES.invalidFormatError;
   }
