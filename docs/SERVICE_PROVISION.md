@@ -110,7 +110,8 @@ All the values are fixed except the company id which is obtained above.
 * `name` - `Admin`
 * `service` - `wlp`
 * `company` - the company id obtained above
-* `permissions` - the whole permission list in the sample
+* `permissions` - the whole permission list in the sample,
+please refer to `iam.adminRole` in MPS config mongo for latest admin role permissions
 
 Create a reseller company admin role `POST /access/roles`
 
@@ -136,7 +137,11 @@ Cache-Control: no-cache
     "im": ["read"],
     "sms": ["read"],
     "verificationSdk: ["read"],
-    "whitelist": ["create", "update", "read", "delete"]
+    "whitelist": ["create", "update", "read", "delete"],
+    "endUserExport": ["read"],
+    "imExport": ["read"],
+    "callExport": ["read"],
+    "smsExport": ["read"]
   }
 }
 ```
