@@ -12,6 +12,7 @@ const accounts = fetchDep('AccountController');
 const provision = fetchDep('ProvisionController');
 const carriers = fetchDep('CarrierController');
 const resources = fetchDep('ResourceController');
+const carrierRateController = fetchDep('CarrierRateController');
 const carrierWalletController = fetchDep('CarrierWalletController');
 const meController = fetchDep('MeController');
 const decodeParamsMiddeware = fetchDep('DecodeParamsMiddeware');
@@ -181,6 +182,15 @@ routes
   .get('/preset', [
     authorize(permission(RESOURCE.COMPANY, ACTION.UPDATE)),
     carriers.getPreset,
+  ])
+  // company charging rate
+  .get('/smsRate', [
+    authorize(permission(RESOURCE.COMPANY, ACTION.READ), RESOURCE_OWNER.PARENT_COMPANY),
+    carrierRateController.getSMSRate,
+  ])
+  .get('/callRate', [
+    authorize(permission(RESOURCE.COMPANY, ACTION.READ), RESOURCE_OWNER.PARENT_COMPANY),
+    carrierRateController.getCallRate,
   ])
   // company wallet
   .get('/wallets', [

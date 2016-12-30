@@ -442,7 +442,7 @@ class CreateWhiteListContainer extends Component {
                     </span>
                     <span>
                       <a
-                        className="resource"
+                        className="text-link"
                         target="_blank"
                         href="/static/whitelist-template.csv"
                       >
@@ -493,7 +493,7 @@ class CreateWhiteListContainer extends Component {
                               : { uploadedFiles.length }
                             </span>
                             <span>
-                              <a className="resource">
+                              <a className="text-link">
                                 { this.getUploadedFilename() }
                               </a>
                             </span>

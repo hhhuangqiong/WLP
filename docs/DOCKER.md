@@ -28,6 +28,8 @@ docker.dev.maaii.com/m80/m800-white-label-portal
 | `mvsApi__timeout` | Maaii Virtual Store Timeout |15000|
 | `ocsApi__baseUrl` | Maaii Online Charge System Endpoint |`http://192.168.119.66:8090`|
 | `ocsApi__timeout` | Maaii Online Charge System Timeout |15000|
+| `maaiiRateApi__baseUrl` | Maaii Rate Endpoint |`http://192.168.119.66:9127`|
+| `maaiiRateApi__timeout` | Maaii Rate Timeout |15000|
 | `bufferTimeInMinutes__callStats__dailyFetch` | buffering time to determine whether to get latest call stats data or the data from one day before to ensure all data are cached into redis successfully.| 240 |
 | `bufferTimeInMinutes__callStats__hourlyFetch` | buffering time to determine whether to get latest call stats data or the data from one hour before to ensure all data are cached into redis successfully. | 10 |
 | (Deprecated^) `logging__winston__meta__instance`|Deploy server/instance name, to use to identify from logstash which container the logs is coming from | testbed-wlp-1 |

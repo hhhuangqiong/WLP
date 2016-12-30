@@ -481,6 +481,7 @@ class CompanyEditForm extends Component {
       <Panel key="companyProfile" header={formatMessage(MESSAGES.companyProfile)} >
         <CompanyProfileInfo
           carrierId={this.props.companyDetail.carrierId}
+          chargingRateCarrierId={this.props.companyDetail.carrierId}
           companyCode={this.state.companyCode}
           companyType={this.state.companyType}
           paymentType={this.state.paymentType}

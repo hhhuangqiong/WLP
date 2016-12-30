@@ -40,5 +40,9 @@
   "mpsApi": {
     "baseUrl": "http://deploy.dev.maaii.com:4005",
     "timeout": 15000
+  },
+  "maaiiRateApi": {
+    "baseUrl": "http://192.168.119.66:9127",
+    "timeout": 15000
   }
 }
