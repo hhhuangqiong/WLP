@@ -1,15 +1,23 @@
 import React, { PropTypes } from 'react';
 import CompanyDetail, { CompanyDetailShape } from './CompanyDetail';
+import { injectIntl, intlShape, FormattedMessage } from 'react-intl';
 
 const CompanyList = (props) => (
   <table className="company-sidebar__list__item">
     <thead>
       <tr>
-        <th>Comany Name</th>
-        <th>Carrier Domain</th>
-        <th>Create Date</th>
-        <th>Payment Type</th>
-        <th>Status</th>
+        <th>
+          <FormattedMessage id="companyName" defaultMessage="Company Name" />
+        </th>
+        <th>
+          <FormattedMessage id="createDate" defaultMessage="Create Date" />
+        </th>
+        <th>
+          <FormattedMessage id="paymentType" defaultMessage="Payment Type" />
+        </th>
+        <th>
+          <FormattedMessage id="status" defaultMessage="Status" />
+        </th>
         <th></th>
       </tr>
     </thead>
@@ -23,7 +31,8 @@ const CompanyList = (props) => (
 );
 
 CompanyList.propTypes = {
+  intl: intlShape.isRequired,
   companies: PropTypes.arrayOf(CompanyDetailShape),
 };
 
-export default CompanyList;
+export default injectIntl(CompanyList);

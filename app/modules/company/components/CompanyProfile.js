@@ -404,7 +404,7 @@ class CompanyProfile extends Component {
     };
     const formatIntlOptionMethod = formatIntlOption.bind(null, formatMessage);
     const companyProfilePanel = (
-      <Panel header={formatMessage(MESSAGES.companyProfile)} >
+      <Panel key="companyProfile" header={formatMessage(MESSAGES.companyProfile)} >
         <CompanyProfileInfo
           companyCode={this.state.companyCode}
           companyType={this.state.companyType}
@@ -421,7 +421,7 @@ class CompanyProfile extends Component {
       </Panel>
     );
     const companyDescriptionPanel = (
-      <Panel header={formatMessage(MESSAGES.companyDescription)} >
+      <Panel key="companyDescription" header={formatMessage(MESSAGES.companyDescription)} >
         <CompanyDescription
           companyName={this.state.companyName}
           country={this.state.country}
@@ -438,7 +438,7 @@ class CompanyProfile extends Component {
       </Panel>
     );
     const companyCapabilitiesPanel = (
-      <Panel header={formatMessage(MESSAGES.companyCapabilities)} >
+      <Panel key="companyCapabilities" header={formatMessage(MESSAGES.companyCapabilities)} >
         <CompanyCapabilities
           capabilities={CAPABILITIES}
           disabled={this.state.disableCapabilities}
@@ -450,7 +450,7 @@ class CompanyProfile extends Component {
     );
 
     const smscSettingPanel = (
-      <Panel header={formatMessage(MESSAGES.smscSetting)} >
+      <Panel key="smscSetting" header={formatMessage(MESSAGES.smscSetting)} >
         <SmscSetting
           option={_.map(SMSC_OPTION, formatIntlOptionMethod)}
           values={this.state.smscValues}
@@ -506,7 +506,7 @@ class CompanyProfile extends Component {
           />
         </div>
       </div>
-      <Collapse accordion={false} defaultActiveKey="0">
+      <Collapse accordion={false} defaultActiveKey="companyProfile">
         {this.renderPanel()}
       </Collapse>
     </div>

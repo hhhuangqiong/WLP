@@ -1,5 +1,5 @@
 import React, { PropTypes } from 'react';
-import { injectIntl, intlShape } from 'react-intl';
+import { injectIntl, intlShape, FormattedMessage } from 'react-intl';
 
 import {
   COMPLETE,
@@ -21,7 +21,9 @@ const StatusDisplay = (props) => {
   return (
     <div className="row">
         <div className="large-10 columns">
-          <label>Status</label>
+          <label>
+            <FormattedMessage id="status" defaultMessage="Status" />
+          </label>
         </div>
        {
         (() => {

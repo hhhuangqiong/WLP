@@ -45,6 +45,7 @@ function parseResponse(provisionItem, company = {}, preset = {}) {
     companyName: company.name,
     timezone: company.timezone,
     country: company.country,
+    carrierId: provisionItem.profile.carrierId,
     companyCode: provisionItem.profile.companyCode,
     capabilities: provisionItem.profile.capabilities,
     companyType: provisionItem.profile.serviceType,
@@ -115,7 +116,7 @@ export default function provisionController(iamServiceClient, provisionHelper) {
         return {
           id: item.id,
           companyName: targetCompanyName || EMPTY_VALUE,
-          domain: item.profile.carrierId || EMPTY_VALUE,
+          carrierId: item.profile.carrierId || EMPTY_VALUE,
           paymentType: item.profile.paymentMode,
           chargeWallet: item.profile.chargeWallet,
           createDate: item.createdAt,

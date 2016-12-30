@@ -20,10 +20,10 @@ const CompanyDetail = (props, context) => {
   const { identity } = context.params;
   const {
     id,
+    carrierId,
     companyName,
     paymentType,
     chargeWallet,
-    domain,
     createDate,
     status,
     intl: { formatMessage },
@@ -34,7 +34,6 @@ const CompanyDetail = (props, context) => {
   return (
     <tr key={companyName}>
       <td>{companyName}</td>
-      <td>{domain}</td>
       <td>{dateLocale.format(moment(createDate), SHORT_DATE_FORMAT)}</td>
       <td>{formatMessage(paymentType === PAYMENT_TYPE.PRE_PAID ? MESSAGES.prePaid : MESSAGES.postPaid)}</td>
       {
@@ -77,7 +76,7 @@ const CompanyDetail = (props, context) => {
             {formatMessage(MESSAGES.details)}
           </button>
           <If condition={isWalletVisible}>
-            <button className="button--secondary" onClick={() => context.router.push(`/${identity}/company/${domain}/wallet`)}>
+            <button className="button--secondary" onClick={() => context.router.push(`/${identity}/company/${carrierId}/wallet`)}>
               {formatMessage(MESSAGES.wallet)}
             </button>
           </If>
@@ -94,7 +93,7 @@ CompanyDetail.propTypes = {
   companyName: PropTypes.string.isRequired,
   paymentType: PropTypes.string.isRequired,
   chargeWallet: PropTypes.string,
-  domain: PropTypes.string,
+  carrierId: PropTypes.string,
   createDate: PropTypes.string.isRequired,
   status: PropTypes.string.isRequired,
 };

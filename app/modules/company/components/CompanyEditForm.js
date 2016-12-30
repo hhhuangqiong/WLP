@@ -478,8 +478,9 @@ class CompanyEditForm extends Component {
     const { intl: { formatMessage } } = this.props;
     const formatIntlOptionMethod = formatIntlOption.bind(null, formatMessage);
     const companyProfilePanel = (
-      <Panel header={formatMessage(MESSAGES.companyProfile)} >
+      <Panel key="companyProfile" header={formatMessage(MESSAGES.companyProfile)} >
         <CompanyProfileInfo
+          carrierId={this.props.companyDetail.carrierId}
           companyCode={this.state.companyCode}
           companyType={this.state.companyType}
           paymentType={this.state.paymentType}
@@ -497,7 +498,7 @@ class CompanyEditForm extends Component {
       </Panel>
     );
     const companyDescriptionPanel = (
-      <Panel header={formatMessage(MESSAGES.companyDescription)} >
+      <Panel key="companyDescription" header={formatMessage(MESSAGES.companyDescription)} >
         <CompanyDescription
           companyName={this.state.companyName}
           country={this.state.country}
@@ -514,7 +515,7 @@ class CompanyEditForm extends Component {
       </Panel>
     );
     const companyCapabilitiesPanel = (
-      <Panel header={formatMessage(MESSAGES.companyCapabilities)} >
+      <Panel key="companyCapabilities" header={formatMessage(MESSAGES.companyCapabilities)} >
         <CompanyCapabilities
           capabilities={CAPABILITIES}
           onCapabilitiesChange={this.onCapabilitiesChange}
@@ -526,7 +527,7 @@ class CompanyEditForm extends Component {
     );
 
     const smscSettingPanel = (
-      <Panel header={formatMessage(MESSAGES.smscSetting)} >
+      <Panel key="smscSetting" header={formatMessage(MESSAGES.smscSetting)} >
         <SmscSetting
           option={_.map(SMSC_OPTION, formatIntlOptionMethod)}
           values={this.state.smscValues}
@@ -633,7 +634,7 @@ class CompanyEditForm extends Component {
           null
         }
       </div>
-        <Collapse accordion={false} defaultActiveKey="0">
+        <Collapse accordion={false} defaultActiveKey="companyProfile">
         {this.renderPanel()}
         </Collapse>
       </div>
@@ -642,7 +643,22 @@ class CompanyEditForm extends Component {
 }
 
 CompanyEditForm.propTypes = {
-  companyDetail: PropTypes.object,
+  companyDetail: PropTypes.shape({
+    companyCode: PropTypes.string,
+    companyName: PropTypes.string,
+    companyType: PropTypes.string,
+    paymentType: PropTypes.string,
+    status: PropTypes.string,
+    carrierId: PropTypes.string,
+    id: PropTypes.string,
+    companyId: PropTypes.string,
+    country: PropTypes.string,
+    timezone: PropTypes.string,
+    resellerCarrierId: PropTypes.string,
+    resellerCompanyId: PropTypes.string,
+    capabilities: PropTypes.array,
+    preset: PropTypes.object,
+  }),
   profileDisabled: PropTypes.shape({
     companyCode: PropTypes.bool,
     companyType: PropTypes.bool,

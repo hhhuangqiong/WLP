@@ -10,6 +10,7 @@ const CompanyProfileInfo = (props) => {
     companyCode,
     companyType,
     paymentType,
+    carrierId,
     companyTypeOption,
     paymentTypeOption,
     onCompanyCodeChange,
@@ -63,7 +64,7 @@ const CompanyProfileInfo = (props) => {
         </div>
       </div>
       <div className="row">
-          <div className="large-10 columns">
+        <div className="large-10 columns">
           <label>
             <FormattedMessage id="paymentType" defaultMessage="Payment Type" />:
           </label>
@@ -78,6 +79,16 @@ const CompanyProfileInfo = (props) => {
           />
         </div>
       </div>
+      { carrierId ? <div className="row">
+        <div className="large-10 columns">
+          <label>
+            <FormattedMessage id="carrierDomain" defaultMessage="Carrier Domain" />:
+          </label>
+        </div>
+        <div className="large-14 columns">
+          <label>{carrierId}</label>
+        </div>
+      </div> : null }
     </div>
   );
 };
@@ -87,6 +98,7 @@ CompanyProfileInfo.propTypes = {
   companyCode: PropTypes.string,
   companyType: PropTypes.string,
   paymentType: PropTypes.string,
+  carrierId: PropTypes.string,
   companyTypeOption: PropTypes.array,
   paymentTypeOption: PropTypes.array,
   onCompanyCodeChange: PropTypes.func,

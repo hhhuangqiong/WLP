@@ -7,7 +7,8 @@ const SYSTEM_ERROR = 'SystemError';
 const HTTP_STATUS_ERROR = 'HttpStatusError';
 
 const defaultCompanyObject = {
-  provisionId: null,
+  id: null,
+  carrierId: null,
   companyId: null,
   companyCode: null,
   companyName: null,
@@ -20,9 +21,6 @@ const defaultCompanyObject = {
   capabilities: [],
   preset: {},
   status: null,
-  companyCreatedError: null,
-  systemErrors: null,
-  userErrors: null,
 };
 
 const CompanyStore = createStore({
