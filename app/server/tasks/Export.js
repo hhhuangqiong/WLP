@@ -180,73 +180,72 @@ export default class ExportTask {
    * @param {row} fast-csv row instance
    */
   humanizeFields(exportType, row) {
+    let humanizedRow;
     switch (exportType) {
-      case (IM):
-        /* jscs:disable */
-        row.device_id = stringifyNumbers(row.device_id);
-        row.stanza_id = stringifyNumbers(row.stanza_id);
-        /* jscs: enable */
-
-        row.origin = getCountryName(row.origin);
-        row.destination = getCountryName(row.destination);
-
-        row.timestamp = beautifyTime(row.timestamp);
-
+      case IM:
+        humanizedRow = {
+          ...row,
+          device_id: stringifyNumbers(row.device_id),
+          stanza_id: stringifyNumbers(row.stanza_id),
+          origin: getCountryName(row.origin),
+          destination: getCountryName(row.destination),
+          timestamp: beautifyTime(row.timestamp),
+        };
         break;
-
-      case (CALLS):
-        row.callee = "'" + row.callee + "'";
-        row.duration = parseDuration(row.duration);
-
-        /* jscs: disable */
-        row.start_time = beautifyTime(row.start_time);
-        row.end_time = beautifyTime(row.end_time);
-        row.answer_time = beautifyTime(row.answer_time);
-
-        row.caller_bundle_id = row.caller_bundle_id || null;
-        row.sip_trunk = row.sip_trunk || null;
-        /* jscs: enable */
-
+      case CALLS:
+        humanizedRow = {
+          ...row,
+          device_id: stringifyNumbers(row.device_id),
+          stanza_id: stringifyNumbers(row.stanza_id),
+          origin: getCountryName(row.origin),
+          destination: getCountryName(row.destination),
+          timestamp: beautifyTime(row.timestamp),
+        };
         break;
-
-      case (VERIFICATION):
-        /* jscs: disable */
-        row.start_time = beautifyTime(row.start_time);
-        row.end_time = beautifyTime(row.end_time);
-
-        row.source_country = getCountryName(row.source_country);
-
-        row.device_id = stringifyNumbers(row.device_id);
-        row.request_id = stringifyNumbers(row.request_id);
-        row.os_version = stringifyNumbers(row.os_version);
-        /* jscs: enable */
-
-        row.country = getCountryName(row.country);
-
+      case VERIFICATION: {
+        let type = '';
         switch (row.type) {
           case 'MobileTerminated':
-            row.type = 'Call-In';
+            type = 'Call-In';
             break;
-
           case 'MobileOriginated':
-            row.type = 'Call-Out';
+            type = 'Call-Out';
+            break;
+          default:
             break;
         }
-
+        humanizedRow = {
+          ...row,
+          start_time: beautifyTime(row.start_time),
+          end_time: beautifyTime(row.end_time),
+          source_country: getCountryName(row.source_country),
+          device_id: stringifyNumbers(row.device_id),
+          request_id: stringifyNumbers(row.request_id),
+          os_version: stringifyNumbers(row.os_version),
+          country: getCountryName(row.country),
+          type,
+        };
         break;
-
-      case (END_USER):
-        row.username = row.username;
-        row.creationDate = beautifyTime(row.creationDate);
-        row.accountStatus = row.accountStatus;
-        row.platform = row.platform;
-        row.deviceModel = row.deviceModel;
-        row.appBundleId = row.appBundleId;
-        row.appVersionNumber = row.appVersionNumber;
+      }
+      case END_USER:
+        humanizedRow = {
+          ...row,
+          creationDate: beautifyTime(row.creationDate),
+        };
+        break;
+      case SMS:
+        humanizedRow = {
+          ...row,
+          request_date: beautifyTime(row.request_date),
+          response_date: beautifyTime(row.response_date),
+          country: getCountryName(row.country),
+        };
+        break;
+      default:
         break;
     }
 
-    return sanitizeNull(row);
+    return sanitizeNull(humanizedRow);
   }
 
   /**
