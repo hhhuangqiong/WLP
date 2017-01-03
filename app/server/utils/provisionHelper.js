@@ -1,4 +1,5 @@
 import _ from 'lodash';
+import Q from 'q';
 
 export default function provisionHelper(mpsClient) {
   // Since it is heavily since the carrierId and companyId conversion,
@@ -85,9 +86,14 @@ export default function provisionHelper(mpsClient) {
   async function getCarrierIdsByCompanyIds(ids) {
     // since it is heavy to check local and send every time
     // now send it server directly and map it afterward.
-    // @TODO support larger size
-    await getProvision({ companyId: ids.toString(), pageSize: 50 });
-    // expect to be loaded into local carrierIdMapping
+    // @workaround separate 50 items in a request and find the related mapping
+    // @TODO refactor to use companyId to avoid mapping WLP-1208
+    const pageSize = 50;
+    const chunks = _.chunk(ids, pageSize);
+    await Q.all(_.map(chunks, companyIds =>
+      getProvision({ companyId: companyIds.toString(), pageSize })
+    ));
+    // expect to be loaded into local carrierIdMapping and return the list
     return _.map(ids, id => carrierIdMapping[id] || null);
   }
 
