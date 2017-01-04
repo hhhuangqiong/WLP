@@ -11,6 +11,7 @@ const CompanyProfileInfo = (props) => {
     companyType,
     paymentType,
     carrierId,
+    chargingRateCarrierId,
     companyTypeOption,
     paymentTypeOption,
     onCompanyCodeChange,
@@ -89,6 +90,27 @@ const CompanyProfileInfo = (props) => {
           <label>{carrierId}</label>
         </div>
       </div> : null }
+      { chargingRateCarrierId ? <div className="row">
+        <div className="large-10 columns">
+          <label>
+            <FormattedMessage id="onlineChargingRateReference"
+              defaultMessage="Online Charging Rate Reference"
+            />:
+          </label>
+        </div>
+        <div className="large-14 columns">
+          <label className="left">
+            <a className="text-link" target="_blank" href={`/api/carriers/${chargingRateCarrierId}/callRate`} >
+              <FormattedMessage id="downloadCallRates"defaultMessage="Download Call Rates" />
+            </a>
+          </label>
+          <label className="left">
+            <a className="text-link" target="_blank" href={`/api/carriers/${chargingRateCarrierId}/smsRate`} >
+              <FormattedMessage id="downloadSMSRates"defaultMessage="Download SMS Rates" />
+            </a>
+          </label>
+        </div>
+      </div> : null }
     </div>
   );
 };
@@ -99,6 +121,7 @@ CompanyProfileInfo.propTypes = {
   companyType: PropTypes.string,
   paymentType: PropTypes.string,
   carrierId: PropTypes.string,
+  chargingRateCarrierId: PropTypes.string,
   companyTypeOption: PropTypes.array,
   paymentTypeOption: PropTypes.array,
   onCompanyCodeChange: PropTypes.func,

@@ -8,6 +8,7 @@ import roleController from './role';
 import carrierWalletController from './carrierWallet';
 import resourceController from './resource';
 import meController from './me';
+import carrierRateController from './carrierRate';
 
 function register(container) {
   container.service('AuthController', authController);
@@ -23,6 +24,7 @@ function register(container) {
   container.service('CarrierController', carrierController);
   container.service('ResourceController', resourceController, 'AclResolver');
   container.service('CarrierWalletController', carrierWalletController, 'OcsClient');
+  container.service('CarrierRateController', carrierRateController, 'MaaiiRateClient');
 }
 
 export {
@@ -36,6 +38,7 @@ export {
   carrierWalletController,
   meController,
   resourceController,
+  carrierRateController,
   register,
 };
 

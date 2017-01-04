@@ -397,6 +397,7 @@ class CompanyProfile extends Component {
   }
   renderPanel() {
     const { intl: { formatMessage }, preset } = this.props;
+    const { identity } = this.context.params;
     const profileDisable = {
       companyCode: false,
       companyType: preset && !!preset.companyType,
@@ -406,6 +407,7 @@ class CompanyProfile extends Component {
     const companyProfilePanel = (
       <Panel key="companyProfile" header={formatMessage(MESSAGES.companyProfile)} >
         <CompanyProfileInfo
+          chargingRateCarrierId={identity}
           companyCode={this.state.companyCode}
           companyType={this.state.companyType}
           paymentType={this.state.paymentType}
