@@ -7,6 +7,7 @@ import favicon from 'serve-favicon';
 import methodOverride from 'method-override';
 import morgan from 'morgan';
 import userLocale from 'm800-user-locale';
+import healthcheck from 'm800-health-check';
 
 import app from '../app';
 import config from '../config';
@@ -51,6 +52,14 @@ export default function (port) {
   if (nconf.get('trustProxy')) {
     server.enable('trust proxy');
   }
+
+  // only check on web components connectivity
+  healthcheck(server, {
+    connectivity: {
+      iam: `${ioc.container.IamClientOptions.baseUrl}/api/health`,
+      mps: `${ioc.container.MpsClientOptions.baseUrl}/api/health`,
+    },
+  });
 
   // Please, put IoC dependencies here, so they are a bit closer to the top of the file :)
   const sessionMiddleware = fetchDep('SessionMiddleware');

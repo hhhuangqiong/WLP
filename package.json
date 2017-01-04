@@ -94,6 +94,7 @@
     "kue": "^0.9.0",
     "lodash": "^3.10.1",
     "logging": "^2.0.21",
+    "m800-health-check": "^0.3.2",
     "m800-mail-service-client": "^1.0.0",
     "m800-user-locale": "^0.4.3-snapshot.75",
     "m800-util": "^0.6.2",
