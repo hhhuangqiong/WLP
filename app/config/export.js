@@ -46,17 +46,6 @@ export default {
     EXPORT_REQUEST_EXECUTION: 'getSms',
     EXPORT_FILENAME: 'export_sms.csv',
   },
-  CALLS_COST: {
-    DATA_FIELDS: [
-      'accountId', 'callType', 'childCdr', 'cost', 'creationDate', 'currency',
-      'destination', 'durationMinutes', 'durationSeconds', 'endDate', 'id',
-      'ocsSessionId', 'reasonCode', 'requestedDestionation', 'startDate',
-      'userId', 'username', 'walletId',
-    ],
-    EXPORT_REQUEST: 'OcsClient',
-    EXPORT_REQUEST_EXECUTION: 'getCallsCost',
-    EXPORT_FILENAME: 'export_calls_retail_price.csv',
-  },
   VERIFICATION: {
     DATA_FIELDS: [
       'application_id', 'application_key', 'cellular_subscriber_id', 'country',

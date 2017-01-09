@@ -85,12 +85,10 @@ export function ocsClient(options) {
 
   async function getCallsCost(params) {
     const { carrier, ...query } = params;
-    // cos API's pagination index is from 1 instead of 0
-    const reqQuery = { ...query, page: query.page + 1 };
     const httpOptions = {
       url: `carriers/${carrier}/records/calls`,
       method: 'get',
-      query: reqQuery,
+      query,
     };
 
     try {
@@ -103,7 +101,7 @@ export function ocsClient(options) {
         logger.warn(`OCS has no records for carrier id: ${carrier}.`);
         return {
           page_number: 0,
-          page_size: parseInt(reqQuery.pageSize, 10),
+          page_size: parseInt(query.pageSize, 10),
           offset: 0,
           number_of_elements: 0,
           total_pages: 0,
