@@ -37,6 +37,7 @@ function deriveResources(carrierProfile) {
     [RESOURCE.IM_EXPORT]: ({ capabilities }) => filterImAndExport(capabilities, CAPABILITY.IM),
     [RESOURCE.SMS]: ({ capabilities }) => filterSmsAndExport(capabilities, CAPABILITY.IM_TO_SMS),
     [RESOURCE.SMS_EXPORT]: ({ capabilities }) => filterSmsAndExport(capabilities, CAPABILITY.IM_TO_SMS),
+    [RESOURCE.SMS_COST_EXPORT]: ({ capabilities }) => filterSmsAndExport(capabilities, CAPABILITY.IM_TO_SMS),
     [RESOURCE.VSF]: ({ capabilities }) => includes(capabilities, CAPABILITY.VSF),
     // show top up when it is pre-paid
     [RESOURCE.TOP_UP]: ({ paymentMode }) => paymentMode === 'PRE_PAID',

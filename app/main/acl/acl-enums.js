@@ -53,6 +53,7 @@ export const RESOURCE = {
   IM_EXPORT: 'imExport',
   END_USER_EXPORT: 'endUserExport',
   SMS_EXPORT: 'smsExport',
+  SMS_COST_EXPORT: 'smsCostExport',
 };
 
 export const RESOURCES = Object.values(RESOURCE);

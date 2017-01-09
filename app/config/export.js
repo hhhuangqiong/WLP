@@ -46,6 +46,16 @@ export default {
     EXPORT_REQUEST_EXECUTION: 'getSms',
     EXPORT_FILENAME: 'export_sms.csv',
   },
+  SMS_COST: {
+    DATA_FIELDS: [
+      'id', 'accountId', 'userId', 'walletId', 'username', 'destination',
+      'items', 'currency', 'cost', 'creationDate', 'serviceType', 'sourceAddr',
+      'ocsSessionId', 'failedItemsNumber', 'sessionId', 'serviceInfo',
+    ],
+    EXPORT_REQUEST: 'OcsClient',
+    EXPORT_REQUEST_EXECUTION: 'getSmsCost',
+    EXPORT_FILENAME: 'export_sms_cost.csv',
+  },
   VERIFICATION: {
     DATA_FIELDS: [
       'application_id', 'application_key', 'cellular_subscriber_id', 'country',

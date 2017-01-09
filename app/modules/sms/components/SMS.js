@@ -13,6 +13,7 @@ import clearSMS from '../actions/clearSMS';
 
 import SMSTable from './SMSTable';
 import SMSStore from '../stores/SMSStore';
+import AuthStore from '../../../main/stores/AuthStore';
 
 import Export from '../../../main/file-export/components/Export';
 import SmsExportForm from './SmsExportForm';
@@ -25,6 +26,7 @@ import * as FilterBar from './../../../main/components/FilterBar';
 import DateRangePicker from './../../../main/components/DateRangePicker';
 import SearchBox from './../../../main/components/Searchbox';
 import FilterBarNavigation from '../../../main/filter-bar/components/FilterBarNavigation';
+import { SMS_COST, SMS } from '../../../main/file-export/constants/exportType';
 
 import config from './../../../main/config';
 import * as dateLocale from '../../../utils/dateLocale';
@@ -38,6 +40,14 @@ const INITIAL_PAGE_NUMBER = 0;
 const MONTHS_BEFORE_TODAY = 1;
 const defaultLocale = dateLocale.getDefaultLocale();
 
+const SMS_EXPORT_OPTIONS = [{
+  value: SMS,
+  label: 'Standard',
+}, {
+  value: SMS_COST,
+  label: 'Cost',
+}];
+
 function getInitialQueryFromURL(params, query = {}) {
   return {
     carrierId: params.identity,
@@ -49,7 +59,7 @@ function getInitialQueryFromURL(params, query = {}) {
   };
 }
 
-const SMS = React.createClass({
+const SmsPage = React.createClass({
   contextTypes: {
     router: PropTypes.object.isRequired,
     params: PropTypes.object.isRequired,
@@ -63,8 +73,12 @@ const SMS = React.createClass({
   },
 
   getInitialState() {
+    const exportState = {
+      exportType: SMS,
+      exportTypeOptions: null,
+    };
     return _.merge(
-      _.clone(this.getDefaultQuery()), this.getRequestBodyFromQuery(), this.getStateFromStores()
+      _.clone(this.getDefaultQuery()), this.getRequestBodyFromQuery(), this.getStateFromStores(), exportState
     );
   },
 
@@ -74,6 +88,7 @@ const SMS = React.createClass({
 
   componentDidMount() {
     this.fetchData();
+    this.setExportTypeOptions();
   },
 
   componentDidUpdate(prevProps) {
@@ -107,6 +122,21 @@ const SMS = React.createClass({
     executeAction(loadSMS, _.merge(_.clone(defaultQuery), getInitialQueryFromURL(params, query)));
   },
 
+  setExportTypeOptions() {
+    const userPermissions = this.state.user.permissions;
+    const exportTypeOptions = [];
+    if (_.includes(userPermissions, permission(RESOURCE.SMS_EXPORT, ACTION.READ))) {
+      exportTypeOptions.push(SMS_EXPORT_OPTIONS[0]);
+    }
+    if (_.includes(userPermissions, permission(RESOURCE.SMS_COST_EXPORT, ACTION.READ))) {
+      exportTypeOptions.push(SMS_EXPORT_OPTIONS[1]);
+    }
+    if (exportTypeOptions.length === 1) {
+      this.setState({ exportType: exportTypeOptions[0].value });
+    }
+    this.setState({ exportTypeOptions });
+  },
+
   getDefaultQuery() {
     return {
       carrierId: null,
@@ -134,55 +164,13 @@ const SMS = React.createClass({
       page: this.getStore(SMSStore).getPage(),
       totalPage: this.getStore(SMSStore).getTotalPage(),
       isLoadingMore: this.getStore(SMSStore).isLoadingMore,
+      user: this.getStore(AuthStore).getUser(),
     };
   },
 
-  render() {
-    const { intl: { formatMessage } } = this.props;
-
-    return (
-      <div className="row">
-        <FilterBar.Wrapper>
-          <FilterBarNavigation section="sms" tab="details" />
-          <FilterBar.LeftItems>
-            <DateRangePicker
-              withIcon
-              startDate={this.state.startDate}
-              endDate={this.state.endDate}
-              handleStartDateChange={this.handleStartDateChange}
-              handleEndDateChange={this.handleEndDateChange}
-            />
-          </FilterBar.LeftItems>
-          <FilterBar.RightItems>
-            <Permit permission={permission(RESOURCE.SMS_EXPORT, ACTION.READ)}>
-              <Export exportType={Sms}>
-                  <SmsExportForm
-                    startDate={this.state.startDate}
-                    endDate={this.state.endDate}
-                    page={this.state.page}
-                    pageRec={this.state.pageRec}
-                  />
-              </Export>
-            </Permit>
-            <SearchBox
-              placeHolder={formatMessage(i18nMessages.sender)}
-              value={this.state.number}
-              onInputChangeHandler={this.handleSearchInputChange}
-              onKeyPressHandler={this.handleSearchInputSubmit}
-            />
-          </FilterBar.RightItems>
-        </FilterBar.Wrapper>
-        <div className="large-24 columns">
-          <SMSTable
-            totalPage={this.state.totalPage}
-            records={this.getStore(SMSStore).getSMS()}
-            page={this.state.page}
-            onPageLoad={this.handlePageLoad}
-            isLoadingMore={this.state.isLoadingMore}
-          />
-        </div>
-      </div>
-    );
+  handleExportTypeChange(val = {}) {
+    const value = val.value || '';
+    this.setState({ exportType: value });
   },
 
   handleQueryChange(newQuery) {
@@ -232,6 +220,59 @@ const SMS = React.createClass({
       this.handleQueryChange({ number: e.target.value, page: INITIAL_PAGE_NUMBER });
     }
   },
+
+  render() {
+    const { intl: { formatMessage } } = this.props;
+
+    return (
+      <div className="row">
+        <FilterBar.Wrapper>
+          <FilterBarNavigation section="sms" tab="details" />
+          <FilterBar.LeftItems>
+            <DateRangePicker
+              withIcon
+              startDate={this.state.startDate}
+              endDate={this.state.endDate}
+              handleStartDateChange={this.handleStartDateChange}
+              handleEndDateChange={this.handleEndDateChange}
+            />
+          </FilterBar.LeftItems>
+          <FilterBar.RightItems>
+          {
+            !_.isEmpty(this.state.exportTypeOptions) ?
+            <Export exportType={this.state.exportType}>
+                <SmsExportForm
+                  startDate={this.state.startDate}
+                  endDate={this.state.endDate}
+                  page={this.state.page}
+                  pageRec={this.state.pageRec}
+                  exportTypeOptions={this.state.exportTypeOptions}
+                  disabled={this.state.exportTypeOptions.length === 1}
+                  handleExportTypeChange={this.handleExportTypeChange}
+                  exportType={this.state.exportType}
+                />
+            </Export> : null
+          }
+          <SearchBox
+            placeHolder={formatMessage(i18nMessages.sender)}
+            value={this.state.number}
+            onInputChangeHandler={this.handleSearchInputChange}
+            onKeyPressHandler={this.handleSearchInputSubmit}
+          />
+          </FilterBar.RightItems>
+        </FilterBar.Wrapper>
+        <div className="large-24 columns">
+          <SMSTable
+            totalPage={this.state.totalPage}
+            records={this.getStore(SMSStore).getSMS()}
+            page={this.state.page}
+            onPageLoad={this.handlePageLoad}
+            isLoadingMore={this.state.isLoadingMore}
+          />
+        </div>
+      </div>
+    );
+  },
 });
 
-export default injectIntl(SMS);
+export default injectIntl(SmsPage);

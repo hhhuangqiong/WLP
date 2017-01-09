@@ -183,9 +183,21 @@ export class RolesPage extends Component {
         );
         break;
       case RESOURCE.SMS:
+        this.handleTickResourceAndExport(
+          resource, actions, RESOURCE.SMS, RESOURCE.SMS_COST_EXPORT, roles, role, index
+        );
+        this.handleTickResourceAndExport(
+          resource, actions, RESOURCE.SMS, RESOURCE.SMS_EXPORT, roles, role, index
+        );
+        break;
       case RESOURCE.SMS_EXPORT:
         this.handleTickResourceAndExport(
           resource, actions, RESOURCE.SMS, RESOURCE.SMS_EXPORT, roles, role, index
+        );
+        break;
+      case RESOURCE.SMS_COST_EXPORT:
+        this.handleTickResourceAndExport(
+          resource, actions, RESOURCE.SMS, RESOURCE.SMS_COST_EXPORT, roles, role, index
         );
         break;
       default: break;

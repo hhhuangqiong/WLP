@@ -16,6 +16,7 @@ import {
   END_USER,
   CALLS_COST,
   SMS,
+  SMS_COST,
 } from '../../main/file-export/constants/ExportType';
 
 import {
@@ -137,6 +138,16 @@ export default class ExportTask {
         source_address_inbound: query.number,
         page: query.page,
         size: query.pageRec,
+      }
+    );
+
+    job[SMS_COST] = () => (
+      {
+        carrier: params.carrierId,
+        start_date: moment(query.startDate, 'x').toISOString(),
+        end_date: moment(query.endDate, 'x').toISOString(),
+        page: PAGE_START_INDEX,
+        limit: PAGE_SIZE_SMALL,
       }
     );
 
@@ -274,6 +285,8 @@ export default class ExportTask {
         return EXPORTS.END_USER;
       case SMS:
         return EXPORTS.SMS;
+      case SMS_COST:
+        return EXPORTS.SMS_COST;
       default:
         return {};
     }

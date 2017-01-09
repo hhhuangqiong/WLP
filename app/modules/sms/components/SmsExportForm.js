@@ -4,9 +4,11 @@ import { injectIntl, intlShape, FormattedMessage } from 'react-intl';
 
 import DateTimePicker from '../../../main/components/DateTimePicker';
 import ExportSubmitControls from '../../../main/file-export/components/ExportSubmitControls';
+import Select from 'react-select';
 
 import * as dateLocale from '../../../utils/dateLocale';
 import { TIME_FORMAT } from '../../../utils/timeFormatter';
+import { SMS_COST, SMS } from '../../../main/file-export/constants/exportType';
 
 const defaultLocale = dateLocale.getDefaultLocale();
 
@@ -19,6 +21,10 @@ class SmsExportForm extends Component {
     handleExport: PropTypes.func,
     page: PropTypes.number,
     pageRec: PropTypes.string,
+    exportTypeOptions: PropTypes.array,
+    disabled: PropTypes.bool,
+    exportType: PropTypes.string,
+    handleExportTypeChange: PropTypes.func,
   }
 
   constructor(props) {
@@ -57,6 +63,8 @@ class SmsExportForm extends Component {
   }
 
   render() {
+    const { formatMessage } = this.props.intl;
+
     return (
       <form onSubmit={this.handleExport} noValidate>
         <h4 id="modalTitle">
@@ -106,6 +114,25 @@ class SmsExportForm extends Component {
             dateFormat="MM/DD/YYYY"
             minDate={this.state.startDate}
             timeFormat={TIME_FORMAT}
+          />
+        </div>
+
+        <div className="export-row">
+          <label className="left bold">
+            <FormattedMessage
+              id="type"
+              defaultMessage="Type"
+            />
+          </label>
+
+          <Select
+            className="export-select"
+            name="select-export-type"
+            value={this.props.exportType}
+            options={this.props.exportTypeOptions}
+            onChange={this.props.handleExportTypeChange}
+            clearable={false}
+            disabled={this.props.disabled}
           />
         </div>
 
