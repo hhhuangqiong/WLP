@@ -1,5 +1,9 @@
 import createStore from 'fluxible/addons/createStore';
 
+function parseServiceType(serviceType) {
+  return serviceType.toLowerCase();
+}
+
 export const CompanyWalletStore = createStore({
   storeName: 'CompanyWalletStore',
   handlers: {
@@ -28,11 +32,13 @@ export const CompanyWalletStore = createStore({
   startLoadingWallets() {
     this.walletsLoading = true;
     this.wallets = [];
+    this.clearCompanyWalletRecords();
     this.emitChange();
   },
   receiveCompanyWallets(wallets) {
     this.wallets = wallets.map(x => ({
       ...x,
+      serviceType: parseServiceType(x.serviceType),
       balance: parseFloat(x.balance),
     }));
     this.walletsLoading = false;

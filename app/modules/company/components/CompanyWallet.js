@@ -8,7 +8,7 @@ import connectToStores from 'fluxible-addons-react/connectToStores';
 
 import { CompanyWalletStore } from '../stores/CompanyWalletStore';
 import ClientConfigStore from '../../../main/stores/ClientConfigStore';
-import { MESSAGES } from '../constants/companyOptions';
+import { MESSAGES, WALLET_SERVICE_TYPE } from '../constants/companyOptions';
 
 import fetchCompanyWalletsWithRecords from '../actions/fetchCompanyWalletsWithRecords';
 import fetchCompanyWalletRecords from './../actions/fetchCompanyWalletRecords';
@@ -38,7 +38,7 @@ class CompanyWallet extends Component {
     walletsLoading: PropTypes.bool,
     wallets: PropTypes.arrayOf(PropTypes.shape({
       walletId: PropTypes.number.isRequired,
-      serviceType: PropTypes.string.isRequired,
+      serviceType: PropTypes.oneOf(Object.values(WALLET_SERVICE_TYPE)).isRequired,
       balance: PropTypes.number.isRequired,
     })),
     transactionsPage: PropTypes.shape({
@@ -158,7 +158,7 @@ class CompanyWallet extends Component {
             {
               wallets.map(wallet =>
                 <div className="small-12 columns" key={wallet.walletId}>
-                  <h4>{intl.formatMessage(wallet.serviceType === 'SMS' ? MESSAGES.smsWallet : MESSAGES.voiceWallet)}</h4>
+                  <h4>{intl.formatMessage(MESSAGES[`${wallet.serviceType}Wallet`] || { id: wallet.serviceType })}</h4>
                   <WalletTopUpForm
                     wallet={wallet}
                     values={topUpForms[wallet.walletId] || {}}

@@ -57,7 +57,8 @@ export const MESSAGES = defineMessages({
     id: 'wallet',
     defaultMessage: 'Wallet',
   },
-  voiceWallet: {
+  // server return the voc in service type
+  vocWallet: {
     id: 'voiceWallet',
     defaultMessage: 'Voice Wallet',
   },
@@ -117,7 +118,8 @@ export const MESSAGES = defineMessages({
     id: 'sms',
     defaultMessage: 'SMS',
   },
-  voice: {
+  // server return the voc in service type
+  voc: {
     id: 'voice',
     defaultMessage: 'Voice',
   },
@@ -252,4 +254,9 @@ export const SMSC_DATA_ID = {
   BINDINGS: 'smsc.bindings',
   BINDING: 'smscValues.binding',
   TYPE: 'smscValues.type',
+};
+
+export const WALLET_SERVICE_TYPE = {
+  SMS: 'sms',
+  VOICE: 'voc',
 };

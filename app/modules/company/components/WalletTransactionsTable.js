@@ -5,7 +5,7 @@ import { injectIntl, intlShape } from 'react-intl';
 import { SHORT_DATE_FORMAT } from './../../../utils/timeFormatter';
 import Currency from './../../../main/components/Currency';
 
-import { MESSAGES } from '../constants/companyOptions';
+import { MESSAGES, WALLET_SERVICE_TYPE } from '../constants/companyOptions';
 
 import Pagination from '../../../main/components/Pagination';
 
@@ -42,7 +42,7 @@ function WalletTransactionsTable(props) {
               <Currency currencyCode={item.currency} amount={item.balance} />
             </td>
             <td>
-              {formatMessage(item.type === 'SMS' ? MESSAGES.sms : MESSAGES.voice)}
+              {formatMessage(MESSAGES[item.type] || { id: item.type })}
             </td>
             <td>{item.description}</td>
           </tr>
@@ -75,7 +75,7 @@ WalletTransactionsTable.propTypes = {
     amount: PropTypes.string,
     currency: PropTypes.number,
     description: PropTypes.string,
-    type: PropTypes.string,
+    type: PropTypes.oneOf(Object.values(WALLET_SERVICE_TYPE)),
     transactionId: PropTypes.string,
   })),
   onPageChange: PropTypes.func,
