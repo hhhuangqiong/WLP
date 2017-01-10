@@ -141,7 +141,9 @@ Cache-Control: no-cache
     "endUserExport": ["read"],
     "imExport": ["read"],
     "callExport": ["read"],
-    "smsExport": ["read"]
+    "callCostExport": ['read'],
+    "smsExport": ["read"],
+    "smsCostExport" : ['read']
   }
 }
 ```
