@@ -127,7 +127,7 @@ export default [
   },
   {
     name: MESSAGES.accessManagement,
-    icon: 'icon-menuaccount', // TODO: use appropriate icon
+    icon: 'icon-menu-access-management',
     page: ACCESS_MANAGEMENT,
     path: `/${ACCESS_MANAGEMENT}`,
     permission: permission(RESOURCE.ROLE),
