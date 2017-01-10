@@ -8,7 +8,6 @@ import Select from 'react-select';
 
 import * as dateLocale from '../../../utils/dateLocale';
 import { TIME_FORMAT } from '../../../utils/timeFormatter';
-import { SMS_COST, SMS } from '../../../main/file-export/constants/exportType';
 
 const defaultLocale = dateLocale.getDefaultLocale();
 
@@ -63,8 +62,6 @@ class SmsExportForm extends Component {
   }
 
   render() {
-    const { formatMessage } = this.props.intl;
-
     return (
       <form onSubmit={this.handleExport} noValidate>
         <h4 id="modalTitle">

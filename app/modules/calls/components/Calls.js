@@ -3,7 +3,6 @@ import moment from 'moment';
 
 import classNames from 'classnames';
 import React, { PropTypes } from 'react';
-import { Link } from 'react-router';
 
 import {
   FormattedMessage,
@@ -34,7 +33,7 @@ import Export from '../../../main/file-export/components/Export';
 import CallsExportForm from './CallsExportForm';
 
 import { CALL_TYPE, CALL_EXPORT_REPORT_TYPE } from '../constants/callType';
-import { CALLS_COST, CALLS } from '../../../main/file-export/constants/exportType';
+import { CALLS_COST, CALLS } from '../../../main/file-export/constants/ExportType';
 import * as dateLocale from '../../../utils/dateLocale';
 
 // use for react-select options

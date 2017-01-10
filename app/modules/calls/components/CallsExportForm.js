@@ -7,8 +7,8 @@ import Select from 'react-select';
 import DateTimePicker from '../../../main/components/DateTimePicker';
 import ExportSubmitControls from '../../../main/file-export/components/ExportSubmitControls';
 
-import { CALL_TYPE, MESSAGES, CALL_EXPORT_REPORT_TYPE } from '../constants/callType';
-import { CALLS_COST, CALLS } from '../../../main/file-export/constants/exportType';
+import { CALL_TYPE, MESSAGES } from '../constants/callType';
+import { CALLS_COST } from '../../../main/file-export/constants/ExportType';
 import * as dateLocale from '../../../utils/dateLocale';
 import { TIME_FORMAT } from '../../../utils/timeFormatter';
 
