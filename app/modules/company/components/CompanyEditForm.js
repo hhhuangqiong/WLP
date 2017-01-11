@@ -16,7 +16,7 @@ import CompanyCapabilities from './CompanyCapabilities';
 import SmscSetting from './SmscSetting';
 import resetCompanyDetail from '../actions/resetCompanyDetail';
 import fetchCompanyDetail from '../actions/fetchCompanyDetail';
-import updateProfile from '../actions/updateProfile';
+import updateCompanyProfile from '../actions/updateCompanyProfile';
 import updateCompany from '../actions/updateCompany';
 import CommonDialog from '../../../main/components/CommonDialog';
 import SmscBindingTable from './SmscBindingTable';
@@ -174,6 +174,7 @@ class CompanyEditForm extends Component {
       companyName: props.companyDetail.companyName,
       companyType: props.companyDetail.companyType,
       paymentType: props.companyDetail.paymentType,
+      logo: props.companyDetail.logo,
       country: props.companyDetail.country,
       timezone: props.companyDetail.timezone,
       capabilitiesChecked: props.companyDetail.capabilities,
@@ -219,7 +220,19 @@ class CompanyEditForm extends Component {
     }
     this.setState({ validationErrors: {} });
   }
-
+  onLogoSelected = (file) => {
+    this.setState({
+      logoFile: file,
+      logo: file.preview,
+    });
+  }
+  onLogoDeleted = () => {
+    // remove the both the current logo src and logoFile
+    this.setState({
+      logoFile: null,
+      logo: null,
+    });
+  }
   getValidatorData = () => {
     const data = _.pick(this.state, ['companyCode', 'companyName', 'country', 'timezone']);
 
@@ -288,9 +301,9 @@ class CompanyEditForm extends Component {
   validateField = (field) => () => {
     this.props.validate(field);
   }
-  saveCompany = () => {
+  updateCompanyProfile = () => {
     const { identity } = this.context.params;
-    const { companyName, country, timezone, token } = this.state;
+    const { companyName, country, timezone, token, logoFile, logo } = this.state;
     this.props.validate((error) => {
       if (!error) {
         const companyInfo = {
@@ -301,16 +314,16 @@ class CompanyEditForm extends Component {
           companyId: this.props.companyDetail.companyId,
           carrierId: identity,
         };
-        // only submit smsc values when it is not default
-        if (this.state.smscValues.type !== SMSC_TYPE.DEFAULT) {
-          companyInfo.smsc = {
-            username: this.state.smscValues.username,
-            password: this.state.smscValues.password,
-            bindingDetails: this.state.smsc.bindings,
-          };
+
+        // remove the logo when original has logo url but removed from state
+        companyInfo.deleteLogo = this.props.companyDetail.logo && !logo;
+        if (logo && logoFile) {
+          // updated logo if uploaded
+          companyInfo.logoFile = logoFile;
         }
+
         const { executeAction } = this.context;
-        executeAction(updateProfile, companyInfo);
+        executeAction(updateCompanyProfile, companyInfo);
       }
     });
   }
@@ -509,6 +522,9 @@ class CompanyEditForm extends Component {
           onCompanyNameChange={this.onCompanyNameChange}
           onCountryChange={this.onCountryChange}
           onTimezoneChange={this.onTimezoneChange}
+          onLogoSelected={this.onLogoSelected}
+          onLogoDeleted={this.onLogoDeleted}
+          logoSrc={!_.isEmpty(this.state.logo) ? this.state.logo : null}
           disabled={this.props.descriptionDisabled}
           validateField={this.validateField}
           errors={this.state.validationErrors}
@@ -615,7 +631,7 @@ class CompanyEditForm extends Component {
               onClick={
                 status === 'ERROR' ?
                 this.updateCompany :
-                this.saveCompany
+                this.updateCompanyProfile
               }
             >
             {
@@ -651,6 +667,7 @@ CompanyEditForm.propTypes = {
     paymentType: PropTypes.string,
     status: PropTypes.string,
     carrierId: PropTypes.string,
+    logo: PropTypes.string,
     id: PropTypes.string,
     companyId: PropTypes.string,
     country: PropTypes.string,

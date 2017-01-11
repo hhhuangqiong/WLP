@@ -13,6 +13,27 @@ export default function companyController(iamServiceClient, provisionHelper, com
     }
   }
 
+  async function deleteLogo(req, res, next) {
+    try {
+      await iamServiceClient.deleteLogo({ id: req.params.companyId });
+      res.sendStatus(204);
+    } catch (ex) {
+      next(ex);
+    }
+  }
+
+  async function updateLogo(req, res, next) {
+    try {
+      await iamServiceClient.postLogo({
+        id: req.params.companyId,
+        file: req.file,
+      });
+      res.sendStatus(204);
+    } catch (ex) {
+      next(ex);
+    }
+  }
+
   async function getManagingCompaniesRoles(req, res, next) {
     try {
       const companyId = await provisionHelper.getCompanyIdByCarrierId(req.params.carrierId);
@@ -46,5 +67,7 @@ export default function companyController(iamServiceClient, provisionHelper, com
     getManagingCompaniesRoles,
     updateCompany,
     getLogo,
+    deleteLogo,
+    updateLogo,
   };
 }

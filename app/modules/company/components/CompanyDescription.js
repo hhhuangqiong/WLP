@@ -25,7 +25,7 @@ const CompanyDescription = (props) => {
     timezoneOption,
     onCountryChange,
     onCompanyNameChange,
-    onLogoUploaded,
+    onLogoSelected,
     onLogoDeleted,
     onTimezoneChange,
     disabled,
@@ -104,9 +104,10 @@ const CompanyDescription = (props) => {
         </div>
         <div className="large-14 columns">
           <ImageUpload
-            onImageUploaded={onLogoUploaded}
+            onImageSelected={onLogoSelected}
             imageSrc={logoSrc}
             onImageDeleted={onLogoDeleted}
+            disabled={disabled}
           />
         </div>
       </div>
@@ -135,7 +136,7 @@ CompanyDescription.propTypes = {
   onCountryChange: PropTypes.func,
   onCompanyNameChange: PropTypes.func,
   onTimezoneChange: PropTypes.func,
-  onLogoUploaded: PropTypes.func,
+  onLogoSelected: PropTypes.func,
   onLogoDeleted: PropTypes.func,
   logoSrc: PropTypes.string,
   validateField: PropTypes.func,

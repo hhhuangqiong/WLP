@@ -38,7 +38,7 @@ const SystemMessageStore = createStore({
     CREATE_COMPANY_FAILURE: 'handleErrorMessage',
     TOP_UP_WALLET_FAILURE: 'handleTopUpWalletFailure',
     UPDATE_COMPANY_FAILURE: 'handleErrorMessage',
-    UPDATE_CARRIER_PROFILE_FAILURE: 'handleErrorMessage',
+    UPDATE_COMPANY_PROFILE_FAILURE: 'handleErrorMessage',
     // signupRule
     CREATE_SIGNUP_RULES_SUCCESS: 'handleCreateSignupRulesSuccess',
   },

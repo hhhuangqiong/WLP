@@ -8,7 +8,7 @@ import classNames from 'classnames';
  * @class ImageUpload
  * @example
  * <ImageUpload
- *   onImageUploaded={onLogoUpload}
+ *   onImageSelected={onLogoUpload}
  *   imageSrc={logoSrc}
  *   onImageDeleted={onLogoDeleted}
  * />
@@ -25,7 +25,7 @@ class ImageUpload extends React.Component {
      * The function gets called if a file was uploaded.
      * @type {func}
     */
-    onImageUploaded: PropTypes.func.isRequired,
+    onImageSelected: PropTypes.func.isRequired,
     /**
      * The function gets called if a file was deleted.
      * @type {func}
@@ -79,7 +79,7 @@ class ImageUpload extends React.Component {
 
   onDrop = (files) => {
     if (!this.props.disabled) {
-      this.props.onImageUploaded(files[0]);
+      this.props.onImageSelected(files[0]);
       this.setState({
         isActive: false,
         isDrop: true,

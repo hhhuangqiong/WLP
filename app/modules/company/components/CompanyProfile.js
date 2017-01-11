@@ -153,7 +153,7 @@ class CompanyProfile extends Component {
     _.set(newState, id, value);
     this.setState(newState);
   }
-  onLogoUploaded = (file) => {
+  onLogoSelected = (file) => {
     this.setState({ logoFile: file });
   }
   onLogoDeleted = () => {
@@ -445,7 +445,7 @@ class CompanyProfile extends Component {
           onTimezoneChange={this.onTimezoneChange}
           validateField={this.validateField}
           errors={this.state.validationErrors}
-          onLogoUploaded={this.onLogoUploaded}
+          onLogoSelected={this.onLogoSelected}
           onLogoDeleted={this.onLogoDeleted}
           logoSrc={_.get(this.state.logoFile, 'preview', null)}
           disabled={false}

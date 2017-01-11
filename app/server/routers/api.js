@@ -18,12 +18,14 @@ const carrierWalletController = fetchDep('CarrierWalletController');
 const meController = fetchDep('MeController');
 const decodeParamsMiddeware = fetchDep('DecodeParamsMiddeware');
 
-// Merge params is used to inherit carrierId from common parent router
-const routes = new Router({ mergeParams: true });
-const apiRouter = new Router();
 // apply the memory storage when upload file
 const storage = multer.memoryStorage();
 const uploadFile = multer({ storage });
+
+// Merge params is used to inherit carrierId from common parent router
+const routes = new Router({ mergeParams: true });
+const apiRouter = new Router();
+
 apiRouter
   // check the existence of req.user, throw 401 when not exist
   .use(ensureAuthenticatedMiddleware)
@@ -247,6 +249,15 @@ routes
   .put('/company/:companyId/profile', [
     authorize(permission(RESOURCE.COMPANY, ACTION.UPDATE)),
     companies.updateCompany,
+  ])
+  .delete('/company/:companyId/logo', [
+    authorize(permission(RESOURCE.COMPANY, ACTION.UPDATE)),
+    companies.deleteLogo,
+  ])
+  .put('/company/:companyId/logo', [
+    authorize(permission(RESOURCE.COMPANY, ACTION.UPDATE)),
+    uploadFile.single('logo'),
+    companies.updateLogo,
   ])
   .post('/provisioning', [
     authorize(permission(RESOURCE.COMPANY, ACTION.CREATE)),

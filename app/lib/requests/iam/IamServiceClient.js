@@ -1,11 +1,9 @@
 import { pick, isString, get, extend, isNumber, defaults, omit, map } from 'lodash';
 import Q from 'q';
-import _ from 'lodash';
 import request from 'superagent';
 import logger from 'winston';
 import { HttpStatusError, ArgumentNullError, NotSupportedError } from 'common-errors';
 import nconf from 'nconf';
-import { ACTION } from '../../../main/acl/acl-enums';
 
 export class IamClient {
   constructor(options) {
@@ -87,10 +85,16 @@ export class IamClient {
     return this._handle(req, url);
   }
   postLogo(command) {
-    const url = `${this.companyPath}/company/${command.id}/logo`;
+    const url = `${this.companyPath}/${command.id}/logo`;
+    const logoFile = command.file;
     const req = request.post(url)
       .set('Content-Type', 'multipart/form-data')
-      .attach('logo', command.file);
+      .attach('logo', logoFile.buffer, logoFile.originalname);
+    return this._handle(req, url);
+  }
+  deleteLogo(command) {
+    const url = `${this.companyPath}/${command.id}/logo`;
+    const req = request.delete(url);
     return this._handle(req, url);
   }
   getDescendantCompany(command) {

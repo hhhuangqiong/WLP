@@ -21,6 +21,7 @@ const defaultCompanyObject = {
   capabilities: [],
   preset: {},
   status: null,
+  logo: null,
 };
 
 const CompanyStore = createStore({
@@ -33,7 +34,7 @@ const CompanyStore = createStore({
     CREATE_COMPANY_SUCCESS: 'handleTokenUpdated',
     CREATE_COMPANY_FAILURE: 'handleTokenFail',
     UPDATE_COMPANY_SUCCESS: 'handleTokenUpdated',
-    UPDATE_CARRIER_PROFILE_SUCCESS: 'handleTokenUpdated',
+    UPDATE_COMPANY_PROFILE_SUCCESS: 'handleTokenUpdated',
     RESET_COMPANY_DETAIL: 'handleCompanyDetailReset',
   },
 

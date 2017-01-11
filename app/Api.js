@@ -33,12 +33,26 @@ Api.prototype._getBaseUrl = function getBaseUrl(carrierId, prefix = API_PATH_PRE
 };
 
 // following one are the general one based on the carriers
-Api.prototype.updateCarrierProfile = function updateCarrierProfile(params, cb) {
+Api.prototype.updateCompanyProfile = function updateCompanyProfile(params, cb) {
   const { carrierId, companyId, ...profile } = params;
   superagent
     .put(`${this._getBaseUrl(carrierId)}/company/${companyId}/profile`)
-    .accept('json')
     .send(profile)
+    .end(genericHandler(cb));
+};
+
+Api.prototype.deleteCompanyLogo = function deleteCompanyLogo(params, cb) {
+  const { carrierId, companyId } = params;
+  superagent
+    .del(`${this._getBaseUrl(carrierId)}/company/${companyId}/logo`)
+    .end(genericHandler(cb));
+};
+
+Api.prototype.updateCompanyLogo = function updateCompanyLogo(params, cb) {
+  const { carrierId, companyId, logoFile } = params;
+  superagent
+    .put(`${this._getBaseUrl(carrierId)}/company/${companyId}/logo`)
+    .attach('logo', logoFile)
     .end(genericHandler(cb));
 };
 

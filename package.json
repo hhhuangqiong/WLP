@@ -103,6 +103,7 @@
     "moment": "^2.11.1",
     "moment-timezone": "^0.4.0",
     "morgan": "^1.5.1",
+    "multer": "^1.2.1",
     "nconf": "^0.7.1",
     "nyc": "^7.1.0",
     "object-assign": "^2.x.x",
