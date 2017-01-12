@@ -26,10 +26,9 @@ export default {
   },
   CALLS_COST: {
     DATA_FIELDS: [
-      'accountId', 'callType', 'childCdr', 'cost', 'creationDate', 'currency',
-      'destination', 'durationMinutes', 'durationSeconds', 'endDate', 'id',
-      'ocsSessionId', 'reasonCode', 'requestedDestionation', 'startDate',
-      'userId', 'username', 'walletId',
+      'id', 'walletId', 'creationDate', 'caller', 'callee', 'startDate',
+      'endDate', 'durationMinutes', 'durationSeconds', 'cost', 'currency',
+      'callType', 'ocsSessionId', 'reasonCode',
     ],
     EXPORT_REQUEST: 'OcsClient',
     EXPORT_REQUEST_EXECUTION: 'getCallsCost',
@@ -48,9 +47,8 @@ export default {
   },
   SMS_COST: {
     DATA_FIELDS: [
-      'id', 'accountId', 'userId', 'walletId', 'username', 'destination',
-      'items', 'currency', 'cost', 'creationDate', 'serviceType', 'sourceAddr',
-      'ocsSessionId', 'failedItemsNumber', 'sessionId', 'serviceInfo',
+      'id', 'walletId', 'carrier', 'sender', 'receiver', 'items', 'currency',
+      'cost', 'creationDate', 'serviceType', 'failedItemsNumber', 'sessionId',
     ],
     EXPORT_REQUEST: 'OcsClient',
     EXPORT_REQUEST_EXECUTION: 'getSmsCost',

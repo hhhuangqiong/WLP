@@ -6,7 +6,8 @@ import logger from 'winston';
 import Q from 'q';
 import moment from 'moment';
 import redisWStream from 'redis-wstream';
-
+import Converter from '../../utils/bossCurrencyConverter';
+import currencyData from '../../data/bossCurrencies.json';
 import { fetchDep } from '../utils/bottle';
 import EXPORTS from '../../config/export';
 import {
@@ -31,7 +32,7 @@ const PAGE_SIZE = 1000;
 const PAGE_SIZE_SMALL = 100;
 
 const MISSING_PAGE_DATA_MSG = 'Invalid pageNumber/totalPages';
-
+const converter = new Converter(currencyData, { default: '840' });
 /*
  * @constructor ImExport
  * @param {Kue} kueue instance of job queue
@@ -220,6 +221,14 @@ export default class ExportTask {
           timestamp: beautifyTime(row.timestamp),
         };
         break;
+      case CALLS_COST:
+        humanizedRow = {
+          ...row,
+          caller: row.username,
+          callee: row.destination,
+          currency: converter.getCurrencyById(row.currency).code,
+        };
+        break;
       case VERIFICATION: {
         let type = '';
         switch (row.type) {
@@ -257,6 +266,14 @@ export default class ExportTask {
           request_date: beautifyTime(row.request_date),
           response_date: beautifyTime(row.response_date),
           country: getCountryName(row.country),
+        };
+        break;
+      case SMS_COST:
+        humanizedRow = {
+          ...row,
+          sender: row.sourceAddr,
+          receiver: row.destination,
+          currency: converter.getCurrencyById(row.currency).code,
         };
         break;
       default:
@@ -375,8 +392,8 @@ export default class ExportTask {
 
             // Extract elements within current page
             while (contentIndex < numberOfContent) {
-              const row = _.pick(contents[contentIndex], config.DATA_FIELDS);
-              csvStream.write(this.humanizeFields(this.exportType, row));
+              const row = this.humanizeFields(this.exportType, contents[contentIndex]);
+              csvStream.write(_.pick(row, config.DATA_FIELDS));
               contentIndex++;
             }
 
