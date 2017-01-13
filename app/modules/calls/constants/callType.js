@@ -7,11 +7,6 @@ export const CALL_TYPE = {
   MAAII_IN: 'MAAII_IN',
 };
 
-export const CALL_EXPORT_REPORT_TYPE = {
-  USAGE: 'Usage',
-  RETAIL_PRICE: 'Retail Price',
-};
-
 export const CALL_EXPORT = {
   callExport: 'callExport',
   callCostExport: 'callCostExport',

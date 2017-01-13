@@ -38,14 +38,6 @@ const INITIAL_PAGE_NUMBER = 0;
 const MONTHS_BEFORE_TODAY = 1;
 const defaultLocale = dateLocale.getDefaultLocale();
 
-const SMS_EXPORT_OPTIONS = [{
-  value: SMS,
-  label: 'Standard',
-}, {
-  value: SMS_COST,
-  label: 'Cost',
-}];
-
 function getInitialQueryFromURL(params, query = {}) {
   return {
     carrierId: params.identity,
@@ -121,6 +113,14 @@ const SmsPage = React.createClass({
   },
 
   setExportTypeOptions() {
+    const { intl: { formatMessage } } = this.props;
+    const SMS_EXPORT_OPTIONS = [{
+      value: SMS,
+      label: formatMessage(i18nMessages.usage),
+    }, {
+      value: SMS_COST,
+      label: formatMessage(i18nMessages.retailPrice),
+    }];
     const userPermissions = this.state.user.permissions;
     const exportTypeOptions = [];
     if (_.includes(userPermissions, permission(RESOURCE.SMS_EXPORT, ACTION.READ))) {
@@ -242,8 +242,6 @@ const SmsPage = React.createClass({
                 <SmsExportForm
                   startDate={this.state.startDate}
                   endDate={this.state.endDate}
-                  page={this.state.page}
-                  pageRec={this.state.pageRec}
                   exportTypeOptions={this.state.exportTypeOptions}
                   disabled={this.state.exportTypeOptions.length === 1}
                   handleExportTypeChange={this.handleExportTypeChange}

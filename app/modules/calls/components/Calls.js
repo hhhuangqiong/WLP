@@ -32,18 +32,9 @@ import Searchbox from '../../../main/components/Searchbox';
 import Export from '../../../main/file-export/components/Export';
 import CallsExportForm from './CallsExportForm';
 
-import { CALL_TYPE, CALL_EXPORT_REPORT_TYPE } from '../constants/callType';
+import { CALL_TYPE } from '../constants/callType';
 import { CALLS_COST, CALLS } from '../../../main/file-export/constants/ExportType';
 import * as dateLocale from '../../../utils/dateLocale';
-
-// use for react-select options
-const CALL_EXPORT_OPTIONS = [{
-  value: CALLS,
-  label: CALL_EXPORT_REPORT_TYPE.USAGE,
-}, {
-  value: CALLS_COST,
-  label: CALL_EXPORT_REPORT_TYPE.RETAIL_PRICE,
-}];
 
 const defaultLocale = dateLocale.getDefaultLocale();
 
@@ -122,6 +113,15 @@ const Calls = React.createClass({
   },
 
   setExportTypeOptions() {
+    const { intl: { formatMessage } } = this.props;
+    // use for react-select options
+    const CALL_EXPORT_OPTIONS = [{
+      value: CALLS,
+      label: formatMessage(i18nMessages.usage),
+    }, {
+      value: CALLS_COST,
+      label: formatMessage(i18nMessages.retailPrice),
+    }];
     const userPermissions = this.state.user.permissions;
     const exportTypeOptions = [];
     if (_.includes(userPermissions, permission(RESOURCE.CALL_EXPORT, ACTION.READ))) {

@@ -68,6 +68,14 @@ const CallsExportForm = React.createClass({
     this.setState({ netType: this.state.netType !== CALL_TYPE.MAAII_IN ? CALL_TYPE.MAAII_IN : '' });
   },
 
+  handleExportTypeChange(val = {}) {
+    // Call Cost has no netType
+    if (val.value === CALLS_COST) {
+      this.setState({ netType: '' });
+    }
+    this.props.handleExportTypeChange(val);
+  },
+
   handleDestinationChange(event) {
     this.setState({ destination: event.target.value });
   },
@@ -153,8 +161,9 @@ const CallsExportForm = React.createClass({
             value={this.props.exportType}
             placeholder={formatMessage(MESSAGES.selectType)}
             options={this.props.exportTypeOptions}
-            onChange={this.props.handleExportTypeChange}
+            onChange={this.handleExportTypeChange}
             clearable={false}
+            searchable={false}
             disabled={this.props.disabled}
           />
         </div>

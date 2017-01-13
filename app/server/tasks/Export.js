@@ -399,7 +399,7 @@ export default class ExportTask {
 
             // Move to next page if there are more pages
             if (pageNumber < totalPages) {
-              param.page++;
+              param.page = pageNumber + 1;
 
               // A hack to prevent progress becomes 100%
               //   to avoid job to end before file stream to be ready for download

@@ -2,6 +2,7 @@ import React, { createClass, PropTypes, cloneElement } from 'react';
 import { first } from 'lodash';
 import { FluxibleMixin } from 'fluxible-addons-react';
 import Modal from 'react-modal';
+import _ from 'lodash';
 
 import { CLIENT } from '../../../utils/env';
 
@@ -97,7 +98,7 @@ export default createClass({
     params.carrierId = identity;
     params.exportType = this.props.exportType;
 
-    this.executeAction(fetchExport, params);
+    this.executeAction(fetchExport, _.omit(params, _.isEmpty));
     this.closeModal();
   },
 

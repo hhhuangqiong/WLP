@@ -145,4 +145,12 @@ export default defineMessages({
     id: 'delete',
     defaultMessage: 'Delete',
   },
+  usage: {
+    id: 'usage',
+    defaultMessage: 'Usage',
+  },
+  retailPrice: {
+    id: 'retailPrice',
+    defaultMessage: 'Retail Price',
+  },
 });

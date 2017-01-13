@@ -18,8 +18,6 @@ class SmsExportForm extends Component {
     closeModal: PropTypes.func,
     intl: intlShape.isRequired,
     handleExport: PropTypes.func,
-    page: PropTypes.number,
-    pageRec: PropTypes.string,
     exportTypeOptions: PropTypes.array,
     disabled: PropTypes.bool,
     exportType: PropTypes.string,
@@ -53,8 +51,6 @@ class SmsExportForm extends Component {
     const params = {
       startDate: this.state.startDate.format('x'),
       endDate: this.state.endDate.format('x'),
-      page: this.props.page,
-      pageRec: this.props.pageRec,
     };
 
     this.props.handleExport(params);
@@ -129,6 +125,7 @@ class SmsExportForm extends Component {
             options={this.props.exportTypeOptions}
             onChange={this.props.handleExportTypeChange}
             clearable={false}
+            searchable={false}
             disabled={this.props.disabled}
           />
         </div>
