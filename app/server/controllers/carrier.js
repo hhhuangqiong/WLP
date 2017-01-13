@@ -819,7 +819,7 @@ export default function carriersController() {
     );
 
     try {
-      const result = imRequest.getImSolr(params);
+      const result = await imRequest.getImSolr(params);
       res.json(result);
     } catch (err) {
       const { code, message, timeout, status } = err;
