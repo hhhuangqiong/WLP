@@ -333,7 +333,7 @@ export default class ExportTask {
 
 // job process function
   exportCSV(job) {
-    job.log(`Start to export the csv in job ${job.id}`);
+    logger.info(`Start to export the csv in job ${job.id} with job.data `, job.data);
     const EXPORT_KEY = `${this.exportType}:${job.id}`;
     const params = job.data;
     const redisClient = fetchDep(nconf.get('containerName'), 'RedisClient');
@@ -356,7 +356,7 @@ export default class ExportTask {
         });
 
       const next = param => {
-        job.log('Start to perform fetching');
+        logger.info('Start to perform fetching');
         // get the job by id to verify that the job is not removed
         kue.Job.get(job.id, err => {
           // get job failed, sliently stop the process
@@ -365,7 +365,7 @@ export default class ExportTask {
             return false;
           }
 
-          job.log(`Fetching the request ${config.EXPORT_REQUEST} with ${JSON.stringify(param)}`);
+          logger.info(`Fetching the request ${config.EXPORT_REQUEST} with ${JSON.stringify(param)}`);
           invoke(param).then(result => {
             job.log('Received the response');
             let contentIndex = 0;
@@ -392,7 +392,7 @@ export default class ExportTask {
 
             // Complete export if no content appear
             if (!numberOfContent) {
-              job.log('Response contain no content and stop');
+              logger.info('Response contain no content and stop');
               csvStream.end();
               return;
             }
@@ -412,7 +412,7 @@ export default class ExportTask {
               // A hack to prevent progress becomes 100%
               //   to avoid job to end before file stream to be ready for download
               job.progress(pageNumber, totalPages + 1, { nextRow: pageNumber });
-              job.log('Fetch the next page');
+              logger.info('Fetch the next page');
               next(param);
             }
           })
