@@ -365,7 +365,7 @@ export default class ExportTask {
             return false;
           }
 
-          logger.info(`Fetching the request ${config.EXPORT_REQUEST} with ${JSON.stringify(param)}`);
+          logger.info(`Fetching the request ${config.EXPORT_REQUEST} with`, param);
           invoke(param).then(result => {
             job.log('Received the response');
             let contentIndex = 0;
