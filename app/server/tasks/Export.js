@@ -326,13 +326,14 @@ export default class ExportTask {
   start() {
     logger.info(`Start the job with export type ${this.exportType}`);
     this.kueue.process(this.exportType, (job, done) => {
+      logger.info(`Start to process the job ${job.id}`);
       this.exportCSV(job).then(() => done(null)).catch(done);
     });
   }
 
 // job process function
   exportCSV(job) {
-    logger.info(`Start to export the csv in job ${job.id}`);
+    job.log(`Start to export the csv in job ${job.id}`);
     const EXPORT_KEY = `${this.exportType}:${job.id}`;
     const params = job.data;
     const redisClient = fetchDep(nconf.get('containerName'), 'RedisClient');
@@ -347,7 +348,7 @@ export default class ExportTask {
       csvStream
         .pipe(redisWStream(redisClient, EXPORT_KEY))
         .on('finish', () => {
-          logger.info(
+          job.log(
             `Job #${job.id} finished writing file, ${totalExportElements} records are being exported`
           );
           resolve();
@@ -355,7 +356,7 @@ export default class ExportTask {
         });
 
       const next = param => {
-        logger.info('Start to perform fetching with param', param);
+        job.log('Start to perform fetching');
         // get the job by id to verify that the job is not removed
         kue.Job.get(job.id, err => {
           // get job failed, sliently stop the process
@@ -364,9 +365,9 @@ export default class ExportTask {
             return false;
           }
 
-          logger.info(`Fetching the request ${config.EXPORT_REQUEST}`);
+          job.log(`Fetching the request ${config.EXPORT_REQUEST} with ${JSON.stringify(param)}`);
           invoke(param).then(result => {
-            logger.info('Received the response');
+            job.log('Received the response');
             let contentIndex = 0;
             // Compatible with different naming fields from end point response
             const contents = result.contents || result.content;
@@ -379,7 +380,7 @@ export default class ExportTask {
               result.pageNumber,
               result.page_number,
             ].filter(n => n !== undefined)[0];
-            logger.info(`Response contains ${numberOfContent} items in page index ${pageNumber} with total page ${totalPages}`);
+            job.log(`Response contains ${numberOfContent} items in page index ${pageNumber} with total page ${totalPages}`);
             // Record number of elements are being exported
             totalExportElements += numberOfContent;
 
@@ -391,12 +392,12 @@ export default class ExportTask {
 
             // Complete export if no content appear
             if (!numberOfContent) {
-              logger.info('Response contain no contents');
+              job.log('Response contain no content and stop');
               csvStream.end();
               return;
             }
 
-            logger.info('Start writing data to CSV');
+            job.log('Start writing data to CSV');
             // Extract elements within current page
             while (contentIndex < numberOfContent) {
               const row = this.humanizeFields(this.exportType, contents[contentIndex]);
@@ -411,6 +412,7 @@ export default class ExportTask {
               // A hack to prevent progress becomes 100%
               //   to avoid job to end before file stream to be ready for download
               job.progress(pageNumber, totalPages + 1, { nextRow: pageNumber });
+              job.log('Fetch the next page');
               next(param);
             }
           })
