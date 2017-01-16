@@ -51,7 +51,6 @@ const converter = new Converter(currencyData, { default: '840' });
 export default class ExportTask {
   constructor(kueue, param, query) {
     const deferred = Q.defer();
-    const exportDelay = fetchDep(nconf.get('containerName'), 'ExportDelay');
 
     this.kueue = kueue;
     this.jobType = param.jobType || query.exportType;
@@ -68,13 +67,9 @@ export default class ExportTask {
         if (err) {
           logger.error(`Unable to create ${this.exportType} job`, err);
           deferred.reject(err);
-        } else {
-          logger.info(`Delay the return created successfully message for ${exportDelay}`);
-          setTimeout(() => {
-            logger.info(`Created ${this.exportType} job successfully. ${job.id}`);
-            deferred.resolve(job);
-          }, exportDelay);
+          return;
         }
+        logger.info(`Created ${this.exportType} job successfully. ${job.id}`);
       });
 
     job
@@ -89,6 +84,13 @@ export default class ExportTask {
       })
       .on('progress', (progress, data) => {
         logger.info('\r  job #%s %s% complete with %s', job.id, progress, JSON.stringify(data));
+      })
+      .on('start', () => {
+        logger.info('job started');
+      })
+      .on('enqueue', () => {
+        logger.info('job enqueued');
+        deferred.resolve(job);
       });
   }
 
@@ -329,9 +331,12 @@ export default class ExportTask {
    */
   start() {
     logger.info(`Start the job with export type ${this.exportType}`);
-    this.kueue.process(this.exportType, (job, done) => {
-      logger.info(`Start to process the job ${job.id}`);
-      this.exportCSV(job).then(() => done(null)).catch(done);
+    this.kueue.inactive((err, ids) => {
+      logger.info('inactive jobs', ids);
+      this.kueue.process(this.exportType, (job, done) => {
+        logger.info(`Start to process the job ${job.id}`);
+        this.exportCSV(job).then(() => done(null)).catch(done);
+      });
     });
   }
 
