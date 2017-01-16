@@ -154,5 +154,6 @@ export default function init(nconf) {
   // Routers
   ioc.service('AuthRouter', createAuthRouter, 'AuthController');
 
+  ioc.constant('ExportDelay', nconf.get('exportDelay'));
   return ioc;
 }

@@ -33,6 +33,7 @@ const PAGE_SIZE_SMALL = 100;
 
 const MISSING_PAGE_DATA_MSG = 'Invalid pageNumber/totalPages';
 const converter = new Converter(currencyData, { default: '840' });
+const exportDelay = fetchDep(nconf.get('containerName'), 'ExportDelay');
 /*
  * @constructor ImExport
  * @param {Kue} kueue instance of job queue
@@ -68,8 +69,11 @@ export default class ExportTask {
           logger.error(`Unable to create ${this.exportType} job`, err);
           deferred.reject(err);
         } else {
-          logger.info(`Created ${this.exportType} job successfully. ${job.id}`);
-          deferred.resolve(job);
+          logger.info(`Delay the return created successfully message for ${exportDelay}`);
+          setTimeout(() => {
+            logger.info(`Created ${this.exportType} job successfully. ${job.id}`);
+            deferred.resolve(job);
+          }, exportDelay);
         }
       });
 
@@ -324,14 +328,11 @@ export default class ExportTask {
    * @param  {Function, cb - pass in by kue, reference https://github.com/Automattic/kue#processing-jobs
    */
   start() {
-    logger.info('Delay to start the job');
-    setTimeout(() => {
-      logger.info(`Start the job with export type ${this.exportType}`);
-      this.kueue.process(this.exportType, (job, done) => {
-        logger.info(`Start to process the job ${job.id}`);
-        this.exportCSV(job).then(() => done(null)).catch(done);
-      });
-    }, 1000);
+    logger.info(`Start the job with export type ${this.exportType}`);
+    this.kueue.process(this.exportType, (job, done) => {
+      logger.info(`Start to process the job ${job.id}`);
+      this.exportCSV(job).then(() => done(null)).catch(done);
+    });
   }
 
 // job process function
