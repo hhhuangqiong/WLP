@@ -66,9 +66,8 @@ const VerificationDetails = React.createClass({
 
   statics: {
     storeListeners: {
-      onChange: VerificationStore,
+      onChange: [VerificationStore, ClientConfigStore],
       onApplicationStoreChange: ApplicationStore,
-      ClientConfigStore,
     },
   },
 
@@ -102,7 +101,7 @@ const VerificationDetails = React.createClass({
       // The page number, starting from 0, defaults to 0 if not specified.
       page: 0,
       //  for initializing value
-      size: this.getStore(ClientConfigStore).getPages().VERIFICATIONS.PAGE_SIZE,
+      pageSize: this.getStore(ClientConfigStore).getPages().VERIFICATIONS.PAGE_SIZE,
       startDate: moment().subtract(2, 'month').startOf('day').format(DATE_FORMAT),
       endDate: moment().endOf('day').format(DATE_FORMAT),
       number: '',
@@ -119,7 +118,7 @@ const VerificationDetails = React.createClass({
       number: this.state.number && this.state.number.trim(),
       page: 0,
       // for setState, so it can be used later.
-      size: this.getStore(ClientConfigStore).getPages().VERIFICATIONS.PAGE_SIZE,
+      pageSize: this.state.pageSize,
       method: this.state.method && this.state.method.trim(),
       os: this.state.os && this.state.os.trim(),
     };
