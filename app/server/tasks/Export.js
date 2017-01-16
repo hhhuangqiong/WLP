@@ -33,7 +33,6 @@ const PAGE_SIZE_SMALL = 100;
 
 const MISSING_PAGE_DATA_MSG = 'Invalid pageNumber/totalPages';
 const converter = new Converter(currencyData, { default: '840' });
-const exportDelay = fetchDep(nconf.get('containerName'), 'ExportDelay');
 /*
  * @constructor ImExport
  * @param {Kue} kueue instance of job queue
@@ -52,6 +51,7 @@ const exportDelay = fetchDep(nconf.get('containerName'), 'ExportDelay');
 export default class ExportTask {
   constructor(kueue, param, query) {
     const deferred = Q.defer();
+    const exportDelay = fetchDep(nconf.get('containerName'), 'ExportDelay');
 
     this.kueue = kueue;
     this.jobType = param.jobType || query.exportType;
