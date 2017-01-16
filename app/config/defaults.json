@@ -45,5 +45,5 @@
     "baseUrl": "http://192.168.119.66:9127",
     "timeout": 15000
   },
-  "exportDelay": 1000,
+  "exportDelay": 1000
 }
