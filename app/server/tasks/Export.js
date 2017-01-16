@@ -324,11 +324,14 @@ export default class ExportTask {
    * @param  {Function, cb - pass in by kue, reference https://github.com/Automattic/kue#processing-jobs
    */
   start() {
-    logger.info(`Start the job with export type ${this.exportType}`);
-    this.kueue.process(this.exportType, (job, done) => {
-      logger.info(`Start to process the job ${job.id}`);
-      this.exportCSV(job).then(() => done(null)).catch(done);
-    });
+    logger.info('Delay to start the job');
+    setTimeout(() => {
+      logger.info(`Start the job with export type ${this.exportType}`);
+      this.kueue.process(this.exportType, (job, done) => {
+        logger.info(`Start to process the job ${job.id}`);
+        this.exportCSV(job).then(() => done(null)).catch(done);
+      });
+    }, 1000);
   }
 
 // job process function
