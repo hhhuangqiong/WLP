@@ -3,7 +3,6 @@ import moment from 'moment';
 
 import actionCreator from '../../../main/utils/apiActionCreator';
 import { ERROR_MESSAGE } from '../../../main/system-message/constants/actionTypes';
-import config from '../../../config';
 
 const { inputDateFormat: DATE_FORMAT } = require('./../../../main/config');
 
@@ -72,7 +71,7 @@ function createVerificationSearchApiCallback(actionName, context) {
  */
 function transformParameters(params) {
   // transform the params from UI-specific to API-specific
-  const size = params.pageSize || config.PAGES.VERIFICATIONS.PAGE_SIZE;
+  const size = params.pageSize;
   const page = params.page || 0;
   const carrierId = params.carrierId;
   const application = params.appId;
