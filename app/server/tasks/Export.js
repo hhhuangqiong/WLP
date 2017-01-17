@@ -357,7 +357,7 @@ export default class ExportTask {
       csvStream
         .pipe(redisWStream(redisClient, EXPORT_KEY))
         .on('finish', () => {
-          job.log(
+          logger.info(
             `Job #${job.id} finished writing file, ${totalExportElements} records are being exported`
           );
           resolve();
@@ -376,7 +376,7 @@ export default class ExportTask {
 
           logger.info(`Fetching the request ${config.EXPORT_REQUEST} with`, param);
           invoke(param).then(result => {
-            job.log('Received the response');
+            logger.info('Received the response');
             let contentIndex = 0;
             // Compatible with different naming fields from end point response
             const contents = result.contents || result.content;
@@ -389,7 +389,7 @@ export default class ExportTask {
               result.pageNumber,
               result.page_number,
             ].filter(n => n !== undefined)[0];
-            job.log(`Response contains ${numberOfContent} items in page index ${pageNumber} with total page ${totalPages}`);
+            logger.info(`Response contains ${numberOfContent} items in page index ${pageNumber} with total page ${totalPages}`);
             // Record number of elements are being exported
             totalExportElements += numberOfContent;
 
@@ -406,7 +406,7 @@ export default class ExportTask {
               return;
             }
 
-            job.log('Start writing data to CSV');
+            logger.info('Start writing data to CSV');
             // Extract elements within current page
             while (contentIndex < numberOfContent) {
               const row = this.humanizeFields(this.exportType, contents[contentIndex]);
