@@ -15,6 +15,7 @@ export const LONG_DATE_TIME_FORMAT = 'LL LTS';
 
 export const NUMERAL_TIME_FORMAT = 'H:mm:ss';
 export const LAST_UPDATE_TIME_FORMAT = 'MMM DD, YYYY H:mm';
+export const DATE_TIME_24_HOUR_FORMAT = 'YYYYMMDDHHmmss';
 
 // Buffer time in minutes
 const BUFFER_TIME_FOR_PROXY_HOURLY = 60;

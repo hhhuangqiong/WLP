@@ -9,7 +9,7 @@ import Converter from '../../../utils/bossCurrencyConverter';
 import { getCurrencyTranslation } from '../../../main/components/Currency';
 import i18nMessages from '../../../main/constants/i18nMessages';
 import * as dateLocale from '../../../utils/dateLocale';
-import { LONG_DATE_TIME_FORMAT } from '../../../utils/timeFormatter';
+import { LONG_DATE_TIME_FORMAT, DATE_TIME_24_HOUR_FORMAT } from '../../../utils/timeFormatter';
 
 const MESSAGES = defineMessages({
   overview: {
@@ -44,15 +44,12 @@ const WalletItem = React.createClass({
     const { intl: { formatMessage } } = this.props;
     const walletType = get(this.props, 'wallet.walletType');
     const currency = CurrencyConverter.getCurrencyById(this.props.wallet.currency);
-    const expiryDate = moment(this.props.wallet.expiryDate, 'yyyymmddhh24miss').isValid() ?
-      dateLocale.format(moment(this.props.wallet.expiryDate, 'yyyymmddhh24miss')
-        , LONG_DATE_TIME_FORMAT) :
-      formatMessage(i18nMessages.unknownLabel);
-
-    const lastTopUpDate = moment(this.props.wallet.lastTopupDate, 'yyyymmddhh24miss').isValid() ?
-      dateLocale.format(moment(this.props.wallet.lastTopupDate, 'yyyymmddhh24miss')
-        , LONG_DATE_TIME_FORMAT) :
-      formatMessage(i18nMessages.unknownLabel);
+    const expiryDateMoment = moment(this.props.wallet.expiryDate, DATE_TIME_24_HOUR_FORMAT);
+    const expiryDate = expiryDateMoment.isValid() ?
+      dateLocale.format(expiryDateMoment, LONG_DATE_TIME_FORMAT) : formatMessage(i18nMessages.unknownLabel);
+    const lastTopUpMoment = moment(this.props.wallet.lastTopupDate, DATE_TIME_24_HOUR_FORMAT);
+    const lastTopUpDate = lastTopUpMoment.isValid() ?
+      dateLocale.format(lastTopUpMoment, LONG_DATE_TIME_FORMAT) : formatMessage(i18nMessages.unknownLabel);
 
     return (
       <div className={
