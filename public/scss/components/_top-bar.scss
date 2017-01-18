@@ -116,11 +116,6 @@
                             margin-top: 0;
                             @include border-radius('0');
                         }
-                        // make the icon independent of the top bar line height,
-                        // it will affect the avatar size
-                        .UserAvatar--inner {
-                           line-height: normal;
-                         }
                         a {
                             padding: 10% 3% !important;
                             img {
