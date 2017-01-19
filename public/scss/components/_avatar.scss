@@ -7,6 +7,7 @@
     .UserAvatar--inner{
       width: $avatar-small-size;
       height: $avatar-small-size;
+      line-height: $avatar-small-size;
     }
   }
   &.medium {
@@ -14,6 +15,7 @@
     .UserAvatar--inner{
       width: $avatar-medium-size;
       height: $avatar-medium-size;
+      line-height: $avatar-medium-size;
     }
   }
   &.large {
@@ -21,6 +23,7 @@
     .UserAvatar--inner{
       width: $avatar-large-size;
       height: $avatar-large-size;
+      line-height: $avatar-large-size;
     }
   }
   font-weight: bold;
