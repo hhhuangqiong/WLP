@@ -2,7 +2,7 @@ import React, { PropTypes } from 'react';
 import classNames from 'classnames';
 import Select from 'react-select';
 import { injectIntl, defineMessages, intlShape, FormattedMessage } from 'react-intl';
-
+import ImageUpload from '../../../main/components/ImageUpload';
 import ValidationErrorLabel from '../../../main/components/ValidationErrorLabel';
 
 const MESSAGES = defineMessages({
@@ -25,12 +25,13 @@ const CompanyDescription = (props) => {
     timezoneOption,
     onCountryChange,
     onCompanyNameChange,
-    onLogoChange,
+    onLogoUploaded,
+    onLogoDeleted,
     onTimezoneChange,
     disabled,
     validateField,
     errors,
-    logo,
+    logoSrc,
     intl: { formatMessage },
    } = props;
   return (
@@ -102,13 +103,11 @@ const CompanyDescription = (props) => {
           </label>
         </div>
         <div className="large-14 columns">
-          <input
-            className={classNames('radius', { error: errors.companyLogo })}
-            type="file"
-            onChange={onLogoChange}
-            disabled={disabled}
+          <ImageUpload
+            onImageUploaded={onLogoUploaded}
+            imageSrc={logoSrc}
+            onImageDeleted={onLogoDeleted}
           />
-          {logo ? <img src={logo} /> : null }
         </div>
       </div>
     </div>
@@ -120,7 +119,6 @@ CompanyDescription.propTypes = {
   companyName: PropTypes.string,
   country: PropTypes.string,
   timezone: PropTypes.string,
-  logo: PropTypes.string,
   countryOption: PropTypes.arrayOf(
     PropTypes.shape({
       value: PropTypes.string,
@@ -137,7 +135,9 @@ CompanyDescription.propTypes = {
   onCountryChange: PropTypes.func,
   onCompanyNameChange: PropTypes.func,
   onTimezoneChange: PropTypes.func,
-  onLogoChange: PropTypes.func,
+  onLogoUploaded: PropTypes.func,
+  onLogoDeleted: PropTypes.func,
+  logoSrc: PropTypes.string,
   validateField: PropTypes.func,
   errors: PropTypes.object,
 };
