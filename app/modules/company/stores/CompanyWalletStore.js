@@ -1,4 +1,5 @@
 import createStore from 'fluxible/addons/createStore';
+import _ from 'lodash';
 
 function parseServiceType(serviceType) {
   return serviceType.toLowerCase();
@@ -41,6 +42,7 @@ export const CompanyWalletStore = createStore({
       serviceType: parseServiceType(x.serviceType),
       balance: parseFloat(x.balance),
     }));
+    this.wallets = _.sortBy(this.wallets, 'serviceType');
     this.walletsLoading = false;
     this.emitChange();
   },
