@@ -1,13 +1,15 @@
 form {
-	font-size: $form-label-font-size;
-    label{
-    	// color: $gray;
-    	text-transform: capitalize;
-    }
-    input[type="submit"]{
-    	@extend .button--primary;
-    }
-    textarea,input,select{
-    	margin-bottom: rem-calc($fieldset-margin-bottom);
-    }
+  font-size: $form-label-font-size;
+  label{
+    text-transform: capitalize;
+  }
+  input[type="checkbox"]+label{
+    text-transform: none;
+  }
+  input[type="submit"]{
+    @extend .button--primary;
+  }
+  textarea,input,select{
+    margin-bottom: rem-calc($fieldset-margin-bottom);
+  }
 }
