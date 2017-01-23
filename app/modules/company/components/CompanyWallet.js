@@ -21,6 +21,7 @@ import WalletTransactionsTable from './WalletTransactionsTable';
 
 import currencyData from '../../../data/bossCurrencies.json';
 import Converter from '../../../utils/bossCurrencyConverter';
+import { beautifyTime } from '../../../utils/StringFormatter';
 
 const converter = new Converter(currencyData, { default: '840' });
 
@@ -98,7 +99,12 @@ class CompanyWallet extends Component {
     // set up the header
     const headerFields = ['transactionDate', 'amount', 'balance', 'currency', 'type', 'description'];
     // parse the data into row data
-    const rows = _.map(data, record => _.map(headerFields, value => record[value] || ''));
+    const rows = _.map(data, record => _.map(headerFields, value => {
+      if (value === 'transactionDate') {
+        return beautifyTime(record[value]);
+      }
+      return record[value] || '';
+    }));
 
     return new CSV(rows, { header: headerFields }).encode();
   }

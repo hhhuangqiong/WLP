@@ -225,6 +225,9 @@ export default class ExportTask {
           origin: getCountryName(row.origin),
           destination: getCountryName(row.destination),
           timestamp: beautifyTime(row.timestamp),
+          start_time: beautifyTime(row.start_time),
+          end_time: beautifyTime(row.end_time),
+          answer_time: beautifyTime(row.answer_time),
         };
         break;
       case CALLS_COST:
@@ -233,6 +236,9 @@ export default class ExportTask {
           caller: row.username,
           callee: row.destination,
           currency: converter.getCurrencyById(row.currency).code,
+          creationDate: beautifyTime(row.creationDate),
+          startDate: beautifyTime(row.startDate),
+          endDate: beautifyTime(row.endDate),
         };
         break;
       case VERIFICATION: {
@@ -280,6 +286,7 @@ export default class ExportTask {
           sender: row.sourceAddr,
           receiver: row.destination,
           currency: converter.getCurrencyById(row.currency).code,
+          creationDate: beautifyTime(row.creationDate),
         };
         break;
       default:

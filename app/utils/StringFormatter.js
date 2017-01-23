@@ -1,7 +1,8 @@
 import moment from 'moment';
 import CountryData from 'country-data';
+import _ from 'lodash';
 
-const OUTPUT_TIME_FORMAT = 'YYYY-MM-DD h:mm:ss a';
+const OUTPUT_TIME_FORMAT = 'DD-MM-YYYY HH:mm:ss';
 const PLACEHOLDER_FOR_NULL = 'N/A';
 
 const HOUR_LABEL = 'h';
@@ -113,7 +114,7 @@ export function timeFromNow(range) {
 
 export function sanitizeNull(row, label = PLACEHOLDER_FOR_NULL) {
   for (const exportField in row) {
-    if (!row[exportField]) {
+    if (_.isNull(row[exportField]) || _.isUndefined(row[exportField])) {
       row[exportField] = label;
     }
   }
