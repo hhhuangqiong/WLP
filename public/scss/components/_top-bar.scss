@@ -106,6 +106,9 @@
                     margin-left: rem-calc(- $company-switcher-width/2);
                     left: 50%;
                     background: $company-switcher-bg-color;
+                    max-height: rem-calc($company-switcher-width*2);
+                    /* To make the company switcher to be scrollable when larger than than max-height */
+                    overflow-y: scroll !important;
                     li {
                         width: 25%;
                         min-width: 25%;
