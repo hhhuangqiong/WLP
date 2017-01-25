@@ -163,34 +163,24 @@ const SMSTable = React.createClass({
             {this._renderTypeIcon(sms.type2)}
           </td>
           <td>
-            <div className="large-24 columns">
-              <div className="row">
-                <div className="large-11 columns">
-                  <div className="caller_info">
-                    <div className="left">
-                      <span className="caller">{this._renderCaller(sms)}</span>
-                    </div>
-                  </div>
-                </div>
+            <div className="caller_info">
+              <div className="left">
+                <span className="caller">{this._renderCaller(sms)}</span>
               </div>
             </div>
           </td>
           <td>
-            <div className="large-1 columns">
-              <div className="calls-table__arrow">
-                <Icon symbol="icon-arrow" />
-              </div>
+            <div className="calls-table__arrow">
+              <Icon symbol="icon-arrow" />
             </div>
           </td>
           <td>
-            <div className="large-11 columns">
-              <div className="callee_info">
-                <CountryFlag className="left" code={sms.country} />
-                <div className="left">
-                  <span className="callee">{sms.destination_address_inbound}</span>
-                  <br />
-                  <span>{getCountryName(sms.country)}</span>
-                </div>
+            <div className="callee_info">
+              <CountryFlag className="left" code={sms.country} />
+              <div className="left">
+                <span className="callee">{sms.destination_address_inbound}</span>
+                <br />
+                <span>{getCountryName(sms.country)}</span>
               </div>
             </div>
           </td>
