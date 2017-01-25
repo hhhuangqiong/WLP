@@ -29,18 +29,22 @@ const MESSAGES = defineMessages({
     id: 'im.details.typeAndFilesize',
     defaultMessage: 'Type / Filesize',
   },
-  mobileAndDestination: {
-    id: 'details.mobileAndDestination',
-    defaultMessage: 'Mobile & Destination',
+  source: {
+    id: 'details.source',
+    defaultMessage: 'Source',
+  },
+  destination: {
+    id: 'details.destination',
+    defaultMessage: 'Destination',
   },
 });
 
 const TABLE_TITLES = [
   MESSAGES.dateAndTime,
   MESSAGES.typeAndFilesize,
-  MESSAGES.mobileAndDestination,
+  MESSAGES.source,
   '',
-  '',
+  MESSAGES.destination,
 ];
 
 const MESSAGE_TYPES = {
@@ -120,14 +124,6 @@ const ImTable = React.createClass({
     return typeSize;
   },
 
-  renderEmptyRow() {
-    if (!this.props.ims || this.props.ims.length === 0) {
-      return <EmptyRow colSpan={TABLE_TITLES.length} />;
-    }
-
-    return null;
-  },
-
   getImTypeTitle(messageType) {
     const { intl: { formatMessage } } = this.props;
 
@@ -144,9 +140,15 @@ const ImTable = React.createClass({
     return formatMessage(IM_MESSAGES[messageId]);
   },
 
-  renderRows() {
-    const { intl: { formatMessage } } = this.props;
+  renderEmptyRow() {
+    if (!this.props.ims || this.props.ims.length === 0) {
+      return <EmptyRow colSpan={TABLE_TITLES.length} />;
+    }
 
+    return null;
+  },
+
+  renderRows() {
     return this.props.ims.map((u, key) => {
       const imDate = dateLocale.format(moment(u.timestamp), LONG_DATE_TIME_FORMAT);
       const imType = get(MESSAGE_TYPES, u.message_type);
@@ -257,7 +259,7 @@ const ImTable = React.createClass({
   },
 
   render() {
-	  const { ims } = this.props;
+    const { ims } = this.props;
     return (
       <table className="data-table large-24 clickable im-table" key="im-table">
         <TableHeader headers={TABLE_TITLES} />

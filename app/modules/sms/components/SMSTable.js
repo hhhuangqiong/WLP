@@ -32,9 +32,13 @@ const MESSAGES = defineMessages({
     id: 'type',
     defaultMessage: 'Type / Filesize',
   },
-  mobileAndDestination: {
-    id: 'details.mobileAndDestination',
-    defaultMessage: 'Mobile & Destination',
+  source: {
+    id: 'details.source',
+    defaultMessage: 'Source',
+  },
+  destination: {
+    id: 'details.destination',
+    defaultMessage: 'Destination',
   },
   status: {
     id: 'status',
@@ -66,7 +70,9 @@ const TABLE_TITLES = [
   '',
   MESSAGES.dateAndTime,
   MESSAGES.type,
-  MESSAGES.mobileAndDestination,
+  MESSAGES.source,
+  '',
+  MESSAGES.destination,
   MESSAGES.status,
   MESSAGES.amount,
   MESSAGES.remark,
@@ -166,20 +172,24 @@ const SMSTable = React.createClass({
                     </div>
                   </div>
                 </div>
-                <div className="large-1 columns">
-                  <div className="calls-table__arrow">
-                    <Icon symbol="icon-arrow" />
-                  </div>
-                </div>
-                <div className="large-11 columns">
-                  <div className="callee_info">
-                    <CountryFlag className="left" code={sms.country} />
-                    <div className="left">
-                      <span className="callee">{sms.destination_address_inbound}</span>
-                      <br />
-                      <span>{getCountryName(sms.country)}</span>
-                    </div>
-                  </div>
+              </div>
+            </div>
+          </td>
+          <td>
+            <div className="large-1 columns">
+              <div className="calls-table__arrow">
+                <Icon symbol="icon-arrow" />
+              </div>
+            </div>
+          </td>
+          <td>
+            <div className="large-11 columns">
+              <div className="callee_info">
+                <CountryFlag className="left" code={sms.country} />
+                <div className="left">
+                  <span className="callee">{sms.destination_address_inbound}</span>
+                  <br />
+                  <span>{getCountryName(sms.country)}</span>
                 </div>
               </div>
             </div>
