@@ -44,6 +44,10 @@ export function mapStatsToDataGrid(total, lastTotal) {
 }
 
 export function getLatestTimeslotValue(data) {
+  // return 0 when no data
+  if (!data.length) {
+    return 0;
+  }
   return data[data.length - 1].v;
 }
 
