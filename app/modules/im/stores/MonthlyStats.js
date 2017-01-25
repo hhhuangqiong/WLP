@@ -21,8 +21,9 @@ const ImMonthlyStatsStore = createStore({
   },
 
   initialize() {
-    this.selectedMonth = moment().subtract(1, 'month').month();
-    this.selectedYear = moment().year();
+    const selectedDate = moment().subtract(1, 'month');
+    this.selectedMonth = selectedDate.month();
+    this.selectedYear = selectedDate.year();
     this.data = null;
     this.isLoading = false;
   },
