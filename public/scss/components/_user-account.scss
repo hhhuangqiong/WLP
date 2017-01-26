@@ -314,10 +314,10 @@ $animation-time: 500ms;
     overflow: hidden;
     position: relative;
     // solve the font-weight change in Safari when do animation
-    -webkit-transform: translateZ(0);
+    // -webkit-transform: translateZ(0);
     &__company-list {
       padding: 1.125rem;
-      -webkit-transform: translateZ(0);
+      // -webkit-transform: translateZ(0);
     }
     .button {
       padding: rem-calc(6) rem-calc(40);
