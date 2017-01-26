@@ -13,8 +13,9 @@ export default createStore({
   },
 
   initialize() {
-    // component will check for the size of transactions
-    this.transactions = [];
+    // expect there are three states and component itself should handle for all three cases
+    // null (not fetched yet), [] (no records), non empty array
+    this.transactions = null;
     this.hasNextPage = false;
     this.pageSize = 100;
     this.pageIndex = 0;

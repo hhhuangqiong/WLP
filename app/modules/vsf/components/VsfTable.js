@@ -64,7 +64,7 @@ import {
 
 const VsfTable = React.createClass({
   propTypes: {
-    transactions: PropTypes.array.isRequired,
+    transactions: PropTypes.array,
     hasNextPage: PropTypes.bool.isRequired,
     loadPage: PropTypes.func.isRequired,
     intl: PropTypes.object.isRequired,
@@ -89,9 +89,8 @@ const VsfTable = React.createClass({
     return <Icon symbol={this.getStyleByStoreType(platform)} />;
   },
 
-  renderRows() {
+  renderRows(transactions) {
     const { intl: { formatMessage } } = this.props;
-    const transactions = this.props.transactions;
 
     return (transactions || []).map((transaction, i) =>
       (
@@ -166,11 +165,7 @@ const VsfTable = React.createClass({
   },
 
   renderEmptyRow() {
-    if (!this.props.transactions || this.props.transactions.length === 0) {
-      return <EmptyRow colSpan={TABLE_TITLES.length} />;
-    }
-
-    return null;
+    return <EmptyRow colSpan={TABLE_TITLES.length} />;
   },
 
   renderTableBody() {
@@ -201,7 +196,7 @@ const VsfTable = React.createClass({
     }
 
     return (
-      <tbody className={UI_STATE_NORMAL}>{this.renderRows()}</tbody>
+      <tbody className={UI_STATE_NORMAL}>{this.renderRows(transactions)}</tbody>
     );
   },
 

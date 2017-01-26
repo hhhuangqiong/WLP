@@ -11,6 +11,8 @@ const SMSStore = createStore({
   },
 
   initialize() {
+    // expect there are three states and component itself should handle for all three cases
+    // null (not fetched yet), [] (no records), non empty array
     this.records = null;
     this.page = 1;
     this.totalPage = 0;

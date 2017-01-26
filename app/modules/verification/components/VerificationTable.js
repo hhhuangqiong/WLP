@@ -1,4 +1,4 @@
-import { isEmpty } from 'lodash';
+import { isNull, isEmpty } from 'lodash';
 import React, { PropTypes } from 'react';
 import { FormattedMessage, defineMessages } from 'react-intl';
 
@@ -7,6 +7,12 @@ import VerificationProfile from './VerificationProfile';
 import EmptyRow from '../../../modules/data-table/components/EmptyRow';
 import TableHeader from '../../../modules/data-table/components/TableHeader';
 import Pagination from '../../../modules/data-table/components/Pagination';
+
+import {
+  UI_STATE_LOADING,
+  UI_STATE_EMPTY,
+  UI_STATE_NORMAL,
+  } from '../../../main/constants/uiState';
 
 const MESSAGES = defineMessages({
   dateAndTime: {
@@ -66,7 +72,7 @@ const VerificationTable = React.createClass({
      * Verification records
      * @type {Object[]}
      */
-    verifications: PropTypes.array.isRequired,
+    verifications: PropTypes.array,
     /**
      * Total number of verifications
      * @type {Number}
@@ -100,9 +106,7 @@ const VerificationTable = React.createClass({
     this.setState({ selectedProfile: null });
   },
 
-  renderTableRows() {
-    const { verifications } = this.props;
-
+  renderTableRows(verifications) {
     return verifications.map(item =>
       (
         <VerificationTableRow
@@ -115,11 +119,39 @@ const VerificationTable = React.createClass({
   },
 
   renderEmptyRow() {
-    if (!this.props.verifications || this.props.verifications.length === 0) {
-      return <EmptyRow colSpan={TABLE_TITLES.length} />;
+    return <EmptyRow colSpan={TABLE_TITLES.length} />;
+  },
+
+  renderTableBody() {
+    const { verifications } = this.props;
+
+    if (isNull(verifications)) {
+      return (
+        <tbody className={UI_STATE_LOADING}>
+          <tr>
+            <td colSpan={TABLE_TITLES.length}>
+              <div className="text-center capitalize">
+                <FormattedMessage
+                  id="loading"
+                  defaultMessage="loading"
+                />
+                <span>...</span>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      );
     }
 
-    return null;
+    if (isEmpty(verifications)) {
+      return (
+        <tbody className={UI_STATE_EMPTY}>{this.renderEmptyRow()}</tbody>
+      );
+    }
+
+    return (
+      <tbody className={UI_STATE_NORMAL}>{this.renderTableRows(verifications)}</tbody>
+    );
   },
 
   renderPaginationFooter() {
@@ -150,9 +182,7 @@ const VerificationTable = React.createClass({
       return (
         <table className="verification-report data-table small-24 large-22 large-offset-1">
           <TableHeader headers={TABLE_TITLES} />
-          <tbody className="verification-table">
-            {isEmpty(this.renderTableRows()) ? this.renderEmptyRow() : this.renderTableRows()}
-          </tbody>
+          {this.renderTableBody()}
           <tfoot>
             <If condition={!isEmpty(this.props.verifications)}>
               <Pagination

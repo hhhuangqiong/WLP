@@ -184,7 +184,7 @@ import {
 const TopUpTable = React.createClass({
   propTypes: {
     dateFormat: PropTypes.string,
-    histories: PropTypes.array.isRequired,
+    histories: PropTypes.array,
     page: PropTypes.number,
     pageRec: PropTypes.number,
     totalRec: PropTypes.number,
@@ -206,11 +206,7 @@ const TopUpTable = React.createClass({
   },
 
   renderEmptyRow() {
-    if (!this.props.histories || this.props.histories.length === 0) {
-      return <EmptyRow colSpan={TABLE_TITLES.length} />;
-    }
-
-    return null;
+    return <EmptyRow colSpan={TABLE_TITLES.length} />;
   },
 
   renderTableBody() {
@@ -241,7 +237,7 @@ const TopUpTable = React.createClass({
     }
 
     return (
-      <tbody className={UI_STATE_NORMAL}>{this.renderRows()}</tbody>
+      <tbody className={UI_STATE_NORMAL}>{this.renderRows(histories)}</tbody>
     );
   },
 
@@ -294,9 +290,7 @@ const TopUpTable = React.createClass({
   },
 
   getErrorDescription(type) {
-    const {
-        formatMessage
-    } = this.props.intl;
+    const { formatMessage } = this.props.intl;
 
     switch (type) {
       case 'Invalid voucher no':
@@ -306,8 +300,8 @@ const TopUpTable = React.createClass({
     }
   },
 
-  renderRows() {
-    return this.props.histories.map(history =>
+  renderRows(histories) {
+    return histories.map(history =>
       (
         <tr>
           <td className="text-center">

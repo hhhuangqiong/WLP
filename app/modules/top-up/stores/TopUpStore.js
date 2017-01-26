@@ -11,8 +11,9 @@ const TopUpStore = createStore({
   },
 
   initialize() {
-    // component will handle the empty case
-    this.histories = [];
+    // expect there are three states and component itself should handle for all three cases
+    // null (not fetched yet), [] (no records), non empty array
+    this.histories = null;
     this.page = 1;
     this.totalRec = 0;
     this.isLoadingMore = false;

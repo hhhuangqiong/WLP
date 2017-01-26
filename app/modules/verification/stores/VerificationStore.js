@@ -12,7 +12,9 @@ export default createStore({
 
   initialize() {
     this.pageSize = 10;
-    this.verifications = [];
+    // expect there are three states and component itself should handle for all three cases
+    // null (not fetched yet), [] (no records), non empty array
+    this.verifications = null;
     this.page = 0;
     this.count = 0;
     this.isLoadingMore = false;
@@ -50,7 +52,7 @@ export default createStore({
   },
 
   getVerifications() {
-    return this.verifications || [];
+    return this.verifications;
   },
 
   getVerificationCount() {

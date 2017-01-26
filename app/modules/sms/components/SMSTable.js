@@ -137,11 +137,7 @@ const SMSTable = React.createClass({
   },
 
   renderEmptyRow() {
-    if (!this.props.records || this.props.records.length === 0) {
-      return <EmptyRow colSpan={TABLE_TITLES.length} />;
-    }
-
-    return null;
+    return <EmptyRow colSpan={TABLE_TITLES.length} />;
   },
 
   renderRows(records = []) {

@@ -88,7 +88,7 @@ const MESSAGE_TYPES = {
 
 const ImTable = React.createClass({
   propTypes: {
-    ims: PropTypes.array.isRequired,
+    ims: PropTypes.array,
     totalPages: PropTypes.number.isRequired,
     page: PropTypes.number.isRequired,
     onDataLoad: PropTypes.func.isRequired,
@@ -141,15 +141,11 @@ const ImTable = React.createClass({
   },
 
   renderEmptyRow() {
-    if (!this.props.ims || this.props.ims.length === 0) {
-      return <EmptyRow colSpan={TABLE_TITLES.length} />;
-    }
-
-    return null;
+    return <EmptyRow colSpan={TABLE_TITLES.length} />;
   },
 
-  renderRows() {
-    return this.props.ims.map((u, key) => {
+  renderRows(ims) {
+    return ims.map((u, key) => {
       const imDate = dateLocale.format(moment(u.timestamp), LONG_DATE_TIME_FORMAT);
       const imType = get(MESSAGE_TYPES, u.message_type);
       const imTypeTitle = this.getImTypeTitle(u.message_type);
@@ -254,7 +250,7 @@ const ImTable = React.createClass({
     }
 
     return (
-      <tbody className="ui-state-normal">{this.renderRows()}</tbody>
+      <tbody className="ui-state-normal">{this.renderRows(content)}</tbody>
     );
   },
 

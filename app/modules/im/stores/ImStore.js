@@ -14,8 +14,9 @@ const ImStore = createStore({
   },
 
   initialize() {
-    // expect to be array and handled in the component if it is empty length
-    this.ims = [];
+    // expect there are three states and component itself should handle for all three cases
+    // null (not fetched yet), [] (no records), non empty array
+    this.ims = null;
     this.offset = 0;
     this.pageNumber = 0;
     this.pageSize = 0;
