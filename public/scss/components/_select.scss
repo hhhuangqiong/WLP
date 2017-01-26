@@ -11,6 +11,10 @@
     color: red;
     font-size: small;
   }
+  /* override the foundation input height where input in react-select should be independent */
+  .Select-input > input {
+    height: initial;
+  }
 }
 
 .pagination-select {
