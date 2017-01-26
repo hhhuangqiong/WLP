@@ -62,11 +62,14 @@ export function mapAccumulatedValueBySegment(results, key) {
 
   results
     .forEach(result => {
-      const mappedKey = result.segment[key];
+      const mappedKey = result.segment[key].toLowerCase();
       // For accumlated values, the last item will always be the latest value
       const value = result.data[result.data.length - 1].v;
-
-      countryByKeys[mappedKey] = value;
+      if (countryByKeys[mappedKey]) {
+        countryByKeys[mappedKey] = countryByKeys[mappedKey] + value;
+      } else {
+        countryByKeys[mappedKey] = value;
+      }
     });
 
   return countryByKeys;
