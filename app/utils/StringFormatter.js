@@ -83,7 +83,12 @@ export function getCountryName(countryAlpha2) {
 
 
 export function beautifyTime(timestamp, timeformat = OUTPUT_TIME_FORMAT) {
-  return timestamp ? moment(timestamp).format(timeformat) : PLACEHOLDER_FOR_NULL;
+  if (timestamp) {
+    return moment(timestamp).format(timeformat);
+  } else if (timestamp === 0) {
+    return 0;
+  }
+  return PLACEHOLDER_FOR_NULL;
 }
 
 export function stringifyNumbers(number) {
