@@ -71,6 +71,7 @@ class CompanyProfile extends Component {
       capabilities: [],
       token: Math.random(),
       validationErrors: {},
+      logoFile: [],
     };
 
     // add the smsc state
@@ -152,18 +153,11 @@ class CompanyProfile extends Component {
     _.set(newState, id, value);
     this.setState(newState);
   }
-  onLogoChange = (e) => {
-    const file = e.target.files[0] || null;
-    if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        // display image on the page
-        this.setState({ logo: reader.result });
-      };
-      reader.readAsDataURL(file);
-    }
-    // for passing image file to the back-end
+  onLogoUploaded = (file) => {
     this.setState({ logoFile: file });
+  }
+  onLogoDeleted = () => {
+    this.setState({ logoFile: [] });
   }
   // for both JOI and user error
   getError = (errors, companyCreatedError) => {
@@ -294,7 +288,7 @@ class CompanyProfile extends Component {
           token: this.state.token,
           carrierId: this.context.params.identity,
         };
-        if (this.state.logoFile) {
+        if (!_.isEmpty(this.state.logoFile)) {
           companyInfo.logo = this.state.logoFile;
         }
         // only submit smsc values when it is not default
@@ -451,8 +445,9 @@ class CompanyProfile extends Component {
           onTimezoneChange={this.onTimezoneChange}
           validateField={this.validateField}
           errors={this.state.validationErrors}
-          onLogoChange={this.onLogoChange}
-          logo={this.state.logo}
+          onLogoUploaded={this.onLogoUploaded}
+          onLogoDeleted={this.onLogoDeleted}
+          logoSrc={_.get(this.state.logoFile, 'preview', null)}
           disabled={false}
         />
       </Panel>

@@ -1,0 +1,65 @@
+.image-upload {
+  position: relative;
+
+  &__drop-zone {
+    width: $image-upload-wrapper-size;
+    height: $image-upload-wrapper-size;
+    border-width: rem-calc(3);
+    border-color: $image-upload-wrapper-color;
+    border-style: dashed;
+    border-radius: rem-calc(10);;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    color: $image-upload-font-color;
+    &--active {
+      border-color: $image-upload-wrapper-color-active;
+      border-style: solid;
+      background: $image-upload-background;
+    }
+    &--drop {
+      border-style: dashed;
+      border-color: $image-upload-wrapper-color-active;
+      background: $white;
+    }
+    &--disabled {
+      cursor: not-allowed;
+      background: $gray-lighter;
+      border-style: solid;
+    }
+  }
+
+  &__img {
+    max-height: $image-upload-wrapper-size;
+  }
+
+
+  &__container {
+    transition: background 0.5s;
+    display: none;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: $image-upload-wrapper-size;
+    height: $image-upload-wrapper-size;
+    padding: rem-calc(70) rem-calc(80);
+    opacity: 0;
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    align-items: center;
+    color: $info-color;
+    display: flex;
+    &:hover {
+      background: $white;
+      opacity: 0.8;
+      z-index: 1;
+    }
+  }
+
+  &__edit {
+    display: inline-block;
+    cursor: pointer;
+  }
+}

@@ -3,8 +3,6 @@ import request from 'superagent';
 import { HttpStatusError, ArgumentNullError, ValidationError } from 'common-errors';
 import { isString, get, isNumber, omit, forEach, isEqual, merge, cloneDeep, isObject } from 'lodash';
 import logger from 'winston';
-import _ from 'lodash';
-import fs from 'fs';
 
 const serviceFilter = ['SDK', 'WHITE_LABEL'];
 
@@ -62,7 +60,7 @@ export default class MpsClient {
     const { logo, ...restInfo } = command;
     const updatedCommand = await this.mergeAndValidateProvisionData(restInfo);
     let req = request.post(url);
-    if(logo){
+    if (logo) {
       req = req.attach('logo', logo.buffer, logo.originalname);
     }
     req.field('data', JSON.stringify(updatedCommand));
