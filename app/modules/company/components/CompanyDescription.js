@@ -25,10 +25,12 @@ const CompanyDescription = (props) => {
     timezoneOption,
     onCountryChange,
     onCompanyNameChange,
+    onLogoChange,
     onTimezoneChange,
     disabled,
     validateField,
     errors,
+    logo,
     intl: { formatMessage },
    } = props;
   return (
@@ -93,6 +95,22 @@ const CompanyDescription = (props) => {
           <ValidationErrorLabel messages={errors.timezone} />
         </div>
       </div>
+      <div className="row">
+        <div className="large-10 columns">
+          <label>
+            <FormattedMessage id="companyLogo" defaultMessage="Compangy Logo" />:
+          </label>
+        </div>
+        <div className="large-14 columns">
+          <input
+            className={classNames('radius', { error: errors.companyLogo })}
+            type="file"
+            onChange={onLogoChange}
+            disabled={disabled}
+          />
+          {logo ? <img src={logo} /> : null }
+        </div>
+      </div>
     </div>
   );
 };
@@ -102,6 +120,7 @@ CompanyDescription.propTypes = {
   companyName: PropTypes.string,
   country: PropTypes.string,
   timezone: PropTypes.string,
+  logo: PropTypes.string,
   countryOption: PropTypes.arrayOf(
     PropTypes.shape({
       value: PropTypes.string,
@@ -118,6 +137,7 @@ CompanyDescription.propTypes = {
   onCountryChange: PropTypes.func,
   onCompanyNameChange: PropTypes.func,
   onTimezoneChange: PropTypes.func,
+  onLogoChange: PropTypes.func,
   validateField: PropTypes.func,
   errors: PropTypes.object,
 };

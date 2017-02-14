@@ -56,6 +56,7 @@ function parseResponse(provisionItem, company = {}, preset = {}) {
     id: provisionItem.id,
     preset: formatedPreset,
     taskErrors: provisionItem.taskErrors,
+    logo: company.logo,
   };
   const realm = _.get(provisionItem, 'profile.smsc.realm');
   if (realm) {
@@ -71,7 +72,8 @@ function parseResponse(provisionItem, company = {}, preset = {}) {
 export default function provisionController(iamServiceClient, provisionHelper) {
   async function createProvision(req, res, next) {
     try {
-      const provisionData = buildProvisionData(req.body);
+      const provisionData = buildProvisionData(JSON.parse(req.body.data));
+      provisionData.logo = req.file;
       const result = await provisionHelper.postProvision(provisionData);
       res.json(result);
     } catch (ex) {

@@ -32,12 +32,15 @@ export default function () {
         .end(genericHandler(cb));
     },
     createProvision(params, cb) {
-      const { carrierId, ...provisionInfo } = params;
+      const { carrierId, logo, ...provisionInfo } = params;
+      const formData = new FormData();
+      if (logo) {
+        formData.append('logo', logo);
+      }
+      formData.append('data', JSON.stringify(provisionInfo));
       superagent
         .post(`${this._getBaseUrl(carrierId)}/provisioning`)
-        .set('Content-Type', 'application/json')
-        .send(provisionInfo)
-        .accept('json')
+        .send(formData)
         .end(genericHandler(cb));
     },
   };

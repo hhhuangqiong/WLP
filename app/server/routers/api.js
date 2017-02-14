@@ -1,4 +1,5 @@
 import { Router } from 'express';
+import multer from 'multer';
 import { permission, RESOURCE, ACTION, RESOURCE_OWNER } from './../../main/acl/acl-enums';
 import { fetchDep } from './../utils/bottle';
 
@@ -20,6 +21,9 @@ const decodeParamsMiddeware = fetchDep('DecodeParamsMiddeware');
 // Merge params is used to inherit carrierId from common parent router
 const routes = new Router({ mergeParams: true });
 const apiRouter = new Router();
+// apply the memory storage when upload file
+const storage = multer.memoryStorage();
+const uploadFile = multer({ storage });
 apiRouter
   // check the existence of req.user, throw 401 when not exist
   .use(ensureAuthenticatedMiddleware)
@@ -246,6 +250,7 @@ routes
   ])
   .post('/provisioning', [
     authorize(permission(RESOURCE.COMPANY, ACTION.CREATE)),
+    uploadFile.single('logo'),
     provision.createProvision,
   ])
   .get('/provisioning', [

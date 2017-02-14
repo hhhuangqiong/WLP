@@ -152,6 +152,19 @@ class CompanyProfile extends Component {
     _.set(newState, id, value);
     this.setState(newState);
   }
+  onLogoChange = (e) => {
+    const file = e.target.files[0] || null;
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        // display image on the page
+        this.setState({ logo: reader.result });
+      };
+      reader.readAsDataURL(file);
+    }
+    // for passing image file to the back-end
+    this.setState({ logoFile: file });
+  }
   // for both JOI and user error
   getError = (errors, companyCreatedError) => {
     // if JOI error occurs,UI will display JOI error
@@ -281,6 +294,9 @@ class CompanyProfile extends Component {
           token: this.state.token,
           carrierId: this.context.params.identity,
         };
+        if (this.state.logoFile) {
+          companyInfo.logo = this.state.logoFile;
+        }
         // only submit smsc values when it is not default
         if (this.state.smscValues.type !== SMSC_TYPE.DEFAULT) {
           companyInfo.smsc = {
@@ -435,6 +451,8 @@ class CompanyProfile extends Component {
           onTimezoneChange={this.onTimezoneChange}
           validateField={this.validateField}
           errors={this.state.validationErrors}
+          onLogoChange={this.onLogoChange}
+          logo={this.state.logo}
           disabled={false}
         />
       </Panel>
