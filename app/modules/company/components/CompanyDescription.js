@@ -99,7 +99,7 @@ const CompanyDescription = (props) => {
       <div className="row">
         <div className="large-10 columns">
           <label>
-            <FormattedMessage id="companyLogo" defaultMessage="Compangy Logo" />:
+            <FormattedMessage id="companyLogo" defaultMessage="Company Logo" />:
           </label>
         </div>
         <div className="large-14 columns">
