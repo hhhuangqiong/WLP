@@ -81,3 +81,48 @@ export function parseTimeRange(timeRange) {
     timescale,
   };
 }
+
+/**
+ * Returns a timeRange for verification.
+ * The term 'now' is actually not correct because it will be aligned to the end
+ * of the interval based on the timescale. If the time is stepping on the start of the interval,
+ * the next interval will be used.
+ * See examples for details.
+ *
+ * @method
+ * @param {String} timeRange, like '7 days', '24 hours'
+ * @example
+ * Assuming now is 2017-02-17T12:13:00+08:00
+ *
+ * parseTimeRangeForVerify('24 hours')
+ * {
+      from: "2017-02-16T13:00:00+08:00",
+      to: "2017-02-17T13:00:00+08:00",
+      quantity: 24,
+      timescale: hour,
+    }
+ *
+ * parseTimeRangeForVerify('30 days')
+ * {
+      from: "2017-01-19T00:00:00+08:00",
+      to: "2017-02-18T00:00:00+08:00",
+      quantity: 30,
+      timescale: day,
+    }
+ *
+ */
+export function parseTimeRangeForVerify(timeRange) {
+  const splitedTimeRange = timeRange.split(' ');
+  const quantity = parseInt(splitedTimeRange[0], 10) || 1;
+  const timescale = splitedTimeRange[1] === 'days' ? 'day' : 'hour';
+  // consider the case of 14:23 with timescale "hour", we would like to get 15:00
+  const to = moment().add(1, timescale).startOf(timescale).valueOf();
+  const from = moment(to).subtract(quantity, timescale).startOf(timescale).valueOf();
+
+  return {
+    from,
+    to,
+    quantity,
+    timescale,
+  };
+}

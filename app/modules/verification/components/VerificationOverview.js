@@ -18,7 +18,11 @@ import * as Panel from './../../../main/components/Panel';
 import getMapConfig from '../../../main/statistics/utils/getMapConfig';
 import ColorRadioButton from '../../../main/components/ColorRadioButton';
 import TimeFramePicker from '../../../main/components/TimeFramePicker';
-import { parseTimeRange, LONG_DATE_FORMAT, TIME_FORMAT } from '../../../utils/timeFormatter';
+import {
+  parseTimeRangeForVerify,
+  LONG_DATE_FORMAT,
+  TIME_FORMAT,
+} from '../../../utils/timeFormatter';
 import LineChart from '../../../main/components/LineChart';
 import DonutChartPanel from '../../../main/components/DonutChartPanel';
 import SummaryCells from './SummaryCells';
@@ -26,7 +30,7 @@ import fetchVerificationOverview from '../actions/fetchVerificationOverview';
 import resetVerificationData from '../actions/resetVerificationData';
 import VerificationOverviewStore from '../stores/VerificationOverviewStore';
 import ApplicationStore from '../../../main/stores/ApplicationStore';
-import { normalizeDurationInMS, timeFromNow } from '../../../utils/StringFormatter';
+import { normalizeDurationInMS } from '../../../utils/StringFormatter';
 import MAP_DATA from '../../../main/statistics/constants/mapData.js';
 import changeTimeRange from '../actions/changeTimeRange';
 import i18nMessages from '../../../main/constants/i18nMessages';
@@ -42,16 +46,6 @@ const EMPTY_CELL_PLACEHOLDER = '-';
 
 // Maintain time format like this Sep 25, 2015 2:40 PM for tooltip
 const TOOLTIP_TIME_FORMAT = 'lll';
-
-function fromTimeslot(collection, fromTime, timeframe) {
-  const maxNumber = max(collection);
-
-  // Map the index to real world numbers representing the number of hours/days
-  const maxIndex = collection.indexOf(maxNumber) + 1;
-
-  const subtractedFromTime = timeFromNow(timeframe);
-  return subtractedFromTime.add(maxIndex, timeframe.indexOf('hours') > -1 ? 'hours' : 'days');
-}
 
 import METHOD_MESSAGES from '../../../main/constants/i18nMessages';
 
@@ -469,7 +463,7 @@ const VerificationOverview = React.createClass({
   },
 
   resetCharts(timeRange) {
-    const { from, quantity, timescale } = parseTimeRange(timeRange);
+    const { from, quantity, timescale } = parseTimeRangeForVerify(timeRange);
 
     const xAxis = {
       start: from,
@@ -487,9 +481,11 @@ const VerificationOverview = React.createClass({
 
   updateCharts(timeRange) {
     const { identity } = this.context.params;
-    const { quantity, timescale } = parseTimeRange(timeRange);
+    const { from, to, quantity, timescale } = parseTimeRangeForVerify(timeRange);
 
     this.context.executeAction(fetchVerificationOverview, {
+      from,
+      to,
       quantity,
       timescale,
       application: this.state.appId,
@@ -502,11 +498,12 @@ const VerificationOverview = React.createClass({
   },
 
   setTotalAttempts() {
+    const hasTotalAttempt = some(this.state.totalAttempts);
     this.setState({
       attemptToggle: TOTAL_NUMBER_ATTEMPTS,
       selectedLineInChartA: TOTAL_NUMBER_ATTEMPTS,
       busiestAttempts: max(this.state.totalAttempts),
-      busiestTime: this.state.totalAttempts ? fromTimeslot(this.state.totalAttempts, moment(), this.state.timeRange) : null,
+      busiestTime: hasTotalAttempt ? this.getBusiestTime(this.state.totalAttempts, this.state.timeRange) : null,
       showSuccessRate: false,
     });
 
@@ -514,11 +511,12 @@ const VerificationOverview = React.createClass({
   },
 
   setSuccessAttempts() {
+    const hasSuccessAttempts = some(this.state.successAttempts);
     this.setState({
       attemptToggle: SUCCESS_ATTEMPTS_NUMBER,
       selectedLineInChartA: SUCCESS_ATTEMPTS_NUMBER,
       busiestAttempts: max(this.state.successAttempts),
-      busiestTime: this.state.successAttempts ? fromTimeslot(this.state.successAttempts, moment(), this.state.timeRange) : null,
+      busiestTime: hasSuccessAttempts ? this.getBusiestTime(this.state.successAttempts, this.state.timeRange) : null,
       showSuccessRate: false,
     });
 
@@ -527,11 +525,11 @@ const VerificationOverview = React.createClass({
 
   setSuccessRates() {
     const { formatMessage } = this.props.intl;
-
+    const hasSuccessAttempts = some(this.state.successAttempts);
     this.setState({
       attemptToggle: SUCCESS_ATTEMPTS_RATE,
       busiestAttempts: max(this.state.successAttempts),
-      busiestTime: this.state.successAttempts ? fromTimeslot(this.state.successAttempts, moment(), this.state.timeRange) : null,
+      busiestTime: hasSuccessAttempts ? this.getBusiestTime(this.state.successAttempts, this.state.timeRange) : null,
       successRateSeries: [
         {
           name: SUCCESS_ATTEMPTS_RATE,
@@ -594,7 +592,6 @@ const VerificationOverview = React.createClass({
       [SUCCESS_ATTEMPTS_NUMBER]: this.setSuccessAttempts,
       [SUCCESS_ATTEMPTS_RATE]: this.setSuccessRates,
     };
-
     return toggle[attemptType]();
   },
 
@@ -617,6 +614,14 @@ const VerificationOverview = React.createClass({
     this.executeAction(changeTimeRange, timeRange);
 
     this.setState({ timeRange });
+  },
+
+  getBusiestTime(collection, timeframe) {
+    const maxNumber = max(collection);
+    const maxIndex = collection.indexOf(maxNumber);
+    const fromTime = moment(this.state.xAxis.start);
+
+    return fromTime.add(maxIndex, timeframe.indexOf('hours') > -1 ? 'hours' : 'days');
   },
 
   isLoading() {

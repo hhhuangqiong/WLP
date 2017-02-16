@@ -2,42 +2,6 @@ import _ from 'lodash';
 import Q from 'q';
 import moment from 'moment';
 
-/**
- * Returns an ISO 8601 string formatted time of a time range from now, aligned to the timescale.
- * The term 'now' is actually not correct because it will be aligned to the end
- * of the interval based on the timescale. If the time is stepping on the start of the interval,
- * the next interval will be used.
- * See examples for details.
- *
- * @method
- * @param {Number} quantity  The number of units of time defined by `timescale`
- * @param {String} timescale  The time unit ('hour', 'day', 'year', etc.)
- * @param {Number} [offset=0]  The offset of the range from now
- * @returns {Object} The time range enclosing the `from` and `to`
- * @example
- * // Assuming now is 2015-09-25T12:00:00+08:00
- *
- * getIsoTimeRangeFromNow(30, 'day')
- * // { from: "2015-08-27T00:00:00+08:00", to: "2015-09-26T00:00:00+08:00"}
- *
- * getIsoTimeRangeFromNow(24, 'hour')
- * // { from: "2015-09-24T13:00:00+08:00", to: "2015-09-25T13:00:00+08:00"}
- *
- * getIsoTimeRangeFromNow(24, 'hour', 12)
- * // { from: "2015-09-24T01:00:00+08:00", to: "2015-09-25T01:00:00+08:00"}
- */
-function getIsoTimeRangeFromNow(quantity, timescale, offset = 0) {
-  // -1 because we want the buckets align with the timescale
-  // consider the case of 14:23 with timescale "hour", we would like to get 15:00
-  const to = moment().subtract(offset - 1, timescale).startOf(timescale);
-  const from = moment(to).subtract(quantity, timescale).startOf(timescale);
-
-  return {
-    from: from.format(),
-    to: to.format(),
-  };
-}
-
 export default (context, params, done) => {
   const {
     getVerificationStatsByStatus,
@@ -46,17 +10,28 @@ export default (context, params, done) => {
     getVerificationStatsByPlatform,
   } = context.api;
 
-  const quantity = params.quantity;
-  const timescale = params.timescale;
+  const {
+    from,
+    to,
+    quantity,
+    timescale,
+  } = params;
 
-  const timeRangeForCurrentPeriod = getIsoTimeRangeFromNow(quantity, timescale);
+  const timeRangeForCurrentPeriod = {
+    from: moment(from).format(),
+    to: moment(to).format(),
+  };
   const paramsForCurrentPeriod = _.merge({
     timescale,
     application: params.application,
     carrierId: params.carrierId,
   }, timeRangeForCurrentPeriod);
 
-  const timeRangeForPreviousPeriod = getIsoTimeRangeFromNow(quantity, timescale, quantity);
+  const timeRangeForPreviousPeriod = {
+    from: moment(from).subtract(quantity, timescale).format(),
+    to: moment(to).subtract(quantity, timescale).format(),
+  };
+
   const paramsForLastPeriod = _.merge({}, paramsForCurrentPeriod, timeRangeForPreviousPeriod);
 
   const fetchedData = {};
