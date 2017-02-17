@@ -56,7 +56,7 @@ const CallsStore = createStore({
   handleCallsFetch(payload) {
     this.calls = payload.contents;
     this.offset = payload.offset;
-    this.page = (payload.offset / payload.pageSize) + 1;
+    this.page = (payload.offset / payload.pageSize);
     this.size = payload.pageSize;
     this.callsCount = payload.totalElements;
     this.totalPages = payload.totalPages;
