@@ -160,7 +160,9 @@ export default (context) => {
           <Route path=":carrierId/wallet" getComponent={CompanyWallet} />
         </Route>
 
-        <Route path={`${modules.ACCOUNT}`} getComponent={Account}>
+        <Route path={`${modules.ACCOUNT}`}>
+          <IndexRedirect to="overview" />
+          <Route path="overview" getComponent={Account} />
           <Route path="create" getComponent={AccountProfile} />
           <Route path=":accountId/profile" getComponent={AccountProfile} />
         </Route>

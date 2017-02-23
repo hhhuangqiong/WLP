@@ -8,9 +8,6 @@ $animation-time: 500ms;
   min-height: $account-page-height;
   min-width: $account-table-width;
 
-  // allow content of account profile to get the rest of width automatically
-  float: left;
-
   background-color: $account-page-color;
   box-shadow: 2px 0 2px #888888;
   .header {

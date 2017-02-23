@@ -16,7 +16,7 @@
   margin-left: 10px;
   margin-right: 10px;
   border:1px solid $gray-light;
-  border-radius: rem-calc(2);
+  border-radius: $pagination-radius;
   &:visited {
     background-color: white;
   }
@@ -47,6 +47,12 @@
     border-left: 1px solid $gray-light;
     border-top: 1px solid $gray-light;
     border-bottom: 1px solid $gray-light;
+    &.previous {
+      border-radius:4px 0 0 4px;
+    }
+    &.next {
+      border-radius:0 4px 4px 0;
+    }
     &.active {
       background-color: grey;
       color: white;

@@ -1,6 +1,6 @@
 $number-of-columns: 6;
 
-.company-sidebar {
+.table {
   &__list {
     margin: 0;
     padding: 0;
@@ -10,9 +10,20 @@ $number-of-columns: 6;
       border-bottom: 1px solid #e5e5e5;
       padding: rem-calc(10) rem-calc(20);
       overflow: hidden;
+      thead {
+        th {
+          font-size: rem-calc(16);
+          font-weight: 400;
+          color: $black-header;
+          padding-left: rem-calc(40);
+        }
+      }
       tbody {
         tr {
           cursor: pointer;
+          &:hover {
+            background: $table-hover-color;
+          }
         }
       }
       a {
@@ -21,6 +32,8 @@ $number-of-columns: 6;
       }
       td {
         width: percentage(1 / $number-of-columns);
+        padding-left: rem-calc(40);
+        font-size: rem-calc(15);
       }
       .complete {
         color: $success-color;

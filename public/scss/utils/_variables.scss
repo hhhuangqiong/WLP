@@ -84,7 +84,7 @@ $menu-sidebar-offcanvas-width: 5rem;
 $menu-sidebar-item-height: rem-calc(70);
 
 //top-bar--inner
-$topbar-inner-height: rem-calc(55);
+$topbar-inner-height: rem-calc(61);
 $topbar-inner-bg-color: $brand-extend;
 $topbar-inner-item-bg-color: transparent;
 $topbar-inner-link-color: rgba(255,255,255,0.5);
@@ -171,3 +171,13 @@ $table-border: 1px solid $table-border-color;
 $table-item-hover-color: #eef6ff;
 $table-item-border-color: #e0e0e0;
 $table-item-border: 1px solid $table-item-border-color;
+$table-input-radius: 5px;
+$table-header-height: 70px;
+$table-button-height: 35px;
+$table-button-width: 150px;
+$table-hover-color: #f2f8ff;
+$table-odd-color: #f1f1f1;
+
+//pagination
+$pagination-radius: rem-calc(4);
+

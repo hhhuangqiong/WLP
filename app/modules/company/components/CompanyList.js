@@ -3,7 +3,7 @@ import CompanyDetail, { CompanyDetailShape } from './CompanyDetail';
 import { injectIntl, intlShape, FormattedMessage } from 'react-intl';
 
 const CompanyList = (props) => (
-  <table className="company-sidebar__list__item">
+  <table className="table__list__item">
     <thead>
       <tr>
         <th>

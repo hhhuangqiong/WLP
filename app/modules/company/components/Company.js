@@ -88,49 +88,54 @@ class Company extends React.Component {
     const { intl: { formatMessage } } = this.props;
     const { identity } = this.context.params;
     return (
-      <div className="company" data-equalizer>
-        <nav className="top-bar company-sidebar__search" data-topbar role="navigation">
-          <Permit permission={permission(RESOURCE.COMPANY, ACTION.CREATE)}>
-            <Link to={`/${identity}/company/create`}>
-              <div
-                role="button"
-                tabIndex="0"
-                className={classNames(
-                'account-top-bar__button-primary',
-                'button',
-                'round',
-                'large',
-                'item',
-                'button-create',
-                )
-              }
-              >
-                <FormattedMessage
-                  id="createNewCompany"
-                  defaultMessage="Create New Company"
-                />
-              </div>
-            </Link>
-          </Permit>
-          <div>
-          <input
-            className="round"
-            type="text"
-            placeholder={formatMessage(MESSAGES.searchCompany)}
-            onKeyDown={this.handleSearchChange}
-          />
-          <Icon symbol="icon-search" />
-        </div>
+      <div>
+        <nav className="top-bar table__search row" data-topbar role="navigation">
+          <div className="table__search--right top-bar--inner right">
+            <div
+              role="button"
+              tabIndex="0"
+              className={classNames(
+              'account-top-bar__button-primary',
+              'button',
+              'round',
+              'large',
+              'item',
+              'button-create',
+              )
+            }
+            >
+              <Permit permission={permission(RESOURCE.COMPANY, ACTION.CREATE)}>
+                <Link to={`/${identity}/company/create`}>
+                  <FormattedMessage
+                    id="createNewCompany"
+                    defaultMessage="Create New Company"
+                  />
+                </Link>
+              </Permit>
+            </div>
+            <div className="table__search--right__input">
+              <input
+                className="round"
+                type="text"
+                placeholder={formatMessage(MESSAGES.searchCompany)}
+                onKeyDown={this.handleSearchChange}
+              />
+              <Icon symbol="icon-icon_search" />
+            </div>
+          </div>
         </nav>
-        <div className="company-list">
-          <CompanyList companies={this.props.companies} />
+
+        <div className="company" data-equalizer>
+          <div className="company-list">
+            <CompanyList companies={this.props.companies} />
+          </div>
+          <Pagination
+            pageSize={this.props.pageSize}
+            pageNumber={this.props.pageNumber}
+            totalElements={this.props.totalElements}
+            onChange={this.handlePageChange}
+          />
         </div>
-        <Pagination
-          pageSize={this.props.pageSize}
-          pageNumber={this.props.pageNumber}
-          totalElements={this.props.totalElements}
-          onChange={this.handlePageChange}
-        />
       </div>
     );
   }

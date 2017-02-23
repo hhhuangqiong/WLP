@@ -45,6 +45,9 @@ export default createStore({
       token: null,
       redirection: null,
     };
+    this.page = 0;
+    this.pageSize = 10;
+    this.totalElements = 0;
   },
 
 
@@ -60,9 +63,12 @@ export default createStore({
     }
   },
 
-  fetchAccounts(payload) {
+  fetchAccounts({ page, pageSize, total, ...payload }) {
     if (!payload || !payload.items) return;
     this.accounts = payload.items;
+    this.page = page;
+    this.pageSize = pageSize;
+    this.totalElements = total;
 
     this.emitChange();
   },
@@ -78,6 +84,7 @@ export default createStore({
       isVerified: account.isVerified,
       roles: account.roles,
     });
+
     this.emitChange();
   },
 
@@ -111,16 +118,31 @@ export default createStore({
     return this.selectedAccount;
   },
 
+  getPage() {
+    return this.page;
+  },
+
+  getPageSize() {
+    return this.pageSize;
+  },
+
+  getTotalElements() {
+    return this.totalElements;
+  },
+
   getOperationResult() {
     return this.operationResult;
   },
 
   dehydrate() {
     return {
-      accounts: this.getAccounts(),
-      selectedAccount: this.getSelectedAccount(),
-      managingCompanies: this.getManagingCompanies(),
-      operationResult: this.getOperationResult(),
+      accounts: this.accounts,
+      selectedAccount: this.selectedAccount,
+      managingCompanies: this.managingCompanies,
+      operationResult: this.operationResult,
+      pageSize: this.pageSize,
+      page: this.page,
+      totalElements: this.totalElements,
     };
   },
 
@@ -129,5 +151,8 @@ export default createStore({
     this.selectedAccount = state.selectedAccount;
     this.managingCompanies = state.managingCompanies;
     this.operationResult = state.operationResult;
+    this.pageSize = state.pageSize;
+    this.totalElements = state.totalElements;
+    this.page = state.page;
   },
 });

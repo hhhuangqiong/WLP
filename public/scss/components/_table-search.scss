@@ -1,0 +1,43 @@
+.table {
+  &__search {
+    background: $brand-extend;
+    padding: 0 $fieldset-padding;
+    height: $topbar-inner-height;
+    > div {
+      position: relative;
+    }
+    .button-create {
+      top: rem-calc(13);
+      height: $table-button-height;
+      padding: rem-calc(8) rem-calc(35);
+      margin-right: rem-calc(30);
+      > a {
+        color: white;
+      }
+    }
+    &--right {
+      display: flex;
+      &__input {
+        position: relative;
+        width: rem-calc(300);
+        top: rem-calc(3);
+      }
+    }
+    &--left {
+      padding-left: rem-calc(33);
+      color: $white;
+      font-size: rem-calc(20);
+    }
+    input {
+      height: $table-button-height;
+      @include inputBoxReset;
+      @include inputBoxWithIcon;
+      ~ .icon {
+        left: rem-calc(10);
+      }
+      &.round {
+        border-radius: $table-input-radius;
+      }
+    }
+  }
+}

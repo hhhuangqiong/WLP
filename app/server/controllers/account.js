@@ -24,7 +24,7 @@ function formatAccountResult(user) {
       lastName: user.name && user.name.familyName || '',
     },
     affiliatedCompany: user.affiliatedCompany,
-    isVerified: user.isVerified,
+    isVerified: user.isVerified || false,
     createdAt: moment(user.createdAt).format('LLL'),
     updatedAt: moment(user.updatedAt).format('LLL'),
   };
@@ -40,10 +40,14 @@ export default function accountController(iamServiceClient, provisionHelper) {
       command.affiliatedCompany = await provisionHelper.getCompanyIdByCarrierId(req.params.carrierId);
       // @TODO temporary set the page size to 50 and expect fetch all users
       // wait IAM to have no pagination support
-      command.pageSize = req.query.pageSize || 50;
+      command.pageSize = req.query.pageSize ? parseInt(req.query.pageSize, 10) : 10;
+      // convert from 0 base to 1 base
+      command.page = 1 + (req.query.page ? parseInt(req.query.page, 10) : 0);
+
       const result = await iamServiceClient.getUsers(command);
       // format the users which is
       result.items = _.map(result.items, formatAccountResult);
+      result.page = result.page - 1;
       res.json(result);
     } catch (ex) {
       next(ex);

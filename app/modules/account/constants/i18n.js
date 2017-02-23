@@ -21,6 +21,14 @@ export const MESSAGES = defineMessages({
     id: 'reverify',
     defaultMessage: 'Reverify',
   },
+  verified: {
+    id: 'verified',
+    defaultMessage: 'Verified',
+  },
+  notVerified: {
+    id: 'notVerified',
+    defaultMessage: 'Not Verified',
+  },
   userName: {
     id: 'userName',
     defaultMessage: 'user Name',

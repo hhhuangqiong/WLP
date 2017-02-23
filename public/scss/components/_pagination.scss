@@ -58,6 +58,10 @@ ul.pagination {
   .Select-control {
     width: 80%;
   }
+  .Select-arrow {
+    border-width: 6px 6px 0.5px;
+    border-color: $gray transparent transparent;
+  }
   .Select-clear-zone {
     display: none;
   }

@@ -3,6 +3,7 @@ import { FormattedMessage } from 'react-intl';
 import Select from 'react-select';
 import ReactPaginate from 'react-paginate';
 import classNames from 'classnames';
+import Icon from './Icon';
 
 function Pagination(props) {
   const {
@@ -51,8 +52,8 @@ function Pagination(props) {
           <FormattedMessage id="first" defaultMessage="First" />
         </button>
         <ReactPaginate
-          previousLabel="<"
-          nextLabel=">"
+          previousLabel={<Icon symbol="icon-left-arrow" />}
+          nextLabel={<Icon symbol="icon-right-arrow" />}
           breakLabel={<a href="">...</a>}
           breakClassName="break-me"
           pageNum={totalPages}

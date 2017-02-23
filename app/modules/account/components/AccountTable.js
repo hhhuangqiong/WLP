@@ -1,13 +1,8 @@
 import React, { PropTypes } from 'react';
-import { Link } from 'react-router';
-import classNames from 'classnames';
 import { injectIntl, intlShape, FormattedMessage } from 'react-intl';
 
-import Avatar from '../../../main/components/Avatar';
-import Icon from '../../../main/components/Icon';
 import { MESSAGES } from './../constants/i18n';
-import Permit from '../../../main/components/common/Permit';
-import { RESOURCE, ACTION, permission } from '../../../main/acl/acl-enums';
+import Pagination from '../../../main/components/Pagination';
 
 const AccountTable = React.createClass({
   displayName: 'AccountTable',
@@ -16,6 +11,10 @@ const AccountTable = React.createClass({
     intl: intlShape.isRequired,
     accounts: PropTypes.array.isRequired,
     handleSearch: PropTypes.func.isRequired,
+    pageSize: PropTypes.number,
+    page: PropTypes.number,
+    totalElements: PropTypes.number,
+    handlePageChange: PropTypes.func,
   },
 
   contextTypes: {
@@ -23,82 +22,69 @@ const AccountTable = React.createClass({
     params: PropTypes.object.isRequired,
   },
 
-  renderSearchBar() {
-    const { formatMessage } = this.props.intl;
-    return (
-      <nav className="top-bar company-sidebar__search" data-topbar role="navigation">
-        <input
-          className="round"
-          type="text"
-          placeholder={formatMessage(MESSAGES.search)}
-          onChange={this.props.handleSearch}
-        />
-        <Icon symbol="icon-search" />
-      </nav>
-    );
-  },
-
-  renderHeader() {
+  renderAccountItems(account) {
     const { identity } = this.context.params;
-    const userNo = this.props.accounts.length;
+    const { formatMessage } = this.props.intl;
+
     return (
-      <div className="header inline-with-space narrow">
-        <h5 className="title inline text-center">
-          <FormattedMessage
-            id="accounts"
-            defaultMessage="Accounts"
-          />
-          {' '}({userNo})
-        </h5>
-        <Permit permission={permission(RESOURCE.USER, ACTION.CREATE)}>
-          <Link to={`/${identity}/account/create`}>
-            <Icon symbol="icon-user-management" className="right" />
-          </Link>
-        </Permit>
-      </div>
+      <tr
+        onClick={() => this.context.router.push(
+          {
+            pathname: `/${identity}/account/${encodeURIComponent(account.id)}/profile`,
+            params: { id: account.id, identity },
+          }
+        )}
+      >
+        <td>{account.name.firstName} {account.name.lastName}</td>
+        <td>{account.id}</td>
+          { account.isVerified ?
+            <td className="complete">
+              <span className="circle-button green"></span>{formatMessage(MESSAGES.verified)}
+            </td> :
+            <td className="status-error">
+              <span className="circle-button red"></span>{formatMessage(MESSAGES.notVerified)}
+            </td>
+          }
+      </tr>
     );
   },
 
-  renderRoleSections() {
-    if (!this.props.accounts.length) {
-      return null;
-    }
-
+  renderPagination() {
+    const { pageSize, page, totalElements, handlePageChange } = this.props;
     return (
-      <ul className="account-table__list">
-        <li className="account-table__item-catagory"></li>
-        {this.renderAccountItems(this.props.accounts)}
-        <li className="divider"></li>
-      </ul>
-    );
-  },
-
-  renderAccountItems(accounts) {
-    const { identity, accountId } = this.context.params;
-    return accounts.map(account => (
-      <li className={classNames('account-table__item', { active: account.id === accountId }, 'clearfix')} key={account.id}>
-        <Link to={`/${identity}/account/${encodeURIComponent(account.id)}/profile`} params={{ id: account.id, identity }}>
-          <div className="account-icon left">
-            <Avatar firstName={account.name.firstName} lastName={account.name.lastName} />
-          </div>
-          <div className="account-table__item__username">
-            {account.name.firstName} {account.name.lastName}
-          </div>
-          <div className="account-table__item__email">
-            {account.id}
-          </div>
-        </Link>
-      </li>
-      )
+      <Pagination
+        pageSize={pageSize}
+        pageNumber={page}
+        totalElements={totalElements}
+        onChange={handlePageChange}
+      />
     );
   },
 
   render() {
     return (
-      <div className="account-table large-7">
-        {this.renderHeader()}
-        {this.renderSearchBar()}
-        {this.renderRoleSections()}
+      <div className="large-24 columns">
+        <table className="table__list__item">
+          <thead>
+            <tr>
+              <th>
+                <FormattedMessage id="name" defaultMessage="Name" />
+              </th>
+              <th>
+                <FormattedMessage id="email" defaultMessage="Email" />
+              </th>
+              <th>
+                <FormattedMessage id="status" defaultMessage="Status" />
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            {this.props.accounts.map((item, index) => (
+              <this.renderAccountItems {...item} key={index} />
+            ))}
+          </tbody>
+        </table>
+        {this.renderPagination()}
       </div>
     );
   },
