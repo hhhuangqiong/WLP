@@ -115,6 +115,7 @@ class Account extends Component {
               className="round"
               type="text"
               placeholder={formatMessage(MESSAGES.search)}
+              onChange={this.handleSearch}
             />
             <Icon symbol="icon-search" />
           </div>
