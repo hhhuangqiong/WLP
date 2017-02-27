@@ -493,7 +493,7 @@ class CompanyProfile extends Component {
   render() {
     const { identity } = this.context.params;
     return (
-    <div className="company__new-profile panel">
+    <div className="new-profile panel">
       <div className="header inline-with-space">
         <div>
           <Link to={`/${identity}/company/overview`}><Icon symbol="icon-previous" />

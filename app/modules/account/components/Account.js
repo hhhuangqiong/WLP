@@ -88,28 +88,27 @@ class Account extends Component {
           />
         </div>
         <div className="table__search--right top-bar--inner right">
-          <div
-            role="button"
-            tabIndex="0"
-            className={classNames(
-            'account-top-bar__button-primary',
-            'button',
-            'round',
-            'large',
-            'item',
-            'button-create',
-            )
-          }
-          >
-            <Permit permission={permission(RESOURCE.USER, ACTION.CREATE)}>
-              <Link to={`/${identity}/account/create`}>
+          <Link to={`/${identity}/account/create`}>
+            <button
+              tabIndex="0"
+              className={classNames(
+              'account-top-bar__button-primary',
+              'button',
+              'round',
+              'large',
+              'item',
+              'button-create',
+              )
+            }
+            >
+              <Permit permission={permission(RESOURCE.USER, ACTION.CREATE)}>
                 <FormattedMessage
                   id="addNewUSer"
                   defaultMessage="Add New User"
                 />
-              </Link>
-            </Permit>
-          </div>
+              </Permit>
+            </button>
+          </Link>
           <div className="table__search--right__input">
             <input
               className="round"

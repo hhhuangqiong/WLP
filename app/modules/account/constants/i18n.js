@@ -1,17 +1,17 @@
 import { defineMessages } from 'react-intl';
 
 export const MESSAGES = defineMessages({
-  createNewAccount: {
-    id: 'account.createNewAccount',
-    defaultMessage: 'Create New Account',
+  createNewUser: {
+    id: 'account.createNewUser',
+    defaultMessage: 'Create New User',
   },
   users: {
     id: 'account.users',
     defaultMessage: 'Users',
   },
-  accountInformation: {
-    id: 'account.accountInformation',
-    defaultMessage: 'Account Information',
+  editUser: {
+    id: 'account.editUser',
+    defaultMessage: 'Edit User',
   },
   search: {
     id: 'searchByEmail',

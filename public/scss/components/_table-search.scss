@@ -9,7 +9,7 @@
     .button-create {
       top: rem-calc(13);
       height: $table-button-height;
-      padding: rem-calc(8) rem-calc(35);
+      padding: rem-calc(9) rem-calc(35);
       margin-right: rem-calc(30);
       > a {
         color: white;
@@ -17,6 +17,9 @@
     }
     &--right {
       display: flex;
+      a {
+        display: inherit;
+      }
       &__input {
         position: relative;
         width: rem-calc(300);

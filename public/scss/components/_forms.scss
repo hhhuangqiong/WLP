@@ -2,6 +2,10 @@ form {
   font-size: $form-label-font-size;
   label{
     text-transform: capitalize;
+    font-size: $panels-h5-font-size;
+  }
+  input {
+    border-color: $input-border-color;
   }
   input[type="checkbox"]+label{
     text-transform: none;

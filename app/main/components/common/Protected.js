@@ -32,6 +32,7 @@ const Protected = React.createClass({
         <Sidebar isOffCanvas={this.state.isOffCanvas} handleOffCanvas={this._setOffCanvas} />
         <CanvasWrapper isOffCanvas={this.state.isOffCanvas}>
           <Navigation isOffCanvas={this.state.isOffCanvas}>
+            <SystemMessage />
             <Title title={this.props.pageTitle} />
             <Menu />
           </Navigation>
@@ -39,7 +40,6 @@ const Protected = React.createClass({
             { this.props.children }
           </Content>
         </CanvasWrapper>
-        <SystemMessage />
         <LoadingSpinner />
       </div>
     );

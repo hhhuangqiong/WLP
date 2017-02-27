@@ -6,6 +6,7 @@ import LanguageSwitcher from './LanguageSwitcher';
 const Public = props => (
   <div className="full-height">
     <nav className="top-bar public-header" data-topbar role="navigation">
+      <SystemMessage />
       <ul className="title-area public-header__title-area">
         <li className="logo public-header__logo">
           <img className="logo" src="/images/logo-default-m800.png" />
@@ -30,7 +31,6 @@ const Public = props => (
         </div>
       </div>
     </div>
-    <SystemMessage />
     <LoadingSpinner />
   </div>
 );

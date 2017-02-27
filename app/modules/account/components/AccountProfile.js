@@ -2,10 +2,13 @@ import { connectToStores } from 'fluxible-addons-react';
 import React, { PropTypes, Component } from 'react';
 
 import _ from 'lodash';
-import { injectIntl } from 'react-intl';
+import { injectIntl, FormattedMessage } from 'react-intl';
 import Joi from 'joi';
 import { injectJoiValidation } from 'm800-user-locale/joi-validation';
+import { Link } from 'react-router';
+import classNames from 'classnames';
 
+import Icon from '../../../main/components/Icon';
 import ApplicationStore from '../../../main/stores/ApplicationStore';
 import AccountStore from '../stores/AccountStore';
 import { MESSAGES } from './../constants/i18n';
@@ -70,26 +73,6 @@ class AccountProfile extends Component {
       roleEditStage: ROLE_EDIT_STAGES.addNewRole,
       previousRoleEditStage: null,
     };
-    this.handleFirstNameChange = this.handleFirstNameChange.bind(this);
-    this.handleLastNameChange = this.handleLastNameChange.bind(this);
-    this.handleEmailChange = this.handleEmailChange.bind(this);
-    this.handleSave = this.handleSave.bind(this);
-    this.handleDelete = this.handleDelete.bind(this);
-    this.handleOpenDeleteDialog = this.handleOpenDeleteDialog.bind(this);
-    this.handleCloseDeleteDialog = this.handleCloseDeleteDialog.bind(this);
-    this.handleSelectedCompanyChange = this.handleSelectedCompanyChange.bind(this);
-    this.handleSelectedRoleChange = this.handleSelectedRoleChange.bind(this);
-    this.handleRoleEditStageChanged = this.handleRoleEditStageChanged.bind(this);
-    this.validateFirstName = this.validateFirstName.bind(this);
-    this.validateLastName = this.validateLastName.bind(this);
-    this.validateEmail = this.validateEmail.bind(this);
-    this.handleDiscard = this.handleDiscard.bind(this);
-    this.handleReverify = this.handleReverify.bind(this);
-    this.handleEditRole = this.handleEditRole.bind(this);
-    this.handleOpenReverifyDialog = this.handleOpenReverifyDialog.bind(this);
-    this.handleCloseReverifyDialog = this.handleCloseReverifyDialog.bind(this);
-    this.handleDeleteCompany = this.handleDeleteCompany.bind(this);
-    this.handleSaveCompany = this.handleSaveCompany.bind(this);
   }
 
   componentDidMount() {
@@ -127,7 +110,7 @@ class AccountProfile extends Component {
     this.updateAccountState(nextProps);
   }
 
-  getValidatorData() {
+  getValidatorData = () => {
     let roles = [];
     _.each(this.state.currentRoles, role => {
       roles = roles.concat(role);
@@ -141,12 +124,12 @@ class AccountProfile extends Component {
     };
   }
   // it will redirect to the page according to the operation result
-  redirect(path) {
+  redirect = (path) => {
     const { identity } = this.context.params;
     this.context.router.push(`/${identity}${path}`);
   }
 
-  updateAccountState(props) {
+  updateAccountState = (props) => {
     this.state.firstName = props.account.firstName;
     this.state.lastName = props.account.lastName;
     this.state.email = props.account.email;
@@ -166,7 +149,7 @@ class AccountProfile extends Component {
     this.state.operationToken = Math.random();
   }
 
-  validatorTypes() {
+  validatorTypes = () => {
     const { intl: { formatMessage } } = this.props;
     return {
       firstName: Joi.string().trim().max(30).required().label(formatMessage(MESSAGES.firstName)),
@@ -176,45 +159,45 @@ class AccountProfile extends Component {
     };
   }
 
-  handleFirstNameChange(e) {
+  handleFirstNameChange = (e) => {
     e.preventDefault();
     this.setState({ firstName: e.target.value });
     if (this.props.errors.firstName) this.validateFirstName();
   }
 
-  handleLastNameChange(e) {
+  handleLastNameChange = (e) => {
     e.preventDefault();
     this.setState({ lastName: e.target.value });
     if (this.props.errors.lastName) this.validateLastName();
   }
 
-  handleEmailChange(e) {
+  handleEmailChange = (e) => {
     e.preventDefault();
     this.setState({ email: e.target.value });
     if (this.props.errors.email) this.validateEmail();
   }
 
-  handleEditRole(id) {
+  handleEditRole = (id) => {
     this.handleSelectedCompanyChange(id);
     this.handleRoleEditStageChanged(ROLE_EDIT_STAGES.selectRole);
   }
 
-  handleSaveCompany() {
+  handleSaveCompany = () => {
     this.state.currentRoles[this.state.selectedCompany.id] = this.state.selectedRoles;
     this.handleRoleEditStageChanged(ROLE_EDIT_STAGES.addNewRole);
   }
 
-  handleDeleteCompany(id) {
+  handleDeleteCompany = (id) => {
     const roles = _.omit(this.state.currentRoles, id);
     this.setState({ currentRoles: roles, selectedRoles: [] });
     this.handleRoleEditStageChanged(ROLE_EDIT_STAGES.addNewRole);
   }
 
-  handleRoleEditStageChanged(roleEditStage) {
+  handleRoleEditStageChanged = (roleEditStage) => {
     this.setState({ roleEditStage, previousRoleEditStage: this.state.roleEditStage });
   }
 
-  containErrors() {
+  containErrors = () => {
     const {
       firstName, lastName, email,
     } = this.props.errors;
@@ -222,7 +205,7 @@ class AccountProfile extends Component {
     return firstName || lastName || email;
   }
 
-  validateField(fieldName, cb) {
+  validateField = (fieldName, cb) => {
     this.props.validate(fieldName, err => {
       // return the error when exist
       if (err[fieldName] && err[fieldName].length) {
@@ -233,19 +216,19 @@ class AccountProfile extends Component {
     });
   }
 
-  validateFirstName() {
+  validateFirstName = () => {
     this.props.validate('firstName');
   }
 
-  validateLastName() {
+  validateLastName = () => {
     this.props.validate('lastName');
   }
 
-  validateEmail() {
+  validateEmail = () => {
     this.props.validate('email');
   }
 
-  handleSave(e) {
+  handleSave = (e) => {
     e.preventDefault();
     const { params: { identity } } = this.context;
     this.props.validate(err => {
@@ -276,11 +259,11 @@ class AccountProfile extends Component {
     });
   }
 
-  handleDiscard() {
+  handleDiscard = () => {
     this.redirect('/account');
   }
 
-  handleDelete() {
+  handleDelete = () => {
     const { params: { identity } } = this.context;
     this.context.executeAction(deleteAccount, {
       carrierId: identity,
@@ -289,15 +272,15 @@ class AccountProfile extends Component {
     this.handleCloseDeleteDialog();
   }
 
-  handleOpenDeleteDialog() {
+  handleOpenDeleteDialog = () => {
     this.setState({ deleteDialogOpened: true });
   }
 
-  handleCloseDeleteDialog() {
+  handleCloseDeleteDialog = () => {
     this.setState({ deleteDialogOpened: false });
   }
 
-  handleReverify() {
+  handleReverify = () => {
     const { params: { identity } } = this.context;
     this.context.executeAction(resendCreatePassword, {
       id: this.state.email,
@@ -306,15 +289,15 @@ class AccountProfile extends Component {
     this.handleCloseReverifyDialog();
   }
 
-  handleOpenReverifyDialog() {
+  handleOpenReverifyDialog = () => {
     this.setState({ reverifyDialogOpened: true });
   }
 
-  handleCloseReverifyDialog() {
+  handleCloseReverifyDialog = () => {
     this.setState({ reverifyDialogOpened: false });
   }
 
-  handleSelectedCompanyChange(item) {
+  handleSelectedCompanyChange = (item) => {
     if (!item) {
       return;
     }
@@ -328,7 +311,7 @@ class AccountProfile extends Component {
     });
   }
 
-  handleSelectedRoleChange(e) {
+  handleSelectedRoleChange = (e) => {
     let selectedRoles = this.state.selectedRoles;
     if (e.target.checked) {
       selectedRoles = this.state.selectedRoles.concat(e.target.value);
@@ -340,27 +323,36 @@ class AccountProfile extends Component {
     this.setState({ selectedRoles });
   }
 
-  isCreate() {
-    return this.props.mode === 'create';
+  isCreate = () => (
+    this.props.mode === 'create'
+  )
+
+  isAccountInfosEmpty = () => {
+    const infos = _.pick(this.state, ['firstName', 'lastName', 'email', 'currentRoles']);
+    let isEmpty = false;
+    _.each(infos, info => {
+      if (_.isEmpty(info)) {
+        isEmpty = true;
+      }
+    });
+    return isEmpty;
   }
 
-  renderActionBar() {
-    return (
-      <AccountActionBar
-        handleSave={this.handleSave}
-        handleDiscard={this.handleDiscard}
-        handleDelete={this.handleDelete}
-        deleteDialogOpened={this.state.deleteDialogOpened}
-        handleOpenDeleteDialog={this.handleOpenDeleteDialog}
-        handleCloseDeleteDialog={this.handleCloseDeleteDialog}
-        isEnabled={!this.containErrors()}
-        isCreate={this.isCreate()}
-        accountId={this.props.account.email}
-      />
-    );
-  }
+  renderActionBar = () => (
+    <AccountActionBar
+      handleSave={this.handleSave}
+      handleDiscard={this.handleDiscard}
+      handleDelete={this.handleDelete}
+      deleteDialogOpened={this.state.deleteDialogOpened}
+      handleOpenDeleteDialog={this.handleOpenDeleteDialog}
+      handleCloseDeleteDialog={this.handleCloseDeleteDialog}
+      isEnabled={!this.containErrors()}
+      isCreate={this.isCreate()}
+      accountId={this.props.account.email}
+    />
+  )
 
-  renderAccountInfo() {
+  renderAccountInfo = () => {
     const {
       firstName,
       lastName,
@@ -376,7 +368,7 @@ class AccountProfile extends Component {
     );
   }
 
-  renderAccountForm() {
+  renderAccountForm = () => {
     const {
       email,
       firstName,
@@ -433,23 +425,94 @@ class AccountProfile extends Component {
     );
   }
 
-  renderInfoContainer() {
+  renderInfoContainer = () => {
     const { formatMessage } = this.props.intl;
+    const { identity } = this.context.params;
+    const isDisabled = this.isAccountInfosEmpty() || this.containErrors();
+
     return (
-      <div className="account-profile__container">
-        <div className="panel callout radius">
-          <h4 className="account-profile__header">
+      <div className="new-profile panel">
+        <div className="header inline-with-space">
+          <div>
+            <Link to={`/${identity}/account/overview`}><Icon symbol="icon-previous" />
+            <h4 className="title-inline">
+              {
+                formatMessage(this.isCreate() ?
+                MESSAGES.createNewUser : MESSAGES.editUser)
+              }
+            </h4>
+            </Link>
+          </div>
+          <div>
             {
-              formatMessage(this.isCreate() ?
-              MESSAGES.createNewAccount : MESSAGES.accountInformation)
+              this.isCreate() ?
+              <button
+                role="button"
+                tabIndex="0"
+                className={classNames(
+                  'account-top-bar__button-primary',
+                  'button',
+                  'round',
+                  'large',
+                  'item',
+                  'cancel'
+                  )
+                }
+                onClick={this.handleDiscard}
+              >
+                <FormattedMessage
+                  id="cancel"
+                  defaultMessage="Cancel"
+                />
+              </button> :
+              <button
+                role="button"
+                tabIndex="0"
+                className={classNames(
+                  'account-top-bar__button-primary',
+                  'button',
+                  'round',
+                  'large',
+                  'item',
+                  'cancel'
+                  )
+                }
+                onClick={this.handleDelete}
+              >
+                <FormattedMessage
+                  id="delete"
+                  defaultMessage="Delete"
+                />
+              </button>
             }
-          </h4>
-          <hr />
-          <If condition={!this.isCreate()}>
-            {this.renderAccountInfo()}
-          </If>
-          {this.renderAccountForm()}
+            <button
+              role="button"
+              tabIndex="0"
+              className={classNames(
+                'account-top-bar__button-primary',
+                'button',
+                'round',
+                'large',
+                'item',
+                )
+              }
+              disabled={isDisabled}
+              onClick={this.handleSave}
+            >
+            {
+              this.isCreate() ?
+              <FormattedMessage
+                id="create"
+                defaultMessage="Create"
+              /> : <FormattedMessage
+                id="save"
+                defaultMessage="Save"
+              />
+            }
+            </button>
+          </div>
         </div>
+        {this.renderAccountForm()}
       </div>
     );
   }
@@ -462,7 +525,6 @@ class AccountProfile extends Component {
     }
     return (
       <div className="account-profile">
-        {this.renderActionBar()}
         {this.renderInfoContainer()}
       </div>
     );

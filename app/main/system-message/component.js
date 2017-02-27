@@ -5,24 +5,26 @@ import Crouton from 'react-crouton';
 const debug = require('debug')('app:main/system-message/component.js');
 
 const SystemMessage = props => (
-  <div className="system-message-container row">
-    {
-      !!props.message ?
-        (
-          <div className={classNames('system-message', props.type)}>
-            <Crouton
-              id={props.id}
-              type={props.type}
-              message={props.message}
-              onDismiss={props.handleDismiss}
-              buttons={props.buttons}
-              hidden={props.hidden}
-              timeout={props.timeout}
-              autoDismiss={props.autoDismiss}
-            />
-          </div>
-        ) : null
-    }
+  <div className="nav__system-message">
+    <div className="system-message-container row">
+      {
+        !!props.message ?
+          (
+            <div className={classNames('system-message', props.type)}>
+              <Crouton
+                id={props.id}
+                type={props.type}
+                message={props.message}
+                onDismiss={props.handleDismiss}
+                buttons={props.buttons}
+                hidden={props.hidden}
+                timeout={props.timeout}
+                autoDismiss={props.autoDismiss}
+              />
+            </div>
+          ) : null
+      }
+    </div>
   </div>
 );
 

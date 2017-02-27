@@ -574,7 +574,7 @@ class CompanyEditForm extends Component {
     const currentErrorIndex = this.state.currentErrorIndex;
 
     return (
-      <div className="company__new-profile">
+      <div className="new-profile">
       {
         // when taskError is not empty, errorDialog will be rendered
         !_.isEmpty(systemErrors) && this.state.errorDialogOpened ?

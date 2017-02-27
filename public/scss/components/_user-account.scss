@@ -109,13 +109,9 @@ $animation-time: 500ms;
 }
 
 .account-form {
-  width: 90%;
-
-  margin-left: auto;
-  margin-right: auto;
-
-  padding-bottom: rem-calc(20);
-  margin-bottom: rem-calc(1);
+  width: 50%;
+  margin: rem-calc(20) 0 0 rem-calc(118);
+  padding-bottom: rem-calc(150);
 
   .forward-enter {
     opacity: 0;
@@ -360,12 +356,11 @@ $animation-time: 500ms;
     border-radius: 10px;
     box-shadow: 1px 1px 1px #888888;
 
-    width: 85%;
-
-    margin-top: rem-calc(20);
-
     margin-left: auto;
     margin-right: auto;
+    .panel {
+      background: $white;
+    }
   }
 
   &__header {

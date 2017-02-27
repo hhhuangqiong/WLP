@@ -20,18 +20,18 @@ body {
   overflow: hidden;
 }
 
-.system-message-container {
-  $width: 70%;
+.nav__system-message {
+  display: flex;
+  justify-content: center;
+}
 
-  margin-left: - $width / 2;
+.system-message-container {
+  $width: auto;
+
   position: fixed;
-  top: rem-calc(80);
-  left: 50%;
+  top: rem-calc(10);
   width: $width;
   height: auto;
-  display: block;
-  align-items: center;
-  justify-content: center;
 }
 
 .loading-spinner-container {

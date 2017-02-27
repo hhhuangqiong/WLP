@@ -148,15 +148,14 @@ class AccountForm extends Component {
           dialogMessage={dialogMessage}
         />
 
-        <FormField label={formatMessage(MESSAGES.userName)}>
+        <FormField label={formatMessage(MESSAGES.firstName)}>
           <div className="row">
-            <div className="large-12 columns">
+            <div className="large-18 columns">
               <input
                 ref="firstName"
                 name="firstName"
                 className={classnames('radius', { error: this.props.firstNameError })}
                 type="text"
-                placeholder={formatMessage(MESSAGES.firstName)}
                 value={firstName}
                 onBlur={this.props.validateFirstName}
                 onChange={this.props.handleFirstNameChange}
@@ -166,14 +165,17 @@ class AccountForm extends Component {
                 {this.props.firstNameError}
               </label>
             </div>
+          </div>
+        </FormField>
 
-            <div className="large-12 columns">
+        <FormField label={formatMessage(MESSAGES.lastName)}>
+          <div className="row">
+            <div className="large-18 columns">
               <input
                 ref="lastName"
                 name="lastName"
                 className={classnames('radius', { error: this.props.lastNameError })}
                 type="text"
-                placeholder={formatMessage(MESSAGES.lastName)}
                 value={lastName}
                 onBlur={this.props.validateLastName}
                 onChange={this.props.handleLastNameChange}
@@ -196,7 +198,6 @@ class AccountForm extends Component {
           <input
             ref="email"
             name="email"
-            placeholder={formatMessage(MESSAGES.email)}
             className={classnames('radius', { error: this.props.emailError })}
             type="email"
             value={email}
