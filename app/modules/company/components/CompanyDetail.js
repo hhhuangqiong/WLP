@@ -70,7 +70,7 @@ const CompanyDetail = (props, context) => {
           }
         })()
       }
-      <td>
+      <td className="company-item--button">
         <div className="table__list__item__links">
           <button className="button--secondary" onClick={() => context.router.push(`/${identity}/company/${id}/edit`)}>
             {formatMessage(MESSAGES.details)}

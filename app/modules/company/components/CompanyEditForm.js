@@ -574,7 +574,7 @@ class CompanyEditForm extends Component {
     const currentErrorIndex = this.state.currentErrorIndex;
 
     return (
-      <div className="new-profile">
+      <div className="new-profile panel">
       {
         // when taskError is not empty, errorDialog will be rendered
         !_.isEmpty(systemErrors) && this.state.errorDialogOpened ?
@@ -605,10 +605,10 @@ class CompanyEditForm extends Component {
           </div>
         </CommonDialog> : null
       }
-        <div className="header inline-with-space narrow">
+        <div className="header inline-with-space">
         <div>
           <Link to={`/${identity}/company/overview`}><Icon symbol="icon-previous" />
-          <h4 className="title-inline">
+          <h4 className="title-inline title-inline--company">
             <FormattedMessage id="editCompany" defaultMessage="Edit Company" />
           </h4>
           </Link>

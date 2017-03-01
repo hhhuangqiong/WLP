@@ -1,3 +1,10 @@
+// prevent the chrome default style
+button {
+  &:focus {
+    outline: 0;
+  }
+}
+
 .button--primary {
     @include button(
 		$bg: $brand-primary,

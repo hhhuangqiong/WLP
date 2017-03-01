@@ -1,4 +1,5 @@
-$number-of-columns: 6;
+$number-of-columns-account: 3;
+$number-of-columns-company: 5;
 
 .table {
   &__list {
@@ -30,8 +31,17 @@ $number-of-columns: 6;
         display: flex;
         align-items: center;
       }
+      &--account {
+        td {
+          width: percentage(1 / $number-of-columns-account);
+        }
+      }
+      &--company {
+        td {
+          width: percentage(1 / $number-of-columns-company);
+        }
+      }
       td {
-        width: percentage(1 / $number-of-columns);
         padding-left: rem-calc(40);
         font-size: rem-calc(15);
       }
@@ -46,6 +56,9 @@ $number-of-columns: 6;
       }
       .unknown {
         color: $gray;
+      }
+      .company-item--button {
+        padding-left: 0;
       }
       &__logo {
         width: rem-calc(70);

@@ -1,5 +1,6 @@
 .new-profile {
   position: relative;
+  padding: $table-input-radius 0;
   .title-inline {
     display: inline-block;
     margin-left: rem-calc(106);
@@ -15,13 +16,25 @@
     padding-top:5px;
   }
   .inline-with-space {
+    height: rem-calc(70);
+    padding-bottom: rem-calc(5);
     background: $white;
-    padding: 18px 50px 0px 10px;
-    align-items: baseline;
+    padding: 0 50px 0px 10px;
+    align-items: center;
     border-bottom: 1px solid $gray-table;
-    h4 {
+    .title-inline {
+      &--company {
+        margin-left: rem-calc(75);
+      }
       font-size: rem-calc(24);
+      margin-top: rem-calc(15);
     }
+    .button {
+      margin-bottom: 0;
+    }
+  }
+  .panel {
+    padding: rem-calc(5) 0;
   }
   .rc-collapse-header {
     text-indent: 0;
@@ -30,7 +43,7 @@
   }
   .icon-previous {
     position: absolute;
-    top: rem-calc(23);
+    top: rem-calc(30);
     left: rem-calc(40);
     fill: $gray;
     cursor: pointer;
@@ -57,14 +70,16 @@
     background: $white;
     margin-right: rem-calc(20);
     color: $gray;
+    &:hover {
+      background-color: $gray-light;
+      color: $white;
+    }
   }
   .dialog-body {
     padding: 0;
   }
   .rc-collapse {
-    border-top:1px solid #d9d9d9;
-    border-left: none;
-    border-right: none;
+    border: 0;
     > .rc-collapse-item {
       padding: rem-calc(10);
       >.rc-collapse-header {

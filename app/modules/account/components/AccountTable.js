@@ -64,7 +64,7 @@ const AccountTable = React.createClass({
   render() {
     return (
       <div className="large-24 columns">
-        <table className="table__list__item">
+        <table className="table__list__item table__list__item--account">
           <thead>
             <tr>
               <th>

@@ -91,28 +91,29 @@ class Company extends React.Component {
       <div>
         <nav className="top-bar table__search row" data-topbar role="navigation">
           <div className="table__search--right top-bar--inner right">
-            <div
-              role="button"
-              tabIndex="0"
-              className={classNames(
-              'account-top-bar__button-primary',
-              'button',
-              'round',
-              'large',
-              'item',
-              'button-create',
-              )
-            }
-            >
-              <Permit permission={permission(RESOURCE.COMPANY, ACTION.CREATE)}>
-                <Link to={`/${identity}/company/create`}>
+            <Permit permission={permission(RESOURCE.COMPANY, ACTION.CREATE)}>
+              <Link to={`/${identity}/company/create`}>
+                <button
+                  role="button"
+                  tabIndex="0"
+                  className={classNames(
+                  'account-top-bar__button-primary',
+                  'button',
+                  'round',
+                  'large',
+                  'item',
+                  'button-create',
+                  )
+                }
+                >
                   <FormattedMessage
                     id="createNewCompany"
                     defaultMessage="Create New Company"
                   />
-                </Link>
-              </Permit>
-            </div>
+                </button>  
+              </Link>
+            </Permit>
+     
             <div className="table__search--right__input">
               <input
                 className="round"

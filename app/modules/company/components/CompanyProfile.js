@@ -497,7 +497,7 @@ class CompanyProfile extends Component {
       <div className="header inline-with-space">
         <div>
           <Link to={`/${identity}/company/overview`}><Icon symbol="icon-previous" />
-          <h4 className="title-inline">
+          <h4 className="title-inline title-inline--company">
             <FormattedMessage id="createNewCompany" defaultMessage="Create New Company" />
           </h4>
           </Link>

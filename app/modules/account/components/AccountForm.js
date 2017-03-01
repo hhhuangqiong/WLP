@@ -1,6 +1,6 @@
 import React, { PropTypes, Component } from 'react';
 import classnames from 'classnames';
-import { injectIntl, intlShape } from 'react-intl';
+import { injectIntl, intlShape, FormattedMessage } from 'react-intl';
 import _ from 'lodash';
 import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
 import FormField from '../../../main/components/FormField';
@@ -189,26 +189,35 @@ class AccountForm extends Component {
         </FormField>
 
         <FormField label={formatMessage(MESSAGES.email)}>
-          <If condition={!this.props.isVerified && !this.props.isCreate}>
-            <span
-              className="account-reverify-email"
-              onClick={this.props.handleOpenReverifyDialog}
-            >Reverify</span>
-          </If>
-          <input
-            ref="email"
-            name="email"
-            className={classnames('radius', { error: this.props.emailError })}
-            type="email"
-            value={email}
-            disabled={!this.props.isCreate && !!this.props.email}
-            onBlur={this.props.validateEmail}
-            onChange={this.props.handleEmailChange}
-            onKeyPress={this.onSubmit}
-          />
-          <label className={classnames({ hide: !this.props.emailError })}>
-            {this.props.emailError}
-          </label>
+          <div className="row">
+            <div className="large-18 columns">
+              <If condition={!this.props.isVerified && !this.props.isCreate}>
+                <span
+                  className="account-reverify-email"
+                  onClick={this.props.handleOpenReverifyDialog}
+                >
+                  <FormattedMessage
+                    id="reverify"
+                    defaultMessage="Reverify"
+                  />
+                </span>
+              </If>
+              <input
+                ref="email"
+                name="email"
+                className={classnames('radius', { error: this.props.emailError })}
+                type="email"
+                value={email}
+                disabled={!this.props.isCreate && !!this.props.email}
+                onBlur={this.props.validateEmail}
+                onChange={this.props.handleEmailChange}
+                onKeyPress={this.onSubmit}
+              />
+              <label className={classnames({ hide: !this.props.emailError })}>
+                {this.props.emailError}
+              </label>
+            </div>
+          </div>
         </FormField>
 
         <FormField label={formatMessage(MESSAGES.assignedRole)}>
