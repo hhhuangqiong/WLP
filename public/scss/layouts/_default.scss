@@ -32,6 +32,7 @@ body {
   top: rem-calc(10);
   width: $width;
   height: auto;
+  z-index: 1;
 }
 
 .loading-spinner-container {
@@ -58,10 +59,6 @@ body {
     &__main-view {
       height: 100%;
       overflow: hidden;
-
-      &__header {
-
-      }
 
       &__contents {
         height: 100%;

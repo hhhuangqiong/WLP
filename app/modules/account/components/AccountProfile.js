@@ -9,10 +9,14 @@ import { Link } from 'react-router';
 import classNames from 'classnames';
 
 import Icon from '../../../main/components/Icon';
+import ConfirmationDialog from '../../../main/components/ConfirmationDialog';
+import Permit from '../../../main/components/common/Permit';
 import ApplicationStore from '../../../main/stores/ApplicationStore';
 import AccountStore from '../stores/AccountStore';
 import { MESSAGES } from './../constants/i18n';
 import { ROLE_EDIT_STAGES } from '../constants/roleEditing';
+import COMMON_MESSAGES from '../../../main/constants/i18nMessages';
+import { RESOURCE, ACTION, permission } from '../../../main/acl/acl-enums';
 
 import createAccount from '../actions/createAccount';
 import updateAccount from '../actions/updateAccount';
@@ -338,20 +342,6 @@ class AccountProfile extends Component {
     return isEmpty;
   }
 
-  renderActionBar = () => (
-    <AccountActionBar
-      handleSave={this.handleSave}
-      handleDiscard={this.handleDiscard}
-      handleDelete={this.handleDelete}
-      deleteDialogOpened={this.state.deleteDialogOpened}
-      handleOpenDeleteDialog={this.handleOpenDeleteDialog}
-      handleCloseDeleteDialog={this.handleCloseDeleteDialog}
-      isEnabled={!this.containErrors()}
-      isCreate={this.isCreate()}
-      accountId={this.props.account.email}
-    />
-  )
-
   renderAccountInfo = () => {
     const {
       firstName,
@@ -429,16 +419,26 @@ class AccountProfile extends Component {
     const { formatMessage } = this.props.intl;
     const { identity } = this.context.params;
     const isDisabled = this.isAccountInfosEmpty() || this.containErrors();
-
+    const dialogMessage = formatMessage(MESSAGES.deleteDialogMessage,
+      { name: this.context.params.accountId });
     return (
       <div className="new-profile panel">
         <div className="header inline-with-space">
+          <ConfirmationDialog
+            isOpen={this.state.deleteDialogOpened}
+            onCancel={this.handleCloseDeleteDialog}
+            onConfirm={this.handleDelete}
+            cancelLabel={formatMessage(COMMON_MESSAGES.cancel)}
+            confirmLabel={formatMessage(COMMON_MESSAGES.delete)}
+            dialogHeader={formatMessage(MESSAGES.deleteDialogHeader)}
+            dialogMessage={dialogMessage}
+          />
           <div>
             <Link to={`/${identity}/account/overview`}><Icon symbol="icon-previous" />
             <h4 className="title-inline">
               {
                 formatMessage(this.isCreate() ?
-                MESSAGES.createNewUser : MESSAGES.editUser)
+                MESSAGES.createNewAccount : MESSAGES.editAccount)
               }
             </h4>
             </Link>
@@ -477,7 +477,7 @@ class AccountProfile extends Component {
                   'cancel'
                   )
                 }
-                onClick={this.handleDelete}
+                onClick={this.handleOpenDeleteDialog}
               >
                 <FormattedMessage
                   id="delete"
@@ -485,31 +485,33 @@ class AccountProfile extends Component {
                 />
               </button>
             }
-            <button
-              role="button"
-              tabIndex="0"
-              className={classNames(
-                'account-top-bar__button-primary',
-                'button',
-                'round',
-                'large',
-                'item',
-                )
+            <Permit permission={permission(RESOURCE.USER, ACTION.UPDATE)}>
+              <button
+                role="button"
+                tabIndex="0"
+                className={classNames(
+                  'account-top-bar__button-primary',
+                  'button',
+                  'round',
+                  'large',
+                  'item',
+                  )
+                }
+                disabled={isDisabled}
+                onClick={this.handleSave}
+              >
+              {
+                this.isCreate() ?
+                <FormattedMessage
+                  id="create"
+                  defaultMessage="Create"
+                /> : <FormattedMessage
+                  id="save"
+                  defaultMessage="Save"
+                />
               }
-              disabled={isDisabled}
-              onClick={this.handleSave}
-            >
-            {
-              this.isCreate() ?
-              <FormattedMessage
-                id="create"
-                defaultMessage="Create"
-              /> : <FormattedMessage
-                id="save"
-                defaultMessage="Save"
-              />
-            }
-            </button>
+              </button>
+            </Permit>
           </div>
         </div>
         {this.renderAccountForm()}

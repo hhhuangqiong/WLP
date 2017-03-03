@@ -36,6 +36,11 @@ class Account extends Component {
     }),
   }
 
+  constructor(props) {
+    super(props);
+    this.state = { searchTerm: null };
+  }
+
   componentDidMount() {
     this.fetchData();
   }
@@ -52,8 +57,7 @@ class Account extends Component {
 
   fetchData = (searchTerm) => {
     const { executeAction, params: { identity } } = this.context;
-    const { pageSize, page } = this.props;
-    const query = { carrierId: identity, pageSize, page };
+    const query = { carrierId: identity, pageSize: this.props.pageSize, page: 0 };
     if (searchTerm) {
       query.search = searchTerm;
     }
@@ -65,15 +69,20 @@ class Account extends Component {
     e.preventDefault();
     // get the value from the input
     const term = e.target.value.trim();
+    this.setState({ searchTerm: term });
     this.fetchData(term);
   }
 
   handlePageChange = (pageOptions) => {
-    this.context.executeAction(fetchAccounts, {
+    const query = {
       carrierId: this.context.params.identity,
       pageSize: pageOptions.pageSize,
       page: pageOptions.pageNumber,
-    });
+    };
+    if (this.state.searchTerm) {
+      query.search = this.state.searchTerm;
+    }
+    this.context.executeAction(fetchAccounts, query);
   }
 
   renderHeader = () => {
@@ -83,8 +92,8 @@ class Account extends Component {
       <nav className="top-bar table__search" data-topbar role="navigation">
         <div className="left top-bar--inner table__search--left">
           <FormattedMessage
-            id="userManagement"
-            defaultMessage="User Management"
+            id="accountManagement"
+            defaultMessage="Account Management"
           />
         </div>
         <div className="table__search--right top-bar--inner right">
@@ -103,8 +112,8 @@ class Account extends Component {
             >
               <Permit permission={permission(RESOURCE.USER, ACTION.CREATE)}>
                 <FormattedMessage
-                  id="addNewUSer"
-                  defaultMessage="Add New User"
+                  id="createNewAccount"
+                  defaultMessage="Create New Account"
                 />
               </Permit>
             </button>

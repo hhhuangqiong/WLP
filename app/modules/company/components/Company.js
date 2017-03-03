@@ -90,6 +90,12 @@ class Company extends React.Component {
     return (
       <div>
         <nav className="top-bar table__search row" data-topbar role="navigation">
+          <div className="left top-bar--inner table__search--left">
+            <FormattedMessage
+              id="companyManagement"
+              defaultMessage="Company Management"
+            />
+          </div>
           <div className="table__search--right top-bar--inner right">
             <Permit permission={permission(RESOURCE.COMPANY, ACTION.CREATE)}>
               <Link to={`/${identity}/company/create`}>
@@ -110,10 +116,10 @@ class Company extends React.Component {
                     id="createNewCompany"
                     defaultMessage="Create New Company"
                   />
-                </button>  
+                </button>
               </Link>
             </Permit>
-     
+
             <div className="table__search--right__input">
               <input
                 className="round"
@@ -121,7 +127,7 @@ class Company extends React.Component {
                 placeholder={formatMessage(MESSAGES.searchCompany)}
                 onKeyDown={this.handleSearchChange}
               />
-              <Icon symbol="icon-icon_search" />
+              <Icon symbol="icon-search" />
             </div>
           </div>
         </nav>
