@@ -1,5 +1,4 @@
 import logger from 'winston';
-import Q from 'q';
 import request from 'superagent';
 import util from 'util';
 import _ from 'lodash';
@@ -64,12 +63,7 @@ export default class CallStatsRequest {
     }
   }
 
-  sendRequest(endpoint, params, loadBalanceIndex = 0, cb) {
-    if (!cb && _.isFunction(loadBalanceIndex)) {
-      cb = loadBalanceIndex;
-      loadBalanceIndex = 0;
-    }
-
+  async sendRequest(endpoint, params, loadBalanceIndex = 0) {
     let baseUrl = this.opts.baseUrl;
     const baseUrlArray = baseUrl.split(',');
 
@@ -84,207 +78,68 @@ export default class CallStatsRequest {
 
     logger.debug(`SIP Statistic API Endpoint: ${reqUrl}?${qs.stringify(params)}`);
 
-    request(endpoint.METHOD, reqUrl)
-      .query(params)
-      .buffer()
-      .timeout(this.opts.timeout)
-      .end((err, res) => {
-        if (err) {
-          cb(handleError(err, err.status || 400));
-          return;
-        }
-        cb(null, _.get(res, 'body'));
-      });
+    try {
+      const req = request(endpoint.METHOD, reqUrl).query(params).buffer().timeout(this.opts.timeout);
+      const res = await req;
+      return _.get(res, 'body');
+    } catch (err) {
+      logger.error(`Request to ${endpoint.METHOD} ${reqUrl} failed`, err);
+      throw handleError(err, err.status || 400);
+    }
   }
 
-  getCallStats(params, cb) {
+  async getCallStats(params) {
     const query = this.normalizeData(REQUEST_TYPE.CALLS, params);
-    Q
-      .allSettled([
-        Q.ninvoke(this, 'sendRequest', this.opts.endpoints.CALLS, query),
-      ])
-      .then(results => {
-        const error = _.find(results, result => result.state !== 'fulfilled');
-
-        if (error) {
-          throw new ConnectionError(error.reason.message || error.message, error);
-        }
-
-        let output = [];
-
-        // IMPORTANT:
-        // DO NOT SUPPORT TIME SCALE OF HOUR FOR MORE THAN ONE DAY
-
-        // do this only when the load balancing is used
-        if (results.length > 1) {
-          // get the max number of results as sample for the segment details
-          // as the breakdown could be dynamic
-
-          // IMPORTANT: when the api returns no data,
-          // it no longer follows the breakdown,
-          // but return all segment keys with value of 'all'
-          // e.g. breakdown success should return two array of results
-          // which has the value of 'false' and 'true' for key of 'success'
-          // when it returns no data, the value of key of 'success' will become 'all'
-          // also, when there is empty data set for a segment,
-          // the whole segment will not be returned
-
-          // so, you will have to get the segment which have value greater than zero
-          // and make it as a sample
-          let resultSample = _.find(results, (result) => {
-            const _result = _.get(result, 'value.results');
-            return (_.find(_result, ({ segment, data }) => {
-              return _.find(data, ({ t, v }) => v > 0);
-            }));
-          });
-
-          resultSample = _.get(resultSample, 'value.results');
-
-          // init the data array with segment
-          // assume that the returned results are always with the
-          // same order of segment
-          output = _.reduce(resultSample, (data, result) => {
-            data.push({ segment: _.get(result, 'segment'), data: [] });
-            return data;
-          }, []);
-
-          _.map(results, (result, resultIndex) => {
-            const values = _.get(result, 'value.results');
-
-            // looping over the sample rather than values
-            // as the value structure varies
-            _.map(resultSample, (sample, segmentIndex) => {
-              const sampleSegment = _.get(sample, 'segment');
-
-              // if an identical segment is found,
-              // populate the data into the segment
-              const value = _.find(values, value => equals(sampleSegment, _.get(value, 'segment')));
-
-              if (!_.isEmpty(value) && !_.isUndefined(value)) {
-                _.map(value.data, record => {
-                  // the manually load balancing invades the correct t value,
-                  // so it has to be overwritten here again with the resultIndex
-                  output[segmentIndex].data.push(_.merge(record, { t: resultIndex }));
-                });
-
-              // if no identical segment is found,
-              // populate an empty data set as it is unrecognisable
-              } else {
-                output[segmentIndex].data.push({ t: resultIndex, v: 0 });
-              }
-            });
-          });
-        } else {
-          output = _.get(results, '0.value.results');
-        }
-
-        cb(null, output);
-      })
-      .catch(error => {
-        logger.error(error);
-        cb(handleError(error, error.status || 500));
-      })
-      .done();
+    const callStats = await this.sendRequest(this.opts.endpoints.CALLS, query);
+    return callStats.results;
   }
 
-  getCallerStats(params, cb) {
+  async getCallerStats(params) {
     const query = this.normalizeData(REQUEST_TYPE.CALLERS, params);
-    Q
-      .allSettled([
-        Q.ninvoke(this, 'sendRequest', this.opts.endpoints.CALLERS, query),
-      ])
-      .then(results => {
-        const error = _.find(results, result => result.state !== 'fulfilled');
 
-        if (error) {
-          throw new ConnectionError(error.reason.message || error.message, error);
-        }
+    const callerStats = await this.sendRequest(this.opts.endpoints.CALLERS, query);
 
-        // get the first result as sample for the segment details
-        // as the breakdown could be dynamic
-        let resultSample = _.max(results, result => (_.get(result, 'value.results')).length);
+    // init the data array with segment
+    // assume that the returned results are always with the
+    // same order of segment
+    const output = _.map(callerStats.results, result => (
+      { segment: _.get(result, 'segment'), data: [] }
+    ));
 
-        resultSample = _.get(resultSample, 'value.results');
-
-        // init the data array with segment
-        // assume that the returned results are always with the
-        // same order of segment
-        const output = _.reduce(resultSample, (data, result) => {
-          data.push({ segment: _.get(result, 'segment'), data: [] });
-          return data;
-        }, []);
-
-        // map the data into the data key in output
-        _.map(results, result => {
-          const values = _.get(result, 'value.results');
-          _.map(values, (value, index) => {
-            if (value && value.data) {
-              _.map(value.data, record => {
-                output[index]
-                  .data
-                  .push(record);
-              });
-            }
-          });
+    // map the data into the data key in output
+    _.forEach(callerStats.results, (value, index) => {
+      if (value && value.data) {
+        _.forEach(value.data, record => {
+          output[index]
+            .data
+            .push(record);
         });
-
-        cb(null, output);
-      })
-      .catch(error => {
-        logger.error(error);
-        cb(handleError(error, error.status || 500));
-      })
-      .done();
+      }
+    });
+    return output;
   }
 
-  getCalleeStats(params, cb) {
+  async getCalleeStats(params) {
     const query = this.normalizeData(REQUEST_TYPE.CALLEES, params);
-    Q
-      .allSettled([
-        Q.ninvoke(this, 'sendRequest', this.opts.endpoints.CALLEES, query),
-      ])
-      .then(results => {
-        const error = _.find(results, result => result.state !== 'fulfilled');
 
-        if (error) {
-          throw new ConnectionError(error.reason.message || error.message, error);
-        }
+    const calleeStats = await this.sendRequest(this.opts.endpoints.CALLEES, query);
 
-        // get the first result as sample for the segment details
-        // as the breakdown could be dynamic
-        let resultSample = _.max(results, result => (_.get(result, 'value.results')).length);
-
-        resultSample = _.get(resultSample, 'value.results');
-
-        // init the data array with segment
-        // assume that the returned results are always with the
-        // same order of segment
-        const output = _.reduce(resultSample, (data, result) => {
-          data.push({ segment: _.get(result, 'segment'), data: [] });
-          return data;
-        }, []);
-
-        // map the data into the data key in output
-        _.map(results, result => {
-          const values = _.get(result, 'value.results');
-
-          _.map(values, (value, index) => {
-            if (value && value.data) {
-              _.map(value.data, record => {
-                output[index]
-                  .data
-                  .push(record);
-              });
-            }
-          });
+    // init the data array with segment
+    // assume that the returned results are always with the
+    // same order of segment
+    const output = _.map(calleeStats.results, result => (
+      { segment: _.get(result, 'segment'), data: [] }
+    ));
+    // map the data into the data key in output
+    _.forEach(calleeStats.results, (value, index) => {
+      if (value && value.data) {
+        _.forEach(value.data, record => {
+          output[index]
+            .data
+            .push(record);
         });
-
-        cb(null, output);
-      })
-      .catch(error => {
-        logger.error(error);
-        cb(handleError(error, error.status || 500));
-      })
-      .done();
+      }
+    });
+    return output;
   }
 }

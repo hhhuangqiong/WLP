@@ -1,5 +1,4 @@
 import logger from 'winston';
-import Q from 'q';
 import request from 'superagent';
 import _ from 'lodash';
 import qs from 'qs';
@@ -63,14 +62,7 @@ export default class ImStatsRequest {
     }
   }
 
-  sendRequest(endpoint, params, loadBalanceIndex = 0, cb) {
-    if (!cb && _.isFunction(loadBalanceIndex)) {
-      // eslint-disable-next-line no-param-reassign
-      cb = loadBalanceIndex;
-      // eslint-disable-next-line no-param-reassign
-      loadBalanceIndex = 0;
-    }
-
+  async sendRequest(endpoint, params, loadBalanceIndex = 0) {
     let baseUrl = this.opts.baseUrl;
     const baseUrlArray = baseUrl.split(',');
 
@@ -85,29 +77,20 @@ export default class ImStatsRequest {
 
     logger.debug(`IM Statistic API Endpoint: ${reqUrl}?${qs.stringify(params)}`);
 
-    request(endpoint.METHOD, reqUrl)
-      .query(params)
-      .buffer()
-      .timeout(this.opts.timeout)
-      .end((err, res) => {
-        if (err) {
-          logger.error(`error received from %s: ${reqUrl}`, err);
-          cb(err);
-          return;
-        }
-
-        logger.debug(`response received from %s: ${reqUrl}`, jsonSchema(res.body));
-        cb(null, res.body);
-      });
+    try {
+      const res = await request(endpoint.METHOD, reqUrl).query(params).buffer().timeout(this.opts.timeout);
+      logger.debug(`response received from %s: ${reqUrl}`, jsonSchema(res.body));
+      return res.body;
+    } catch (err) {
+      logger.error(`Request to ${endpoint.METHOD} ${reqUrl} failed`, err);
+      throw handleError(err, err.status || 400);
+    }
   }
 
-  getImStats(params, cb) {
+  async getImStats(params) {
     const query = this.normalizeData(REQUEST_TYPE.IM, params);
-    try {
-      this.sendRequest(this.opts.endpoints.IM, query, cb);
-    } catch (err) {
-      logger.error('error occurred in getImStats()', err);
-      cb(handleError(err, err.status || 500));
-    }
+
+    const res = await this.sendRequest(this.opts.endpoints.IM, query);
+    return res;
   }
 }

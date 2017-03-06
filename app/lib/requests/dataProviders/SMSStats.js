@@ -1,5 +1,4 @@
 import logger from 'winston';
-import Q from 'q';
 import request from 'superagent';
 import _ from 'lodash';
 import qs from 'qs';
@@ -28,7 +27,7 @@ export default class SMSStatsRequest {
     this.opts = constructOpts(opts);
   }
 
-  normalizeData(type, params, cb) {
+  normalizeData(type, params) {
     logger.debug('normalizeData', params);
 
     try {
@@ -51,21 +50,14 @@ export default class SMSStatsRequest {
 
       query = _.omit(query, value => !value);
       logger.debug('finished data normalisation', query);
-      cb(null, query);
+      return query;
     } catch (err) {
       logger.error('error occurred when normalised data for SMS stats request', err);
-      cb(handleError(err, 500), null);
+      throw handleError(err, 500);
     }
   }
 
-  sendRequest(endpoint, params, loadBalanceIndex = 0, cb) {
-    if (!cb && _.isFunction(loadBalanceIndex)) {
-      // eslint-disable-next-line no-param-reassign
-      cb = loadBalanceIndex;
-      // eslint-disable-next-line no-param-reassign
-      loadBalanceIndex = 0;
-    }
-
+  async sendRequest(endpoint, params, loadBalanceIndex = 0) {
     let baseUrl = this.opts.baseUrl;
     const baseUrlArray = baseUrl.split(',');
 
@@ -80,32 +72,20 @@ export default class SMSStatsRequest {
 
     logger.debug(`SMS Statistic API Endpoint: ${reqUrl}?${qs.stringify(params)}`);
 
-    request(endpoint.METHOD, reqUrl)
-      .query(params)
-      .buffer()
-      .timeout(this.opts.timeout)
-      .end((err, res) => {
-        if (err) {
-          logger.error(`error received from %s: ${reqUrl}`, err);
-          cb(err);
-          return;
-        }
-
-        logger.debug(`response received from %s: ${reqUrl}`, jsonSchema(res.body));
-        cb(null, res.body);
-      });
+    try {
+      const res = await request(endpoint.METHOD, reqUrl).query(params).buffer().timeout(this.opts.timeout);
+      logger.debug(`response received from %s: ${reqUrl}`, jsonSchema(res.body));
+      return res.body;
+    } catch (err) {
+      logger.error(`error received from %s: ${reqUrl}`, err);
+      throw err;
+    }
   }
 
-  getSMSStats(params, cb) {
-    Q
-      .ninvoke(this, 'normalizeData', REQUEST_TYPE.SMS, params)
-      .then(query => {
-        this.sendRequest(this.opts.endpoints.SMS, query, cb);
-      })
-      .catch(err => {
-        logger.error('error occurred in getSMSStats()', err);
-        cb(handleError(err, err.status || 500));
-      })
-      .done();
+  async getSMSStats(params) {
+    const query = this.normalizeData(REQUEST_TYPE.SMS, params);
+
+    const res = await this.sendRequest(this.opts.endpoints.SMS, query);
+    return res;
   }
 }

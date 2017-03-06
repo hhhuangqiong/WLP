@@ -1,6 +1,5 @@
 import logger from 'winston';
 import nconf from 'nconf';
-import Q from 'q';
 import request from 'superagent';
 import util from 'util';
 import _ from 'lodash';
@@ -127,7 +126,6 @@ export default class VerificationRequest {
    * as the index of the api endpoints array
    */
   async sendRequest(endpoint, params, loadBalanceIndex = 0) {
-
     let baseUrl = this.opts.baseUrl;
     const baseUrlArray = baseUrl.split(',');
 
@@ -143,35 +141,12 @@ export default class VerificationRequest {
     logger.debug(`Verification API Endpoint: ${reqUrl}?${qs.stringify(params)}`);
 
     try {
-      const req = request(endpoint.METHOD, reqUrl).query(params).buffer().timeout(this.opts.timeout);
-      const res = await req;
+      const res = await request(endpoint.METHOD, reqUrl).query(params).buffer().timeout(this.opts.timeout);
       logger.debug(util.format('Received a response from %s: ', reqUrl), jsonSchema(res.body));
       return res.body;
     } catch (err) {
-      // TODO: generalize the network error handling (maybe extending Error class?)
-      const error = new Error();
-      error.status = err.status;
-      error.message = err.message;
-
-      if (err.code === 'ETIMEDOUT' || err.code === 'ECONNABORTED') {
-        error.status = 504;
-        error.timeout = this.opts.timeout;
-      } else if (err.code === 'ENOTFOUND') {
-        error.status = 404;
-      } else if (err.code === 'ECONNREFUSED') {
-        error.status = 500;
-      } else if (err.response) {
-        // SuperAgent error object structure
-        // https://visionmedia.github.io/superagent/#error-handling
-        const response = err.response.body;
-        error.status = err.status;
-        error.code = response.error;
-        error.message = response.message;
-      }
-
-      logger.debug(util.format('Received a %s response from %s: %s',
-        error.status, reqUrl, error.message));
-      throw err;
+      logger.error(`Request to ${endpoint.METHOD} ${endpoint.PATH} failed`, err);
+      throw handleError(err, err.status || 400);
     }
   }
 
@@ -186,12 +161,8 @@ export default class VerificationRequest {
     const query = this.convertDateInParamsFromIsoToTimestamp(params);
     const paramsAfterFormatQuery = this.formatQueryParameters(query);
 
-    try {
-      const result = await this.sendRequest(this.opts.endpoints.SEARCH, paramsAfterFormatQuery);
-      return result;
-    } catch (err) {
-      throw err;
-    }
+    const result = await this.sendRequest(this.opts.endpoints.SEARCH, paramsAfterFormatQuery);
+    return result;
   }
 
   /**
@@ -204,11 +175,7 @@ export default class VerificationRequest {
       breakdown: groupBy,
     }));
 
-    try {
-      const result = await this.sendRequest(this.opts.endpoints.STATS, formattedParams);
-      return result;
-    } catch (err) {
-      throw err;
-    }
+    const result = await this.sendRequest(this.opts.endpoints.STATS, formattedParams);
+    return result;
   }
 }

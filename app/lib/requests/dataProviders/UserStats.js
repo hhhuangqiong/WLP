@@ -1,5 +1,4 @@
 import logger from 'winston';
-import Q from 'q';
 import request from 'superagent';
 import util from 'util';
 import _ from 'lodash';
@@ -73,12 +72,7 @@ export default class UserStatsRequest {
     }
   }
 
-  sendRequest(endpoint, params, loadBalanceIndex = 0, cb) {
-    if (!cb && _.isFunction(loadBalanceIndex)) {
-      cb = loadBalanceIndex;
-      loadBalanceIndex = 0;
-    }
-
+  async sendRequest(endpoint, params, loadBalanceIndex = 0) {
     let baseUrl = this.opts.baseUrl;
     const baseUrlArray = baseUrl.split(',');
 
@@ -93,49 +87,36 @@ export default class UserStatsRequest {
 
     logger.debug(`EndUser Statistic API Endpoint: ${reqUrl}?${qs.stringify(params)}`);
 
-    request(endpoint.METHOD, reqUrl)
-      .query(params)
-      .buffer()
-      .timeout(this.opts.timeout)
-      .end((err, res) => {
-        if (err) {
-          // @TODO since timeout won't have res and prevent exception from undefeined res.body
-          logger.debug('Received error', err);
-          if (res) {
-            logger.debug(util.format('Received error response from %s: ', reqUrl), jsonSchema(res.body));
-          }
-          cb(err);
-          return;
-        }
-
-        cb(null, res.body);
-      });
+    try {
+      const res = await request(endpoint.METHOD, reqUrl)
+                        .query(params)
+                        .buffer()
+                        .timeout(this.opts.timeout);
+      return res.body;
+    } catch (err) {
+      logger.debug(util.format('Received error response from %s: ', reqUrl));
+      throw handleError(err, err.status || 400);
+    }
   }
 
-  getUserStats(params, cb) {
+  async getUserStats(params) {
     const query = this.normalizeData(REQUEST_TYPE.USER, params);
-    try {
-      this.sendRequest(this.opts.endpoints.USER, query, cb);
-    } catch (err) {
-      cb(handleError(err, err.status || 500));
-    }
+
+    const res = await this.sendRequest(this.opts.endpoints.USER, query);
+    return res;
   }
 
-  getNewUserStats(params, cb) {
+  async getNewUserStats(params) {
     const query = this.normalizeData(REQUEST_TYPE.NEW_USERS, params);
-    try {
-      this.sendRequest(this.opts.endpoints.NEW_USERS, query, cb);
-    } catch (err) {
-      cb(handleError(err, err.status || 500));
-    }
+
+    const res = await this.sendRequest(this.opts.endpoints.NEW_USERS, query);
+    return res;
   }
 
-  getActiveUserStats(params, cb) {
+  async getActiveUserStats(params) {
     const query = this.normalizeData(REQUEST_TYPE.USER.ACTIVE_USERS, params);
-    try {
-      this.sendRequest(this.opts.endpoints.ACTIVE_USERS, query, cb);
-    } catch (err) {
-      cb(handleError(err, err.status || 500));
-    }
+
+    const res = await this.sendRequest(this.opts.endpoints.ACTIVE_USERS, query);
+    return res;
   }
 }

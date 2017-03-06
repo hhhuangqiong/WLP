@@ -1,10 +1,10 @@
 import _ from 'lodash';
 
-export function parseTotalAtTime(stats, cb) {
+export function parseTotalAtTime(stats) {
   const { data } = stats.results[0];
   const result = _.last(data);
 
-  return cb(null, result.v);
+  return result.v;
 }
 
 export function parseMonthlyTotalInTime(stats) {

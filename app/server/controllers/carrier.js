@@ -526,7 +526,7 @@ export default function carriersController() {
     }
   }
 
-  function getSMSStats(req, res) {
+  async function getSMSStats(req, res) {
     req.checkParams('carrierId').notEmpty();
     req.checkQuery('fromTime').notEmpty();
     req.checkQuery('toTime').notEmpty();
@@ -566,17 +566,18 @@ export default function carriersController() {
       type,
     }, val => !val);
 
-    Q.ninvoke(smsStatsRequest, 'getSMSStats', params).then(result => {
+    try {
+      const result = await smsStatsRequest.getSMSStats(params);
       // not using res.apiResponse
       // because it acts as a dataProvider proxy only
       res.status(200).json(_.merge({ success: true }, result));
-    }).catch(err => {
+    } catch (err) {
       logger.error(err);
       res.apiError(500, new dataError.TransactionError(err.message, err));
-    });
+    }
   }
 
-  function getSMSMonthlyStats(req, res) {
+  async function getSMSMonthlyStats(req, res) {
     req.checkParams('carrierId').notEmpty();
     req.checkQuery('fromTime').notEmpty();
     req.checkQuery('toTime').notEmpty();
@@ -611,39 +612,37 @@ export default function carriersController() {
       stat_type: statType,
     });
 
-    Q
-      .all([
-        Q.ninvoke(smsStatsRequest, 'getSMSStats', thisMonthParams),
-        Q.ninvoke(smsStatsRequest, 'getSMSStats', prevMonthParams),
-      ])
-      .spread((thisMonthResult, prevMonthResult) => {
-        const thisMonthData = _.get(thisMonthResult, 'results.0.data');
-        const prevMonthData = _.get(prevMonthResult, 'results.0.data');
+    try {
+      const [thisMonthResult, prevMonthResult] = await Promise.all([
+        smsStatsRequest.getSMSStats(thisMonthParams),
+        smsStatsRequest.getSMSStats(prevMonthParams),
+      ]);
+      const thisMonthData = _.get(thisMonthResult, 'results.0.data');
+      const prevMonthData = _.get(prevMonthResult, 'results.0.data');
 
-        if (!thisMonthData || !prevMonthData) {
-          logger.error('missing data set to compute monthly stats', thisMonthData, prevMonthData);
-          throw new Error('incomplete data set');
-        }
+      if (!thisMonthData || !prevMonthData) {
+        logger.error('missing data set to compute monthly stats', thisMonthData, prevMonthData);
+        throw new Error('incomplete data set');
+      }
 
-        const thisMonthTotal = getTotalFromSegmentData(thisMonthData);
-        const prevMonthTotal = getTotalFromSegmentData(prevMonthData);
-        const data = parseStatsComparison(thisMonthTotal, prevMonthTotal);
+      const thisMonthTotal = getTotalFromSegmentData(thisMonthData);
+      const prevMonthTotal = getTotalFromSegmentData(prevMonthData);
+      const data = parseStatsComparison(thisMonthTotal, prevMonthTotal);
 
-        // not using res.apiResponse
-        // because it failed adopt jsonApi spec,
-        // as it does not contain `id` field
-        res.status(200).json({
-          success: true,
-          data,
-        });
-      })
-      .catch(err => {
-        logger.error('error occurred when fetching sms monthly stats', err);
-        res.apiError(500, new dataError.TransactionError(err.message, err));
+      // not using res.apiResponse
+      // because it failed adopt jsonApi spec,
+      // as it does not contain `id` field
+      res.status(200).json({
+        success: true,
+        data,
       });
+    } catch (err) {
+      logger.error('error occurred when fetching sms monthly stats', err);
+      res.apiError(500, new dataError.TransactionError(err.message, err));
+    }
   }
 
-  function getSMSSummaryStats(req, res) {
+  async function getSMSSummaryStats(req, res) {
     req.checkParams('carrierId').notEmpty();
     req.checkQuery('fromTime').notEmpty();
     req.checkQuery('toTime').notEmpty();
@@ -714,64 +713,68 @@ export default function carriersController() {
       return getTotalFromSegments(segments);
     }
 
-    Q
-      .all([
-        Q.ninvoke(smsStatsRequest, 'getSMSStats', thisTimeRangeParams),
-        Q.ninvoke(smsStatsRequest, 'getSMSStats', prevTimeRangeParams),
-        Q.ninvoke(smsStatsRequest, 'getSMSStats', lineChartParams),
-        Q.ninvoke(smsStatsRequest, 'getSMSStats', geographicChartParams),
-      ])
-      .spread((thisTimeRangeResult, prevTimeRangeResult, lineChartResult, geographicChartResult) => {
-        const thisTimeRangeResults = _.get(thisTimeRangeResult, 'results');
-        const prevTimeRangeResults = _.get(prevTimeRangeResult, 'results');
-        const lineChartResults = _.get(lineChartResult, 'results');
-        const geographicChartResults = _.get(geographicChartResult, 'results');
+    try {
+      const [
+        thisTimeRangeResult,
+        prevTimeRangeResult,
+        lineChartResult,
+        geographicChartResult,
+      ] = await Promise.all([
+        smsStatsRequest.getSMSStats(thisTimeRangeParams),
+        smsStatsRequest.getSMSStats(prevTimeRangeParams),
+        smsStatsRequest.getSMSStats(lineChartParams),
+        smsStatsRequest.getSMSStats(geographicChartParams),
+      ]);
 
-        if (!thisTimeRangeResults || !prevTimeRangeResults || !lineChartResults || !geographicChartResults) {
-          logger.error('missing data set to compute monthly stats', thisTimeRangeResults, prevTimeRangeResults, lineChartResults, geographicChartResults);
-          throw new Error('incomplete data set');
+      const thisTimeRangeResults = _.get(thisTimeRangeResult, 'results');
+      const prevTimeRangeResults = _.get(prevTimeRangeResult, 'results');
+      const lineChartResults = _.get(lineChartResult, 'results');
+      const geographicChartResults = _.get(geographicChartResult, 'results');
+
+      if (!thisTimeRangeResults || !prevTimeRangeResults || !lineChartResults || !geographicChartResults) {
+        logger.error('missing data set to compute monthly stats', thisTimeRangeResults, prevTimeRangeResults, lineChartResults, geographicChartResults);
+        throw new Error('incomplete data set');
+      }
+
+      const lineChartData = _.get(lineChartResults, '0.data');
+      const geographicChartData = _.reduce(geographicChartResults, (result, { segment, data }) => {
+        const { country } = segment;
+        if (country) {
+          result[country] = data;
         }
+        return result;
+      }, {});
 
-        const lineChartData = _.get(lineChartResults, '0.data');
-        const geographicChartData = _.reduce(geographicChartResults, (result, { segment, data }) => {
-          const { country } = segment;
-          if (country) {
-            result[country] = data;
-          }
-          return result;
-        }, {});
+      let data = { lineChart: lineChartData, geographicChart: geographicChartData };
 
-        let data = { lineChart: lineChartData, geographicChart: geographicChartData };
+      let thisMonthSubTotal = 0;
+      let prevMonthSubTotal = 0;
 
-        let thisMonthSubTotal = 0;
-        let prevMonthSubTotal = 0;
+      data = _.reduce(types, (result, status, statusKey) => {
+        const currentTotal = getTotalByProperty(thisTimeRangeResults, { status });
+        const prevTotal = getTotalByProperty(prevTimeRangeResults, { status });
 
-        data = _.reduce(types, (result, status, statusKey) => {
-          const currentTotal = getTotalByProperty(thisTimeRangeResults, { status });
-          const prevTotal = getTotalByProperty(prevTimeRangeResults, { status });
+        thisMonthSubTotal += currentTotal;
+        prevMonthSubTotal += prevTotal;
 
-          thisMonthSubTotal += currentTotal;
-          prevMonthSubTotal += prevTotal;
+        // eslint-disable-next-line no-param-reassign
+        result[statusKey] = parseStatsComparison(currentTotal, prevTotal);
+        return result;
+      }, data);
 
-          // eslint-disable-next-line no-param-reassign
-          result[statusKey] = parseStatsComparison(currentTotal, prevTotal);
-          return result;
-        }, data);
+      _.assign(data, { total: parseStatsComparison(thisMonthSubTotal, prevMonthSubTotal) });
 
-        _.assign(data, { total: parseStatsComparison(thisMonthSubTotal, prevMonthSubTotal) });
-
-        // not using res.apiResponse
-        // because it failed adopt jsonApi spec,
-        // as it does not contain `id` field
-        res.status(200).json({
-          success: true,
-          data,
-        });
-      })
-      .catch(err => {
-        logger.error('error occurred when fetching im stats', err);
-        res.apiError(500, new dataError.TransactionError(err.message, err));
+      // not using res.apiResponse
+      // because it failed adopt jsonApi spec,
+      // as it does not contain `id` field
+      res.status(200).json({
+        success: true,
+        data,
       });
+    } catch (err) {
+      logger.error('error occurred when fetching im stats', err);
+      res.apiError(500, new dataError.TransactionError(err.message, err));
+    }
   }
 
 // '/carriers/:carrierId/im'
@@ -928,13 +931,13 @@ export default function carriersController() {
     }
   };
 
-  function validateStatisticsRequest(req, cb) {
+  function validateStatisticsRequest(req) {
     req.checkParams('carrierId').notEmpty();
     req.checkQuery('application').notEmpty();
     req.checkQuery('from').notEmpty();
     req.checkQuery('to').notEmpty();
 
-    cb(req.validationErrors());
+    return req.validationErrors();
   }
 
   function mapVerificationStatsRequestParameters(req) {
@@ -948,39 +951,39 @@ export default function carriersController() {
     }, val => !val);
   }
 
-  function getVerificationStatistics(req, res) {
-    validateStatisticsRequest(req, err => {
-      if (err) {
-        res.status(400).json({
-          error: {
-            message: prepareValidationMessage(err),
-          },
-        });
+  async function getVerificationStatistics(req, res) {
+    const err = validateStatisticsRequest(req);
 
-        return;
-      }
+    if (err) {
+      res.status(400).json({
+        error: {
+          message: prepareValidationMessage(err),
+        },
+      });
+      return;
+    }
 
+    try {
       const params = mapVerificationStatsRequestParameters(req);
       const breakdownType = req.query.type;
 
-      verificationRequest.getVerificationStats(params, breakdownType)
-      .then(response => Q.nfcall(parseVerificationStatistic, response, params))
-      .then(result => res.json(result))
-      .catch(error => {
-        const { code, message, timeout, status } = error;
+      const response = await verificationRequest.getVerificationStats(params, breakdownType);
+      const result = parseVerificationStatistic(response, params);
+      res.json(result);
+    } catch (error) {
+      const { code, message, timeout, status } = error;
 
-        res.status(status || 500).json({
-          error: {
-            code,
-            message,
-            timeout,
-          },
-        });
+      res.status(status || 500).json({
+        error: {
+          code,
+          message,
+          timeout,
+        },
       });
-    });
+    }
   }
 
-  function getEndUsersStatsTotal(req, res) {
+  async function getEndUsersStatsTotal(req, res) {
     req.checkParams('carrierId').notEmpty();
     req.checkQuery('fromTime').notEmpty();
     req.checkQuery('toTime').notEmpty();
@@ -1005,24 +1008,24 @@ export default function carriersController() {
       timescale: 'day',
     }, val => !val);
 
-    Q
-      .ninvoke(userStatsRequest, 'getUserStats', params)
-      .then(response => Q.nfcall(parseTotalAtTime, response))
-      .then(result => res.json({ totalRegisteredUser: result }))
-      .catch(err => {
-        const { code, message, timeout, status } = err;
+    try {
+      let response = await userStatsRequest.getUserStats(params);
+      response = parseTotalAtTime(response);
+      res.json({ totalRegisteredUser: response });
+    } catch (err) {
+      const { code, message, timeout, status } = err;
 
-        res.status(status || 500).json({
-          error: {
-            code,
-            message,
-            timeout,
-          },
-        });
-      }).done();
+      res.status(status || 500).json({
+        error: {
+          code,
+          message,
+          timeout,
+        },
+      });
+    }
   }
 
-  function getEndUsersStatsMonthly(req, res) {
+  async function getEndUsersStatsMonthly(req, res) {
     req.checkParams('carrierId').notEmpty();
     req.checkQuery('fromTime').notEmpty();
     req.checkQuery('toTime').notEmpty();
@@ -1110,64 +1113,38 @@ export default function carriersController() {
       timescale: 'day',
     }, val => !val);
 
-    Q
-      .allSettled([
-        Q.ninvoke(userStatsRequest, 'getNewUserStats', thisMonthRegisteredParams),
-        Q.ninvoke(userStatsRequest, 'getNewUserStats', lastMonthRegisteredParams),
-        Q.ninvoke(userStatsRequest, 'getActiveUserStats', thisMonthActiveParams),
-        Q.ninvoke(userStatsRequest, 'getActiveUserStats', lastMonthActiveParams),
-      ])
-      .spread((
+    try {
+      const [
         thisMonthRegisteredStats,
         lastMonthRegisteredStats,
         thisMonthActiveStats,
-        lastMonthActiveStats
-      ) => {
-        const responses = [
-          thisMonthRegisteredStats,
-          lastMonthRegisteredStats,
-          thisMonthActiveStats,
-          lastMonthActiveStats,
-        ];
+        lastMonthActiveStats,
+      ] = await Promise.all([
+        userStatsRequest.getNewUserStats(thisMonthRegisteredParams),
+        userStatsRequest.getNewUserStats(lastMonthRegisteredParams),
+        userStatsRequest.getActiveUserStats(thisMonthActiveParams),
+        userStatsRequest.getActiveUserStats(lastMonthActiveParams),
+      ]);
 
-        const errors = _.reduce(responses, (result, response) => {
-          if (response.state !== 'fulfilled') {
-            result.push(response.reason);
-          }
-
-          return result;
-        }, []);
-
-        if (!_.isEmpty(errors)) {
-          res.status(500).json({
-            error: errors,
-          });
-
-          return;
-        }
-
-        res.json({
-          thisMonthActiveUser: parseMonthlyTotalInTime(thisMonthActiveStats.value),
-          lastMonthActiveUser: parseMonthlyTotalInTime(lastMonthActiveStats.value),
-          thisMonthRegisteredUser: parseMonthlyTotalInTime(thisMonthRegisteredStats.value),
-          lastMonthRegisteredUser: parseMonthlyTotalInTime(lastMonthRegisteredStats.value),
-        });
-      })
-      .catch(err => {
-        const { code, message, timeout, status } = err;
-
-        res.status(status || 500).json({
-          error: {
-            code,
-            message,
-            timeout,
-          },
-        });
-      })
-      .done();
+      res.json({
+        thisMonthActiveUser: parseMonthlyTotalInTime(thisMonthActiveStats),
+        lastMonthActiveUser: parseMonthlyTotalInTime(lastMonthActiveStats),
+        thisMonthRegisteredUser: parseMonthlyTotalInTime(thisMonthRegisteredStats),
+        lastMonthRegisteredUser: parseMonthlyTotalInTime(lastMonthRegisteredStats),
+      });
+    } catch (err) {
+      const { code, message, timeout, status } = err;
+      res.status(status || 500).json({
+        error: {
+          code,
+          message,
+          timeout,
+        },
+      });
+    }
   }
 
-  function getEndUsersStats(req, res) {
+  async function getEndUsersStats(req, res) {
     req.checkParams('carrierId').notEmpty();
     req.checkQuery('fromTime').notEmpty();
     req.checkQuery('toTime').notEmpty();
@@ -1198,133 +1175,110 @@ export default function carriersController() {
       case 'registration':
         params.breakdown = 'carrier';
 
-        Q
-          .allSettled([
-            Q.ninvoke(userStatsRequest, 'getNewUserStats', params),
-            Q.ninvoke(userStatsRequest, 'getActiveUserStats', params),
-          ])
-          .spread((newUserStats, activeUserStats) => {
-            const responses = [newUserStats, activeUserStats];
-            const errors = _.reduce(responses, (result, response) => {
-              if (response.state !== 'fulfilled') {
-                result.push(response.reason);
-              }
+        try {
+          const [newUserStats, activeUserStats] = await Promise.all([
+            userStatsRequest.getNewUserStats(params),
+            userStatsRequest.getActiveUserStats(params),
+          ]);
 
-              return result;
-            }, []);
+          res.json({
+            activeUserStats: _.get(activeUserStats, 'results.0.data'),
+            newUserStats: _.get(newUserStats, 'results.0.data'),
+          });
+        } catch (err) {
+          const { code, message, timeout, status } = err;
 
-            if (!_.isEmpty(errors)) {
-              res.status(500).json({
-                error: errors,
-              });
+          res.status(status || 500).json({
+            error: {
+              code,
+              message,
+              timeout,
+            },
+          });
+        }
 
-              return;
-            }
-
-            res.json({
-              activeUserStats: _.get(activeUserStats, 'value.results.0.data'),
-              newUserStats: _.get(newUserStats, 'value.results.0.data'),
-            });
-          })
-          .catch(err => {
-            const { code, message, timeout, status } = err;
-
-            res.status(status || 500).json({
-              error: {
-                code,
-                message,
-                timeout,
-              },
-            });
-          })
-          .done();
         break;
 
       case 'device':
         params.breakdown = 'carrier,platform';
 
-        Q
-          .ninvoke(userStatsRequest, 'getUserStats', params)
-          .then(stats => {
-            const results = _.get(stats, 'results') || [];
+        try {
+          const stats = await userStatsRequest.getUserStats(params);
+          const results = _.get(stats, 'results') || [];
 
-            const deviceStats = _.reduce(results, (data, result) => {
-              data.push({
-                platform: _.get(result, 'segment.platform'),
-                total: _.get(_.last(result.data), 'v'),
-              });
+          const deviceStats = _.map(results, (result) => (
+            {
+              platform: _.get(result, 'segment.platform'),
+              total: _.get(_.last(result.data), 'v'),
+            }
+          ));
 
-              return data;
-            }, []);
+          res.json({ deviceStats });
+        } catch (err) {
+          const { code, message, timeout, status } = err;
 
-            res.json({ deviceStats });
-          })
-          .catch(err => {
-            const { code, message, timeout, status } = err;
+          res.status(status || 500).json({
+            error: {
+              code,
+              message,
+              timeout,
+            },
+          });
+        }
 
-            res.status(status || 500).json({
-              error: {
-                code,
-                message,
-                timeout,
-              },
-            });
-          })
-          .done();
         break;
 
       case 'geographic':
         params.breakdown = 'country';
 
-        Q
-          .ninvoke(userStatsRequest, 'getNewUserStats', params)
-          .then(stats => {
-            const results = _.get(stats, 'results') || [];
+        try {
+          const stats = await userStatsRequest.getNewUserStats(params);
 
-            const geographicStats = _.reduce(results, (data, result) => {
-              let countryCode = _.get(result, 'segment.country');
-              countryCode = _.isString(countryCode) && countryCode.toUpperCase();
+          const results = _.get(stats, 'results') || [];
 
-              data.push({
-                code: countryCode,
-                value: _.reduce(result.data, (total, data) => {
-                  total += data.v;
-                  return total;
-                }, 0),
-                name: !_.isEmpty(countryCode) ? countries[countryCode].name : 'N/A',
-              });
+          const geographicStats = _.reduce(results, (data, result) => {
+            let countryCode = _.get(result, 'segment.country');
+            countryCode = _.isString(countryCode) && countryCode.toUpperCase();
 
-              return data;
-            }, []);
-
-            res.json({ geographicStats });
-          })
-          .catch(err => {
-            const { code, message, timeout, status } = err;
-
-            res.status(status || 500).json({
-              error: {
-                code,
-                message,
-                timeout,
-              },
+            data.push({
+              code: countryCode,
+              value: _.reduce(result.data, (total, data) => {
+                total += data.v;
+                return total;
+              }, 0),
+              name: !_.isEmpty(countryCode) ? countries[countryCode].name : 'N/A',
             });
-          })
-          .done();
+
+            return data;
+          }, []);
+
+          res.json({ geographicStats });
+        } catch (err) {
+          const { code, message, timeout, status } = err;
+
+          res.status(status || 500).json({
+            error: {
+              code,
+              message,
+              timeout,
+            },
+          });
+        }
+
         break;
     }
   }
 
-  function getCallUserStatsMonthly(req, res, next) {
+  async function getCallUserStatsMonthly(req, res) {
     req.checkParams('carrierId').notEmpty();
     req.checkQuery('fromTime').notEmpty();
     req.checkQuery('toTime').notEmpty();
 
     const error = req.validationErrors();
 
+
     if (error) {
-      next(new ValidationError(prepareValidationMessage(error)));
-      return;
+      throw new ValidationError(prepareValidationMessage(error));
     }
 
     const { fromTime, toTime, type } = req.query;
@@ -1368,137 +1322,92 @@ export default function carriersController() {
     const currentMonthStatKey = makeCacheKey('callUserStatsMonthly', thisMonthParams);
     const lastMonthStatKey = makeCacheKey('callUserStatsMonthly', lastMonthParams);
 
-    Q
-      .allSettled([
+    try {
+      let [thisMonthCallUser, lastMonthCallUser] = await Promise.all([
         Q.ninvoke(redisClient, 'get', currentMonthStatKey),
         Q.ninvoke(redisClient, 'get', lastMonthStatKey),
-      ])
-      .spread((currentMonthStat, lastMonthStat) => {
-        const thisMonthCallUser = _.get(currentMonthStat, 'value');
-        let lastMonthCallUser = _.get(lastMonthStat, 'value');
+      ]);
 
-        // prevent from refetching via data provider if and only if
-        // both this & last month data could be found in redis
-        if (thisMonthCallUser && lastMonthCallUser) {
-          logger.debug(
-            'cache data is found on redis with key %s and key %s',
-            currentMonthStatKey,
-            lastMonthStatKey
-          );
+      if (thisMonthCallUser && lastMonthCallUser) {
+        logger.debug(
+          'cache data is found on redis with key %s and key %s',
+          currentMonthStatKey,
+          lastMonthStatKey
+        );
 
-          res.json({
-            thisMonthCallUser: parseInt(thisMonthCallUser, 10),
-            lastMonthCallUser: parseInt(lastMonthCallUser, 10),
-          });
+        res.json({
+          thisMonthCallUser: parseInt(thisMonthCallUser, 10),
+          lastMonthCallUser: parseInt(lastMonthCallUser, 10),
+        });
 
-          return;
+        return;
+      }
+
+      // this is what we originally did:
+      // do the query from data provider server
+      const [
+        thisMonthCallerStats,
+        lastMonthCallerStats,
+        thisMonthCalleeStats,
+        lastMonthCalleeStats,
+      ] = await Promise.all([
+        callStatsRequest.getCallerStats(thisMonthParams),
+        callStatsRequest.getCallerStats(lastMonthParams),
+        callStatsRequest.getCalleeStats(thisMonthParams),
+        callStatsRequest.getCalleeStats(lastMonthParams),
+      ]);
+
+      const thisMonthCallers = _.get(thisMonthCallerStats, '0.data');
+      const thisMonthCallees = _.get(thisMonthCalleeStats, '0.data');
+
+      // concat callee with carrierId into caller array
+      // as callee contains OFFNET user
+      // that for callee is already done by parameter of caller_carrier
+      thisMonthCallUser = _.reduce(thisMonthCallees, (result, callee) => {
+        if (callee.indexOf(carrierId) > 0) {
+          result.push(callee);
         }
 
-        // this is what we originally did:
-        // do the query from data provider server
-        Q
-          .allSettled([
-            Q.ninvoke(callStatsRequest, 'getCallerStats', thisMonthParams),
-            Q.ninvoke(callStatsRequest, 'getCallerStats', lastMonthParams),
-            Q.ninvoke(callStatsRequest, 'getCalleeStats', thisMonthParams),
-            Q.ninvoke(callStatsRequest, 'getCalleeStats', lastMonthParams),
-          ])
-          .spread((
-            thisMonthCallerStats,
-            lastMonthCallerStats,
-            thisMonthCalleeStats,
-            lastMonthCalleeStats
-          ) => {
-            const responses = [
-              thisMonthCallerStats,
-              lastMonthCallerStats,
-              thisMonthCalleeStats,
-              lastMonthCalleeStats,
-            ];
+        return result;
+      }, thisMonthCallers);
 
-            const errors = _.reduce(responses, (result, response) => {
-              if (response.state !== 'fulfilled') {
-                result.push(response.reason);
-              }
+      const lastMonthCallers = _.get(lastMonthCallerStats, '0.data');
+      const lastMonthCallees = _.get(lastMonthCalleeStats, '0.data');
 
-              return result;
-            }, []);
+      // concat callee with carrierId into caller array
+      // as callee contains OFFNET user
+      // that for callee is already done by parameter of caller_carrier
+      lastMonthCallUser = _.reduce(lastMonthCallees, (result, callee) => {
+        if (callee.indexOf(carrierId) > 0) {
+          result.push(callee);
+        }
+        return result;
+      }, lastMonthCallers);
 
-            if (!_.isEmpty(errors)) {
-              res.status(500).json({
-                error: errors,
-              });
+      thisMonthCallUser = (_.uniq(thisMonthCallUser)).length;
+      lastMonthCallUser = (_.uniq(lastMonthCallUser)).length;
 
-              return;
-            }
+      // REMOVE THIS WHEN PERFORMANCE ISSUE IS RESOLVED
+      // put the result into cache
+      redisClient.set(currentMonthStatKey, thisMonthCallUser);
+      redisClient.set(lastMonthStatKey, lastMonthCallUser);
 
-            const thisMonthCallers = _.get(thisMonthCallerStats, 'value.0.data');
-            const thisMonthCallees = _.get(thisMonthCalleeStats, 'value.0.data');
-
-            // concat callee with carrierId into caller array
-            // as callee contains OFFNET user
-            // that for callee is already done by parameter of caller_carrier
-            let thisMonthCallUser = _.reduce(thisMonthCallees, (result, callee) => {
-              if (callee.indexOf(carrierId) > 0) {
-                result.push(callee);
-              }
-
-              return result;
-            }, thisMonthCallers);
-
-            const lastMonthCallers = _.get(lastMonthCallerStats, 'value.0.data');
-            const lastMonthCallees = _.get(lastMonthCalleeStats, 'value.0.data');
-
-            // concat callee with carrierId into caller array
-            // as callee contains OFFNET user
-            // that for callee is already done by parameter of caller_carrier
-            let lastMonthCallUser = _.reduce(lastMonthCallees, (result, callee) => {
-              if (callee.indexOf(carrierId) > 0) {
-                result.push(callee);
-              }
-              return result;
-            }, lastMonthCallers);
-
-            thisMonthCallUser = (_.uniq(thisMonthCallUser)).length;
-            lastMonthCallUser = (_.uniq(lastMonthCallUser)).length;
-
-            // REMOVE THIS WHEN PERFORMANCE ISSUE IS RESOLVED
-            // put the result into cache
-            redisClient.set(currentMonthStatKey, thisMonthCallUser);
-            redisClient.set(lastMonthStatKey, lastMonthCallUser);
-
-            res.json({
-              thisMonthCallUser, lastMonthCallUser,
-            });
-          })
-          .catch(err => {
-            const { code, message, timeout, status } = err;
-
-            res.status(status || 500).json({
-              error: {
-                code,
-                message,
-                timeout,
-              },
-            });
-          })
-          .done();
-      })
-      .catch(err => {
-        const { code, message, timeout, status } = err;
-
-        res.status(status || 500).json({
-          error: {
-            code,
-            message,
-            timeout,
-          },
-        });
-      })
-      .done();
+      res.json({
+        thisMonthCallUser, lastMonthCallUser,
+      });
+    } catch (err) {
+      const { code, message, timeout, status } = err;
+      res.status(status || 500).json({
+        error: {
+          code,
+          message,
+          timeout,
+        },
+      });
+    }
   }
 
-  function getOverviewDetailStats(req, res, next) {
+  async function getOverviewDetailStats(req, res) {
     req.checkParams('carrierId').notEmpty();
 
     req.checkQuery('from').notEmpty();
@@ -1515,16 +1424,16 @@ export default function carriersController() {
     const { from, to, timescale } = req.query;
     const { carrierId: carriers } = req.params;
 
-    overviewStatsRequest
-      .getDetailStats({ from, to, timescale, carriers })
-      .then(stats => res.json({ stats }))
-      .catch(sendRequestError => {
-        const error = new dataError.TransactionError(sendRequestError.message, sendRequestError);
-        res.apiError(500, error);
-      });
+    try {
+      const stats = await overviewStatsRequest.getDetailStats({ from, to, timescale, carriers });
+      res.json({ stats });
+    } catch (sendRequestError) {
+      const err = new dataError.TransactionError(sendRequestError.message, sendRequestError);
+      res.apiError(500, err);
+    }
   }
 
-  function getOverviewSummaryStats(req, res, next) {
+  async function getOverviewSummaryStats(req, res) {
     req.checkParams('carrierId').notEmpty();
 
     req.checkQuery('from').notEmpty();
@@ -1542,12 +1451,13 @@ export default function carriersController() {
     const { from, to, timescale, breakdown } = req.query;
     const { carrierId: carriers } = req.params;
 
-    overviewStatsRequest
-      .getSummaryStats({ from, to, timescale, carriers, breakdown })
-      .then(stats => res.json({ stats }))
-      .catch(sendRequestError => {
-        res.apiError(500, new dataError.TransactionError(sendRequestError.message, sendRequestError));
-      });
+    try {
+      const stats = await overviewStatsRequest
+                        .getSummaryStats({ from, to, timescale, carriers, breakdown });
+      res.json({ stats });
+    } catch (sendRequestError) {
+      res.apiError(500, new dataError.TransactionError(sendRequestError.message, sendRequestError));
+    }
   }
 
   function getVsfMonthlyStats(req, res, next) {
@@ -1598,7 +1508,17 @@ export default function carriersController() {
       });
   }
 
-  function getCallUserStatsTotal(req, res, next) {
+  function makeEmptyStats(reference) {
+    return _.reduce(reference, (total, stat) => {
+      total.push({
+        t: stat.t,
+        v: 0,
+      });
+      return total;
+    }, []);
+  }
+
+  async function getCallUserStatsTotal(req, res) {
     req.checkParams('carrierId').notEmpty();
     req.checkQuery('fromTime').notEmpty();
     req.checkQuery('toTime').notEmpty();
@@ -1606,8 +1526,7 @@ export default function carriersController() {
     const error = req.validationErrors();
 
     if (error) {
-      next(new ValidationError(prepareValidationMessage(error)));
-      return;
+      throw new ValidationError(prepareValidationMessage(error));
     }
 
     const { carrierId } = req.params;
@@ -1642,102 +1561,66 @@ export default function carriersController() {
       type,
     }, val => !val);
 
-    Q
-      .allSettled([
-        Q.ninvoke(callStatsRequest, 'getCallStats', callAttemptParams),
-        Q.ninvoke(callStatsRequest, 'getCallStats', tcdParams),
-        Q.ninvoke(callStatsRequest, 'getCallStats', acdParams),
-      ])
-      .spread((callAttemptStats, tcdStats, acdStats) => {
-        const responses = [callAttemptStats, tcdStats, acdStats];
-        const errors = _.reduce(responses, (result, response) => {
-          if (response.state !== 'fulfilled') {
-            result.push(response.reason);
-          }
+    try {
+      const [callAttemptStats, tcdStats, acdStats] = await Promise.all([
+        callStatsRequest.getCallStats(callAttemptParams),
+        callStatsRequest.getCallStats(tcdParams),
+        callStatsRequest.getCallerStats(acdParams),
+      ]);
 
-          return result;
-        }, []);
-
-        if (!_.isEmpty(errors)) {
-          // always return the first error
-          res
-            .status(errors[0].status || 500)
-            .json({ error: {
-              name: errors[0].name,
-              message: errors[0].message,
-            } });
-
-          return;
-        }
-
-        callAttemptStats = _.get(callAttemptStats, 'value');
-
-        let successAttemptStats = _.get(_.find(callAttemptStats, stat => (
+      let successAttemptStats = _.get(_.find(callAttemptStats, stat => (
           stat.segment.success === 'true'
         )), 'data');
 
-        let failureAttemptStats = _.get(_.find(callAttemptStats, stat => (
-          stat.segment.success === 'false'
-        )), 'data');
+      let failureAttemptStats = _.get(_.find(callAttemptStats, stat => (
+        stat.segment.success === 'false'
+      )), 'data');
 
-        function makeEmptyStats(reference) {
-          return _.reduce(reference, (total, stat) => {
-            total.push({
-              t: stat.t,
-              v: 0
-            });
-            return total;
-          }, []);
-        }
+      if (_.isUndefined(successAttemptStats) && !_.isUndefined(failureAttemptStats)) {
+        successAttemptStats = makeEmptyStats(failureAttemptStats);
+      } else if (!_.isUndefined(successAttemptStats) && _.isUndefined(failureAttemptStats)) {
+        failureAttemptStats = makeEmptyStats(successAttemptStats);
+      }
 
-        if (_.isUndefined(successAttemptStats) && !_.isUndefined(failureAttemptStats)) {
-          successAttemptStats = makeEmptyStats(failureAttemptStats);
-        } else if (!_.isUndefined(successAttemptStats) && _.isUndefined(failureAttemptStats)) {
-          failureAttemptStats = makeEmptyStats(successAttemptStats);
-        }
-
-        const totalAttemptStats = _.reduce(failureAttemptStats, (total, stat) => {
-          total.push({
-            t: stat.t,
-            v: stat.v + _.result(_.find(successAttemptStats, saStat => saStat.t === stat.t), 'v'),
-          });
-          return total;
-        }, []);
-
-        const successRate = _.reduce(totalAttemptStats, (rates, stat) => {
-          const total = stat.v;
-
-          const success = _.result(_.find(successAttemptStats, saStat => saStat.t === stat.t), 'v');
-
-          rates.push({
-            t: stat.t,
-            v: (total === 0) ? 0 : (success / total) * 100,
-          });
-
-          return rates;
-        }, []);
-
-        acdStats = _.get(acdStats, 'value');
-
-        const averageDurationStats = _.get(_.find(
-          acdStats,
-          stat => stat.segment.success === 'true'
-        ), 'data');
-
-        res.json({
-          totalAttemptStats,
-          successAttemptStats,
-          successRateStats: successRate,
-          totalDurationStats: _.get(tcdStats, 'value.0.data'),
-          averageDurationStats,
+      const totalAttemptStats = _.reduce(failureAttemptStats, (total, stat) => {
+        total.push({
+          t: stat.t,
+          v: stat.v + _.result(_.find(successAttemptStats, saStat => saStat.t === stat.t), 'v'),
         });
-      })
-      .catch(err => {
-        next(new dataError.TransactionError(err.message, err));
+        return total;
+      }, []);
+
+      const successRate = _.reduce(totalAttemptStats, (rates, stat) => {
+        const total = stat.v;
+
+        const success = _.result(_.find(successAttemptStats, saStat => saStat.t === stat.t), 'v');
+
+        rates.push({
+          t: stat.t,
+          v: (total === 0) ? 0 : (success / total) * 100,
+        });
+
+        return rates;
+      }, []);
+
+      const averageDurationStats = _.get(_.find(
+        acdStats,
+        stat => stat.segment.success === 'true'
+      ), 'data');
+
+      res.json({
+        totalAttemptStats,
+        successAttemptStats,
+        successRateStats: successRate,
+        totalDurationStats: _.get(tcdStats, '0.data'),
+        averageDurationStats,
       });
+    } catch (err) {
+      throw new dataError.TransactionError(err.message, err);
+    }
   }
 
-  function getIMStats(req, res) {
+  async function getIMStats(req, res) {
     req.checkParams('carrierId').notEmpty();
     req.checkQuery('fromTime').notEmpty();
     req.checkQuery('toTime').notEmpty();
@@ -1760,17 +1643,18 @@ export default function carriersController() {
       breakdown,
     }, val => !val);
 
-    Q.ninvoke(imStatsRequest, 'getImStats', params).then(result => {
+    try {
+      const result = await imStatsRequest.getImStats(params);
       // not using res.apiResponse
       // because it acts as a dataProvider proxy only
       res.status(200).json(_.merge({ success: true }, result));
-    }).catch(err => {
+    } catch (err) {
       logger.error(err);
       res.apiError(500, new dataError.TransactionError(err.message, err));
-    });
+    }
   }
 
-  function getIMMonthlyStats(req, res) {
+  async function getIMMonthlyStats(req, res) {
     req.checkParams('carrierId').notEmpty();
     req.checkQuery('fromTime').notEmpty();
     req.checkQuery('toTime').notEmpty();
@@ -1802,39 +1686,38 @@ export default function carriersController() {
       breakdown,
     });
 
-    Q
-      .all([
-        Q.ninvoke(imStatsRequest, 'getImStats', thisMonthParams),
-        Q.ninvoke(imStatsRequest, 'getImStats', prevMonthParams),
-      ])
-      .spread((thisMonthResult, prevMonthResult) => {
-        const thisMonthData = _.get(thisMonthResult, 'results.0.data');
-        const prevMonthData = _.get(prevMonthResult, 'results.0.data');
+    try {
+      const [thisMonthResult, prevMonthResult] = await Promise.all([
+        imStatsRequest.getImStats(thisMonthParams),
+        imStatsRequest.getImStats(prevMonthParams),
+      ]);
 
-        if (!thisMonthData || !prevMonthData) {
-          logger.error('missing data set to compute monthly stats', thisMonthData, prevMonthData);
-          throw new Error('incomplete data set');
-        }
+      const thisMonthData = _.get(thisMonthResult, 'results.0.data');
+      const prevMonthData = _.get(prevMonthResult, 'results.0.data');
 
-        const thisMonthTotal = getTotalFromSegmentData(thisMonthData);
-        const prevMonthTotal = getTotalFromSegmentData(prevMonthData);
-        const data = parseStatsComparison(thisMonthTotal, prevMonthTotal);
+      if (!thisMonthData || !prevMonthData) {
+        logger.error('missing data set to compute monthly stats', thisMonthData, prevMonthData);
+        throw new Error('incomplete data set');
+      }
 
-        // not using res.apiResponse
-        // because it failed adopt jsonApi spec,
-        // as it does not contain `id` field
-        res.status(200).json({
-          success: true,
-          data,
-        });
-      })
-      .catch(err => {
-        logger.error('error occurred when fetching im stats', err);
-        res.apiError(500, new dataError.TransactionError(err.message, err));
+      const thisMonthTotal = getTotalFromSegmentData(thisMonthData);
+      const prevMonthTotal = getTotalFromSegmentData(prevMonthData);
+      const data = parseStatsComparison(thisMonthTotal, prevMonthTotal);
+
+      // not using res.apiResponse
+      // because it failed adopt jsonApi spec,
+      // as it does not contain `id` field
+      res.status(200).json({
+        success: true,
+        data,
       });
+    } catch (err) {
+      logger.error('error occurred when fetching im stats', err);
+      res.apiError(500, new dataError.TransactionError(err.message, err));
+    }
   }
 
-  function getIMSummaryStats(req, res) {
+  async function getIMSummaryStats(req, res) {
     req.checkParams('carrierId').notEmpty();
     req.checkQuery('fromTime').notEmpty();
     req.checkQuery('toTime').notEmpty();
@@ -1894,44 +1777,47 @@ export default function carriersController() {
       return getTotalFromSegments(segments);
     }
 
-    Q
-      .all([
-        Q.ninvoke(imStatsRequest, 'getImStats', thisTimeRangeParams),
-        Q.ninvoke(imStatsRequest, 'getImStats', prevTimeRangeParams),
-        Q.ninvoke(imStatsRequest, 'getImStats', lineChartParams),
-      ])
-      .spread((thisTimeRangeResult, prevTimeRangeResult, lineChartResult) => {
-        const thisTimeRangeResults = _.get(thisTimeRangeResult, 'results');
-        const prevTimeRangeResults = _.get(prevTimeRangeResult, 'results');
-        const lineChartData = _.get(lineChartResult, 'results.0.data');
+    try {
+      const [
+        thisTimeRangeResult,
+        prevTimeRangeResult,
+        lineChartResult,
+      ] = await Promise.all([
+        imStatsRequest.getImStats(thisTimeRangeParams),
+        imStatsRequest.getImStats(prevTimeRangeParams),
+        imStatsRequest.getImStats(lineChartParams),
+      ]);
 
-        if (!thisTimeRangeResults || !prevTimeRangeResults || !lineChartData) {
-          logger.error('missing data set to compute monthly stats', thisTimeRangeResults, prevTimeRangeResults, lineChartData);
-          throw new Error('incomplete data set');
-        }
+      const thisTimeRangeResults = _.get(thisTimeRangeResult, 'results');
+      const prevTimeRangeResults = _.get(prevTimeRangeResult, 'results');
+      const lineChartData = _.get(lineChartResult, 'results.0.data');
 
-        let data = { total: lineChartData };
+      if (!thisTimeRangeResults || !prevTimeRangeResults || !lineChartData) {
+        logger.error('missing data set to compute monthly stats', thisTimeRangeResults, prevTimeRangeResults, lineChartData);
+        throw new Error('incomplete data set');
+      }
 
-        data = _.reduce(types, (result, typeNatures, typeKey) => {
-          const currentTotal = getTotalByNature(thisTimeRangeResults, { nature: typeNatures });
-          const prevTotal = getTotalByNature(prevTimeRangeResults, { nature: typeNatures });
-          // eslint-disable-next-line no-param-reassign
-          result[typeKey] = parseStatsComparison(currentTotal, prevTotal);
-          return result;
-        }, data);
+      let data = { total: lineChartData };
 
-        // not using res.apiResponse
-        // because it failed adopt jsonApi spec,
-        // as it does not contain `id` field
-        res.status(200).json({
-          success: true,
-          data,
-        });
-      })
-      .catch(err => {
-        logger.error('error occurred when fetching im stats', err);
-        res.apiError(500, new dataError.TransactionError(err.message, err));
+      data = _.reduce(types, (result, typeNatures, typeKey) => {
+        const currentTotal = getTotalByNature(thisTimeRangeResults, { nature: typeNatures });
+        const prevTotal = getTotalByNature(prevTimeRangeResults, { nature: typeNatures });
+        // eslint-disable-next-line no-param-reassign
+        result[typeKey] = parseStatsComparison(currentTotal, prevTotal);
+        return result;
+      }, data);
+
+      // not using res.apiResponse
+      // because it failed adopt jsonApi spec,
+      // as it does not contain `id` field
+      res.status(200).json({
+        success: true,
+        data,
       });
+    } catch (err) {
+      logger.error('error occurred when fetching im stats', err);
+      res.apiError(500, new dataError.TransactionError(err.message, err));
+    }
   }
 
   /**

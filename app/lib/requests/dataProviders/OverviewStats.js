@@ -32,12 +32,12 @@ export default class OverviewStatsRequest {
   async getDetailStats(params) {
     const countryData = await this.fetchCountryData(params);
 
-    return Promise.resolve({
+    return {
       countryData,
-    });
+    };
   }
 
-  fetchCountryData(params) {
+  async fetchCountryData(params) {
     const schema = Joi.object().keys({
       from: Joi.number().integer().required(),
       to: Joi.number().integer().required(),
@@ -45,22 +45,17 @@ export default class OverviewStatsRequest {
       carriers: Joi.string().required(),
     });
 
-    return new Promise((resolve, reject) => {
-      Joi.validate(params, schema, (validationError, value) => {
-        if (validationError) {
-          reject(new ValidationError(validationError.message));
-          return;
-        }
+    const { error } = Joi.validate(params, schema);
 
-        const updatedParams = params;
-        updatedParams.breakdown = COUNTRY_BREAKDOWN;
+    if (error) {
+      throw new ValidationError(error.message);
+    }
 
-        this
-          .sendRequest(ENDPOINTS.ACCUMULATED, updatedParams)
-          .then(body => resolve(this.parseCountryDataResponse(body)))
-          .catch(error => reject(new ConnectionError(error.message)));
-      });
-    });
+    const updatedParams = params;
+    updatedParams.breakdown = COUNTRY_BREAKDOWN;
+
+    const body = await this.sendRequest(ENDPOINTS.ACCUMULATED, updatedParams);
+    return this.parseCountryDataResponse(body);
   }
 
   parseCountryDataResponse(body) {
@@ -73,17 +68,14 @@ export default class OverviewStatsRequest {
     const { android: verifiedAndroid, ios: verifiedIos } = await this.fetchVerifiedSummary(params);
     */
 
-    return Promise.resolve({
-      registeredAndroid,
-      registeredIos,
-      /* Disabled for WLP-824
+    return { registeredAndroid, registeredIos };
+    /* Disabled for WLP-824
       verifiedAndroid,
       verifiedIos,
-      */
-    });
+    */
   }
 
-  fetchAccumulatedSummary(params) {
+  async fetchAccumulatedSummary(params) {
     const schema = Joi.object().keys({
       from: Joi.number().integer().required(),
       to: Joi.number().integer().required(),
@@ -92,19 +84,14 @@ export default class OverviewStatsRequest {
       breakdown: Joi.string().required(),
     });
 
-    return new Promise((resolve, reject) => {
-      Joi.validate(params, schema, (validationError, value) => {
-        if (validationError) {
-          reject(new ValidationError(validationError.message));
-          return;
-        }
+    const { error } = Joi.validate(params, schema);
 
-        this
-          .sendRequest(ENDPOINTS.ACCUMULATED, params)
-          .then(body => resolve(this.parseAccumulatedSummaryResponse(body)))
-          .catch(error => reject(new ConnectionError(error.message)));
-      });
-    });
+    if (error) {
+      throw new ValidationError(error.message);
+    }
+
+    const body = await this.sendRequest(ENDPOINTS.ACCUMULATED, params);
+    return this.parseAccumulatedSummaryResponse(body);
   }
 
   parseAccumulatedSummaryResponse(body) {
@@ -114,17 +101,16 @@ export default class OverviewStatsRequest {
     };
   }
 
-  fetchVerifiedSummary({ carriers }) {
+  async fetchVerifiedSummary({ carriers }) {
     if (!carriers) {
-      return Promise.reject(new ArgumentNullError('carriers'));
+      throw new ArgumentNullError('carriers');
     }
 
-    return this
-      .sendRequest({
-        PATH: `${ENDPOINTS.VERIFIED.PATH}/${carriers}`,
-        METHOD: ENDPOINTS.VERIFIED.METHOD,
-      })
-      .then(body => this.parseVerifiedSummaryResponse(body));
+    const body = await this.sendRequest({
+      PATH: `${ENDPOINTS.VERIFIED.PATH}/${carriers}`,
+      METHOD: ENDPOINTS.VERIFIED.METHOD,
+    });
+    return this.parseVerifiedSummaryResponse(body);
   }
 
   parseVerifiedSummaryResponse(body) {
@@ -135,31 +121,25 @@ export default class OverviewStatsRequest {
     };
   }
 
-  sendRequest(endpoint, params = {}) {
+  async sendRequest(endpoint, params = {}) {
     if (!this.baseUrl) {
-      return Promise.reject(new ArgumentNullError('baseUrl'));
+      throw new ArgumentNullError('baseUrl');
     }
 
     if (!endpoint || !endpoint.PATH) {
-      return Promise.reject(new ArgumentNullError('endpoint path'));
+      throw new ArgumentNullError('endpoint path');
     }
 
     const reqUrl = `${this.baseUrl}${endpoint.PATH}`;
 
     logger.debug(`Overview Stats API Endpoint: ${reqUrl}?${qs.stringify(params)}`);
 
-    return new Promise((resolve, reject) => {
-      request(endpoint.METHOD, reqUrl)
-        .query(params)
-        .buffer()
-        .timeout(this.timeout)
-        .end((err, res) => {
-          if (err) {
-            reject(handleError(err, err.status || 400));
-            return;
-          }
-          resolve(res.body);
-        });
-    });
+    try {
+      const res = await request(endpoint.METHOD, reqUrl).query(params).buffer().timeout(this.timeout);
+      return res.body;
+    } catch (err) {
+      logger.error(`Request to ${endpoint.METHOD} ${reqUrl} failed`, err);
+      throw handleError(err, err.status || 400);
+    }
   }
 }

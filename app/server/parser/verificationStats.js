@@ -12,7 +12,7 @@ const DEFAULT_TYPES = ['Call-in', 'Call-out', 'SMS', 'IVR'];
  */
 const DEFAULT_PLATFORMS = ['Android', 'IOS'];
 
-function parseStatsByGroup(data, mapDataName, group, fullKeyList, cb) {
+function parseStatsByGroup(data, mapDataName, group, fullKeyList) {
   let total = 0;
   let dataArray = [];
 
@@ -40,15 +40,14 @@ function parseStatsByGroup(data, mapDataName, group, fullKeyList, cb) {
     total,
   };
 
-  cb(null, result);
+  return result;
 }
 
-function parseStatsByStatus(data, params, cb) {
+function parseStatsByStatus(data, params) {
   // Whenever the response is not broken down, it means no records exist in the period.
   // In such cases, return a dummy result for chart drawing.
   if (data.results[0].segment.success === 'all') {
-    cb(null, parseHelper.createDummyResultForByStatusRequest(params));
-    return;
+    return parseHelper.createDummyResultForByStatusRequest(params);
   }
 
   const { successSet, failureSet } = parseHelper.standardiseStatusDataSet(data.results, params);
@@ -92,15 +91,14 @@ function parseStatsByStatus(data, params, cb) {
     averageSuccessRate,
   });
 
-  cb(null, result);
+  return result;
 }
 
-function parseStatsByCountry(data, cb) {
+function parseStatsByCountry(data) {
   // Whenever the response is not broken down, it means no records exist in the period.
   // In such cases, return an empty result.
   if (data.results[0].segment.country === 'all') {
-    cb(null, []);
-    return;
+    return [];
   }
 
   let countries = _.indexBy(data.results, result => result.segment.country.toUpperCase());
@@ -131,10 +129,10 @@ function parseStatsByCountry(data, cb) {
     return result;
   }, {});
 
-  cb(null, _.values(countriesWithValues));
+  return _.values(countriesWithValues);
 }
 
-function parseStatsByPlatform(data, cb) {
+function parseStatsByPlatform(data) {
   const mapDataName = (platform) => {
     switch (platform) {
       case 'ios':
@@ -143,10 +141,10 @@ function parseStatsByPlatform(data, cb) {
         return _.capitalize(platform);
     }
   };
-  return parseStatsByGroup(data, mapDataName, 'platform', DEFAULT_PLATFORMS, cb);
+  return parseStatsByGroup(data, mapDataName, 'platform', DEFAULT_PLATFORMS);
 }
 
-function parseStatsByType(data, cb) {
+function parseStatsByType(data) {
   const mapDataName = (type) => {
     switch (type) {
       case 'MobileTerminated':
@@ -157,25 +155,20 @@ function parseStatsByType(data, cb) {
         return type;
     }
   };
-  return parseStatsByGroup(data, mapDataName, 'type', DEFAULT_TYPES, cb);
+  return parseStatsByGroup(data, mapDataName, 'type', DEFAULT_TYPES);
 }
 
-export function parseVerificationStatistic(data, params, cb) {
+export function parseVerificationStatistic(data, params) {
   switch (params.breakdown) {
     case 'success':
-      parseStatsByStatus(data, params, cb);
-      break;
+      return parseStatsByStatus(data, params);
     case 'platform':
-      parseStatsByPlatform(data, cb);
-      break;
+      return parseStatsByPlatform(data);
     case 'type':
-      parseStatsByType(data, cb);
-      break;
+      return parseStatsByType(data);
     case 'country':
-      parseStatsByCountry(data, cb);
-      break;
+      return parseStatsByCountry(data);
     default:
-      cb(new Error('Unknown request type'));
-      break;
+      throw new Error('Unknown request type');
   }
 }

@@ -1,13 +1,18 @@
 import logger from 'winston';
 import nconf from 'nconf';
-import Q from 'q';
 import request from 'superagent';
 import util from 'util';
 import _ from 'lodash';
 import qs from 'qs';
 
 import { buildImSolrQueryString } from '../queryBuilder/im';
-import { constructOpts, formatDateString, swapDate, composeSolrResponse, handleError } from '../helper';
+import {
+  constructOpts,
+  formatDateString,
+  swapDate,
+  composeSolrResponse,
+  handleError,
+} from '../helper';
 
 const LABEL_FOR_NULL = 'N/A';
 
@@ -105,6 +110,7 @@ export default class ImRequest {
       const res = await req;
       return this.filterData(res.body, params.rows);
     } catch (err) {
+      logger.error(`Request to ${url} failed`, err);
       throw handleError(err, err.status || 400);
     }
   }
@@ -146,13 +152,9 @@ export default class ImRequest {
   async getImStat(params) {
     logger.debug('get im message statistic from BOSS with params', params);
 
-    try {
-      const query = this.formatQueryData(params);
-      const result = await this.sendRequest(query);
-      return result;
-    } catch (err) {
-      throw handleError(err, err.status || 500);
-    }
+    const query = this.formatQueryData(params);
+    const result = await this.sendRequest(query);
+    return result;
   }
 
   /**
@@ -162,12 +164,8 @@ export default class ImRequest {
   async getImSolr(params) {
     logger.debug('get IM message history from dataProvider with params', params);
 
-    try {
-      const query = buildImSolrQueryString(params);
-      const result = await this.sendRequest(query);
-      return result;
-    } catch (err) {
-      throw handleError(err, err.status || 500);
-    }
+    const query = buildImSolrQueryString(params);
+    const result = await this.sendRequest(query);
+    return result;
   }
 }

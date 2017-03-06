@@ -103,6 +103,7 @@ export default class CallsRequest {
       const res = await req;
       return this.filterCalls(res.body, params.rows);
     } catch (err) {
+      logger.error(`Request to ${url} failed`, err);
       throw handleError(err, err.status || 400);
     }
   }
@@ -136,13 +137,9 @@ export default class CallsRequest {
   async getCalls(params) {
     logger.debug('get calls from carrier %s', params);
 
-    try {
-      const formattedDate = this.formatQueryData(params);
-      const queryString = buildCallSolrQueryString(formattedDate);
-      const result = await this.sendRequest(queryString);
-      return result;
-    } catch (err) {
-      throw handleError(err, err.status || 500);
-    }
+    const formattedDate = this.formatQueryData(params);
+    const queryString = buildCallSolrQueryString(formattedDate);
+    const result = await this.sendRequest(queryString);
+    return result;
   }
 }
