@@ -217,10 +217,11 @@ const VerificationTableRow = React.createClass({
   },
 
   render() {
-    const { intl: { formatMessage } } = this.props;
     const verification = this.props.verification;
 
-    const time = moment(verification.timestamp);
+    // WLP-852 To display the start time as the indicator of each record since
+    // it is order by start time from the response data
+    const time = moment(verification.start_time);
     const dateString = dateLocale.format(time, LONG_DATE_FORMAT);
     const timeString = dateLocale.format(time, TIME_WITH_SECOND_FORMAT);
 
