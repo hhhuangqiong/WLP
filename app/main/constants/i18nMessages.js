@@ -37,6 +37,14 @@ export default defineMessages({
     id: 'seconds',
     defaultMessage: 'seconds',
   },
+  min: {
+    id: 'min',
+    defaultMessage: 'min',
+  },
+  sec: {
+    id: 'sec',
+    defaultMessage: 'sec',
+  },
   attempts: {
     id: 'attempts',
     defaultMessage: 'attempts',

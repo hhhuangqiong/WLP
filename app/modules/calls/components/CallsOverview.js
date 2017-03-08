@@ -250,7 +250,7 @@ const CallsOverview = React.createClass({
         symbol: 'circle',
         lineWidth: 2,
         tooltip: {
-          valueSuffix: ' s',
+          valueSuffix: formatMessage(i18nMessages.sec),
         },
       },
       {
@@ -261,7 +261,7 @@ const CallsOverview = React.createClass({
         color: '#D8D8D8',
         yAxis: 1,
         tooltip: {
-          valueSuffix: ' mins',
+          valueSuffix: formatMessage(i18nMessages.min),
           // TODO: make it as a default props for CombinationChart as the value presentation will be shared
           pointFormatter: function pointFormatter() {
             const color = this.color;
@@ -284,6 +284,7 @@ const CallsOverview = React.createClass({
   },
 
   _getDurationLineChartYAxis() {
+    const { intl: { formatMessage } } = this.props;
     return [
       {
         unit: 's',
@@ -292,7 +293,12 @@ const CallsOverview = React.createClass({
         labels: {
           // it don't have to be rounded
           // as allowDecimal could be configured from HighCharts
-          formatter: function () { return `${this.value / 60}m`; }
+          formatter: function formatTime() {
+            if (isUndefined(this.value)) {
+              return '';
+            }
+            return ` ${moment.duration(this.value, 'seconds').asMinutes()}${formatMessage(i18nMessages.min)}`;
+          },
         },
       },
       {
