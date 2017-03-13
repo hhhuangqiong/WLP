@@ -1,2 +1,15 @@
-import actionCreator from '../utils/verificationSearchActionCreator';
-export default actionCreator('FETCH_MORE_VERIFICATIONS', 'getVerifications');
+import dispatchApiCall from '../../../utils/dispatchApiCall';
+import transformParameters from '../utils/transformParameters';
+
+export default function (context, params) {
+  const query = transformParameters(params);
+  const { carrierId } = query;
+  const args = {
+    context,
+    eventPrefix: 'FETCH_MORE_VERIFICATIONS',
+    url: `/carriers/${carrierId}/verifications`,
+    method: 'get',
+    query,
+  };
+  dispatchApiCall(args);
+}

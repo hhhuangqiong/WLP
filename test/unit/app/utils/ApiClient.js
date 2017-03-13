@@ -26,35 +26,35 @@ describe('ApiClient', () => {
     });
 
     it('should remove the last char of `/` from a valid url for server request', (done) => {
-      const serverResult = formatUrl(validUrlWithSlashSuffix, validPath, isServer);
+      const serverResult = formatUrl(validUrlWithSlashSuffix, validPath, apiProxy, isServer);
       expect(serverResult).to.equal(`${validUrl}${apiProxy}${validPath}`);
       done();
     });
 
     it('should add `/` prefix to a valid path if it is missing', (done) => {
-      const clientResult = formatUrl(validUrl, validPathWithoutSlashPrefix, isClient);
-      const serverResult = formatUrl(validUrl, validPathWithoutSlashPrefix, isServer);
+      const clientResult = formatUrl(validUrl, validPathWithoutSlashPrefix, apiProxy, isClient);
+      const serverResult = formatUrl(validUrl, validPathWithoutSlashPrefix, apiProxy, isServer);
       expect(clientResult).to.equal(`${apiProxy}/${validPathWithoutSlashPrefix}`);
       expect(serverResult).to.equal(`${validUrl}${apiProxy}/${validPathWithoutSlashPrefix}`);
       done();
     });
 
     it(`should proxy a valid path to ${apiProxy}`, (done) => {
-      const clientResult = formatUrl(validUrl, validPath, isClient);
-      const serverResult = formatUrl(validUrl, validPath, isServer);
+      const clientResult = formatUrl(validUrl, validPath, apiProxy, isClient);
+      const serverResult = formatUrl(validUrl, validPath, apiProxy, isServer);
       expect(clientResult).to.equal(`${apiProxy}${validPath}`);
       expect(serverResult).to.equal(`${validUrl}${apiProxy}${validPath}`);
       done();
     });
 
     it('should return a full url for a server request', (done) => {
-      const serverResult = formatUrl(validUrl, validPath, isServer);
+      const serverResult = formatUrl(validUrl, validPath, apiProxy, isServer);
       expect(serverResult).to.equal(`${validUrl}${apiProxy}${validPath}`);
       done();
     });
 
     it('should return an absolute url for a client request', (done) => {
-      const clientResult = formatUrl(validUrl, validPath, isClient);
+      const clientResult = formatUrl(validUrl, validPath, apiProxy, isClient);
       expect(clientResult).to.equal(`${apiProxy}${validPath}`);
       done();
     });

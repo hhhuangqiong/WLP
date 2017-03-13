@@ -1,11 +1,14 @@
+import dispatchApiCall from '../../../utils/dispatchApiCall';
+
 export default function (context, params) {
-  const { apiClient } = context;
   const { token, carrierId, id, ...data } = params;
-  return apiClient
-    .put(`/carriers/${carrierId}/accounts/${encodeURIComponent(id)}`, { data })
-    .then(() => {
-      context.dispatch('UPDATE_ACCOUNT_SUCCESS', { token });
-    }).catch(err => {
-      context.dispatch('UPDATE_ACCOUNT_FAILURE', err);
-    });
+  const args = {
+    context,
+    eventPrefix: 'UPDATE_ACCOUNT',
+    url: `/carriers/${carrierId}/accounts/${encodeURIComponent(id)}`,
+    method: 'put',
+    data,
+    token,
+  };
+  dispatchApiCall(args);
 }

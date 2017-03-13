@@ -1,10 +1,7 @@
-import actionCreator from '../../../main/utils/apiActionCreator';
-
+import dispatchApiCall from '../../../utils/dispatchApiCall';
 import {
   CLEAR_OVERVIEW_SUMMARY_STATS,
   CLEAR_OVERVIEW_DETAIL_STATS,
-  FETCH_OVERVIEW_SUMMARY_STATS,
-  FETCH_OVERVIEW_DETAIL_STATS,
   UPDATE_OVERVIEW_DETAIL_STATS_TIME_FRAME,
 } from '../constants/actionTypes';
 
@@ -23,12 +20,26 @@ export function updateOverviewDetailStatsTimeFrame(context, params, done) {
   done();
 }
 
-export const fetchOverviewSummaryStats = actionCreator(
-  FETCH_OVERVIEW_SUMMARY_STATS,
-  'getOverviewSummaryStats'
-);
+export function fetchOverviewSummaryStats(context, params) {
+  const { carrierId, ...otherParams } = params;
+  const args = {
+    context,
+    eventPrefix: 'FETCH_OVERVIEW_SUMMARY_STATS',
+    url: `/carriers/${carrierId}/overview/summaryStats`,
+    method: 'get',
+    query: otherParams,
+  };
+  dispatchApiCall(args);
+}
 
-export const fetchOverviewDetailStats = actionCreator(
-  FETCH_OVERVIEW_DETAIL_STATS,
-  'getOverviewDetailStats'
-);
+export function fetchOverviewDetailStats(context, params) {
+  const { carrierId, ...otherParams } = params;
+  const args = {
+    context,
+    eventPrefix: 'FETCH_OVERVIEW_DETAIL_STATS',
+    url: `/carriers/${carrierId}/overview/detailStats`,
+    method: 'get',
+    query: otherParams,
+  };
+  dispatchApiCall(args);
+}

@@ -1,14 +1,12 @@
-import actionCreator from '../../../main/utils/apiActionCreator';
+import dispatchApiCall from '../../../utils/dispatchApiCall';
 
-export default actionCreator('DEACTIVATE_END_USER', 'deactivateEndUser', {
-  cb: (err, result, context) => {
-    if (err) {
-      context.dispatch('DEACTIVATE_END_USER_FAILURE', err);
-      context.dispatch('ERROR_MESSAGE', { message: 'User deactivation failed' });
-      return;
-    }
-
-    context.dispatch('DEACTIVATE_END_USER_SUCCESS', result);
-    context.dispatch('INFO_MESSAGE', { message: 'User deactivated' });
-  },
-});
+export default function (context, payload) {
+  const { carrierId, username } = payload;
+  const args = {
+    context,
+    eventPrefix: 'DEACTIVATE_END_USER',
+    url: `carriers/${carrierId}/users/${username}/suspension`,
+    method: 'post',
+  };
+  dispatchApiCall(args);
+}

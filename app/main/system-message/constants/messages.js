@@ -33,6 +33,26 @@ export const MESSAGES = defineMessages({
     id: 'endUser.deleteUserSuccess',
     defaultMessage: '{user} is deleted successfully',
   },
+  deactiveUserSuccess: {
+    id: 'endUser.deactiveUserSuccess',
+    defaultMessage: 'User deactivated',
+  },
+  deactiveUserFail: {
+    id: 'endUser.deactiveUserFail',
+    defaultMessage: 'User deactivation failed',
+  },
+  reactiveEndUserSuccess: {
+    id: 'endUser.reactiveEndUserSuccess',
+    defaultMessage: 'User activated',
+  },
+  reactiveEndUserFail: {
+    id: 'endUser.reactiveEndUserFail',
+    defaultMessage: 'User activation failed',
+  },
+  fetchEndUserWalletFail: {
+    id: 'endUser.fetchEndUserWalletFail',
+    defaultMessage: 'Failed to get user wallet',
+  },
   createAccountSuccess: {
     id: 'account.createAccountSuccess',
     defaultMessage: 'Create account success!',

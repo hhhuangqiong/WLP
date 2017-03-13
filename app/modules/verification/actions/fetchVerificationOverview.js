@@ -1,20 +1,14 @@
 import _ from 'lodash';
-import Q from 'q';
 import moment from 'moment';
+import dispatchApiCall from '../../../utils/dispatchApiCall';
 
-export default (context, params, done) => {
-  const {
-    getVerificationStatsByStatus,
-    getVerificationStatsByCountry,
-    getVerificationStatsByType,
-    getVerificationStatsByPlatform,
-  } = context.api;
-
+export default async (context, params) => {
   const {
     from,
     to,
     quantity,
     timescale,
+    carrierId,
   } = params;
 
   const timeRangeForCurrentPeriod = {
@@ -36,80 +30,61 @@ export default (context, params, done) => {
 
   const fetchedData = {};
 
-  const actions = [{
-    name: 'FETCH_VERIFICATION_ATTEMPTS',
-    bindedApi: Q.nbind(getVerificationStatsByStatus, context.api, paramsForCurrentPeriod),
-  }, {
-    name: 'FETCH_VERIFICATION_TYPE',
-    bindedApi: Q.nbind(getVerificationStatsByType, context.api, paramsForCurrentPeriod),
-  }, {
-    name: 'FETCH_VERIFICATION_OS_TYPE',
-    bindedApi: Q.nbind(getVerificationStatsByPlatform, context.api, paramsForCurrentPeriod),
-  }, {
-    name: 'FETCH_VERIFICATION_COUNTRIES_DATA',
-    bindedApi: Q.nbind(getVerificationStatsByCountry, context.api, paramsForCurrentPeriod),
-  }, {
-    name: 'FETCH_VERIFICATION_PAST_ATTEMPTS',
-    bindedApi: Q.nbind(getVerificationStatsByStatus, context.api, paramsForLastPeriod),
-  }];
-
-  const runningActions = actions.map(action => {
-    return action
-      .bindedApi()
-      .then(result => {
-        // Prepare all data from endpoint first and
-        // dispatch once afterward to ensure the data update problem of Line Chart
-        if (action.name === 'FETCH_VERIFICATION_COUNTRIES_DATA') {
-          fetchedData.countriesData = result;
-        } else if (action.name === 'FETCH_VERIFICATION_OS_TYPE') {
-          fetchedData.osData = result.data;
-        } else if (action.name === 'FETCH_VERIFICATION_PAST_ATTEMPTS') {
-          fetchedData.pastAttemptData = result;
-        } else if (action.name === 'FETCH_VERIFICATION_ATTEMPTS') {
-          fetchedData.currentAttemptData = result;
-        } else if (action.name === 'FETCH_VERIFICATION_TYPE') {
-          fetchedData.typeData = result.data;
-        }
-      })
-      .catch(err => {
-        context.dispatch(`${action.name}_FAILURE`, err);
-        // we don't want to handle the error here
-        throw err;
-      })
-      .finally(() => {});
+  const getVerificationStatsByStatusCurrent = dispatchApiCall({
+    context,
+    eventPrefix: 'FETCH_VERIFICATION_ATTEMPTS',
+    url: `/carriers/${carrierId}/verificationStats`,
+    method: 'get',
+    query: _.merge(paramsForCurrentPeriod, { type: 'success' }),
   });
 
-  Q
-    .allSettled(runningActions)
-    .then(promises => {
-      const failureStatusList = [];
+  const getVerificationStatsByType = dispatchApiCall({
+    context,
+    eventPrefix: 'FETCH_VERIFICATION_TYPE',
+    url: `/carriers/${carrierId}/verificationStats`,
+    method: 'get',
+    query: _.merge(paramsForCurrentPeriod, { type: 'type' }),
+  });
 
-      promises.forEach(promise => {
-        // rejected promise and the reason is not in our list
-        if (promise.reason && failureStatusList.indexOf(promise.reason.status) < 0) {
-          failureStatusList.push(promise.reason.status);
-        }
-      });
+  const getVerificationStatsByPlatform = dispatchApiCall({
+    context,
+    eventPrefix: 'FETCH_VERIFICATION_OS_TYPE',
+    url: `/carriers/${carrierId}/verificationStats`,
+    method: 'get',
+    query: _.merge(paramsForCurrentPeriod, { type: 'platform' }),
+  });
 
-      const possibleReasons = failureStatusList.map(status => {
-        switch (status) {
-          case 504:
-            return 'Request timeout';
-          default:
-            return 'Server error';
-        }
-      });
+  const getVerificationStatsByCountry = dispatchApiCall({
+    context,
+    eventPrefix: 'FETCH_VERIFICATION_COUNTRIES_DATA',
+    url: `/carriers/${carrierId}/verificationStats`,
+    method: 'get',
+    query: _.merge(paramsForCurrentPeriod, { type: 'country' }),
+  });
 
-      if (failureStatusList.length > 0) {
-        context.dispatch('ERROR_MESSAGE', {
-          message: `Sorry. Some data cannot be retrieved. Possible reason(s):
-${_.unique(possibleReasons).join(', ')}`,
-        });
-      } else {
-        context.dispatch('FETCH_VERIFICATION_OVERVIEW_SUCCESS', fetchedData);
-      }
+  const getVerificationStatsByStatusPast = dispatchApiCall({
+    context,
+    eventPrefix: 'FETCH_VERIFICATION_PAST_ATTEMPTS',
+    url: `/carriers/${carrierId}/verificationStats`,
+    method: 'get',
+    query: _.merge(paramsForLastPeriod, { type: 'success' }),
+  });
 
-      done();
-    })
-    .done();
+
+  const [currentAttemptData, typeData, osData, countriesData, pastAttemptData] =
+    await Promise.all([
+      getVerificationStatsByStatusCurrent,
+      getVerificationStatsByType,
+      getVerificationStatsByPlatform,
+      getVerificationStatsByCountry,
+      getVerificationStatsByStatusPast,
+    ]);
+
+  fetchedData.currentAttemptData = currentAttemptData;
+  fetchedData.typeData = typeData.data;
+  fetchedData.osData = osData.data;
+  fetchedData.countriesData = countriesData;
+  fetchedData.pastAttemptData = pastAttemptData;
+
+  context.dispatch('FETCH_VERIFICATION_OVERVIEW_SUCCESS', fetchedData);
 };

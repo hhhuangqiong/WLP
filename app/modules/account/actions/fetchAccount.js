@@ -1,11 +1,12 @@
+import dispatchApiCall from '../../../utils/dispatchApiCall';
+
 export default function (context, params) {
-  const { apiClient } = context;
   const { carrierId, id } = params;
-  return apiClient
-    .get(`/carriers/${carrierId}/accounts/${encodeURIComponent(id)}`)
-    .then(account => {
-      context.dispatch('FETCH_ACCOUNT_SUCCESS', account);
-    }).catch(err => {
-      context.dispatch('FETCH_ACCOUNT_FAILURE', err);
-    });
+  const args = {
+    context,
+    eventPrefix: 'FETCH_ACCOUNT',
+    url: `/carriers/${carrierId}/accounts/${encodeURIComponent(id)}`,
+    method: 'get',
+  };
+  dispatchApiCall(args);
 }

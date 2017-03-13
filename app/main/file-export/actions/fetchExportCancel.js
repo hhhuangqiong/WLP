@@ -1,16 +1,14 @@
-export default function (context, params, done) {
-  context.dispatch('FETCH_EXPORT_CANCEL_START');
+import dispatchApiCall from '../../../utils/dispatchApiCall';
 
-  function exportCallback(err, result) {
-    if (err) {
-      context.dispatch('FETCH_EXPORT_CANCEL_FAILURE', err);
-      done();
-      return;
-    }
-
-    context.dispatch('FETCH_EXPORT_CANCEL_SUCCESS', result);
-    done();
-  }
-
-  context.api.cancelExport(params, exportCallback);
+export default function (context, params) {
+  const { carrierId } = params;
+  const args = {
+    context,
+    eventPrefix: 'FETCH_EXPORT_CANCEL',
+    url: `/carriers/${carrierId}/cancel`,
+    method: 'get',
+    prefix: '/export',
+    query: params,
+  };
+  dispatchApiCall(args);
 }

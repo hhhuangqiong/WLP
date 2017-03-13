@@ -1,11 +1,12 @@
+import dispatchApiCall from '../../../utils/dispatchApiCall';
+
 export default function (context, params) {
-  const { apiClient } = context;
   const { carrierId, id } = params;
-  return apiClient
-    .post(`/carriers/${carrierId}/accounts/${encodeURIComponent(id)}/requestSetPassword`)
-    .then(result => {
-      context.dispatch('RESEND_CREATE_PASSWORD_SUCCESS', result);
-    }).catch(err => {
-      context.dispatch('RESEND_CREATE_PASSWORD_FAILURE', err);
-    });
+  const args = {
+    context,
+    eventPrefix: 'RESEND_CREATE_PASSWORD',
+    url: `/carriers/${carrierId}/accounts/${encodeURIComponent(id)}/requestSetPassword`,
+    method: 'post',
+  };
+  dispatchApiCall(args);
 }

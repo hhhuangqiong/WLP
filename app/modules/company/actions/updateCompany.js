@@ -1,15 +1,13 @@
-export default function (context, params, done) {
-  const { token, ...companyProfile } = params;
-  context.dispatch('UPDATE_COMPANY_START');
+import dispatchApiCall from '../../../utils/dispatchApiCall';
 
-  context.api.updateProvision(companyProfile, (err) => {
-    if (err) {
-      context.dispatch('UPDATE_COMPANY_FAILURE', err);
-      done();
-      return;
-    }
-
-    context.dispatch('UPDATE_COMPANY_SUCCESS', token);
-    done();
-  });
+export default function (context, params) {
+  const { carrierId, provisionId, ...data } = params;
+  const args = {
+    context,
+    eventPrefix: 'UPDATE_COMPANY',
+    url: `/carriers/${carrierId}/provisioning/${provisionId}`,
+    method: 'put',
+    data,
+  };
+  dispatchApiCall(args);
 }

@@ -1,10 +1,11 @@
+import dispatchApiCall from '../../../utils/dispatchApiCall';
+
 export default function (context, params) {
-  const { apiClient } = context;
-  return apiClient
-    .get(`/carriers/${params.carrierId}/managingCompaniesRoles`)
-    .then(result => {
-      context.dispatch('FETCH_CARRIER_MANAGING_COMPANIES_SUCCESS', result);
-    }).catch(err => {
-      context.dispatch('FETCH_CARRIER_MANAGING_COMPANIES_FAILURE', err);
-    });
+  const args = {
+    context,
+    eventPrefix: 'FETCH_CARRIER_MANAGING_COMPANIES',
+    url: `/carriers/${params.carrierId}/managingCompaniesRoles`,
+    method: 'get',
+  };
+  dispatchApiCall(args);
 }

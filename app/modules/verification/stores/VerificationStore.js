@@ -26,9 +26,9 @@ export default createStore({
   },
 
   handleVerificationsFetched(payload) {
-    this.page = payload.page;
-    this.count = payload.count;
-    this.verifications = payload.items;
+    this.page = payload.page_number;
+    this.count = payload.total_elements;
+    this.verifications = payload.content;
 
     this.emitChange();
   },
@@ -37,7 +37,7 @@ export default createStore({
     this.page = payload.page;
     this.count = payload.count;
 
-    payload.items.forEach(item => {
+    payload.content.forEach(item => {
       this.verifications.push(item);
     });
 

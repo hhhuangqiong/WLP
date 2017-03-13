@@ -1,25 +1,13 @@
-import {
-  CREATE_SIGNUP_RULES_START,
-  CREATE_SIGNUP_RULES_SUCCESS,
-  CREATE_SIGNUP_RULES_FAILURE,
-} from '../constants/actionTypes';
+import dispatchApiCall from '../../../utils/dispatchApiCall';
 
-export default function (context, payload, done) {
-  const { apiClient } = context;
-  const { carrierId, identities } = payload;
-
-  context.dispatch(CREATE_SIGNUP_RULES_START);
-
-  const endpoint = `carriers/${carrierId}/signupRules`;
-
-  apiClient
-    .post(endpoint, { data: { identities } })
-    .then(result => {
-      context.dispatch(CREATE_SIGNUP_RULES_SUCCESS, result);
-      done();
-    })
-    .catch(err => {
-      context.dispatch(CREATE_SIGNUP_RULES_FAILURE, err);
-      done();
-    });
+export default function (context, params) {
+  const { carrierId, identities } = params;
+  const args = {
+    context,
+    eventPrefix: 'CREATE_SIGNUP_RULES',
+    url: `/carriers/${carrierId}/signupRules`,
+    method: 'post',
+    data: identities,
+  };
+  dispatchApiCall(args);
 }

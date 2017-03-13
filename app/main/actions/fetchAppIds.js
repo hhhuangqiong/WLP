@@ -1,2 +1,11 @@
-import actionCreator from '../utils/apiActionCreator';
-export default actionCreator('FETCH_APP_IDS', 'getApplicationIds');
+import dispatchApiCall from '../../utils/dispatchApiCall';
+
+export default function (context, params) {
+  const args = {
+    context,
+    eventPrefix: 'FETCH_APP_IDS',
+    url: `/carriers/${params.carrierId}/applicationIds`,
+    method: 'get',
+  };
+  dispatchApiCall(args);
+}

@@ -1,2 +1,12 @@
-import actionCreator from '../../../main/utils/apiActionCreator';
-export default actionCreator('FETCH_MORE_CALLS', 'getCalls');
+import dispatchApiCall from '../../../utils/dispatchApiCall';
+
+export default function (context, params) {
+  const args = {
+    context,
+    eventPrefix: 'FETCH_MORE_CALLS',
+    url: `/carriers/${params.carrierId}/calls`,
+    method: 'get',
+    query: params,
+  };
+  dispatchApiCall(args);
+}

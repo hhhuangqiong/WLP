@@ -1,2 +1,13 @@
-import actionCreator from '../../../main/utils/apiActionCreator';
-export default actionCreator('FETCH_COMPANIES', 'getProvisions');
+import dispatchApiCall from '../../../utils/dispatchApiCall';
+
+export default function (context, params) {
+  const { carrierId, ...query } = params;
+  const args = {
+    context,
+    eventPrefix: 'FETCH_COMPANIES',
+    url: `/carriers/${carrierId}/provisioning`,
+    method: 'get',
+    query,
+  };
+  dispatchApiCall(args);
+}

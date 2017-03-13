@@ -69,7 +69,7 @@ const CompanyStore = createStore({
     this.emitChange();
   },
 
-  handleTokenUpdated(token) {
+  handleTokenUpdated({ token }) {
     this.companyToken = token;
     this.emitChange();
   },

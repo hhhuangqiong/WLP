@@ -1,6 +1,15 @@
 import { omit } from 'lodash';
-import actionCreator from '../../../main/utils/apiActionCreator';
-const action = actionCreator('UPDATE_ROLE', 'updateRole');
-export default function updateRole(context, payload, done) {
-  return action(context, omit(payload, ['createdAt', 'updatedAt', 'isRoot']), done);
+import dispatchApiCall from '../../../utils/dispatchApiCall';
+
+export default function (context, params) {
+  const { carrierId, id, ...data } = params;
+
+  const args = {
+    context,
+    eventPrefix: 'UPDATE_ROLE',
+    url: `/carriers/${carrierId}/roles/${id}`,
+    method: 'put',
+    data: omit(data, ['createdAt', 'updatedAt', 'isRoot']),
+  };
+  dispatchApiCall(args);
 }

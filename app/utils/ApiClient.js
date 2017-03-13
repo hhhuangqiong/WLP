@@ -64,7 +64,7 @@ export function parseResponse(response) {
  * @param isFromServer {Boolean} true if the request is on server-side
  * @returns {String} api resource endpoint
  */
-export function formatUrl(url, path, isFromServer = false) {
+export function formatUrl(url, path, prefix, isFromServer = false) {
   if (!url || !isString(url)) {
     throw new Error('invalid url parameter');
   }
@@ -74,7 +74,7 @@ export function formatUrl(url, path, isFromServer = false) {
   }
 
   const adjustedUrl = url.charAt(url.length - 1) === '/' ? url.slice(0, -1) : url;
-  const adjustedPath = path.charAt(0) !== '/' ? `/api/${path}` : `/api${path}`;
+  const adjustedPath = path.charAt(0) !== '/' ? `${prefix}/${path}` : `${prefix}${path}`;
 
   if (isFromServer) {
     return `${adjustedUrl}${adjustedPath}`;
@@ -116,7 +116,7 @@ export default class ApiClient {
        * @param configs {Object}
        * @return {Promise}
        */
-      this[method] = (path, { query, data } = {}, configs = { timeout: 3000, ...configs }) => new Promise((resolve, reject) => {
+      this[method] = (path, { query, data } = {}, prefix = '/api', configs = { timeout: 3000, ...configs }) => new Promise((resolve, reject) => {
         if (query && !isObject(query)) {
           reject(new Error('`query` argument must be an object'));
           return;
@@ -156,7 +156,7 @@ export default class ApiClient {
           debug('transferred cookie to the request', cookie);
         }
 
-        let url = formatUrl(baseUrl(), path, isFromServer);
+        let url = formatUrl(baseUrl(), path, prefix, isFromServer);
 
         if (query) {
           url = `${url}?${stringify(query)}`;

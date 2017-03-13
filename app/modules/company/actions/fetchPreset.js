@@ -1,2 +1,12 @@
-import actionCreator from '../../../main/utils/apiActionCreator';
-export default actionCreator('FETCH_PRESET', 'getPreset');
+import dispatchApiCall from '../../../utils/dispatchApiCall';
+
+export default function (context, params) {
+  const { carrierId } = params;
+  const args = {
+    context,
+    eventPrefix: 'FETCH_PRESET',
+    url: `/carriers/${carrierId}/preset`,
+    method: 'get',
+  };
+  dispatchApiCall(args);
+}

@@ -1,14 +1,19 @@
-export default function (context, params, done) {
-  const { token, ...companyProfile } = params;
-  context.dispatch('CREATE_COMPANY_START');
+import dispatchApiCall from '../../../utils/dispatchApiCall';
 
-  context.api.createProvision(companyProfile, (err) => {
-    if (err) {
-      context.dispatch('CREATE_COMPANY_FAILURE', err);
-      done();
-      return;
-    }
-    context.dispatch('CREATE_COMPANY_SUCCESS', token);
-    done();
-  });
+export default function (context, params) {
+  const { token, carrierId, logo, ...provisionInfo } = params;
+  const formData = new FormData();
+  if (logo) {
+    formData.append('logo', logo);
+  }
+  formData.append('data', JSON.stringify(provisionInfo));
+  const args = {
+    context,
+    eventPrefix: 'CREATE_COMPANY',
+    url: `/carriers/${carrierId}/provisioning`,
+    method: 'post',
+    data: formData,
+    token,
+  };
+  dispatchApiCall(args);
 }

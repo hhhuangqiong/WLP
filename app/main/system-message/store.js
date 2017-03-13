@@ -18,11 +18,14 @@ const SystemMessageStore = createStore({
     ERROR_MESSAGE: 'handleErrorMessage',
     INFO_MESSAGE: 'handleInfoMessage',
     // types below are going to be obsoleted or moved to the corresponding store
-    DEACTIVATE_END_USER_FAILURE: 'handleErrorMessage',
     DELETE_END_USER_FAILURE: 'handleErrorMessage',
     DELETE_END_USER_SUCCESS: 'handleDeleteEndUserSuccess',
     REACTIVATE_COMPANY_SUCCESS: 'handleUpdateCompanySuccess',
-    REACTIVATE_END_USER_FAILURE: 'handleErrorMessage',
+    DEACTIVATE_END_USER_FAILURE: 'hanldeDeactiveEndUserFailure',
+    DEACTIVATE_END_USER_SUCCESS: 'hanldeDeactiveEndUserSuccess',
+    FETCH_END_USER_WALLET_FAILURE: 'handleFetchEndUserWalletFailure',
+    REACTIVATE_END_USER_SUCCESS: 'handleReactiveEndUserSuccess',
+    REACTIVATE_END_USER_FAILURE: 'hanldeReactiveEndUserFailure',
     // accounts
     CREATE_ACCOUNT_SUCCESS: 'handleCreateAccountSuccess',
     CREATE_ACCOUNT_FAILURE: 'handleErrorMessage',
@@ -103,6 +106,25 @@ const SystemMessageStore = createStore({
         message = error.message;
     }
     this.handleErrorMessage(message);
+  },
+  hanldeDeactiveEndUserSuccess() {
+    this.handleInfoMessage(MESSAGES.deactiveUserSuccess);
+  },
+
+  hanldeDeactiveEndUserFailure() {
+    this.handleErrorMessage(MESSAGES.deactiveUserFail);
+  },
+
+  handleFetchEndUserWalletFailure() {
+    this.handleErrorMessage(MESSAGES.fetchEndUserWalletFail);
+  },
+
+  hanldeReactiveEndUserFailure() {
+    this.handleErrorMessage(MESSAGES.reactiveEndUserFail);
+  },
+
+  handleReactiveEndUserSuccess() {
+    this.handleInfoMessage(MESSAGES.reactiveEndUserSuccess);
   },
 
   handleCreateAccountSuccess() {
