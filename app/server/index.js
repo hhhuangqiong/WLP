@@ -15,6 +15,7 @@ import render from './render';
 import apiResponse from './utils/apiResponse';
 import { fetchDep } from './utils/bottle';
 import { ERROR_500 } from '../utils/paths';
+import api from './routers/api';
 
 const PROJ_ROOT = path.join(__dirname, '../..');
 
@@ -110,7 +111,7 @@ export default function (port) {
   // hlr is used for demo purpose
   server.use(require('./routers/hlr').default);
   server.use(config.EXPORT_PATH_PREFIX, require('./routers/export').default);
-  server.use(config.API_PATH_PREFIX, require('./routers/api').default);
+  server.use(config.API_PATH_PREFIX, ioc.container.Api);
   server.use(config.API_PATH_PREFIX, apiErrorHandlerMiddleware);
   server.use(config.EXPORT_PATH_PREFIX, apiErrorHandlerMiddleware);
   // introspect user access token and log out the user if invalid token

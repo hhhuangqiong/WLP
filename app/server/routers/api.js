@@ -1,37 +1,48 @@
 import { Router } from 'express';
 import multer from 'multer';
 import { permission, RESOURCE, ACTION, RESOURCE_OWNER } from './../../main/acl/acl-enums';
-import { fetchDep } from './../utils/bottle';
 
-// TODO: refactor api.js to be a factory function with dependencies
-const noCacheMiddleware = fetchDep('NoCacheMiddleware');
-const authorize = fetchDep('AuthorizationMiddlewareFactory');
-const ensureAuthenticatedMiddleware = fetchDep('EnsureAuthenticatedMiddleware');
-const roleController = fetchDep('RoleController');
-const companies = fetchDep('CompanyController');
-const accounts = fetchDep('AccountController');
-const provision = fetchDep('ProvisionController');
-const carriers = fetchDep('CarrierController');
-const resources = fetchDep('ResourceController');
-const carrierRateController = fetchDep('CarrierRateController');
-const carrierWalletController = fetchDep('CarrierWalletController');
-const meController = fetchDep('MeController');
-const decodeParamsMiddeware = fetchDep('DecodeParamsMiddeware');
+export function api(
+  noCacheMiddleware,
+  authorize,
+  ensureAuthenticatedMiddleware,
+  decodeParamsMiddeware,
+  controllers,
+) {
+  const {
+    roleController,
+    companyController,
+    accountController,
+    provisionController,
+    resourceController,
+    carrierRateController,
+    carrierWalletController,
+    meController,
+    imController,
+    callController,
+    userController,
+    overviewController,
+    signUpController,
+    topUpController,
+    smsController,
+    vsfController,
+    verificationController,
+    applicationController,
+  } = controllers;
+  // apply the memory storage when upload file
+  const storage = multer.memoryStorage();
+  const uploadFile = multer({ storage });
 
-// apply the memory storage when upload file
-const storage = multer.memoryStorage();
-const uploadFile = multer({ storage });
+  // Merge params is used to inherit carrierId from common parent router
+  const routes = new Router({ mergeParams: true });
+  const apiRouter = new Router();
 
-// Merge params is used to inherit carrierId from common parent router
-const routes = new Router({ mergeParams: true });
-const apiRouter = new Router();
-
-apiRouter
+  apiRouter
   // check the existence of req.user, throw 401 when not exist
   .use(ensureAuthenticatedMiddleware)
   .use(decodeParamsMiddeware)
   // company logo has no permission checking
-  .use('/companies/logo', companies.getLogo())
+  .use('/companies/logo', companyController.getLogo())
   // undergo the authorization checking base on permission
   .use('/carriers/:carrierId', routes)
   .use('*', (req, res) => res.status(400).json({
@@ -41,153 +52,153 @@ apiRouter
     },
   }));
 
-// eslint:max-len 0
-routes
+  // eslint:max-len 0
+  routes
   .use(noCacheMiddleware)
   .get('/me', meController.getCurrentUser)
   .get('/me/companies', meController.getCompanies)
   // general overview
   .get('/overview/summaryStats', [
     authorize(permission(RESOURCE.GENERAL)),
-    carriers.getOverviewSummaryStats,
+    overviewController.getOverviewSummaryStats,
   ])
   .get('/overview/detailStats', [
     authorize(permission(RESOURCE.GENERAL)),
-    carriers.getOverviewDetailStats,
-  ])
-  // end users
-  .get('/users', [
-    authorize(permission(RESOURCE.END_USER)),
-    carriers.getUsers,
+    overviewController.getOverviewDetailStats,
   ])
   // signupRules
   .get('/signupRules', [
     authorize(permission(RESOURCE.WHITELIST)),
-    carriers.getSignupRules,
+    signUpController.getSignupRules,
   ])
   .post('/signupRules', [
     authorize(permission(RESOURCE.WHITELIST, ACTION.CREATE)),
-    carriers.createSignupRules,
+    signUpController.createSignupRules,
   ])
   .delete('/signupRules/:id', [
     authorize(permission(RESOURCE.WHITELIST, ACTION.DELETE)),
-    carriers.deleteSignupRule,
+    signUpController.deleteSignupRule,
   ])
   // TODO: change userStatsTotal and userStatsMonthly
+  // end users
+  .get('/users', [
+    authorize(permission(RESOURCE.END_USER)),
+    userController.getUsers,
+  ])
   .get('/userStatsTotal', [
     authorize(permission(RESOURCE.END_USER)),
-    carriers.getEndUsersStatsTotal,
+    userController.getEndUsersStatsTotal,
   ])
   .get('/userStatsMonthly', [
     authorize(permission(RESOURCE.END_USER)),
-    carriers.getEndUsersStatsMonthly,
+    userController.getEndUsersStatsMonthly,
   ])
   .get('/stat/user/query', [
     authorize(permission(RESOURCE.END_USER)),
-    carriers.getEndUsersStats,
+    userController.getEndUsersStats,
   ])
   .get('/users/:username', [
     authorize(permission(RESOURCE.END_USER)),
-    carriers.getUsername,
+    userController.getUsername,
   ])
   .get('/users/:username/wallet', [
     authorize(permission(RESOURCE.END_USER)),
-    carriers.getUserWallet,
+    userController.getUserWallet,
   ])
   .post('/users/:username/suspension', [
     authorize(permission(RESOURCE.END_USER, ACTION.UPDATE)),
-    carriers.suspendUser,
+    userController.suspendUser,
   ])
   .delete('/users/:username/suspension', [
     authorize(permission(RESOURCE.END_USER, ACTION.UPDATE)),
-    carriers.reactivateUser,
+    userController.reactivateUser,
   ])
   // calls
   .get('/calls', [
     authorize(permission(RESOURCE.CALL)),
-    carriers.getCalls,
+    callController.getCalls,
   ])
   .get('/callUserStatsMonthly', [
     authorize(permission(RESOURCE.CALL)),
-    carriers.getCallUserStatsMonthly,
+    callController.getCallUserStatsMonthly,
   ])
   .get('/callUserStatsTotal', [
     authorize(permission(RESOURCE.CALL)),
-    carriers.getCallUserStatsTotal,
+    callController.getCallUserStatsTotal,
   ])
   // im
   .get('/im', [
     authorize(permission(RESOURCE.IM)),
-    carriers.getIM,
+    imController.getIM,
   ])
   .get('/stats/im', [
     authorize(permission(RESOURCE.IM)),
-    carriers.getIMStats,
+    imController.getIMStats,
   ])
   .get('/stats/im/monthly', [
     authorize(permission(RESOURCE.IM)),
-    carriers.getIMMonthlyStats,
+    imController.getIMMonthlyStats,
   ])
   .get('/stats/im/summary', [
     authorize(permission(RESOURCE.IM)),
-    carriers.getIMSummaryStats,
+    imController.getIMSummaryStats,
   ])
   // sms
   .get('/sms', [
     authorize(permission(RESOURCE.SMS)),
-    carriers.getSMS,
+    smsController.getSMS,
   ])
   .get('/stats/sms', [
     authorize(permission(RESOURCE.SMS)),
-    carriers.getSMSStats,
+    smsController.getSMSStats,
   ])
   .get('/stats/sms/monthly', [
     authorize(permission(RESOURCE.SMS)),
-    carriers.getSMSMonthlyStats,
+    smsController.getSMSMonthlyStats,
   ])
   .get('/stats/sms/summary', [
     authorize(permission(RESOURCE.SMS)),
-    carriers.getSMSSummaryStats,
+    smsController.getSMSSummaryStats,
   ])
   // top up
   .get('/topup', [
     authorize(permission(RESOURCE.TOP_UP)),
-    carriers.getTopUp,
+    topUpController.getTopUp,
   ])
   // vsf
   .get('/vsf', [
     authorize(permission(RESOURCE.VSF)),
-    carriers.getVSF,
+    vsfController.getVSF,
   ])
   .get('/vsf/overview/summaryStats', [
     authorize(permission(RESOURCE.VSF)),
-    carriers.getVsfSummaryStats,
+    vsfController.getVsfSummaryStats,
   ])
   .get('/vsf/overview/monthlyStats', [
     authorize(permission(RESOURCE.VSF)),
-    carriers.getVsfMonthlyStats,
+    vsfController.getVsfMonthlyStats,
   ])
   // verifications
   .get('/verifications', [
     authorize(permission(RESOURCE.VERIFICATION_SDK)),
-    carriers.getVerifications,
+    verificationController.getVerifications,
   ])
   .get('/verificationStats', [
     authorize(permission(RESOURCE.VERIFICATION_SDK)),
-    carriers.getVerificationStatistics,
+    verificationController.getVerificationStatistics,
   ])
   .get('/applicationIds', [
     authorize(permission(RESOURCE.VERIFICATION_SDK)),
-    carriers.getApplicationIds,
+    applicationController.getApplicationIds,
   ])
   .get('/applications', [
     authorize(permission(RESOURCE.VERIFICATION_SDK)),
-    carriers.getApplications,
+    applicationController.getApplications,
   ])
   // used in the company provision section to get the preset information
   .get('/preset', [
     authorize(permission(RESOURCE.COMPANY, ACTION.UPDATE)),
-    carriers.getPreset,
+    provisionController.getPreset,
   ])
   // company charging rate
   .get('/smsRate', [
@@ -214,27 +225,27 @@ routes
   // used in account section
   .get('/accounts', [
     authorize(permission(RESOURCE.USER)),
-    accounts.getAccounts,
+    accountController.getAccounts,
   ])
   .post('/accounts', [
     authorize(permission(RESOURCE.USER, ACTION.CREATE)),
-    accounts.createAccount,
+    accountController.createAccount,
   ])
   .get('/accounts/:id', [
     authorize(permission(RESOURCE.USER)),
-    accounts.getAccount,
+    accountController.getAccount,
   ])
   .put('/accounts/:id', [
     authorize(permission(RESOURCE.USER, ACTION.UPDATE)),
-    accounts.updateAccount,
+    accountController.updateAccount,
   ])
   .delete('/accounts/:id', [
     authorize(permission(RESOURCE.USER, ACTION.DELETE)),
-    accounts.deleteAccount,
+    accountController.deleteAccount,
   ])
   .post('/accounts/:id/requestSetPassword', [
     authorize(permission(RESOURCE.USER, ACTION.UPDATE)),
-    accounts.requestSetPassword,
+    accountController.requestSetPassword,
   ])
   // company controller will be used to manage the carrier,
   // it will convert the carrier id into company id
@@ -242,44 +253,44 @@ routes
   // so it can be assgined to user
   .get('/managingCompaniesRoles', [
     authorize(permission(RESOURCE.USER)),
-    companies.getManagingCompaniesRoles,
+    companyController.getManagingCompaniesRoles,
   ])
   // used in company section
   // only for provision status(complete) to update the company description
   .put('/company/:companyId/profile', [
     authorize(permission(RESOURCE.COMPANY, ACTION.UPDATE)),
-    companies.updateCompany,
+    companyController.updateCompany,
   ])
   .delete('/company/:companyId/logo', [
     authorize(permission(RESOURCE.COMPANY, ACTION.UPDATE)),
-    companies.deleteLogo,
+    companyController.deleteLogo,
   ])
   .put('/company/:companyId/logo', [
     authorize(permission(RESOURCE.COMPANY, ACTION.UPDATE)),
     uploadFile.single('logo'),
-    companies.updateLogo,
+    companyController.updateLogo,
   ])
   .post('/provisioning', [
     authorize(permission(RESOURCE.COMPANY, ACTION.CREATE)),
     uploadFile.single('logo'),
-    provision.createProvision,
+    provisionController.createProvision,
   ])
   .get('/provisioning', [
     authorize(permission(RESOURCE.COMPANY)),
-    provision.getProvisions,
+    provisionController.getProvisions,
   ])
   .get('/provisioning/:provisionId', [
     authorize(permission(RESOURCE.COMPANY)),
-    provision.getProvision,
+    provisionController.getProvision,
   ])
   .put('/provisioning/:provisionId', [
     authorize(permission(RESOURCE.COMPANY, ACTION.UPDATE)),
-    provision.putProvision,
+    provisionController.putProvision,
   ])
   // used in the access management section
   .get('/resource', [
     authorize(permission(RESOURCE.ROLE)),
-    resources.getCarrierResources,
+    resourceController.getCarrierResources,
   ])
   .get('/roles', [
     authorize(permission(RESOURCE.ROLE)),
@@ -298,4 +309,7 @@ routes
     roleController.remove,
   ]);
 
-export default apiRouter;
+  return apiRouter;
+}
+
+export default api;

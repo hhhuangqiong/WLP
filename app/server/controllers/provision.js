@@ -171,10 +171,30 @@ export default function provisionController(iamServiceClient, provisionHelper) {
     }
   }
 
+  async function getPreset(req, res, next) {
+    try {
+      const {
+        capabilities,
+        paymentMode,
+        serviceType,
+      } = await provisionHelper.getPresetByCarrierId(req.params.carrierId);
+      // only need the following data for front end, avoid expose billing information
+      // and convert back for the front end
+      res.json({
+        capabilities,
+        paymentType: paymentMode,
+        companyType: serviceType,
+      });
+    } catch (ex) {
+      next(ex);
+    }
+  }
+
   return {
     createProvision,
     getProvision,
     getProvisions,
     putProvision,
+    getPreset,
   };
 }

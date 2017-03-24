@@ -19,10 +19,11 @@ import { createAclResolver } from './../../main/acl/acl-resolver';
 // Middleware
 import { register as registerMiddleware } from './../middlewares';
 // Controllers
-import { register as registerControllers } from './../controllers';
+import registerControllers from './../controllers';
 
 // Routers
 import { createAuthRouter } from './../routers/auth';
+import api from './../routers/api';
 
 /**
  * Initialize the IoC container
@@ -153,6 +154,20 @@ export default function init(nconf) {
 
   // Routers
   ioc.service('AuthRouter', createAuthRouter, 'AuthController');
+  ioc.factory('Api', c => {
+    const noCacheMiddleware = c.NoCacheMiddleware;
+    const authorizationMiddlewareFactory = c.AuthorizationMiddlewareFactory;
+    const ensureAuthenticatedMiddleware = c.EnsureAuthenticatedMiddleware;
+    const decodeParamsMiddeware = c.DecodeParamsMiddeware;
+    const controllers = c.Controllers;
+    return api(
+      noCacheMiddleware,
+      authorizationMiddlewareFactory,
+      ensureAuthenticatedMiddleware,
+      decodeParamsMiddeware,
+      controllers,
+    );
+  });
 
   return ioc;
 }
